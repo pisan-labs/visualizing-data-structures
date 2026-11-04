@@ -108,7 +108,7 @@ function* shell(r: Run, rule: ShellSettings['gaps']): Gen {
         extra: extra(),
       });
       // Why the loop stopped, and the value it stopped at; said together with the drop.
-      let why = '';
+      let why: string;
       let stopper: string | null = null;
       for (;;) {
         if (j < h) {

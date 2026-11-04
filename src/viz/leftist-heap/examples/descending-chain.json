@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "leftist-heap",
+  "id": "descending-chain",
+  "title": "Tall but fast: a long left chain",
+  "notes": "Keys inserted from largest to smallest make a chain down the left, height 8. The right path is still one node long, so inserting 10 and deleting the minimum each take one comparison.",
+  "settings": { "npl": "-1" },
+  "seed": 1,
+  "ops": [
+    ["insert", 9],
+    ["insert", 8],
+    ["insert", 7],
+    ["insert", 6],
+    ["insert", 5],
+    ["insert", 4],
+    ["insert", 3],
+    ["insert", 2],
+    ["insert", 1],
+    ["insert", 10],
+    ["deletemin"]
+  ],
+  "at": { "op": 8, "step": 1000000 }
+}

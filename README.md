@@ -1,5 +1,7 @@
 # visualizing-data-structures
 
+<img src="public/logo.svg" alt="StepWise" width="300">
+
 [![CI](https://github.com/pisan-labs/visualizing-data-structures/actions/workflows/ci.yml/badge.svg)](https://github.com/pisan-labs/visualizing-data-structures/actions/workflows/ci.yml)
 
 Interactive visualizations of data structures and algorithms for university courses

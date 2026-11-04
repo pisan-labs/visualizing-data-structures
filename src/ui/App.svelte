@@ -2,6 +2,7 @@
   import { REPO_URL, SITE_NAME } from '../site';
   import { getViz } from '../viz/registry';
   import Catalog from './Catalog.svelte';
+  import Logo from './Logo.svelte';
   import { parseRoute } from './route';
   import { notices, prefs, setPref, type Theme } from './state.svelte';
   import VizPage from './VizPage.svelte';
@@ -42,9 +43,9 @@
     }}>Skip to content</a
   >
   <header class="site">
-    <a class="brand" href="#/">
-      <img src="./favicon.svg" alt="" width="26" height="26" />
-      <span>{SITE_NAME}</span>
+    <a class="brand" href="#/" aria-label="{SITE_NAME} home">
+      <Logo size={30} />
+      <span class="word">Step<span class="w">Wise</span></span>
     </a>
     <label class="theme">
       <span class="visually-hidden">Theme</span>
@@ -123,11 +124,16 @@
   .brand {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     font-weight: 800;
-    font-size: 1.15rem;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
     color: var(--text);
     text-decoration: none;
+  }
+
+  .brand .w {
+    color: var(--accent);
   }
 
   .theme select {

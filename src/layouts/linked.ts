@@ -533,7 +533,8 @@ export function drawChain(spec: ChainSpec, roles: Roles): ChainScene {
     const y = laneBelow(src.row, k);
     const out = [P, { x: P.x, y }, { x: xOuterLeft(k), y }];
     if (firstInRow(dst)) return [...out, { x: xOuterLeft(k), y: inLeft.y }, inLeft];
-    const y2 = gapLane(dst.row, k);
+    // One lane below the row-wrap connector that runs through the same gap.
+    const y2 = gapLane(dst.row, k + 1);
     return [...out, { x: xOuterLeft(k), y: y2 }, { x: inBottomL.x, y: y2 }, inBottomL];
   }
 

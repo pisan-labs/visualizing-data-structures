@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "stack-array",
+  "id": "overflow",
+  "title": "Overflow at capacity",
+  "notes": "A stack of capacity 4 gets a fifth push. Watch the check that stops it.",
+  "settings": { "capacity": 4, "top": "count", "layout": "vertical" },
+  "seed": 1,
+  "ops": [
+    ["push", 1],
+    ["push", 2],
+    ["push", 3],
+    ["push", 4],
+    ["push", 5]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

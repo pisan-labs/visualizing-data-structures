@@ -1,0 +1,20 @@
+# Netlify builds every push to main and every pull request (deploy preview).
+# Tests run in GitHub Actions (.github/workflows/ci.yml), not here.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# No X-Frame-Options: pages must stay embeddable in Canvas and slides.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

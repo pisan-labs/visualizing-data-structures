@@ -1,8 +1,8 @@
 # Visualizing Data Structures: Plan
 
-Draft v0, 2026-11-04. Status: **waiting on answers to the open questions (section 11)**.
-No code has been written yet. Once the questions are answered, the decisions move to
-`BRIEFING.md` and this plan gets a v1.
+v1, 2026-11-04. Status: **Phase 0 done. Phase 1 (Stack, array) built and waiting for your
+review.** Decisions are in section 11 and `BRIEFING.md`. Working name: Stepwise (pending your
+pick). Deployment waits on connecting the repo to Netlify.
 
 ---
 
@@ -289,8 +289,9 @@ Hosting (question 5):
 | **GitHub Pages** | Free; lives with the code; deploys from Actions | No built-in preview link per pull request |
 | Cloudflare Pages / Netlify | Free tier; preview link per pull request | Another account to manage |
 
-**Recommendation: GitHub Pages.** Routing uses the URL hash (`#/bst?ex=...`), so no
-server rewrite rules are needed.
+**Decision: Netlify**, with a custom domain `<name>.pisan.me`. Netlify builds every push
+to `main` and gives each pull request a preview link. GitHub Actions runs the tests.
+Routing uses the URL hash (`#/bst?ex=...`), so no server rewrite rules are needed.
 
 ### 5.6 Repository layout
 
@@ -407,9 +408,30 @@ We write our own code. The Galles/Lucet code is under the FreeBSD license, so co
 would be allowed with their notice, but we don't need to. The About page will credit
 both projects as inspiration. For our own license, see question 6.
 
-## 11. Open questions
+## 11. Decisions (2026-11-04)
 
-Questions marked **[blocks slice]** need an answer before Phase 1 starts. The rest can wait.
+| # | Question | Decision |
+|---|---|---|
+| 1 | Audience | University data structures and algorithms courses |
+| 2 | Code panel | Pseudocode now; one real language after Phase 2 |
+| 3 | Saving | No server in v1 (share links, browser library, file export, embed, curated examples) |
+| 4 | UI framework | Svelte 5; no student contributors expected |
+| 5 | Hosting | Netlify, custom domain `<name>.pisan.me`; public repo |
+| 6 | License | MIT for code, CC BY 4.0 for written explanations |
+| 7 | Slices | Stack (array), then BST, review after each |
+| 8 | Order and pace | As fast as the quota allows; no external deadlines; roadmap order stands |
+| 9 | Geometry | In scope, last |
+| 10 | Additions | All the candidates below, and possibly more |
+| 11 | Quiz mode | Engine support in Phase 1, UI after Phase 5 |
+| 12 | Conventions | Toggles wherever textbooks differ; CLRS as the default |
+| 13 | Analytics | None |
+| 14 | Name | Pending: 10 suggestions given; working name Stepwise |
+| 15 | Canvas embed | Yes, in v1 |
+| 16 | Explanations | Claude writes in Yusuf's voice; no approval step; Yusuf edits as needed |
+
+### Original questions (for the record)
+
+Questions marked **[blocks slice]** needed an answer before Phase 1 started.
 
 1. **Audience.** Which courses and levels is this for? This sets the depth of the
    explanations and which families come first. *(No recommendation; I need to know.)*

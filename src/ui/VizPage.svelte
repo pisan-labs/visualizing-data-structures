@@ -1,0 +1,303 @@
+<script lang="ts">
+  import { onDestroy, onMount, untrack } from 'svelte';
+  import { decodeExample, encodeExample, ExampleError, validateExample } from '../engine/example';
+  import type { AnyVizDef } from '../engine/types';
+  import { SITE_NAME } from '../site';
+  import CodePanel from './CodePanel.svelte';
+  import ExamplesPanel from './ExamplesPanel.svelte';
+  import HistoryPanel from './HistoryPanel.svelte';
+  import LearnPanel from './LearnPanel.svelte';
+  import Narration from './Narration.svelte';
+  import OpControls from './OpControls.svelte';
+  import { Session } from './session.svelte';
+  import SettingsPanel from './SettingsPanel.svelte';
+  import Stage from './Stage.svelte';
+  import { notify, prefs, setPref, type Tab } from './state.svelte';
+  import Transport from './Transport.svelte';
+  import VarsPanel from './VarsPanel.svelte';
+
+  let { def, code, embed }: { def: AnyVizDef; code: string | null; embed: boolean } = $props();
+
+  const session = untrack(() => new Session(def, { speed: prefs.speed, detail: prefs.detail }));
+  let ready = $state(false);
+
+  onMount(async () => {
+    document.title = `${def.title} · ${SITE_NAME}`;
+    if (code) {
+      try {
+        session.load(validateExample(def, await decodeExample(code)));
+      } catch (e) {
+        notify(
+          e instanceof ExampleError ? e.message : 'That link is not a valid example.',
+          'error',
+        );
+      }
+    }
+    ready = true;
+  });
+
+  onDestroy(() => session.destroy());
+
+  const scene = $derived(def.view(session.current.step, session.settings));
+  const duration = $derived(session.animate ? session.tweenMs : 0);
+
+  // Keep the address bar pointing at the current work, so reload and bookmarks keep it.
+  let syncTimer: ReturnType<typeof setTimeout> | undefined;
+  let fullUrl = $state('');
+  $effect(() => {
+    void session.version;
+    void session.cursor;
+    const settings = session.settings;
+    if (!ready) return;
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(async () => {
+      const pristine =
+        session.timeline.entries.length === 0 &&
+        Object.keys(def.defaults).every((k) => settings[k] === def.defaults[k]);
+      const query = pristine ? '' : `?ex=${await encodeExample(session.toExample())}`;
+      const hash = `#/${def.id}${query}`;
+      fullUrl = location.href.split('#')[0] + hash;
+      history.replaceState(history.state, '', embed ? `${hash}${query ? '&' : '?'}embed=1` : hash);
+    }, 400);
+  });
+
+  const tabs: { id: Tab; label: string }[] = [
+    { id: 'learn', label: 'Learn' },
+    { id: 'examples', label: 'Examples' },
+    { id: 'history', label: 'History' },
+  ];
+
+  function onTabKey(e: KeyboardEvent) {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    e.preventDefault();
+    e.stopPropagation();
+    const i = tabs.findIndex((t) => t.id === prefs.tab);
+    const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]!;
+    setPref('tab', next.id);
+    document.getElementById(`tab-${next.id}`)?.focus();
+  }
+
+  function onKey(e: KeyboardEvent) {
+    const t = e.target as HTMLElement;
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if (t.closest('input, textarea, select, [contenteditable="true"], [role="tab"]')) return;
+    switch (e.key) {
+      case ' ':
+        if (t.closest('button, a, summary')) return;
+        e.preventDefault();
+        session.toggle();
+        break;
+      case 'ArrowRight':
+      case 'PageDown':
+        e.preventDefault();
+        session.stepForward();
+        break;
+      case 'ArrowLeft':
+      case 'PageUp':
+        e.preventDefault();
+        session.stepBack();
+        break;
+    }
+  }
+</script>
+
+<svelte:window onkeydown={onKey} />
+
+<div class="viz" class:embed>
+  <header class="viz-head">
+    {#if !embed}
+      <a class="back" href="#/">← All visualizations</a>
+    {/if}
+    <div class="title-row">
+      <h1>{def.title}</h1>
+      {#if embed}
+        <a
+          class="open"
+          href={fullUrl || location.href.replace(/[?&]embed=1/, '')}
+          target="_blank"
+          rel="noopener"
+        >
+          Open in {SITE_NAME} ↗
+        </a>
+      {/if}
+    </div>
+    {#if !embed}<p class="blurb muted">{def.blurb}</p>{/if}
+  </header>
+
+  <!-- DOM order is the phone order; on wide screens the side column sits next to the stage. -->
+  <div class="main">
+    <OpControls {session} />
+    {#if !embed}<SettingsPanel {session} />{/if}
+    <div id="stage-anchor"></div>
+    <Stage {scene} {duration} />
+    <Transport {session} />
+  </div>
+
+  <div class="side">
+    <Narration {session} />
+    <CodePanel {session} />
+    <VarsPanel {session} />
+  </div>
+
+  {#if !embed}
+    <section class="tabs card">
+      <div class="tablist" role="tablist" aria-label="More about this visualization">
+        {#each tabs as t (t.id)}
+          <button
+            id="tab-{t.id}"
+            role="tab"
+            aria-selected={prefs.tab === t.id}
+            aria-controls="panel-{t.id}"
+            tabindex={prefs.tab === t.id ? 0 : -1}
+            onclick={() => setPref('tab', t.id)}
+            onkeydown={onTabKey}>{t.label}</button
+          >
+        {/each}
+      </div>
+      {#each tabs as t (t.id)}
+        <div
+          id="panel-{t.id}"
+          role="tabpanel"
+          aria-labelledby="tab-{t.id}"
+          hidden={prefs.tab !== t.id}
+          class="panel"
+        >
+          {#if prefs.tab === t.id}
+            {#if t.id === 'learn'}
+              <LearnPanel {session} />
+            {:else if t.id === 'examples'}
+              <ExamplesPanel {session} />
+            {:else}
+              <HistoryPanel {session} />
+            {/if}
+          {/if}
+        </div>
+      {/each}
+    </section>
+  {/if}
+</div>
+
+<style>
+  .viz {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 12px 16px 24px;
+  }
+
+  .main,
+  .side {
+    display: contents;
+  }
+
+  .viz-head {
+    display: grid;
+    gap: 2px;
+  }
+
+  .title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    line-height: 1.2;
+  }
+
+  .back {
+    font-size: 0.92rem;
+    text-decoration: none;
+  }
+
+  .blurb {
+    margin: 0;
+  }
+
+  .tabs {
+    padding: 0 0 12px;
+  }
+
+  .tablist {
+    display: flex;
+    border-bottom: 1px solid var(--line);
+  }
+
+  [role='tab'] {
+    flex: 1;
+    min-height: 44px;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    background: none;
+    font-weight: 600;
+    color: var(--text-2);
+  }
+
+  [role='tab'][aria-selected='true'] {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+  }
+
+  .panel {
+    padding: 12px 14px 0;
+  }
+
+  .embed {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .embed h1 {
+    font-size: 1.2rem;
+  }
+
+  /* In an iframe, keep the stage, playback and narration in view together. */
+  .embed :global(.stage svg) {
+    max-height: clamp(200px, calc(100vh - 370px), 640px);
+  }
+
+  @media (min-width: 1024px) {
+    .viz {
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+      grid-template-rows: auto auto 1fr;
+      align-items: start;
+    }
+
+    .viz-head {
+      grid-column: 1 / -1;
+    }
+
+    .main {
+      display: grid;
+      gap: 12px;
+      min-width: 0;
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .side {
+      display: grid;
+      gap: 12px;
+      min-width: 0;
+      grid-column: 2;
+      grid-row: 2 / span 2;
+      position: sticky;
+      top: 12px;
+    }
+
+    .tabs {
+      grid-column: 1;
+      grid-row: 3;
+    }
+
+    .panel {
+      max-width: 80ch;
+    }
+  }
+</style>

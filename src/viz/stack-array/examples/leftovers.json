@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "stack-array",
+  "id": "leftovers",
+  "title": "Popped values stay in memory",
+  "notes": "Pop does not erase anything. It only moves top. The next push overwrites the leftover.",
+  "settings": { "capacity": 8, "top": "count", "layout": "vertical" },
+  "seed": 1,
+  "ops": [["push", 1], ["push", 2], ["push", 3], ["pop"], ["pop"], ["push", 9]],
+  "at": { "op": -1, "step": 0 }
+}

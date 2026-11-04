@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "bubble-sort",
+  "id": "reverse",
+  "title": "Reverse order: every comparison swaps",
+  "notes": "The worst case. Eight values in reverse order need 28 comparisons and 28 swaps, the most bubble sort can do on 8 values.",
+  "settings": { "direction": "down", "earlyExit": true, "lastSwap": false, "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "80 70 60 50 40 30 20 10"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

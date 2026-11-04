@@ -85,3 +85,5 @@
 2026-11-04 [code] Merged wave 2H: separate chaining, open addressing (linear, quadratic, double; tombstones), buckets, rehashing with amortized cost, LRU cache; all with practice
 
 2026-11-04 [code] Fixed the intermittent doubly-linked-list conformance failure: insertAt at the end cited a sentinel-only pseudocode line with the sentinel off; regression test added
+
+2026-11-04 [code] Presets receive the page's current settings (optional third argument), so a preset can suit them

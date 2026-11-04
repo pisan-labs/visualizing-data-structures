@@ -49,7 +49,7 @@ export function sharedControls(a: AnyVizDef, b: AnyVizDef): Controls {
     },
     presets: c.presets?.map((p) => ({
       label: p.label,
-      make: (rng, size) => keepShared(p.make(rng, size), shared),
+      make: (rng, size, settings) => keepShared(p.make(rng, size, settings), shared),
     })),
   };
 }

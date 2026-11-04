@@ -122,7 +122,9 @@ export interface Controls {
 
 export interface Preset {
   label: string;
-  make(rng: Rng, size: number): OpCall[];
+  /** `settings` are the page's current options, so a preset can suit them (keys that collide
+   * for this table size). Tests may leave them out. */
+  make(rng: Rng, size: number, settings?: Settings): OpCall[];
 }
 
 /** One cell of the Big-O self-test: the answer, a one-line reason, and an example to try. */

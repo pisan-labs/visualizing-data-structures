@@ -1,5 +1,5 @@
 import { keepShared, sharedControls, sharedOps } from '../engine/compare';
-import type { Controls, Level, OpCall } from '../engine/types';
+import type { Controls, Level, OpCall, Settings } from '../engine/types';
 import type { Session } from './session.svelte';
 
 /** What the playback bar needs. A Session has all of it, and so does a Pair. */
@@ -21,6 +21,8 @@ export interface Playback {
 /** What the operation controls need: the buttons to show and where to send what they run. */
 export interface OpTarget {
   readonly def: { readonly controls: Controls };
+  /** The options presets should suit: the page's, or the first page's on a compare page. */
+  readonly settings: Settings;
   run(calls: OpCall[]): void;
   fill(calls: OpCall[]): void;
 }
@@ -93,6 +95,10 @@ export class Pair implements OpTarget, Playback {
 
   get atEnd(): boolean {
     return this.a.atEnd && this.b.atEnd;
+  }
+
+  get settings(): Settings {
+    return this.a.settings;
   }
 
   get speed(): number {

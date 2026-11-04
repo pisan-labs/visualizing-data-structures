@@ -25,7 +25,7 @@
     const p = controls.presets?.[presetIndex];
     if (!p) return;
     error = '';
-    session.fill(p.make(makeRng(randomSeed()), size));
+    session.fill(p.make(makeRng(randomSeed()), size, session.settings));
   }
 
   function run(b: ControlButton) {

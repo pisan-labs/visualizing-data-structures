@@ -101,3 +101,5 @@
 2026-11-04 [code] Merged wave 2F: B-tree (CLRS, t = 2 to 4, delete cases named), 2-4 tree (transfer, fusion), B+ tree (copy up vs push up, range over linked leaves), skip list (seeded coin flips); multiway layout in src/layouts/multiway.ts; all with practice
 
 2026-11-04 [code] Fixed a B-tree conformance failure: a repeated insert with split-on-the-way-up returned the old state after showing the working copy; regression test added
+
+2026-11-04 [code] Merged wave 2I: factorial (plain, tail, tail-call optimised), reversing a string, Fibonacci call tree with memo, recursion tree vs memoized DAG, N-Queens, backtracking (subsets, permutations, pruning); call stack and recursion tree layout in src/layouts/calls.ts; all with practice

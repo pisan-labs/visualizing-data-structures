@@ -97,3 +97,5 @@
 2026-11-04 [decision] session-relay settings: Europe/Berlin; handover check 15:56, session start 16:52 (Yusuf's 5pm); hourly check at :46; HANDOFF.md at the repo root; the handoff is a commit on dev, not a PR
 
 2026-11-04 [decision] All development moved from dev to main (consistent with Yusuf's other projects); dev retired; Yusuf deploys to Netlify by hand for now. session-relay's handoff commit goes on main
+
+2026-11-04 [code] Merged wave 2F: B-tree (CLRS, t = 2 to 4, delete cases named), 2-4 tree (transfer, fusion), B+ tree (copy up vs push up, range over linked leaves), skip list (seeded coin flips); multiway layout in src/layouts/multiway.ts; all with practice

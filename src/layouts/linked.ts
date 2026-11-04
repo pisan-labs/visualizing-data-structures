@@ -458,6 +458,14 @@ export function drawChain(spec: ChainSpec, roles: Roles): ChainScene {
     const inBottomL = { x: D.x + 10, y: D.y + D.h };
     const inBottomR = { x: D.x + D.w - 10, y: D.y + D.h };
 
+    if (src === dst) {
+      // A node that points at itself: a tight loop under it, back in from the other side.
+      const y = laneBelow(src.row, k);
+      const x = side === 'right' ? D.x - 12 - k * LANE : D.x + D.w + 12 + k * LANE;
+      const into = side === 'right' ? inLeft : inRight;
+      return [P, { x: P.x, y }, { x, y }, { x, y: into.y }, into];
+    }
+
     if (src.row === dst.row) {
       if (side === 'right') {
         if (dst.col === src.col + 1) return [P, { x: D.x, y: P.y }];

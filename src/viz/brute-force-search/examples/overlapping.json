@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "brute-force-search",
+  "id": "overlapping",
+  "title": "Overlapping matches: ABABA in ABABABABAB",
+  "notes": "ABABA occurs at shifts 0, 2 and 4, and each match shares three characters with the next one. Brute force finds them all because it tries every shift, even one inside a match it has just found.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["load", "ABABABABAB / ABABA"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

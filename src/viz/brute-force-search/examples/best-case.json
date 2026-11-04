@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "brute-force-search",
+  "id": "best-case",
+  "title": "The best case: the first letter never matches",
+  "notes": "There is no Q in the text, so every shift fails on its first comparison: 10 shifts, 10 comparisons. That is n − m + 1, the least any search for every match can do.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["load", "SEARCHINGTEXT / QUIZ"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "brute-force-search",
+  "id": "two-matches",
+  "title": "Two matches, and a lot of repeated work",
+  "notes": "ABABAC occurs at shifts 3 and 9. Brute force tries all 11 shifts and makes 30 comparisons. Shift 1 matches five characters before it fails, and then the text pointer goes back four places to start again at T[2].",
+  "settings": {},
+  "seed": 1,
+  "ops": [["load", "GABABABACABABACG / ABABAC"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

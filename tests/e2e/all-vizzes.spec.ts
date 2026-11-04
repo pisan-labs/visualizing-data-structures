@@ -21,7 +21,7 @@ for (const id of ids) {
       page.on('console', (m) => {
         if (m.type() === 'error') errors.push(m.text());
       });
-      await page.goto(`./#/${id}`);
+      await page.goto(`/${id}/`);
       await page.getByRole('combobox', { name: 'Speed' }).selectOption('4');
       const form = page.locator('form.controls');
       const input = form.locator('#op-input');
@@ -45,7 +45,7 @@ for (const id of ids) {
     });
 
     test('fits the screen and has no axe violations', async ({ page }) => {
-      await page.goto(`./#/${id}`);
+      await page.goto(`/${id}/`);
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
       );

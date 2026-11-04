@@ -89,12 +89,13 @@ export interface ControlButton {
   usesInput: boolean;
   /** "1 2 3" runs the operation once per value. */
   bulk?: boolean;
-  /**
-   * How many values the operation reads from the input, separated by spaces or commas.
-   * Default 1. For example insertAt(i, x) reads two: "2 42". Not combined with `bulk`.
-   */
-  args?: number;
   primary?: boolean;
+  /**
+   * For an operation that takes several values, what each one is, in order, for example
+   * ['an index', 'a value'] for insert(i, x). The learner types them separated by spaces and
+   * the button makes one call. Leave it out when the operation takes one value.
+   */
+  args?: string[];
 }
 
 export interface Controls {

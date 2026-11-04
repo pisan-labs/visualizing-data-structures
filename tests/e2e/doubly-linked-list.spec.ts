@@ -9,7 +9,7 @@ async function op(page: Page, button: string, text?: string) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('./#/doubly-linked-list');
+  await page.goto('/doubly-linked-list/');
   await expect(page.getByRole('heading', { name: 'Doubly linked list' })).toBeVisible();
   await page.getByRole('combobox', { name: 'Speed' }).selectOption('4');
 });

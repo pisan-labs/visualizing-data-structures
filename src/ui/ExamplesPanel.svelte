@@ -8,7 +8,8 @@
   } from '../engine/storage';
   import type { SavedExample } from '../engine/types';
   import { SITE_NAME } from '../site';
-  import { getViz } from '../viz/registry';
+  import { liveIds } from '../viz/registry';
+  import { vizHref } from './route';
   import type { Session } from './session.svelte';
   import { notify } from './state.svelte';
 
@@ -21,10 +22,15 @@
   let fileInput: HTMLInputElement | undefined = $state();
 
   async function linkFor(ex: SavedExample, embed = false): Promise<string> {
-    const code = await encodeExample(ex);
-    const base = location.href.split('#')[0];
-    return `${base}#/${ex.viz}?ex=${code}${embed ? '&embed=1' : ''}`;
+    const options = embed
+      ? { theme: embedTheme === 'auto' ? null : embedTheme, autoplay: embedAutoplay }
+      : {};
+    return location.origin + vizHref(ex.viz, { ex: await encodeExample(ex), embed, ...options });
   }
+
+  // Options for the embed code.
+  let embedTheme = $state<'auto' | 'light' | 'dark' | 'contrast'>('auto');
+  let embedAutoplay = $state(false);
 
   async function copy(text: string, what: string) {
     shareText = text;
@@ -94,10 +100,10 @@
       const raw: unknown = JSON.parse(await file.text());
       const viz = exampleViz(raw);
       if (viz && viz !== session.def.id) {
-        const other = getViz(viz);
-        if (!other)
+        if (!liveIds.includes(viz))
           throw new Error(`This file is for "${viz}", which this site does not have yet.`);
-        location.hash = new URL(await linkFor(validateExample(other, raw))).hash;
+        // That page checks the example when it opens.
+        location.href = await linkFor(raw as SavedExample);
         return;
       }
       const ex = validateExample(session.def, raw);
@@ -137,6 +143,18 @@
     <div class="row">
       <button class="btn small" onclick={copyLink}>Copy link</button>
       <button class="btn small" onclick={copyEmbed}>Copy embed code</button>
+    </div>
+    <div class="row embed-options">
+      <label>
+        Embed theme
+        <select class="field" bind:value={embedTheme}>
+          <option value="auto">Follow the viewer</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+          <option value="contrast">High contrast</option>
+        </select>
+      </label>
+      <label><input type="checkbox" bind:checked={embedAutoplay} /> Start playing</label>
     </div>
     {#if shareText}
       <label class="visually-hidden" for="share-text">Link or embed code</label>
@@ -264,6 +282,24 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+  }
+
+  .embed-options {
+    margin-top: 8px;
+    align-items: center;
+    font-size: 0.88rem;
+    color: var(--text-2);
+  }
+
+  .embed-options label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .embed-options select {
+    min-height: 32px;
+    color: var(--text);
   }
 
   .grow {

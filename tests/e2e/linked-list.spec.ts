@@ -13,7 +13,7 @@ async function op(page: Page, button: string, text?: string) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('./#/linked-list');
+  await page.goto('/linked-list/');
   await expect(page.getByRole('heading', { name: 'Singly linked list' })).toBeVisible();
   await fast(page);
 });
@@ -29,7 +29,7 @@ test('insert at an index reads the index and the value', async ({ page }) => {
   await op(page, 'Insert at tail', '10 30');
   await expect(narration(page)).toContainText('30 is at the end', { timeout: 10_000 });
   await op(page, 'Insert at (i, x)', '5');
-  await expect(page.getByRole('alert')).toContainText('needs 2 values');
+  await expect(page.getByRole('alert')).toContainText('needs an index and a value');
   await op(page, 'Insert at (i, x)', '1 20');
   await expect(narration(page)).toContainText('20 is at index 1', { timeout: 10_000 });
   await expect(stage(page)).toHaveAttribute('aria-label', /head → 10 → 20 → 30 → null/);

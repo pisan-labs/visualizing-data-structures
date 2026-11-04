@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "dijkstra",
+  "id": "lowers-every-key",
+  "title": "Every edge lowers a key",
+  "notes": "Each vertex Dijkstra settles lowers the key of every vertex after it: 15 relaxations, and every one of them is a DECREASE-KEY. With a binary heap, this is the O(E log V) worst case.",
+  "settings": {
+    "queue": "decrease",
+    "layout": "layered"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "A>B:1, A>C:3, A>D:5, A>E:7, A>F:9, B>C:1, B>D:3, B>E:5, B>F:7, C>D:1, C>E:3, C>F:5, D>E:1, D>F:3, E>F:1"
+    ],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

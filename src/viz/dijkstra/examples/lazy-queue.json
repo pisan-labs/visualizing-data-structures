@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "dijkstra",
+  "id": "lazy-queue",
+  "title": "A lazy queue leaves stale entries",
+  "notes": "The first example again, with the queue most heap code uses: a new entry each time a d drops. D goes in three times, with keys 8, 7 and 6, and B twice. The old entries come out later and are skipped.",
+  "settings": {
+    "queue": "lazy",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A>B:5, A>C:2, B>D:4, B>E:2, C>B:1, C>D:6, D>G:3, E>D:1, E>F:4, F>G:1"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

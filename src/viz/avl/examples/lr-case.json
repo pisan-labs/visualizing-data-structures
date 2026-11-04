@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "avl",
+  "id": "lr-case",
+  "title": "LR case: a double rotation",
+  "notes": "Inserting 45 makes 50 too tall on the left, but its left child 30 leans right. A right rotation at 50 alone would not fix it. First rotate left at 30, which lines up 50, 40 and 30, then rotate right at 50.",
+  "settings": {
+    "delete": "successor",
+    "show": "both",
+    "bf": "left",
+    "leaf": "zero"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 30],
+    ["insert", 70],
+    ["insert", 20],
+    ["insert", 40],
+    ["insert", 45]
+  ],
+  "at": {
+    "op": 4,
+    "step": 999
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "treap",
+  "id": "max-heap",
+  "title": "A max-heap of priorities",
+  "notes": "With the other heap order, larger priorities sit higher. The same five keys and priorities as in the first example now put 20 (priority 70) at the root.",
+  "settings": {
+    "heap": "max",
+    "priority": "random"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", "50:40"],
+    ["insert", "30:60"],
+    ["insert", "70:50"],
+    ["insert", "20:70"],
+    ["insert", "40:10"]
+  ],
+  "at": {
+    "op": 3,
+    "step": 999
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "avl",
+  "id": "ll-case",
+  "title": "LL case: one right rotation",
+  "notes": "Inserting 10 makes 50 two levels taller on the left, through its left child 30, which leans left too. One right rotation at 50 lifts 30 to the root, and 40 swings across to become 50's left child.",
+  "settings": {
+    "delete": "successor",
+    "show": "both",
+    "bf": "left",
+    "leaf": "zero"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 30],
+    ["insert", 70],
+    ["insert", 20],
+    ["insert", 40],
+    ["insert", 10]
+  ],
+  "at": {
+    "op": 4,
+    "step": 999
+  }
+}

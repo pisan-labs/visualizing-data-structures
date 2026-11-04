@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "viz": "red-black",
+  "id": "insert-all-cases",
+  "title": "One insert, all three cases",
+  "notes": "Inserting 40 under the red 30 meets a red uncle, 70: case 1 recolors and moves the problem up to 60. Now 60 and its parent 80 are both red, the uncle 10 is black, and the path zigzags: case 2 rotates right at 80 and case 3 rotates left at 20, which puts 60 at the root.",
+  "settings": {
+    "delete": "successor",
+    "nils": false,
+    "bh": true
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 70],
+    ["insert", 20],
+    ["insert", 10],
+    ["insert", 90],
+    ["insert", 80],
+    ["insert", 60],
+    ["insert", 30],
+    ["insert", 40]
+  ],
+  "at": {
+    "op": 6,
+    "step": 999
+  }
+}

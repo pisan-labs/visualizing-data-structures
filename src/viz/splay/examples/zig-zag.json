@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "splay",
+  "id": "zig-zag",
+  "title": "Zig-zag: the path bends",
+  "notes": "After 10 and 30, inserting 20 hangs it as the right child of 10, which is the left child of 30. The path bends, so the splay rotates at the parent 10 first and then at 30, exactly like an AVL double rotation.",
+  "settings": {
+    "delete": "join"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 30],
+    ["insert", 20]
+  ],
+  "at": {
+    "op": 1,
+    "step": 999
+  }
+}

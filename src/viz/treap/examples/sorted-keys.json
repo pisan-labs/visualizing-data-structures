@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "treap",
+  "id": "sorted-keys",
+  "title": "Sorted keys, random priorities",
+  "notes": "Seven keys in increasing order, each with a random priority from the seeded generator. A plain BST would be a chain of height 6; the treap ends up shaped like a BST built in random order.",
+  "settings": {
+    "heap": "min",
+    "priority": "random"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

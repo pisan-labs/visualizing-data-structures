@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "hash-rehash",
+  "id": "grow-prime",
+  "title": "Growing to the next prime",
+  "notes": "The 4th insert would make α = 4/5 = 0.8, so the table grows to 11, the first prime at least 10, and all three keys move. The 9th insert grows it again, to 23. Watch each key land in a new slot: its slot depends on m.",
+  "settings": { "m0": 5, "threshold": "0.75", "grow": "prime" },
+  "seed": 1,
+  "ops": [
+    ["insert", 12],
+    ["insert", 7],
+    ["insert", 19],
+    ["insert", 3],
+    ["insert", 25],
+    ["insert", 8],
+    ["insert", 30],
+    ["insert", 14],
+    ["insert", 41],
+    ["search", 30]
+  ],
+  "at": { "op": 2, "step": 100 }
+}

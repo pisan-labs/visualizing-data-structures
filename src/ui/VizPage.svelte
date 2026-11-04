@@ -10,6 +10,7 @@
   import LearnPanel from './LearnPanel.svelte';
   import Narration from './Narration.svelte';
   import OpControls from './OpControls.svelte';
+  import PracticePanel from './PracticePanel.svelte';
   import { vizHref } from './route';
   import { Session } from './session.svelte';
   import SettingsPanel from './SettingsPanel.svelte';
@@ -26,6 +27,8 @@
     lesson = null,
     theme = null,
     autoplay = false,
+    practice = null,
+    practiceCount = 5,
   }: {
     def: AnyVizDef;
     code: string | null;
@@ -33,6 +36,8 @@
     lesson?: string | null;
     theme?: string | null;
     autoplay?: boolean;
+    practice?: number | null;
+    practiceCount?: number;
   } = $props();
 
   const session = untrack(() => new Session(def, { speed: prefs.speed, detail: prefs.detail }));
@@ -41,6 +46,7 @@
   onMount(async () => {
     document.title = `${def.title} · ${SITE_NAME}`;
     if (lesson) setPref('tab', 'learn');
+    if (practice) setPref('tab', 'practice');
     if (code) {
       try {
         session.load(validateExample(def, await decodeExample(code)));
@@ -116,13 +122,14 @@
     )}`,
   );
 
-  const tabs: { id: Tab; label: string }[] = [
+  const tabs = $derived<{ id: Tab; label: string }[]>([
     { id: 'learn', label: 'Learn' },
     { id: 'bigo', label: 'Big-O' },
+    ...(def.practice?.length ? [{ id: 'practice' as Tab, label: 'Practice' }] : []),
     { id: 'examples', label: 'Examples' },
     { id: 'trace', label: 'Trace' },
     { id: 'history', label: 'History' },
-  ];
+  ]);
 
   function onTabKey(e: KeyboardEvent) {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
@@ -235,6 +242,8 @@
               <LearnPanel {session} {lesson} />
             {:else if t.id === 'bigo'}
               <BigOPanel {session} />
+            {:else if t.id === 'practice'}
+              <PracticePanel {session} seed={practice} count={practiceCount} />
             {:else if t.id === 'trace'}
               <TracePanel {session} />
             {:else if t.id === 'examples'}

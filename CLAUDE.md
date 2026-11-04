@@ -100,7 +100,13 @@ everything on every push; Netlify builds and deploys `main` (`netlify.toml`).
     output our model expects. `src/viz/code.test.ts` runs all three on the curated examples and
     on random scripts. Code follows the default settings; keep it idiomatic and short.
     Toolchains: Java 17+ (switch arrows are fine) and C++17 (`-Wall -Wextra -Werror`).
-12. **Tests.**
+12. **Practice.** Give `practice` 3 or 4 question kinds, following `src/viz/stack-array/practice.ts`.
+    - Each kind is built from a seeded RNG.
+    - The picture shows the state after `setup`; the prompt asks about operations that follow.
+    - Compute every answer by running the model; never write one by hand.
+    - Answers are a choice, a number, or a sequence.
+    - Add `watch` operations so "Show me" can play the answer.
+13. **Tests.**
     - `src/viz/conformance.test.ts` checks every page automatically: narration (no `{token}`
       or `undefined` leftovers), line ids, plain pseudocode, marks, unique shape ids, Big-O
       rows, presets, examples, links, and no placeholder text.

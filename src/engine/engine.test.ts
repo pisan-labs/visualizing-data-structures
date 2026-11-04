@@ -10,6 +10,7 @@ import {
   validateExample,
 } from './example';
 import { deriveSeed, makeRng } from './rng';
+import { answerText, isCorrect, practiceSet } from './practice';
 import { parseScript, toScript } from './script';
 import type { OpCall } from './types';
 import { Timeline } from './timeline';
@@ -168,5 +169,29 @@ describe('typed scripts', () => {
       error: expect.stringMatching(/^Line 1: "toolongvalue": Keep values to 6/),
     });
     expect(parseScript(stackArray, '  ')).toEqual({ error: 'The script is empty.' });
+  });
+});
+
+describe('practice sets', () => {
+  it('are the same for the same seed and cover every kind', () => {
+    const a = practiceSet(stackArray, 12345, 8);
+    const b = practiceSet(stackArray, 12345, 8);
+    expect(a.map((x) => x.question)).toEqual(b.map((x) => x.question));
+    expect(new Set(a.map((x) => x.kind.id)).size).toBe(stackArray.practice!.length);
+    expect(practiceSet(stackArray, 54321, 8).map((x) => x.question)).not.toEqual(
+      a.map((x) => x.question),
+    );
+  });
+
+  it('check answers of every kind', () => {
+    expect(isCorrect({ kind: 'choice', options: ['a', 'b'], correct: 1 }, '1')).toBe(true);
+    expect(isCorrect({ kind: 'choice', options: ['a', 'b'], correct: 1 }, '0')).toBe(false);
+    expect(isCorrect({ kind: 'choice', options: ['a', 'b'], correct: 0 }, '')).toBe(false);
+    expect(isCorrect({ kind: 'number', value: 3 }, ' 3 ')).toBe(true);
+    expect(isCorrect({ kind: 'number', value: 0 }, '')).toBe(false);
+    expect(isCorrect({ kind: 'sequence', value: ['10', 'A'] }, '10, a')).toBe(true);
+    expect(isCorrect({ kind: 'sequence', value: ['10', 'A'] }, '10')).toBe(false);
+    expect(isCorrect({ kind: 'sequence', value: [] }, '  ')).toBe(true);
+    expect(answerText({ kind: 'sequence', value: [] })).toBe('(nothing)');
   });
 });

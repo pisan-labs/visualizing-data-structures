@@ -22,6 +22,7 @@ import {
   type StackSettings,
   type StackState,
 } from './model';
+import { stackPractice } from './practice';
 import { view } from './view';
 
 export const MAX_VALUE_LENGTH = 6;
@@ -132,6 +133,7 @@ export const stackArray: VizDef<StackState, StackSettings, StackExtra> = {
       note: 'Space: O(capacity), whether the stack is full or empty.',
     },
   ],
+  practice: stackPractice(() => stackArray),
   code: {
     python: pythonSource,
     java: javaSource,

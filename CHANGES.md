@@ -93,3 +93,5 @@
 2026-11-04 [doc] BRIEFING.md brought up to date: code tabs, practice sets and concept checks, instructor tools; the site is not published until the first deploy
 
 2026-11-04 [decision] Yusuf approved session-relay (hourly reports only when there is news, daily handover check, fresh session when worthwhile); set up when wave 2 (G, F, I, J) is merged
+
+2026-11-04 [decision] session-relay settings: Europe/Berlin; handover check 15:56, session start 16:52 (Yusuf's 5pm); hourly check at :46; HANDOFF.md at the repo root; the handoff is a commit on dev, not a PR

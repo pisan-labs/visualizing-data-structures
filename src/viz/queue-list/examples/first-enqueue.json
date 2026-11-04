@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "queue-list",
+  "id": "first-enqueue",
+  "title": "The first enqueue sets both pointers",
+  "notes": "On an empty queue there is no last node to link from, so enqueue points head at the new node instead. The second enqueue takes the usual path.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["enqueue", 5],
+    ["enqueue", 6]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

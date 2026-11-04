@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "viz": "dynamic-array",
+  "id": "amortized",
+  "title": "Sixteen appends, under two copies each",
+  "notes": "Sixteen appends from one slot. The expensive appends (the 2nd, 3rd, 5th and 9th) copy 1, 2, 4 and 8 values. That is 15 copies for 16 appends, fewer than one per append by the end.",
+  "settings": { "growth": "2", "shrink": "quarter", "start": 1 },
+  "seed": 1,
+  "ops": [
+    ["append", 1],
+    ["append", 2],
+    ["append", 3],
+    ["append", 4],
+    ["append", 5],
+    ["append", 6],
+    ["append", 7],
+    ["append", 8],
+    ["append", 9],
+    ["append", 10],
+    ["append", 11],
+    ["append", 12],
+    ["append", 13],
+    ["append", 14],
+    ["append", 15],
+    ["append", 16]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

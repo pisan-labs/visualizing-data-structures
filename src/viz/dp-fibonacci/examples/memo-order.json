@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "dp-fibonacci",
+  "id": "memo-order",
+  "title": "Top-down: cells fill as the calls finish",
+  "notes": "memoFib(6) asks for F(5), which asks for F(4), and so on down to F(1). That call finishes first, so F[1] is the first cell filled, then F[0], then F[2] up to F[6]. Set the detail level to Milestones to see only the fills.",
+  "settings": { "style": "memo" },
+  "seed": 1,
+  "ops": [["fib", 6]],
+  "at": { "op": 0, "step": 0 }
+}

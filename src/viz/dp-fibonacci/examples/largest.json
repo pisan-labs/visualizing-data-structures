@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "dp-fibonacci",
+  "id": "largest",
+  "title": "F(15) in fourteen additions",
+  "notes": "The largest table here. Bottom-up, F(15) = 610 takes one addition per cell after the base cases. The plain recursion would make 1973 calls for the same number.",
+  "settings": { "style": "bottomup" },
+  "seed": 1,
+  "ops": [["fib", 15]],
+  "at": { "op": 0, "step": 0 }
+}

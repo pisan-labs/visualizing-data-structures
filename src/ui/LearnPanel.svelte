@@ -13,19 +13,25 @@
 
   let article: HTMLElement | undefined = $state();
 
-  // Links like [Try it](#example:lifo) load a curated example instead of navigating.
+  // Links like [Try it](#example:lifo) load a curated example instead of navigating;
+  // [Show me](#play:lifo) loads it and plays it.
   $effect(() => {
     const el = article;
     if (!el) return;
     const onClick = (e: MouseEvent) => {
       const a = (e.target as Element).closest('a');
-      const href = a?.getAttribute('href') ?? '';
-      if (!href.startsWith('#example:')) return;
+      const link = /^#(example|play):(.+)$/.exec(a?.getAttribute('href') ?? '');
+      if (!link) return;
       e.preventDefault();
-      const ex = session.def.examples.find((x) => x.id === href.slice('#example:'.length));
+      const ex = session.def.examples.find((x) => x.id === link[2]);
       if (!ex) return;
       session.load(validateExample(session.def, ex));
-      notify(`Loaded "${ex.title}". Press play or step through it.`);
+      if (link[1] === 'play') session.play();
+      notify(
+        link[1] === 'play'
+          ? `Playing "${ex.title}".`
+          : `Loaded "${ex.title}". Press play or step through it.`,
+      );
       document
         .getElementById('stage-anchor')
         ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -73,6 +79,12 @@
     background: var(--surface-2);
     padding: 1px 4px;
     border-radius: 4px;
+  }
+
+  /* Long lines in code blocks wrap, so they never widen the page on a phone. */
+  .learn :global(pre) {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
 
   .learn :global(ul) {

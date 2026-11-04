@@ -2,7 +2,7 @@ import { readJson, writeJson } from '../engine/storage';
 import type { Level } from '../engine/types';
 
 export type Theme = 'auto' | 'light' | 'dark' | 'contrast';
-export type Tab = 'learn' | 'bigo' | 'examples' | 'history';
+export type Tab = 'learn' | 'bigo' | 'examples' | 'trace' | 'history';
 export type CodeView = 'formal' | 'plain' | 'python' | 'java' | 'cpp';
 
 /** Per-viewer conveniences, remembered in the browser when storage is available. */

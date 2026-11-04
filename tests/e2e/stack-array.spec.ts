@@ -219,3 +219,33 @@ test('each visualization page has its own title and preview tags', async ({ requ
   expect(html).toContain('<link rel="canonical" href="https://stepwise.pisan.me/stack-array/"');
   expect(html).toMatch(/og:description" content="Push, pop and peek/);
 });
+
+test('trace table lists the steps and jumps to one', async ({ page }) => {
+  await fast(page);
+  await push(page, '10 20');
+  await expect(narration(page)).toContainText('20 is now the top', { timeout: 10_000 });
+  await page.getByRole('tab', { name: 'Trace' }).click();
+  const table = page.getByRole('region', { name: 'Trace table' });
+  await expect(table.getByRole('row')).toHaveCount(1 + 7);
+  await table.getByRole('button', { name: 'Jump to step 3' }).click();
+  await expect(narration(page)).toContainText('Store 10 in A[0]');
+});
+
+test('feedback link opens a prefilled GitHub issue', async ({ page }) => {
+  const link = page.getByRole('link', { name: 'Spotted a mistake? Tell us on GitHub' });
+  await expect(link).toHaveAttribute('href', /issues\/new\?title=%5Bstack-array%5D/);
+});
+
+test('catalog search and pathways filter the list', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('searchbox', { name: 'Search the catalog' }).fill('heap');
+  await expect(page.getByText(/^Showing \d+ of \d+\.$/)).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Heaps and priority queues' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Graphs' })).toHaveCount(0);
+  await page.getByRole('searchbox', { name: 'Search the catalog' }).fill('');
+  await page.getByText('Algorithms', { exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Linked lists' })).toHaveCount(0);
+  await page.getByText('Ready only').click();
+  await page.getByText('Everything').click();
+  await expect(page.getByRole('link', { name: 'Stack (array)' })).toBeVisible();
+});

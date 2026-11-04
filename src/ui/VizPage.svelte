@@ -2,7 +2,7 @@
   import { onDestroy, onMount, untrack } from 'svelte';
   import { decodeExample, encodeExample, ExampleError, validateExample } from '../engine/example';
   import type { AnyVizDef } from '../engine/types';
-  import { SITE_NAME } from '../site';
+  import { REPO_URL, SITE_NAME } from '../site';
   import CodePanel from './CodePanel.svelte';
   import BigOPanel from './BigOPanel.svelte';
   import ExamplesPanel from './ExamplesPanel.svelte';
@@ -15,6 +15,7 @@
   import SettingsPanel from './SettingsPanel.svelte';
   import Stage from './Stage.svelte';
   import { notify, prefs, setPref, type Tab } from './state.svelte';
+  import TracePanel from './TracePanel.svelte';
   import Transport from './Transport.svelte';
   import VarsPanel from './VarsPanel.svelte';
 
@@ -68,10 +69,18 @@
     }, 400);
   });
 
+  // A prefilled GitHub issue that carries the page and the exact example.
+  const issueUrl = $derived(
+    `${REPO_URL}/issues/new?title=${encodeURIComponent(`[${def.id}] `)}&body=${encodeURIComponent(
+      `Page: ${fullUrl || location.origin + vizHref(def.id)}\n\nWhat happened:\n\nWhat I expected:\n`,
+    )}`,
+  );
+
   const tabs: { id: Tab; label: string }[] = [
     { id: 'learn', label: 'Learn' },
     { id: 'bigo', label: 'Big-O' },
     { id: 'examples', label: 'Examples' },
+    { id: 'trace', label: 'Trace' },
     { id: 'history', label: 'History' },
   ];
 
@@ -175,6 +184,8 @@
               <LearnPanel {session} {lesson} />
             {:else if t.id === 'bigo'}
               <BigOPanel {session} />
+            {:else if t.id === 'trace'}
+              <TracePanel {session} />
             {:else if t.id === 'examples'}
               <ExamplesPanel {session} />
             {:else}
@@ -184,6 +195,9 @@
         </div>
       {/each}
     </section>
+    <p class="feedback">
+      <a href={issueUrl} target="_blank" rel="noopener">Spotted a mistake? Tell us on GitHub</a>
+    </p>
   {/if}
 </div>
 
@@ -256,6 +270,11 @@
 
   .panel {
     padding: 12px 14px 0;
+  }
+
+  .feedback {
+    margin: 0;
+    font-size: 0.88rem;
   }
 
   .embed {

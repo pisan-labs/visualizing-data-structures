@@ -21,7 +21,7 @@ import {
 const R = 17;
 /** Rows above the first row of roots: the min pointer, the wrap of the root list, the totals. */
 const MIN_Y = -(R + 24);
-const WRAP_Y = -(R + 42);
+const WRAP_Y = -(R + 48);
 const STATS_Y = -(R + 66);
 const BOX_W = 56;
 const CELL = { w: 40, h: 30 };
@@ -181,15 +181,27 @@ export function view(step: Step<FibState, FibExtra>, settings: FibSettings): Sce
     boxes.push({ ...layout.bounds, h: layout.bounds.h + (internal ? 14 : 0) });
   };
 
-  const minLabel = (node: PlacedForestNode, text: string, id: string) => {
+  /**
+   * The min pointer: an arrow down into root u, long enough for its head, with its name beside
+   * it. The name goes on the side away from the list's wrap-around and row connectors: left of
+   * the last root, right of the others, and above the arrow when both sides have a line.
+   */
+  const minLabel = (layout: ForestLayout, roots: number[], u: number, text: string, id: string) => {
+    const node: PlacedForestNode = layout.nodes.get(u)!;
+    const rowOf = new Map(layout.trees.map((t) => [t.root, t.row]));
+    const k = roots.indexOf(u);
+    const last = roots.length > 1 && k === roots.length - 1;
+    const firstInRow = k > 0 && rowOf.get(roots[k - 1]!) !== rowOf.get(u);
+    const side = last ? (firstInRow ? 0 : -1) : 1;
     shapes.push({
       kind: 'text',
       id: `${id}-label`,
-      x: node.x,
-      y: node.y + MIN_Y + R - 4,
+      // Clear of the arrowhead, which is 14 units wide.
+      x: node.x + side * 10,
+      y: side === 0 ? node.y - R - 27 : node.y - R - 9,
       text,
       size: 13,
-      anchor: 'middle',
+      anchor: side < 0 ? 'end' : side > 0 ? 'start' : 'middle',
       mono: true,
       cls: 'pointer',
       role: roles.get(id) ?? (extra?.minPending ? 'stale' : 'found'),
@@ -197,8 +209,9 @@ export function view(step: Step<FibState, FibExtra>, settings: FibSettings): Sce
     shapes.push({
       kind: 'arrow',
       id,
+      // From a little under the wrap-around line down to the root: a 14-unit head and a shaft.
       x1: node.x,
-      y1: node.y + MIN_Y + R,
+      y1: node.y - R - 23,
       x2: node.x,
       y2: node.y - R - 3,
       role: roles.get(id) ?? (extra?.minPending ? undefined : 'found'),
@@ -221,8 +234,7 @@ export function view(step: Step<FibState, FibExtra>, settings: FibSettings): Sce
     boxes.push({ x: 0, y: -R, w: 96, h: 2 * R });
   } else {
     drawList(main, s.roots, 'm');
-    if (s.min !== null && main.nodes.has(s.min))
-      minLabel(main.nodes.get(s.min)!, 'H.min', 'min-ptr');
+    if (s.min !== null && main.nodes.has(s.min)) minLabel(main, s.roots, s.min, 'H.min', 'min-ptr');
   }
 
   let below = s.roots.length ? main.bounds.y + main.bounds.h + (internal ? 14 : 0) : R;
@@ -232,7 +244,7 @@ export function view(step: Step<FibState, FibExtra>, settings: FibSettings): Sce
     const top = below - MIN_Y + 34;
     const other = shiftForest(layoutForest(s.other, kids, opts), 0, top);
     drawList(other, s.other, 'o');
-    if (s.otherMin !== null) minLabel(other.nodes.get(s.otherMin)!, 'H2.min', 'min2-ptr');
+    if (s.otherMin !== null) minLabel(other, s.other, s.otherMin, 'H2.min', 'min2-ptr');
     shapes.push({
       kind: 'text',
       id: 'other-label',

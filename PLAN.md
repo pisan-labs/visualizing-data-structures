@@ -351,7 +351,7 @@ The About page credits Galles and Lucet as inspiration.
 | # | Question | Decision |
 |---|---|---|
 | 1 | Audience | University data structures and algorithms courses |
-| 2 | Code panel | Pseudocode now; real languages: see 12.1 |
+| 2 | Code panel | Synced pseudocode in formal and plain-English versions, plus static Python, Java and C++ tabs tested in CI against the model (12.1) |
 | 3 | Saving | No server in v1 |
 | 4 | UI framework | Svelte 5; no student contributors expected |
 | 5 | Hosting | Netlify site `stepwise-pisan-labs`, final domain `stepwise.pisan.me`; public repo; publishing locked until Yusuf releases it |
@@ -360,16 +360,26 @@ The About page credits Galles and Lucet as inspiration.
 | 8 | Pace | As fast as the quota allows; parallel agents; hourly reports; 15-minute rule for decisions |
 | 9 | Geometry | In scope, last |
 | 10 | Additions | Everything in Appendix B, and possibly more |
-| 11 | Quiz mode | Engine support exists; see 4.7 for the new timing |
+| 11 | Quiz mode | Big-O self-tests and concept checks with every page; practice-set framework in wave 2 (12.4) |
 | 12 | Conventions | Toggles wherever textbooks differ; CLRS default |
 | 13 | Analytics | None |
 | 14 | Name and logo | **StepWise** (capital W); logo A, a staircase of array cells |
 | 15 | Canvas embed | Yes |
 | 16 | Explanations | Claude writes in Yusuf's voice; no approval step |
+| 17 | URLs | One pre-rendered page per visualization (`/bst/`); state in the hash; old `#/` links redirect (12.2) |
+| 18 | Lessons | Concept sections with "Show me" buttons that drive the drawing, each with a deep link; framework in wave 1 (12.3) |
+| 19 | Advanced topics | All in the catalog, marked advanced, built in wave 4; no joke sorts (12.5) |
+| 20 | Translations | English only for now; UI strings in one module (12.6) |
+| 21 | Learners' own code | Not traced; typed operation scripts instead (12.7) |
+| 22 | Parallelism | 4 agents per wave; the lead reviews and merges (12.8) |
+| 23 | Pathways | "Data structures" and "Algorithms" (12.9) |
+| 24 | Feedback | Prefilled GitHub issue link on every page; needs issues turned on (12.10) |
+| 25 | Time zone | UTC+1 assumed for reports (12.11) |
 
-## 12. Open questions (asked 2026-11-04)
+## 12. Questions asked 2026-11-04
 
-Each has a recommendation, which goes ahead after 15 minutes without an answer.
+No answers arrived within 15 minutes, so every recommendation below went ahead at 06:42 UTC
+(decisions 2, 11 and 17–25 in section 11). Any of them can still be reversed.
 
 1. **Code tabs.** Should each page also show static Python, Java and C++, tested in CI against
    our model? Pseudocode would stay the only panel synced with the animation.

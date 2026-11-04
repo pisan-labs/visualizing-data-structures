@@ -278,7 +278,12 @@ const clear: Op = {
 
 export const ops = { push, pop, peek, clear };
 
-const L = (id: string, indent: number, text: string) => ({ id, indent, text });
+const L = (id: string, indent: number, text: string, plain: string) => ({
+  id,
+  indent,
+  text,
+  plain,
+});
 
 export function pseudocode(settings: StackSettings): PseudoBlock[] {
   if (settings.top === 'count') {
@@ -286,67 +291,79 @@ export function pseudocode(settings: StackSettings): PseudoBlock[] {
       {
         op: 'push',
         lines: [
-          L('push.sig', 0, 'push(x)'),
-          L('push.check', 1, 'if top == capacity'),
-          L('push.overflow', 2, 'error "stack overflow"'),
-          L('push.store', 1, 'A[top] = x'),
-          L('push.inc', 1, 'top = top + 1'),
+          L('push.sig', 0, 'push(x)', 'To push x:'),
+          L('push.check', 1, 'if top == capacity', 'If the array is full,'),
+          L('push.overflow', 2, 'error "stack overflow"', 'stop: the stack overflows.'),
+          L('push.store', 1, 'A[top] = x', 'Put x in the first free slot.'),
+          L('push.inc', 1, 'top = top + 1', 'Count one more item.'),
         ],
       },
       {
         op: 'pop',
         lines: [
-          L('pop.sig', 0, 'pop()'),
-          L('pop.check', 1, 'if top == 0'),
-          L('pop.underflow', 2, 'error "stack underflow"'),
-          L('pop.dec', 1, 'top = top - 1'),
-          L('pop.return', 1, 'return A[top]'),
+          L('pop.sig', 0, 'pop()', 'To pop:'),
+          L('pop.check', 1, 'if top == 0', 'If the stack is empty,'),
+          L('pop.underflow', 2, 'error "stack underflow"', 'stop: the stack underflows.'),
+          L('pop.dec', 1, 'top = top - 1', 'Count one fewer item.'),
+          L('pop.return', 1, 'return A[top]', 'Hand back the item that was on top.'),
         ],
       },
       {
         op: 'peek',
         lines: [
-          L('peek.sig', 0, 'peek()'),
-          L('peek.check', 1, 'if top == 0'),
-          L('peek.empty', 2, 'error "stack is empty"'),
-          L('peek.return', 1, 'return A[top - 1]'),
+          L('peek.sig', 0, 'peek()', 'To peek:'),
+          L('peek.check', 1, 'if top == 0', 'If the stack is empty,'),
+          L('peek.empty', 2, 'error "stack is empty"', 'stop: there is nothing to look at.'),
+          L('peek.return', 1, 'return A[top - 1]', 'Hand back the top item and leave it there.'),
         ],
       },
-      { op: 'clear', lines: [L('clear.sig', 0, 'clear()'), L('clear.reset', 1, 'top = 0')] },
+      {
+        op: 'clear',
+        lines: [
+          L('clear.sig', 0, 'clear()', 'To clear:'),
+          L('clear.reset', 1, 'top = 0', 'Say there are no items. The old values stay in memory.'),
+        ],
+      },
     ];
   }
   return [
     {
       op: 'push',
       lines: [
-        L('push.sig', 0, 'push(x)'),
-        L('push.check', 1, 'if top == capacity - 1'),
-        L('push.overflow', 2, 'error "stack overflow"'),
-        L('push.inc', 1, 'top = top + 1'),
-        L('push.store', 1, 'A[top] = x'),
+        L('push.sig', 0, 'push(x)', 'To push x:'),
+        L('push.check', 1, 'if top == capacity - 1', 'If the last slot is already taken,'),
+        L('push.overflow', 2, 'error "stack overflow"', 'stop: the stack overflows.'),
+        L('push.inc', 1, 'top = top + 1', 'Move top up to the next slot.'),
+        L('push.store', 1, 'A[top] = x', 'Put x in that slot.'),
       ],
     },
     {
       op: 'pop',
       lines: [
-        L('pop.sig', 0, 'pop()'),
-        L('pop.check', 1, 'if top == -1'),
-        L('pop.underflow', 2, 'error "stack underflow"'),
-        L('pop.read', 1, 'x = A[top]'),
-        L('pop.dec', 1, 'top = top - 1'),
-        L('pop.return', 1, 'return x'),
+        L('pop.sig', 0, 'pop()', 'To pop:'),
+        L('pop.check', 1, 'if top == -1', 'If the stack is empty,'),
+        L('pop.underflow', 2, 'error "stack underflow"', 'stop: the stack underflows.'),
+        L('pop.read', 1, 'x = A[top]', 'Copy the top item.'),
+        L('pop.dec', 1, 'top = top - 1', 'Move top down one slot.'),
+        L('pop.return', 1, 'return x', 'Hand back the copy.'),
       ],
     },
     {
       op: 'peek',
       lines: [
-        L('peek.sig', 0, 'peek()'),
-        L('peek.check', 1, 'if top == -1'),
-        L('peek.empty', 2, 'error "stack is empty"'),
-        L('peek.return', 1, 'return A[top]'),
+        L('peek.sig', 0, 'peek()', 'To peek:'),
+        L('peek.check', 1, 'if top == -1', 'If the stack is empty,'),
+        L('peek.empty', 2, 'error "stack is empty"', 'stop: there is nothing to look at.'),
+        L('peek.return', 1, 'return A[top]', 'Hand back the top item and leave it there.'),
       ],
     },
-    { op: 'clear', lines: [L('clear.sig', 0, 'clear()'), L('clear.reset', 1, 'top = -1')] },
+    {
+      op: 'clear',
+      lines: [
+        L('clear.sig', 0, 'clear()', 'To clear:'),
+        L('clear.reset', 1, 'top = -1', 'Say there are no items. The old values stay in memory.'),
+      ],
+    },
   ];
 }
 

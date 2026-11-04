@@ -39,22 +39,73 @@ everything on every push; Netlify builds and deploys `main` (`netlify.toml`).
 
 ## Adding a visualization (definition of done)
 
-1. Operations are generators that yield steps. The last step of each operation must show the
-   final state (the engine forces it to level 1).
-2. Every mark id must match a shape id in the view. Give moving values identities (uids), so the
-   animation follows the value, not the slot.
-3. Where textbooks differ, add a setting (toggle). Default to CLRS conventions.
-4. `src/viz/conformance.test.ts` checks every registered visualization automatically: narration,
-   pseudocode ids, marks, unique shape ids, examples, and concept-page links. Add a
-   model-specific property test against a reference implementation as well.
-5. Concept page: write it in Yusuf's voice (use the `write-like-pisan` skill). No approval step
-   is needed; he edits afterwards. Link examples as `[Title](#example:<id>)`.
-6. At least 3 curated examples, each with `id`, `title`, and `notes`.
-7. Add Playwright coverage for anything new in the UI.
+`src/viz/stack-array/` is the reference implementation: copy its shape.
+
+1. **Folder.** `src/viz/<id>/`, with `<id>` exactly as in `src/viz/catalog.ts`. `index.ts`
+   default-exports the `VizDef`. The registry finds it by itself; never edit `registry.ts`.
+2. **Operations** are generators that yield steps. Keep a step fine-grained where a learner
+   would want to pause; use level 3 for very fine detail such as every comparison. The last step
+   of each operation must show the final state (the engine forces it to level 1).
+3. **Marks and identity.** Every mark id must match a shape id in the view. Give moving values
+   identities (uids), so the animation follows the value, not the slot.
+4. **Variants.** Where textbooks differ, add a setting (toggle), default to CLRS conventions, and
+   make the pseudocode follow the settings.
+5. **Pseudocode.** Every line has `text` (formal) and `plain` (plain English) with the same id.
+6. **Counters and readouts** (comparisons, swaps, probes, rotations, N, height) go in `vars`.
+7. **Big-O self-test.** `complexity` rows with best, average and worst cases, each with a
+   one-line `why` and, where possible, the id of an example that shows it.
+8. **Input.** `controls.input.sample` holds a valid input. Add `controls.presets` that suit the
+   structure (random, sorted, reverse, nearly sorted, duplicates, skewed, best and worst cases).
+9. **Examples.** At least 3 in `examples/*.json`, each with `id`, `title` and `notes`. Cover
+   edge and worst cases. Name examples after the idea, never after a textbook figure number.
+10. **Concept page** (`explain.md`), in Yusuf's voice: invoke the `anthropic-skills:write-like-pisan`
+    skill first. Cover:
+    - the idea, and the operations with their costs;
+    - how it works and its variants;
+    - when to use it and when to avoid it;
+    - failure cases and common mistakes;
+    - "Try this".
+
+    Two link forms:
+    - `[Title](#example:<id>)` loads an example;
+    - `[Show me](#play:<id>)` loads it and plays.
+
+    Each `##` section is a lesson with its own deep link. Add 1 or 2 concept checks per page:
+
+    ````
+    ```check
+    Q: After push(1), push(2), what does pop() return?
+    - 1
+    * 2
+    - Nothing, the stack is empty
+    = The last value in is the first out.
+    ```
+    ````
+
+    `-` marks a wrong option, `*` the right one, and `=` the explanation.
+11. **Code tabs.** `code/python/`, `code/java/` and `code/cpp/` each hold:
+    - the implementation shown to learners, imported with `?raw` into `code.python`, `code.java`
+      and `code.cpp`;
+    - a test driver: `main.py`, `Main.java` or `main.cpp`.
+
+    The driver reads one operation per line from standard input and prints one line per
+    result, nothing else. `code.script(calls, settings)` returns the driver input and the
+    output our model expects. `src/viz/code.test.ts` runs all three on the curated examples and
+    on random scripts. Code follows the default settings; keep it idiomatic and short.
+    Toolchains: Java 17+ (switch arrows are fine) and C++17 (`-Wall -Wextra -Werror`).
+12. **Tests.**
+    - `src/viz/conformance.test.ts` checks every page automatically: narration (no `{token}`
+      or `undefined` leftovers), line ids, plain pseudocode, marks, unique shape ids, Big-O
+      rows, presets, examples, links, and no placeholder text.
+    - Add `<id>.test.ts` with a property-based test against a simple reference implementation,
+      checking invariants on every step.
+    - `tests/e2e/all-vizzes.spec.ts` runs every operation of every page on desktop and phone,
+      with axe.
+    - Run Playwright with your own `E2E_PORT` when several worktrees are running at once.
 
 ## Conventions
 
 - Site name and links live in `src/site.ts` (plus `<title>` in `index.html`).
-- Routes are hash-based: `#/<viz-id>?ex=<code>&embed=1`.
+- Routes are hash-based for now (`#/<viz-id>?ex=<code>&embed=1`); per-page URLs (`/<viz-id>/`) are coming (PLAN 5.7).
 - No analytics or tracking. No external fonts or CDNs.
 - Code is MIT; written explanations are CC BY 4.0.

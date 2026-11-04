@@ -29,3 +29,7 @@
 2026-11-04 [note] Three agents surveyed VisuAlgo, csvistool (Georgia Tech CS 1332) and Coddy; comparison and borrowed ideas in PLAN.md 3.3 (Coddy details are from search summaries: bot wall)
 
 2026-11-04 [plan] PLAN v2: lessons, Big-O self-tests, practice sets, trace table, code tabs and URL proposals, build in waves of parallel agents; catalog grows to 108 pages (16 advanced)
+
+2026-11-04 [decision] No answers to PLAN v2 questions within 15 minutes; all recommendations adopted (code tabs in 3 languages, per-page URLs, lessons, practice in wave 2, advanced in wave 4, English only, no code tracing, 4 agents, 2 pathways, feedback link, UTC+1)
+
+2026-11-04 [code] Engine for wave 1: plain-English pseudocode, Big-O self-test rows, presets, code tabs (Python/Java/C++) run against the model in src/viz/code.test.ts; stricter conformance checks

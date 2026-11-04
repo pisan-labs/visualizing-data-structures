@@ -4,6 +4,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { validateExample } from '../engine/example';
+import { makeRng } from '../engine/rng';
 import { Timeline } from '../engine/timeline';
 import type { AnyVizDef, OpCall, Settings, Value } from '../engine/types';
 import type { Shape } from '../render/scene';
@@ -38,6 +39,9 @@ function checkTimeline(def: AnyVizDef, t: Timeline<unknown, Settings, unknown>) 
   for (let i = 0; i < t.length; i++) {
     const { step } = t.at(i);
     expect(step.say.trim().length, `step ${i} has narration`).toBeGreaterThan(0);
+    expect(step.say, `step ${i} narration has no template leftovers`).not.toMatch(
+      /\{[\w.]+\}|\bundefined\b|\bNaN\b|\[object Object\]/,
+    );
     expect([1, 2, 3]).toContain(step.level);
     for (const id of step.lines)
       expect(lineIds.has(id), `pseudocode line "${id}" exists`).toBe(true);
@@ -91,9 +95,55 @@ describe.each(vizzes.map((v) => [v.id, v] as const))('%s', (_id, def) => {
   });
 
   it('links from the concept page only to examples that exist', () => {
-    const links = [...def.explain.matchAll(/\(#example:([\w-]+)\)/g)].map((m) => m[1]);
+    const links = [...def.explain.matchAll(/\(#(?:example|play):([\w-]+)\)/g)].map((m) => m[1]);
     expect(links.length).toBeGreaterThan(0);
     const ids = def.examples.map((e) => e.id);
     for (const l of links) expect(ids).toContain(l);
   });
+
+  it('has no placeholder text in what learners read', () => {
+    const texts = [def.explain, def.blurb, ...def.examples.map((e) => `${e.title} ${e.notes}`)];
+    for (const t of texts) expect(t).not.toMatch(/\bTODO\b|\?\?\?|future work|lorem ipsum/i);
+  });
+
+  it('has plain-English pseudocode for every line, in every setting', () => {
+    for (const settings of settingsSamples(def)) {
+      for (const b of def.pseudocode(settings)) {
+        for (const l of b.lines) expect(l.plain.trim(), `${b.op}/${l.id}`).not.toBe('');
+      }
+    }
+  });
+
+  it('has a Big-O self-test whose examples exist', () => {
+    expect(def.complexity.length).toBeGreaterThan(0);
+    const ids = def.examples.map((e) => e.id);
+    for (const row of def.complexity) {
+      for (const c of [row.best, row.average, row.worst]) {
+        expect(c.cost.trim()).not.toBe('');
+        expect(c.why.trim()).not.toBe('');
+        if (c.example) expect(ids, `${row.op}: example ${c.example}`).toContain(c.example);
+      }
+    }
+  });
+
+  it('offers presets that run cleanly', () => {
+    for (const p of def.controls.presets ?? []) {
+      for (const size of def.controls.sizes ?? [5, 8, 12]) {
+        const calls = p.make(makeRng(3), size);
+        expect(calls.length, p.label).toBeGreaterThan(0);
+        checkTimeline(def, new Timeline(def, { ...def.defaults }, 3, calls));
+      }
+    }
+  });
 });
+
+/** Default settings plus each choice option on its own, so every variant is covered once. */
+function settingsSamples(def: AnyVizDef): Settings[] {
+  const out: Settings[] = [{ ...def.defaults }];
+  for (const s of def.settings) {
+    if (s.kind === 'choice')
+      for (const o of s.options) out.push({ ...def.defaults, [s.key]: o.value });
+    if (s.kind === 'boolean') out.push({ ...def.defaults, [s.key]: !def.defaults[s.key] });
+  }
+  return out;
+}

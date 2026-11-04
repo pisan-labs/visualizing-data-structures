@@ -69,7 +69,10 @@ export type SettingSpec =
 
 export interface PseudoLine {
   id: string;
+  /** Formal pseudocode. */
   text: string;
+  /** The same line in plain English, for the "Plain English" view. Same id, same highlighting. */
+  plain: string;
   indent: number;
 }
 
@@ -100,6 +103,51 @@ export interface Controls {
   };
   buttons: ControlButton[];
   random?: { label: string; make(rng: Rng): OpCall[] };
+  /**
+   * "Fill with ..." presets: sorted, reverse, nearly sorted, random, skewed, worst case...
+   * `make` returns the operations to run (for example one insert per value, or one "load").
+   */
+  presets?: Preset[];
+  /** Sizes offered for presets. Default [5, 8, 12]. */
+  sizes?: number[];
+}
+
+export interface Preset {
+  label: string;
+  make(rng: Rng, size: number): OpCall[];
+}
+
+/** One cell of the Big-O self-test: the answer, a one-line reason, and an example to try. */
+export interface CostCase {
+  cost: string;
+  why: string;
+  /** Id of a curated example that shows this case. */
+  example?: string;
+}
+
+/** One row of the Big-O self-test table. Answers stay hidden until the learner reveals them. */
+export interface ComplexityRow {
+  /** The operation as learners know it, e.g. "push(x)" or "search(x)". */
+  op: string;
+  best: CostCase;
+  average: CostCase;
+  worst: CostCase;
+  /** Optional remark shown under the row, e.g. "amortized over a sequence of pushes". */
+  note?: string;
+}
+
+/**
+ * Static code tabs. The shown sources are plain strings (imported with ?raw). Each language
+ * also has a driver in src/viz/<id>/code/<lang>/ that reads operations from standard input,
+ * one per line, and prints one line per result. src/viz/code.test.ts runs the drivers on
+ * scripts and compares their output with what this visualization's own model produces.
+ */
+export interface CodeTabs {
+  python: string;
+  java: string;
+  cpp: string;
+  /** Convert operations into driver input lines and the output lines the model expects. */
+  script(calls: OpCall[], settings: Settings): { input: string[]; expected: string[] };
 }
 
 export interface SavedExample {
@@ -135,6 +183,10 @@ export interface VizDef<S, Set extends Settings, X = unknown> {
   /** Concept page, Markdown. */
   explain: string;
   examples: SavedExample[];
+  /** Big-O self-test rows. */
+  complexity: ComplexityRow[];
+  /** Static code in three languages, tested against the model. */
+  code?: CodeTabs;
 }
 
 // Erased form used by generic UI code.

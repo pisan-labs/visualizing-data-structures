@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "skew-heap",
+  "id": "long-right-path",
+  "title": "A long right path, paid for once",
+  "notes": "Each new minimum followed by a big key adds one node to the right path, so these nine inserts leave a right path of five: 10, 20, 30, 40, 50. Inserting 60 walks all five and swaps all five, which leaves a right path of two. The next insert, 70, is cheap again.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 40],
+    ["insert", 90],
+    ["insert", 30],
+    ["insert", 91],
+    ["insert", 20],
+    ["insert", 92],
+    ["insert", 10],
+    ["insert", 93],
+    ["insert", 60],
+    ["insert", 70]
+  ],
+  "at": { "op": 8, "step": 1000000 }
+}

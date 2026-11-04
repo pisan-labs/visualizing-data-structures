@@ -207,7 +207,43 @@ export function meldPractice(variant: Variant, def: () => Def): PracticeKind[] {
     },
   };
 
+  const NO_RIGHT = 'It has no right child';
+  const rightAfterInsert: PracticeKind = {
+    id: 'right-child-after-insert',
+    title: 'Which key is the right child of the root after an insert?',
+    make(rng) {
+      const { keys, setup } = heap(rng, 5, 8);
+      const k = distinct(rng, 1, keys)[0]!;
+      const steps = lastOp([...setup, ['insert', k]]);
+      const before = steps[0]!.state;
+      const end = steps[steps.length - 1]!.state;
+      const root = end.nodes[end.root!]!;
+      const right = root.right === null ? NO_RIGHT : String(end.nodes[root.right]!.key);
+      const old = before.nodes[before.root!]!;
+      const near = [old.left, old.right]
+        .filter((u): u is number => u !== null)
+        .map((u) => String(before.nodes[u]!.key));
+      const options = shuffle(
+        rng,
+        [right, String(k), ...near, NO_RIGHT].filter((x, i, all) => all.indexOf(x) === i),
+      );
+      const why =
+        root.key === k
+          ? `${k} is the new minimum, so it wins at once and the old heap becomes its right subtree. Then the swap moves it to the left, and the right side is empty.`
+          : right === NO_RIGHT
+            ? `The root ${root.key} wins the first call, its right subtree takes the merge, and then it swaps its children. Its left side was empty, so now its right side is.`
+            : `The root ${root.key} wins the first call, its right subtree takes the merge, and then it swaps its children. So its old left child, ${right}, ends up on the right.`;
+      return {
+        prompt: `Insert \`${k}\` into the ${name} shown. Afterwards, which key is the right child of the root?`,
+        setup,
+        answer: { kind: 'choice', options, correct: options.indexOf(right) },
+        explain: why,
+        watch: [['insert', k]],
+      };
+    },
+  };
+
   return leftist
     ? [swaps, nplAfterMerge, pathAfterDelete, leftAfterDelete]
-    : [swaps, mergePath, pathAfterDelete, leftAfterDelete];
+    : [mergePath, rightAfterInsert, pathAfterDelete, leftAfterDelete];
 }

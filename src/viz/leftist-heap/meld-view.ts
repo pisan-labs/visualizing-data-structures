@@ -34,9 +34,11 @@ const CALL_ROWS = 3;
 const CALL_PITCH = 19;
 const CALL_INDENT = 14;
 
-function shifted(t: TreeLayout<number>, dx: number): TreeLayout<number> {
-  const nodes = new Map([...t.nodes].map(([id, n]) => [id, { ...n, x: n.x + dx }] as const));
-  return { ...t, nodes, bounds: { ...t.bounds, x: t.bounds.x + dx } };
+function shifted(t: TreeLayout<number>, dx: number, dy: number): TreeLayout<number> {
+  const nodes = new Map(
+    [...t.nodes].map(([id, n]) => [id, { ...n, x: n.x + dx, y: n.y + dy }] as const),
+  );
+  return { ...t, nodes, bounds: { ...t.bounds, x: t.bounds.x + dx, y: t.bounds.y + dy } };
 }
 
 export function meldView(variant: Variant) {
@@ -85,7 +87,8 @@ export function meldView(variant: Variant) {
     if (s.other !== null) {
       const o = layoutBinaryTree(s.other, access, opts);
       const right = s.root === null ? 44 : main.bounds.x + main.bounds.w;
-      other = shifted(o, right + SIDE_GAP - o.bounds.x);
+      // One level down, so it and its label stay clear of the zoom buttons in the top corner.
+      other = shifted(o, right + SIDE_GAP - o.bounds.x, levelGap);
       shapes.push(...drawBinaryTree(other, { label, roles, baseRole }));
       boxes.push(treeBox(other));
       if (extra?.otherLabel) {

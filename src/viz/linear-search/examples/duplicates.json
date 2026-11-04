@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "linear-search",
+  "id": "duplicates",
+  "title": "Two 3s: the first one wins",
+  "notes": "3 is in A[1] and in A[3]. The search stops at the first match and returns 1; it never looks at A[3].",
+  "settings": { "sentinel": false, "draw": "cells" },
+  "seed": 1,
+  "ops": [
+    ["load", "7 3 9 3 5"],
+    ["search", 3]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

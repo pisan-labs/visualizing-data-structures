@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "merge-sort",
+  "id": "bottom-up",
+  "title": "Bottom-up: runs of 1, 2, 4, 8",
+  "notes": "Same values, no recursion. Pass 1 merges pairs of single values, pass 2 merges pairs of runs of 2, and pass 3 merges the two runs of 4. The brackets show the runs being merged and the runs they become.",
+  "settings": { "style": "bottomup", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "74 52 19 8 33 61 25 47"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "bubble-sort",
+  "id": "last-swap",
+  "title": "The last swap skips the part that is already final",
+  "notes": "Nearly sorted input. The first pass swaps only near the end, so everything in front of that swap is final and the next pass starts there. 8 comparisons in all; early exit alone needs 18.",
+  "settings": { "direction": "down", "earlyExit": false, "lastSwap": true, "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "12 18 27 33 45 71 52 64"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

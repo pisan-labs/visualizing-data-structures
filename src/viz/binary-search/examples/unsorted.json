@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "binary-search",
+  "id": "unsorted",
+  "title": "Unsorted: refuse, then sort first",
+  "notes": "These values are out of order, so the search refuses and says why. Sort A sorts them, and then 35 turns up at index 3.",
+  "settings": { "variant": "exact", "style": "iterative", "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "42 17 63 8 35 24"], ["search", 35], ["sort"], ["search", 35]],
+  "at": { "op": 0, "step": 0 }
+}

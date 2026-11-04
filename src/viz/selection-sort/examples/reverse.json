@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "selection-sort",
+  "id": "reverse",
+  "title": "Reverse order: same comparisons, few swaps",
+  "notes": "28 comparisons, exactly as for any 8 values, but still only 7 swaps. After 4 passes the array is already sorted; the last 3 passes check it anyway.",
+  "settings": { "select": "min", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "80 70 60 50 40 30 20 10"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

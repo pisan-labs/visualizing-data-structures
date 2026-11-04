@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "bubble-sort",
+  "id": "smallest-first",
+  "title": "The smallest value moves to the front",
+  "notes": "CLRS's version: each pass walks j from the back, so the smallest value left rises to the front one swap at a time. Watch 4 travel all the way to A[0] in the first pass.",
+  "settings": { "direction": "down", "earlyExit": false, "lastSwap": false, "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "29 64 51 18 73 4 36"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

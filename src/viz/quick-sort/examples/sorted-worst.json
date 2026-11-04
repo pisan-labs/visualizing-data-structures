@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "quick-sort",
+  "id": "sorted-worst",
+  "title": "Sorted input, last value as pivot: the worst case",
+  "notes": "The pivot is always the largest value left, so every partition peels off just one value. Watch the call stack become a staircase: 28 comparisons for 8 values, and the calls go 7 levels deep.",
+  "settings": { "partition": "lomuto", "pivot": "last", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "10 20 30 40 50 60 70 80"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "shell-sort",
+  "id": "sorted-input",
+  "title": "Sorted input: comparisons only",
+  "notes": "The best case. Each gap pass compares every value with the one h places to its left and moves nothing: 4 + 6 + 7 = 17 comparisons for 8 values.",
+  "settings": { "gaps": "shell", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "10 20 30 40 50 60 70 80"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

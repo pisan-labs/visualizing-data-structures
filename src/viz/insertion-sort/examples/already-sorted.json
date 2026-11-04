@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "insertion-sort",
+  "id": "already-sorted",
+  "title": "Sorted input: one comparison per value",
+  "notes": "The best case. Each new value is compared with its left neighbor once and stays where it is: 7 comparisons and no shifts for 8 values.",
+  "settings": { "move": "shift", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "14 26 38 41 57 69 72 85"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

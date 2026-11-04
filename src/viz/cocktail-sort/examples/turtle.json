@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "cocktail-sort",
+  "id": "turtle",
+  "title": "A small value stuck at the end",
+  "notes": "10 starts at the back. Bubble sort walking from the front moves it one step per pass and needs 28 comparisons. Here one backward pass carries it to the front: 18 comparisons in all.",
+  "settings": { "shrink": "one", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "20 30 40 50 60 70 80 10"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "binary-search",
+  "id": "found",
+  "title": "Found on the fourth probe",
+  "notes": "Each probe halves the window: A[0..9], then A[5..9], A[5..6] and A[6]. 42 turns up on the 4th probe, the most 10 values can take.",
+  "settings": { "variant": "exact", "style": "iterative", "draw": "cells" },
+  "seed": 1,
+  "ops": [
+    ["load", "8 12 17 24 31 35 42 50 57 63"],
+    ["search", 42]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

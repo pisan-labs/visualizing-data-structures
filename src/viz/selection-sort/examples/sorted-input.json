@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "selection-sort",
+  "id": "sorted-input",
+  "title": "Sorted input saves nothing",
+  "notes": "Already in order, yet every pass still scans the rest of the array: 21 comparisons for 7 values, and 6 swaps of a value with itself. Selection sort has no best case.",
+  "settings": { "select": "min", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "12 25 37 48 59 63 77"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

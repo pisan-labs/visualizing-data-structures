@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { vizzes } from '../viz/all';
 import { stackArray } from '../viz/stack-array';
 import { interpolate } from '../render/interpolate';
 import { shapesBounds, type Scene } from '../render/scene';
@@ -65,6 +66,10 @@ describe('rng', () => {
     expect(Array.from({ length: 5 }, () => b.int(1, 6))).toEqual(xs);
     expect(xs.every((x) => x >= 1 && x <= 6)).toBe(true);
     expect(deriveSeed(1, 0)).not.toBe(deriveSeed(1, 1));
+    // Nearby seeds, as instructors hand out (sets 12000 to 12399), never share a derived seed.
+    const seen = new Set<number>();
+    for (let s = 12000; s < 12400; s++) for (let i = 0; i < 12; i++) seen.add(deriveSeed(s, i));
+    expect(seen.size).toBe(400 * 12);
   });
 });
 
@@ -169,6 +174,16 @@ describe('typed scripts', () => {
       error: expect.stringMatching(/^Line 1: "toolongvalue": Keep values to 6/),
     });
     expect(parseScript(stackArray, '  ')).toEqual({ error: 'The script is empty.' });
+  });
+
+  it('reads a one-value operation that is not bulk the way its button does', () => {
+    const bubble = vizzes.find((d) => d.id === 'bubble-sort')!;
+    // The Load button reads the whole box as one list, so the script must too.
+    expect(parseScript(bubble, 'load 5 3 8 1\nsort')).toEqual({
+      calls: [['load', '5 3 8 1'], ['sort']],
+    });
+    const calls = (parseScript(bubble, 'load 5, 3, 8\nsort') as { calls: OpCall[] }).calls;
+    expect(parseScript(bubble, toScript(calls))).toEqual({ calls });
   });
 });
 

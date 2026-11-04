@@ -1,0 +1,108 @@
+/*
+ * Node colors for the red-black tree page, loaded with the page. Black nodes are dark with light
+ * keys; red nodes are light with a red outline and dark keys. The two differ in lightness as well
+ * as hue, so they stay apart in grayscale, for color-blind viewers, and in the high-contrast
+ * theme. A mark (role) still sets a node's outline: these rules win only for the fill and the key.
+ */
+:root {
+  --rb-black: #1f2328;
+  --rb-black-key: #ffffff;
+  --rb-black-line: #1f2328;
+  --rb-red: #ffd9d9;
+  --rb-red-key: #8b1219;
+  --rb-red-line: #c0262d;
+  --rb-extra: #1f2328;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']):not([data-theme='contrast']) {
+    --rb-black: #050608;
+    --rb-black-key: #f2f4f7;
+    --rb-black-line: #8a94a3;
+    --rb-red: #ffadad;
+    --rb-red-key: #2a0a0c;
+    --rb-red-line: #ff7b7b;
+    --rb-extra: #e6e9ee;
+  }
+}
+
+:root[data-theme='dark'] {
+  --rb-black: #050608;
+  --rb-black-key: #f2f4f7;
+  --rb-black-line: #8a94a3;
+  --rb-red: #ffadad;
+  --rb-red-key: #2a0a0c;
+  --rb-red-line: #ff7b7b;
+  --rb-extra: #e6e9ee;
+}
+
+:root[data-theme='contrast'] {
+  --rb-black: #000000;
+  --rb-black-key: #ffffff;
+  --rb-black-line: #ffffff;
+  --rb-red: #ffb3b3;
+  --rb-red-key: #000000;
+  --rb-red-line: #ff4d4d;
+  --rb-extra: #ffffff;
+}
+
+/* Fills and keys: more specific than the role styles, so a mark never hides a node's color. */
+svg .shape.circle.rb-black,
+svg .shape.rect.rb-nil {
+  fill: var(--rb-black);
+}
+
+svg .shape.circle.rb-red {
+  fill: var(--rb-red);
+}
+
+svg .shape.text.rb-key-black {
+  fill: var(--rb-black-key);
+}
+
+svg .shape.text.rb-key-red {
+  fill: var(--rb-red-key);
+}
+
+/* Outlines: less specific than the role styles, so a mark's outline shows. */
+circle.shape.rb-black,
+rect.shape.rb-nil {
+  stroke: var(--rb-black-line);
+  stroke-width: 2;
+}
+
+circle.shape.rb-red {
+  stroke: var(--rb-red-line);
+  stroke-width: 2.5;
+}
+
+/* The extra black a delete leaves behind: a dashed ring around x. */
+svg .shape.rb-extra {
+  fill: none;
+  stroke: var(--rb-extra);
+  stroke-width: 2.5;
+  stroke-dasharray: 4 3;
+}
+
+/* Windows high contrast: system colors, and a dashed outline marks the red nodes. */
+@media (forced-colors: active) {
+  svg .shape.circle.rb-black,
+  svg .shape.rect.rb-nil {
+    fill: CanvasText;
+    stroke: CanvasText;
+  }
+
+  svg .shape.circle.rb-red {
+    fill: Canvas;
+    stroke: CanvasText;
+    stroke-dasharray: 4 3;
+  }
+
+  svg .shape.text.rb-key-black {
+    fill: Canvas;
+  }
+
+  svg .shape.text.rb-key-red {
+    fill: CanvasText;
+  }
+}

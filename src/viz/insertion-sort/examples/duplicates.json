@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "insertion-sort",
+  "id": "duplicates",
+  "title": "Equal values stay in order",
+  "notes": "The loop stops as soon as it meets a value that is not bigger than key, so a value never moves past an equal one. Insertion sort is stable.",
+  "settings": { "move": "shift", "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "33 14 33 8 14"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

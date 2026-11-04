@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "treap",
+  "id": "delete-rotate-down",
+  "title": "Delete rotates the key down",
+  "notes": "Deleting the root, 40, means rotating it down. Its children are 30 (priority 60) and 50 (priority 40); 50's priority is smaller, so 50 moves up. Then 40 has only one child left and can be spliced out, as in a BST.",
+  "settings": {
+    "heap": "min",
+    "priority": "random"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", "50:40"],
+    ["insert", "30:60"],
+    ["insert", "70:50"],
+    ["insert", "20:70"],
+    ["insert", "40:10"],
+    ["delete", 40]
+  ],
+  "at": {
+    "op": 4,
+    "step": 999
+  }
+}

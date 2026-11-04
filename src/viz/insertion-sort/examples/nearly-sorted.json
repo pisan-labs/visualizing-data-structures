@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "insertion-sort",
+  "id": "nearly-sorted",
+  "title": "Nearly sorted input is almost free",
+  "notes": "Only two pairs are out of order (25 before 18, and 44 before 41), so insertion sort makes just two shifts. This is why fast library sorts switch to insertion sort for small or nearly sorted pieces.",
+  "settings": { "move": "shift", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "12 25 18 37 44 41 59 66"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

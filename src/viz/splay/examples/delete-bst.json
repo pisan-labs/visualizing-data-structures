@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "splay",
+  "id": "delete-bst",
+  "title": "Delete as in a BST, then splay the parent",
+  "notes": "With the other delete option, 50 is removed as in a plain BST. It is a leaf, so it just leaves, and its parent 40 is splayed to the root with a zig-zig and a zig.",
+  "settings": {
+    "delete": "bst"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 30],
+    ["insert", 70],
+    ["insert", 20],
+    ["insert", 40],
+    ["insert", 60],
+    ["insert", 80],
+    ["delete", 50]
+  ],
+  "at": {
+    "op": 6,
+    "step": 999
+  }
+}

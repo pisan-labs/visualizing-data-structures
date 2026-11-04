@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "splay",
+  "id": "zig",
+  "title": "Zig: one rotation at the root",
+  "notes": "Every insert splays its key to the root, so after 20, 10 and 30 the tree is a chain with 30 on top. 20 is the root's child, so splaying it is a single zig: one rotation, and the tree is balanced.",
+  "settings": {
+    "delete": "join"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 20],
+    ["insert", 10],
+    ["insert", 30],
+    ["search", 20]
+  ],
+  "at": {
+    "op": 2,
+    "step": 999
+  }
+}

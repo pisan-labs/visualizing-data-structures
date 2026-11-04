@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "red-black",
+  "id": "sorted-input",
+  "title": "Sorted input stays shallow",
+  "notes": "Seven keys in increasing order would make a plain BST a chain of height 6. Here case 3 and case 1 keep the tree at height 3, and the NIL leaves show that every path from the root meets the same number of black nodes.",
+  "settings": {
+    "delete": "successor",
+    "nils": true,
+    "bh": true
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

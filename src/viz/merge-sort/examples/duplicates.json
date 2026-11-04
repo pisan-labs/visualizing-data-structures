@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "merge-sort",
+  "id": "duplicates",
+  "title": "Ties go to L, so equal values keep their order",
+  "notes": "Two 41s and two 23s. When the fronts of L and R are equal, merge takes from L, and L holds the values that came first. That one choice makes merge sort stable.",
+  "settings": { "style": "topdown", "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "41 23 41 7 23 15"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

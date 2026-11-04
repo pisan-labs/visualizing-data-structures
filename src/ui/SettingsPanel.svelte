@@ -2,6 +2,8 @@
   import type { Session } from './session.svelte';
 
   let { session }: { session: Session } = $props();
+  // Radio groups are named per instance: a compare page shows two of these.
+  const uid = $props.id();
   const specs = $derived(session.def.settings);
 </script>
 
@@ -17,7 +19,7 @@
               <label class="choice">
                 <input
                   type="radio"
-                  name="setting-{s.key}"
+                  name="{uid}-{s.key}"
                   value={o.value}
                   checked={session.settings[s.key] === o.value}
                   onchange={() => session.setSettings({ [s.key]: o.value })}

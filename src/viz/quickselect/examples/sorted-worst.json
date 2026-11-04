@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "quickselect",
+  "id": "sorted-worst",
+  "title": "Sorted input, last value as pivot, k = 1: the worst case",
+  "notes": "Every pivot is the largest value left, so each partition removes just one value from the right: 28 comparisons for 8 values, the same as a full quicksort. Switch the pivot to random and run it again.",
+  "settings": { "partition": "lomuto", "pivot": "last", "draw": "bars" },
+  "seed": 1,
+  "ops": [
+    ["load", "10 20 30 40 50 60 70 80"],
+    ["select", 1]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

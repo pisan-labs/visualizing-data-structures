@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "avl",
+  "id": "delete-level-child",
+  "title": "Delete: a level child needs one rotation",
+  "notes": "Deleting 70 leaves 50 two levels taller on the left. Its left child 30 has balance 0, which an insert never produces. That counts as the LL case: one right rotation, and the subtree keeps its old height, so the walk stops.",
+  "settings": {
+    "delete": "successor",
+    "show": "both",
+    "bf": "left",
+    "leaf": "zero"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 30],
+    ["insert", 70],
+    ["insert", 20],
+    ["insert", 40],
+    ["delete", 70]
+  ],
+  "at": {
+    "op": 4,
+    "step": 999
+  }
+}

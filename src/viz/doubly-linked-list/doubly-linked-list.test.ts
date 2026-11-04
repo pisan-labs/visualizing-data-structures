@@ -139,6 +139,26 @@ const call: fc.Arbitrary<OpCall> = fc.oneof(
 );
 
 describe('doubly linked list', () => {
+  it('cites only lines its pseudocode has, inserting at the end with or without a sentinel', () => {
+    // insertAt(0, x) on an empty list is the end case; it once cited a sentinel-only line.
+    for (const sentinel of ['on', 'off'] as const) {
+      const settings: DSettings = { sentinel };
+      const t = new Timeline(doublyLinkedList, settings, 1, [
+        ['insertAt', 0, 'A'],
+        ['insertAt', 1, 'B'],
+        ['insertAt', 1, 'C'],
+      ]);
+      const ids = new Set(
+        doublyLinkedList
+          .pseudocode(settings)
+          .flatMap((b) => b.lines)
+          .map((l) => l.id),
+      );
+      for (const e of t.entries)
+        for (const step of e.steps) for (const id of step.lines) expect(ids).toContain(id);
+    }
+  });
+
   it('matches an array for any sequence of operations, with invariants on every step', () => {
     fc.assert(
       fc.property(

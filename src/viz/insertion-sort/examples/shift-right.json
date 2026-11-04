@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "insertion-sort",
+  "id": "shift-right",
+  "title": "Lift the key, shift, drop it in",
+  "notes": "CLRS's version. Each pass lifts the next value out as key, shifts bigger values one slot right to open a gap, and drops key into it. The faded copies are old values that the next shift or the drop will overwrite.",
+  "settings": { "move": "shift", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "47 15 63 28 90 36 71"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

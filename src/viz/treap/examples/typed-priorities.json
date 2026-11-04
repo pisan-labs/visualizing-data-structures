@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "viz": "treap",
+  "id": "typed-priorities",
+  "title": "Same keys and priorities, same treap",
+  "notes": "With typed priorities, the same keys and priorities build the same treap in any insertion order. The second round inserts the same five pairs in a different order and ends with exactly the same tree.",
+  "settings": {
+    "heap": "min",
+    "priority": "typed"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", "50:30"],
+    ["insert", "20:10"],
+    ["insert", "80:20"],
+    ["insert", "10:40"],
+    ["insert", "30:50"],
+    ["clear"],
+    ["insert", "10:40"],
+    ["insert", "30:50"],
+    ["insert", "80:20"],
+    ["insert", "50:30"],
+    ["insert", "20:10"]
+  ],
+  "at": {
+    "op": 4,
+    "step": 999
+  }
+}

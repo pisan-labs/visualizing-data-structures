@@ -138,7 +138,7 @@ describe.each(vizzes.map((v) => [v.id, v] as const))('%s', (_id, def) => {
   it('offers presets that run cleanly', () => {
     for (const p of def.controls.presets ?? []) {
       for (const size of def.controls.sizes ?? [5, 8, 12]) {
-        const calls = p.make(makeRng(3), size);
+        const calls = p.make(makeRng(3), size, def.defaults);
         expect(calls.length, p.label).toBeGreaterThan(0);
         checkTimeline(def, new Timeline(def, { ...def.defaults }, 3, calls));
       }

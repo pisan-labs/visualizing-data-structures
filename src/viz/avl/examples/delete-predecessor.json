@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "viz": "avl",
+  "id": "delete-predecessor",
+  "title": "Delete with the predecessor, then rotate",
+  "notes": "With the predecessor option, 40 (the largest key left of 50) takes 50's place. Its old parent 30 is then too tall on the left, so it rotates right, and the root ends up one level shorter.",
+  "settings": {
+    "delete": "predecessor",
+    "show": "both",
+    "bf": "left",
+    "leaf": "zero"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 30],
+    ["insert", 70],
+    ["insert", 20],
+    ["insert", 40],
+    ["insert", 60],
+    ["insert", 80],
+    ["insert", 10],
+    ["delete", 50]
+  ],
+  "at": {
+    "op": 7,
+    "step": 999
+  }
+}

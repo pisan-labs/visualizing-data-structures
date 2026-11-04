@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "selection-sort",
+  "id": "largest-last",
+  "title": "Select the largest, swap it to the end",
+  "notes": "The mirror image: each pass finds the largest value in the unsorted front part and swaps it into the last unsorted slot. Same values as the first example, same counts.",
+  "settings": { "select": "max", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "38 71 14 56 23 89 45"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "viz": "splay",
+  "id": "repeated-access",
+  "title": "Repeated accesses make the tree shallow",
+  "notes": "Sorted inserts build a chain of height 7. Searching for 10 at the bottom costs 8 comparisons, but the splay folds the chain and leaves height 5. After searching 20, 30 and 40 too, the height is 3.",
+  "settings": {
+    "delete": "join"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["search", 10],
+    ["search", 20],
+    ["search", 30],
+    ["search", 40]
+  ],
+  "at": {
+    "op": 7,
+    "step": 999
+  }
+}

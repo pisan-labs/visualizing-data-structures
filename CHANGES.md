@@ -67,3 +67,23 @@
 2026-11-04 [code] Fixed dev CI (red since the Practice tab): six tabs overflowed phones by 37 px with CI's wider font; tabs now go in rows of three in a narrow card, and the screen-fit test also runs with a wide font
 
 2026-11-04 [code] Practice pictures scale to 0.8 to 1.25 px per unit where the screen allows: deep trees and tall stacks get more height, small lists are no longer blown up
+
+2026-11-04 [code] Compare mode: /<page>/#compare=<other> runs the same operations on two pages side by side (each keeps its options; a side that finishes an operation waits); Compare menu lists same-family pages that can run this page's main operation
+
+2026-11-04 [decision] Operations run while playback is going now queue after the last operation instead of replacing the queued ones; when paused they still replace what follows (as after an undo)
+
+2026-11-04 [code] Merged wave 1D: linear and binary search (5 variants, refuses unsorted input), bubble, cocktail, selection, insertion, shell, merge, quick sort, quickselect; bars layout in src/layouts/bars.ts; all with practice
+
+2026-11-04 [code] Scripts read a one-value, non-bulk operation the way its button does ("load 5 3 8 1" is one load); phones give the zoom buttons their own strip above the drawing
+
+2026-11-04 [code] Merged wave 2E: AVL, red-black (CLRS cases, NIL leaves, black-height), splay (zig, zig-zig, zig-zag), treap (seeded or typed priorities); all with practice
+
+2026-11-04 [decision] deriveSeed mixes the seed before the operation index: nearby seeds shared numbers (set 12346 repeated a question of set 12345). Random runs change; the two examples whose prose quotes random counts got new seeds that keep the same numbers
+
+2026-11-04 [code] Long pseudocode scrolls inside the side column on desktop and follows the current line; long lines wrap at their indent instead of scrolling one by one on phones
+
+2026-11-04 [code] Merged wave 2H: separate chaining, open addressing (linear, quadratic, double; tombstones), buckets, rehashing with amortized cost, LRU cache; all with practice
+
+2026-11-04 [code] Fixed the intermittent doubly-linked-list conformance failure: insertAt at the end cited a sentinel-only pseudocode line with the sentinel off; regression test added
+
+2026-11-04 [code] Presets receive the page's current settings (optional third argument), so a preset can suit them

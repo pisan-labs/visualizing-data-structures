@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "lru-cache",
+  "id": "loop-misses",
+  "title": "A loop one key too big misses every time",
+  "notes": "Keys 1, 2, 3, 4 are read in a loop, and every miss loads the key with put. The cache holds 3, and the key needed next is always the one just evicted, so every get misses: a hit rate of 0. This is LRU's worst case.",
+  "settings": { "capacity": 3 },
+  "seed": 1,
+  "ops": [
+    ["get", 1],
+    ["put", 1, 1],
+    ["get", 2],
+    ["put", 2, 2],
+    ["get", 3],
+    ["put", 3, 3],
+    ["get", 4],
+    ["put", 4, 4],
+    ["get", 1],
+    ["put", 1, 1],
+    ["get", 2],
+    ["put", 2, 2],
+    ["get", 3]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

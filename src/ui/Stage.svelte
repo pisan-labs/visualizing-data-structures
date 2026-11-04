@@ -174,6 +174,14 @@
     gap: 4px;
   }
 
+  /* On a phone the drawing fills the width, so the zoom buttons get a strip of their own
+     instead of covering its top-right corner. */
+  @media (max-width: 600px) {
+    .stage {
+      padding-top: 46px;
+    }
+  }
+
   .icon-btn.small {
     width: 34px;
     height: 34px;

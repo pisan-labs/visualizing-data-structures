@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "lru-cache",
+  "id": "one-entry",
+  "title": "A cache of one: head and tail are the same node",
+  "notes": "With room for one entry, head and tail point at the same node. Evicting it empties the list, so both have to become null before the new node goes in. The edge cases are where pointer code breaks.",
+  "settings": { "capacity": 1 },
+  "seed": 1,
+  "ops": [
+    ["put", 1, 10],
+    ["put", 2, 20],
+    ["get", 1],
+    ["get", 2]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

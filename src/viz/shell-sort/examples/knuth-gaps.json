@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "shell-sort",
+  "id": "knuth-gaps",
+  "title": "Knuth's gaps: 13, 4, 1",
+  "notes": "16 values. Knuth's rule grows h through 1, 4, 13 and stops once h is at least n/3, so the gaps are 13, 4 and 1. The gap of 13 only touches three pairs, but one shift moves 81 from A[0] straight to A[13], its final place.",
+  "settings": { "gaps": "knuth", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "81 14 63 37 95 22 50 8 71 44 29 90 3 58 17 66"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

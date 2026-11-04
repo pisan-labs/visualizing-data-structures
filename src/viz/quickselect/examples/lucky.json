@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "quickselect",
+  "id": "lucky",
+  "title": "A lucky pivot: done after one partition",
+  "notes": "The last value, 30, is the 4th smallest. With the last value as pivot, the first partition puts it straight into A[3], the target slot: 7 comparisons and done.",
+  "settings": { "partition": "lomuto", "pivot": "last", "draw": "bars" },
+  "seed": 1,
+  "ops": [
+    ["load", "42 17 63 8 35 91 24 30"],
+    ["select", 4]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

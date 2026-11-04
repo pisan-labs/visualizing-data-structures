@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Session } from './session.svelte';
-  import { notify, prefs, setPref, type CodeView } from './state.svelte';
+  import { notify, prefs, reducedMotion, setPref, type CodeView } from './state.svelte';
 
   let { session }: { session: Session } = $props();
 
@@ -38,6 +38,22 @@
   const block = $derived(blocks.find((b) => b.op === shownOp) ?? blocks[0]);
   const active = $derived(new Set(shownOp === currentOp ? f.step.lines : []));
   const isError = $derived(f.step.marks.some((m) => m.role === 'error'));
+
+  // On wide screens a long block scrolls inside the panel; keep the current line in view there,
+  // without moving the page.
+  let list: HTMLOListElement | undefined = $state();
+  $effect(() => {
+    void active;
+    const el = list;
+    const li = el?.querySelector<HTMLElement>('li.active');
+    if (!el || !li || el.scrollHeight <= el.clientHeight) return;
+    const top = li.offsetTop;
+    const bottom = top + li.offsetHeight;
+    const behavior = reducedMotion() ? 'auto' : 'smooth';
+    if (top < el.scrollTop) el.scrollTo({ top: top - 24, behavior });
+    else if (bottom > el.scrollTop + el.clientHeight)
+      el.scrollTo({ top: bottom - el.clientHeight + 24, behavior });
+  });
 
   async function copySource() {
     try {
@@ -95,7 +111,15 @@
       {/each}
     </div>
     {#if block}
-      <ol class="lines" class:plain={view === 'plain'}>
+      <!-- Scrollable on wide screens, so it must be reachable by keyboard (WCAG 2.1.1). -->
+      <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+      <ol
+        class="lines"
+        class:plain={view === 'plain'}
+        bind:this={list}
+        tabindex="0"
+        aria-label="{block.op} in {views.find((v) => v.id === view)?.label}"
+      >
         {#each block.lines as l (l.id)}
           <li
             class:active={active.has(l.id)}
@@ -155,6 +179,7 @@
   }
 
   .lines {
+    position: relative;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -162,14 +187,30 @@
     font-size: 0.95rem;
   }
 
+  /* The side column stays on screen beside the drawing, so a long block (a red-black delete is
+     45 lines) scrolls inside the panel instead of running off the bottom. */
+  @media (min-width: 1024px) {
+    .lines {
+      max-height: max(220px, calc(100vh - 420px));
+      overflow-y: auto;
+    }
+  }
+
+  /* A long line wraps, keeping its indent, instead of scrolling on its own: on a phone each
+     line would otherwise be a separate scroll area. */
   li {
     counter-increment: line;
     display: flex;
     gap: 10px;
     padding: 3px 14px;
     border-left: 4px solid transparent;
-    white-space: pre;
-    overflow-x: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  li > code,
+  li > .text {
+    min-width: 0;
   }
 
   .plain li {

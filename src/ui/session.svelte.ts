@@ -81,17 +81,30 @@ export class Session {
   run(calls: OpCall[]): void {
     if (calls.length === 0) return;
     const wasPlaying = this.playing;
-    const { discarded, firstNew } = this.tl.apply(calls, this.cursor);
-    this.version++;
-    if (discarded > 0) {
-      notify(
-        `Replaced ${discarded} later ${discarded === 1 ? 'operation' : 'operations'} in the history.`,
-      );
-    }
+    // While playing, new operations queue up after the last one. Otherwise they replace any
+    // operations after the one on screen, like typing after an undo.
+    const after = wasPlaying ? this.tl.entries.length - 1 : this.current.op;
+    const firstNew = this.append(calls, after);
     if (!wasPlaying) {
       this.cursor = firstNew - 1;
       this.play(false);
     }
+  }
+
+  /**
+   * Run `calls` after operation `afterOp`, dropping any later operations, without moving the
+   * cursor or starting playback. Returns the global index of the first new step.
+   */
+  append(calls: OpCall[], afterOp: number, quiet = false): number {
+    const { discarded, firstNew } = this.tl.apply(calls, this.tl.endOf(afterOp));
+    this.version++;
+    if (discarded > 0 && !quiet) {
+      notify(
+        `Replaced ${discarded} later ${discarded === 1 ? 'operation' : 'operations'} in the history.`,
+      );
+    }
+    this.cursor = Math.min(this.cursor, this.tl.length - 1);
+    return firstNew;
   }
 
   play(restart = true): void {

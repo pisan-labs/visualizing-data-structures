@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "splay",
+  "id": "search-miss",
+  "title": "A search that misses still splays",
+  "notes": "45 is not in the tree. The search falls off below 50, and 50, the last node it visited, is splayed to the root with a zig-zag. Without that, a long unsuccessful walk would leave nothing better behind.",
+  "settings": {
+    "delete": "join"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 30],
+    ["insert", 70],
+    ["insert", 20],
+    ["insert", 40],
+    ["search", 45]
+  ],
+  "at": {
+    "op": 4,
+    "step": 999
+  }
+}

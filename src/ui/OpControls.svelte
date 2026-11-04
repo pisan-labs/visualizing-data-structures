@@ -1,9 +1,10 @@
 <script lang="ts">
   import { makeRng, randomSeed } from '../engine/rng';
   import type { ControlButton, OpCall, Value } from '../engine/types';
-  import type { Session } from './session.svelte';
+  import type { OpTarget } from './pair.svelte';
 
-  let { session }: { session: Session } = $props();
+  // One page's session, or a compare page's pair of sessions.
+  let { session }: { session: OpTarget } = $props();
 
   const controls = $derived(session.def.controls);
   const primary = $derived(controls.buttons.find((b) => b.primary));
@@ -24,7 +25,7 @@
     const p = controls.presets?.[presetIndex];
     if (!p) return;
     error = '';
-    session.fill(p.make(makeRng(randomSeed()), size));
+    session.fill(p.make(makeRng(randomSeed()), size, session.settings));
   }
 
   function run(b: ControlButton) {

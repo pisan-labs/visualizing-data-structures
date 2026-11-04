@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "quickselect",
+  "id": "median",
+  "title": "Find the median without sorting",
+  "notes": "The 4th smallest of 7 values is the median, and it belongs in A[3]. Each partition puts a random pivot in its final place; quickselect then follows only the side that holds A[3] and fades the other.",
+  "settings": { "partition": "lomuto", "pivot": "random", "draw": "bars" },
+  "seed": 3,
+  "ops": [
+    ["load", "38 81 22 57 13 64 49"],
+    ["select", 4]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

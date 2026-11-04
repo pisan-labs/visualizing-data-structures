@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "hash-open",
+  "id": "quadratic-fails",
+  "title": "Quadratic probing misses empty slots",
+  "notes": "Four keys in seven slots, so the table is not even two-thirds full. 7 starts at slot 0, and (0 + i²) mod 7 only ever lands on 0, 1, 4 and 2. Slots 3, 5 and 6 are empty but out of reach, so the insert fails. Keep α below 1/2 with quadratic probing.",
+  "settings": { "m": 7, "probe": "quadratic", "h2": "clrs" },
+  "seed": 1,
+  "ops": [
+    ["insert", 0],
+    ["insert", 1],
+    ["insert", 2],
+    ["insert", 4],
+    ["insert", 7]
+  ],
+  "at": { "op": 3, "step": 100 }
+}

@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "splay",
+  "id": "zig-zig",
+  "title": "Zig-zig: grandparent first",
+  "notes": "Inserting 30, 20 and 10 leaves a chain leaning right. 30 and its parent 20 are both right children, so the splay rotates at the grandparent 10 first and then at 20. Rotating the parent first would be a different, worse tree.",
+  "settings": {
+    "delete": "join"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 30],
+    ["insert", 20],
+    ["insert", 10],
+    ["search", 30]
+  ],
+  "at": {
+    "op": 2,
+    "step": 999
+  }
+}

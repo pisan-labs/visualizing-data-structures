@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "hash-buckets",
+  "id": "one-bucket",
+  "title": "Every key in one bucket",
+  "notes": "Multiples of 4 all hash to bucket 0 when there are 4 buckets. Two fit; the other four go to the overflow area, and the search for 28 reads the bucket and the whole overflow area: 6 probes for 6 keys. The overflow area is a plain list, so it costs O(n).",
+  "settings": { "B": 4, "b": 2, "overflow": "area" },
+  "seed": 1,
+  "ops": [
+    ["insert", 4],
+    ["insert", 8],
+    ["insert", 12],
+    ["insert", 16],
+    ["insert", 20],
+    ["insert", 24],
+    ["search", 28]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

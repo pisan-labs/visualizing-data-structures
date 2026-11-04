@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "binary-search",
+  "id": "duplicates",
+  "title": "Five 7s: an exact match lands in the middle",
+  "notes": "The first probe hits A[3] = 7 and returns 3, not 1. Any 7 is a correct answer for an exact match. Switch to First occurrence to get the first one.",
+  "settings": { "variant": "exact", "style": "iterative", "draw": "cells" },
+  "seed": 1,
+  "ops": [
+    ["load", "2 7 7 7 7 7 9 12"],
+    ["search", 7]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

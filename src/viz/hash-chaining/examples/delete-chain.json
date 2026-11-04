@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "hash-chaining",
+  "id": "delete-chain",
+  "title": "Delete from a chain",
+  "notes": "Four keys share bucket 3. Deleting 17 from the middle makes the node before it point past it. Deleting 24, the first node, changes T[3] itself. Deleting 99 finds an empty bucket and stops at once.",
+  "settings": { "m": 7, "hash": "division", "mode": "keys", "where": "head" },
+  "seed": 1,
+  "ops": [
+    ["insert", 3],
+    ["insert", 10],
+    ["insert", 17],
+    ["insert", 24],
+    ["delete", 17],
+    ["delete", 24],
+    ["delete", 99]
+  ],
+  "at": { "op": 3, "step": 100 }
+}

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "bubble-sort",
+  "id": "duplicates",
+  "title": "Equal values never swap",
+  "notes": "Two 31s and two 18s. Bubble sort swaps only when a value is strictly smaller than its neighbor, so equal values keep their order. That makes it stable.",
+  "settings": { "direction": "down", "earlyExit": true, "lastSwap": false, "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "31 18 44 31 7 18"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

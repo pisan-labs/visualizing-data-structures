@@ -51,7 +51,7 @@ The largest key is at the root, so finding it is free. Removing it leaves a hole
 
 Swap with the larger child, always. Swap with the smaller one and you've just put a small key above a bigger one.
 
-[Extract until empty](#example:extract-until-empty) keeps extracting, and the keys come out in order, largest first. That's heap sort, minus the trick that does it inside one array. [Show me](#play:extract-until-empty).
+[Extract until empty](#example:extract-until-empty) keeps extracting, and the keys come out in order, largest first. That's [heap sort](/heap-sort/), minus the trick that does it inside one array. [Show me](#play:extract-until-empty).
 
 ## Build a heap: two ways
 
@@ -83,7 +83,7 @@ Deleting slot i works like extract. Move the last key into the gap and shrink th
 
 Use a heap when you keep asking for the smallest (or largest) item while new items keep arriving: scheduling, event simulation, Dijkstra, Prim, merging sorted lists, keeping the top k of a stream. You get the extreme in O(1), insert and remove in O(log n), all in one array with no pointers.
 
-Don't use a heap to search; finding an arbitrary key means looking at every slot. Don't use one if you need all the keys in sorted order all the time; a balanced search tree keeps them sorted. And merging two binary heaps means building a new one from scratch, which is O(n). Leftist, skew, binomial and Fibonacci heaps exist mostly because of that.
+Don't use a heap to search; finding an arbitrary key means looking at every slot. Don't use one if you need all the keys in sorted order all the time; a balanced search tree keeps them sorted. And merging two binary heaps means building a new one from scratch, which is O(n). [Leftist](/leftist-heap/), [skew](/skew-heap/), [binomial](/binomial-queue/) and [Fibonacci](/fibonacci-heap/) heaps exist mostly because of that.
 
 ## Common mistakes
 

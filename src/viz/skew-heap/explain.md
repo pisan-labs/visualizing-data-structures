@@ -1,6 +1,6 @@
 # Skew heap
 
-A skew heap is a leftist heap that stopped keeping track. Same tree, same heap order, same merge down the right paths. But no null path lengths, and no check on the way back up: every node on the merge path swaps its children, always.
+A skew heap is a [leftist heap](/leftist-heap/) that stopped keeping track. Same tree, same heap order, same merge down the right paths. But no null path lengths, and no check on the way back up: every node on the merge path swaps its children, always.
 
 That sounds reckless. A skew heap can grow a right path as long as the whole heap, and then one merge walks all of it. The surprise is that it can't do that often. Over any sequence of operations, merges cost O(log n) each on average. Skew heaps come from Sleator and Tarjan, the pair behind splay trees, and they have the same flavor: no balance information at all, and an amortized bound instead of a worst-case one.
 

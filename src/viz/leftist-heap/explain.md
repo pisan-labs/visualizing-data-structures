@@ -1,6 +1,6 @@
 # Leftist heap
 
-A binary heap is great until you need to merge two of them. Then you're stuck copying one array into the other and building again: O(n). A leftist heap gives up the array. It's a binary tree with pointers, it keeps heap order (every parent is no bigger than its children, so the minimum is at the root), and it merges two heaps in O(log n).
+A [binary heap](/binary-heap/) is great until you need to merge two of them. Then you're stuck copying one array into the other and building again: O(n). A leftist heap gives up the array. It's a binary tree with pointers, it keeps heap order (every parent is no bigger than its children, so the minimum is at the root), and it merges two heaps in O(log n).
 
 The whole trick is one number per node and one rule about it.
 
@@ -66,7 +66,7 @@ Weiss sets npl(nil) = −1, so a leaf has npl 0. Other books count one more: npl
 
 Use a leftist heap when you merge priority queues often. Merging is the point. It's also simple to write without arrays, which is why leftist heaps show up a lot in functional languages, where you build new nodes rather than update old ones.
 
-If you never merge, use a binary heap. It's an array, it has no pointers to chase, and it's faster in practice. If you need decrease-key on a heap that also merges, have a look at binomial queues and Fibonacci heaps.
+If you never merge, use a binary heap. It's an array, it has no pointers to chase, and it's faster in practice. If you need decrease-key on a heap that also merges, have a look at [binomial queues](/binomial-queue/) and [Fibonacci heaps](/fibonacci-heap/).
 
 ## Common mistakes
 

@@ -1,6 +1,6 @@
 # Heap sort
 
-Selection sort finds the largest value by looking at all of them, and it does that n − 1 times. Heap sort finds it with a heap. First it rearranges A into a max-heap, so the largest value sits at the root. Swap the root to the end of the array, where it belongs, and the heap is one slot smaller. One sift-down fixes the heap in O(log n), and you repeat. The heap and the sorted part share one array, so heap sort needs no extra memory at all.
+[Selection sort](/selection-sort/) finds the largest value by looking at all of them, and it does that n − 1 times. Heap sort finds it with a heap. First it rearranges A into a max-heap, so the largest value sits at the root. Swap the root to the end of the array, where it belongs, and the heap is one slot smaller. One sift-down fixes the heap in O(log n), and you repeat. The heap and the sorted part share one array, so heap sort needs no extra memory at all.
 
 ## The idea
 
@@ -12,7 +12,7 @@ Selection sort finds the largest value by looking at all of them, and it does th
 
 Phase 1 builds the heap. Phase 2 runs `last` from n down to 2: swap the root with `A[last]`, take that slot out of the heap, and sift the new root down. Each round the heap loses its last slot and the sorted part gains it. [Show me](#play:build-bottom-up)
 
-The picture draws A twice. The tree on top is the heap, stored the way the binary heap page stores one: the children of `A[i]` are `A[2i]` and `A[2i + 1]`. The bars underneath are the whole array, with the sorted part shaded. A swap moves a value in both pictures, and a value that leaves the heap fades out of the tree.
+The picture draws A twice. The tree on top is the heap, stored the way the [binary heap](/binary-heap/) page stores one: the children of `A[i]` are `A[2i]` and `A[2i + 1]`. The bars underneath are the whole array, with the sorted part shaded. A swap moves a value in both pictures, and a value that leaves the heap fades out of the tree.
 
 CLRS starts the array at `A[1]`. Start at 0 and the children of `A[i]` are `A[2i + 1]` and `A[2i + 2]`; the code tabs do that, since Python, Java and C++ arrays start at 0. The **Array indexing** option switches the drawing, the narration and the pseudocode.
 
@@ -41,7 +41,7 @@ heapSize is what keeps the sorted part safe. `maxHeapify` only looks at children
 
 The order of the input barely matters. [Reverse sorted](#example:reverse-input) input is a max-heap already, since every value is at least as big as everything after it, so phase 1 makes no swaps at all. Phase 2 doesn't care: 18 comparisons and 11 swaps for 7 values. [Sorted input](#example:sorted-input) is upside down for a max-heap, and every value sinks to a leaf in phase 1. 21 comparisons and 16 swaps. Over all 5,040 orders of seven distinct values, heap sort makes 19.8 comparisons on average, never fewer than 16 and never more than 22.
 
-That's the selling point: O(n log n) in the worst case, like merge sort, and no extra array, unlike merge sort. Many C++ libraries use it as a safety net: their `std::sort` is introsort, a quicksort that switches to heap sort when the recursion gets too deep.
+That's the selling point: O(n log n) in the worst case, like [merge sort](/merge-sort/), and no extra array, unlike merge sort. Many C++ libraries use it as a safety net: their `std::sort` is introsort, a quicksort that switches to heap sort when the recursion gets too deep.
 
 Equal values are the one exception. A child that is not bigger never swaps, so with [all values equal](#example:all-equal) nothing sinks and the sort is O(n): 15 comparisons and 6 swaps for 7 values.
 
@@ -61,7 +61,7 @@ Q: Heap sort runs on 5, 5, 3. Which 5 comes first in the sorted array?
 
 Use heap sort when you need a guaranteed O(n log n) and can't spare O(n) extra memory: embedded code, real-time code, or the fallback inside introsort. It's also handy when you only want the k largest values: build the heap in O(n) and stop phase 2 after k rounds, O(n + k log n).
 
-Avoid it when you need a stable sort, or when the data is nearly sorted; insertion sort is close to O(n) there, and heap sort shuffles it all anyway. On random data quicksort is usually faster in practice. Each sift-down jumps from i to 2i to 4i, all over the array, and memory caches don't like that.
+Avoid it when you need a stable sort, or when the data is nearly sorted; [insertion sort](/insertion-sort/) is close to O(n) there, and heap sort shuffles it all anyway. On random data [quicksort](/quick-sort/) is usually faster in practice. Each sift-down jumps from i to 2i to 4i, all over the array, and memory caches don't like that.
 
 ## Common mistakes
 

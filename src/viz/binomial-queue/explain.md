@@ -36,7 +36,7 @@ Q: A binomial queue holds 13 keys. Which trees does it have?
 
 ## Union is binary addition
 
-To unite two queues, merge their root lists by degree, the way merge sort merges two sorted lists. Then walk the list. Two trees of the same degree next to each other get linked into one tree of the next degree up. That's a carry: 1 + 1 = 10. A carry can meet two more trees of its new degree, one from each queue, and then there are three of a kind, 1 + 1 + 1 = 11: keep the first and link the other two.
+To unite two queues, merge their root lists by degree, the way [merge sort](/merge-sort/) merges two sorted lists. Then walk the list. Two trees of the same degree next to each other get linked into one tree of the next degree up. That's a carry: 1 + 1 = 10. A carry can meet two more trees of its new degree, one from each queue, and then there are three of a kind, 1 + 1 + 1 = 11: keep the first and link the other two.
 
 [Show me](#play:union-binary): 6 keys (110) and 7 keys (111). The two B₁ trees link into a B₂, which finds two B₂ trees waiting. The first stays, the other two link into a B₃, and the result is 1101. Watch the variables: one link per carry.
 
@@ -46,7 +46,7 @@ CLRS writes the walk with three pointers, prev, x and next, and four cases. The 
 
 Insert is a union with a one-node queue: adding 1. [An insert that carries all the way](#example:insert-carries): 7 keys is 111, plus 1 is 1000, so the new node links with the B₀, that B₁ links with the B₁, and that B₂ links with the B₂. Three links, one tree. That's the worst case, O(log n). Most inserts are cheap, though, because a binary counter mostly flips its last few bits. Over a run of n inserts the links add up to fewer than n, so insert is O(1) amortized.
 
-findMin has to look at every root, since any of them could be the smallest. That's O(log n). Some implementations keep a pointer to the smallest root to make it O(1); the Fibonacci heap does.
+findMin has to look at every root, since any of them could be the smallest. That's O(log n). Some implementations keep a pointer to the smallest root to make it O(1); the [Fibonacci heap](/fibonacci-heap/) does.
 
 extractMin finds the smallest root and takes its tree out of the list. The children of a B_k are a B_{k−1}, …, B₀, which is a binomial queue all by itself once you reverse them into increasing degree. Union that queue with what's left. [Show me](#play:delete-min-children): the B₃ rooted at 10 gives up three subtrees, and they link back together with the B₀ that was already there.
 
@@ -60,7 +60,7 @@ Q: A queue holds 15 keys. How many links does an insert make?
 
 ## decreaseKey
 
-Lowering a key can only break heap order with the parent, so swap the key upward until its parent is smaller, the same way a binary heap sifts up. A B_k has height k, so that's O(log n). [decreaseKey climbs to the root](#example:decrease-bubble).
+Lowering a key can only break heap order with the parent, so swap the key upward until its parent is smaller, the same way a [binary heap](/binary-heap/) sifts up. A B_k has height k, so that's O(log n). [decreaseKey climbs to the root](#example:decrease-bubble).
 
 CLRS exchanges the keys rather than the nodes, and the drawing does the same: the key moves up, the nodes stay where they are. Here you name the node by its key. A real program would keep a pointer to it, since a binomial queue can't search.
 

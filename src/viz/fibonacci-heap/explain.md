@@ -1,6 +1,6 @@
 # Fibonacci heap
 
-A Fibonacci heap is the binomial queue's lazy cousin. It keeps a list of heap-ordered trees and a pointer to the smallest root, and it puts off every bit of tidying it can. Insert just adds a tree. Union just joins two lists. The bill comes due in extractMin, which cleans up everything at once. Fredman and Tarjan designed it to make decreaseKey cheap, because Dijkstra's and Prim's algorithms call decreaseKey far more often than anything else.
+A Fibonacci heap is the [binomial queue](/binomial-queue/)'s lazy cousin. It keeps a list of heap-ordered trees and a pointer to the smallest root, and it puts off every bit of tidying it can. Insert just adds a tree. Union just joins two lists. The bill comes due in extractMin, which cleans up everything at once. Fredman and Tarjan designed it to make decreaseKey cheap, because Dijkstra's and Prim's algorithms call decreaseKey far more often than anything else.
 
 The bounds are amortized: any one operation can be slow, but a sequence of them never is.
 
@@ -15,7 +15,7 @@ The bounds are amortized: any one operation can be slow, but a sequence of them 
 | `decreaseKey(x, k)` | Lower a key, cutting where needed | O(1) |
 | `delete(x)` | decreaseKey to −∞, then extractMin | O(log n) |
 
-Compare that with a binary heap, where decreaseKey is O(log n). Dijkstra with a Fibonacci heap runs in O(E + V log V) instead of O(E log V).
+Compare that with a [binary heap](/binary-heap/), where decreaseKey is O(log n). Dijkstra with a Fibonacci heap runs in O(E + V log V) instead of O(E log V).
 
 ## Lazy: a list of trees and a pointer
 

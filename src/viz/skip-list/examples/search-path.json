@@ -1,0 +1,30 @@
+{
+  "format": 1,
+  "viz": "skip-list",
+  "id": "search-path",
+  "title": "Search: right while smaller, else down",
+  "notes": "search(60) and then search(65) on the same list. Each one starts on the top level, runs right while the next key is smaller, and drops down otherwise.",
+  "settings": {
+    "p": "1/2",
+    "maxLevel": 5,
+    "draw": "across"
+  },
+  "seed": 6,
+  "ops": [
+    ["insert", 30],
+    ["insert", 10],
+    ["insert", 70],
+    ["insert", 50],
+    ["insert", 90],
+    ["insert", 20],
+    ["insert", 60],
+    ["insert", 40],
+    ["insert", 80],
+    ["search", 60],
+    ["search", 65]
+  ],
+  "at": {
+    "op": 8,
+    "step": 99
+  }
+}

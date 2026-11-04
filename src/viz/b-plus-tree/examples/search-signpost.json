@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "viz": "b-plus-tree",
+  "id": "search-signpost",
+  "title": "Search always ends in a leaf",
+  "notes": "70 is in the root, but only as a signpost: the search goes right of it and on down to the leaf that holds 70. Then a search for 75 ends in the same leaf without finding it.",
+  "settings": {
+    "order": "4"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["insert", 90],
+    ["insert", 100],
+    ["search", 70],
+    ["search", 75]
+  ],
+  "at": {
+    "op": 9,
+    "step": 99
+  }
+}

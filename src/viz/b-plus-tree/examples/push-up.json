@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "viz": "b-plus-tree",
+  "id": "push-up",
+  "title": "An internal split pushes its key up",
+  "notes": "The leaf split sends a copy of 90 up, and that fills the root with 4 keys. The root splits too, but an internal split pushes its middle key, 70, up into a new root, and keeps no copy.",
+  "settings": {
+    "order": "4"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["insert", 90],
+    ["insert", 100]
+  ],
+  "at": {
+    "op": 8,
+    "step": 99
+  }
+}

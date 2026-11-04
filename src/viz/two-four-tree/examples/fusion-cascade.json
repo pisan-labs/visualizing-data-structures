@@ -1,0 +1,30 @@
+{
+  "format": 1,
+  "viz": "two-four-tree",
+  "id": "fusion-cascade",
+  "title": "Fusions climb to the root and the tree gets shorter",
+  "notes": "Every node on the way to 100 is a 2-node. The first fusion empties the parent, a second fusion one level up empties the root, and the root goes away.",
+  "settings": {
+    "swap": "pred"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 40],
+    ["insert", 100],
+    ["insert", 90],
+    ["insert", 80],
+    ["insert", 70],
+    ["insert", 60],
+    ["insert", 20],
+    ["insert", 10],
+    ["insert", 30],
+    ["delete", 40],
+    ["delete", 30],
+    ["delete", 100]
+  ],
+  "at": {
+    "op": 11,
+    "step": 99
+  }
+}

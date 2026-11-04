@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "viz": "skip-list",
+  "id": "quarter",
+  "title": "With p = 1/4 the towers are shorter",
+  "notes": "The same keys and the same random numbers as the first example, but a flip now adds a level only 1 time in 4. No tower is taller than before, and there are fewer pointers.",
+  "settings": {
+    "p": "1/4",
+    "maxLevel": 5,
+    "draw": "across"
+  },
+  "seed": 6,
+  "ops": [
+    ["insert", 30],
+    ["insert", 10],
+    ["insert", 70],
+    ["insert", 50],
+    ["insert", 90],
+    ["insert", 20],
+    ["insert", 60],
+    ["insert", 40],
+    ["insert", 80]
+  ],
+  "at": {
+    "op": 7,
+    "step": 99
+  }
+}

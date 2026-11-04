@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "viz": "b-tree",
+  "id": "merge-down",
+  "title": "Case 3b: merge with a sibling on the way down",
+  "notes": "The leaf holding 10 and its only sibling both have t - 1 = 2 keys, so they merge, with 30 coming down from the root between them.",
+  "settings": {
+    "t": "3",
+    "split": "down"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["insert", 90],
+    ["delete", 10]
+  ],
+  "at": {
+    "op": 8,
+    "step": 99
+  }
+}

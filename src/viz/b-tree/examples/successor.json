@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "viz": "b-tree",
+  "id": "successor",
+  "title": "Case 2b: the successor takes the key's place",
+  "notes": "60 is in the root. The child before it has only t - 1 = 2 keys, but the child after it has 3, so the successor 70 moves up instead.",
+  "settings": {
+    "t": "3",
+    "split": "down"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["insert", 90],
+    ["delete", 60]
+  ],
+  "at": {
+    "op": 8,
+    "step": 99
+  }
+}

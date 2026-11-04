@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "linked-list",
+  "id": "reverse",
+  "title": "Reverse a list in place",
+  "notes": "Build 10, 20, 30, 40, then reverse it. prev, cur and next move one node at a time while each next pointer turns around.",
+  "settings": { "tail": "on" },
+  "seed": 1,
+  "ops": [
+    ["insertTail", 10],
+    ["insertTail", 20],
+    ["insertTail", 30],
+    ["insertTail", 40],
+    ["reverse"]
+  ],
+  "at": { "op": 3, "step": 99 }
+}

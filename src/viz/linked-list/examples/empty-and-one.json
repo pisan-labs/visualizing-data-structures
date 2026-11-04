@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "linked-list",
+  "id": "empty-and-one",
+  "title": "The empty list and the one-node list",
+  "notes": "Remove from an empty list and call get(0) on it. Then add one node and remove it from the tail: with one node, head and tail both have to change.",
+  "settings": { "tail": "on" },
+  "seed": 1,
+  "ops": [["removeHead"], ["get", 0], ["insertHead", 7], ["removeTail"], ["search", 7]],
+  "at": { "op": -1, "step": 0 }
+}

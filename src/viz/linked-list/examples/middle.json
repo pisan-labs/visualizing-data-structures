@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "linked-list",
+  "id": "middle",
+  "title": "Insert and remove in the middle",
+  "notes": "insertAt walks prev to the node before the spot, then links the new node in. removeAt and removeValue walk prev and cur together, then make prev skip over cur.",
+  "settings": { "tail": "on" },
+  "seed": 1,
+  "ops": [
+    ["insertTail", 10],
+    ["insertTail", 20],
+    ["insertTail", 40],
+    ["insertAt", 2, 30],
+    ["removeAt", 1],
+    ["removeValue", 40],
+    ["search", 30]
+  ],
+  "at": { "op": 2, "step": 99 }
+}

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "floyd-cycle",
+  "id": "no-cycle",
+  "title": "No cycle: the hare reaches null",
+  "notes": "Without a cycle the hare runs off the end after about n / 2 steps, and the answer is no cycle. Five nodes: fast.next is null after two steps.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["build", "1 2 3 4 5"], ["detect"]],
+  "at": { "op": 0, "step": 99 }
+}

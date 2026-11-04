@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "dp-lcs",
+  "id": "same-string",
+  "title": "A word and itself: straight down the diagonal",
+  "notes": "Every character matches its twin, so the diagonal counts 1, 2, 3, ... and the walk back goes straight up the diagonal, taking every character.",
+  "settings": { "tie": "up" },
+  "seed": 1,
+  "ops": [["load", "SPRING", "SPRING"], ["fill"], ["trace"]],
+  "at": { "op": 1, "step": 0 }
+}

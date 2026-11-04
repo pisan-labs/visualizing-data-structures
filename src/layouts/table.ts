@@ -111,6 +111,7 @@ export interface TableContent {
 const PAD = 10;
 /** The stage's zoom buttons sit over the top right corner; keep content below them. */
 const PAD_TOP = 46;
+const PAD_TALL = 16;
 const MIN_W = 480;
 const HEAD_H = 30;
 const ARC_LANE = 24;
@@ -121,10 +122,14 @@ export function cellWidthFor(cols: number): number {
   return Math.max(44, Math.min(64, Math.floor(760 / (cols + 1))));
 }
 
-/** Font size for a cell value: as big as 24 units, smaller for long text in a narrow cell. */
+/**
+ * Font size for a cell value: up to 28 units for one character and 26 for two, so small
+ * numbers stay big on a phone; smaller for long text in a narrow cell.
+ */
 export function valueSize(text: string, cellW: number): number {
-  const fit = Math.floor((cellW - 6) / (Math.max(1, text.length) * 0.6));
-  return Math.max(12, Math.min(24, fit));
+  const n = Math.max(1, text.length);
+  const fit = Math.floor((cellW - 6) / (n * 0.6));
+  return Math.max(12, Math.min(n === 1 ? 28 : n === 2 ? 26 : 24, fit));
 }
 
 export interface TableGeometry {
@@ -155,7 +160,7 @@ export interface TableGeometry {
 
 export function tableGeometry(frame: TableFrame): TableGeometry {
   const cellW = frame.cellW ?? cellWidthFor(frame.cols);
-  const cellH = frame.cellH ?? Math.round(Math.min(52, cellW * 0.86));
+  const cellH = frame.cellH ?? Math.round(Math.min(50, cellW * 0.8));
   const heads = frame.rowHeads ?? [40];
   const headsW = heads.reduce((a, b) => a + b, 0);
   const colLanes = frame.colHeads ?? 1;
@@ -166,9 +171,14 @@ export function tableGeometry(frame: TableFrame): TableGeometry {
   const x0 = (width - natural) / 2 + PAD;
   const gridLeft = x0 + headsW;
 
-  let y = PAD_TOP;
   const arcLanes = frame.arcLanes ?? 0;
-  if (arcLanes) y += ARC_BASE + arcLanes * ARC_LANE;
+  const arcH = arcLanes ? ARC_BASE + arcLanes * ARC_LANE : 0;
+  const bodyH = arcH + colLanes * HEAD_H + 8 + frame.rows * cellH + 10 + (frame.below ?? 0) + PAD;
+  // A wide drawing fills the stage's width, so its top right corner sits under the zoom
+  // buttons: keep that clear. A tall one is drawn narrower than the stage, so the corner is
+  // empty anyway, and the room is better spent on bigger cells.
+  let y = bodyH > width * 0.55 ? PAD_TALL : PAD_TOP;
+  y += arcH;
   const headsTop = y;
   if (above) y += colLanes * HEAD_H;
   const gridTop = y + (above ? 4 : 0);
@@ -317,7 +327,7 @@ export function tableScene(
       const id = `ch-${k}-${c}`;
       const isIndex = colStyle(k) === 'index';
       shapes.push(
-        text(id, g.cx(c), g.headY(k), t, isIndex ? 18 : valueSize(t, w) - 2, {
+        text(id, g.cx(c), g.headY(k), t, isIndex ? 20 : Math.min(24, valueSize(t, w) - 2), {
           mono: true,
           cls: isIndex ? 'index' : undefined,
           weight: isIndex ? 'normal' : 'bold',
@@ -332,7 +342,7 @@ export function tableScene(
       if (!t) return;
       const id = `rh-${k}-${r}`;
       const isIndex = rowStyle(k) === 'index';
-      const size = isIndex ? 18 : Math.min(22, valueSize(t, lw));
+      const size = isIndex ? 20 : Math.min(24, valueSize(t, lw));
       shapes.push(
         text(id, g.headX(k), g.cy(r) + size * 0.36, t, size, {
           mono: true,

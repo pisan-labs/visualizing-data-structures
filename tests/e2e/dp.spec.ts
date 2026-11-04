@@ -154,3 +154,54 @@ test.describe('Making change', () => {
     await practice(page, 'dp-change', 13579);
   });
 });
+
+test.describe('Longest common subsequence', () => {
+  test.beforeEach(({ page }) => open(page, 'dp-lcs', 'Longest common subsequence'));
+
+  test('fills the table, then walks back to BCBA', async ({ page }) => {
+    await press(page, 'Trace back');
+    await expect(narration(page)).toContainText('Fill the table first.');
+    await press(page, 'Fill the table');
+    await toEnd(page);
+    await expect(narration(page)).toContainText(
+      "c[7][6] = 4: the longest common subsequence of 'ABCBDAB' and 'BDCABA' has length 4.",
+    );
+    await press(page, 'Trace back');
+    await toEnd(page);
+    await expect(narration(page)).toContainText("the LCS is 'BCBA', 4 characters.");
+    await expect(stage(page)).toHaveAttribute('aria-label', /LCS found so far: B C B A\./);
+    await backTo(
+      page,
+      "'B' ≠ 'A' at c[7][6]: c[6][6] = c[7][5] = 4, a tie, so go up as CLRS does.",
+    );
+  });
+
+  test('ties going left find a different LCS from the same table', async ({ page }) => {
+    await option(page, 'Go left');
+    await expect(code(page)).toContainText('else if c[i][j - 1] >= c[i - 1][j]');
+    await press(page, 'Fill the table');
+    await press(page, 'Trace back');
+    await toEnd(page);
+    await expect(narration(page)).toContainText("the LCS is 'BDAB', 4 characters.");
+  });
+
+  test('loads two words and fills one row at a time', async ({ page }) => {
+    await type(page, 'Two strings', 'STONE LONGEST');
+    await press(page, 'Load');
+    await expect(narration(page)).toContainText("X = 'STONE' gives the rows");
+    await form(page).locator('details.more > summary').click();
+    await press(page, 'Fill one row');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('Row 0 and column 0 are 0');
+    await press(page, 'Fill one row');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('Row 1 is done');
+    await type(page, 'Two strings', 'TOO-LONG X');
+    await press(page, 'Load');
+    await expect(page.getByRole('alert')).toContainText('Use only letters and digits');
+  });
+
+  test('a practice question is graded and played', async ({ page }) => {
+    await practice(page, 'dp-lcs', 97531);
+  });
+});

@@ -459,6 +459,7 @@ describe('B-tree practice', () => {
           ref.insert(k);
           expect(a.kind === 'choice' && a.options[a.correct], where).toBe(String(ref.medians[0]));
         } else if (id === 'split-count') {
+          expect(q.watch!.length, where).toBeGreaterThanOrEqual(3);
           const before = ref.splits;
           for (const [, x] of q.watch!) ref.insert(Number(x));
           expect(a.kind === 'number' && a.value, where).toBe(ref.splits - before);

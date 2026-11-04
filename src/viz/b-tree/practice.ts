@@ -1,14 +1,14 @@
-import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, Step, VizDef } from '../../engine/types';
 import { keysOf, type BExtra, type BState } from '../_multiway/btree';
+import { firstMedian, freshKey as fresh, keyList } from '../_multiway/practice';
 import { distinctKeys, inserts, shuffle } from '../_multiway/presets';
 import { defaults, type BTreeSettings } from './model';
 
+export { firstMedian };
+
 type Def = VizDef<BState, BTreeSettings, BExtra>;
 type BStep = Step<BState, BExtra>;
-
-const keyList = (keys: number[]) => keys.map((k) => `\`${k}\``).join(', ');
 
 /** The delete cases a run of steps went through, in order: "3b", "1"... */
 export function deleteCases(steps: BStep[]): string[] {
@@ -31,21 +31,6 @@ export function deleteCases(steps: BStep[]): string[] {
   return out;
 }
 
-/** The key that moved up in the first split of an insert, read from the step that split. */
-export function firstMedian(steps: BStep[]): number | null {
-  for (const st of steps) {
-    if (!st.lines.includes('sp.up') && !st.lines.includes('up.split')) continue;
-    const m = st.marks.find((x) => x.role === 'active' && x.id.startsWith('cell-'));
-    if (!m) continue;
-    const uid = Number(m.id.slice('cell-'.length));
-    for (const n of Object.values(st.state.nodes)) {
-      const k = n.keys.find((x) => x.uid === uid);
-      if (k) return k.key;
-    }
-  }
-  return null;
-}
-
 /**
  * Practice questions for the B-tree. Every answer comes from running the model, so it always
  * agrees with the drawing. `def` is a getter to avoid an import cycle.
@@ -56,13 +41,6 @@ export function bTreePractice(def: () => Def): PracticeKind[] {
   const lastOp = (cs: OpCall[], settings?: BTreeSettings): BStep[] => {
     const t = run(cs, settings);
     return t.entries[t.entries.length - 1]!.steps;
-  };
-  /** A key between 1 and 99 that is not in the tree. */
-  const fresh = (rng: Rng, keys: number[]) => {
-    for (;;) {
-      const k = rng.int(1, 99);
-      if (!keys.includes(k)) return k;
-    }
   };
 
   return [
@@ -101,10 +79,10 @@ export function bTreePractice(def: () => Def): PracticeKind[] {
       id: 'split-count',
       title: 'How many splits?',
       make(rng) {
-        const keys = distinctKeys(rng, rng.int(10, 16));
         const first = rng.int(4, 8);
+        const keys = distinctKeys(rng, first + rng.int(3, 5));
         const setup = inserts(keys.slice(0, first));
-        const ask = inserts(keys.slice(first, first + rng.int(3, 5)));
+        const ask = inserts(keys.slice(first));
         const before = run(setup).endState().splits;
         const after = run([...setup, ...ask]).endState().splits;
         const n = after - before;

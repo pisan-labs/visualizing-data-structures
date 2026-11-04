@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "floyd-cycle",
+  "id": "tiny",
+  "title": "The empty list and one node",
+  "notes": "An empty list has no cycle. One node with next = null has none either; one node pointing at itself is a cycle with μ = 0 and λ = 1.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["detect"], ["build", "7"], ["detect"], ["build", "7 @0"], ["detect"]],
+  "at": { "op": -1, "step": 0 }
+}

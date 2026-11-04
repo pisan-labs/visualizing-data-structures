@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "floyd-cycle",
+  "id": "full-cycle",
+  "title": "The whole list is a cycle (μ = 0)",
+  "notes": "The last node links back to head, so there is no tail. Phase 1 still works; in phase 2 slow starts at head, which is already the start of the cycle.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["build", "1 2 3 4 5 6 @0"], ["detect"]],
+  "at": { "op": 0, "step": 99 }
+}

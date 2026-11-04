@@ -39,3 +39,5 @@
 2026-11-04 [code] Fix: long code lines widened the page on desktop (grid tracks now minmax(0, 1fr); cards may shrink); test covers it
 
 2026-11-04 [code] Per-page URLs: /<id>/ pages prerendered with their own title, description, preview tags and canonical URL; state in the hash; old #/ links redirect; visualizations load on demand; sitemap and robots.txt
+
+2026-11-04 [decision] Deploys only on request: work goes to dev (CI runs there), main = what Netlify publishes, moved with `git push origin dev:main` when Yusuf says deploy (15 credits each); adopted after the 15-minute window

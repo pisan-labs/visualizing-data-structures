@@ -22,6 +22,13 @@ everything on every push; Netlify builds and deploys `main` (`netlify.toml`).
 `@playwright/test` is pinned to 1.63.0 to match the browsers preinstalled in cloud sessions, and
 `overrides` pins `playwright-core` to the same version. Bump them together.
 
+## Branches and deploys
+
+- Work on `dev` and push `dev`. CI runs on `dev` and `main`.
+- `main` is what Netlify publishes. Each production deploy costs Netlify credits, so move `main`
+  only when Yusuf says "deploy": `git push origin dev:main` (a fast-forward of tested work).
+- Agent worktrees branch from `dev` and are merged back into `dev` by the lead.
+
 ## Architecture
 
 - `src/engine/`: framework-free core.

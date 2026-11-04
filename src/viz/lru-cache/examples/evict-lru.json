@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "lru-cache",
+  "id": "evict-lru",
+  "title": "Evicting the least recently used",
+  "notes": "A cache of 2. get(1) makes 1 the most recent, so put(3, 3) evicts 2. Then put(4, 4) evicts 1, which was used before 3 was put. What goes is whatever was used least recently, not whatever was put first.",
+  "settings": { "capacity": 2 },
+  "seed": 1,
+  "ops": [
+    ["put", 1, 1],
+    ["put", 2, 2],
+    ["get", 1],
+    ["put", 3, 3],
+    ["get", 2],
+    ["put", 4, 4],
+    ["get", 1],
+    ["get", 3],
+    ["get", 4]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

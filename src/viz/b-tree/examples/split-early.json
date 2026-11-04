@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "viz": "b-tree",
+  "id": "split-early",
+  "title": "Splitting early can make the tree taller",
+  "notes": "The root is full, so CLRS splits it even though the leaf where 5 goes has room. Switch Options to split on the way back up and the same insert leaves the top alone.",
+  "settings": {
+    "t": "2",
+    "split": "down"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["insert", 5]
+  ],
+  "at": {
+    "op": 7,
+    "step": 99
+  }
+}

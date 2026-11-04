@@ -179,8 +179,7 @@ Items marked ✔ are already built.
 - ✔ Compare mode (2026-11-04): `/<page>/#compare=<other>` runs the same operations on two pages, or on one page with two settings, side by side. Playback moves by operation; a side that finishes first waits.
 - ✔ Assignment links (see 4.7).
 - ✔ Catalog pathways ("Data structures", "Algorithms").
-- **To add:**
-  - printable concept pages.
+- ✔ Printable concept pages (2026-11-04): Print on the Learn tab, or the browser's print, gives the title, the explanation and its checks in light colors, without the drawing or controls.
 
 ### 4.7 New teaching features in v2
 

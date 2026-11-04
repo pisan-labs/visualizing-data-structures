@@ -87,3 +87,5 @@
 2026-11-04 [code] Fixed the intermittent doubly-linked-list conformance failure: insertAt at the end cited a sentinel-only pseudocode line with the sentinel off; regression test added
 
 2026-11-04 [code] Presets receive the page's current settings (optional third argument), so a preset can suit them
+
+2026-11-04 [code] Printable concept pages: a Print button on the Learn tab; print styles keep the title, explanation and checks in light colors and drop the drawing, controls and site chrome

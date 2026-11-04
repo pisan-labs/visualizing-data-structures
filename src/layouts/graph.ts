@@ -20,9 +20,11 @@
  *   for a page where the drawing shares the stage with bigger panels.
  *
  * Fitting a laptop and a phone: the stage is about 884 x 305 pixels on a 1366 x 768 laptop
- * and 362 pixels wide on a phone. A scene of about 500 x 420 units (graph on top, panels under
- * it) keeps 15-unit text near 11 pixels on both. Wider scenes shrink on a phone and taller
- * ones on a laptop, so put panels under the graph and keep them compact.
+ * and 362 x 585 on a phone in portrait. A scene of about 500 x 420 units keeps 15-unit text
+ * near 11 pixels on both; wider scenes shrink on a phone and taller ones on a laptop. Views
+ * cannot see the screen, so `placePanels` puts the panels under the graph or beside it,
+ * whichever keeps the smaller of the two pictures larger (`fitScore`). Keep panels compact,
+ * and reserve room for what grows (a queue, a stack) so the choice holds through a run.
  *
  * Drawing: drawGraph(g, layout, options) -> { shapes, bounds }
  *   Vertices are circles with their names; edges are lines (undirected) or arrows (directed),

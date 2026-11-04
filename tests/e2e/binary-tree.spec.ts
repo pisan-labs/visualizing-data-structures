@@ -19,7 +19,7 @@ async function toEnd(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('./#/binary-tree');
+  await page.goto('/binary-tree/');
   await expect(page.getByRole('heading', { name: 'Binary tree and traversals' })).toBeVisible();
 });
 
@@ -94,10 +94,10 @@ test('empty children can be drawn as squares', async ({ page }) => {
 test('"Show me" links load an example and play it', async ({ page }) => {
   await page.getByRole('tab', { name: 'Learn' }).click();
   await page.getByRole('link', { name: 'Show me' }).first().click();
-  await expect(page.getByText('Playing "Four ways to walk one tree"')).toBeVisible();
-  await expect(page).toHaveURL(/#\/binary-tree/);
+  await expect(page).toHaveURL(/\/binary-tree\//);
   await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
   await expect(narration(page)).toContainText('preorder');
+  await expect(stage(page)).toHaveAttribute('aria-label', /6 nodes/);
 });
 
 test('concept page links load examples', async ({ page }) => {

@@ -16,6 +16,8 @@ export interface PageLayout {
   pointerLanes?: number;
   /** One extra slot past the end for a sentinel. */
   sentinel?: boolean;
+  barHeight?: number;
+  callsHeight?: number;
 }
 
 const live = (x: Item | null | undefined): x is Item => !!x && !x.stale;
@@ -44,6 +46,8 @@ export function arrayView(step: ArrayStep, draw: Draw, layout: PageLayout = {}):
     regionLanes: layout.regionLanes,
     held: layout.held,
     pointerLanes: layout.pointerLanes,
+    barHeight: layout.barHeight,
+    callsHeight: layout.callsHeight,
   };
   const items: (Item | null)[] = state.a.map((x) => (live(x) ? x : null));
   if (extra.sentinel) items[n] = extra.sentinel;

@@ -20,7 +20,9 @@
  *     "<= pivot"), with optional labels.
  *   - `faded`: index ranges that are out of play (eliminated halves); their values fade.
  *   - `calls`: the call stack, outermost first, as nested brackets in the top lane. The last
- *     one is the running call. Brackets get thinner as the stack gets deeper.
+ *     one is the running call. Brackets get thinner as the stack gets deeper. Give brackets a
+ *     `depth` to put several on one row (bottom-up merge sort's runs) and `current` to pick
+ *     the highlighted one.
  *   - `held`: a value lifted out of the array (insertion sort's key) or a value being looked
  *     for, drawn as a tile above a slot.
  *   - `roles`: the step's marks by shape id.
@@ -61,6 +63,10 @@ export interface BarsFrame {
   held?: boolean;
   /** Pointer label lanes under each row. Default 2. */
   pointerLanes?: number;
+  /** Height of the bar area (bars mode). Default 190, or 128 with two rows. */
+  barHeight?: number;
+  /** Height of the call-stack lane. Default 112. */
+  callsHeight?: number;
 }
 
 export interface BarItem {
@@ -105,6 +111,10 @@ export interface BarsRegion {
 export interface BarsCall {
   from: number;
   to: number;
+  /** Row in the lane. Default: its position in the list, so a list is a call stack. */
+  depth?: number;
+  /** Highlight it. Default: the last one, the running call. */
+  current?: boolean;
 }
 
 export interface BarsHeld {
@@ -130,6 +140,8 @@ export interface BarsContent {
 const PAD = 10;
 /** The stage's zoom buttons sit over the top right corner; keep content below them. */
 const PAD_TOP = 46;
+/** The call-stack lane runs the full width, so it needs to clear the buttons on phones too. */
+const PAD_TOP_CALLS = 80;
 const MIN_W = 520;
 const FONT = { value: 25, index: 22, pointer: 24, label: 22, held: 21 };
 const BAR_H = 190;
@@ -175,6 +187,7 @@ export interface BarsGeometry {
   center(i: number): number;
   row(id: string): RowGeometry;
   callsTop: number;
+  callsHeight: number;
   regionLane(k: number): number;
   heldTop: number;
   barHeight: number;
@@ -187,12 +200,13 @@ export function barsGeometry(frame: BarsFrame): BarsGeometry {
   const width = Math.max(MIN_W, (frame.slots + 1) * pitch + 2 * PAD);
   const x0 = (width - frame.slots * pitch) / 2;
   const lanes = frame.pointerLanes ?? 2;
-  const barHeight = rows.length > 1 ? BAR_H_TWO_ROWS : BAR_H;
+  const barHeight = frame.barHeight ?? (rows.length > 1 ? BAR_H_TWO_ROWS : BAR_H);
+  const callsHeight = frame.callsHeight ?? CALLS_H;
 
   // Top to bottom: call stack, lifted value, region labels (right on top of their bands), rows.
-  let y = PAD_TOP;
+  let y = frame.calls ? PAD_TOP_CALLS : PAD_TOP;
   const callsTop = y;
-  if (frame.calls) y += CALLS_H;
+  if (frame.calls) y += callsHeight;
   const heldTop = y;
   if (frame.held) y += HELD_H;
   const regionTop = y;
@@ -229,6 +243,7 @@ export function barsGeometry(frame: BarsFrame): BarsGeometry {
     center: (i) => x0 + (i + 0.5) * pitch,
     row: (id) => geo.get(id) ?? geo.get(rows[0]!)!,
     callsTop,
+    callsHeight,
     regionLane: (k) => regionTop + 22 + k * REGION_LANE,
     heldTop,
     barHeight,
@@ -322,21 +337,25 @@ export function barsScene(
   // The call stack: one bracket per active call, outermost on top.
   const calls = content.calls ?? [];
   if (frame.calls && calls.length) {
-    const rowH = Math.min(CALL_ROW_MAX, CALLS_H / calls.length);
+    const depthOf = (c: BarsCall, k: number) => c.depth ?? k;
+    const rows = Math.max(...calls.map((c, k) => depthOf(c, k))) + 1;
+    const anyCurrent = calls.some((c) => c.current !== undefined);
+    const rowH = Math.min(CALL_ROW_MAX, g.callsHeight / rows);
     const th = Math.max(3, Math.min(10, rowH * 0.42));
     calls.forEach((c, k) => {
       const empty = c.to < c.from;
       const id = `call-${k}`;
+      const current = anyCurrent ? !!c.current : k === calls.length - 1;
       shapes.push({
         kind: 'rect',
         id,
         x: empty ? g.left(c.from) - 3 : g.left(c.from) + 2,
-        y: g.callsTop + k * rowH + (rowH - th) / 2,
+        y: g.callsTop + depthOf(c, k) * rowH + (rowH - th) / 2,
         w: empty ? 6 : (c.to - c.from + 1) * g.pitch - 4,
         h: th,
         r: Math.min(3, th / 2),
-        role: roles.get(id) ?? (k === calls.length - 1 ? 'active' : undefined),
-        cls: k === calls.length - 1 ? undefined : 'cell',
+        role: roles.get(id) ?? (current ? 'active' : undefined),
+        cls: current ? undefined : 'cell',
       });
     });
   }

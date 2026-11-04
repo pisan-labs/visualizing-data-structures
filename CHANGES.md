@@ -111,3 +111,9 @@
 2026-11-04 [code] A page being replaced no longer rewrites the address after it is gone, and hash navigation reads the address it went to (a fast jump to #practice could lose the set); the B-tree readability test waits for animation to finish
 
 2026-11-04 [doc] HANDOFF.md added for session-relay: hourly status report only when something is new, handover check 15:56 and session start 16:52 Europe/Berlin; routines trig_01YFFf7haBUVw55QnJE6zbfH, trig_019edEXqKvVwcMM1CsPVQpUD, trig_014pSjnKeCWEgQXUWgZECJGR
+
+2026-11-04 [code] Merged wave 3K: graph model and one-line parser (edge list, adjacency list, matrix) in src/viz/_graph/, graph layout with state panels in src/layouts/graph.ts, graph representations, BFS and DFS; all with practice
+
+2026-11-04 [decision] Compare mode pairs pages only when the second runs the first's main operation and one more from its main row ("clear" aside): sharing only "load" (a sort and a search, BFS and the representations page) no longer counts
+
+2026-11-04 [code] The operation input widens on pages that take long input (graph text, strings to search)

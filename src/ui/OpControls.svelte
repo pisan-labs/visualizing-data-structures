@@ -79,6 +79,7 @@
       id="op-input"
       bind:this={input}
       class="field"
+      class:wide={controls.input.maxLength > 40}
       bind:value={text}
       placeholder={controls.input.placeholder}
       maxlength={controls.input.maxLength}
@@ -172,6 +173,12 @@
     flex: 1 1 140px;
     min-width: 0;
     max-width: 260px;
+  }
+
+  /* Long inputs (a graph's edges, a text to search) get room to be read. */
+  input.wide {
+    flex-basis: 320px;
+    max-width: 640px;
   }
 
   input[aria-invalid='true'] {

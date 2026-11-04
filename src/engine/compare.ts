@@ -22,12 +22,19 @@ export function mainOp(def: AnyVizDef): string | undefined {
 }
 
 /**
- * Two pages can be compared when the second can run the first one's main operation. Sharing
- * only "clear" or "peek" (a stack and a queue) is not enough.
+ * Two pages can be compared when the second can run the first one's main operation and at least
+ * one more operation from its main row ("clear" does not count), or the main operation is the
+ * only one there. Sharing "clear" or "peek" (a stack and a queue) is not enough, and neither is
+ * sharing only "load" (a sort and a search, BFS and the graph representations page).
  */
 export function canCompare(a: AnyVizDef, b: AnyVizDef): boolean {
   const op = mainOp(a);
-  return op !== undefined && sharedOps(a, b).has(op);
+  const shared = sharedOps(a, b);
+  if (op === undefined || !shared.has(op)) return false;
+  const others = a.controls.buttons
+    .filter((x) => !x.more && x.op !== 'clear' && x.op !== op)
+    .map((x) => x.op);
+  return others.length === 0 || others.some((o) => shared.has(o));
 }
 
 /** Keep only the calls both pages can run. */

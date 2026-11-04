@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "insertion-sort",
+  "id": "swap-left",
+  "title": "Swap the new value left",
+  "notes": "Same values, but the new value swaps with its left neighbor until it fits. The comparisons are identical; every shift became a swap.",
+  "settings": { "move": "swap", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "47 15 63 28 90 36 71"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

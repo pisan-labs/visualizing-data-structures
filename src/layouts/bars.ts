@@ -189,13 +189,14 @@ export function barsGeometry(frame: BarsFrame): BarsGeometry {
   const lanes = frame.pointerLanes ?? 2;
   const barHeight = rows.length > 1 ? BAR_H_TWO_ROWS : BAR_H;
 
+  // Top to bottom: call stack, lifted value, region labels (right on top of their bands), rows.
   let y = PAD_TOP;
   const callsTop = y;
   if (frame.calls) y += CALLS_H;
-  const regionTop = y;
-  y += (frame.regionLanes ?? 0) * REGION_LANE;
   const heldTop = y;
   if (frame.held) y += HELD_H;
+  const regionTop = y;
+  y += (frame.regionLanes ?? 0) * REGION_LANE;
 
   const geo = new Map<string, RowGeometry>();
   rows.forEach((id, k) => {

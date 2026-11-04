@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "insertion-sort",
+  "id": "reverse",
+  "title": "Reverse order: every value goes to the front",
+  "notes": "The worst case. Each new value is smaller than everything before it, so it travels all the way to A[0]: 28 comparisons and 28 shifts for 8 values.",
+  "settings": { "move": "shift", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "80 70 60 50 40 30 20 10"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

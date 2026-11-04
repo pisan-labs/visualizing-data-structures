@@ -137,3 +137,27 @@ test.describe('selection sort', () => {
     await backTo(page, 'Swap A[2] = 2 with A[max] = 3.');
   });
 });
+
+test.describe('insertion sort', () => {
+  test.beforeEach(({ page }) => open(page, 'insertion-sort', 'Insertion sort'));
+
+  test('lifts the key and drops it into the gap', async ({ page }) => {
+    await load(page, '3 1 2');
+    await run(page, 'Sort');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('That took 3 comparisons and 2 shifts.');
+    await backTo(page, 'A[1] = key: 2 drops into the gap.');
+    await expect(page.locator('.code li.active')).toContainText('A[j + 1] = key');
+    await expect(stage(page)).toHaveAttribute('aria-label', /Array A with 3 values: 1, 2, 3\./);
+    await backTo(page, 'key = 2.');
+    await expect(stage(page)).toHaveAttribute('aria-label', /key = 2, held outside the array/);
+  });
+
+  test('swapping instead of shifting changes the code', async ({ page }) => {
+    await option(page, 'Swapping the new value with its left neighbor');
+    await expect(code(page)).toContainText('swap A[j - 1] and A[j]');
+    await loadExample(page, 'Swap the new value left');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('12 comparisons and 7 swaps');
+  });
+});

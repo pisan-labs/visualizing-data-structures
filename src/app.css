@@ -308,3 +308,77 @@ button {
     grid-template-columns: minmax(0, 1fr) minmax(360px, 520px);
   }
 }
+
+/* Printing gives the concept page as a handout: the title, the explanation and its checks, in
+   light colors whatever the theme, without the drawing, controls or site chrome. */
+@media print {
+  :root {
+    --bg: #ffffff !important;
+    --surface: #ffffff !important;
+    --surface-2: #f1f3f6 !important;
+    --text: #000000 !important;
+    --text-2: #3a414b !important;
+    --line: #b9c1cc !important;
+    --accent: #1f4fb3 !important;
+    --c-new: #1e7d3c !important;
+    --c-found: #7a3db8 !important;
+    --c-error: #c0262d !important;
+    --code-hl: #e8eefc !important;
+    --shadow: none !important;
+    color-scheme: light;
+  }
+
+  header.site,
+  footer.site,
+  .skip,
+  .notices,
+  .viz .back,
+  .viz .actions,
+  .viz .main,
+  .viz .side,
+  .viz .tablist,
+  .viz .feedback,
+  .learn-tools {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff;
+  }
+
+  .viz {
+    display: block !important;
+  }
+
+  .viz .card {
+    border: 0;
+    box-shadow: none;
+  }
+
+  .viz .panel {
+    max-width: none;
+    padding: 0;
+  }
+
+  .learn h2,
+  .learn h3 {
+    break-after: avoid;
+  }
+
+  .learn .check,
+  .learn pre,
+  .learn table {
+    break-inside: avoid;
+  }
+
+  /* Links load examples on screen; on paper they are just words. */
+  .learn a {
+    color: inherit !important;
+    font-weight: inherit !important;
+    text-decoration: none !important;
+  }
+
+  .learn a::before {
+    content: none !important;
+  }
+}

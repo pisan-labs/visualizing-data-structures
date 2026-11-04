@@ -32,8 +32,8 @@ One-time setup, done in the Netlify web UI:
    shows (a `CNAME` from `<name>` to `<site>.netlify.app`) at the DNS provider for `pisan.me`.
    Netlify issues the HTTPS certificate on its own.
 
-After that, every push to `main` deploys, and every pull request gets a preview link. Tests run
-in GitHub Actions, not on Netlify.
+For now Yusuf deploys by hand from the Netlify dashboard, so a push to `main` does not publish
+anything by itself. Tests run in GitHub Actions, not on Netlify.
 
 ## Licenses
 

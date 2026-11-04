@@ -179,8 +179,7 @@ Items marked ✔ are already built.
 - ✔ Compare mode (2026-11-04): `/<page>/#compare=<other>` runs the same operations on two pages, or on one page with two settings, side by side. Playback moves by operation; a side that finishes first waits.
 - ✔ Assignment links (see 4.7).
 - ✔ Catalog pathways ("Data structures", "Algorithms").
-- **To add:**
-  - printable concept pages.
+- ✔ Printable concept pages (2026-11-04): Print on the Learn tab, or the browser's print, gives the title, the explanation and its checks in light colors, without the drawing or controls.
 
 ### 4.7 New teaching features in v2
 
@@ -375,7 +374,8 @@ The About page credits Galles and Lucet as inspiration.
 | 23 | Pathways | "Data structures" and "Algorithms" (12.9) |
 | 24 | Feedback | Prefilled GitHub issue link on every page; Issues turned on by Yusuf (12.10) |
 | 25 | Time zone | UTC+1 assumed for reports (12.11) |
-| 26 | Deploys | Work goes to `dev` (CI runs there); `main` is what Netlify publishes and moves only when Yusuf says "deploy" (`git push origin dev:main`). Each production deploy costs 15 Netlify credits |
+| 26 | Deploys | Work goes to `dev` (CI runs there); `main` is what Netlify publishes and moves only when Yusuf says "deploy" (`git push origin dev:main`). Each production deploy costs 15 Netlify credits. Replaced by 27 |
+| 27 | Branches (later on 2026-11-04) | All work goes to `main`, as in Yusuf's other projects; `dev` is retired. Yusuf deploys to Netlify by hand for now |
 
 ## 12. Questions asked 2026-11-04
 

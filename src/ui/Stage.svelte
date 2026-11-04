@@ -290,6 +290,12 @@
     fill: var(--text-2);
   }
 
+  /* Pointer dots (circles with the arrowhead class) take the arrow color, without a ring. */
+  .circle.arrowhead {
+    fill: var(--text-2);
+    stroke: none;
+  }
+
   /* Roles */
   .rect.role-active,
   .circle.role-active {

@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "deque-array",
+  "id": "as-stack",
+  "title": "A deque used as a stack",
+  "notes": "Add and remove at the same end and the deque behaves like a stack: the last value in is the first one out.",
+  "settings": { "capacity": 8, "full": "gap", "layout": "ring" },
+  "seed": 1,
+  "ops": [
+    ["addLast", 1],
+    ["addLast", 2],
+    ["addLast", 3],
+    ["removeLast"],
+    ["removeLast"],
+    ["removeLast"]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

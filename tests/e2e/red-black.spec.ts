@@ -60,10 +60,17 @@ for (const theme of ['light', 'dark', 'contrast']) {
     await page.getByRole('combobox', { name: 'Theme' }).selectOption(theme);
     await op(page, 'Insert', '50 30');
     await toEnd(page);
-    const black = await luminance(page, 'rb-black');
-    const red = await luminance(page, 'rb-red');
-    // A contrast ratio of at least 3:1 between the two fills.
-    expect((Math.max(black, red) + 0.05) / (Math.min(black, red) + 0.05)).toBeGreaterThan(3);
+    // The drawing tweens to the last step on the next animation frames: wait for both nodes.
+    await expect(stage(page).locator('circle.rb-black')).toHaveCount(1);
+    await expect(stage(page).locator('circle.rb-red')).toHaveCount(1);
+    // A contrast ratio of at least 3:1 between the two fills (polled: fills fade in too).
+    await expect
+      .poll(async () => {
+        const black = await luminance(page, 'rb-black');
+        const red = await luminance(page, 'rb-red');
+        return (Math.max(black, red) + 0.05) / (Math.min(black, red) + 0.05);
+      })
+      .toBeGreaterThan(3);
   });
 }
 

@@ -206,6 +206,15 @@ export class Session {
     this.cursor = ex.at ? this.tl.indexOf(ex.at.op, ex.at.step) : this.tl.length - 1;
   }
 
+  /** Start over with these operations and show the result; every step stays available. */
+  fill(calls: OpCall[]): void {
+    this.pause();
+    this.tl = new Timeline(this.def, this.tl.settings, this.tl.seed, calls);
+    this.version++;
+    this.animate = false;
+    this.cursor = this.tl.length - 1;
+  }
+
   undoLast(): void {
     const n = this.tl.entries.length;
     if (n === 0) return;

@@ -4,6 +4,7 @@
   import type { AnyVizDef } from '../engine/types';
   import { SITE_NAME } from '../site';
   import CodePanel from './CodePanel.svelte';
+  import BigOPanel from './BigOPanel.svelte';
   import ExamplesPanel from './ExamplesPanel.svelte';
   import HistoryPanel from './HistoryPanel.svelte';
   import LearnPanel from './LearnPanel.svelte';
@@ -16,13 +17,19 @@
   import Transport from './Transport.svelte';
   import VarsPanel from './VarsPanel.svelte';
 
-  let { def, code, embed }: { def: AnyVizDef; code: string | null; embed: boolean } = $props();
+  let {
+    def,
+    code,
+    embed,
+    lesson = null,
+  }: { def: AnyVizDef; code: string | null; embed: boolean; lesson?: string | null } = $props();
 
   const session = untrack(() => new Session(def, { speed: prefs.speed, detail: prefs.detail }));
   let ready = $state(false);
 
   onMount(async () => {
     document.title = `${def.title} · ${SITE_NAME}`;
+    if (lesson) setPref('tab', 'learn');
     if (code) {
       try {
         session.load(validateExample(def, await decodeExample(code)));
@@ -63,6 +70,7 @@
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'learn', label: 'Learn' },
+    { id: 'bigo', label: 'Big-O' },
     { id: 'examples', label: 'Examples' },
     { id: 'history', label: 'History' },
   ];
@@ -164,7 +172,9 @@
         >
           {#if prefs.tab === t.id}
             {#if t.id === 'learn'}
-              <LearnPanel {session} />
+              <LearnPanel {session} {lesson} />
+            {:else if t.id === 'bigo'}
+              <BigOPanel {session} />
             {:else if t.id === 'examples'}
               <ExamplesPanel {session} />
             {:else}
@@ -275,6 +285,7 @@
 
     .main {
       display: grid;
+      grid-template-columns: minmax(0, 1fr);
       gap: 12px;
       min-width: 0;
       grid-column: 1;
@@ -283,6 +294,7 @@
 
     .side {
       display: grid;
+      grid-template-columns: minmax(0, 1fr);
       gap: 12px;
       min-width: 0;
       grid-column: 2;

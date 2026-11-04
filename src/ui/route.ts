@@ -1,6 +1,13 @@
 export type Route =
   | { kind: 'catalog' }
-  | { kind: 'viz'; id: string; code: string | null; embed: boolean; key: string };
+  | {
+      kind: 'viz';
+      id: string;
+      code: string | null;
+      embed: boolean;
+      lesson: string | null;
+      key: string;
+    };
 
 /** Routes live in the hash (#/stack-array?ex=...&embed=1) so static hosting needs no rewrites. */
 export function parseRoute(hash: string): Route {
@@ -13,6 +20,7 @@ export function parseRoute(hash: string): Route {
     id: decodeURIComponent(path),
     code: params.get('ex'),
     embed: params.get('embed') === '1',
+    lesson: params.get('lesson'),
     key: h,
   };
 }

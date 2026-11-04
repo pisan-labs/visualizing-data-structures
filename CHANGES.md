@@ -33,3 +33,7 @@
 2026-11-04 [decision] No answers to PLAN v2 questions within 15 minutes; all recommendations adopted (code tabs in 3 languages, per-page URLs, lessons, practice in wave 2, advanced in wave 4, English only, no code tracing, 4 agents, 2 pathways, feedback link, UTC+1)
 
 2026-11-04 [code] Engine for wave 1: plain-English pseudocode, Big-O self-test rows, presets, code tabs (Python/Java/C++) run against the model in src/viz/code.test.ts; stricter conformance checks
+
+2026-11-04 [code] UI for wave 1 features: Big-O tab (hidden answers, Watch it), code panel views (pseudocode, plain English, Python, Java, C++), presets (Start over with), Show me links, concept checks, lesson deep links (?lesson=)
+
+2026-11-04 [code] Fix: long code lines widened the page on desktop (grid tracks now minmax(0, 1fr); cards may shrink); test covers it

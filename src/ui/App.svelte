@@ -67,7 +67,7 @@
     <Catalog />
   {:else if viz}
     {#key route.key}
-      <VizPage def={viz} code={route.code} embed={route.embed} />
+      <VizPage def={viz} code={route.code} embed={route.embed} lesson={route.lesson} />
     {/key}
   {:else}
     <div class="missing">

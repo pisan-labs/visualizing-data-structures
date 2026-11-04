@@ -27,7 +27,15 @@ In the first version, `top` counts the items. An empty stack has `top = 0`, and 
 
 In the second version, `top` is the index of the top item, so an empty stack has `top = -1`. Push increments first, then stores: `top = top + 1`, then `A[top] = x`.
 
-Mixing the two is a reliable way to get an off-by-one error. Pick one and stay with it. The **Meaning of top** option switches between them. Run the same pushes under both and compare the order of the steps.
+Mixing the two is a reliable way to get an off-by-one error. Pick one and stay with it. The **Meaning of top** option switches between them. Run the same pushes under both and compare the order of the steps. [Show me](#play:index-convention)
+
+```check
+Q: When `top` starts at -1, which line runs first in push (after the full check)?
+- `A[top] = x`
+* `top = top + 1`
+- They run at the same time
+= In this version `top` points at the top item, so push has to move it up before it stores x.
+```
 
 ## Full and empty
 
@@ -37,7 +45,15 @@ The usual fix for overflow is to grow: when the array fills up, allocate one twi
 
 ## Pop doesn't erase anything
 
-Pop moves `top` down by one and returns the value. That's all. The value is still sitting in the array, and the visualization shows it faded. It is no longer part of the stack, and the next push into that slot overwrites it. Clear is even lazier: it resets `top` and leaves every value where it was.
+Pop moves `top` down by one and returns the value. That's all. The value is still sitting in the array, and the visualization shows it faded. It is no longer part of the stack, and the next push into that slot overwrites it. Clear is even lazier: it resets `top` and leaves every value where it was. [Show me](#play:leftovers)
+
+```check
+Q: You push 1, 2 and 3, then pop twice. What is in `A[1]` now?
+- Nothing, pop erased it
+* 2
+- 3
+= Pop only moves `top`. The 2 stays in `A[1]` until a later push overwrites it.
+```
 
 ## Where you'll meet stacks
 

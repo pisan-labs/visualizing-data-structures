@@ -128,7 +128,8 @@ test('history panel jumps and undoes', async ({ page }) => {
   await expect(page.getByRole('button', { name: /3\. push\(3\)/ })).toHaveCount(0);
 });
 
-test('no horizontal scrolling', async ({ page }) => {
+test('no horizontal scrolling, even with long lines of real code', async ({ page }) => {
+  await page.getByRole('combobox', { name: 'Show the code as' }).selectOption('java');
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );
@@ -159,4 +160,49 @@ test('embed mode hides the site chrome', async ({ page }) => {
   await expect(page.getByRole('link', { name: /Open in/ })).toBeVisible();
   await expect(page.getByRole('tab', { name: 'Learn' })).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'All visualizations' })).toHaveCount(0);
+});
+
+test('Big-O self-test reveals answers and loads examples', async ({ page }) => {
+  await page.getByRole('tab', { name: 'Big-O' }).click();
+  await page.getByRole('button', { name: 'Reveal the worst case for push(x)' }).click();
+  await expect(page.locator('.bigo')).toContainText('Even a full array costs one check');
+  await page.getByRole('button', { name: 'Watch it' }).first().click();
+  await expect(page.getByText('Loaded "Overflow at capacity"')).toBeVisible();
+  await page.getByRole('button', { name: 'Show all' }).click();
+  await expect(page.getByRole('button', { name: /^Reveal the/ })).toHaveCount(0);
+});
+
+test('code panel switches between pseudocode, plain English and real code', async ({ page }) => {
+  const view = page.getByRole('combobox', { name: 'Show the code as' });
+  await view.selectOption('plain');
+  await expect(page.locator('.code')).toContainText('Put x in the first free slot.');
+  await view.selectOption('python');
+  await expect(page.locator('.code pre')).toContainText('class ArrayStack');
+  await view.selectOption('java');
+  await expect(page.locator('.code pre')).toContainText('public class ArrayStack');
+  await view.selectOption('cpp');
+  await expect(page.locator('.code pre')).toContainText('class ArrayStack');
+  await view.selectOption('formal');
+  await expect(page.locator('.code')).toContainText('A[top] = x');
+});
+
+test('a preset starts over and shows the result', async ({ page }) => {
+  await page
+    .getByLabel('Start over with', { exact: true })
+    .selectOption({ label: 'The letters of a word' });
+  await page.getByLabel('How many').selectOption('5');
+  await page.getByRole('button', { name: 'Fill' }).click();
+  await expect(stage(page)).toHaveAttribute('aria-label', /From bottom to top: A, L, G, O, R\./);
+});
+
+test('concept checks give feedback and Show me plays an example', async ({ page }) => {
+  await page.getByRole('tab', { name: 'Learn' }).click();
+  const check = page.locator('.check').filter({ hasText: 'What is in' });
+  await check.getByRole('button', { name: 'Nothing, pop erased it' }).click();
+  await expect(check).toContainText('Not quite.');
+  await check.getByRole('button', { name: 'Try again' }).click();
+  await check.getByRole('button', { name: '2', exact: true }).click();
+  await expect(check).toContainText('Yes.');
+  await page.getByRole('link', { name: 'Show me' }).first().click();
+  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
 });

@@ -21,7 +21,10 @@ export function andList(xs: readonly (string | number)[]): string {
   return `${s.slice(0, -1).join(', ')} and ${s[s.length - 1]}`;
 }
 
-/** An operation argument as one whole number in [lo, hi], or a message saying what is wrong. */
+/**
+ * An operation argument as one whole number in [lo, hi], or a message saying what is wrong.
+ * `what` names the number in a sentence: "n", "the amount".
+ */
 export function wholeFromArg(
   arg: Value | undefined,
   lo: number,
@@ -31,7 +34,7 @@ export function wholeFromArg(
   const range = `a whole number from ${lo} to ${hi}`;
   const t = String(arg ?? '').trim();
   if (t === '') return `Type ${what} first: ${range}.`;
-  if (/[\s,]/.test(t)) return `Type one ${what}, not a list: ${range}.`;
+  if (/[\s,]/.test(t)) return `Type just one number for ${what}: ${range}.`;
   if (!/^-?\d+$/.test(t)) return `"${t}" is not ${range}.`;
   const v = Number(t);
   if (v < lo || v > hi) return `${v} is out of range. Use ${range}.`;

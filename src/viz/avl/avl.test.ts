@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
-import { avl, fibNodes, sparsestOrder, zigzagOrderOf } from '.';
+import { avl, fibNodes, sparsestOrder } from '.';
 import { shownHeight, type AVLSettings, type AVLState } from './model';
-import { inorderKeys, shapeText, treeHeight } from './tree-kit';
+import { inorderKeys, shapeText, treeHeight, zigzagOrderOf } from './tree-kit';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: the textbook recursive AVL tree (Weiss style), written independently. Delete copies

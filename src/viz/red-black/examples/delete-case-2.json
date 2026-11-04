@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "red-black",
+  "id": "delete-case-2",
+  "title": "Delete case 2: pass the extra black up",
+  "notes": "After 5 is gone, the tree is three black nodes. Deleting 10 leaves a doubly black NIL whose sibling 30 is black with black (NIL) children. Case 2 turns 30 red and moves the extra black up to the root, where it simply disappears: the black-height drops from 2 to 1.",
+  "settings": {
+    "delete": "successor",
+    "nils": false,
+    "bh": true
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 20],
+    ["insert", 10],
+    ["insert", 30],
+    ["insert", 5],
+    ["delete", 5],
+    ["delete", 10]
+  ],
+  "at": {
+    "op": 4,
+    "step": 999
+  }
+}

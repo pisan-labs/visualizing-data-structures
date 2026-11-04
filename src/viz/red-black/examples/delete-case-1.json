@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "red-black",
+  "id": "delete-case-1",
+  "title": "Delete case 1: a red sibling",
+  "notes": "Deleting the black leaf 80 leaves a doubly black NIL whose sibling, 50, is red. Case 1 swaps the colors of 50 and 70 and rotates right at 70. x now has a black sibling, 60, with black children: case 2 moves the extra black up to 70, which is red, so it just turns black.",
+  "settings": {
+    "delete": "successor",
+    "nils": true,
+    "bh": true
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 80],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 10],
+    ["insert", 50],
+    ["insert", 20],
+    ["delete", 80]
+  ],
+  "at": {
+    "op": 5,
+    "step": 999
+  }
+}

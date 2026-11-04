@@ -271,9 +271,18 @@ export function drawCaption(
   shapes.push({ kind: 'text', id, x, y: HY + 5, text, size: 15, weight: 'bold', role });
 }
 
-/** One line of small print under the tree (a legend), left-aligned. */
-export function drawNote(shapes: Shape[], f: Frame, id: string, text: string, below: number) {
-  const y = below + 22;
-  shapes.push({ kind: 'text', id, x: f.left, y, text, size: 13, cls: 'label' });
-  f.boxes.push({ x: f.left, y: y - 13, w: Math.min(text.length * 6.6, 600), h: 17 });
+/**
+ * Small print under the tree (a legend), left-aligned. The parts share one line when it fits the
+ * width of the drawing, and otherwise go one per line, so a legend never makes a small tree
+ * shrink on a phone.
+ */
+export function drawNote(shapes: Shape[], f: Frame, id: string, parts: string[], below: number) {
+  const width = (t: string) => t.length * 6.6;
+  const one = parts.join(' ');
+  const lines = width(one) <= f.right - f.left ? [one] : parts;
+  lines.forEach((text, i) => {
+    const y = below + 22 + i * 17;
+    shapes.push({ kind: 'text', id: `${id}-${i}`, x: f.left, y, text, size: 13, cls: 'label' });
+    f.boxes.push({ x: f.left, y: y - 13, w: width(text), h: 17 });
+  });
 }

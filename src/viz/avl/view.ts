@@ -101,7 +101,7 @@ export function view(step: Step<AVLState, AVLExtra>, settings: AVLSettings): Sce
   }
 
   const bottom = Math.max(...f.boxes.map((b) => b.y + b.h));
-  drawNote(shapes, f, 'legend', legendText(settings), bottom);
+  drawNote(shapes, f, 'legend', legendParts(settings), bottom);
 
   const free = drawArg(shapes, roles, f, extra.arg);
   drawCaption(shapes, free + 4, 'case', extra.rotation && `${extra.rotation} case`, 'error');
@@ -117,11 +117,12 @@ export function view(step: Step<AVLState, AVLExtra>, settings: AVLSettings): Sce
   };
 }
 
-function legendText(settings: AVLSettings): string {
+function legendParts(settings: AVLSettings): string[] {
   const bf = settings.bf === 'left' ? 'left − right' : 'right − left';
   const leaf = settings.leaf === 'one' ? 1 : 0;
-  if (settings.show === 'height')
-    return `Left of each node: its height (a leaf has height ${leaf}).`;
-  if (settings.show === 'balance') return `Right of each node: its balance factor, ${bf}.`;
-  return `Left: height (a leaf is ${leaf}). Right: balance factor, ${bf}.`;
+  const height = `Left of a node: its height (a leaf is ${leaf}).`;
+  const balance = `Right: its balance factor, ${bf}.`;
+  if (settings.show === 'height') return [height];
+  if (settings.show === 'balance') return [`Right of a node: its balance factor, ${bf}.`];
+  return [height, balance];
 }

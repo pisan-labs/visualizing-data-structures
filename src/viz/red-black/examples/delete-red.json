@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "red-black",
+  "id": "delete-red",
+  "title": "Deleting a red node needs no fixup",
+  "notes": "20 is a red leaf. Removing it takes no black node off any path, so the tree is still a red-black tree and the fixup never runs.",
+  "settings": {
+    "delete": "successor",
+    "nils": false,
+    "bh": true
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 20],
+    ["insert", 60],
+    ["insert", 90],
+    ["delete", 20]
+  ],
+  "at": {
+    "op": 2,
+    "step": 999
+  }
+}

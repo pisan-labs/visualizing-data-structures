@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "red-black",
+  "id": "insert-case-3",
+  "title": "Insert case 3: recolor and rotate",
+  "notes": "20 is the left child of a left child, and the uncle is nil (black). Case 3 colors 30 black and 50 red, then rotates right at 50, so 30 ends up on top.",
+  "settings": {
+    "delete": "successor",
+    "nils": false,
+    "bh": true
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 30],
+    ["insert", 20]
+  ],
+  "at": {
+    "op": 1,
+    "step": 999
+  }
+}

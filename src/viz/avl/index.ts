@@ -1,6 +1,5 @@
-import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
-import type { OpCall, SavedExample, Settings, Value, VizDef } from '../../engine/types';
+import type { OpCall, SavedExample, Settings, VizDef } from '../../engine/types';
 import cppSource from './code/cpp/avl.hpp?raw';
 import javaSource from './code/java/AVLTree.java?raw';
 import pythonSource from './code/python/avl.py?raw';
@@ -27,31 +26,17 @@ import {
   type AVLState,
 } from './model';
 import { avlPractice } from './practice';
-import { parseKey, preorderKeys, treeHeight, treeSize } from './tree-kit';
+import {
+  ascending,
+  distinctKeys,
+  inserts,
+  parseKey,
+  preorderKeys,
+  treeHeight,
+  treeSize,
+  zigzagOrderOf,
+} from './tree-kit';
 import { view } from './view';
-
-/** n distinct keys from 1 to 99 (or more when n is large). */
-export function distinctKeys(rng: Rng, n: number): number[] {
-  const hi = Math.max(99, 3 * n);
-  const keys = new Set<number>();
-  while (keys.size < n) keys.add(rng.int(1, hi));
-  return [...keys];
-}
-
-export const ascending = (keys: number[]) => [...keys].sort((a, b) => a - b);
-export const inserts = (keys: number[]): OpCall[] => keys.map((k) => ['insert', k] as OpCall);
-
-/** Smallest, largest, second smallest, second largest...: every new key sits between the last two. */
-export function zigzagOrderOf(sorted: number[]): number[] {
-  const out: number[] = [];
-  let lo = 0;
-  let hi = sorted.length - 1;
-  while (lo <= hi) {
-    out.push(sorted[lo++]!);
-    if (lo <= hi) out.push(sorted[hi--]!);
-  }
-  return out;
-}
 
 /** Nodes in the sparsest AVL tree of height h: N(h) = N(h-1) + N(h-2) + 1. */
 export function fibNodes(h: number): number {
@@ -86,10 +71,6 @@ export function sparsestOrder(sorted: number[]): number[] {
     queue.push(t.left, t.right);
   }
   return out;
-}
-
-export function parseKeyInput(token: string): Value | Error {
-  return parseKey(token);
 }
 
 export const avl: VizDef<AVLState, AVLSettings, AVLExtra> = {
@@ -152,7 +133,7 @@ export const avl: VizDef<AVLState, AVLSettings, AVLExtra> = {
       placeholder: 'e.g. 42, or 10 20 30 40',
       maxLength: 160,
       sample: '50',
-      parse: parseKeyInput,
+      parse: parseKey,
     },
     buttons: [
       { op: 'insert', label: 'Insert', usesInput: true, bulk: true, primary: true },

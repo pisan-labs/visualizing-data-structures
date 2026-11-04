@@ -4,9 +4,11 @@
  * key parsing, and the walks that do not change the tree (search, min, max, inorder). Each page
  * adds its own fields to the nodes (a height, a color, a priority) and its own steps.
  */
+import type { Rng } from '../../engine/rng';
 import type {
   Mark,
   MarkRole,
+  OpCall,
   PseudoBlock,
   PseudoLine,
   Scalar,
@@ -75,6 +77,32 @@ export function parseKey(raw: Value): number | Error {
 
 export function cmp(k: number, key: number): string {
   return k < key ? `${k} < ${key}` : k > key ? `${k} > ${key}` : `${k} = ${key}`;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Presets
+
+/** n distinct keys from 1 to 99 (or more when n is large). */
+export function distinctKeys(rng: Rng, n: number): number[] {
+  const hi = Math.max(99, 3 * n);
+  const keys = new Set<number>();
+  while (keys.size < n) keys.add(rng.int(1, hi));
+  return [...keys];
+}
+
+export const ascending = (keys: number[]) => [...keys].sort((a, b) => a - b);
+export const inserts = (keys: number[]): OpCall[] => keys.map((k) => ['insert', k] as OpCall);
+
+/** Smallest, largest, second smallest, second largest...: every new key sits between the last two. */
+export function zigzagOrderOf(sorted: number[]): number[] {
+  const out: number[] = [];
+  let lo = 0;
+  let hi = sorted.length - 1;
+  while (lo <= hi) {
+    out.push(sorted[lo++]!);
+    if (lo <= hi) out.push(sorted[hi--]!);
+  }
+  return out;
 }
 
 export const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;

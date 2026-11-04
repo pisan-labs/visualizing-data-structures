@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "red-black",
+  "id": "delete-case-3",
+  "title": "Delete case 3: the near nephew is red",
+  "notes": "Deleting 10 leaves a doubly black NIL. Its sibling 80 is black, 80's far child is black (NIL) but its near child 50 is red: case 3 rotates right at 80 so the red child is on the far side, and case 4 finishes the job.",
+  "settings": {
+    "delete": "successor",
+    "nils": false,
+    "bh": true
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 80],
+    ["insert", 40],
+    ["insert", 10],
+    ["insert", 50],
+    ["delete", 10]
+  ],
+  "at": {
+    "op": 3,
+    "step": 999
+  }
+}

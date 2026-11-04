@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "red-black",
+  "id": "insert-case-1",
+  "title": "Insert case 1: a red uncle means recolor",
+  "notes": "20 lands under red 30, and its uncle 70 is red too. Case 1 recolors: 30 and 70 turn black, 50 turns red, and the problem moves up to 50. 50 is the root, so it just turns black again.",
+  "settings": {
+    "delete": "successor",
+    "nils": false,
+    "bh": true
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 30],
+    ["insert", 70],
+    ["insert", 20]
+  ],
+  "at": {
+    "op": 2,
+    "step": 999
+  }
+}

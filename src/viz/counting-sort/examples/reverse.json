@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "counting-sort",
+  "id": "reverse",
+  "title": "Reverse sorted: no harder than sorted",
+  "notes": "Counting sort never compares two values, so the order of the input does not matter. Ten values from 9 down to 0 take the same n + k steps as any other ten values from 0 to 9.",
+  "settings": { "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "9 8 7 6 5 4 3 2 1 0"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

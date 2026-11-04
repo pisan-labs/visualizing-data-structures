@@ -96,6 +96,8 @@ export interface ControlButton {
    * the button makes one call. Leave it out when the operation takes one value.
    */
   args?: string[];
+  /** Less common operations sit under "More operations" so the drawing stays in view. */
+  more?: boolean;
 }
 
 export interface Controls {

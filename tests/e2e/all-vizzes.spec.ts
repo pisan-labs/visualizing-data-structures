@@ -26,6 +26,9 @@ for (const id of ids) {
       const form = page.locator('form.controls');
       const input = form.locator('#op-input');
       const sample = (await input.count()) ? await input.getAttribute('data-sample') : null;
+      // Open "More operations" so every operation button can be clicked.
+      const more = form.locator('details.more > summary');
+      if (await more.count()) await more.click();
       const buttons = form.locator('button');
       const count = await buttons.count();
       expect(count).toBeGreaterThan(0);
@@ -37,7 +40,12 @@ for (const id of ids) {
         await expect(page.getByRole('alert')).toHaveCount(0);
       }
       const next = page.getByRole('button', { name: 'Forward to the next operation' });
-      for (let i = 0; i < count + 2 && (await next.isEnabled()); i++) await next.click();
+      // Playback may finish (and disable the button) between the check and the click, so the
+      // click must not wait for "enabled". Jumping to an operation also pauses playback.
+      for (let i = 0; i < count + 2; i++) {
+        if (await next.isDisabled()) break;
+        await next.click({ force: true });
+      }
       await expect(page.locator('.narration p')).not.toBeEmpty();
       await page.getByRole('button', { name: 'Back to the previous operation' }).click();
       await expect(page.locator('.narration p')).not.toBeEmpty();

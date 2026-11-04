@@ -57,6 +57,36 @@
 
   onDestroy(() => session.destroy());
 
+  // On wide screens, size the drawing so the playback bar fits on the first screen, whatever
+  // height this page's controls need. Phones scroll instead.
+  let vizEl: HTMLElement | undefined = $state();
+  function fitStage() {
+    const el = vizEl;
+    if (!el) return;
+    const anchor = el.querySelector('#stage-anchor');
+    const transport = el.querySelector('.transport');
+    if (embed || innerWidth < 1024 || !anchor || !transport) {
+      el.style.removeProperty('--stage-max');
+      return;
+    }
+    const top = anchor.getBoundingClientRect().top + scrollY;
+    const room = innerHeight - top - transport.getBoundingClientRect().height - 12 - 16 - 14;
+    el.style.setProperty('--stage-max', `${Math.round(Math.max(260, Math.min(680, room)))}px`);
+  }
+  $effect(() => {
+    const el = vizEl;
+    if (!el) return;
+    fitStage();
+    const observer = new ResizeObserver(() => fitStage());
+    for (const part of el.querySelectorAll('.viz-head, form.controls, details.options'))
+      observer.observe(part);
+    addEventListener('resize', fitStage);
+    return () => {
+      observer.disconnect();
+      removeEventListener('resize', fitStage);
+    };
+  });
+
   const scene = $derived(def.view(session.current.step, session.settings));
   const duration = $derived(session.animate ? session.tweenMs : 0);
 
@@ -141,7 +171,7 @@
 
 <svelte:window onkeydown={onKey} />
 
-<div class="viz" class:embed>
+<div class="viz" class:embed bind:this={vizEl}>
   <header class="viz-head">
     {#if !embed}
       <a class="back" href="/">← All visualizations</a>

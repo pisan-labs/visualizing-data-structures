@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "reverse-string",
+  "id": "rest-first",
+  "title": "Reverse the rest, then add the first character",
+  "notes": "Each call waits for the reverse of everything after its first character. On the way back the partial results grow: \"K\", \"KC\", \"KCA\", \"KCAT\", \"KCATS\".",
+  "settings": { "variant": "rest" },
+  "seed": 1,
+  "ops": [["reverse", "STACK"]],
+  "at": { "op": -1, "step": 0 }
+}

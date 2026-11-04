@@ -198,7 +198,17 @@ export function view(step: Step<FactState, undefined>, settings: FactSettings): 
   const { width, lineX } = frameSize(s, settings);
   const room = Math.max(MIN_ROOM, run?.room ?? 0);
   const stackX = treeW + GAP;
-  const stack = drawCallStack(frames, { x: stackX, y: 0, width, room, lineX, size: SIZE, roles });
+  // Before the first call main sits right under the title (so a still picture is tight); the
+  // framing keeps the room either way.
+  const stack = drawCallStack(frames, {
+    x: stackX,
+    y: 0,
+    width,
+    room: run ? room : 1,
+    lineX,
+    size: SIZE,
+    roles,
+  });
   shapes.push(...stack.shapes);
 
   const bounds = padBounds(

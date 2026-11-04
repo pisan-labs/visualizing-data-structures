@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "reverse-string",
+  "id": "even-length",
+  "title": "An even length: i passes j",
+  "notes": "With four characters there is no middle one. After two swaps i is 2 and j is 1, so the base case has to be i >= j, not i == j.",
+  "settings": { "variant": "swap" },
+  "seed": 1,
+  "ops": [["reverse", "ABCD"]],
+  "at": { "op": -1, "step": 0 }
+}

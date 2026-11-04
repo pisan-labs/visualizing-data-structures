@@ -4,7 +4,9 @@ import type { AnyVizDef, ControlButton, OpCall, Value } from './types';
  * Typed operation scripts: one statement per line or separated by ";".
  * A statement is an operation (its name or its button label) followed by values, for example
  * "push 10 20" (one call per value for bulk operations), "insert 2 99" (an operation that takes
- * two values) or "pop". Lines starting with "#" are comments.
+ * two values), "load 5 3 8 1" (one value read from the whole rest of the line, as its button
+ * reads the input box) or "pop". Lines starting with "#" are comments. A statement does what
+ * typing its values into the box and pressing the button does.
  */
 export type ScriptResult = { calls: OpCall[] } | { error: string };
 
@@ -36,8 +38,11 @@ export function parseScript(def: AnyVizDef, text: string): ScriptResult {
     }
     if (!def.controls.input) return { error: `${where}: ${b.op} needs a value.` };
     if (tokens.length === 0) return { error: `${where}: ${b.op} needs a value.` };
+    // A one-value button that is not bulk reads the whole box as one value ("load 5 3 8 1").
+    const whole = arity === 1 && !b.bulk;
+    const raw = whole ? [s.slice(s.indexOf(word) + word.length).replace(/^[\s,]+/, '')] : tokens;
     const values: Value[] = [];
-    for (const t of tokens) {
+    for (const t of raw) {
       const v = def.controls.input.parse(t);
       if (v instanceof Error) return { error: `${where}: "${t}": ${v.message}` };
       values.push(v);

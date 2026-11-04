@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { vizzes } from '../viz/all';
 import { stackArray } from '../viz/stack-array';
 import { interpolate } from '../render/interpolate';
 import { shapesBounds, type Scene } from '../render/scene';
@@ -169,6 +170,16 @@ describe('typed scripts', () => {
       error: expect.stringMatching(/^Line 1: "toolongvalue": Keep values to 6/),
     });
     expect(parseScript(stackArray, '  ')).toEqual({ error: 'The script is empty.' });
+  });
+
+  it('reads a one-value operation that is not bulk the way its button does', () => {
+    const bubble = vizzes.find((d) => d.id === 'bubble-sort')!;
+    // The Load button reads the whole box as one list, so the script must too.
+    expect(parseScript(bubble, 'load 5 3 8 1\nsort')).toEqual({
+      calls: [['load', '5 3 8 1'], ['sort']],
+    });
+    const calls = (parseScript(bubble, 'load 5, 3, 8\nsort') as { calls: OpCall[] }).calls;
+    expect(parseScript(bubble, toScript(calls))).toEqual({ calls });
   });
 });
 

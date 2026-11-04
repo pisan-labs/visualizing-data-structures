@@ -71,3 +71,7 @@
 2026-11-04 [code] Compare mode: /<page>/#compare=<other> runs the same operations on two pages side by side (each keeps its options; a side that finishes an operation waits); Compare menu lists same-family pages that can run this page's main operation
 
 2026-11-04 [decision] Operations run while playback is going now queue after the last operation instead of replacing the queued ones; when paused they still replace what follows (as after an undo)
+
+2026-11-04 [code] Merged wave 1D: linear and binary search (5 variants, refuses unsorted input), bubble, cocktail, selection, insertion, shell, merge, quick sort, quickselect; bars layout in src/layouts/bars.ts; all with practice
+
+2026-11-04 [code] Scripts read a one-value, non-bulk operation the way its button does ("load 5 3 8 1" is one load); phones give the zoom buttons their own strip above the drawing

@@ -175,12 +175,12 @@ Items marked ✔ are already built.
 
 ### 4.6 Instructor features
 - ✔ Embed in Canvas.
+- ✔ Presentation mode (2026-11-04).
+- ✔ Compare mode (2026-11-04): `/<page>/#compare=<other>` runs the same operations on two pages, or on one page with two settings, side by side. Playback moves by operation; a side that finishes first waits.
+- ✔ Assignment links (see 4.7).
+- ✔ Catalog pathways ("Data structures", "Algorithms").
 - **To add:**
-  - presentation mode;
-  - compare mode, moved earlier to wave 2 (BST vs AVL, Kruskal vs Prim, heap as array vs tree);
-  - printable concept pages;
-  - assignment links (see 4.7);
-  - catalog pathways ("Data structures", "Algorithms").
+  - printable concept pages.
 
 ### 4.7 New teaching features in v2
 

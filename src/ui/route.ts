@@ -6,6 +6,9 @@ export type Route =
       code: string | null;
       embed: boolean;
       lesson: string | null;
+      /** Embeds can fix a theme and start playing by themselves. */
+      theme: string | null;
+      autoplay: boolean;
       key: string;
     }
   /** An old link of the form /#/<id>?ex=...; the app sends it to /<id>/#ex=... */
@@ -29,12 +32,22 @@ export function parseLocation(pathname: string, hash: string): Route {
     code: params.get('ex'),
     embed: params.get('embed') === '1',
     lesson: params.get('lesson'),
+    theme: params.get('theme'),
+    autoplay: params.get('autoplay') === '1',
     key: `${pathname}${hash}`,
   };
 }
 
 /** The address of a visualization page, optionally with state in the hash. */
-export function vizHref(id: string, state: { ex?: string; embed?: boolean } = {}): string {
-  const params = [state.ex ? `ex=${state.ex}` : '', state.embed ? 'embed=1' : ''].filter(Boolean);
+export function vizHref(
+  id: string,
+  state: { ex?: string; embed?: boolean; theme?: string | null; autoplay?: boolean } = {},
+): string {
+  const params = [
+    state.ex ? `ex=${state.ex}` : '',
+    state.embed ? 'embed=1' : '',
+    state.embed && state.theme ? `theme=${state.theme}` : '',
+    state.embed && state.autoplay ? 'autoplay=1' : '',
+  ].filter(Boolean);
   return `/${id}/${params.length ? `#${params.join('&')}` : ''}`;
 }

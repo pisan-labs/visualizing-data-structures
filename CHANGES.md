@@ -43,3 +43,5 @@
 2026-11-04 [decision] Deploys only on request: work goes to dev (CI runs there), main = what Netlify publishes, moved with `git push origin dev:main` when Yusuf says deploy (15 credits each); adopted after the 15-minute window
 
 2026-11-04 [code] Trace tab (one row per step, jump, copy as CSV or Markdown), prefilled GitHub feedback link on every page, catalog search with Data structures / Algorithms pathways, advanced and ready-only filters
+
+2026-11-04 [code] Typed operation scripts in the History tab (edit and replay, line-numbered errors), -/+ speed keys, embed options (fixed theme, autoplay) in the link and the embed-code builder

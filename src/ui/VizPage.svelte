@@ -24,7 +24,16 @@
     code,
     embed,
     lesson = null,
-  }: { def: AnyVizDef; code: string | null; embed: boolean; lesson?: string | null } = $props();
+    theme = null,
+    autoplay = false,
+  }: {
+    def: AnyVizDef;
+    code: string | null;
+    embed: boolean;
+    lesson?: string | null;
+    theme?: string | null;
+    autoplay?: boolean;
+  } = $props();
 
   const session = untrack(() => new Session(def, { speed: prefs.speed, detail: prefs.detail }));
   let ready = $state(false);
@@ -43,6 +52,7 @@
       }
     }
     ready = true;
+    if (autoplay) session.play();
   });
 
   onDestroy(() => session.destroy());
@@ -65,7 +75,7 @@
         Object.keys(def.defaults).every((k) => settings[k] === def.defaults[k]);
       const ex = pristine ? undefined : await encodeExample(session.toExample());
       fullUrl = location.origin + vizHref(def.id, { ex });
-      history.replaceState(history.state, '', vizHref(def.id, { ex, embed }));
+      history.replaceState(history.state, '', vizHref(def.id, { ex, embed, theme, autoplay }));
     }, 400);
   });
 
@@ -114,6 +124,17 @@
         e.preventDefault();
         session.stepBack();
         break;
+      case '-':
+      case '+':
+      case '=': {
+        const speeds = [0.25, 0.5, 1, 1.5, 2, 4];
+        const i = speeds.indexOf(session.speed);
+        const next =
+          speeds[Math.max(0, Math.min(speeds.length - 1, i + (e.key === '-' ? -1 : 1)))]!;
+        session.setSpeed(next);
+        setPref('speed', next);
+        break;
+      }
     }
   }
 </script>

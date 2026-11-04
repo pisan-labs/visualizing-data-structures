@@ -30,10 +30,17 @@
     };
   });
 
+  // An embed may fix its theme (#...&theme=dark); otherwise the viewer's choice applies.
+  const embedTheme = $derived(
+    route.kind === 'viz' && route.embed && ['light', 'dark', 'contrast'].includes(route.theme ?? '')
+      ? route.theme
+      : null,
+  );
   $effect(() => {
     const root = document.documentElement;
-    if (prefs.theme === 'auto') root.removeAttribute('data-theme');
-    else root.setAttribute('data-theme', prefs.theme);
+    const theme = embedTheme ?? prefs.theme;
+    if (theme === 'auto') root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', theme);
   });
 
   const themes: { value: Theme; label: string }[] = [
@@ -81,7 +88,14 @@
   {:else if route.kind === 'viz'}
     {#if viz}
       {#key route.key}
-        <VizPage def={viz} code={route.code} embed={route.embed} lesson={route.lesson} />
+        <VizPage
+          def={viz}
+          code={route.code}
+          embed={route.embed}
+          lesson={route.lesson}
+          theme={route.theme}
+          autoplay={route.autoplay}
+        />
       {/key}
     {:else if viz === null}
       <div class="missing">

@@ -249,3 +249,44 @@ test('catalog search and pathways filter the list', async ({ page }) => {
   await page.getByText('Everything').click();
   await expect(page.getByRole('link', { name: 'Stack (array)' })).toBeVisible();
 });
+
+test('a typed script starts over and explains mistakes', async ({ page }) => {
+  await page.getByRole('tab', { name: 'History' }).click();
+  await page.getByText('Type a script').click();
+  const box = page.getByLabel('Script', { exact: true });
+  await box.fill('push 1 2\nfly');
+  await page.getByRole('button', { name: 'Start over with this script' }).click();
+  await expect(page.getByRole('alert')).toContainText('Line 2: "fly" is not an operation');
+  await box.fill('push 1 2 3; pop');
+  await page.getByRole('button', { name: 'Start over with this script' }).click();
+  await expect(stage(page)).toHaveAttribute('aria-label', /From bottom to top: 1, 2\./);
+});
+
+test('minus and plus change the speed', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Phones have no keyboard shortcuts');
+  const speed = page.getByRole('combobox', { name: 'Speed' });
+  await page.locator('h1').click();
+  await page.keyboard.press('+');
+  await expect(speed).toHaveValue('1.5');
+  await page.keyboard.press('-');
+  await page.keyboard.press('-');
+  await expect(speed).toHaveValue('0.5');
+});
+
+test('an embed can fix its theme and start playing', async ({ page }) => {
+  await page.goto('/stack-array/#embed=1&theme=dark&autoplay=1&ex=' + (await lifoCode(page)));
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+});
+
+/** The share code of the curated "Last in, first out" example, read from a real share link. */
+async function lifoCode(page: Page): Promise<string> {
+  await page.getByRole('tab', { name: 'Examples' }).click();
+  await page
+    .getByRole('listitem')
+    .filter({ has: page.getByText('Last in, first out', { exact: true }) })
+    .getByRole('button', { name: 'Load' })
+    .click();
+  await expect(page).toHaveURL(/#ex=z/);
+  return new URL(page.url()).hash.match(/ex=([\w-]+)/)![1]!;
+}

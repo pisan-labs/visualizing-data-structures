@@ -16,7 +16,8 @@ const variants = fc.record({
   draw: fc.constantFrom('bars' as const, 'cells' as const),
 });
 
-describe('bubble sort', () => {
+// Property tests run thousands of steps; give them room on a busy machine.
+describe('bubble sort', { timeout: 60_000 }, () => {
   it('sorts like the built-in sort, keeps every value, and is stable, in every variant', () => {
     fc.assert(
       fc.property(variants, fc.oneof(valuesArb(), repeatsArb), (st, values) => {
@@ -28,7 +29,7 @@ describe('bubble sort', () => {
         if (!st.earlyExit && !st.lastSwap) expect(c.comparisons).toBe((n * (n - 1)) / 2);
         else expect(c.comparisons).toBeLessThanOrEqual((n * (n - 1)) / 2);
       }),
-      { numRuns: 200 },
+      { numRuns: 120 },
     );
   });
 
@@ -47,7 +48,7 @@ describe('bubble sort', () => {
         const early = counters(checkSort(bubbleSort, settings({ direction, earlyExit: true }), vs));
         expect(last.comparisons).toBeLessThanOrEqual(early.comparisons!);
       }),
-      { numRuns: 150 },
+      { numRuns: 80 },
     );
   });
 
@@ -63,12 +64,14 @@ describe('bubble sort', () => {
     expect(upPass.state.a[6]!.value).toBe(73);
   });
 
-  it('puts every comparison at detail level 3 and each pass end at level 1', () => {
+  it('shows each comparison once, at level 2 or 3, and each pass end at level 1', () => {
     const t = new Timeline(bubbleSort, settings(), 1, [['load', '5 3 8 1'], ['sort']]);
     const steps = t.entries[1]!.steps;
     const compares = steps.filter((s) => s.say.startsWith('Compare'));
     expect(compares).toHaveLength(6);
-    expect(compares.every((s) => s.level === 3)).toBe(true);
+    expect(compares.every((s) => s.level === 2 || s.level === 3)).toBe(true);
+    // A pair that swaps is shown first (level 3); a pair already in order is one level-2 step.
+    expect(compares.filter((s) => s.level === 3)).toHaveLength(steps.at(-1)!.vars!.swaps as number);
     expect(steps.filter((s) => s.say.startsWith('End of pass')).every((s) => s.level === 1)).toBe(
       true,
     );

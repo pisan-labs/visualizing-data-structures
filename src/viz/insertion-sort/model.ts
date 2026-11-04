@@ -52,14 +52,6 @@ function* finish(r: Run): Gen {
 function* shifting(r: Run): Gen {
   const n = r.n;
   for (let i = 1; i < n; i++) {
-    yield r.step({
-      say: `i = ${i}: insert ${at(i, r.v(i))} into the sorted part, ${span(0, i - 1)}.`,
-      lines: ['outer'],
-      level: 2,
-      marks: [mark(r.id(i), 'found')],
-      vars: { i },
-      extra: { pointers: [{ name: 'i', at: i }], regions: sortedSoFar(i - 1) },
-    });
     const key: Item = r.a[i]!;
     r.a[i] = { uid: 0, value: key.value, stale: true };
     let j = i - 1;
@@ -74,8 +66,8 @@ function* shifting(r: Run): Gen {
     });
     const vars = () => ({ i, key: key.value, j });
     yield r.step({
-      say: `key = ${key.value}. Lift it out of A[${i}]; the old copy stays there until something overwrites it. Start with j = ${j}.`,
-      lines: ['key', 'init'],
+      say: `i = ${i}: insert ${at(i, key.value)} into the sorted part, ${span(0, i - 1)}. key = ${key.value}: lift it out; the old copy stays in A[${i}] until something overwrites it. Start with j = ${j}.`,
+      lines: ['outer', 'key', 'init'],
       level: 2,
       marks: [mark(`v${key.uid}`, 'found')],
       vars: vars(),
@@ -95,17 +87,11 @@ function* shifting(r: Run): Gen {
       }
       const v = r.v(j);
       r.count('comparisons');
-      yield r.step({
-        say: `Is ${at(j, v)} bigger than key = ${key.value}?`,
-        lines: ['while'],
-        level: 3,
-        marks: [mark(r.id(j), 'compare'), mark(`v${key.uid}`, 'found')],
-        vars: vars(),
-        extra: extra(),
-      });
+      const question = `Is ${at(j, v)} bigger than key = ${key.value}?`;
       if (v <= key.value) {
+        // Nothing moves, so the question and its answer are one step.
         yield r.step({
-          say: `${v} is not bigger than ${key.value}, so stop: ${key.value} belongs right after it, in A[${j + 1}].`,
+          say: `${question} No, so stop: ${key.value} belongs right after it, in A[${j + 1}].`,
           lines: ['while'],
           level: 2,
           marks: [mark(r.id(j), 'compare'), mark(`v${key.uid}`, 'found')],
@@ -114,6 +100,14 @@ function* shifting(r: Run): Gen {
         });
         break;
       }
+      yield r.step({
+        say: question,
+        lines: ['while'],
+        level: 3,
+        marks: [mark(r.id(j), 'compare'), mark(`v${key.uid}`, 'found')],
+        vars: vars(),
+        extra: extra(),
+      });
       const moving = r.a[j]!;
       r.a[j + 1] = moving;
       r.a[j] = { uid: 0, value: moving.value, stale: true };
@@ -183,25 +177,26 @@ function* swapping(r: Run): Gen {
       }
       const [x, y] = [r.v(j - 1), r.v(j)];
       r.count('comparisons');
+      const question = `Is ${at(j - 1, x)} bigger than ${at(j, y)}?`;
+      if (x <= y) {
+        yield r.step({
+          say: `${question} No, so ${y} is in place. ${span(0, i)} is sorted so far.`,
+          lines: ['while'],
+          level: 1,
+          marks: [mark(r.id(j - 1), 'compare'), mark(r.id(j), 'found')],
+          vars: { i, j },
+          extra: { ...extra(), regions: sortedSoFar(i) },
+        });
+        break;
+      }
       yield r.step({
-        say: `Is ${at(j - 1, x)} bigger than ${at(j, y)}?`,
+        say: question,
         lines: ['while'],
         level: 3,
         marks: [mark(r.id(j - 1), 'compare'), mark(r.id(j), 'found')],
         vars: { i, j },
         extra: extra(),
       });
-      if (x <= y) {
-        yield r.step({
-          say: `${x} is not bigger than ${y}, so ${y} is in place. ${span(0, i)} is sorted so far.`,
-          lines: ['while'],
-          level: 1,
-          marks: [mark(r.id(j), 'found')],
-          vars: { i, j },
-          extra: { ...extra(), regions: sortedSoFar(i) },
-        });
-        break;
-      }
       r.swap(j - 1, j);
       r.count('swaps');
       j--;

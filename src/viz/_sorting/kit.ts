@@ -255,16 +255,17 @@ export interface PairOptions {
   back: boolean;
   extra: () => ArrayExtra;
   vars: () => Record<string, Scalar>;
-  /** Pseudocode lines for the compare step, the "no swap" step and the swap step. */
-  lines: { compare: string[]; stay: string[]; swap: string[] };
+  /** Pseudocode lines for comparing (and leaving a pair in order) and for swapping. */
+  lines: { compare: string[]; swap: string[] };
   /** Runs right after a swap, before its step is shown (to set a flag the step displays). */
   onSwap?: () => void;
 }
 
 /**
- * Compare the neighbors A[lo] and A[lo + 1] and swap them if they are out of order: a level-3
- * step for the comparison and a level-2 step for what happens. Returns whether they swapped.
- * Shared by bubble sort and cocktail shaker sort.
+ * Compare the neighbors A[lo] and A[lo + 1] and swap them if they are out of order. A swap gets
+ * a level-3 step that shows the pair first and a level-2 step for the swap. A pair already in
+ * order gets one level-2 step: nothing moves, so a separate "compare" step would add nothing.
+ * Returns whether they swapped. Shared by bubble sort and cocktail shaker sort.
  */
 export function* compareNeighbors(
   r: Run,
@@ -275,17 +276,18 @@ export function* compareNeighbors(
   const [x, y] = [r.v(lo), r.v(hi)];
   r.count('comparisons');
   const pair = (role: MarkRole) => [mark(r.id(lo), role), mark(r.id(hi), role)];
-  yield r.step({
-    say: o.back
-      ? `Compare ${at(hi, y)} with its left neighbor, ${at(lo, x)}.`
-      : `Compare ${at(lo, x)} with its right neighbor, ${at(hi, y)}.`,
-    lines: o.lines.compare,
-    level: 3,
-    marks: pair('compare'),
-    vars: o.vars(),
-    extra: o.extra(),
-  });
+  const compare = o.back
+    ? `Compare ${at(hi, y)} with its left neighbor, ${at(lo, x)}`
+    : `Compare ${at(lo, x)} with its right neighbor, ${at(hi, y)}`;
   if (x > y) {
+    yield r.step({
+      say: `${compare}.`,
+      lines: o.lines.compare,
+      level: 3,
+      marks: pair('compare'),
+      vars: o.vars(),
+      extra: o.extra(),
+    });
     r.swap(lo, hi);
     r.count('swaps');
     o.onSwap?.();
@@ -303,9 +305,9 @@ export function* compareNeighbors(
   }
   yield r.step({
     say: o.back
-      ? `${y} is not smaller than ${x}, so they stay where they are.`
-      : `${x} is not bigger than ${y}, so they stay where they are.`,
-    lines: o.lines.stay,
+      ? `${compare}: ${y} is not smaller than ${x}, so they stay where they are.`
+      : `${compare}: ${x} is not bigger than ${y}, so they stay where they are.`,
+    lines: o.lines.compare,
     level: 2,
     marks: pair('compare'),
     vars: o.vars(),

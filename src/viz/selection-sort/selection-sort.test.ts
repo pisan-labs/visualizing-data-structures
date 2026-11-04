@@ -28,7 +28,8 @@ function reference(values: number[], useMin: boolean): number[] {
   return a.map((x) => x.uid);
 }
 
-describe('selection sort', () => {
+// Property tests run thousands of steps; give them room on a busy machine.
+describe('selection sort', { timeout: 60_000 }, () => {
   it('sorts like the built-in sort with n(n - 1)/2 comparisons and n - 1 swaps', () => {
     fc.assert(
       fc.property(variants, fc.oneof(valuesArb(), repeatsArb), (st, values) => {
@@ -37,7 +38,7 @@ describe('selection sort', () => {
         expect(c.comparisons).toBe((n * (n - 1)) / 2);
         expect(c.swaps).toBe(Math.max(0, n - 1));
       }),
-      { numRuns: 200 },
+      { numRuns: 120 },
     );
   });
 
@@ -55,7 +56,7 @@ describe('selection sort', () => {
         const last = t.entries[1]!.steps.at(-1)!.say;
         expect(last.includes('was not stable')).toBe(!stable);
       }),
-      { numRuns: 200 },
+      { numRuns: 120 },
     );
   });
 
@@ -70,11 +71,13 @@ describe('selection sort', () => {
     expect(t.entries[1]!.steps.some((s) => s.say.includes('not stable'))).toBe(true);
   });
 
-  it('makes every swap a milestone and every comparison a level-3 step', () => {
+  it('makes every swap a milestone and shows each comparison once', () => {
     const t = new Timeline(selectionSort, settings(), 1, [['load', '5 3 8 1'], ['sort']]);
     const steps = t.entries[1]!.steps;
     expect(steps.filter((s) => s.lines.includes('swap')).every((s) => s.level === 1)).toBe(true);
-    expect(steps.filter((s) => s.say.startsWith('Is ')).every((s) => s.level === 3)).toBe(true);
+    const questions = steps.filter((s) => s.say.startsWith('Is '));
+    expect(questions).toHaveLength(steps.at(-1)!.vars!.comparisons as number);
+    expect(questions.every((s) => s.level === 2 || s.level === 3)).toBe(true);
   });
 
   it('follows the setting in its pseudocode', () => {

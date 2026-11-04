@@ -82,7 +82,7 @@ function* shake(r: Run, toLast: boolean): Gen {
       back: false,
       extra,
       vars,
-      lines: { compare: ['fwd', 'fcmp'], stay: ['fcmp'], swap: ['fswap', 'fflag'] },
+      lines: { compare: ['fwd', 'fcmp'], swap: ['fswap', 'fflag'] },
       onSwap: () => {
         swapped = true;
         last = j;
@@ -130,7 +130,7 @@ function* shake(r: Run, toLast: boolean): Gen {
       back: true,
       extra,
       vars,
-      lines: { compare: ['bwd', 'bcmp'], stay: ['bcmp'], swap: ['bswap', 'bflag'] },
+      lines: { compare: ['bwd', 'bcmp'], swap: ['bswap', 'bflag'] },
       onSwap: () => {
         swapped = true;
         last = j;

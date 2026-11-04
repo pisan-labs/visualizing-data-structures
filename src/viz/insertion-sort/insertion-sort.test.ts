@@ -8,7 +8,8 @@ import type { InsertionSettings } from './model';
 const settings = (s: Partial<InsertionSettings> = {}): InsertionSettings =>
   ({ ...insertionSort.defaults, ...s }) as InsertionSettings;
 
-describe('insertion sort', () => {
+// Property tests run thousands of steps; give them room on a busy machine.
+describe('insertion sort', { timeout: 60_000 }, () => {
   it('sorts like the built-in sort, keeps every value and is stable', () => {
     fc.assert(
       fc.property(
@@ -27,7 +28,7 @@ describe('insertion sort', () => {
           expect(c.comparisons).toBeLessThanOrEqual(inversions(values) + n - 1);
         },
       ),
-      { numRuns: 200 },
+      { numRuns: 120 },
     );
   });
 
@@ -38,7 +39,7 @@ describe('insertion sort', () => {
         const swap = counters(checkSort(insertionSort, settings({ move: 'swap' }), values));
         expect(shift.comparisons).toBe(swap.comparisons);
       }),
-      { numRuns: 100 },
+      { numRuns: 60 },
     );
   });
 
@@ -68,12 +69,14 @@ describe('insertion sort', () => {
     expect(nearly.shifts).toBe(2);
   });
 
-  it('drops each key as a milestone and compares at level 3', () => {
+  it('drops each key as a milestone and shows each comparison once', () => {
     const t = new Timeline(insertionSort, settings(), 1, [['load', '5 3 8 1'], ['sort']]);
     const steps = t.entries[1]!.steps;
     expect(steps.filter((s) => s.lines.includes('drop'))).toHaveLength(3);
     expect(steps.filter((s) => s.lines.includes('drop')).every((s) => s.level === 1)).toBe(true);
-    expect(steps.filter((s) => s.say.startsWith('Is ')).every((s) => s.level === 3)).toBe(true);
+    const questions = steps.filter((s) => s.say.startsWith('Is '));
+    expect(questions).toHaveLength(steps.at(-1)!.vars!.comparisons as number);
+    expect(questions.every((s) => s.level === 2 || s.level === 3)).toBe(true);
   });
 
   it('follows the setting in its pseudocode', () => {

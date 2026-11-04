@@ -9,7 +9,7 @@ const stage = (page: Page) => page.locator('.stage > svg');
 const code = (page: Page) => page.locator('.code');
 
 async function open(page: Page, id: string, title: string) {
-  await page.goto(`./#/${id}`);
+  await page.goto(`/${id}/`);
   await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible();
   await page.getByRole('combobox', { name: 'Speed' }).selectOption('4');
 }
@@ -149,7 +149,7 @@ test.describe('insertion sort', () => {
     await backTo(page, 'A[1] = key: 2 drops into the gap.');
     await expect(page.locator('.code li.active')).toContainText('A[j + 1] = key');
     await expect(stage(page)).toHaveAttribute('aria-label', /Array A with 3 values: 1, 2, 3\./);
-    await backTo(page, 'key = 2.');
+    await backTo(page, 'key = 2: lift it out');
     await expect(stage(page)).toHaveAttribute('aria-label', /key = 2, held outside the array/);
   });
 

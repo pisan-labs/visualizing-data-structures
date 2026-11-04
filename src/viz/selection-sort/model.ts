@@ -82,15 +82,17 @@ function* select(r: Run, useMin: boolean): Gen {
     for (j = from + 1; j <= to; j++) {
       const [x, y] = [r.v(j), r.v(best)];
       r.count('comparisons');
-      yield r.step({
-        say: `Is ${at(j, x)} ${useMin ? 'smaller' : 'bigger'} than the ${word} so far, A[${name}] = ${y}?`,
-        lines: ['inner', 'cmp'],
-        level: 3,
-        marks: [mark(r.id(j), 'compare'), mark(r.id(best), 'found')],
-        vars: vars(true),
-        extra: extra(true),
-      });
+      const question = `Is ${at(j, x)} ${useMin ? 'smaller' : 'bigger'} than the ${word} so far, A[${name}] = ${y}?`;
       if (useMin ? x < y : x > y) {
+        // A new minimum: show the question first, then the answer.
+        yield r.step({
+          say: question,
+          lines: ['inner', 'cmp'],
+          level: 3,
+          marks: [mark(r.id(j), 'compare'), mark(r.id(best), 'found')],
+          vars: vars(true),
+          extra: extra(true),
+        });
         best = j;
         yield r.step({
           say: `${x} ${useMin ? '<' : '>'} ${y}, so ${name} = ${j}. ${x} is the ${word} so far.`,
@@ -101,9 +103,10 @@ function* select(r: Run, useMin: boolean): Gen {
           extra: extra(true),
         });
       } else {
+        // Nothing changes, so the question and its answer are one step.
         yield r.step({
-          say: `${x} is not ${useMin ? 'smaller' : 'bigger'} than ${y}, so ${name} stays ${best}.`,
-          lines: ['cmp'],
+          say: `${question} No: ${name} stays ${best}.`,
+          lines: ['inner', 'cmp'],
           level: 2,
           marks: [mark(r.id(j), 'compare'), mark(r.id(best), 'found')],
           vars: vars(true),

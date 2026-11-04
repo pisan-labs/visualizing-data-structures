@@ -56,7 +56,7 @@ function comparePair(
     back: down,
     extra: () => ({ pointers: ptrs(), regions: finalRegion(r) }),
     vars,
-    lines: { compare: ['inner', 'cmp'], stay: ['cmp'], swap: ['swap', ...onSwap.lines] },
+    lines: { compare: ['inner', 'cmp'], swap: ['swap', ...onSwap.lines] },
     onSwap: onSwap.then,
   });
 }

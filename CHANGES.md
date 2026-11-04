@@ -37,3 +37,5 @@
 2026-11-04 [code] UI for wave 1 features: Big-O tab (hidden answers, Watch it), code panel views (pseudocode, plain English, Python, Java, C++), presets (Start over with), Show me links, concept checks, lesson deep links (?lesson=)
 
 2026-11-04 [code] Fix: long code lines widened the page on desktop (grid tracks now minmax(0, 1fr); cards may shrink); test covers it
+
+2026-11-04 [code] Per-page URLs: /<id>/ pages prerendered with their own title, description, preview tags and canonical URL; state in the hash; old #/ links redirect; visualizations load on demand; sitemap and robots.txt

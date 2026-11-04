@@ -15,7 +15,7 @@
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
 
-  // Each "##" section is a lesson with its own deep link (#/<viz>?lesson=<slug>).
+  // Each "##" section is a lesson with its own deep link (/<viz>/#lesson=<slug>).
   const md = new Marked({
     renderer: {
       heading({ tokens, depth, text }) {

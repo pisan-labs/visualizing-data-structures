@@ -34,8 +34,8 @@ everything on every push; Netlify builds and deploys `main` (`netlify.toml`).
   in place, so read lists through `session.entries` (a fresh copy), never a cached array.
 - `src/viz/<id>/`: one folder per visualization: `model.ts` (state, operations, pseudocode),
   `view.ts` (step to scene), `index.ts` (the `VizDef`), `explain.md` (concept page),
-  `examples/*.json` (curated examples), tests. Register it in `src/viz/registry.ts`; the catalog
-  is `src/viz/catalog.ts`.
+  `examples/*.json` (curated examples), `code/` (Python, Java, C++), tests. Pages are found
+  automatically; the catalog of planned pages is `src/viz/catalog.ts`.
 
 ## Adding a visualization (definition of done)
 
@@ -106,6 +106,10 @@ everything on every push; Netlify builds and deploys `main` (`netlify.toml`).
 ## Conventions
 
 - Site name and links live in `src/site.ts` (plus `<title>` in `index.html`).
-- Routes are hash-based for now (`#/<viz-id>?ex=<code>&embed=1`); per-page URLs (`/<viz-id>/`) are coming (PLAN 5.7).
+- Every visualization has its own page, `/<viz-id>/`, written by `scripts/prerender.mjs` after
+  `vite build` (title, description, preview tags, canonical URL). The hash holds only state:
+  `#ex=<code>&embed=1&lesson=<section>`. Old `/#/<viz-id>?...` links redirect.
+- The app loads each visualization on demand (`src/viz/registry.ts`); tests and prerender use
+  `src/viz/all.ts`.
 - No analytics or tracking. No external fonts or CDNs.
 - Code is MIT; written explanations are CC BY 4.0.

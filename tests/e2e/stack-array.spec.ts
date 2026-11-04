@@ -14,14 +14,14 @@ async function push(page: Page, values: string) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('./#/stack-array');
+  await page.goto('/stack-array/');
   await expect(page.getByRole('heading', { name: 'Stack (array)' })).toBeVisible();
 });
 
 test('catalog links to the stack', async ({ page }) => {
-  await page.goto('./');
+  await page.goto('/');
   await page.getByRole('link', { name: 'Stack (array)' }).click();
-  await expect(page).toHaveURL(/#\/stack-array/);
+  await expect(page).toHaveURL(/\/stack-array\//);
   await expect(narration(page)).toContainText('An empty stack');
 });
 
@@ -66,7 +66,7 @@ test('the address bar holds the work, so a link reopens it', async ({ page, cont
   await fast(page);
   await push(page, 'S T A');
   await expect(narration(page)).toContainText('"A" is now the top', { timeout: 10_000 });
-  await expect(page).toHaveURL(/\?ex=z/);
+  await expect(page).toHaveURL(/\/stack-array\/#ex=z/);
   const url = page.url();
 
   const other = await context.newPage();
@@ -96,7 +96,7 @@ test('concept page links load examples', async ({ page }) => {
   await page.getByRole('tab', { name: 'Learn' }).click();
   await page.getByRole('link', { name: 'Reverse a word' }).click();
   await expect(page.getByText('Loaded "Reverse a word"')).toBeVisible();
-  await expect(page).toHaveURL(/#\/stack-array/);
+  await expect(page).toHaveURL(/\/stack-array\//);
 });
 
 test('switching the meaning of top changes the code and replays', async ({ page }) => {
@@ -113,7 +113,7 @@ test('switching the meaning of top changes the code and replays', async ({ page 
 test('bad input and bad links get readable errors', async ({ page }) => {
   await push(page, 'waytoolong');
   await expect(page.getByRole('alert')).toContainText('6 characters');
-  await page.goto('./#/stack-array?ex=zgarbage');
+  await page.goto('/stack-array/#ex=zgarbage');
   await expect(page.getByRole('status')).toContainText('not a valid example');
 });
 
@@ -148,7 +148,7 @@ for (const theme of ['light', 'dark', 'contrast']) {
 }
 
 test('catalog has no axe violations', async ({ page }) => {
-  await page.goto('./');
+  await page.goto('/');
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();
@@ -156,7 +156,7 @@ test('catalog has no axe violations', async ({ page }) => {
 });
 
 test('embed mode hides the site chrome', async ({ page }) => {
-  await page.goto('./#/stack-array?embed=1');
+  await page.goto('/stack-array/#embed=1');
   await expect(page.getByRole('link', { name: /Open in/ })).toBeVisible();
   await expect(page.getByRole('tab', { name: 'Learn' })).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'All visualizations' })).toHaveCount(0);
@@ -205,4 +205,17 @@ test('concept checks give feedback and Show me plays an example', async ({ page 
   await expect(check).toContainText('Yes.');
   await page.getByRole('link', { name: 'Show me' }).first().click();
   await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+});
+
+test('old /#/ links move to the page address and keep their state', async ({ page }) => {
+  await page.goto('/#/stack-array?embed=1');
+  await expect(page).toHaveURL(/\/stack-array\/#embed=1$/);
+  await expect(page.getByRole('link', { name: /Open in/ })).toBeVisible();
+});
+
+test('each visualization page has its own title and preview tags', async ({ request }) => {
+  const html = await (await request.get('/stack-array/')).text();
+  expect(html).toContain('<title>Stack (array) · StepWise</title>');
+  expect(html).toContain('<link rel="canonical" href="https://stepwise.pisan.me/stack-array/"');
+  expect(html).toMatch(/og:description" content="Push, pop and peek/);
 });

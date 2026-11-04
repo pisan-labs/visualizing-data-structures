@@ -10,6 +10,7 @@
   import LearnPanel from './LearnPanel.svelte';
   import Narration from './Narration.svelte';
   import OpControls from './OpControls.svelte';
+  import { vizHref } from './route';
   import { Session } from './session.svelte';
   import SettingsPanel from './SettingsPanel.svelte';
   import Stage from './Stage.svelte';
@@ -61,10 +62,9 @@
       const pristine =
         session.timeline.entries.length === 0 &&
         Object.keys(def.defaults).every((k) => settings[k] === def.defaults[k]);
-      const query = pristine ? '' : `?ex=${await encodeExample(session.toExample())}`;
-      const hash = `#/${def.id}${query}`;
-      fullUrl = location.href.split('#')[0] + hash;
-      history.replaceState(history.state, '', embed ? `${hash}${query ? '&' : '?'}embed=1` : hash);
+      const ex = pristine ? undefined : await encodeExample(session.toExample());
+      fullUrl = location.origin + vizHref(def.id, { ex });
+      history.replaceState(history.state, '', vizHref(def.id, { ex, embed }));
     }, 400);
   });
 
@@ -114,14 +114,14 @@
 <div class="viz" class:embed>
   <header class="viz-head">
     {#if !embed}
-      <a class="back" href="#/">← All visualizations</a>
+      <a class="back" href="/">← All visualizations</a>
     {/if}
     <div class="title-row">
       <h1>{def.title}</h1>
       {#if embed}
         <a
           class="open"
-          href={fullUrl || location.href.replace(/[?&]embed=1/, '')}
+          href={fullUrl || location.origin + vizHref(def.id)}
           target="_blank"
           rel="noopener"
         >

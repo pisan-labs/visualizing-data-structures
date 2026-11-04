@@ -1,4 +1,4 @@
-import { vizzes } from './registry';
+import { liveIds } from './registry';
 
 /**
  * Everything planned for the site, by family (PLAN.md Appendix B). Items whose id is in the
@@ -219,4 +219,4 @@ export const families: Family[] = [
   },
 ];
 
-export const isLive = (id: string): boolean => vizzes.some((v) => v.id === id);
+export const isLive = (id: string): boolean => liveIds.includes(id);

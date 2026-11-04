@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
   import { SITE_NAME, TAGLINE } from '../site';
   import { families, isLive } from '../viz/catalog';
-  import { getViz } from '../viz/registry';
 
   onMount(() => {
     document.title = `${SITE_NAME}: ${TAGLINE}`;
@@ -29,11 +28,10 @@
         <h2 id="fam-{f.name}">{f.name}</h2>
         <ul>
           {#each f.items as item (item.id)}
-            {@const def = getViz(item.id)}
-            <li class:live={!!def}>
-              {#if def}
-                <a href="#/{item.id}">{item.title}</a>
-                <span class="blurb">{def.blurb}</span>
+            {@const live = isLive(item.id)}
+            <li class:live>
+              {#if live}
+                <a href="/{item.id}/">{item.title}</a>
               {:else}
                 <span class="planned">{item.title}</span>
                 <span class="tag">{item.advanced ? 'advanced, planned' : 'planned'}</span>
@@ -102,12 +100,6 @@
 
   li.live a {
     font-weight: 700;
-  }
-
-  .blurb {
-    display: block;
-    font-size: 0.88rem;
-    color: var(--text-2);
   }
 
   .planned {

@@ -8,7 +8,8 @@
   } from '../engine/storage';
   import type { SavedExample } from '../engine/types';
   import { SITE_NAME } from '../site';
-  import { getViz } from '../viz/registry';
+  import { liveIds } from '../viz/registry';
+  import { vizHref } from './route';
   import type { Session } from './session.svelte';
   import { notify } from './state.svelte';
 
@@ -21,9 +22,7 @@
   let fileInput: HTMLInputElement | undefined = $state();
 
   async function linkFor(ex: SavedExample, embed = false): Promise<string> {
-    const code = await encodeExample(ex);
-    const base = location.href.split('#')[0];
-    return `${base}#/${ex.viz}?ex=${code}${embed ? '&embed=1' : ''}`;
+    return location.origin + vizHref(ex.viz, { ex: await encodeExample(ex), embed });
   }
 
   async function copy(text: string, what: string) {
@@ -94,10 +93,10 @@
       const raw: unknown = JSON.parse(await file.text());
       const viz = exampleViz(raw);
       if (viz && viz !== session.def.id) {
-        const other = getViz(viz);
-        if (!other)
+        if (!liveIds.includes(viz))
           throw new Error(`This file is for "${viz}", which this site does not have yet.`);
-        location.hash = new URL(await linkFor(validateExample(other, raw))).hash;
+        // That page checks the example when it opens.
+        location.href = await linkFor(raw as SavedExample);
         return;
       }
       const ex = validateExample(session.def, raw);

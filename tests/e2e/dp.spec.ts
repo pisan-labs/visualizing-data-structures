@@ -244,3 +244,43 @@ test.describe('Edit distance', () => {
     await practice(page, 'dp-edit-distance', 86420);
   });
 });
+
+test.describe('0/1 knapsack', () => {
+  test.beforeEach(({ page }) => open(page, 'dp-knapsack', '0/1 knapsack'));
+
+  test('the table beats the best value per weight first', async ({ page }) => {
+    await press(page, 'Fill the table');
+    await toEnd(page);
+    await expect(narration(page)).toContainText(
+      'K[3][5] = 22: the best value that fits in capacity 5.',
+    );
+    await press(page, 'Trace back');
+    await toEnd(page);
+    await expect(narration(page)).toContainText(
+      'Take items 2 and 3: weight 5 of 5, value 22. Greedy by value per weight gets 16.',
+    );
+    await expect(stage(page)).toHaveAttribute(
+      'aria-label',
+      /Greedy by value per weight takes 1, 2, worth 16\./,
+    );
+  });
+
+  test('loads items and a capacity typed in the box', async ({ page }) => {
+    await type(page, 'Items or capacity', '2:3 3:4 4:5 5:6');
+    await press(page, 'Load items');
+    await expect(narration(page)).toContainText('item 4 weighs 5 and is worth 6');
+    await type(page, 'Items or capacity', '7');
+    await press(page, 'Capacity');
+    await press(page, 'Fill the table');
+    await press(page, 'Trace back');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('Take items 2 and 3: weight 7 of 7, value 9.');
+    await type(page, 'Items or capacity', '1:x');
+    await press(page, 'Load items');
+    await expect(page.getByRole('alert')).toContainText('is not weight:value');
+  });
+
+  test('a practice question is graded and played', async ({ page }) => {
+    await practice(page, 'dp-knapsack', 31415);
+  });
+});

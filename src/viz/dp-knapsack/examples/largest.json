@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "dp-knapsack",
+  "id": "largest",
+  "title": "Six items, capacity 12: the most work",
+  "notes": "The largest table here: 7 rows and 13 columns, 78 cells after row 0. Every cell does the same small amount of work, so the time grows with the number of items times the capacity.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["items", "1:2 3:7 4:9 5:11 2:4 6:12"], ["capacity", 12], ["fill"], ["trace"]],
+  "at": { "op": 2, "step": 0 }
+}

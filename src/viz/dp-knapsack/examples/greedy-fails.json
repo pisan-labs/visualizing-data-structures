@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "dp-knapsack",
+  "id": "greedy-fails",
+  "title": "The best value per weight first is wrong",
+  "notes": "Item 1 is worth 6 per unit of weight, more than any other, so greedy takes it first, then item 2, and item 3 no longer fits: 16. The table leaves item 1 out and takes items 2 and 3: 22.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["items", "1:6 2:10 3:12"], ["capacity", 5], ["fill"], ["trace"]],
+  "at": { "op": 2, "step": 0 }
+}

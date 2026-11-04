@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "dp-knapsack",
+  "id": "nothing-fits",
+  "title": "Every item is too heavy",
+  "notes": "Both items weigh more than the capacity, so every cell copies the cell above and the best value is 0. The walk back takes nothing.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["items", "6:10 7:12"], ["capacity", 5], ["fill"], ["trace"]],
+  "at": { "op": 2, "step": 0 }
+}

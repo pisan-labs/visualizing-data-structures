@@ -44,7 +44,7 @@
  *   the value has a mark of its own.
  * - `ch-<lane>-<c>` and `rh-<lane>-<r>`: header text. `corner-<colLane>-<rowLane>`.
  * - `link-<id>`: a link (for arcs, also `link-<id>-up` and `link-<id>-over`), and
- *   `link-<id>-label`.
+ *   `link-<id>-label` (on a chip, `link-<id>-chip`, for links that are not arcs).
  * - `path-<k>`: the arrow from path cell k to path cell k + 1.
  * - `boxRow` shapes: `<id>-<k>` boxes and `<id>-<k>-t` their text, plus `<id>-label`.
  *
@@ -81,7 +81,7 @@ export interface TableLink {
   /** The cell that reads it. */
   to: Cell;
   role?: MarkRole;
-  /** A short label: on the arc for arcs, beside the arrow otherwise. */
+  /** A short label: over the arc for arcs, on a chip in the middle of the arrow otherwise. */
   label?: string;
   route?: 'auto' | 'arc';
   /** Arc lane, 0 nearest the grid. */
@@ -435,11 +435,29 @@ export function tableScene(
     const s = route(g, link.from, link.to);
     shapes.push({ kind: 'arrow', id, ...s, role, z: 1.5 });
     if (link.label) {
+      // A chip on the middle of the arrow. Routes keep arrows on grid lines and corners, away
+      // from the values, so the chip never covers one.
+      const mx = (s.x1 + s.x2) / 2;
+      const my = (s.y1 + s.y2) / 2;
+      const cw = link.label.length * 15 * 0.62 + 10;
+      shapes.push({
+        kind: 'rect',
+        id: `${id}-chip`,
+        x: mx - cw / 2,
+        y: my - 10,
+        w: cw,
+        h: 20,
+        r: 6,
+        cls: 'cell live',
+        z: 1.7,
+      });
       shapes.push(
-        text(`${id}-label`, (s.x1 + s.x2) / 2 + 12, (s.y1 + s.y2) / 2 - 6, link.label, 16, {
+        text(`${id}-label`, mx, my + 5, link.label, 15, {
           cls: 'label',
           mono: true,
+          weight: 'bold',
           role,
+          z: 2.1,
         }),
       );
     }

@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "trie",
+  "id": "lazy-delete",
+  "title": "A lazy delete leaves its nodes behind",
+  "notes": "With the lazy setting, deleting card only clears the mark on d. The r and d nodes stay, so search(card) walks the whole path and still says no. Inserting card again adds no nodes.",
+  "settings": {
+    "delete": "lazy"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", "cat"],
+    ["insert", "card"],
+    ["delete", "card"],
+    ["search", "card"],
+    ["insert", "card"]
+  ],
+  "at": {
+    "op": 1,
+    "step": 99
+  }
+}

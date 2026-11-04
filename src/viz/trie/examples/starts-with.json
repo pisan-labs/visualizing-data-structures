@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "trie",
+  "id": "starts-with",
+  "title": "Every word with a prefix, in order",
+  "notes": "The words go in out of order, but startsWith(ca) lists car, care, cart, cat: a preorder walk that takes the children from a to z gives alphabetical order for free.",
+  "settings": {
+    "delete": "prune"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", "cat"],
+    ["insert", "care"],
+    ["insert", "dog"],
+    ["insert", "car"],
+    ["insert", "cart"],
+    ["insert", "do"],
+    ["startsWith", "ca"]
+  ],
+  "at": {
+    "op": 5,
+    "step": 99
+  }
+}

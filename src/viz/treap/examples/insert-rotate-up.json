@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "treap",
+  "id": "insert-rotate-up",
+  "title": "A new key rotates up to its place in the heap",
+  "notes": "40 arrives with priority 10, the smallest so far. It lands as a leaf under 30, then rotates up twice, past 30 (priority 60) and 50 (priority 40), until nothing above it has a larger priority. The keys stay in order the whole time.",
+  "settings": {
+    "heap": "min",
+    "priority": "random"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", "50:40"],
+    ["insert", "30:60"],
+    ["insert", "70:50"],
+    ["insert", "20:70"],
+    ["insert", "40:10"]
+  ],
+  "at": {
+    "op": 3,
+    "step": 999
+  }
+}

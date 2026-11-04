@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "binary-tree",
+  "id": "skewed-depth",
+  "title": "A chain makes the stack as deep as the tree",
+  "notes": "Every node has only a left child. Preorder ends up with one stack frame per node, while level order never has more than one node in the queue.",
+  "settings": { "mode": "recursive", "nulls": false },
+  "seed": 1,
+  "ops": [["build", "1 2 _ 3 _ 4 _ 5 _ 6"], ["preorder"], ["levelorder"]],
+  "at": { "op": 0, "step": 99 }
+}

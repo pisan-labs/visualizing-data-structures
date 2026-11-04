@@ -1,0 +1,30 @@
+{
+  "format": 1,
+  "viz": "bst",
+  "id": "select-rank",
+  "title": "Select and rank use subtree sizes",
+  "notes": "Each node knows how many keys are in its subtree. select(4) stops at the root; select(3) and rank(60) go down one path, adding up left subtree sizes.",
+  "settings": {
+    "delete": "successor",
+    "dupes": "reject",
+    "mode": "keys"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 30],
+    ["insert", 70],
+    ["insert", 20],
+    ["insert", 40],
+    ["insert", 60],
+    ["insert", 80],
+    ["select", 4],
+    ["select", 3],
+    ["rank", 60],
+    ["rank", 45]
+  ],
+  "at": {
+    "op": 6,
+    "step": 99
+  }
+}

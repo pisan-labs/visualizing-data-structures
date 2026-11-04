@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "binary-tree",
+  "id": "postorder-iterative",
+  "title": "Postorder without recursion",
+  "notes": "A node is written only after both of its subtrees. The variable last tells us whether we are coming back up from the right subtree.",
+  "settings": { "mode": "iterative", "nulls": false },
+  "seed": 1,
+  "ops": [["build", "1 2 3 4 5 _ 6"], ["postorder"]],
+  "at": { "op": 0, "step": 99 }
+}

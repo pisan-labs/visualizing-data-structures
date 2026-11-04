@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "viz": "bst",
+  "id": "search-miss",
+  "title": "A hit at the root and a miss",
+  "notes": "search(50) finds the root in one comparison. search(45) goes left, right, right, and falls off the tree where 45 would be inserted.",
+  "settings": {
+    "delete": "successor",
+    "dupes": "reject",
+    "mode": "keys"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 30],
+    ["insert", 70],
+    ["insert", 20],
+    ["insert", 40],
+    ["insert", 60],
+    ["insert", 80],
+    ["search", 50],
+    ["search", 45]
+  ],
+  "at": {
+    "op": 6,
+    "step": 99
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "binary-tree",
+  "id": "four-orders",
+  "title": "Four ways to walk one tree",
+  "notes": "One tree, four traversals. Preorder writes a node before its subtrees, inorder between them, postorder after them, and level order goes row by row.",
+  "settings": { "mode": "recursive", "nulls": false },
+  "seed": 1,
+  "ops": [["build", "1 2 3 4 5 _ 6"], ["preorder"], ["inorder"], ["postorder"], ["levelorder"]],
+  "at": { "op": 0, "step": 99 }
+}

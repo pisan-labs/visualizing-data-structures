@@ -73,8 +73,13 @@
     Object.keys(def.defaults).every((k) => s[k] === def.defaults[k]);
 
   // Keep the address bar pointing at the current work. The second page's state carries only its
-  // options: its operations are the first page's.
+  // options: its operations are the first page's. Nothing is written once the page has gone.
   let syncTimer: ReturnType<typeof setTimeout> | undefined;
+  let alive = true;
+  onDestroy(() => {
+    alive = false;
+    clearTimeout(syncTimer);
+  });
   $effect(() => {
     void pair.a.version;
     void pair.b.version;
@@ -89,6 +94,7 @@
       const exb = isDefault(sb, b)
         ? undefined
         : await encodeExample({ ...pair.b.toExample(), ops: [], at: undefined });
+      if (!alive) return;
       history.replaceState(history.state, '', vizHref(a.id, { compare: b.id, ex, exb }));
     }, 400);
   });

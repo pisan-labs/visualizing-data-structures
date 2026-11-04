@@ -67,7 +67,14 @@
   ];
 </script>
 
-<svelte:window onhashchange={() => (route = parseLocation(location.pathname, location.hash))} />
+<!-- Read the address the navigation went to, not the current one: a page that is being replaced
+     could still rewrite it. -->
+<svelte:window
+  onhashchange={(e) => {
+    const to = new URL(e.newURL);
+    route = parseLocation(to.pathname, to.hash);
+  }}
+/>
 
 {#if !embed}
   <a

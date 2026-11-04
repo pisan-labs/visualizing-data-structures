@@ -97,8 +97,14 @@
   const scene = $derived(def.view(session.current.step, session.settings));
   const duration = $derived(session.animate ? session.tweenMs : 0);
 
-  // Keep the address bar pointing at the current work, so reload and bookmarks keep it.
+  // Keep the address bar pointing at the current work, so reload and bookmarks keep it. A page
+  // that is going away must not write the address afterwards: the next page's hash is in it.
   let syncTimer: ReturnType<typeof setTimeout> | undefined;
+  let alive = true;
+  onDestroy(() => {
+    alive = false;
+    clearTimeout(syncTimer);
+  });
   let fullUrl = $state('');
   $effect(() => {
     void session.version;
@@ -111,6 +117,7 @@
         session.timeline.entries.length === 0 &&
         Object.keys(def.defaults).every((k) => settings[k] === def.defaults[k]);
       const ex = pristine ? undefined : await encodeExample(session.toExample());
+      if (!alive) return;
       fullUrl = location.origin + vizHref(def.id, { ex });
       history.replaceState(history.state, '', vizHref(def.id, { ex, embed, theme, autoplay }));
     }, 400);

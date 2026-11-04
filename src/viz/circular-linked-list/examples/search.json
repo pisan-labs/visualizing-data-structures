@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "circular-linked-list",
+  "id": "search",
+  "title": "Search goes around once",
+  "notes": "search(15) finds it on the third comparison. search(99) visits every node, gets back to the front and gives up with -1.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insertBack", 5],
+    ["insertBack", 10],
+    ["insertBack", 15],
+    ["search", 15],
+    ["search", 99]
+  ],
+  "at": { "op": 2, "step": 99 }
+}

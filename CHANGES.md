@@ -49,3 +49,11 @@
 2026-11-04 [code] Canonical versions of shared changes the agents duplicated: buttons with several values (ControlButton.args names), circles styled like cells, wrapped code blocks on concept pages; agents asked to merge dev
 
 2026-11-04 [note] GitHub Issues turned on for pisan-labs/visualizing-data-structures; the per-page feedback link now works
+
+2026-11-04 [code] Merged wave 1A: binary tree and traversals, BST (tidy binary-tree layout in src/layouts); "More operations" fold-out for less common buttons; desktop stage sized to keep playback in view; shared browser test race fixed; ESLint skips agent worktrees
+
+2026-11-04 [code] Merged wave 1B: singly, doubly and circular linked lists, cycle detection (Floyd), linked-nodes layout in src/layouts/linked.ts; pointer dots drawn without a ring
+
+2026-11-04 [code] Practice sets: seeded, browser-graded questions (choice, number, sequence) with Show me; assignment links (#practice=<seed>&n=); stack has 4 question kinds; shape drawing moved to Shapes.svelte; practice is part of the definition of done
+
+2026-11-04 [code] Presentation mode: Present button hides site chrome, tabs and options, enlarges narration, code and variables, goes full screen; Escape leaves

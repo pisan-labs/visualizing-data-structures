@@ -10,6 +10,7 @@
   import LearnPanel from './LearnPanel.svelte';
   import Narration from './Narration.svelte';
   import OpControls from './OpControls.svelte';
+  import PracticePanel from './PracticePanel.svelte';
   import { vizHref } from './route';
   import { Session } from './session.svelte';
   import SettingsPanel from './SettingsPanel.svelte';
@@ -26,6 +27,8 @@
     lesson = null,
     theme = null,
     autoplay = false,
+    practice = null,
+    practiceCount = 5,
   }: {
     def: AnyVizDef;
     code: string | null;
@@ -33,6 +36,8 @@
     lesson?: string | null;
     theme?: string | null;
     autoplay?: boolean;
+    practice?: number | null;
+    practiceCount?: number;
   } = $props();
 
   const session = untrack(() => new Session(def, { speed: prefs.speed, detail: prefs.detail }));
@@ -41,6 +46,7 @@
   onMount(async () => {
     document.title = `${def.title} · ${SITE_NAME}`;
     if (lesson) setPref('tab', 'learn');
+    if (practice) setPref('tab', 'practice');
     if (code) {
       try {
         session.load(validateExample(def, await decodeExample(code)));
@@ -56,6 +62,36 @@
   });
 
   onDestroy(() => session.destroy());
+
+  // On wide screens, size the drawing so the playback bar fits on the first screen, whatever
+  // height this page's controls need. Phones scroll instead.
+  let vizEl: HTMLElement | undefined = $state();
+  function fitStage() {
+    const el = vizEl;
+    if (!el) return;
+    const anchor = el.querySelector('#stage-anchor');
+    const transport = el.querySelector('.transport');
+    if (embed || innerWidth < 1024 || !anchor || !transport) {
+      el.style.removeProperty('--stage-max');
+      return;
+    }
+    const top = anchor.getBoundingClientRect().top + scrollY;
+    const room = innerHeight - top - transport.getBoundingClientRect().height - 12 - 16 - 14;
+    el.style.setProperty('--stage-max', `${Math.round(Math.max(260, Math.min(680, room)))}px`);
+  }
+  $effect(() => {
+    const el = vizEl;
+    if (!el) return;
+    fitStage();
+    const observer = new ResizeObserver(() => fitStage());
+    for (const part of el.querySelectorAll('.viz-head, form.controls, details.options'))
+      observer.observe(part);
+    addEventListener('resize', fitStage);
+    return () => {
+      observer.disconnect();
+      removeEventListener('resize', fitStage);
+    };
+  });
 
   const scene = $derived(def.view(session.current.step, session.settings));
   const duration = $derived(session.animate ? session.tweenMs : 0);
@@ -86,13 +122,14 @@
     )}`,
   );
 
-  const tabs: { id: Tab; label: string }[] = [
+  const tabs = $derived<{ id: Tab; label: string }[]>([
     { id: 'learn', label: 'Learn' },
     { id: 'bigo', label: 'Big-O' },
+    ...(def.practice?.length ? [{ id: 'practice' as Tab, label: 'Practice' }] : []),
     { id: 'examples', label: 'Examples' },
     { id: 'trace', label: 'Trace' },
     { id: 'history', label: 'History' },
-  ];
+  ]);
 
   function onTabKey(e: KeyboardEvent) {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
@@ -104,7 +141,26 @@
     document.getElementById(`tab-${next.id}`)?.focus();
   }
 
+  // Presentation mode for lectures: bigger text, no site chrome or tabs, full screen.
+  let presenting = $state(false);
+  async function present(on: boolean) {
+    presenting = on;
+    document.documentElement.classList.toggle('presenting', on);
+    try {
+      if (on && !document.fullscreenElement) await document.documentElement.requestFullscreen();
+      if (!on && document.fullscreenElement) await document.exitFullscreen();
+    } catch {
+      // Full screen is optional (some browsers and iframes refuse it).
+    }
+    queueMicrotask(fitStage);
+  }
+  onDestroy(() => document.documentElement.classList.remove('presenting'));
+
   function onKey(e: KeyboardEvent) {
+    if (e.key === 'Escape' && presenting) {
+      present(false);
+      return;
+    }
     const t = e.target as HTMLElement;
     if (e.altKey || e.ctrlKey || e.metaKey) return;
     if (t.closest('input, textarea, select, [contenteditable="true"], [role="tab"]')) return;
@@ -141,13 +197,22 @@
 
 <svelte:window onkeydown={onKey} />
 
-<div class="viz" class:embed>
+<div class="viz" class:embed bind:this={vizEl}>
   <header class="viz-head">
     {#if !embed}
       <a class="back" href="/">← All visualizations</a>
     {/if}
     <div class="title-row">
       <h1>{def.title}</h1>
+      {#if !embed}
+        <button
+          class="btn small present"
+          onclick={() => present(!presenting)}
+          aria-pressed={presenting}
+        >
+          {presenting ? 'Exit presentation' : 'Present'}
+        </button>
+      {/if}
       {#if embed}
         <a
           class="open"
@@ -205,6 +270,8 @@
               <LearnPanel {session} {lesson} />
             {:else if t.id === 'bigo'}
               <BigOPanel {session} />
+            {:else if t.id === 'practice'}
+              <PracticePanel {session} seed={practice} count={practiceCount} />
             {:else if t.id === 'trace'}
               <TracePanel {session} />
             {:else if t.id === 'examples'}

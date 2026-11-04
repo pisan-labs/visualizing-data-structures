@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "circular-linked-list",
+  "id": "one-node",
+  "title": "The empty list and the one-node list",
+  "notes": "Removing from an empty list is an error. One node points at itself: rotating it changes nothing, and removing it sets tail to null.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["removeFront"],
+    ["insertFront", 7],
+    ["rotate"],
+    ["traverse"],
+    ["removeFront"],
+    ["traverse"]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

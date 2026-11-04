@@ -96,6 +96,8 @@ export interface ControlButton {
    * the button makes one call. Leave it out when the operation takes one value.
    */
   args?: string[];
+  /** Less common operations sit under "More operations" so the drawing stays in view. */
+  more?: boolean;
 }
 
 export interface Controls {
@@ -169,6 +171,33 @@ export interface SavedExample {
   at?: { op: number; step: number };
 }
 
+/** How a practice question is answered. */
+export type PracticeAnswer =
+  | { kind: 'choice'; options: string[]; correct: number }
+  | { kind: 'number'; value: number }
+  /** Values typed in order, separated by spaces or commas, e.g. a traversal. */
+  | { kind: 'sequence'; value: string[] };
+
+/** One generated practice question. Compute answers with the model, never by hand. */
+export interface PracticeQuestion {
+  /** Inline Markdown. Say what to do; the picture shows the state after `setup`. */
+  prompt: string;
+  /** Operations run from the start (with `settings`) to make the state in the picture. */
+  setup: OpCall[];
+  settings?: Settings;
+  answer: PracticeAnswer;
+  /** Inline Markdown shown after checking: why the answer is what it is. */
+  explain: string;
+  /** Operations "Show me" plays on the main drawing, after the setup. */
+  watch?: OpCall[];
+}
+
+export interface PracticeKind {
+  id: string;
+  title: string;
+  make(rng: Rng): PracticeQuestion;
+}
+
 export interface VizDef<S, Set extends Settings, X = unknown> {
   id: string;
   title: string;
@@ -193,6 +222,8 @@ export interface VizDef<S, Set extends Settings, X = unknown> {
   complexity: ComplexityRow[];
   /** Static code in three languages, tested against the model. */
   code?: CodeTabs;
+  /** Generators for seeded practice sets (the Practice tab). */
+  practice?: PracticeKind[];
 }
 
 // Erased form used by generic UI code.

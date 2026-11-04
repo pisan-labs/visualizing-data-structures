@@ -9,6 +9,9 @@ export type Route =
       /** Embeds can fix a theme and start playing by themselves. */
       theme: string | null;
       autoplay: boolean;
+      /** A practice set to open: #practice=<seed>&n=<count>. */
+      practice: number | null;
+      practiceCount: number;
       key: string;
     }
   /** An old link of the form /#/<id>?ex=...; the app sends it to /<id>/#ex=... */
@@ -34,6 +37,8 @@ export function parseLocation(pathname: string, hash: string): Route {
     lesson: params.get('lesson'),
     theme: params.get('theme'),
     autoplay: params.get('autoplay') === '1',
+    practice: Number(params.get('practice')) || null,
+    practiceCount: Number(params.get('n')) || 5,
     key: `${pathname}${hash}`,
   };
 }

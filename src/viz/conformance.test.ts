@@ -4,6 +4,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { validateExample } from '../engine/example';
+import { practiceSet } from '../engine/practice';
 import { makeRng } from '../engine/rng';
 import { Timeline } from '../engine/timeline';
 import type { AnyVizDef, OpCall, Settings, Value } from '../engine/types';
@@ -144,6 +145,42 @@ describe.each(vizzes.map((v) => [v.id, v] as const))('%s', (_id, def) => {
     }
   });
 });
+
+describe.each(vizzes.filter((v) => v.practice?.length).map((v) => [v.id, v] as const))(
+  '%s practice',
+  (_id, def) => {
+    it('makes well-formed, reproducible questions that the model can run', () => {
+      for (const seed of [1, 2, 3, 42, 4242]) {
+        const set = practiceSet(def, seed, 8);
+        expect(practiceSet(def, seed, 8).map((x) => x.question)).toEqual(
+          set.map((x) => x.question),
+        );
+        for (const { kind, question: q } of set) {
+          const where = `${kind.id} (seed ${seed})`;
+          for (const text of [q.prompt, q.explain]) {
+            expect(text.trim(), where).not.toBe('');
+            expect(text, where).not.toMatch(/\{[\w.]+\}|\bundefined\b|\bNaN\b|TODO/);
+          }
+          const settings = { ...def.defaults, ...q.settings };
+          checkTimeline(def, new Timeline(def, settings, 1, [...q.setup, ...(q.watch ?? [])]));
+          const a = q.answer;
+          if (a.kind === 'choice') {
+            expect(a.options.length, where).toBeGreaterThanOrEqual(2);
+            expect(new Set(a.options).size, `${where}: options are distinct`).toBe(
+              a.options.length,
+            );
+            expect(a.correct, where).toBeGreaterThanOrEqual(0);
+            expect(a.correct, where).toBeLessThan(a.options.length);
+          } else if (a.kind === 'number') {
+            expect(Number.isFinite(a.value), where).toBe(true);
+          } else {
+            for (const v of a.value) expect(v.trim(), where).not.toBe('');
+          }
+        }
+      }
+    });
+  },
+);
 
 /** Default settings plus each choice option on its own, so every variant is covered once. */
 function settingsSamples(def: AnyVizDef): Settings[] {

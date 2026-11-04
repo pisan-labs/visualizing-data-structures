@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "doubly-linked-list",
+  "id": "empty-and-one",
+  "title": "The empty list and the one-node list",
+  "notes": "An empty list is the sentinel pointing at itself. Removing from it is an error. Insert one node: nil.next.prev = new sets nil.prev, because nil.next is nil. Then remove it again.",
+  "settings": { "sentinel": "on" },
+  "seed": 1,
+  "ops": [["removeHead"], ["get", 0], ["insertHead", 7], ["removeTail"]],
+  "at": { "op": -1, "step": 0 }
+}

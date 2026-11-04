@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "linked-list",
+  "id": "head-order",
+  "title": "Insert at the head: link first, then move head",
+  "notes": "Three inserts at the head. Each one sets new.next = head before head = new. The list comes out in the reverse of the order the values went in.",
+  "settings": { "tail": "on" },
+  "seed": 1,
+  "ops": [
+    ["insertHead", 30],
+    ["insertHead", 20],
+    ["insertHead", 10]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

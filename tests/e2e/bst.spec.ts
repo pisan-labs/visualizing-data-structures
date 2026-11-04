@@ -10,12 +10,16 @@ async function fast(page: Page) {
 
 async function op(page: Page, name: string, value?: string) {
   if (value !== undefined) await page.getByLabel('Key', { exact: true }).fill(value);
-  await page.getByRole('button', { name, exact: true }).click();
+  const button = page.getByRole('button', { name, exact: true });
+  // Less common operations sit under "More operations".
+  if (!(await button.isVisible())) await page.getByText('More operations').click();
+  await button.click();
 }
 
 async function toEnd(page: Page) {
+  // Playback can disable the button between the check and the click; jumping also pauses.
   const next = page.getByRole('button', { name: 'Forward to the next operation' });
-  while (await next.isEnabled()) await next.click();
+  while (!(await next.isDisabled())) await next.click({ force: true });
 }
 
 async function seven(page: Page) {

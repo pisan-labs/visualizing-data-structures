@@ -75,6 +75,12 @@
     border-radius: 4px;
   }
 
+  /* Code blocks wrap instead of widening the page on a phone. */
+  .learn :global(pre) {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
   .learn :global(ul) {
     padding-left: 1.2em;
   }

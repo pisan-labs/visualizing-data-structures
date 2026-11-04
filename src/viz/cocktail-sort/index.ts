@@ -31,6 +31,7 @@ import {
   pseudocode,
   type CocktailSettings,
 } from './model';
+import { cocktailPractice } from './practice';
 import { view } from './view';
 
 export const cocktailSort: VizDef<ArrayState, CocktailSettings, ArrayExtra> = {
@@ -121,6 +122,7 @@ export const cocktailSort: VizDef<ArrayState, CocktailSettings, ArrayExtra> = {
     lastSwap,
     duplicates,
   ] as unknown as SavedExample[],
+  practice: cocktailPractice(() => cocktailSort),
 };
 
 export default cocktailSort;

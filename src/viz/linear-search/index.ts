@@ -29,6 +29,7 @@ import {
   pseudocode,
   type LinearSettings,
 } from './model';
+import { linearPractice } from './practice';
 import { view } from './view';
 
 /** Driver protocol: "search x" prints the index the model returned. Rejected calls are left out. */
@@ -137,6 +138,7 @@ export const linearSearch: VizDef<ArrayState, LinearSettings, ArrayExtra> = {
   },
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [found, notFound, firstSlot, duplicates, sentinel] as unknown as SavedExample[],
+  practice: linearPractice(() => linearSearch),
 };
 
 export default linearSearch;

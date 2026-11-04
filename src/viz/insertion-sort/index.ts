@@ -31,6 +31,7 @@ import {
   pseudocode,
   type InsertionSettings,
 } from './model';
+import { insertionPractice } from './practice';
 import { view } from './view';
 
 export const insertionSort: VizDef<ArrayState, InsertionSettings, ArrayExtra> = {
@@ -117,6 +118,7 @@ export const insertionSort: VizDef<ArrayState, InsertionSettings, ArrayExtra> = 
     reverse,
     duplicates,
   ] as unknown as SavedExample[],
+  practice: insertionPractice(() => insertionSort),
 };
 
 export default insertionSort;

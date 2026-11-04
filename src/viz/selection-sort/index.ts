@@ -30,6 +30,7 @@ import {
   pseudocode,
   type SelectionSettings,
 } from './model';
+import { selectionPractice } from './practice';
 import { view } from './view';
 
 export const selectionSort: VizDef<ArrayState, SelectionSettings, ArrayExtra> = {
@@ -115,6 +116,7 @@ export const selectionSort: VizDef<ArrayState, SelectionSettings, ArrayExtra> = 
     reverse,
     notStable,
   ] as unknown as SavedExample[],
+  practice: selectionPractice(() => selectionSort),
 };
 
 export default selectionSort;

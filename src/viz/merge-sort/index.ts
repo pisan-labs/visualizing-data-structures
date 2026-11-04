@@ -33,6 +33,7 @@ import {
   pseudocode,
   type MergeSettings,
 } from './model';
+import { mergePractice } from './practice';
 import { view } from './view';
 
 /**
@@ -131,6 +132,7 @@ export const mergeSort: VizDef<ArrayState, MergeSettings, ArrayExtra> = {
     oddSize,
     duplicates,
   ] as unknown as SavedExample[],
+  practice: mergePractice(() => mergeSort),
 };
 
 export default mergeSort;

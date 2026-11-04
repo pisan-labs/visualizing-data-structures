@@ -32,6 +32,7 @@ import {
   pseudocode,
   type QuickSettings,
 } from './model';
+import { quickPractice } from './practice';
 import { view } from './view';
 
 export const quickSort: VizDef<ArrayState, QuickSettings, ArrayExtra> = {
@@ -113,6 +114,7 @@ export const quickSort: VizDef<ArrayState, QuickSettings, ArrayExtra> = {
     hoare,
     allEqual,
   ] as unknown as SavedExample[],
+  practice: quickPractice(() => quickSort),
 };
 
 export default quickSort;

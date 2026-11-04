@@ -31,6 +31,7 @@ import {
   pseudocode,
   type BubbleSettings,
 } from './model';
+import { bubblePractice } from './practice';
 import { view } from './view';
 
 export const bubbleSort: VizDef<ArrayState, BubbleSettings, ArrayExtra> = {
@@ -128,6 +129,7 @@ export const bubbleSort: VizDef<ArrayState, BubbleSettings, ArrayExtra> = {
     lastSwap,
     duplicates,
   ] as unknown as SavedExample[],
+  practice: bubblePractice(() => bubbleSort),
 };
 
 export default bubbleSort;

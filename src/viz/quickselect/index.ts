@@ -32,6 +32,7 @@ import {
   pseudocode,
   type SelectSettings,
 } from './model';
+import { selectPractice } from './practice';
 import { view } from './view';
 
 /** Driver protocol: "select k" prints the k-th smallest value. Rejected calls are left out. */
@@ -112,6 +113,7 @@ export const quickselect: VizDef<ArrayState, SelectSettings, ArrayExtra> = {
   },
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [median, smallest, lucky, sortedWorst, hoare, duplicates] as unknown as SavedExample[],
+  practice: selectPractice(() => quickselect),
 };
 
 export default quickselect;

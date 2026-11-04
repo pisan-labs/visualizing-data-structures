@@ -37,6 +37,7 @@ import {
   type BinarySettings,
   type Variant,
 } from './model';
+import { binaryPractice } from './practice';
 import { view } from './view';
 
 /** Driver commands, one per variant. */
@@ -215,6 +216,7 @@ export const binarySearch: VizDef<ArrayState, BinarySettings, ArrayExtra> = {
     unsorted,
     recursive,
   ] as unknown as SavedExample[],
+  practice: binaryPractice(() => binarySearch),
 };
 
 export default binarySearch;

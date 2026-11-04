@@ -33,6 +33,7 @@ import {
   pseudocode,
   type ShellSettings,
 } from './model';
+import { shellPractice } from './practice';
 import { view } from './view';
 
 export const shellSort: VizDef<ArrayState, ShellSettings, ArrayExtra> = {
@@ -126,6 +127,7 @@ export const shellSort: VizDef<ArrayState, ShellSettings, ArrayExtra> = {
     halvingTrap,
     notStable,
   ] as unknown as SavedExample[],
+  practice: shellPractice(() => shellSort),
 };
 
 export default shellSort;

@@ -90,8 +90,8 @@ export const dynamicArray: VizDef<DynState, DynSettings, DynExtra> = {
       { op: 'insert', label: 'Insert', usesInput: true, args: ['an index', 'a value'] },
       { op: 'removeAt', label: 'Remove at', usesInput: true, bulk: true },
       { op: 'removeLast', label: 'Remove last', usesInput: false },
-      { op: 'get', label: 'Get', usesInput: true, bulk: true },
-      { op: 'set', label: 'Set', usesInput: true, args: ['an index', 'a value'] },
+      { op: 'get', label: 'Get', usesInput: true, bulk: true, more: true },
+      { op: 'set', label: 'Set', usesInput: true, args: ['an index', 'a value'], more: true },
     ],
     random: { label: 'Append random', make: (rng) => [['append', rng.int(1, 99)]] },
     presets: [

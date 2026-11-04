@@ -83,8 +83,8 @@ export const dequeArray: VizDef<DequeState, DequeSettings, DequeExtra> = {
       { op: 'addLast', label: 'Add last', usesInput: true, bulk: true, primary: true },
       { op: 'removeFirst', label: 'Remove first', usesInput: false },
       { op: 'removeLast', label: 'Remove last', usesInput: false },
-      { op: 'peekFirst', label: 'Peek first', usesInput: false },
-      { op: 'peekLast', label: 'Peek last', usesInput: false },
+      { op: 'peekFirst', label: 'Peek first', usesInput: false, more: true },
+      { op: 'peekLast', label: 'Peek last', usesInput: false, more: true },
     ],
     random: {
       label: 'Add random',

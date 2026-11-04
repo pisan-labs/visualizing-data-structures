@@ -17,7 +17,10 @@ async function fast(page: Page) {
 
 async function press(page: Page, button: string, input?: string) {
   if (input !== undefined) await page.getByLabel('Value or index').fill(input);
-  await page.getByRole('button', { name: button, exact: true }).click();
+  const target = page.getByRole('button', { name: button, exact: true });
+  // Get and Set sit under "More operations".
+  if (!(await target.isVisible())) await page.locator('details.more > summary').click();
+  await target.click();
 }
 
 async function loadExample(page: Page, title: string) {

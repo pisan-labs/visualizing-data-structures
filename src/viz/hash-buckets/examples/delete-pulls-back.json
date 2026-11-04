@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "hash-buckets",
+  "id": "delete-pulls-back",
+  "title": "Delete pulls a key back from the overflow area",
+  "notes": "Bucket 0 is full and 20 and 25 wait in the overflow area. Deleting 15 frees a slot, and 20 moves back into it. That keeps the rule that only a full bucket has keys in the overflow area, so a search can still stop at a bucket with room.",
+  "settings": { "B": 5, "b": 2, "overflow": "area" },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 15],
+    ["insert", 20],
+    ["insert", 25],
+    ["delete", 15],
+    ["search", 25]
+  ],
+  "at": { "op": 3, "step": 100 }
+}

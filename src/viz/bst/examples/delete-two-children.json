@@ -1,0 +1,30 @@
+{
+  "format": 1,
+  "viz": "bst",
+  "id": "delete-two-children",
+  "title": "Delete a node with two children",
+  "notes": "50 has two children, so its successor 55 (the smallest key on its right) takes its place. 55's right child, 57, first moves up into 55's old spot.",
+  "settings": {
+    "delete": "successor",
+    "dupes": "reject",
+    "mode": "keys"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 30],
+    ["insert", 70],
+    ["insert", 20],
+    ["insert", 40],
+    ["insert", 60],
+    ["insert", 80],
+    ["insert", 55],
+    ["insert", 65],
+    ["insert", 57],
+    ["delete", 50]
+  ],
+  "at": {
+    "op": 9,
+    "step": 99
+  }
+}

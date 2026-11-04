@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "binary-tree",
+  "id": "level-queue",
+  "title": "Level order uses a queue",
+  "notes": "Children join the back of the queue, so a whole level comes out before the next one starts.",
+  "settings": { "mode": "recursive", "nulls": false },
+  "seed": 1,
+  "ops": [["build", "1 2 3 4 5 6 7 8 _ _ 9"], ["levelorder"]],
+  "at": { "op": 0, "step": 99 }
+}

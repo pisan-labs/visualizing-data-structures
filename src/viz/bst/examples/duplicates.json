@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "viz": "bst",
+  "id": "duplicates",
+  "title": "Counting duplicate keys",
+  "notes": "With duplicates counted, inserting 30 again adds to its count instead of adding a node. Delete takes one copy away at a time, and select counts every copy.",
+  "settings": {
+    "delete": "successor",
+    "dupes": "count",
+    "mode": "keys"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 30],
+    ["insert", 70],
+    ["insert", 30],
+    ["insert", 30],
+    ["select", 3],
+    ["delete", 30],
+    ["inorder"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

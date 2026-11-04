@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "range-queries",
+  "id": "update-then-query",
+  "title": "Change a value, then query",
+  "notes": "Set A[2] to 10. Every entry of P from P[3] on has to change before the next sum is right.",
+  "settings": { "structure": "prefix" },
+  "seed": 1,
+  "ops": [
+    ["build", "5 3 8 1 9 2 7 4"],
+    ["query", 0, 3],
+    ["update", 2, 10],
+    ["query", 0, 3],
+    ["query", 4, 7]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

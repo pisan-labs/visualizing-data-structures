@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "range-queries",
+  "id": "sparse-update",
+  "title": "One change touches many windows",
+  "notes": "Setting A[7] to 1 means recomputing every window that contains position 7: 2 in row 1, 4 in row 2, 8 in row 3 and 1 in row 4. A sparse table is meant for arrays that do not change.",
+  "settings": { "structure": "sparse" },
+  "seed": 1,
+  "ops": [
+    ["build", "12 7 19 3 25 14 8 21 5 30 17 9 26 2 11 16"],
+    ["update", 7, 1],
+    ["query", 0, 15]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

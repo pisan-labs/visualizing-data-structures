@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "range-queries",
+  "id": "single-cell",
+  "title": "A range of one cell",
+  "notes": "sum(4, 4) is P[5] − P[4]: two neighbors in P, and their difference is A[4] itself.",
+  "settings": { "structure": "prefix" },
+  "seed": 1,
+  "ops": [
+    ["build", "5 3 8 1 9 2 7 4"],
+    ["query", 4, 4]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

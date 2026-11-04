@@ -46,6 +46,8 @@ export interface Around {
   calls: () => BarsCall[];
   vars: () => Record<string, Scalar>;
   pointers?: () => BarsPointer[];
+  /** Index ranges out of play (quickselect fades the side it no longer needs). */
+  faded?: () => { from: number; to: number }[];
 }
 
 const RULE_TEXT: Record<PivotRule, string> = {
@@ -93,7 +95,12 @@ export function* partition(
   const lomuto = st.partition === 'lomuto';
   const home = lomuto ? r : p;
   const window: BarsRegion = { id: 'window', from: p, to: r, tone: 'window' };
-  const base = (): ArrayExtra => ({ calls: around.calls(), regions: [window] });
+  const base = (): ArrayExtra => ({
+    calls: around.calls(),
+    faded: around.faded?.(),
+    regions: [window],
+    pointers: around.pointers?.(),
+  });
 
   // Choose the pivot and move it to A[r] (Lomuto) or A[p] (Hoare).
   const natural = lomuto ? 'last' : 'first';
@@ -140,6 +147,7 @@ export function* partition(
     ];
     const extra = (last: number): ArrayExtra => ({
       calls: around.calls(),
+      faded: around.faded?.(),
       regions: regions(last),
       pointers: [
         { name: 'j', at: j },
@@ -218,6 +226,7 @@ export function* partition(
       vars: { ...vars(), q },
       extra: {
         calls: around.calls(),
+        faded: around.faded?.(),
         regions: [
           window,
           ...(q - 1 >= p
@@ -250,6 +259,7 @@ export function* partition(
   ];
   const extra = (): ArrayExtra => ({
     calls: around.calls(),
+    faded: around.faded?.(),
     regions: regions(),
     pointers: [{ name: 'i', at: i }, { name: 'j', at: j }, ...(around.pointers?.() ?? [])],
   });
@@ -324,6 +334,7 @@ export function* partition(
       vars: { ...vars(), q: j },
       extra: {
         calls: around.calls(),
+        faded: around.faded?.(),
         regions: [
           window,
           { id: 'low', from: p, to: j, tone: 'plain', label: `≤ ${x}` },
@@ -367,14 +378,14 @@ export function partitionLines(st: PartitionSettings): PseudoLine[] {
     middle: L(
       'choose',
       1,
-      `swap ${home} and A[floor((p + r) / 2)]`,
+      `swap ${home} and A[floor((p+r)/2)]`,
       `Use the middle value as the pivot: move it to ${home}.`,
     ),
     median3: L(
       'choose',
       1,
-      `swap ${home} and the median of A[p], A[mid], A[r]`,
-      `Use the median of the first, middle and last values: move it to ${home}.`,
+      `swap ${home} and A[median3(p, r)]`,
+      `Use the median of the first, middle and last values (A[p], A[mid], A[r]): move it to ${home}.`,
     ),
     random: L(
       'choose',

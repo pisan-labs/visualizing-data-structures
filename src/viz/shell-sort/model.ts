@@ -246,8 +246,8 @@ export function pseudocode(st: ShellSettings): PseudoBlock[] {
           L(
             'init',
             1,
-            'gaps = [701, 301, 132, 57, 23, 10, 4, 1]',
-            "Ciura's gaps, found by experiment.",
+            'gaps = [..., 57, 23, 10, 4, 1]',
+            "Ciura's gaps, found by experiment: 701, 301, 132, 57, 23, 10, 4, 1.",
           ),
           L(
             'gap',

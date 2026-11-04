@@ -234,6 +234,37 @@ test.describe('quicksort', () => {
     await option(page, "Hoare's: two indices walk toward each other");
     await expect(code(page)).toContainText('hoarePartition(A, p, r)');
     await option(page, 'Median of first, middle and last');
-    await expect(code(page)).toContainText('the median of A[p], A[mid], A[r]');
+    await expect(code(page)).toContainText('swap A[p] and A[median3(p, r)]');
+  });
+});
+
+test.describe('quickselect', () => {
+  test.beforeEach(({ page }) => open(page, 'quickselect', 'Quickselect'));
+
+  test('finds the k-th smallest value', async ({ page }) => {
+    await form(page).getByLabel('Values or k').fill('2');
+    await run(page, 'Select');
+    await toEnd(page);
+    await expect(narration(page)).toContainText(
+      'select(2) returns 17, the 2nd smallest of the 6 values.',
+    );
+    await expect(page.locator('.vars')).toContainText('result');
+  });
+
+  test('explains a k that is out of range', async ({ page }) => {
+    await form(page).getByLabel('Values or k').fill('9');
+    await run(page, 'Select');
+    await expect(narration(page)).toContainText('k must be between 1 (the smallest) and 6');
+    await expect(page.getByRole('alert')).toHaveCount(0);
+  });
+
+  test('the worst case example and the Hoare option', async ({ page }) => {
+    await loadExample(page, 'Sorted input, last value as pivot, k = 1: the worst case');
+    await toEnd(page);
+    await expect(narration(page)).toContainText(
+      'select(1) returns 10, the smallest of the 8 values.',
+    );
+    await option(page, "Hoare's: two indices walk toward each other");
+    await expect(code(page)).toContainText('return quickselect(A, p, q, k)');
   });
 });

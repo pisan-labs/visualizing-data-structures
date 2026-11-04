@@ -471,7 +471,8 @@ export function* insertUp(
         1,
         [nodeMark(x, 'found'), cellMark(hit, 'found'), mark('arg-box', 'error')],
       );
-      return s;
+      // End on the state the step shows: the working copy has already taken a uid for k.
+      return W.snap();
     }
     if (W.leaf(x)) {
       node.keys.splice(i, 0, { uid, key: k });

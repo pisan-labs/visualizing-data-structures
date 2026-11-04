@@ -287,6 +287,18 @@ const run = (settings: Partial<BTreeSettings>, calls: OpCall[]) =>
 const ins = (ks: number[]): OpCall[] => ks.map((k) => ['insert', k]);
 
 describe('B-tree', () => {
+  it('ends a repeated insert on the state its last step shows, with either split rule', () => {
+    // Splitting on the way up once returned the old state after showing the working copy.
+    for (const split of ['down', 'up'] as const) {
+      const settings = { ...bTree.defaults, t: '2', split } as BTreeSettings;
+      const tl = new Timeline(bTree, settings, 1, [
+        ['insert', 5],
+        ['insert', 5],
+      ]);
+      for (const e of tl.entries) expect(e.steps[e.steps.length - 1]!.state).toEqual(e.end);
+    }
+  });
+
   it('matches a reference B-tree, shape included, and keeps every invariant on every step', () => {
     fc.assert(
       fc.property(

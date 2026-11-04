@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bfs",
+  "id": "grid",
+  "title": "A grid: shortest routes in a maze-like graph",
+  "notes": "The distances from A grow one diagonal at a time. Every vertex at distance 2 is found before any at distance 3.",
+  "settings": {
+    "marking": "colors",
+    "layout": "grid"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, B-C, C-D, A-E, B-F, C-G, D-H, E-F, F-G, G-H, E-I, F-J, G-K, H-L, I-J, J-K, K-L"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

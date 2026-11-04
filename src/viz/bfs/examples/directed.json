@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bfs",
+  "id": "directed",
+  "title": "A directed graph: edges only go one way",
+  "notes": "BFS follows edges forward only. E has an edge into A, but no edge leads to E, so E stays at d = \u221e. F is 3 edges away: A, C, D, F.",
+  "settings": {
+    "marking": "colors",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A>B, A>C, B>C, C>D, D>B, E>A, D>F, F>C"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

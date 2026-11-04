@@ -630,98 +630,89 @@ export interface DrawGraphOptions {
 }
 
 interface Route {
-  /** Points from the start end to the end end, trimmed to the circles. */
+  /** Untrimmed points from the edge's u to its v (plus a bend point when it bends). */
   pts: Pt[];
-  /** A point for labels, and the unit normal there. */
+  /** A point for labels, and the unit normal there (outward when bent). */
   mid: Pt;
   nx: number;
   ny: number;
 }
 
-/** Distance from p to the segment ab, and whether p projects inside it. */
-function segDist(p: Pt, a: Pt, b: Pt): { d: number; inside: boolean } {
+/** Distance from p to the segment ab. */
+function segDist(p: Pt, a: Pt, b: Pt): number {
   const dx = b.x - a.x;
   const dy = b.y - a.y;
   const len2 = dx * dx + dy * dy || 1e-9;
-  const t = ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2;
-  const c = Math.max(0, Math.min(1, t));
-  return {
-    d: Math.hypot(p.x - (a.x + c * dx), p.y - (a.y + c * dy)),
-    inside: t > 0.05 && t < 0.95,
-  };
+  const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2));
+  return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
 }
 
 function clearOf(path: Pt[], others: Pt[], room: number): boolean {
   for (const p of others)
-    for (let i = 0; i + 1 < path.length; i++) {
-      const s = segDist(p, path[i]!, path[i + 1]!);
-      if (s.d < room) return false;
-    }
+    for (let i = 0; i + 1 < path.length; i++)
+      if (segDist(p, path[i]!, path[i + 1]!) < room) return false;
   return true;
 }
 
-/** The path from a to b, bent around any vertex in `others` it would touch. */
-function route(
-  a: Pt,
-  b: Pt,
-  others: Pt[],
-  offset: number,
-  startTrim: number,
-  endTrim: number,
-): Route {
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-  const len = Math.hypot(dx, dy) || 1;
-  const ux = dx / len;
-  const uy = dy / len;
+/** The path from a to b, offset sideways, bent around any vertex in `others` it would touch. */
+function route(a: Pt, b: Pt, others: Pt[], offset: number): Route {
+  const len = dist(a, b) || 1;
   // Normal to the left of the direction a -> b (y grows downward).
-  const nx = uy;
-  const ny = -ux;
+  const nx = (b.y - a.y) / len;
+  const ny = -(b.x - a.x) / len;
   const A = { x: a.x + nx * offset, y: a.y + ny * offset };
   const B = { x: b.x + nx * offset, y: b.y + ny * offset };
   const room = VERTEX_R + 5;
-  const near = others.filter((p) => segDist(p, A, B).d < VERTEX_R + 40);
-  let bend: Pt | null = null;
-  if (!clearOf([A, B], near, room)) {
-    const mid = { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 };
-    const sides = offset < 0 ? [-1, 1] : [1, -1];
-    outer: for (const h of [VERTEX_R + 12, VERTEX_R + 26, VERTEX_R + 42, VERTEX_R + 60]) {
-      for (const side of sides) {
-        const c = { x: mid.x + nx * h * side, y: mid.y + ny * h * side };
-        if (clearOf([A, c, B], near, room)) {
-          bend = c;
-          break outer;
-        }
-      }
+  const near = others.filter((p) => segDist(p, A, B) < VERTEX_R + 40);
+  const mid = { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 };
+  if (clearOf([A, B], near, room)) return { pts: [A, B], mid, nx, ny };
+  const sides = offset < 0 ? [-1, 1] : [1, -1];
+  for (const h of [VERTEX_R + 12, VERTEX_R + 26, VERTEX_R + 42, VERTEX_R + 60]) {
+    for (const side of sides) {
+      const c = { x: mid.x + nx * h * side, y: mid.y + ny * h * side };
+      if (clearOf([A, c, B], near, room))
+        return { pts: [A, c, B], mid: c, nx: nx * side, ny: ny * side };
     }
   }
-  const pts = bend ? [A, bend, B] : [A, B];
-  // Trim the ends to the circles along the first and last segments.
-  const trim = (from: Pt, toward: Pt, by: number): Pt => {
-    const d = dist(from, toward) || 1;
-    return {
-      x: from.x + ((toward.x - from.x) * by) / d,
-      y: from.y + ((toward.y - from.y) * by) / d,
-    };
-  };
-  const start = trim(pts[0]!, pts[1]!, startTrim);
-  const end = trim(pts[pts.length - 1]!, pts[pts.length - 2]!, endTrim);
-  const out = [start, ...pts.slice(1, -1), end];
-  const mid = bend ?? { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 };
-  let mx = nx;
-  let my = ny;
-  if (bend) {
-    // Labels go on the outside of the bend.
-    const cx = (A.x + B.x) / 2;
-    const cy = (A.y + B.y) / 2;
-    const l = Math.hypot(bend.x - cx, bend.y - cy) || 1;
-    mx = (bend.x - cx) / l;
-    my = (bend.y - cy) / l;
-  }
-  return { pts: out, mid, nx: mx, ny: my };
+  return { pts: [A, B], mid, nx, ny };
 }
 
-/** Free directions around a vertex: candidates sorted by how far they are from its edges. */
+/** Move `from` toward `toward` by `by`. */
+function trim(from: Pt, toward: Pt, by: number): Pt {
+  const d = dist(from, toward) || 1;
+  return { x: from.x + ((toward.x - from.x) * by) / d, y: from.y + ((toward.y - from.y) * by) / d };
+}
+
+const NOTE_SIZE = 13;
+const POINTER_SIZE = 15;
+/** Room kept beside every vertex for a badge, so badges never move as others appear. */
+const NOTE_W = textWidth('88/88', NOTE_SIZE, true) + 8;
+const NOTE_H = NOTE_SIZE + 5;
+
+export function labelSize(text: string): number {
+  return text.length <= 2 ? 16 : 13.5;
+}
+
+const overlaps = (a: Bounds, b: Bounds) =>
+  a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+
+function boxHitsCircle(b: Bounds, c: Pt, r: number): boolean {
+  const x = Math.max(b.x, Math.min(c.x, b.x + b.w));
+  const y = Math.max(b.y, Math.min(c.y, b.y + b.h));
+  return Math.hypot(c.x - x, c.y - y) < r;
+}
+
+function boxHitsSegment(b: Bounds, p: Pt, q: Pt): boolean {
+  const n = Math.max(2, Math.ceil(dist(p, q) / 4));
+  for (let i = 0; i <= n; i++) {
+    const x = p.x + ((q.x - p.x) * i) / n;
+    const y = p.y + ((q.y - p.y) * i) / n;
+    if (x > b.x && x < b.x + b.w && y > b.y && y < b.y + b.h) return true;
+  }
+  return false;
+}
+
+/** The eight directions around a vertex, the ones farthest from its edges first. */
 function freeDirections(at: Pt, toward: Pt[]): number[] {
   const angles = toward.map((p) => Math.atan2(p.y - at.y, p.x - at.x));
   // Preferred order when there is a tie: above right, below right, right, above, ...
@@ -742,11 +733,125 @@ function freeDirections(at: Pt, toward: Pt[]): number[] {
     .map((c) => c.a);
 }
 
-const NOTE_SIZE = 13;
-const POINTER_SIZE = 15;
+/** Edge routes and the spots beside each vertex for its badge and its pointer labels. */
+interface Geometry {
+  routes: Map<string, Route>;
+  /** The direction of each vertex's badge, in radians. */
+  note: Map<string, number>;
+  pointer: Map<string, { at: Pt; a: number }>;
+  labels: Map<string, { weight?: Pt; kind?: Pt }>;
+  noteBox(v: string, a: number, w: number): Bounds;
+}
 
-export function labelSize(text: string): number {
-  return text.length <= 2 ? 16 : 13.5;
+const geometryCache = new WeakMap<GraphLayout, Map<string, Geometry>>();
+
+/**
+ * Everything about where things go that does not depend on a step: edge routes, the spots for
+ * weights and edge letters, and a spot beside every vertex for a badge and for pointers. The
+ * spots avoid other vertices, edges, labels and each other, so a badge stays put when others
+ * appear.
+ */
+function geometry(g: GraphLike, layout: GraphLayout, weights: boolean): Geometry {
+  const key = `${g.directed}|${weights}|${g.edges.map((e) => `${e.u}-${e.v}`).join(',')}`;
+  let byKey = geometryCache.get(layout);
+  const hit = byKey?.get(key);
+  if (hit) return hit;
+  const R = layout.r;
+  const pos = layout.pos;
+  const arcs = new Set(g.edges.map((e) => `${e.u}>${e.v}`));
+  const routes = new Map<string, Route>();
+  const labels = new Map<string, { weight?: Pt; kind?: Pt }>();
+  const segments: [Pt, Pt][] = [];
+  const taken: Bounds[] = [];
+  const leaving = new Map(g.vertices.map((v) => [v, [] as Pt[]]));
+  for (const e of g.edges) {
+    const p = pos[e.u];
+    const q = pos[e.v];
+    if (!p || !q) continue;
+    const k = `${e.u}-${e.v}`;
+    const paired = g.directed && arcs.has(`${e.v}>${e.u}`);
+    const others = g.vertices.filter((v) => v !== e.u && v !== e.v).map((v) => pos[v]!);
+    // The two arcs of a pair each keep to their right of the line between their ends.
+    const r = route(p, q, others, paired ? -6 : 0);
+    routes.set(k, r);
+    for (let i = 0; i + 1 < r.pts.length; i++) segments.push([r.pts[i]!, r.pts[i + 1]!]);
+    leaving.get(e.u)!.push(r.pts[1]!);
+    leaving.get(e.v)!.push(r.pts[r.pts.length - 2]!);
+    // Weight on one side and the edge letter on the other. A paired arc or a bent edge has
+    // only one free side (outside the pair, outside the bend), so both go there, apart.
+    const bent = r.pts.length > 2;
+    const oneSide = paired || bent;
+    const s = paired && !bent ? -1 : 1;
+    const tx = -r.ny;
+    const ty = r.nx;
+    const apart = oneSide && weights ? 9 : 0;
+    const out = { x: r.mid.x + r.nx * 11 * s, y: r.mid.y + r.ny * 11 * s };
+    const spot = {
+      weight: weights ? { x: out.x - tx * apart, y: out.y - ty * apart } : undefined,
+      kind: oneSide
+        ? { x: out.x + tx * apart, y: out.y + ty * apart }
+        : { x: r.mid.x - r.nx * 11, y: r.mid.y - r.ny * 11 },
+    };
+    labels.set(k, spot);
+    if (spot.weight) taken.push({ x: spot.weight.x - 10, y: spot.weight.y - 8, w: 20, h: 16 });
+  }
+  const cost = (b: Bounds, self: string) => {
+    let n = 0;
+    for (const v of g.vertices) if (v !== self && boxHitsCircle(b, pos[v]!, R + 6)) n += 4;
+    for (const [p, q] of segments) if (boxHitsSegment(b, p, q)) n += 1;
+    for (const t of taken) if (overlaps(t, b)) n += 3;
+    return n;
+  };
+  const best = (v: string, boxAt: (a: number) => Bounds, skip: (a: number) => boolean) => {
+    let pick: { a: number; b: Bounds; n: number } | null = null;
+    for (const a of freeDirections(pos[v]!, leaving.get(v)!)) {
+      if (skip(a)) continue;
+      const b = boxAt(a);
+      const n = cost(b, v);
+      if (!pick || n < pick.n) pick = { a, b, n };
+      if (n === 0) break;
+    }
+    return pick!;
+  };
+  /** A badge of width w beside v in direction a, its near side just clear of the circle. */
+  const noteBox = (v: string, a: number, w: number): Bounds => {
+    const at = pos[v]!;
+    const d = R + 4 + Math.max(w * Math.abs(Math.cos(a)), NOTE_H * Math.abs(Math.sin(a))) / 2;
+    const c = { x: at.x + Math.cos(a) * d, y: at.y + Math.sin(a) * d };
+    return { x: c.x - w / 2, y: c.y - NOTE_H / 2, w, h: NOTE_H };
+  };
+  const note = new Map<string, number>();
+  for (const v of g.vertices) {
+    const pick = best(
+      v,
+      (a) => noteBox(v, a, NOTE_W),
+      () => false,
+    );
+    taken.push(pick.b);
+    note.set(v, pick.a);
+  }
+  const pointer = new Map<string, { at: Pt; a: number }>();
+  for (const v of g.vertices) {
+    const at = pos[v]!;
+    const used = note.get(v)!;
+    const pick = best(
+      v,
+      (a) => {
+        const c = { x: at.x + Math.cos(a) * (R + 13), y: at.y + Math.sin(a) * (R + 13) };
+        return { x: c.x - 14, y: c.y - 10, w: 28, h: 20 };
+      },
+      (a) => Math.abs(Math.atan2(Math.sin(a - used), Math.cos(a - used))) < 0.7,
+    );
+    taken.push(pick.b);
+    pointer.set(v, { at: { x: pick.b.x + 14, y: pick.b.y + 10 }, a: pick.a });
+  }
+  const geo = { routes, note, pointer, labels, noteBox };
+  if (!byKey) {
+    byKey = new Map();
+    geometryCache.set(layout, byKey);
+  }
+  byKey.set(key, geo);
+  return geo;
 }
 
 export function drawGraph(
@@ -759,68 +864,51 @@ export function drawGraph(
   const pos = layout.pos;
   const shapes: Shape[] = [];
   const boxes: Bounds[] = [layout.bounds];
-  const arcs = new Set(g.edges.map((e) => `${e.u}>${e.v}`));
   const showWeights = o.weights ?? g.weighted;
-  // Directions edges leave each vertex in, for placing notes and pointers.
-  const leaving = new Map(g.vertices.map((v) => [v, [] as Pt[]]));
+  const geo = geometry(g, layout, showWeights);
 
   for (const e of g.edges) {
     const key = `${e.u}-${e.v}`;
+    const r = geo.routes.get(key);
+    if (!r) continue;
     const id = edgeId(key);
     const look = o.edge?.(key);
-    const p = pos[e.u];
-    const q = pos[e.v];
-    if (!p || !q) continue;
-    const others = g.vertices.filter((v) => v !== e.u && v !== e.v).map((v) => pos[v]!);
-    const paired = g.directed && arcs.has(`${e.v}>${e.u}`);
-    // Draw from the parent when a tree edge of an undirected graph was found from v.
+    // A tree edge of an undirected graph found from v is drawn from v, so its head is at u.
     const flip = look === 'tree' && !g.directed && o.parent?.(key) === e.v;
     const head = g.directed || look === 'tree';
-    const [from, to] = flip ? [q, p] : [p, q];
-    // The two arcs of a pair each keep to their right of the line between their ends.
-    const r = route(from, to, others, paired ? -6 : 0, R + 1, head ? R + 2 : R + 1);
-    leaving.get(e.u)!.push(r.pts.length > 2 ? r.pts[1]! : q);
-    leaving.get(e.v)!.push(r.pts.length > 2 ? r.pts[1]! : p);
+    const pts = flip ? [...r.pts].reverse() : r.pts;
+    const n = pts.length;
+    const drawn = [
+      trim(pts[0]!, pts[1]!, R + 1),
+      ...pts.slice(1, -1),
+      trim(pts[n - 1]!, pts[n - 2]!, head ? R + 2 : R + 1),
+    ];
     const role = roles.get(id) ?? (look === 'tree' ? 'done' : undefined);
     const dashed = look === 'seen' || look === 'back' || look === 'forward' || look === 'cross';
-    const opacity = look === 'unexamined' ? 0.32 : look === 'seen' ? 0.75 : undefined;
-    const segs = r.pts.length - 1;
-    for (let i = 0; i < segs; i++) {
-      const last = i === segs - 1;
+    const opacity = look === 'unexamined' ? 0.35 : look === 'seen' ? 0.75 : undefined;
+    for (let i = 0; i + 1 < drawn.length; i++) {
+      const last = i + 2 === drawn.length;
       shapes.push({
         kind: 'arrow',
         id: last ? id : `${id}-a`,
-        x1: r.pts[i]!.x,
-        y1: r.pts[i]!.y,
-        x2: r.pts[i + 1]!.x,
-        y2: r.pts[i + 1]!.y,
+        x1: drawn[i]!.x,
+        y1: drawn[i]!.y,
+        x2: drawn[i + 1]!.x,
+        y2: drawn[i + 1]!.y,
         head: last && head ? 'end' : 'none',
         dashed,
         role,
         opacity,
       });
     }
-    // Weight on one side and the edge kind's letter on the other. A paired arc or a bent edge
-    // has only one free side (outside the pair, outside the bend): both go there, apart.
-    const bent = r.pts.length > 2;
-    const oneSide = paired || bent;
-    const s = paired && !bent ? -1 : 1;
-    const tx = -r.ny;
-    const ty = r.nx;
-    const letter = look ? KIND_LETTER[look] : undefined;
-    const apart = oneSide && showWeights && letter ? 9 : 0;
-    if (showWeights) {
-      const text = String(e.w);
-      const at = {
-        x: r.mid.x + r.nx * 11 * s - tx * apart,
-        y: r.mid.y + r.ny * 11 * s - ty * apart,
-      };
+    const spot = geo.labels.get(key)!;
+    if (showWeights && spot.weight) {
       shapes.push({
         kind: 'text',
         id: weightId(key),
-        x: at.x,
-        y: at.y + 4.5,
-        text,
+        x: spot.weight.x,
+        y: spot.weight.y + 4.5,
+        text: String(e.w),
         size: 13,
         anchor: 'middle',
         weight: 'bold',
@@ -828,15 +916,13 @@ export function drawGraph(
         opacity,
       });
     }
-    if (letter) {
-      const at = oneSide
-        ? { x: r.mid.x + r.nx * 11 * s + tx * apart, y: r.mid.y + r.ny * 11 * s + ty * apart }
-        : { x: r.mid.x - r.nx * 11, y: r.mid.y - r.ny * 11 };
+    const letter = look ? KIND_LETTER[look] : undefined;
+    if (letter && spot.kind) {
       shapes.push({
         kind: 'text',
         id: kindId(key),
-        x: at.x,
-        y: at.y + 5,
+        x: spot.kind.x,
+        y: spot.kind.y + 5,
         text: letter,
         size: 13.5,
         anchor: 'middle',
@@ -894,18 +980,10 @@ export function drawGraph(
       role: roles.get(labelId(v)) ?? (role === 'active' || role === 'error' ? role : undefined),
       opacity,
     });
-
-    const dirs = freeDirections(at, leaving.get(v)!);
     const note = o.note?.(v);
-    let used: number | null = null;
     if (note) {
-      const a = dirs[0]!;
-      used = a;
-      const w = textWidth(note, NOTE_SIZE, true) + 8;
-      const h = NOTE_SIZE + 5;
-      const d = R + 4 + Math.max(w * Math.abs(Math.cos(a)), h * Math.abs(Math.sin(a))) / 2;
-      const c = { x: at.x + Math.cos(a) * d, y: at.y + Math.sin(a) * d };
-      const box = { x: c.x - w / 2, y: c.y - h / 2, w, h };
+      const box = geo.noteBox(v, geo.note.get(v)!, textWidth(note, NOTE_SIZE, true) + 8);
+      const c = { x: box.x + box.w / 2, y: box.y + box.h / 2 };
       shapes.push({ kind: 'rect', id: `${noteId(v)}-box`, ...box, r: 4, opacity });
       shapes.push({
         kind: 'text',
@@ -923,18 +1001,11 @@ export function drawGraph(
     }
     const here = pointersAt.get(v);
     if (here) {
-      const a =
-        dirs.find(
-          (x) =>
-            used === null || Math.abs(Math.atan2(Math.sin(x - used), Math.cos(x - used))) > 1.2,
-        ) ?? dirs[1]!;
-      const d = R + 13;
-      const c = { x: at.x + Math.cos(a) * d, y: at.y + Math.sin(a) * d };
-      const step = 13;
+      const { at: c, a } = geo.pointer.get(v)!;
       here.forEach((p, i) => {
-        const off = (i - (here.length - 1) / 2) * step;
-        // Side by side across the direction they point in.
-        const x = c.x + -Math.sin(a) * off;
+        const off = (i - (here.length - 1) / 2) * 13;
+        // Side by side across the direction they sit in.
+        const x = c.x - Math.sin(a) * off;
         const y = c.y + Math.cos(a) * off;
         shapes.push({
           kind: 'text',

@@ -61,3 +61,9 @@
 2026-11-04 [code] Merged wave 1C: array queue and deque, dynamic array, sorted array, list-based stack, queue and deque (node-chain layout in src/layouts/node-chain.ts), with practice sets
 
 2026-11-04 [code] Practice pictures crop to the drawn shapes (shapesBounds), so space a view reserves for animation no longer shows as blank bands; Vitest per-test timeout raised to 60 s for heavy property tests
+
+2026-11-04 [code] Merged practice sets for binary-tree (traversals, level-order build, call-stack depth, queue size) and bst (height, delete replacement, select/rank, search path)
+
+2026-11-04 [code] Fixed dev CI (red since the Practice tab): six tabs overflowed phones by 37 px with CI's wider font; tabs now go in rows of three in a narrow card, and the screen-fit test also runs with a wide font
+
+2026-11-04 [code] Practice pictures scale to 0.8 to 1.25 px per unit where the screen allows: deep trees and tall stacks get more height, small lists are no longer blown up

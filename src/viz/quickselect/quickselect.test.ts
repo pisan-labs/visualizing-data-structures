@@ -91,7 +91,7 @@ describe('quickselect', { timeout: 60_000 }, () => {
     const lucky = select(settings({ pivot: 'last' }), [42, 17, 63, 8, 35, 91, 24, 30], 4).steps;
     expect(counters(lucky).comparisons).toBe(7);
     expect(lucky.at(-1)!.vars?.result).toBe(30);
-    const median = select(settings(), [38, 81, 22, 57, 13, 64, 49], 4, 7).steps;
+    const median = select(settings(), [38, 81, 22, 57, 13, 64, 49], 4, 3).steps;
     expect(counters(median).comparisons).toBe(11);
     expect(ordinal(1)).toBe('1st');
     expect(ordinal(12)).toBe('12th');

@@ -22,13 +22,20 @@ export function makeRng(seed: number): Rng {
   };
 }
 
-/** Derive an independent seed for operation `index`, so replaying one op never shifts another. */
+/** The MurmurHash3 finalizer: a bijection on 32 bits in which nearby inputs land far apart. */
+function mix(x: number): number {
+  x = Math.imul(x ^ (x >>> 16), 0x85ebca6b);
+  x = Math.imul(x ^ (x >>> 13), 0xc2b2ae35);
+  return (x ^ (x >>> 16)) >>> 0;
+}
+
+/**
+ * Derive an independent seed for operation `index`, so replaying one op never shifts another.
+ * The seed is mixed before the index joins it: combining them first (seed ^ index) made nearby
+ * seeds share numbers, so practice set 12346 repeated a question of set 12345.
+ */
 export function deriveSeed(seed: number, index: number): number {
-  let h = (seed ^ 0x9e3779b9) >>> 0;
-  h = Math.imul(h ^ index, 0x85ebca6b) >>> 0;
-  h ^= h >>> 13;
-  h = Math.imul(h, 0xc2b2ae35) >>> 0;
-  return (h ^ (h >>> 16)) >>> 0;
+  return mix((mix(seed >>> 0) + Math.imul(index + 1, 0x9e3779b9)) >>> 0);
 }
 
 export function randomSeed(): number {

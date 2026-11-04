@@ -5,7 +5,7 @@
   "title": "A random pivot",
   "notes": "Sorted input again, with a random pivot. The random choices come from the example's seed, so every replay picks the same pivots. Some splits are lopsided, but nothing like the staircase of the worst case: 15 comparisons and 4 levels, against 28 and 7.",
   "settings": { "partition": "lomuto", "pivot": "random", "draw": "bars" },
-  "seed": 2,
+  "seed": 39,
   "ops": [["load", "10 20 30 40 50 60 70 80"], ["sort"]],
   "at": { "op": 0, "step": 0 }
 }

@@ -150,7 +150,7 @@ describe('quicksort', { timeout: 60_000 }, () => {
     expect(lomuto).toMatchObject({ swaps: 13, comparisons: 16 });
     const random = counters(
       checkSort(quickSort, settings({ pivot: 'random' }), [10, 20, 30, 40, 50, 60, 70, 80], {
-        seed: 2,
+        seed: 39,
       }),
     );
     expect(random).toMatchObject({ comparisons: 15, maxDepth: 4 });

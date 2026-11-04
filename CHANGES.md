@@ -75,3 +75,9 @@
 2026-11-04 [code] Merged wave 1D: linear and binary search (5 variants, refuses unsorted input), bubble, cocktail, selection, insertion, shell, merge, quick sort, quickselect; bars layout in src/layouts/bars.ts; all with practice
 
 2026-11-04 [code] Scripts read a one-value, non-bulk operation the way its button does ("load 5 3 8 1" is one load); phones give the zoom buttons their own strip above the drawing
+
+2026-11-04 [code] Merged wave 2E: AVL, red-black (CLRS cases, NIL leaves, black-height), splay (zig, zig-zig, zig-zag), treap (seeded or typed priorities); all with practice
+
+2026-11-04 [decision] deriveSeed mixes the seed before the operation index: nearby seeds shared numbers (set 12346 repeated a question of set 12345). Random runs change; the two examples whose prose quotes random counts got new seeds that keep the same numbers
+
+2026-11-04 [code] Long pseudocode scrolls inside the side column on desktop and follows the current line; long lines wrap at their indent instead of scrolling one by one on phones

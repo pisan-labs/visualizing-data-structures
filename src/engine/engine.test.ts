@@ -66,6 +66,10 @@ describe('rng', () => {
     expect(Array.from({ length: 5 }, () => b.int(1, 6))).toEqual(xs);
     expect(xs.every((x) => x >= 1 && x <= 6)).toBe(true);
     expect(deriveSeed(1, 0)).not.toBe(deriveSeed(1, 1));
+    // Nearby seeds, as instructors hand out (sets 12000 to 12399), never share a derived seed.
+    const seen = new Set<number>();
+    for (let s = 12000; s < 12400; s++) for (let i = 0; i < 12; i++) seen.add(deriveSeed(s, i));
+    expect(seen.size).toBe(400 * 12);
   });
 });
 

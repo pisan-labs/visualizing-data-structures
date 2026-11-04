@@ -67,10 +67,13 @@ export function view(step: RadixStep, settings: RadixSettings): Scene {
 
   if (extra.buckets) {
     const depth = Math.max(1, extra.depth ?? 1);
+    // Deep buckets get shorter cells, so the drawing stays readable on a short laptop screen.
+    const cellH = depth > 4 ? 30 : CELL_H;
+    const gap = depth > 4 ? 3 : GAP;
     const top = bounds.h + 4;
     const bp = Math.min(64, Math.floor((width - 20) / base));
     const left = (width - base * bp) / 2;
-    const colH = depth * (CELL_H + GAP) - GAP + 2 * PAD;
+    const colH = depth * (cellH + gap) - gap + 2 * PAD;
     // Three digits must fit the cell inside a column.
     const size = Math.min(24, Math.floor((bp - 10) / 1.8));
     for (let d = 0; d < base; d++) {
@@ -99,7 +102,7 @@ export function view(step: RadixStep, settings: RadixSettings): Scene {
         z: 0.5,
       });
       extra.buckets[d]!.forEach((item, k) => {
-        const y = top + HEAD + PAD + k * (CELL_H + GAP);
+        const y = top + HEAD + PAD + k * (cellH + gap);
         const role = roles.get(`v${item.uid}`);
         out.push({
           kind: 'rect',
@@ -107,7 +110,7 @@ export function view(step: RadixStep, settings: RadixSettings): Scene {
           x: x + 5,
           y,
           w: bp - 10,
-          h: CELL_H,
+          h: cellH,
           r: 5,
           cls: 'cell live',
           role,
@@ -116,7 +119,7 @@ export function view(step: RadixStep, settings: RadixSettings): Scene {
           kind: 'text',
           id: `v${item.uid}`,
           x: x + bp / 2,
-          y: y + CELL_H / 2 + size * 0.36,
+          y: y + cellH / 2 + size * 0.36,
           text: String(item.value),
           size,
           anchor: 'middle',

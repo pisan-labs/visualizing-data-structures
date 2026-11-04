@@ -136,3 +136,32 @@ test.describe('radix sort', () => {
     await practice(page, 'radix-sort', 27182);
   });
 });
+
+test.describe('bucket sort', () => {
+  test.beforeEach(({ page }) => open(page, 'bucket-sort', 'Bucket sort'));
+
+  test('scatters, sorts each bucket and joins them', async ({ page }) => {
+    await sort(page);
+    await toEnd(page);
+    await expect(narration(page)).toContainText(
+      'Sorted: 0.12, 0.17, 0.21, 0.23, 0.26, 0.39, 0.68, 0.72, 0.78, 0.94. Insertion sort made 5 comparisons in all; the fullest bucket held 3 values.',
+    );
+    await backTo(page, 'A[0] = 0.78: 10 × 0.78 = 7.8, so it goes to the back of bucket 7.');
+    await expect(stage(page)).toHaveAttribute('aria-label', /Buckets: 7: 0\.78\./);
+    await load(page, '0.5 1.5');
+    await expect(page.getByRole('alert')).toContainText('is not a value like 0.78');
+  });
+
+  test('whole numbers: one outlier crowds one bucket', async ({ page }) => {
+    await option(page, 'Whole numbers, buckets split [min, max]');
+    await expect(code(page)).toContainText('floor(n * (v - min) / (max - min + 1))');
+    await load(page, '7 3 6 1 5 2 4 99');
+    await sort(page);
+    await toEnd(page);
+    await expect(narration(page)).toContainText('the fullest bucket held 7 values');
+  });
+
+  test('a practice question is graded and played', async ({ page }) => {
+    await practice(page, 'bucket-sort', 31416);
+  });
+});

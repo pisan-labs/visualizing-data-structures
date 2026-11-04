@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "bucket-sort",
+  "id": "spread-out",
+  "title": "Ten values, ten buckets",
+  "notes": "Ten values in [0, 1) go to buckets 0 to 9 by their first decimal digit. No bucket gets more than three, so the insertion sorts are short, and joining the buckets in order gives the sorted array.",
+  "settings": { "values": "fraction", "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "0.78 0.17 0.39 0.26 0.72 0.94 0.21 0.12 0.23 0.68"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

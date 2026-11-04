@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "bucket-sort",
+  "id": "one-bucket",
+  "title": "Everything in one bucket: the worst case",
+  "notes": "Eight values, all below 1/8, so all of them land in bucket 0. The buckets do nothing for us: this is a plain insertion sort, and in reverse order it makes 28 comparisons, n(n - 1)/2.",
+  "settings": { "values": "fraction", "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "0.09 0.08 0.07 0.06 0.05 0.03 0.02 0.01"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "viz": "bst",
+  "id": "balanced-order",
+  "title": "The same keys, a better order",
+  "notes": "The keys of the chain example, inserted medians first. Now the tree has height 2, and finding 70 takes 3 comparisons instead of 7.",
+  "settings": {
+    "delete": "successor",
+    "dupes": "reject",
+    "mode": "keys"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 40],
+    ["insert", 20],
+    ["insert", 60],
+    ["insert", 10],
+    ["insert", 30],
+    ["insert", 50],
+    ["insert", 70],
+    ["search", 70]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

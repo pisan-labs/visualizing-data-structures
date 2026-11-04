@@ -65,9 +65,10 @@
  *     label     the call as written, e.g. "fib(3)".
  *     value     what it returned, e.g. "= 2": a second line in the box, or after the label when
  *               the boxes have one line.
- *     tag       a short label in a badge on the box's top-right corner: "2nd" for a repeated
- *               subproblem, "memo" for a call the memo answered, "pruned"... Marks like these
- *               must be words, not only a color. tagRole colors the badge (default compare).
+ *     tag       a short label in a badge at the box's top-right corner (on the edge of a
+ *               two-line box, just above a one-line box): "2nd" for a repeated subproblem,
+ *               "memo" for a call the memo answered, "pruned"... Marks like these must be
+ *               words, not only a color. tagRole colors the badge (default compare).
  *     edge      a short label on the edge from the parent, e.g. "take 3".
  *     state     current (running: role active), open (on the stack, waiting for a call it
  *               made: role visit), done (returned: drawn dimmed), cut (stopped early, by a memo
@@ -529,11 +530,14 @@ export function layoutCallTree(calls: TreeCall[], options: CallTreeOptions = {})
     outline(root);
     if (seen.size !== calls.length) throw new Error('Some calls are not reachable from the first.');
     place(root, 0, 0, null);
-    // Tags stick out above their boxes.
+    // Tags stick out above their boxes: half way on two-line boxes, almost all the way on
+    // one-line boxes, where a badge on the corner would cover the label.
     const top = Math.min(
       ...[...nodes.values()].map((n) => {
         const tag = byId.get(n.id)!.tag;
-        return n.y - n.h / 2 - (tag ? tagSize(tag, size).h / 2 : 0);
+        if (!tag) return n.y - n.h / 2;
+        const t = tagSize(tag, size);
+        return n.y - n.h / 2 - (twoLines ? t.h / 2 : t.h - 2);
       }),
     );
     bounds = { x: minX, y: top, w: maxX - minX, h: maxY - top };
@@ -630,7 +634,7 @@ export function callNodeShapes(
   if (call.tag) {
     const t = tagSize(call.tag, size);
     const tx = x0 + box.w - t.w / 2;
-    const ty = y0 - t.h / 2;
+    const ty = twoLines ? y0 - t.h / 2 : y0 - t.h + 2;
     const tagRole = roles.get(`${id}-tag`) ?? call.tagRole ?? 'compare';
     shapes.push({
       kind: 'rect',

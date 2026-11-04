@@ -48,8 +48,11 @@ export function view(step: Step<BSTState, BSTExtra>, settings: BSTSettings): Sce
       roles.set(edgeShapeId(u), 'active');
   }
 
-  const left = Math.min(tree.bounds.x, -110);
-  const right = Math.max(tree.bounds.x + tree.bounds.w, 110);
+  // Steps of an operation keep a band above the tree for its argument and for a node lifted
+  // out during delete. A plain picture (no step data, as in practice questions) leaves it out.
+  const band = step.extra !== undefined;
+  const left = band ? Math.min(tree.bounds.x, -110) : tree.bounds.x;
+  const right = band ? Math.max(tree.bounds.x + tree.bounds.w, 110) : tree.bounds.x + tree.bounds.w;
   const argX = left + 24;
   const argBox = { x: argX, y: HY - 15, w: 56, h: 30 };
 
@@ -78,8 +81,8 @@ export function view(step: Step<BSTState, BSTExtra>, settings: BSTSettings): Sce
     // Room under the bottom row for the labels drawn below nodes.
     boxes.push({ ...tree.bounds, h: tree.bounds.h + (annotated ? 22 : 0) });
   }
-  // The band above the tree is always there, so the camera stays put between operations.
-  boxes.push({ x: left, y: HY - 16, w: right - left, h: 32 });
+  // The band stays for every step of an operation, so the camera stays put between steps.
+  if (band) boxes.push({ x: left, y: HY - 16, w: right - left, h: 32 });
 
   // One label under each node: its subtree size (select, rank), else its value (key-value
   // mode), else how many copies it holds (when duplicates are counted).

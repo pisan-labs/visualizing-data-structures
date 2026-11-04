@@ -23,6 +23,7 @@ import {
   type CSettings,
   type CState,
 } from './model';
+import { circularPractice } from './practice';
 import { view } from './view';
 
 const each = (op: string, vs: Value[]): OpCall[] => vs.map((v) => [op, v] as OpCall);
@@ -125,6 +126,7 @@ export const circularLinkedList: VizDef<CState, CSettings, CExtra> = {
     cpp: cppSource,
     script: (calls: OpCall[]) => codeScript(calls),
   },
+  practice: circularPractice(() => circularLinkedList),
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [backIsFront, rotate, traverse, oneNode, search, queue] as unknown as SavedExample[],
 };

@@ -31,6 +31,7 @@ import {
   type BSTSettings,
   type BSTState,
 } from './model';
+import { bstPractice } from './practice';
 import { view } from './view';
 
 /** "42" stays a number; "42=apple" stays a pair for insert to split. */
@@ -167,6 +168,7 @@ export const bst: VizDef<BSTState, BSTSettings, BSTExtra> = {
     sizes: [7, 15, 31],
   },
   explain,
+  practice: bstPractice(() => bst),
   complexity: [
     {
       op: 'search(k)',

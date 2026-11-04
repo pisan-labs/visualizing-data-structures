@@ -57,3 +57,7 @@
 2026-11-04 [code] Practice sets: seeded, browser-graded questions (choice, number, sequence) with Show me; assignment links (#practice=<seed>&n=); stack has 4 question kinds; shape drawing moved to Shapes.svelte; practice is part of the definition of done
 
 2026-11-04 [code] Presentation mode: Present button hides site chrome, tabs and options, enlarges narration, code and variables, goes full screen; Escape leaves
+
+2026-11-04 [code] Merged wave 1C: array queue and deque, dynamic array, sorted array, list-based stack, queue and deque (node-chain layout in src/layouts/node-chain.ts), with practice sets
+
+2026-11-04 [code] Practice pictures crop to the drawn shapes (shapesBounds), so space a view reserves for animation no longer shows as blank bands; Vitest per-test timeout raised to 60 s for heavy property tests

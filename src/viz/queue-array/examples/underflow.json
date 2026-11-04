@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "queue-array",
+  "id": "underflow",
+  "title": "Empty again, away from index 0",
+  "notes": "Three enqueues, three dequeues, then one dequeue too many. front catches up with rear at index 3, and front == rear means empty wherever it happens.",
+  "settings": { "capacity": 8, "full": "gap", "layout": "ring" },
+  "seed": 1,
+  "ops": [
+    ["enqueue", 7],
+    ["enqueue", 8],
+    ["enqueue", 9],
+    ["dequeue"],
+    ["dequeue"],
+    ["dequeue"],
+    ["dequeue"]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

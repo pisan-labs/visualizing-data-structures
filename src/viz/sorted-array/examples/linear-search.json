@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "sorted-array",
+  "id": "linear-search",
+  "title": "The same search without order",
+  "notes": "The same nine values in an unsorted array. With no order to use, search(70) checks the items one by one: 7 comparisons instead of 3.",
+  "settings": { "mode": "unsorted", "capacity": 10 },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["insert", 90],
+    ["search", 70]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

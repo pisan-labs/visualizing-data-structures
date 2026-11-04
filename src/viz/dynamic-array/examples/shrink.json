@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "dynamic-array",
+  "id": "shrink",
+  "title": "Shrinking at a quarter full",
+  "notes": "Five appends grow the array to 8 slots. Removing down to 2 items, a quarter of 8, halves it to 4. One more removal leaves 1 item, a quarter of 4, and it halves again.",
+  "settings": { "growth": "2", "shrink": "quarter", "start": 1 },
+  "seed": 1,
+  "ops": [
+    ["append", 1],
+    ["append", 2],
+    ["append", 3],
+    ["append", 4],
+    ["append", 5],
+    ["removeLast"],
+    ["removeLast"],
+    ["removeLast"],
+    ["removeLast"]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

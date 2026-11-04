@@ -97,6 +97,29 @@ test('bad keys are refused with a reason', async ({ page }) => {
   await expect(page.getByRole('alert')).toContainText('between -99 and 999');
 });
 
+test('a practice set grades an answer and shows it on the tree', async ({ page }) => {
+  await page.goto('/bst/#practice=13579&n=5');
+  await expect(page.getByRole('tab', { name: 'Practice' })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  await expect(page.locator('.question')).toHaveCount(5);
+  const first = page.locator('.question').first();
+  await first.getByRole('button', { name: 'Check' }).click();
+  const feedback = first.locator('.feedback');
+  await expect(feedback).toContainText('Not quite. The answer is');
+  const answer = ((await feedback.textContent()) ?? '').match(/The answer is (.+?)\./)![1]!;
+  await first.getByRole('button', { name: 'Try again' }).click();
+  const radio = first.getByRole('radio', { name: answer, exact: true });
+  if (await radio.count()) await radio.check();
+  else await first.getByRole('textbox').fill(answer);
+  await first.getByRole('button', { name: 'Check' }).click();
+  await expect(feedback).toContainText('Yes.');
+  await first.getByRole('button', { name: 'Show me' }).click();
+  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await expect(stage(page)).toHaveAttribute('aria-label', /A binary search tree with \d+ keys/);
+});
+
 test('concept page links load and play examples', async ({ page }) => {
   await page.getByRole('tab', { name: 'Learn' }).click();
   await page.getByRole('link', { name: 'Delete a leaf' }).first().click();

@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "queue-array",
+  "id": "split-row",
+  "title": "A queue split across the end of the array",
+  "notes": "The wraparound example drawn as a row, the way it sits in memory. At the end the queue starts at index 3, runs to the last slot, and continues at index 0.",
+  "settings": { "capacity": 6, "full": "gap", "layout": "row" },
+  "seed": 1,
+  "ops": [
+    ["enqueue", 1],
+    ["enqueue", 2],
+    ["enqueue", 3],
+    ["enqueue", 4],
+    ["dequeue"],
+    ["dequeue"],
+    ["dequeue"],
+    ["enqueue", 5],
+    ["enqueue", 6],
+    ["enqueue", 7]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

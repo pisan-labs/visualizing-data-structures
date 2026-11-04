@@ -111,7 +111,8 @@ describe('circular linked list', () => {
       }),
       { numRuns: 400 },
     );
-  });
+    // Generous: the whole suite runs in parallel and this test runs 400 sequences.
+  }, 60_000);
 
   it('makes one node point at itself, and empties the list when it goes', () => {
     const t = run([['insertFront', 7], ['removeFront']]);

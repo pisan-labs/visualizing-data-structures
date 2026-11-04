@@ -5,6 +5,7 @@ import {
   edgeShapeId,
   keyShapeId,
   layoutBinaryTree,
+  NIL_SIZE,
   nilSpot,
   nodeShapeId,
   nullShapeId,
@@ -167,22 +168,54 @@ describe('binary tree layout', () => {
     expect(layoutBinaryTree(null, access(t)).bounds).toEqual({ x: 0, y: 0, w: 0, h: 0 });
   });
 
-  it('puts a nil marker clear of every node', () => {
+  /** Every nil marker (a square of side NIL_SIZE) keeps its corners outside every circle. */
+  function checkNilSpots(t: T, levelGap?: number) {
+    const L = layoutBinaryTree(t.root, access(t), { levelGap });
+    const corner = (NIL_SIZE / 2) * Math.SQRT2;
+    for (const p of L.nodes.values()) {
+      for (const side of ['left', 'right'] as const) {
+        if ((side === 'left' ? t.left : t.right)[p.id as number] !== null) continue;
+        const spot = nilSpot(L, p.id, side);
+        for (const q of L.nodes.values()) {
+          const d = Math.hypot(spot.x - q.x, spot.y - q.y);
+          expect(d, `nil ${side} of ${p.id} vs node ${q.id}`).toBeGreaterThan(L.radius + corner);
+        }
+      }
+    }
+  }
+
+  it('puts a nil marker clear of every node, for every level gap the pages use', () => {
+    fc.assert(fc.property(treeArb, fc.constantFrom(undefined, 38, 44, 52, 56), checkNilSpots), {
+      numRuns: 200,
+    });
+  });
+
+  it('keeps a node of a deeper subtree from tucking under a leaf (CI counterexample)', () => {
+    // fast-check seed 2088238246: leaf 8 sat right above node 3 of its sibling's subtree, so
+    // the nil marker for 8's right child landed on 3.
+    const t: T = {
+      left: { 0: 1, 1: 2, 2: 4, 3: 5, 4: null, 5: null, 6: 9, 7: null, 8: null, 9: null },
+      right: { 0: 8, 1: 3, 2: 6, 3: null, 4: 7, 5: null, 6: null, 7: null, 8: null, 9: null },
+      root: 0,
+      n: 10,
+    };
+    checkNilSpots(t);
+    checkNilSpots(t, 38);
+    const L = layoutBinaryTree(t.root, access(t));
+    const leaf = L.nodes.get(8)!;
+    const below = L.nodes.get(3)!;
+    expect(Math.abs(below.x - nilSpot(L, 8, 'right').x)).toBeGreaterThanOrEqual(L.radius + L.gap);
+    expect(below.depth).toBe(leaf.depth + 1);
+  });
+
+  it('never lets a null square touch a node', () => {
     fc.assert(
       fc.property(treeArb, (t) => {
-        const L = layoutBinaryTree(t.root, access(t));
-        for (const p of L.nodes.values()) {
-          for (const side of ['left', 'right'] as const) {
-            if ((side === 'left' ? t.left : t.right)[p.id as number] !== null) continue;
-            const spot = nilSpot(L, p.id, side);
-            for (const q of L.nodes.values()) {
-              // The marker is a square of side 12: keep its corners outside every circle.
-              expect(Math.hypot(spot.x - q.x, spot.y - q.y)).toBeGreaterThan(
-                L.radius + 6 * Math.SQRT2 - 1,
-              );
-            }
-          }
-        }
+        const L = layoutBinaryTree(t.root, access(t), { nulls: true });
+        const corner = (L.nullSize / 2) * Math.SQRT2;
+        for (const z of L.nulls)
+          for (const q of L.nodes.values())
+            expect(Math.hypot(z.x - q.x, z.y - q.y)).toBeGreaterThan(L.radius + corner);
       }),
       { numRuns: 200 },
     );

@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "queue-array",
+  "id": "wraparound",
+  "title": "Rear wraps around to index 0",
+  "notes": "Fill four slots, dequeue three, then keep enqueueing. Rear runs off the end of the array and starts again at index 0, reusing the slots that dequeue freed.",
+  "settings": { "capacity": 6, "full": "gap", "layout": "ring" },
+  "seed": 1,
+  "ops": [
+    ["enqueue", 1],
+    ["enqueue", 2],
+    ["enqueue", 3],
+    ["enqueue", 4],
+    ["dequeue"],
+    ["dequeue"],
+    ["dequeue"],
+    ["enqueue", 5],
+    ["enqueue", 6],
+    ["enqueue", 7]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

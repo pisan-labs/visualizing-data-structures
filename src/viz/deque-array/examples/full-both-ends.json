@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "deque-array",
+  "id": "full-both-ends",
+  "title": "Full from both ends",
+  "notes": "Five slots, one left empty, so four items fit. They arrive at alternating ends, and the fifth add overflows whichever end it tries.",
+  "settings": { "capacity": 5, "full": "gap", "layout": "ring" },
+  "seed": 1,
+  "ops": [
+    ["addFirst", 1],
+    ["addLast", 2],
+    ["addFirst", 3],
+    ["addLast", 4],
+    ["addFirst", 5]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "sorted-array",
+  "id": "insert-shift",
+  "title": "Inserting in order shifts the bigger items",
+  "notes": "Four values in order, then 10, which belongs at the front: all four shift right to make room. Then 90, which belongs at the end and moves nothing.",
+  "settings": { "mode": "sorted", "capacity": 10 },
+  "seed": 1,
+  "ops": [
+    ["insert", 20],
+    ["insert", 40],
+    ["insert", 60],
+    ["insert", 80],
+    ["insert", 10],
+    ["insert", 90]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

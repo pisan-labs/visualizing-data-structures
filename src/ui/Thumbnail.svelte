@@ -1,10 +1,11 @@
 <script lang="ts">
-  import type { Scene } from '../render/scene';
+  import { shapesBounds, type Scene } from '../render/scene';
   import Shapes from './Shapes.svelte';
 
   /** A static drawing of one scene, for practice questions and similar. */
   let { scene, height = 220 }: { scene: Scene; height?: number } = $props();
-  const b = $derived(scene.bounds);
+  // Crop to what is drawn: views reserve room for animation that a still picture does not need.
+  const b = $derived(shapesBounds(scene.shapes) ?? scene.bounds);
 </script>
 
 <svg

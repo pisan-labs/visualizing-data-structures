@@ -657,7 +657,7 @@ function neighbor(which: 'successor' | 'predecessor'): Op {
 // ---------------------------------------------------------------------------------------------
 // select, rank
 
-const ordinal = (n: number) => {
+export const ordinal = (n: number) => {
   const t = Math.abs(n) % 100;
   const u = Math.abs(n) % 10;
   const suffix =

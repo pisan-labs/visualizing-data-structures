@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "dynamic-array",
+  "id": "growth-1-5",
+  "title": "Growing by half instead of doubling",
+  "notes": "The same kind of appends with a growth factor of 1.5. Capacity goes 1, 2, 3, 5, 8, 12: more resizes and more copies per append than doubling, but less unused space.",
+  "settings": { "growth": "1.5", "shrink": "quarter", "start": 1 },
+  "seed": 1,
+  "ops": [
+    ["append", 1],
+    ["append", 2],
+    ["append", 3],
+    ["append", 4],
+    ["append", 5],
+    ["append", 6],
+    ["append", 7],
+    ["append", 8],
+    ["append", 9],
+    ["append", 10],
+    ["append", 11],
+    ["append", 12]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

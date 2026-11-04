@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "doubly-linked-list",
+  "id": "four-updates",
+  "title": "Four pointer updates per insert",
+  "notes": "Insert 15 between 10 and 20. The new node's own two pointers come first, then the two neighbours' pointers, and the order of those two matters.",
+  "settings": { "sentinel": "on" },
+  "seed": 1,
+  "ops": [
+    ["insertTail", 10],
+    ["insertTail", 20],
+    ["insertTail", 30],
+    ["insertAt", 1, 15]
+  ],
+  "at": { "op": 2, "step": 99 }
+}

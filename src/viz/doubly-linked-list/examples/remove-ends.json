@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "doubly-linked-list",
+  "id": "remove-ends",
+  "title": "Remove from either end without walking",
+  "notes": "removeTail finds the node before the last one through its prev pointer, so it is as cheap as removeHead. Each removal is four pointer updates.",
+  "settings": { "sentinel": "on" },
+  "seed": 1,
+  "ops": [
+    ["insertTail", 1],
+    ["insertTail", 2],
+    ["insertTail", 3],
+    ["insertTail", 4],
+    ["removeTail"],
+    ["removeHead"]
+  ],
+  "at": { "op": 3, "step": 99 }
+}

@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "doubly-linked-list",
+  "id": "nearer-end",
+  "title": "get(i) walks from the nearer end",
+  "notes": "With 8 nodes, get(1) walks forward 1 hop and get(6) walks back 1 hop. No index costs more than about n / 2 hops. get(8) is out of range.",
+  "settings": { "sentinel": "on" },
+  "seed": 1,
+  "ops": [
+    ["insertTail", 10],
+    ["insertTail", 20],
+    ["insertTail", 30],
+    ["insertTail", 40],
+    ["insertTail", 50],
+    ["insertTail", 60],
+    ["insertTail", 70],
+    ["insertTail", 80],
+    ["get", 1],
+    ["get", 6],
+    ["get", 8]
+  ],
+  "at": { "op": 7, "step": 99 }
+}

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "doubly-linked-list",
+  "id": "reverse",
+  "title": "Reverse by swapping next and prev",
+  "notes": "Every node swaps its two pointers, and so does the sentinel. Swapped nodes are drawn turned around.",
+  "settings": { "sentinel": "on" },
+  "seed": 1,
+  "ops": [["insertTail", 1], ["insertTail", 2], ["insertTail", 3], ["insertTail", 4], ["reverse"]],
+  "at": { "op": 3, "step": 99 }
+}

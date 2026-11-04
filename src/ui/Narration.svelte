@@ -1,7 +1,7 @@
 <script lang="ts">
   import { formatCall, type Session } from './session.svelte';
 
-  let { session }: { session: Session } = $props();
+  let { session, label = 'What is happening' }: { session: Session; label?: string } = $props();
 
   const f = $derived(session.current);
   const visible = $derived(session.timeline.visibleIndices(session.detail));
@@ -10,7 +10,7 @@
   const isError = $derived(f.step.marks.some((m) => m.role === 'error'));
 </script>
 
-<section class="narration card" class:error={isError} aria-label="What is happening">
+<section class="narration card" class:error={isError} aria-label={label}>
   <div class="meta">
     <span class="chip"><code>{op}</code></span>
     <span class="muted">Step {pos + 1} of {visible.length}</span>

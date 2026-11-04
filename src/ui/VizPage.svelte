@@ -4,6 +4,7 @@
   import type { AnyVizDef } from '../engine/types';
   import { REPO_URL, SITE_NAME } from '../site';
   import CodePanel from './CodePanel.svelte';
+  import CompareMenu from './CompareMenu.svelte';
   import BigOPanel from './BigOPanel.svelte';
   import ExamplesPanel from './ExamplesPanel.svelte';
   import HistoryPanel from './HistoryPanel.svelte';
@@ -205,13 +206,16 @@
     <div class="title-row">
       <h1>{def.title}</h1>
       {#if !embed}
-        <button
-          class="btn small present"
-          onclick={() => present(!presenting)}
-          aria-pressed={presenting}
-        >
-          {presenting ? 'Exit presentation' : 'Present'}
-        </button>
+        <div class="actions">
+          <CompareMenu {session} />
+          <button
+            class="btn small present"
+            onclick={() => present(!presenting)}
+            aria-pressed={presenting}
+          >
+            {presenting ? 'Exit presentation' : 'Present'}
+          </button>
+        </div>
       {/if}
       {#if embed}
         <a
@@ -233,7 +237,7 @@
     {#if !embed}<SettingsPanel {session} />{/if}
     <div id="stage-anchor"></div>
     <Stage {scene} {duration} />
-    <Transport {session} />
+    <Transport {session} scrub={session} />
   </div>
 
   <div class="side">
@@ -321,6 +325,12 @@
     margin: 0;
     font-size: 1.6rem;
     line-height: 1.2;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .back {

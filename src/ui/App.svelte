@@ -3,6 +3,7 @@
   import { REPO_URL, SITE_NAME } from '../site';
   import { loadViz } from '../viz/registry';
   import Catalog from './Catalog.svelte';
+  import ComparePage from './ComparePage.svelte';
   import Logo from './Logo.svelte';
   import { parseLocation } from './route';
   import { notices, prefs, setPref, type Theme } from './state.svelte';
@@ -24,6 +25,21 @@
     viz = undefined;
     loadViz(r.id).then((def) => {
       if (live) viz = def ?? null;
+    });
+    return () => {
+      live = false;
+    };
+  });
+
+  // Compare mode loads a second page: undefined while loading, null when there is none.
+  let vizB = $state<AnyVizDef | null | undefined>(undefined);
+  $effect(() => {
+    const r = route;
+    vizB = undefined;
+    if (r.kind !== 'viz' || !r.compare) return;
+    let live = true;
+    loadViz(r.compare).then((def) => {
+      if (live) vizB = def ?? null;
     });
     return () => {
       live = false;
@@ -86,7 +102,21 @@
   {#if route.kind === 'catalog'}
     <Catalog />
   {:else if route.kind === 'viz'}
-    {#if viz}
+    {#if viz && route.compare}
+      {#if vizB}
+        {#key route.key}
+          <ComparePage a={viz} b={vizB} code={route.code} codeB={route.codeB} />
+        {/key}
+      {:else if vizB === null}
+        <div class="missing">
+          <h1>Not here yet</h1>
+          <p>There is no visualization called "{route.compare}" to compare with.</p>
+          <p><a href="/{viz.id}/">Back to {viz.title}</a></p>
+        </div>
+      {:else}
+        <p class="loading muted" aria-live="polite">Loading…</p>
+      {/if}
+    {:else if viz}
       {#key route.key}
         <VizPage
           def={viz}

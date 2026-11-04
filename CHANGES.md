@@ -67,3 +67,7 @@
 2026-11-04 [code] Fixed dev CI (red since the Practice tab): six tabs overflowed phones by 37 px with CI's wider font; tabs now go in rows of three in a narrow card, and the screen-fit test also runs with a wide font
 
 2026-11-04 [code] Practice pictures scale to 0.8 to 1.25 px per unit where the screen allows: deep trees and tall stacks get more height, small lists are no longer blown up
+
+2026-11-04 [code] Compare mode: /<page>/#compare=<other> runs the same operations on two pages side by side (each keeps its options; a side that finishes an operation waits); Compare menu lists same-family pages that can run this page's main operation
+
+2026-11-04 [decision] Operations run while playback is going now queue after the last operation instead of replacing the queued ones; when paused they still replace what follows (as after an undo)

@@ -246,18 +246,21 @@
       stroke var(--tween) ease;
   }
 
-  .rect {
+  .rect,
+  .circle {
     fill: var(--cell-empty);
     stroke: var(--line-strong);
     stroke-width: 1.5;
   }
 
-  .rect.live {
+  .rect.live,
+  .circle.live {
     fill: var(--cell-live);
     stroke: var(--text-2);
   }
 
-  .rect.ghost {
+  .rect.ghost,
+  .circle.ghost {
     fill: none;
     stroke: var(--line-strong);
     stroke-dasharray: 5 4;
@@ -287,36 +290,44 @@
   }
 
   /* Roles */
-  .rect.role-active {
+  .rect.role-active,
+  .circle.role-active {
     stroke: var(--c-active);
     stroke-width: 3;
     fill: color-mix(in srgb, var(--c-active) 14%, var(--cell-live));
   }
   .rect.role-new,
-  .rect.role-done {
+  .rect.role-done,
+  .circle.role-new,
+  .circle.role-done {
     stroke: var(--c-new);
     stroke-width: 3;
     fill: color-mix(in srgb, var(--c-new) 14%, var(--cell-live));
   }
-  .rect.role-found {
+  .rect.role-found,
+  .circle.role-found {
     stroke: var(--c-found);
     stroke-width: 3;
     fill: color-mix(in srgb, var(--c-found) 14%, var(--cell-live));
   }
-  .rect.role-error {
+  .rect.role-error,
+  .circle.role-error {
     stroke: var(--c-error);
     stroke-width: 3;
     fill: color-mix(in srgb, var(--c-error) 12%, var(--cell-live));
   }
-  .rect.role-compare {
+  .rect.role-compare,
+  .circle.role-compare {
     stroke: var(--c-compare);
     stroke-width: 3;
   }
-  .rect.role-visit {
+  .rect.role-visit,
+  .circle.role-visit {
     stroke: var(--c-visit);
     stroke-width: 3;
   }
-  .rect.role-remove {
+  .rect.role-remove,
+  .circle.role-remove {
     stroke: var(--c-remove);
     stroke-width: 3;
   }

@@ -14,8 +14,25 @@ async function build(page: Page, list: string) {
 }
 
 async function toEnd(page: Page) {
+  // Playback can disable the button between the check and the click; jumping also pauses.
   const next = page.getByRole('button', { name: 'Forward to the next operation' });
-  while (await next.isEnabled()) await next.click();
+  while (!(await next.isDisabled())) await next.click({ force: true });
+}
+
+/** Answer the first practice question by reading the answer a wrong try reveals. */
+async function answerFirst(page: Page) {
+  const first = page.locator('.question').first();
+  await first.getByRole('button', { name: 'Check' }).click();
+  const feedback = first.locator('.feedback');
+  await expect(feedback).toContainText('Not quite. The answer is');
+  const answer = ((await feedback.textContent()) ?? '').match(/The answer is (.+?)\./)![1]!;
+  await first.getByRole('button', { name: 'Try again' }).click();
+  const radio = first.getByRole('radio', { name: answer, exact: true });
+  if (await radio.count()) await radio.check();
+  else await first.getByRole('textbox').fill(answer);
+  await first.getByRole('button', { name: 'Check' }).click();
+  await expect(feedback).toContainText('Yes.');
+  return first;
 }
 
 test.beforeEach(async ({ page }) => {
@@ -98,6 +115,19 @@ test('"Show me" links load an example and play it', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
   await expect(narration(page)).toContainText('preorder');
   await expect(stage(page)).toHaveAttribute('aria-label', /6 nodes/);
+});
+
+test('a practice set grades an answer and shows it on the tree', async ({ page }) => {
+  await page.goto('/binary-tree/#practice=24680&n=5');
+  await expect(page.getByRole('tab', { name: 'Practice' })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  await expect(page.locator('.question')).toHaveCount(5);
+  const first = await answerFirst(page);
+  await first.getByRole('button', { name: 'Show me' }).click();
+  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await expect(stage(page)).toHaveAttribute('aria-label', /A binary tree with \d+ nodes/);
 });
 
 test('concept page links load examples', async ({ page }) => {

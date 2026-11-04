@@ -353,3 +353,70 @@ describe('binary search tree', () => {
     expect(zigzagOrderOf([1, 2, 3, 4, 5])).toEqual([1, 5, 2, 4, 3]);
   });
 });
+
+describe('binary search tree practice', () => {
+  const kinds = bst.practice!;
+  const refHeight = (x: RNode | null): number =>
+    x ? 1 + Math.max(refHeight(x.left), refHeight(x.right)) : -1;
+  const keysOf = (calls: OpCall[]) => calls.map((c) => Number(c[1]));
+
+  it('offers four kinds of question', () => {
+    expect(kinds.map((k) => k.id)).toEqual([
+      'height-after',
+      'delete-replacement',
+      'select-rank',
+      'search-path',
+    ]);
+  });
+
+  it('gets every answer right, checked against the reference BST', () => {
+    for (let seed = 1; seed <= 60; seed++) {
+      for (const k of kinds) {
+        const q = k.make(makeRng(seed));
+        const settings = { ...bst.defaults, ...q.settings } as BSTSettings;
+        const ref = new RefBST(settings);
+        for (const key of keysOf(q.setup)) ref.insert(key, null);
+        const a = q.answer;
+        const [op, arg] = q.watch![0]!;
+        if (k.id === 'height-after') {
+          for (const key of keysOf(q.watch!)) ref.insert(key, null);
+          expect(a).toEqual({ kind: 'number', value: refHeight(ref.root) });
+        } else if (k.id === 'delete-replacement') {
+          if (a.kind !== 'choice') throw new Error('delete-replacement is a choice');
+          const z = Number(arg);
+          // Where z hangs before the delete: under which parent, on which side.
+          let parent: RNode | null = null;
+          for (let x = ref.root; x && x.key !== z; x = z < x.key ? x.left : x.right) parent = x;
+          expect(ref.find(z)!.left && ref.find(z)!.right).toBeTruthy();
+          ref.delete(z);
+          const now = parent ? (z < parent.key ? parent.left : parent.right) : ref.root;
+          expect(a.options[a.correct]).toBe(String(now!.key));
+        } else if (k.id === 'select-rank') {
+          const keys = ref.keys();
+          const want = op === 'select' ? keys[Number(arg) - 1] : keys.indexOf(Number(arg)) + 1;
+          expect(a).toEqual({ kind: 'number', value: want });
+        } else {
+          const path: string[] = [];
+          const key = Number(arg);
+          for (let x = ref.root; x; x = key < x.key ? x.left : x.right) {
+            path.push(String(x.key));
+            if (x.key === key) break;
+          }
+          expect(a).toEqual({ kind: 'sequence', value: path });
+        }
+      }
+    }
+  });
+
+  it('shows the answer by playing the asked operations after the setup', () => {
+    for (const k of kinds) {
+      for (let seed = 1; seed <= 5; seed++) {
+        const q = k.make(makeRng(seed));
+        const settings = { ...bst.defaults, ...q.settings } as BSTSettings;
+        const t = new Timeline(bst, settings, 1, [...q.setup, ...q.watch!]);
+        expect(t.entries).toHaveLength(q.setup.length + q.watch!.length);
+        expect(q.watch!.length).toBeGreaterThan(0);
+      }
+    }
+  });
+});

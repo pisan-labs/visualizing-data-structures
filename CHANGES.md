@@ -91,3 +91,5 @@
 2026-11-04 [code] Printable concept pages: a Print button on the Learn tab; print styles keep the title, explanation and checks in light colors and drop the drawing, controls and site chrome
 
 2026-11-04 [doc] BRIEFING.md brought up to date: code tabs, practice sets and concept checks, instructor tools; the site is not published until the first deploy
+
+2026-11-04 [decision] Yusuf approved session-relay (hourly reports only when there is news, daily handover check, fresh session when worthwhile); set up when wave 2 (G, F, I, J) is merged

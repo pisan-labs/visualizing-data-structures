@@ -268,3 +268,28 @@ test.describe('quickselect', () => {
     await expect(code(page)).toContainText('return quickselect(A, p, q, k)');
   });
 });
+
+test.describe('linear search', () => {
+  test.beforeEach(({ page }) => open(page, 'linear-search', 'Linear search'));
+
+  test('finds the value and returns its index', async ({ page }) => {
+    await form(page).getByLabel('Values or x').fill('35');
+    await run(page, 'Search');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('Yes: found 35 at index 4. Return 4.');
+    await expect(stage(page)).toHaveAttribute('aria-label', /x = 35, held outside the array\./);
+    await expect(page.locator('.vars')).toContainText('result');
+  });
+
+  test('a miss checks every value, and a sentinel saves the index checks', async ({ page }) => {
+    await form(page).getByLabel('Values or x').fill('50');
+    await run(page, 'Search');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('none is 50. Return -1.');
+    await loadExample(page, 'A sentinel saves the index checks');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('A[6] is the sentinel');
+    await expect(stage(page)).toHaveAttribute('aria-label', /Sentinel 50 in A\[6\]\./);
+    await expect(code(page)).toContainText('A[n] = x');
+  });
+});

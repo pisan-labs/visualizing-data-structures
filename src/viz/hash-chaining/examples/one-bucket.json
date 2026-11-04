@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "hash-chaining",
+  "id": "one-bucket",
+  "title": "Every key in one bucket",
+  "notes": "Multiples of 7 all hash to 0 when m = 7. Seven keys in seven buckets gives α = 1, but the longest chain is 7, and finding 0 compares it with every key. Try m = 11 in Options and play it again.",
+  "settings": { "m": 7, "hash": "division", "mode": "keys", "where": "head" },
+  "seed": 1,
+  "ops": [
+    ["insert", 0],
+    ["insert", 7],
+    ["insert", 14],
+    ["insert", 21],
+    ["insert", 28],
+    ["insert", 35],
+    ["insert", 42],
+    ["search", 0],
+    ["search", 49]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

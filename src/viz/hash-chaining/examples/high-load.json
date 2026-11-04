@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "hash-chaining",
+  "id": "high-load",
+  "title": "A load factor above 1",
+  "notes": "Twelve keys in five buckets gives α = 2.4. Open addressing could not hold them at all; chaining just grows its chains. The two searches show a hit and a miss in an average bucket.",
+  "settings": { "m": 5, "hash": "division", "mode": "keys", "where": "head" },
+  "seed": 1,
+  "ops": [
+    ["insert", 12],
+    ["insert", 31],
+    ["insert", 7],
+    ["insert", 44],
+    ["insert", 25],
+    ["insert", 18],
+    ["insert", 3],
+    ["insert", 56],
+    ["insert", 89],
+    ["insert", 40],
+    ["insert", 61],
+    ["insert", 23],
+    ["search", 12],
+    ["search", 33]
+  ],
+  "at": { "op": 11, "step": 100 }
+}

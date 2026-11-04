@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "hash-chaining",
+  "id": "collisions",
+  "title": "Collisions share a bucket",
+  "notes": "10, 17, 24 and 3 all leave remainder 3 when divided by 7, so they share bucket 3. New keys go to the front of the chain, so the search for 17 passes 3 and 24 first, and the search for 31 walks the whole chain before giving up.",
+  "settings": { "m": 7, "hash": "division", "mode": "keys", "where": "head" },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 17],
+    ["insert", 24],
+    ["insert", 5],
+    ["insert", 12],
+    ["insert", 3],
+    ["search", 17],
+    ["search", 31]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

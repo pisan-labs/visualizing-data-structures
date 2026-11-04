@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "graph-representations",
+  "id": "neighbours-row",
+  "title": "Neighbours: the list reads them, the matrix reads a whole row",
+  "notes": "B has 3 neighbours. The list reads 3 entries, the matrix all 8 cells of row B, and the edge list all 10 rows.",
+  "settings": {
+    "layout": "force",
+    "arrange": "wide"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, B-D, B-E, C-E, C-F, D-G, E-G, F-H, G-H"],
+    ["neighbours", "B"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

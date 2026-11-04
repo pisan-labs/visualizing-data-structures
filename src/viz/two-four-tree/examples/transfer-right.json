@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "viz": "two-four-tree",
+  "id": "transfer-right",
+  "title": "Underflow fixed by a transfer from the right",
+  "notes": "Deleting 10 empties the leftmost leaf, which has no left sibling. The right sibling [40 50] can spare a key: 40 goes up and 30 comes down.",
+  "settings": {
+    "swap": "pred"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["insert", 90],
+    ["delete", 20],
+    ["delete", 10]
+  ],
+  "at": {
+    "op": 9,
+    "step": 99
+  }
+}

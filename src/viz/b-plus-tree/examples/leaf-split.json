@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "b-plus-tree",
+  "id": "leaf-split",
+  "title": "A leaf split copies its key up",
+  "notes": "With m = 4 a leaf holds at most 3 keys. 40 makes 4, so the leaf splits in two, and a copy of 30, the first key on the right, goes up into a new root. 30 stays in its leaf.",
+  "settings": {
+    "order": "4"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40]
+  ],
+  "at": {
+    "op": 2,
+    "step": 99
+  }
+}

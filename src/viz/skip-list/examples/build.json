@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "viz": "skip-list",
+  "id": "build",
+  "title": "Build a skip list with coin flips",
+  "notes": "Nine inserts, each with its own coin flips. On average half the nodes reach level 2, a quarter reach level 3, and so on; with only nine nodes the counts wander.",
+  "settings": {
+    "p": "1/2",
+    "maxLevel": 5,
+    "draw": "across"
+  },
+  "seed": 6,
+  "ops": [
+    ["insert", 30],
+    ["insert", 10],
+    ["insert", 70],
+    ["insert", 50],
+    ["insert", 90],
+    ["insert", 20],
+    ["insert", 60],
+    ["insert", 40],
+    ["insert", 80]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

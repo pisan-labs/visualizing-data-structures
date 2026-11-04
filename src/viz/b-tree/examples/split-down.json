@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "viz": "b-tree",
+  "id": "split-down",
+  "title": "A full child splits on the way down",
+  "notes": "The leaf where 90 belongs is full, so it splits while its parent still has room, and 60 moves up. Only then does insert go down into the right half.",
+  "settings": {
+    "t": "3",
+    "split": "down"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["insert", 90]
+  ],
+  "at": {
+    "op": 7,
+    "step": 99
+  }
+}

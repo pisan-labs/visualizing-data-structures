@@ -1,5 +1,7 @@
 <script module lang="ts">
   let count = 0;
+  /** Marker ids must be unique when several drawings share a page. */
+  const nextUid = () => (count += 1);
 </script>
 
 <script lang="ts">
@@ -8,8 +10,7 @@
   /** Draws scene shapes inside an <svg>. Used by the stage and by static pictures. */
   let { shapes }: { shapes: Shape[] } = $props();
 
-  // Marker ids must be unique when several drawings share a page.
-  const uid = ++count;
+  const uid = nextUid();
 
   const roleClass = (role?: string) => (role ? `role-${role}` : '');
   const markerFor = (role?: string) =>

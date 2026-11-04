@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "heap-sort",
+  "id": "all-equal",
+  "title": "All values equal: nothing sinks",
+  "notes": "No child is ever bigger than its parent, so every maxHeapify stops after its comparisons and nothing sinks. What is left is the n - 1 swaps of the root to the end: 15 comparisons and 6 swaps, O(n). The 40s still end up in a different order.",
+  "settings": {
+    "index": "one",
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [["load", "40 40 40 40 40 40 40"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

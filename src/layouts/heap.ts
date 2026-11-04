@@ -14,12 +14,16 @@
  *     children of p are 2p + 1 and 2p + 2. The root is at x = 0, y = 0. Options are those of
  *     layoutBinaryTree (radius, gap, levelGap). `height` is -1 when n = 0.
  *
+ *   shiftHeapLayout(layout, dx, dy) -> HeapTreeLayout
+ *     The same layout moved by (dx, dy), to put the tree next to another picture.
+ *
  *   drawHeapTree(layout, items, options) -> Shape[]
  *     items[p] = { id, text } is the value at position p. Draws, for every position p:
  *       heapEdgeId(p)        the edge from p's parent down to p
  *       nodeShapeId(id)      the circle,  keyShapeId(id)  its label
  *       treeIndexId(p)       the array index (p + base) under the node, when `base` is given;
- *                            leave TREE_INDEX_ROOM free under the tree for the bottom row
+ *                            leave treeIndexRoom(indexSize) free under the tree for the bottom
+ *                            row (TREE_INDEX_ROOM for the default size, 12)
  *     `opacity(p)` fades a position (heap sort fades the sorted part).
  *
  *   drawHeapArray(items, options) -> { shapes, bounds, cell(p) }
@@ -92,10 +96,24 @@ export function heapLayout(n: number, options: TreeLayoutOptions<number> = {}): 
   };
 }
 
+/** The same layout, moved by (dx, dy). */
+export function shiftHeapLayout(layout: HeapTreeLayout, dx: number, dy: number): HeapTreeLayout {
+  return {
+    ...layout,
+    at: (p) => {
+      const c = layout.at(p);
+      return { x: c.x + dx, y: c.y + dy };
+    },
+    bounds: { ...layout.bounds, x: layout.bounds.x + dx, y: layout.bounds.y + dy },
+  };
+}
+
 export interface DrawHeapTreeOptions {
   roles?: Roles;
   /** Draw each node's array index (p + base) under it. Leave out to draw no indices. */
   base?: number;
+  /** Font size of those indices. Default 12. */
+  indexSize?: number;
   /** Opacity of a position: its node, label, index and the edge into it. */
   opacity?(p: number): number | undefined;
   /** Role for a position's circle when no mark names its value. */
@@ -153,13 +171,14 @@ export function drawHeapTree(
     });
     if (opts.base !== undefined) {
       // Under the node, between the edges down to its children: nothing else is drawn there.
+      const size = opts.indexSize ?? INDEX_SIZE;
       shapes.push({
         kind: 'text',
         id: treeIndexId(p),
         x: c.x,
-        y: c.y + r + INDEX_DROP,
+        y: c.y + r + size + 1,
         text: String(p + opts.base),
-        size: 12,
+        size,
         anchor: 'middle',
         cls: 'index',
         mono: true,
@@ -170,10 +189,11 @@ export function drawHeapTree(
   return shapes;
 }
 
-/** How far under a node's circle its index label's baseline sits. */
-const INDEX_DROP = 13;
-/** Extra room under the tree's bottom row when index labels are drawn. */
-export const TREE_INDEX_ROOM = INDEX_DROP + 3;
+/** Default font size of the index under a node; its baseline sits size + 1 under the circle. */
+const INDEX_SIZE = 12;
+/** Extra room under the tree's bottom row when index labels of this size are drawn. */
+export const treeIndexRoom = (size = INDEX_SIZE) => size + 4;
+export const TREE_INDEX_ROOM = treeIndexRoom();
 
 export const CELL = { w: 34, h: 30 };
 /** Vertical room an array row takes, index labels included. */

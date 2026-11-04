@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "linked-list",
+  "id": "remove-tail",
+  "title": "Removing the tail still walks",
+  "notes": "The list has a tail pointer, but removeTail needs the node before the tail, and nodes only point forward. So it walks from head anyway.",
+  "settings": { "tail": "on" },
+  "seed": 1,
+  "ops": [
+    ["insertTail", 10],
+    ["insertTail", 20],
+    ["insertTail", 30],
+    ["insertTail", 40],
+    ["removeTail"]
+  ],
+  "at": { "op": 3, "step": 99 }
+}

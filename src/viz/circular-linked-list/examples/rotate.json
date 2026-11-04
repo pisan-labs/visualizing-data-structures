@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "circular-linked-list",
+  "id": "rotate",
+  "title": "Rotate: one assignment moves the front to the back",
+  "notes": "rotate() is tail = tail.next. Nothing in the circle changes; only where we say it starts. Twice round: 1 2 3 4 becomes 3 4 1 2.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insertBack", 1],
+    ["insertBack", 2],
+    ["insertBack", 3],
+    ["insertBack", 4],
+    ["rotate"],
+    ["rotate"]
+  ],
+  "at": { "op": 3, "step": 99 }
+}

@@ -7,6 +7,8 @@
 
   const controls = $derived(session.def.controls);
   const primary = $derived(controls.buttons.find((b) => b.primary));
+  const main = $derived(controls.buttons.filter((b) => !b.more));
+  const more = $derived(controls.buttons.filter((b) => b.more));
   let text = $state('');
   let error = $state('');
   let input: HTMLInputElement | undefined = $state();
@@ -89,7 +91,7 @@
     />
   {/if}
   <div class="buttons">
-    {#each controls.buttons as b (b.op)}
+    {#each main as b (b.op)}
       {#if b.primary}
         <button type="submit" class="btn primary" data-args={b.args?.length}>{b.label}</button>
       {:else}
@@ -109,26 +111,42 @@
       </button>
     {/if}
   </div>
-  {#if controls.presets?.length}
-    <div class="presets" role="group" aria-label="Start over with a preset">
-      <label for="preset">Start over with</label>
-      <select id="preset" class="field" bind:value={presetIndex}>
-        {#each controls.presets as p, i (p.label)}
-          <option value={i}>{p.label}</option>
-        {/each}
-      </select>
-      <label for="preset-size" class="visually-hidden">How many</label>
-      <select
-        id="preset-size"
-        class="field"
-        value={size}
-        onchange={(e) => (presetSize = Number(e.currentTarget.value))}
-      >
-        {#each sizes as n (n)}
-          <option value={n}>{n}</option>
-        {/each}
-      </select>
-      <button type="button" class="btn" onclick={fill}>Fill</button>
+  {#if more.length || controls.presets?.length}
+    <div class="secondary">
+      {#if more.length}
+        <details class="more">
+          <summary>More operations</summary>
+          <div class="buttons">
+            {#each more as b (b.op)}
+              <button type="button" class="btn" data-args={b.args?.length} onclick={() => run(b)}
+                >{b.label}</button
+              >
+            {/each}
+          </div>
+        </details>
+      {/if}
+      {#if controls.presets?.length}
+        <div class="presets" role="group" aria-label="Start over with a preset">
+          <label for="preset">Start over with</label>
+          <select id="preset" class="field" bind:value={presetIndex}>
+            {#each controls.presets as p, i (p.label)}
+              <option value={i}>{p.label}</option>
+            {/each}
+          </select>
+          <label for="preset-size" class="visually-hidden">How many</label>
+          <select
+            id="preset-size"
+            class="field"
+            value={size}
+            onchange={(e) => (presetSize = Number(e.currentTarget.value))}
+          >
+            {#each sizes as n (n)}
+              <option value={n}>{n}</option>
+            {/each}
+          </select>
+          <button type="button" class="btn" onclick={fill}>Fill</button>
+        </div>
+      {/if}
     </div>
   {/if}
   {#if error}
@@ -166,14 +184,38 @@
     gap: 6px;
   }
 
+  .secondary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 18px;
+    flex-basis: 100%;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+  }
+
+  /* Opened, the extra operations take a full line under the rest of the row. */
+  .more[open] {
+    flex-basis: 100%;
+    order: 2;
+  }
+
+  .more summary {
+    cursor: pointer;
+    color: var(--text-2);
+    font-size: 0.92rem;
+    padding: 4px 0;
+  }
+
+  .more .buttons {
+    padding-top: 6px;
+  }
+
   .presets {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 6px;
-    flex-basis: 100%;
-    padding-top: 8px;
-    border-top: 1px solid var(--line);
     font-size: 0.92rem;
     color: var(--text-2);
   }

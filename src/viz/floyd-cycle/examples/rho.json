@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "floyd-cycle",
+  "id": "rho",
+  "title": "A tail and a cycle",
+  "notes": "Seven nodes; the last links back to index 2. The tortoise and the hare meet inside the cycle, then phase 2 finds where it starts (μ = 2) and phase 3 measures it (λ = 5).",
+  "settings": {},
+  "seed": 1,
+  "ops": [["build", "1 2 3 4 5 6 7 @2"], ["detect"]],
+  "at": { "op": 0, "step": 99 }
+}

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "floyd-cycle",
+  "id": "self-loop",
+  "title": "A node that points at itself (λ = 1)",
+  "notes": "The last node's next is itself. The hare gets stuck there, the tortoise walks in, and the cycle is one node long.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["build", "1 2 3 4 @3"], ["detect"]],
+  "at": { "op": 0, "step": 99 }
+}

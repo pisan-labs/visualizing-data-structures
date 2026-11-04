@@ -221,7 +221,8 @@
   @media (min-width: 1024px) {
     /* Leave room for the controls above and the playback bar below. */
     svg {
-      max-height: clamp(260px, calc(100vh - 412px), 680px);
+      /* VizPage measures the space left above the playback bar and sets --stage-max. */
+      max-height: var(--stage-max, clamp(260px, calc(100vh - 412px), 680px));
     }
   }
 
@@ -287,6 +288,12 @@
 
   .arrowhead {
     fill: var(--text-2);
+  }
+
+  /* Pointer dots (circles with the arrowhead class) take the arrow color, without a ring. */
+  .circle.arrowhead {
+    fill: var(--text-2);
+    stroke: none;
   }
 
   /* Roles */

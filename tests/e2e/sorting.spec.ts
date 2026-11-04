@@ -161,3 +161,29 @@ test.describe('insertion sort', () => {
     await expect(narration(page)).toContainText('12 comparisons and 7 swaps');
   });
 });
+
+test.describe('shell sort', () => {
+  test.beforeEach(({ page }) => open(page, 'shell-sort', 'Shell sort'));
+
+  test('sorts with shrinking gaps, one milestone per gap', async ({ page }) => {
+    await load(page, '62 83 18 53 7 17 95 86');
+    await run(page, 'Sort');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('That took 18 comparisons and 3 shifts.');
+    await page.getByRole('combobox', { name: 'Detail' }).selectOption('1');
+    await page.getByRole('button', { name: 'Step back' }).click();
+    await expect(narration(page)).toContainText('Done with h = 2');
+    await page.getByRole('button', { name: 'Step back' }).click();
+    await expect(narration(page)).toContainText('Done with h = 4');
+  });
+
+  test('the gap sequence option and a preset', async ({ page }) => {
+    await option(page, "Knuth's: ..., 40, 13, 4, 1 (each 3h + 1)");
+    await expect(code(page)).toContainText('h = floor(h / 3)');
+    await page.getByLabel('Start over with', { exact: true }).selectOption({ index: 5 });
+    await page.getByRole('button', { name: 'Fill' }).click();
+    await run(page, 'Sort');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('Sorted:');
+  });
+});

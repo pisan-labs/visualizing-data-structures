@@ -531,12 +531,7 @@ export function pseudocode(settings: BucketSettings): PseudoBlock[] {
     L('ins.store', 2, 'B[i][t] = k; return', 'put k in the first free slot.'),
     ...(area
       ? [
-          L(
-            'ins.full',
-            1,
-            'for each key x in the overflow area',
-            'The bucket is full. For each overflow key,',
-          ),
+          L('ins.full', 1, 'for each overflow key x', 'The bucket is full. For each overflow key,'),
           L('ins.ovscan', 2, 'if x == k: return', 'if it is k, k is already there: stop.'),
           L(
             'ins.append',
@@ -558,16 +553,11 @@ export function pseudocode(settings: BucketSettings): PseudoBlock[] {
           L(
             'srch.notfull',
             1,
-            'if bucket i has a free slot',
+            'if bucket i has room',
             'If the bucket has room, k never overflowed,',
           ),
           L('srch.miss', 2, 'return nil', 'so it is not in the table.'),
-          L(
-            'srch.ovscan',
-            1,
-            'for each key x in the overflow area',
-            'Otherwise try every overflow key:',
-          ),
+          L('srch.ovscan', 1, 'for each overflow key x', 'Otherwise try every overflow key:'),
           L('srch.ovfound', 2, 'if x == k: return found', 'if it is k, found it.'),
           L('srch.end', 1, 'return nil', 'k is not there either.'),
         ]
@@ -582,22 +572,22 @@ export function pseudocode(settings: BucketSettings): PseudoBlock[] {
           L(
             'del.pull',
             3,
-            'if some x in the overflow area has h(x) == i',
-            'and if a key of bucket i is waiting in the overflow area,',
+            'x = an overflow key of i',
+            'look for a key of bucket i waiting in the overflow area,',
           ),
-          L('del.move', 4, 'move x into B[i][t]', 'move it into the free slot.'),
+          L(
+            'del.move',
+            3,
+            'if x ≠ nil: B[i][t] = x',
+            'and if there is one, move it into the free slot.',
+          ),
           L(
             'del.notfull',
             1,
-            'if bucket i has a free slot: return',
+            'if bucket i has room: return',
             'If the bucket has room, k is not there.',
           ),
-          L(
-            'del.ovscan',
-            1,
-            'for each slot p of the overflow area',
-            'Otherwise try every overflow slot:',
-          ),
+          L('del.ovscan', 1, 'for each overflow slot p', 'Otherwise try every overflow slot:'),
           L('del.ovfound', 2, 'if overflow[p] == k', 'if it holds k,'),
           L('del.ovremove', 3, 'remove overflow[p]; return', 'remove it; later slots move up.'),
           L('del.miss', 1, 'return', 'k is not in the table.'),
@@ -618,7 +608,7 @@ export function pseudocode(settings: BucketSettings): PseudoBlock[] {
         L(
           'clr.set',
           1,
-          'free every slot; empty the overflow area',
+          'B = all free; overflow = []',
           'Free every slot and empty the overflow area.',
         ),
       ],

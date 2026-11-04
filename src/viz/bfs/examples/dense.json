@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bfs",
+  "id": "dense",
+  "title": "A complete graph: every vertex at distance 1",
+  "notes": "Every vertex is a neighbour of A, so all of them are found at once. The search still looks at each list in full: 30 edge checks for 15 edges.",
+  "settings": {
+    "marking": "colors",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, A-D, A-E, A-F, B-C, B-D, B-E, B-F, C-D, C-E, C-F, D-E, D-F, E-F"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

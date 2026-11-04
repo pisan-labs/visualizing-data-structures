@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "graph-representations",
+  "id": "dense",
+  "title": "A dense graph: every list is as long as a matrix row",
+  "notes": "A complete graph on 6 vertices has all 15 edges. Each list has 5 entries, so the lists hold 30 in all, close to the 36 cells of the matrix.",
+  "settings": {
+    "layout": "force",
+    "arrange": "wide"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, A-D, A-E, A-F, B-C, B-D, B-E, B-F, C-D, C-E, C-F, D-E, D-F, E-F"],
+    ["neighbours", "A"],
+    ["hasEdge", "E-F"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

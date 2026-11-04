@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bfs",
+  "id": "star",
+  "title": "A star: the queue holds every other vertex at once",
+  "notes": "From the middle, all 7 leaves are discovered while A is scanned, so the queue grows to 7 before anything else happens. A queue can hold up to V - 1 vertices.",
+  "settings": {
+    "marking": "colors",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, A-D, A-E, A-F, A-G, A-H"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

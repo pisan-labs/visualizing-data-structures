@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "dfs",
+  "id": "star",
+  "title": "A star: the call stack stays shallow",
+  "notes": "From the middle, each leaf is one call deep and returns at once. The call stack never holds more than 2 calls, though DFS still looks at every edge from both ends.",
+  "settings": {
+    "style": "recursive",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, A-D, A-E, A-F, A-G"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

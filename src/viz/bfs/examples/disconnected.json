@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bfs",
+  "id": "disconnected",
+  "title": "Two pieces: what BFS cannot reach",
+  "notes": "A, B, C and D form one piece; E, F and G another, and H has no edges. BFS from A reaches only its own piece, so E, F, G and H stay white with d = \u221e.",
+  "settings": {
+    "marking": "colors",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, B-D, C-D, E-F, F-G, E-G, H"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

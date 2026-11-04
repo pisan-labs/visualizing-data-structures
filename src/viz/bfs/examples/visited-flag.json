@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bfs",
+  "id": "visited-flag",
+  "title": "One visited flag instead of three colors",
+  "notes": "The same search with a visited flag. It visits the vertices in the same order and gets the same d and \u03c0: BFS only needs to know whether a vertex has been seen.",
+  "settings": {
+    "marking": "visited",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, B-D, B-E, C-E, C-F, D-G, E-G, F-H, G-H"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

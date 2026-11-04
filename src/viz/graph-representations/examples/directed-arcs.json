@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "graph-representations",
+  "id": "directed-arcs",
+  "title": "A directed graph: lists hold the edges out, and the matrix is not symmetric",
+  "notes": "A>C is an edge but C>A is not. Adj[A] lists only where A points, and row A of the matrix is not column A.",
+  "settings": {
+    "layout": "force",
+    "arrange": "wide"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A>B, A>C, B>C, C>D, D>B, D>E"],
+    ["hasEdge", "A>C"],
+    ["hasEdge", "C>A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

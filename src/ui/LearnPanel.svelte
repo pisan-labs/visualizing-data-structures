@@ -138,6 +138,12 @@
     border-radius: 4px;
   }
 
+  /* Long code lines wrap, so phones never scroll sideways. */
+  .learn :global(pre) {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
   .learn :global(ul) {
     padding-left: 1.2em;
   }

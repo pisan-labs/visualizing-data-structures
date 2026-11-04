@@ -45,3 +45,5 @@
 2026-11-04 [code] Trace tab (one row per step, jump, copy as CSV or Markdown), prefilled GitHub feedback link on every page, catalog search with Data structures / Algorithms pathways, advanced and ready-only filters
 
 2026-11-04 [code] Typed operation scripts in the History tab (edit and replay, line-numbered errors), -/+ speed keys, embed options (fixed theme, autoplay) in the link and the embed-code builder
+
+2026-11-04 [code] Canonical versions of shared changes the agents duplicated: buttons with several values (ControlButton.args names), circles styled like cells, wrapped code blocks on concept pages; agents asked to merge dev

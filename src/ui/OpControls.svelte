@@ -1,6 +1,6 @@
 <script lang="ts">
   import { makeRng, randomSeed } from '../engine/rng';
-  import type { ControlButton, OpCall } from '../engine/types';
+  import type { ControlButton, OpCall, Value } from '../engine/types';
   import type { Session } from './session.svelte';
 
   let { session }: { session: Session } = $props();
@@ -31,7 +31,13 @@
       session.run([[b.op]]);
       return;
     }
-    const tokens = b.bulk ? text.split(/[\s,]+/).filter(Boolean) : [text.trim()];
+    const several = (b.args?.length ?? 1) > 1;
+    const tokens = b.bulk || several ? text.split(/[\s,]+/).filter(Boolean) : [text.trim()];
+    if (several && tokens.length !== b.args!.length) {
+      error = `${b.label} needs ${b.args!.join(' and ')}, separated by a space.`;
+      input?.focus();
+      return;
+    }
     if (tokens.length === 0 || !tokens[0]) {
       error = 'Type a value first.';
       input?.focus();
@@ -41,7 +47,7 @@
       error = `At most ${MAX_BULK} values at a time.`;
       return;
     }
-    const calls: OpCall[] = [];
+    const values: Value[] = [];
     for (const t of tokens) {
       const v = controls.input.parse(t);
       if (v instanceof Error) {
@@ -49,11 +55,12 @@
         input?.focus();
         return;
       }
-      calls.push([b.op, v]);
+      values.push(v);
     }
     error = '';
     text = '';
-    session.run(calls);
+    // Several values make one call, insert(2, 99); otherwise one call per value.
+    session.run(several ? [[b.op, ...values]] : values.map((v): OpCall => [b.op, v]));
   }
 
   function onSubmit(e: SubmitEvent) {
@@ -84,9 +91,11 @@
   <div class="buttons">
     {#each controls.buttons as b (b.op)}
       {#if b.primary}
-        <button type="submit" class="btn primary">{b.label}</button>
+        <button type="submit" class="btn primary" data-args={b.args?.length}>{b.label}</button>
       {:else}
-        <button type="button" class="btn" onclick={() => run(b)}>{b.label}</button>
+        <button type="button" class="btn" data-args={b.args?.length} onclick={() => run(b)}
+          >{b.label}</button
+        >
       {/if}
     {/each}
     {#if controls.random}

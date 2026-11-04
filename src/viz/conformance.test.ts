@@ -9,7 +9,7 @@ import { Timeline } from '../engine/timeline';
 import type { AnyVizDef, OpCall, Settings, Value } from '../engine/types';
 import type { Shape } from '../render/scene';
 import { families } from './catalog';
-import { vizPaths, vizzes } from './registry';
+import { vizPaths, vizzes } from './all';
 
 function settingsArb(def: AnyVizDef): fc.Arbitrary<Settings> {
   const parts: Record<string, fc.Arbitrary<unknown>> = {};
@@ -28,9 +28,13 @@ const valueArb: fc.Arbitrary<Value> = fc.oneof(
 
 function callArb(def: AnyVizDef): fc.Arbitrary<OpCall> {
   return fc.oneof(
-    ...def.controls.buttons.map((b) =>
-      b.usesInput ? valueArb.map((v) => [b.op, v] as OpCall) : fc.constant([b.op] as OpCall),
-    ),
+    ...def.controls.buttons.map((b) => {
+      if (!b.usesInput) return fc.constant([b.op] as OpCall);
+      const n = b.args?.length ?? 1;
+      return n === 1
+        ? valueArb.map((v) => [b.op, v] as OpCall)
+        : fc.array(valueArb, { minLength: n, maxLength: n }).map((vs) => [b.op, ...vs] as OpCall);
+    }),
   );
 }
 
@@ -65,7 +69,11 @@ describe.each(vizzes.map((v) => [v.id, v] as const))('%s', (_id, def) => {
   });
 
   it('has controls for real operations', () => {
-    for (const b of def.controls.buttons) expect(def.ops[b.op], b.op).toBeDefined();
+    for (const b of def.controls.buttons) {
+      expect(def.ops[b.op], b.op).toBeDefined();
+      const values = b.usesInput ? (b.args?.length ?? 1) : 0;
+      expect(def.ops[b.op]!.arity, `${b.op} takes what its button gives it`).toBe(values);
+    }
   });
 
   it('passes the step checks for random operation sequences', () => {

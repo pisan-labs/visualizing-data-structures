@@ -33,3 +33,17 @@
 2026-11-04 [decision] No answers to PLAN v2 questions within 15 minutes; all recommendations adopted (code tabs in 3 languages, per-page URLs, lessons, practice in wave 2, advanced in wave 4, English only, no code tracing, 4 agents, 2 pathways, feedback link, UTC+1)
 
 2026-11-04 [code] Engine for wave 1: plain-English pseudocode, Big-O self-test rows, presets, code tabs (Python/Java/C++) run against the model in src/viz/code.test.ts; stricter conformance checks
+
+2026-11-04 [code] UI for wave 1 features: Big-O tab (hidden answers, Watch it), code panel views (pseudocode, plain English, Python, Java, C++), presets (Start over with), Show me links, concept checks, lesson deep links (?lesson=)
+
+2026-11-04 [code] Fix: long code lines widened the page on desktop (grid tracks now minmax(0, 1fr); cards may shrink); test covers it
+
+2026-11-04 [code] Per-page URLs: /<id>/ pages prerendered with their own title, description, preview tags and canonical URL; state in the hash; old #/ links redirect; visualizations load on demand; sitemap and robots.txt
+
+2026-11-04 [decision] Deploys only on request: work goes to dev (CI runs there), main = what Netlify publishes, moved with `git push origin dev:main` when Yusuf says deploy (15 credits each); adopted after the 15-minute window
+
+2026-11-04 [code] Trace tab (one row per step, jump, copy as CSV or Markdown), prefilled GitHub feedback link on every page, catalog search with Data structures / Algorithms pathways, advanced and ready-only filters
+
+2026-11-04 [code] Typed operation scripts in the History tab (edit and replay, line-numbered errors), -/+ speed keys, embed options (fixed theme, autoplay) in the link and the embed-code builder
+
+2026-11-04 [code] Canonical versions of shared changes the agents duplicated: buttons with several values (ControlButton.args names), circles styled like cells, wrapped code blocks on concept pages; agents asked to merge dev

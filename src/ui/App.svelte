@@ -1,26 +1,46 @@
 <script lang="ts">
+  import type { AnyVizDef } from '../engine/types';
   import { REPO_URL, SITE_NAME } from '../site';
-  import { getViz } from '../viz/registry';
+  import { loadViz } from '../viz/registry';
   import Catalog from './Catalog.svelte';
   import Logo from './Logo.svelte';
-  import { parseRoute } from './route';
+  import { parseLocation } from './route';
   import { notices, prefs, setPref, type Theme } from './state.svelte';
   import VizPage from './VizPage.svelte';
 
-  let hash = $state(location.hash);
-  const route = $derived(parseRoute(hash));
-  const viz = $derived(route.kind === 'viz' ? getViz(route.id) : undefined);
+  const initial = parseLocation(location.pathname, location.hash);
+  // Old links (/#/stack-array?ex=...) move to the page's own address.
+  if (initial.kind === 'legacy') location.replace(initial.target);
+
+  let route = $state(initial);
   const embed = $derived(route.kind === 'viz' && route.embed);
 
+  // undefined while loading, null when there is no such page.
+  let viz = $state<AnyVizDef | null | undefined>(undefined);
   $effect(() => {
-    const root = document.documentElement;
-    if (prefs.theme === 'auto') root.removeAttribute('data-theme');
-    else root.setAttribute('data-theme', prefs.theme);
+    const r = route;
+    if (r.kind !== 'viz') return;
+    let live = true;
+    viz = undefined;
+    loadViz(r.id).then((def) => {
+      if (live) viz = def ?? null;
+    });
+    return () => {
+      live = false;
+    };
   });
 
+  // An embed may fix its theme (#...&theme=dark); otherwise the viewer's choice applies.
+  const embedTheme = $derived(
+    route.kind === 'viz' && route.embed && ['light', 'dark', 'contrast'].includes(route.theme ?? '')
+      ? route.theme
+      : null,
+  );
   $effect(() => {
-    void route;
-    if (!embed) window.scrollTo(0, 0);
+    const root = document.documentElement;
+    const theme = embedTheme ?? prefs.theme;
+    if (theme === 'auto') root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', theme);
   });
 
   const themes: { value: Theme; label: string }[] = [
@@ -31,7 +51,7 @@
   ];
 </script>
 
-<svelte:window onhashchange={() => (hash = location.hash)} />
+<svelte:window onhashchange={() => (route = parseLocation(location.pathname, location.hash))} />
 
 {#if !embed}
   <a
@@ -43,7 +63,7 @@
     }}>Skip to content</a
   >
   <header class="site">
-    <a class="brand" href="#/" aria-label="{SITE_NAME} home">
+    <a class="brand" href="/" aria-label="{SITE_NAME} home">
       <Logo size={30} />
       <span class="word">Step<span class="w">Wise</span></span>
     </a>
@@ -65,16 +85,27 @@
 <main id="main" tabindex="-1">
   {#if route.kind === 'catalog'}
     <Catalog />
-  {:else if viz}
-    {#key route.key}
-      <VizPage def={viz} code={route.code} embed={route.embed} />
-    {/key}
-  {:else}
-    <div class="missing">
-      <h1>Not here yet</h1>
-      <p>There is no visualization called "{route.id}" on this site.</p>
-      <p><a href="#/">See all visualizations</a></p>
-    </div>
+  {:else if route.kind === 'viz'}
+    {#if viz}
+      {#key route.key}
+        <VizPage
+          def={viz}
+          code={route.code}
+          embed={route.embed}
+          lesson={route.lesson}
+          theme={route.theme}
+          autoplay={route.autoplay}
+        />
+      {/key}
+    {:else if viz === null}
+      <div class="missing">
+        <h1>Not here yet</h1>
+        <p>There is no visualization called "{route.id}" on this site.</p>
+        <p><a href="/">See all visualizations</a></p>
+      </div>
+    {:else}
+      <p class="loading muted" aria-live="polite">Loading…</p>
+    {/if}
   {/if}
 </main>
 
@@ -142,6 +173,12 @@
 
   main:focus {
     outline: none;
+  }
+
+  .loading {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 32px 16px;
   }
 
   .missing {

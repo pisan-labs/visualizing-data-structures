@@ -11,7 +11,7 @@ import path from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { makeRng } from '../engine/rng';
 import type { AnyVizDef, OpCall, Settings, Value } from '../engine/types';
-import { vizzes } from './registry';
+import { vizzes } from './all';
 
 type Lang = 'python' | 'java' | 'cpp';
 
@@ -41,9 +41,12 @@ function randomScript(def: AnyVizDef, seed: number, length: number): OpCall[] {
   const buttons = def.controls.buttons.filter((b) => !b.usesInput || pool.length > 0);
   return Array.from({ length }, () => {
     const b = buttons[rng.int(0, buttons.length - 1)]!;
-    return b.usesInput
-      ? ([b.op, pool[rng.int(0, pool.length - 1)]!] as OpCall)
-      : ([b.op] as OpCall);
+    if (!b.usesInput) return [b.op] as OpCall;
+    const values = Array.from(
+      { length: b.args?.length ?? 1 },
+      () => pool[rng.int(0, pool.length - 1)]!,
+    );
+    return [b.op, ...values] as OpCall;
   });
 }
 

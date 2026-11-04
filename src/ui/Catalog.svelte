@@ -1,8 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { SITE_NAME, TAGLINE } from '../site';
-  import { families, isLive } from '../viz/catalog';
-  import { getViz } from '../viz/registry';
+  import { families, isLive, pathways, type Pathway } from '../viz/catalog';
 
   onMount(() => {
     document.title = `${SITE_NAME}: ${TAGLINE}`;
@@ -10,6 +9,28 @@
 
   const total = families.reduce((n, f) => n + f.items.length, 0);
   const live = families.reduce((n, f) => n + f.items.filter((i) => isLive(i.id)).length, 0);
+
+  let query = $state('');
+  let pathway = $state<Pathway | 'all'>('all');
+  let showAdvanced = $state(true);
+  let readyOnly = $state(false);
+
+  const words = $derived(query.toLowerCase().split(/\s+/).filter(Boolean));
+  const shown = $derived(
+    families
+      .filter((f) => pathway === 'all' || f.pathways.includes(pathway))
+      .map((f) => ({
+        ...f,
+        items: f.items.filter(
+          (i) =>
+            (showAdvanced || !i.advanced) &&
+            (!readyOnly || isLive(i.id)) &&
+            words.every((w) => `${i.title} ${f.name}`.toLowerCase().includes(w)),
+        ),
+      }))
+      .filter((f) => f.items.length > 0),
+  );
+  const count = $derived(shown.reduce((n, f) => n + f.items.length, 0));
 </script>
 
 <div class="catalog">
@@ -23,17 +44,44 @@
     <p class="muted">{live} of {total} visualizations are ready. The rest are on the way.</p>
   </section>
 
+  <form class="filters" role="search" onsubmit={(e) => e.preventDefault()}>
+    <label class="search">
+      <span class="visually-hidden">Search the catalog</span>
+      <input
+        class="field"
+        type="search"
+        placeholder="Search, e.g. tree, sort, graph"
+        bind:value={query}
+      />
+    </label>
+    <fieldset class="pathways">
+      <legend class="visually-hidden">Course pathway</legend>
+      <label class:on={pathway === 'all'}
+        ><input type="radio" name="pathway" value="all" bind:group={pathway} /> Everything</label
+      >
+      {#each pathways as p (p.id)}
+        <label class:on={pathway === p.id}
+          ><input type="radio" name="pathway" value={p.id} bind:group={pathway} /> {p.label}</label
+        >
+      {/each}
+    </fieldset>
+    <label class="check"><input type="checkbox" bind:checked={showAdvanced} /> Show advanced</label>
+    <label class="check"><input type="checkbox" bind:checked={readyOnly} /> Ready only</label>
+  </form>
+  <p class="count muted" aria-live="polite">
+    {count === 0 ? 'Nothing matches.' : `Showing ${count} of ${total}.`}
+  </p>
+
   <div class="families">
-    {#each families as f (f.name)}
+    {#each shown as f (f.name)}
       <section class="family card" aria-labelledby="fam-{f.name}">
         <h2 id="fam-{f.name}">{f.name}</h2>
         <ul>
           {#each f.items as item (item.id)}
-            {@const def = getViz(item.id)}
-            <li class:live={!!def}>
-              {#if def}
-                <a href="#/{item.id}">{item.title}</a>
-                <span class="blurb">{def.blurb}</span>
+            {@const live = isLive(item.id)}
+            <li class:live>
+              {#if live}
+                <a href="/{item.id}/">{item.title}</a>
               {:else}
                 <span class="planned">{item.title}</span>
                 <span class="tag">{item.advanced ? 'advanced, planned' : 'planned'}</span>
@@ -62,6 +110,61 @@
   .intro p {
     max-width: 62ch;
     margin: 0 0 8px;
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    margin-top: 16px;
+  }
+
+  .search input {
+    width: min(100%, 320px);
+    min-height: 42px;
+  }
+
+  .search {
+    flex: 1 1 240px;
+  }
+
+  .pathways {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .pathways label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: var(--surface);
+    cursor: pointer;
+  }
+
+  .pathways label.on {
+    border-color: var(--accent);
+    box-shadow: inset 0 0 0 1px var(--accent);
+    font-weight: 600;
+  }
+
+  .check {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+  }
+
+  .count {
+    margin: 8px 0 0;
   }
 
   .families {
@@ -102,12 +205,6 @@
 
   li.live a {
     font-weight: 700;
-  }
-
-  .blurb {
-    display: block;
-    font-size: 0.88rem;
-    color: var(--text-2);
   }
 
   .planned {

@@ -89,6 +89,12 @@
   });
 </script>
 
+<div class="learn-tools">
+  <button class="btn small" onclick={() => print()} title="Print this explanation as a handout">
+    Print
+  </button>
+</div>
+
 <article class="learn" bind:this={article}>
   {#each segments as seg, i (i)}
     {#if seg.kind === 'html'}
@@ -104,6 +110,11 @@
 <p class="license muted">Text licensed under CC BY 4.0.</p>
 
 <style>
+  .learn-tools {
+    display: flex;
+    justify-content: flex-end;
+  }
+
   .learn {
     line-height: 1.6;
   }

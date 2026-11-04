@@ -8,6 +8,7 @@ import {
   makeState,
   plural,
   Run,
+  SORT_START,
   span,
   walk,
   type ArrayExtra,
@@ -25,13 +26,11 @@ export interface CocktailSettings {
 
 export const defaults: CocktailSettings = { shrink: 'one', draw: 'bars' };
 
-export const START = [42, 17, 63, 8, 35, 91, 24, 56];
-
 type Op = OpSpec<ArrayState, CocktailSettings, ArrayExtra>;
 type Gen = Generator<ArrayStep, ArrayState, void>;
 
 export function init(): ArrayState {
-  return makeState(START);
+  return makeState(SORT_START);
 }
 
 function* finish(r: Run): Gen {

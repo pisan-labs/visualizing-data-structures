@@ -8,6 +8,7 @@ import {
   mark,
   plural,
   Run,
+  SORT_START,
   span,
   type ArrayExtra,
   type ArrayState,
@@ -25,13 +26,11 @@ export interface InsertionSettings {
 
 export const defaults: InsertionSettings = { move: 'shift', draw: 'bars' };
 
-export const START = [42, 17, 63, 8, 35, 91, 24, 56];
-
 type Op = OpSpec<ArrayState, InsertionSettings, ArrayExtra>;
 type Gen = Generator<ArrayStep, ArrayState, void>;
 
 export function init(): ArrayState {
-  return makeState(START);
+  return makeState(SORT_START);
 }
 
 const sortedSoFar = (to: number): BarsRegion[] =>

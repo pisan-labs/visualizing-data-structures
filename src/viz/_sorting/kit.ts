@@ -444,6 +444,12 @@ export function sortPresets(
 
 export const SORT_SIZES = [8, 12, 16, 20];
 
+/**
+ * What every sorting page starts with. Six values keep a first run short (15 comparisons for
+ * an O(n²) sort) and keep the shared random-sequence checks fast.
+ */
+export const SORT_START = [42, 17, 63, 8, 35, 24];
+
 // ----- Code tabs -----
 
 /**

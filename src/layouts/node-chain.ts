@@ -67,6 +67,8 @@ const X0 = 64;
 const LABEL = 15;
 /** Paint order: node boxes are 1 and text 2, so links and dividers go in between. */
 const LINK_Z = 1.5;
+/** How far next arrows sit above, and prev arrows below, the middle of a doubly linked node. */
+const SPLIT = 8;
 
 const SIZES = {
   single: { field: 24, value: 48 },
@@ -179,12 +181,14 @@ export function drawChain(d: ChainDrawing): { shapes: Shape[]; bounds: Bounds } 
     }
 
     // next: an arrow to the following slot, routed around the row end; or a slash.
+    // In a doubly linked list, next arrows run a little above the middle and prev arrows a
+    // little below; routed links use separate lanes for the same reason.
     const nx = p.x + W - field / 2;
-    const ny = p.cy - (double ? 6 : 0);
+    const ny = p.cy - (double ? SPLIT : 0);
     const nextRole = role(`${id}-next`);
     if (node.next) {
       const q = slot(k + 1);
-      const qy = q.cy - (double ? 6 : 0);
+      const qy = q.cy - (double ? SPLIT : 0);
       const pts: [number, number][] =
         q.row === p.row
           ? [
@@ -193,10 +197,10 @@ export function drawChain(d: ChainDrawing): { shapes: Shape[]; bounds: Bounds } 
             ]
           : [
               [nx, ny],
-              [right + 16, ny],
-              [right + 16, laneY(p.row)],
-              [X0 - 22, laneY(p.row)],
-              [X0 - 22, qy],
+              [right + 14, ny],
+              [right + 14, laneY(p.row) - (double ? 6 : 0)],
+              [X0 - 20, laneY(p.row) - (double ? 6 : 0)],
+              [X0 - 20, qy],
               [q.x - 1, qy],
             ];
       line(`${id}-next`, pts, { role: nextRole, head: true });
@@ -215,22 +219,22 @@ export function drawChain(d: ChainDrawing): { shapes: Shape[]; bounds: Bounds } 
     if (double) {
       const prevRole = role(`${id}-prev`);
       const px = p.x + field / 2;
-      const py = p.cy + 6;
+      const py = p.cy + SPLIT;
       if (node.prev && k > 0) {
         const q = slot(k - 1);
         const pts: [number, number][] =
           q.row === p.row
             ? [
                 [px, py],
-                [q.x + W + 1, q.cy + 6],
+                [q.x + W + 1, q.cy + SPLIT],
               ]
             : [
                 [px, py],
-                [X0 - 30, py],
-                [X0 - 30, laneY(q.row) + 8],
-                [right + 24, laneY(q.row) + 8],
-                [right + 24, q.cy + 6],
-                [q.x + W + 1, q.cy + 6],
+                [X0 - 34, py],
+                [X0 - 34, laneY(q.row) + 6],
+                [right + 30, laneY(q.row) + 6],
+                [right + 30, q.cy + SPLIT],
+                [q.x + W + 1, q.cy + SPLIT],
               ];
         line(`${id}-prev`, pts, { role: prevRole, head: true });
         dot(`${id}-prev-dot`, px, py);

@@ -79,6 +79,12 @@
     padding-left: 1.2em;
   }
 
+  /* Wrap long lines (concept checks before they become widgets) so phones never scroll sideways. */
+  .learn :global(pre) {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
   .license {
     font-size: 0.8rem;
     margin-top: 16px;

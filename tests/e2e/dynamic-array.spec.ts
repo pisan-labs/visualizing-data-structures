@@ -30,7 +30,7 @@ async function loadExample(page: Page, title: string) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('./#/dynamic-array');
+  await page.goto('/dynamic-array/');
   await expect(page.getByRole('heading', { name: 'Dynamic array (resizing)' })).toBeVisible();
 });
 

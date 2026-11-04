@@ -11,7 +11,7 @@ import path from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { makeRng } from '../engine/rng';
 import type { AnyVizDef, OpCall, Settings, Value } from '../engine/types';
-import { vizzes } from './registry';
+import { vizzes } from './all';
 
 type Lang = 'python' | 'java' | 'cpp';
 

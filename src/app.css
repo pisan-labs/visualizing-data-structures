@@ -236,6 +236,8 @@ button {
 }
 
 .card {
+  /* Cards sit in grid and flex layouts; let them shrink so wide content scrolls inside them. */
+  min-width: 0;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);

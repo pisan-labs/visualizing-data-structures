@@ -13,6 +13,18 @@
 
   const MAX_BULK = 50;
 
+  const sizes = $derived(controls.sizes ?? [5, 8, 12]);
+  let presetIndex = $state(0);
+  let presetSize = $state<number | null>(null);
+  const size = $derived(presetSize ?? sizes[Math.floor(sizes.length / 2)] ?? 5);
+
+  function fill() {
+    const p = controls.presets?.[presetIndex];
+    if (!p) return;
+    error = '';
+    session.fill(p.make(makeRng(randomSeed()), size));
+  }
+
   function run(b: ControlButton) {
     if (!b.usesInput || !controls.input) {
       error = '';
@@ -79,9 +91,11 @@
   <div class="buttons">
     {#each controls.buttons as b (b.op)}
       {#if b.primary}
-        <button type="submit" class="btn primary">{b.label}</button>
+        <button type="submit" class="btn primary" data-args={b.args?.length}>{b.label}</button>
       {:else}
-        <button type="button" class="btn" onclick={() => run(b)}>{b.label}</button>
+        <button type="button" class="btn" data-args={b.args?.length} onclick={() => run(b)}
+          >{b.label}</button
+        >
       {/if}
     {/each}
     {#if controls.random}
@@ -95,6 +109,28 @@
       </button>
     {/if}
   </div>
+  {#if controls.presets?.length}
+    <div class="presets" role="group" aria-label="Start over with a preset">
+      <label for="preset">Start over with</label>
+      <select id="preset" class="field" bind:value={presetIndex}>
+        {#each controls.presets as p, i (p.label)}
+          <option value={i}>{p.label}</option>
+        {/each}
+      </select>
+      <label for="preset-size" class="visually-hidden">How many</label>
+      <select
+        id="preset-size"
+        class="field"
+        value={size}
+        onchange={(e) => (presetSize = Number(e.currentTarget.value))}
+      >
+        {#each sizes as n (n)}
+          <option value={n}>{n}</option>
+        {/each}
+      </select>
+      <button type="button" class="btn" onclick={fill}>Fill</button>
+    </div>
+  {/if}
   {#if error}
     <p id="op-error" class="error" role="alert">{error}</p>
   {/if}
@@ -128,6 +164,23 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+  }
+
+  .presets {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    flex-basis: 100%;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+    font-size: 0.92rem;
+    color: var(--text-2);
+  }
+
+  .presets select {
+    min-height: 36px;
+    color: var(--text);
   }
 
   .error {

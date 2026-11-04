@@ -9,7 +9,7 @@ import { Timeline } from '../engine/timeline';
 import type { AnyVizDef, OpCall, Settings, Value } from '../engine/types';
 import type { Shape } from '../render/scene';
 import { families } from './catalog';
-import { vizPaths, vizzes } from './registry';
+import { vizPaths, vizzes } from './all';
 
 function settingsArb(def: AnyVizDef): fc.Arbitrary<Settings> {
   const parts: Record<string, fc.Arbitrary<unknown>> = {};

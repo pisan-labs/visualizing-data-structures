@@ -22,7 +22,9 @@ the browser, exported as files, and embedded in Canvas.
   interpolates between scenes and draws them as SVG.
 - **Saved example:** settings + seed + the list of operations, plus a format version.
   Share links compress it into the URL hash.
-- **Hosting:** Netlify site `stepwise-pisan-labs`, domain `stepwise.pisan.me`; publishing is locked until Yusuf releases it. GitHub Actions runs CI.
+- **Hosting:** Netlify site `stepwise-pisan-labs`, domain `stepwise.pisan.me`. Netlify builds only
+  `main`, and each production deploy costs 15 credits, so work goes to `dev` and `main` moves only
+  when Yusuf says "deploy". GitHub Actions runs CI on both branches.
 - **License:** MIT for code; CC BY 4.0 for written explanations.
 - **Conventions:** toggles wherever textbooks differ; CLRS is the default.
 - **Pseudocode:** first; one real language after Phase 2.

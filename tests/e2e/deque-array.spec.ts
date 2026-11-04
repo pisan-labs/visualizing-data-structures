@@ -25,7 +25,7 @@ async function loadExample(page: Page, title: string, jumpTo: string) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('./#/deque-array');
+  await page.goto('/deque-array/');
   await expect(page.getByRole('heading', { name: 'Deque (circular array)' })).toBeVisible();
 });
 

@@ -2,27 +2,45 @@
   import { onDestroy, onMount, untrack } from 'svelte';
   import { decodeExample, encodeExample, ExampleError, validateExample } from '../engine/example';
   import type { AnyVizDef } from '../engine/types';
-  import { SITE_NAME } from '../site';
+  import { REPO_URL, SITE_NAME } from '../site';
   import CodePanel from './CodePanel.svelte';
+  import BigOPanel from './BigOPanel.svelte';
   import ExamplesPanel from './ExamplesPanel.svelte';
   import HistoryPanel from './HistoryPanel.svelte';
   import LearnPanel from './LearnPanel.svelte';
   import Narration from './Narration.svelte';
   import OpControls from './OpControls.svelte';
+  import { vizHref } from './route';
   import { Session } from './session.svelte';
   import SettingsPanel from './SettingsPanel.svelte';
   import Stage from './Stage.svelte';
   import { notify, prefs, setPref, type Tab } from './state.svelte';
+  import TracePanel from './TracePanel.svelte';
   import Transport from './Transport.svelte';
   import VarsPanel from './VarsPanel.svelte';
 
-  let { def, code, embed }: { def: AnyVizDef; code: string | null; embed: boolean } = $props();
+  let {
+    def,
+    code,
+    embed,
+    lesson = null,
+    theme = null,
+    autoplay = false,
+  }: {
+    def: AnyVizDef;
+    code: string | null;
+    embed: boolean;
+    lesson?: string | null;
+    theme?: string | null;
+    autoplay?: boolean;
+  } = $props();
 
   const session = untrack(() => new Session(def, { speed: prefs.speed, detail: prefs.detail }));
   let ready = $state(false);
 
   onMount(async () => {
     document.title = `${def.title} · ${SITE_NAME}`;
+    if (lesson) setPref('tab', 'learn');
     if (code) {
       try {
         session.load(validateExample(def, await decodeExample(code)));
@@ -34,6 +52,7 @@
       }
     }
     ready = true;
+    if (autoplay) session.play();
   });
 
   onDestroy(() => session.destroy());
@@ -54,16 +73,24 @@
       const pristine =
         session.timeline.entries.length === 0 &&
         Object.keys(def.defaults).every((k) => settings[k] === def.defaults[k]);
-      const query = pristine ? '' : `?ex=${await encodeExample(session.toExample())}`;
-      const hash = `#/${def.id}${query}`;
-      fullUrl = location.href.split('#')[0] + hash;
-      history.replaceState(history.state, '', embed ? `${hash}${query ? '&' : '?'}embed=1` : hash);
+      const ex = pristine ? undefined : await encodeExample(session.toExample());
+      fullUrl = location.origin + vizHref(def.id, { ex });
+      history.replaceState(history.state, '', vizHref(def.id, { ex, embed, theme, autoplay }));
     }, 400);
   });
 
+  // A prefilled GitHub issue that carries the page and the exact example.
+  const issueUrl = $derived(
+    `${REPO_URL}/issues/new?title=${encodeURIComponent(`[${def.id}] `)}&body=${encodeURIComponent(
+      `Page: ${fullUrl || location.origin + vizHref(def.id)}\n\nWhat happened:\n\nWhat I expected:\n`,
+    )}`,
+  );
+
   const tabs: { id: Tab; label: string }[] = [
     { id: 'learn', label: 'Learn' },
+    { id: 'bigo', label: 'Big-O' },
     { id: 'examples', label: 'Examples' },
+    { id: 'trace', label: 'Trace' },
     { id: 'history', label: 'History' },
   ];
 
@@ -97,6 +124,17 @@
         e.preventDefault();
         session.stepBack();
         break;
+      case '-':
+      case '+':
+      case '=': {
+        const speeds = [0.25, 0.5, 1, 1.5, 2, 4];
+        const i = speeds.indexOf(session.speed);
+        const next =
+          speeds[Math.max(0, Math.min(speeds.length - 1, i + (e.key === '-' ? -1 : 1)))]!;
+        session.setSpeed(next);
+        setPref('speed', next);
+        break;
+      }
     }
   }
 </script>
@@ -106,14 +144,14 @@
 <div class="viz" class:embed>
   <header class="viz-head">
     {#if !embed}
-      <a class="back" href="#/">← All visualizations</a>
+      <a class="back" href="/">← All visualizations</a>
     {/if}
     <div class="title-row">
       <h1>{def.title}</h1>
       {#if embed}
         <a
           class="open"
-          href={fullUrl || location.href.replace(/[?&]embed=1/, '')}
+          href={fullUrl || location.origin + vizHref(def.id)}
           target="_blank"
           rel="noopener"
         >
@@ -164,7 +202,11 @@
         >
           {#if prefs.tab === t.id}
             {#if t.id === 'learn'}
-              <LearnPanel {session} />
+              <LearnPanel {session} {lesson} />
+            {:else if t.id === 'bigo'}
+              <BigOPanel {session} />
+            {:else if t.id === 'trace'}
+              <TracePanel {session} />
             {:else if t.id === 'examples'}
               <ExamplesPanel {session} />
             {:else}
@@ -174,6 +216,9 @@
         </div>
       {/each}
     </section>
+    <p class="feedback">
+      <a href={issueUrl} target="_blank" rel="noopener">Spotted a mistake? Tell us on GitHub</a>
+    </p>
   {/if}
 </div>
 
@@ -248,6 +293,11 @@
     padding: 12px 14px 0;
   }
 
+  .feedback {
+    margin: 0;
+    font-size: 0.88rem;
+  }
+
   .embed {
     padding: 8px;
     gap: 8px;
@@ -275,6 +325,7 @@
 
     .main {
       display: grid;
+      grid-template-columns: minmax(0, 1fr);
       gap: 12px;
       min-width: 0;
       grid-column: 1;
@@ -283,6 +334,7 @@
 
     .side {
       display: grid;
+      grid-template-columns: minmax(0, 1fr);
       gap: 12px;
       min-width: 0;
       grid-column: 2;

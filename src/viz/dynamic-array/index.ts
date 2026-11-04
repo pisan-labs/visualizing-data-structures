@@ -82,7 +82,7 @@ export const dynamicArray: VizDef<DynState, DynSettings, DynExtra> = {
       label: 'Value or index',
       placeholder: 'e.g. 42, or 2 99',
       maxLength: 60,
-      sample: '1 5',
+      sample: '1',
       parse: parseDynValue,
     },
     buttons: [

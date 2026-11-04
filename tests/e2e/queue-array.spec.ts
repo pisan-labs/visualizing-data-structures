@@ -23,7 +23,7 @@ async function loadExample(page: Page, title: string) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('./#/queue-array');
+  await page.goto('/queue-array/');
   await expect(page.getByRole('heading', { name: 'Queue (circular array)' })).toBeVisible();
 });
 

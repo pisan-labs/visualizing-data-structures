@@ -312,3 +312,15 @@ test('an assignment link opens the same practice set and grades answers', async 
   await first.getByRole('button', { name: 'Show me' }).click();
   await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
 });
+
+test('presentation mode hides the chrome and Escape leaves it', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Presenting is for lecture screens');
+  await page.getByRole('button', { name: 'Present' }).click();
+  await expect(page.locator('header.site')).toBeHidden();
+  await expect(page.getByRole('tab', { name: 'Learn' })).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Exit presentation' })).toBeVisible();
+  await page.locator('h1').click();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('header.site')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Present' })).toBeVisible();
+});

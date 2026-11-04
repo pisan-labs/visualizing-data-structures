@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "avl",
+  "id": "rr-case",
+  "title": "RR case: one left rotation",
+  "notes": "The mirror image of LL. Inserting 70 makes 30 two levels taller on the right, through 50, which leans right too. One left rotation at 30 lifts 50 to the root, and 40 swings across to become 30's right child.",
+  "settings": {
+    "delete": "successor",
+    "show": "both",
+    "bf": "left",
+    "leaf": "zero"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 30],
+    ["insert", 20],
+    ["insert", 50],
+    ["insert", 40],
+    ["insert", 60],
+    ["insert", 70]
+  ],
+  "at": {
+    "op": 4,
+    "step": 999
+  }
+}

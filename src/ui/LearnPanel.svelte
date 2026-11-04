@@ -75,6 +75,12 @@
     border-radius: 4px;
   }
 
+  /* Wrap long lines in code blocks (concept checks among them), so phones never scroll sideways. */
+  .learn :global(pre) {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
   .learn :global(ul) {
     padding-left: 1.2em;
   }

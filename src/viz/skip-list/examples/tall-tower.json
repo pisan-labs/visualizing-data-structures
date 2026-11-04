@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "viz": "skip-list",
+  "id": "tall-tower",
+  "title": "A lucky node reaches the maximum level",
+  "notes": "With the maximum level set to 4, the coin keeps coming up heads for 80 until it hits the cap, and the flipping stops there.",
+  "settings": {
+    "p": "1/2",
+    "maxLevel": 4,
+    "draw": "across"
+  },
+  "seed": 4,
+  "ops": [
+    ["insert", 30],
+    ["insert", 10],
+    ["insert", 70],
+    ["insert", 50],
+    ["insert", 90],
+    ["insert", 20],
+    ["insert", 60],
+    ["insert", 40],
+    ["insert", 80]
+  ],
+  "at": {
+    "op": 7,
+    "step": 99
+  }
+}

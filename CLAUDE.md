@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Interactive data structure and algorithm visualizations (working name **Stepwise**). Read
+Interactive data structure and algorithm visualizations (**StepWise**, capital W). Read
 `BRIEFING.md` for scope and decisions and `PLAN.md` for the roadmap. Log decisions and notable
 changes in `CHANGES.md` (append-only, one line each: `YYYY-MM-DD [type] description`).
 

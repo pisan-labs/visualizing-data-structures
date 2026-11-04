@@ -162,7 +162,8 @@
           x2={s.x2}
           y2={s.y2}
           stroke-dasharray={s.dashed ? '5 4' : undefined}
-          marker-end={markerFor(s.role)}
+          marker-end={s.head === 'none' ? undefined : markerFor(s.role)}
+          marker-start={s.head === 'both' ? markerFor(s.role) : undefined}
           opacity={s.opacity ?? 1}
         />
       {:else if s.kind === 'circle'}

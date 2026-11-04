@@ -94,6 +94,8 @@ export interface Controls {
     label: string;
     placeholder: string;
     maxLength: number;
+    /** A valid input, used by the automatic browser tests. Defaults to "5". */
+    sample?: string;
     parse(token: string): Value | Error;
   };
   buttons: ControlButton[];

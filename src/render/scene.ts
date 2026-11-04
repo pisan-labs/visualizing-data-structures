@@ -45,6 +45,8 @@ export interface ArrowShape extends ShapeBase {
   x2: number;
   y2: number;
   dashed?: boolean;
+  /** Which ends get an arrowhead. Default 'end'; 'none' draws a plain line (undirected edge). */
+  head?: 'end' | 'none' | 'both';
 }
 
 export interface CircleShape extends ShapeBase {

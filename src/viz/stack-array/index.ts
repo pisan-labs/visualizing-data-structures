@@ -85,3 +85,5 @@ export const stackArray: VizDef<StackState, StackSettings, StackExtra> = {
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [lifo, reverseWord, leftovers, overflow, underflow, index] as unknown as SavedExample[],
 };
+
+export default stackArray;

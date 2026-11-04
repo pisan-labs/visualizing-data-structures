@@ -17,3 +17,7 @@
 2026-11-04 [code] Stack (array) live: top convention toggle (count vs index), capacity, layout; 6 curated examples; concept page in Yusuf's voice; 22 unit + 31 e2e tests
 
 2026-11-04 [decision] Desktop layout puts narration, pseudocode and variables in a sticky right column so stage, controls and explanation fit at 1366x768
+
+2026-11-04 [decision] Name is StepWise (capital W); final URL https://stepwise.pisan.me; Netlify site stepwise-pisan-labs connected, publishing locked by Yusuf for now
+
+2026-11-04 [code] Prep for parallel agents: registry auto-discovers src/viz/*/index.ts, E2E_PORT env, browser test that covers every visualization, arrow head option

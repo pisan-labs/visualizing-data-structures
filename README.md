@@ -3,7 +3,7 @@
 [![CI](https://github.com/pisan-labs/visualizing-data-structures/actions/workflows/ci.yml/badge.svg)](https://github.com/pisan-labs/visualizing-data-structures/actions/workflows/ci.yml)
 
 Interactive visualizations of data structures and algorithms for university courses
-(working name **Stepwise**). Every step is narrated, the running pseudocode line is
+(**StepWise**, https://stepwise.pisan.me). Every step is narrated, the running pseudocode line is
 highlighted, and the variables are shown. You can step backwards through the whole history,
 share your work as a link, embed it in Canvas, or save it as a file.
 

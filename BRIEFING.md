@@ -29,7 +29,7 @@ the browser, exported as files, and embedded in Canvas.
 - **Explanations:** Claude writes them in Yusuf's voice with no approval step; Yusuf edits
   as needed.
 - **Pace:** as fast as the quota allows; no external deadlines.
-- **Name:** pending; working name **Stepwise**, set in `src/site.ts`.
+- **Name:** **StepWise** (capital W), set in `src/site.ts`. Live at `https://stepwise.pisan.me` (Netlify site `stepwise-pisan-labs`).
 
 ## Non-goals (v1)
 

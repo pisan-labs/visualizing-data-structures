@@ -64,6 +64,7 @@
       autocapitalize="off"
       spellcheck="false"
       enterkeyhint="go"
+      data-sample={controls.input.sample ?? '5'}
       aria-invalid={error ? 'true' : undefined}
       aria-describedby={error ? 'op-error' : undefined}
     />

@@ -425,7 +425,7 @@ both projects as inspiration. For our own license, see question 6.
 | 11 | Quiz mode | Engine support in Phase 1, UI after Phase 5 |
 | 12 | Conventions | Toggles wherever textbooks differ; CLRS as the default |
 | 13 | Analytics | None |
-| 14 | Name | Pending: 10 suggestions given; working name Stepwise |
+| 14 | Name | **StepWise** (capital W), domain `stepwise.pisan.me` |
 | 15 | Canvas embed | Yes, in v1 |
 | 16 | Explanations | Claude writes in Yusuf's voice; no approval step; Yusuf edits as needed |
 

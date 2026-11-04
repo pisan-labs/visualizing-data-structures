@@ -7,7 +7,8 @@ import { validateExample } from '../engine/example';
 import { Timeline } from '../engine/timeline';
 import type { AnyVizDef, OpCall, Settings, Value } from '../engine/types';
 import type { Shape } from '../render/scene';
-import { vizzes } from './registry';
+import { families } from './catalog';
+import { vizPaths, vizzes } from './registry';
 
 function settingsArb(def: AnyVizDef): fc.Arbitrary<Settings> {
   const parts: Record<string, fc.Arbitrary<unknown>> = {};
@@ -53,6 +54,12 @@ function checkTimeline(def: AnyVizDef, t: Timeline<unknown, Settings, unknown>) 
 }
 
 describe.each(vizzes.map((v) => [v.id, v] as const))('%s', (_id, def) => {
+  it('lives in a folder named after its id and is listed in the catalog', () => {
+    const path = Object.keys(vizPaths).find((p) => vizPaths[p] === def);
+    expect(path).toBe(`./${def.id}/index.ts`);
+    expect(families.flatMap((f) => f.items.map((i) => i.id))).toContain(def.id);
+  });
+
   it('has controls for real operations', () => {
     for (const b of def.controls.buttons) expect(def.ops[b.op], b.op).toBeDefined();
   });

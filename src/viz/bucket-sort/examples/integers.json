@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "bucket-sort",
+  "id": "integers",
+  "title": "Whole numbers: the buckets split the range",
+  "notes": "Eight whole numbers from 3 to 49. The range from 3 up to 50 is cut into eight equal parts, one per bucket, and each number goes to the part it falls in.",
+  "settings": { "values": "integer", "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "29 25 3 49 9 37 21 43"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "dp-change",
+  "id": "greedy-stuck",
+  "title": "Coins 3 and 5, amount 11: greedy gets stuck",
+  "notes": "With no coin worth 1, the amounts 1, 2, 4 and 7 cannot be made at all: their cells hold ∞. Greedy takes 5 and 5, leaves 1, and has nowhere to go. The table pays 11 with 3 + 3 + 5.",
+  "settings": { "goal": "fewest" },
+  "seed": 1,
+  "ops": [
+    ["coins", "3 5"],
+    ["change", 11]
+  ],
+  "at": { "op": 1, "step": 0 }
+}

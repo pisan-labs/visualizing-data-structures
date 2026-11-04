@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "radix-sort",
+  "id": "stability",
+  "title": "Each pass keeps the order of the one before",
+  "notes": "In pass 2, 11 and 12 share bucket 1. 11 goes in first because pass 1 left it in front of 12, and that is exactly the order the last digit asks for. If a pass mixed up equal digits, the work of the earlier passes would be lost.",
+  "settings": { "base": 10, "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "21 11 22 12"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

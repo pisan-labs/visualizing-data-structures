@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "dp-change",
+  "id": "count-ways",
+  "title": "How many ways to make 6 with 1, 3 and 4?",
+  "notes": "Each row adds one coin. A cell adds the ways that skip the new coin (the cell above) to the ways that use it at least once (the cell one coin to the left). Four ways in all.",
+  "settings": { "goal": "ways" },
+  "seed": 1,
+  "ops": [["change", 6]],
+  "at": { "op": 0, "step": 0 }
+}

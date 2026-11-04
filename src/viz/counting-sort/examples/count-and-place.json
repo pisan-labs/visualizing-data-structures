@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "counting-sort",
+  "id": "count-and-place",
+  "title": "Count, add up, place",
+  "notes": "Eight values from 0 to 5. Count them into C, add the counts up, then drop each value into B at the place its count points to, starting from the right end of A. Switch to bars to see the counts as a histogram.",
+  "settings": { "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "2 5 3 0 2 3 0 3"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

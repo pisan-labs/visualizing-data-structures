@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "dp-edit-distance",
+  "id": "inserts-only",
+  "title": "One letter to banana: five inserts",
+  "notes": "a has one letter and banana has six, so at least five letters must be inserted. The single a matches one of banana's a's, and the walk back runs along row 0 for the rest.",
+  "settings": { "ins": 1, "del": 1, "sub": 1 },
+  "seed": 1,
+  "ops": [["load", "a", "banana"], ["fill"], ["trace"]],
+  "at": { "op": 1, "step": 0 }
+}

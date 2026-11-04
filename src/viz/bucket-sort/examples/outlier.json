@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "bucket-sort",
+  "id": "outlier",
+  "title": "One outlier crowds the rest into one bucket",
+  "notes": "Seven small numbers and a 99. The range from 1 to 99 is cut into eight parts about 12 wide, so the seven small numbers all share bucket 0 and insertion sort has to do the real work.",
+  "settings": { "values": "integer", "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "7 3 6 1 5 2 4 99"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

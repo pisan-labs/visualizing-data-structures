@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "dp-fibonacci",
+  "id": "base-cases",
+  "title": "The smallest cases: F(0), F(1) and F(2)",
+  "notes": "F(0) and F(1) are base cases: the table has nothing to add yet. F(2) is the first value that needs an addition.",
+  "settings": { "style": "bottomup" },
+  "seed": 1,
+  "ops": [
+    ["fib", 0],
+    ["fib", 1],
+    ["fib", 2]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

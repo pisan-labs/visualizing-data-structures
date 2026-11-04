@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "bucket-sort",
+  "id": "even",
+  "title": "Evenly spread: one value per bucket",
+  "notes": "Every value has a bucket to itself, so there is nothing to sort inside the buckets: no comparisons at all. Scatter and join, and the array is sorted.",
+  "settings": { "values": "fraction", "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "0.55 0.05 0.85 0.35 0.15 0.95 0.65 0.25 0.75 0.45"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

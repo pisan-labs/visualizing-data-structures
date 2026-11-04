@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "dp-change",
+  "id": "greedy-works",
+  "title": "Coins 1, 5 and 10: greedy happens to work",
+  "notes": "With these coins the largest coin first is always right, so greedy and the table agree on three coins for 12: a 10 and two 1s. The table still checks every coin for every amount.",
+  "settings": { "goal": "fewest" },
+  "seed": 1,
+  "ops": [
+    ["coins", "1 5 10"],
+    ["change", 12]
+  ],
+  "at": { "op": 1, "step": 0 }
+}

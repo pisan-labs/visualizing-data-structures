@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "counting-sort",
+  "id": "all-equal",
+  "title": "All equal: one count does all the work",
+  "notes": "Six 7s. C[7] counts to 6 and every other count stays 0. The placement still goes from the right, filling B from B[5] down to B[0].",
+  "settings": { "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "7 7 7 7 7 7"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

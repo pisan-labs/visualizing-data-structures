@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "dp-fibonacci",
+  "id": "memo-hits",
+  "title": "Memo hits: every value is worked out once",
+  "notes": "memoFib(9) runs 17 times. Ten of those calls fill a cell; the other seven find their answer already in the memo and return at once. Without the memo, F(9) takes 109 calls.",
+  "settings": { "style": "memo" },
+  "seed": 1,
+  "ops": [["fib", 9]],
+  "at": { "op": 0, "step": 0 }
+}

@@ -27,12 +27,18 @@ the browser, exported as files, and embedded in Canvas.
   when Yusuf says "deploy". GitHub Actions runs CI on both branches.
 - **License:** MIT for code; CC BY 4.0 for written explanations.
 - **Conventions:** toggles wherever textbooks differ; CLRS is the default.
-- **Pseudocode:** first; one real language after Phase 2.
-- **Quiz mode:** the engine supports it from Phase 1; the UI comes after Phase 5.
+- **Code:** pseudocode in formal and plain-English forms, synced with the steps, plus static
+  Python, Java and C++ tabs that CI runs against the model.
+- **Self-testing:** concept checks on the concept pages, a Big-O self-test, and seeded practice
+  sets graded in the browser; an assignment link gives everyone the same set.
+- **Instructor tools:** embeds, presentation mode, compare mode (two pages on the same
+  operations) and printable concept pages.
 - **Explanations:** Claude writes them in Yusuf's voice with no approval step; Yusuf edits
   as needed.
 - **Pace:** as fast as the quota allows; no external deadlines.
-- **Name:** **StepWise** (capital W), set in `src/site.ts`. Live at `https://stepwise.pisan.me` (Netlify site `stepwise-pisan-labs`).
+- **Name:** **StepWise** (capital W), set in `src/site.ts`. It will live at
+  `https://stepwise.pisan.me` (Netlify site `stepwise-pisan-labs`); nothing is published until the
+  first deploy.
 
 ## Non-goals (v1)
 

@@ -39,11 +39,11 @@ heapSize is what keeps the sorted part safe. `maxHeapify` only looks at children
 
 ## O(n log n), whatever the order
 
-The order of the input barely matters. [Reverse sorted](#example:reverse-input) input is a max-heap already, since every value is at least as big as everything after it, so phase 1 makes no swaps at all. Phase 2 doesn't care: 18 comparisons and 11 swaps for 7 values. [Sorted input](#example:sorted-input) is upside down for a max-heap, and every value sinks to a leaf in phase 1. 21 comparisons and 16 swaps. Averaged over all 5,040 orders of seven distinct values, heap sort makes 19.8 comparisons. Not much spread.
+The order of the input barely matters. [Reverse sorted](#example:reverse-input) input is a max-heap already, since every value is at least as big as everything after it, so phase 1 makes no swaps at all. Phase 2 doesn't care: 18 comparisons and 11 swaps for 7 values. [Sorted input](#example:sorted-input) is upside down for a max-heap, and every value sinks to a leaf in phase 1. 21 comparisons and 16 swaps. Over all 5,040 orders of seven distinct values, heap sort makes 19.8 comparisons on average, never fewer than 16 and never more than 22.
 
 That's the selling point: O(n log n) in the worst case, like merge sort, and no extra array, unlike merge sort. Many C++ libraries use it as a safety net: their `std::sort` is introsort, a quicksort that switches to heap sort when the recursion gets too deep.
 
-The one exception to the best case is equal values. A child that is not bigger never swaps, so with [all values equal](#example:all-equal) nothing sinks and the sort is O(n): 15 comparisons and 6 swaps for 7 values.
+Equal values are the one exception. A child that is not bigger never swaps, so with [all values equal](#example:all-equal) nothing sinks and the sort is O(n): 15 comparisons and 6 swaps for 7 values.
 
 ## Not stable
 
@@ -61,7 +61,7 @@ Q: Heap sort runs on 5, 5, 3. Which 5 comes first in the sorted array?
 
 Use heap sort when you need a guaranteed O(n log n) and can't spare O(n) extra memory: embedded code, real-time code, or the fallback inside introsort. It's also handy when you only want the k largest values: build the heap in O(n) and stop phase 2 after k rounds, O(n + k log n).
 
-Avoid it when you need a stable sort, or when the data is nearly sorted; insertion sort finishes that in O(n), and heap sort shuffles it all anyway. On random data quicksort is usually faster in practice. Each sift-down jumps from i to 2i to 4i, all over the array, and memory caches don't like that.
+Avoid it when you need a stable sort, or when the data is nearly sorted; insertion sort is close to O(n) there, and heap sort shuffles it all anyway. On random data quicksort is usually faster in practice. Each sift-down jumps from i to 2i to 4i, all over the array, and memory caches don't like that.
 
 ## Common mistakes
 

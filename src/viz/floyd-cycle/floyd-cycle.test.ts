@@ -85,7 +85,8 @@ describe('floyd cycle detection', () => {
       }),
       { numRuns: 400 },
     );
-  });
+    // Generous: the whole suite runs in parallel and this test runs 400 sequences.
+  }, 60_000);
 
   it('reads and checks the list text', () => {
     expect(parseSpec('1 2 3 4 5 6 @2')).toEqual({ values: [1, 2, 3, 4, 5, 6], loopAt: 2 });

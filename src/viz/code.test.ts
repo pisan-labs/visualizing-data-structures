@@ -82,7 +82,8 @@ describe.each(withCode.map((v) => [v.id, v] as const))('%s code tabs', (id, def)
   beforeAll(() => {
     if (toolchain.python) {
       const dir = path.join(root, 'python');
-      runners.python = (input) => run('python3', ['main.py'], dir, input);
+      // -B: never write __pycache__ into the source tree.
+      runners.python = (input) => run('python3', ['-B', 'main.py'], dir, input);
     }
     if (toolchain.java) {
       const dir = path.join(root, 'java');

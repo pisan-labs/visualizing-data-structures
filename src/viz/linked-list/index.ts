@@ -25,6 +25,7 @@ import {
   type ListState,
 } from './model';
 import { listScript } from './driver';
+import { listPractice } from './practice';
 import { view } from './view';
 
 const each = (op: string, vs: Value[]): OpCall[] => vs.map((v) => [op, v] as OpCall);
@@ -65,19 +66,20 @@ export const linkedList: VizDef<ListState, ListSettings, ListExtra> = {
     buttons: [
       { op: 'insertTail', label: 'Insert at tail', usesInput: true, bulk: true, primary: true },
       { op: 'insertHead', label: 'Insert at head', usesInput: true, bulk: true },
+      { op: 'removeHead', label: 'Remove head', usesInput: false },
+      { op: 'removeTail', label: 'Remove tail', usesInput: false },
+      { op: 'search', label: 'Search', usesInput: true },
+      { op: 'reverse', label: 'Reverse', usesInput: false },
       {
         op: 'insertAt',
         label: 'Insert at (i, x)',
         usesInput: true,
         args: ['an index', 'a value'],
+        more: true,
       },
-      { op: 'removeHead', label: 'Remove head', usesInput: false },
-      { op: 'removeTail', label: 'Remove tail', usesInput: false },
-      { op: 'removeAt', label: 'Remove at (i)', usesInput: true },
-      { op: 'removeValue', label: 'Remove value', usesInput: true },
-      { op: 'search', label: 'Search', usesInput: true },
-      { op: 'get', label: 'Get (i)', usesInput: true },
-      { op: 'reverse', label: 'Reverse', usesInput: false },
+      { op: 'removeAt', label: 'Remove at (i)', usesInput: true, more: true },
+      { op: 'removeValue', label: 'Remove value', usesInput: true, more: true },
+      { op: 'get', label: 'Get (i)', usesInput: true, more: true },
     ],
     random: { label: 'Insert random', make: (rng) => [['insertTail', rng.int(1, 99)]] },
     presets: [
@@ -194,6 +196,7 @@ export const linkedList: VizDef<ListState, ListSettings, ListExtra> = {
     script: (calls: OpCall[], settings: Settings) =>
       listScript(linkedList, calls, settings as ListSettings, values),
   },
+  practice: listPractice(() => linkedList),
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [
     reverse,

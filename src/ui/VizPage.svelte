@@ -141,7 +141,26 @@
     document.getElementById(`tab-${next.id}`)?.focus();
   }
 
+  // Presentation mode for lectures: bigger text, no site chrome or tabs, full screen.
+  let presenting = $state(false);
+  async function present(on: boolean) {
+    presenting = on;
+    document.documentElement.classList.toggle('presenting', on);
+    try {
+      if (on && !document.fullscreenElement) await document.documentElement.requestFullscreen();
+      if (!on && document.fullscreenElement) await document.exitFullscreen();
+    } catch {
+      // Full screen is optional (some browsers and iframes refuse it).
+    }
+    queueMicrotask(fitStage);
+  }
+  onDestroy(() => document.documentElement.classList.remove('presenting'));
+
   function onKey(e: KeyboardEvent) {
+    if (e.key === 'Escape' && presenting) {
+      present(false);
+      return;
+    }
     const t = e.target as HTMLElement;
     if (e.altKey || e.ctrlKey || e.metaKey) return;
     if (t.closest('input, textarea, select, [contenteditable="true"], [role="tab"]')) return;
@@ -185,6 +204,15 @@
     {/if}
     <div class="title-row">
       <h1>{def.title}</h1>
+      {#if !embed}
+        <button
+          class="btn small present"
+          onclick={() => present(!presenting)}
+          aria-pressed={presenting}
+        >
+          {presenting ? 'Exit presentation' : 'Present'}
+        </button>
+      {/if}
       {#if embed}
         <a
           class="open"

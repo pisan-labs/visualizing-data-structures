@@ -24,6 +24,7 @@ import {
   type DSettings,
   type DState,
 } from './model';
+import { doublyPractice } from './practice';
 import { view } from './view';
 
 const each = (op: string, vs: Value[]): OpCall[] => vs.map((v) => [op, v] as OpCall);
@@ -71,11 +72,11 @@ export const doublyLinkedList: VizDef<DState, DSettings, DExtra> = {
       },
       { op: 'removeHead', label: 'Remove head', usesInput: false },
       { op: 'removeTail', label: 'Remove tail', usesInput: false },
-      { op: 'removeAt', label: 'Remove at (i)', usesInput: true },
-      { op: 'removeValue', label: 'Remove value', usesInput: true },
-      { op: 'search', label: 'Search', usesInput: true },
-      { op: 'get', label: 'Get (i)', usesInput: true },
-      { op: 'reverse', label: 'Reverse', usesInput: false },
+      { op: 'get', label: 'Get (i)', usesInput: true, more: true },
+      { op: 'search', label: 'Search', usesInput: true, more: true },
+      { op: 'removeAt', label: 'Remove at (i)', usesInput: true, more: true },
+      { op: 'removeValue', label: 'Remove value', usesInput: true, more: true },
+      { op: 'reverse', label: 'Reverse', usesInput: false, more: true },
     ],
     random: { label: 'Insert random', make: (rng) => [['insertTail', rng.int(1, 99)]] },
     presets: [
@@ -176,6 +177,7 @@ export const doublyLinkedList: VizDef<DState, DSettings, DExtra> = {
     script: (calls: OpCall[], settings: Settings) =>
       listScript(doublyLinkedList, calls, settings as DSettings, values),
   },
+  practice: doublyPractice(() => doublyLinkedList),
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [
     fourUpdates,

@@ -25,6 +25,7 @@ import {
   type FSettings,
   type FState,
 } from './model';
+import { floydPractice } from './practice';
 import { view } from './view';
 
 /** A build call for values 1..n whose last node links back to index k (or nowhere). */
@@ -122,6 +123,7 @@ export const floydCycle: VizDef<FState, FSettings, FExtra> = {
     cpp: cppSource,
     script: (calls: OpCall[]) => codeScript(calls),
   },
+  practice: floydPractice(() => floydCycle),
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [rho, noCycle, fullCycle, selfLoop, tiny, longTail] as unknown as SavedExample[],
 };

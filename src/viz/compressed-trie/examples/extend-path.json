@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "compressed-trie",
+  "id": "extend-path",
+  "title": "A longer word needs no split",
+  "notes": "cart follows the whole edge car and has t left over, so it only needs a new leaf under car. Nothing splits.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insert", "car"],
+    ["insert", "cart"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 99
+  }
+}

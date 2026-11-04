@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "compressed-trie",
+  "id": "long-words",
+  "title": "Long words, few nodes",
+  "notes": "Four words with 32 letters. A plain trie needs 26 nodes for them; the compressed trie needs 7, because only al and alg branch.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insert", "algorithm"],
+    ["insert", "algebra"],
+    ["insert", "alphabet"],
+    ["insert", "altitude"],
+    ["search", "algebra"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

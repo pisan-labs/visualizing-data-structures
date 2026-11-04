@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "compressed-trie",
+  "id": "delete-prefix-merges",
+  "title": "Deleting a word in the middle of a path",
+  "notes": "car's node has one child, cart's t. Once car's end mark goes, nothing needs that node, so car and t merge into one edge, cart. Deleting cart instead would only remove a leaf.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insert", "car"],
+    ["insert", "cart"],
+    ["delete", "car"]
+  ],
+  "at": {
+    "op": 1,
+    "step": 99
+  }
+}

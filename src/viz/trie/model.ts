@@ -549,7 +549,7 @@ const startsWith: Op = {
     yield step(
       c,
       output.length
-        ? `${plural(output.length, 'word starts', 'words start')} with ${p}: ${output.join(', ')}. They come out in alphabetical order because the children are visited a to z.`
+        ? `${plural(output.length, 'word starts', 'words start')} with ${p}: ${output.join(', ')}.${output.length > 1 ? ' They come out in alphabetical order because the children are visited a to z.' : ''}`
         : `Nothing below the node for ${p} ends a word. The list is empty.`,
       ['pre.ret'],
       1,

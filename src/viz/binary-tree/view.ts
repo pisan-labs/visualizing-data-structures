@@ -51,6 +51,17 @@ function row(
     mono: true,
   });
   let rows = 1;
+  if (opts.uids.length === 0) {
+    shapes.push({
+      kind: 'text',
+      id: `${opts.labelId}-empty`,
+      x: x + LABEL_W,
+      y: y + CELL.h / 2 + 5,
+      text: '(empty)',
+      size: 13,
+      cls: 'label',
+    });
+  }
   opts.uids.forEach((uid, i) => {
     const r = Math.floor(i / perRow);
     rows = r + 1;

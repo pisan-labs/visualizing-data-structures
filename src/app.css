@@ -268,3 +268,42 @@ button {
     animation-duration: 0s !important;
   }
 }
+
+/* Presentation mode (VizPage): the visualization fills the screen with lecture-size text. */
+:root.presenting header.site,
+:root.presenting footer.site,
+:root.presenting .viz .back,
+:root.presenting .viz .blurb,
+:root.presenting .viz details.options,
+:root.presenting .viz .tabs,
+:root.presenting .viz .feedback {
+  display: none;
+}
+
+:root.presenting .viz {
+  max-width: none;
+}
+
+:root.presenting .viz h1 {
+  font-size: 1.4rem;
+}
+
+:root.presenting .narration p {
+  font-size: 1.6rem;
+  line-height: 1.4;
+}
+
+:root.presenting .code .lines,
+:root.presenting .code .source {
+  font-size: 1.2rem;
+}
+
+:root.presenting .vars dl {
+  font-size: 1.15rem;
+}
+
+@media (min-width: 1024px) {
+  :root.presenting .viz {
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 520px);
+  }
+}

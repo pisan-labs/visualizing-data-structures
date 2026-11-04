@@ -290,3 +290,37 @@ async function lifoCode(page: Page): Promise<string> {
   await expect(page).toHaveURL(/#ex=z/);
   return new URL(page.url()).hash.match(/ex=([\w-]+)/)![1]!;
 }
+
+test('an assignment link opens the same practice set and grades answers', async ({ page }) => {
+  await page.goto('/stack-array/#practice=12345&n=3');
+  await expect(page.getByRole('tab', { name: 'Practice' })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  await expect(page.getByText('Set 12345')).toBeVisible();
+  const first = page.locator('.question').first();
+  await first.getByRole('button', { name: 'Check' }).click();
+  const feedback = first.locator('.feedback');
+  await expect(feedback).toContainText('Not quite. The answer is');
+  const answer = ((await feedback.textContent()) ?? '').match(/The answer is (.+?)\./)![1]!;
+  await first.getByRole('button', { name: 'Try again' }).click();
+  const radio = first.getByRole('radio', { name: answer, exact: true });
+  if (await radio.count()) await radio.check();
+  else await first.getByRole('textbox').fill(answer === '(nothing)' ? '' : answer);
+  await first.getByRole('button', { name: 'Check' }).click();
+  await expect(feedback).toContainText('Yes.');
+  await first.getByRole('button', { name: 'Show me' }).click();
+  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+});
+
+test('presentation mode hides the chrome and Escape leaves it', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Presenting is for lecture screens');
+  await page.getByRole('button', { name: 'Present' }).click();
+  await expect(page.locator('header.site')).toBeHidden();
+  await expect(page.getByRole('tab', { name: 'Learn' })).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Exit presentation' })).toBeVisible();
+  await page.locator('h1').click();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('header.site')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Present' })).toBeVisible();
+});

@@ -95,6 +95,8 @@
           lesson={route.lesson}
           theme={route.theme}
           autoplay={route.autoplay}
+          practice={route.practice}
+          practiceCount={route.practiceCount}
         />
       {/key}
     {:else if viz === null}

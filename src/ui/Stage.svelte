@@ -3,6 +3,7 @@
   import { easeInOut, interpolate } from '../render/interpolate';
   import type { Scene } from '../render/scene';
   import Icon from './Icon.svelte';
+  import Shapes from './Shapes.svelte';
   import { reducedMotion } from './state.svelte';
 
   let { scene, duration }: { scene: Scene; duration: number } = $props();
@@ -98,9 +99,6 @@
     zoom = clampZoom(zoom * Math.exp(-e.deltaY * 0.01));
   }
 
-  const roleClass = (role?: string) => (role ? `role-${role}` : '');
-  const markerFor = (role?: string) =>
-    `url(#arrow-${role && ['active', 'error', 'found', 'new', 'done'].includes(role) ? role : 'base'})`;
   const ratio = $derived(`${scene.bounds.w} / ${scene.bounds.h}`);
 </script>
 
@@ -117,65 +115,7 @@
     onpointercancel={onPointerUp}
     onwheel={onWheel}
   >
-    <defs>
-      {#each ['base', 'active', 'error', 'found', 'new', 'done'] as r (r)}
-        <marker
-          id="arrow-{r}"
-          viewBox="0 0 10 10"
-          refX="9"
-          refY="5"
-          markerWidth="7"
-          markerHeight="7"
-          orient="auto-start-reverse"
-        >
-          <path d="M0 0L10 5L0 10z" class="arrowhead role-{r}" />
-        </marker>
-      {/each}
-    </defs>
-    {#each shown.shapes as s (s.id)}
-      {#if s.kind === 'rect'}
-        <rect
-          class="shape rect {s.cls ?? ''} {roleClass(s.role)}"
-          x={s.x}
-          y={s.y}
-          width={s.w}
-          height={s.h}
-          rx={s.r ?? 4}
-          opacity={s.opacity ?? 1}
-        />
-      {:else if s.kind === 'text'}
-        <text
-          class="shape text {s.cls ?? ''} {roleClass(s.role)}"
-          class:mono={s.mono}
-          x={s.x}
-          y={s.y}
-          font-size={s.size ?? 16}
-          font-weight={s.weight === 'bold' ? 700 : 400}
-          text-anchor={s.anchor ?? 'start'}
-          opacity={s.opacity ?? 1}>{s.text}</text
-        >
-      {:else if s.kind === 'arrow'}
-        <line
-          class="shape arrow {s.cls ?? ''} {roleClass(s.role)}"
-          x1={s.x1}
-          y1={s.y1}
-          x2={s.x2}
-          y2={s.y2}
-          stroke-dasharray={s.dashed ? '5 4' : undefined}
-          marker-end={s.head === 'none' ? undefined : markerFor(s.role)}
-          marker-start={s.head === 'both' ? markerFor(s.role) : undefined}
-          opacity={s.opacity ?? 1}
-        />
-      {:else if s.kind === 'circle'}
-        <circle
-          class="shape circle {s.cls ?? ''} {roleClass(s.role)}"
-          cx={s.x}
-          cy={s.y}
-          r={s.r}
-          opacity={s.opacity ?? 1}
-        />
-      {/if}
-    {/each}
+    <Shapes shapes={shown.shapes} />
   </svg>
   <div class="zoom" role="group" aria-label="Zoom">
     <button
@@ -239,146 +179,5 @@
     height: 34px;
     border-radius: 8px;
     opacity: 0.85;
-  }
-
-  .shape {
-    transition:
-      fill var(--tween) ease,
-      stroke var(--tween) ease;
-  }
-
-  .rect,
-  .circle {
-    fill: var(--cell-empty);
-    stroke: var(--line-strong);
-    stroke-width: 1.5;
-  }
-
-  .rect.live,
-  .circle.live {
-    fill: var(--cell-live);
-    stroke: var(--text-2);
-  }
-
-  .rect.ghost,
-  .circle.ghost {
-    fill: none;
-    stroke: var(--line-strong);
-    stroke-dasharray: 5 4;
-  }
-
-  .text {
-    fill: var(--text);
-    font-family: var(--font);
-  }
-
-  .text.mono {
-    font-family: var(--mono);
-  }
-
-  .text.index,
-  .text.label {
-    fill: var(--text-2);
-  }
-
-  .arrow {
-    stroke: var(--text-2);
-    stroke-width: 2;
-  }
-
-  .arrowhead {
-    fill: var(--text-2);
-  }
-
-  /* Pointer dots (circles with the arrowhead class) take the arrow color, without a ring. */
-  .circle.arrowhead {
-    fill: var(--text-2);
-    stroke: none;
-  }
-
-  /* Roles */
-  .rect.role-active,
-  .circle.role-active {
-    stroke: var(--c-active);
-    stroke-width: 3;
-    fill: color-mix(in srgb, var(--c-active) 14%, var(--cell-live));
-  }
-  .rect.role-new,
-  .rect.role-done,
-  .circle.role-new,
-  .circle.role-done {
-    stroke: var(--c-new);
-    stroke-width: 3;
-    fill: color-mix(in srgb, var(--c-new) 14%, var(--cell-live));
-  }
-  .rect.role-found,
-  .circle.role-found {
-    stroke: var(--c-found);
-    stroke-width: 3;
-    fill: color-mix(in srgb, var(--c-found) 14%, var(--cell-live));
-  }
-  .rect.role-error,
-  .circle.role-error {
-    stroke: var(--c-error);
-    stroke-width: 3;
-    fill: color-mix(in srgb, var(--c-error) 12%, var(--cell-live));
-  }
-  .rect.role-compare,
-  .circle.role-compare {
-    stroke: var(--c-compare);
-    stroke-width: 3;
-  }
-  .rect.role-visit,
-  .circle.role-visit {
-    stroke: var(--c-visit);
-    stroke-width: 3;
-  }
-  .rect.role-remove,
-  .circle.role-remove {
-    stroke: var(--c-remove);
-    stroke-width: 3;
-  }
-
-  .text.role-active {
-    fill: var(--c-active);
-    font-weight: 700;
-  }
-  .text.role-new,
-  .text.role-done {
-    fill: var(--c-new);
-  }
-  .text.role-found {
-    fill: var(--c-found);
-  }
-  .text.role-error {
-    fill: var(--c-error);
-    font-weight: 700;
-  }
-  .text.role-stale {
-    fill: var(--c-stale);
-    font-style: italic;
-    font-weight: 400;
-  }
-
-  .arrow.role-active {
-    stroke: var(--c-active);
-    stroke-width: 3;
-  }
-  .arrow.role-error {
-    stroke: var(--c-error);
-    stroke-width: 3;
-  }
-  .arrowhead.role-active {
-    fill: var(--c-active);
-  }
-  .arrowhead.role-error {
-    fill: var(--c-error);
-  }
-  .arrowhead.role-found {
-    fill: var(--c-found);
-  }
-  .arrowhead.role-new,
-  .arrowhead.role-done {
-    fill: var(--c-new);
   }
 </style>

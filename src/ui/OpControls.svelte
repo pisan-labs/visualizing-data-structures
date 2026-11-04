@@ -1,6 +1,6 @@
 <script lang="ts">
   import { makeRng, randomSeed } from '../engine/rng';
-  import type { ControlButton, OpCall } from '../engine/types';
+  import type { ControlButton, OpCall, Value } from '../engine/types';
   import type { Session } from './session.svelte';
 
   let { session }: { session: Session } = $props();
@@ -19,9 +19,15 @@
       session.run([[b.op]]);
       return;
     }
-    const tokens = b.bulk ? text.split(/[\s,]+/).filter(Boolean) : [text.trim()];
+    const args = b.args ?? 1;
+    const tokens = b.bulk || args > 1 ? text.split(/[\s,]+/).filter(Boolean) : [text.trim()];
     if (tokens.length === 0 || !tokens[0]) {
       error = 'Type a value first.';
+      input?.focus();
+      return;
+    }
+    if (args > 1 && tokens.length !== args) {
+      error = `${b.label} needs ${args} values, separated by a space.`;
       input?.focus();
       return;
     }
@@ -29,7 +35,7 @@
       error = `At most ${MAX_BULK} values at a time.`;
       return;
     }
-    const calls: OpCall[] = [];
+    const values: Value[] = [];
     for (const t of tokens) {
       const v = controls.input.parse(t);
       if (v instanceof Error) {
@@ -37,8 +43,9 @@
         input?.focus();
         return;
       }
-      calls.push([b.op, v]);
+      values.push(v);
     }
+    const calls: OpCall[] = args > 1 ? [[b.op, ...values]] : values.map((v) => [b.op, v]);
     error = '';
     text = '';
     session.run(calls);
@@ -72,9 +79,11 @@
   <div class="buttons">
     {#each controls.buttons as b (b.op)}
       {#if b.primary}
-        <button type="submit" class="btn primary">{b.label}</button>
+        <button type="submit" class="btn primary" data-args={b.args}>{b.label}</button>
       {:else}
-        <button type="button" class="btn" onclick={() => run(b)}>{b.label}</button>
+        <button type="button" class="btn" data-args={b.args} onclick={() => run(b)}
+          >{b.label}</button
+        >
       {/if}
     {/each}
     {#if controls.random}

@@ -41,9 +41,9 @@ function randomScript(def: AnyVizDef, seed: number, length: number): OpCall[] {
   const buttons = def.controls.buttons.filter((b) => !b.usesInput || pool.length > 0);
   return Array.from({ length }, () => {
     const b = buttons[rng.int(0, buttons.length - 1)]!;
-    return b.usesInput
-      ? ([b.op, pool[rng.int(0, pool.length - 1)]!] as OpCall)
-      : ([b.op] as OpCall);
+    if (!b.usesInput) return [b.op] as OpCall;
+    const args = Array.from({ length: b.args ?? 1 }, () => pool[rng.int(0, pool.length - 1)]!);
+    return [b.op, ...args] as OpCall;
   });
 }
 

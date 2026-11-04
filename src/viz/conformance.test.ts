@@ -29,7 +29,11 @@ const valueArb: fc.Arbitrary<Value> = fc.oneof(
 function callArb(def: AnyVizDef): fc.Arbitrary<OpCall> {
   return fc.oneof(
     ...def.controls.buttons.map((b) =>
-      b.usesInput ? valueArb.map((v) => [b.op, v] as OpCall) : fc.constant([b.op] as OpCall),
+      b.usesInput
+        ? fc
+            .array(valueArb, { minLength: b.args ?? 1, maxLength: b.args ?? 1 })
+            .map((vs) => [b.op, ...vs] as OpCall)
+        : fc.constant([b.op] as OpCall),
     ),
   );
 }

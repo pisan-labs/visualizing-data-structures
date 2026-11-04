@@ -30,7 +30,9 @@ for (const id of ids) {
       const count = await buttons.count();
       expect(count).toBeGreaterThan(0);
       for (let i = 0; i < count; i++) {
-        if (sample !== null) await input.fill(sample);
+        // A button that reads several values (data-args) gets the sample once per value.
+        const args = Number((await buttons.nth(i).getAttribute('data-args')) ?? 1);
+        if (sample !== null) await input.fill(Array(args).fill(sample).join(' '));
         await buttons.nth(i).click();
         await expect(page.getByRole('alert')).toHaveCount(0);
       }

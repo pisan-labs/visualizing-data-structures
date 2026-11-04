@@ -89,6 +89,11 @@ export interface ControlButton {
   usesInput: boolean;
   /** "1 2 3" runs the operation once per value. */
   bulk?: boolean;
+  /**
+   * How many values the operation reads from the input, separated by spaces or commas.
+   * Default 1. For example insertAt(i, x) reads two: "2 42". Not combined with `bulk`.
+   */
+  args?: number;
   primary?: boolean;
 }
 

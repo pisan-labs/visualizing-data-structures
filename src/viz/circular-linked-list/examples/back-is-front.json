@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "circular-linked-list",
+  "id": "back-is-front",
+  "title": "Insert at the back: insert at the front, then move tail",
+  "notes": "In a circle, the spot after tail is both the front and the back. insertBack puts 30 there, then moves tail one step so 30 is the back.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insertBack", 10],
+    ["insertBack", 20],
+    ["insertBack", 30]
+  ],
+  "at": { "op": 1, "step": 99 }
+}

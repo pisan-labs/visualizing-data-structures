@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "circular-linked-list",
+  "id": "traverse",
+  "title": "Traverse once around",
+  "notes": "There is no null to stop at. The loop stops when cur gets back to tail.next, the node it started from.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["insertBack", 10], ["insertBack", 20], ["insertBack", 30], ["traverse"]],
+  "at": { "op": 2, "step": 99 }
+}

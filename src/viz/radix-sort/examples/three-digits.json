@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "radix-sort",
+  "id": "three-digits",
+  "title": "Three-digit values, three passes",
+  "notes": "Pass 1 sorts by the ones, pass 2 by the tens and pass 3 by the hundreds. After each pass, A is sorted by the digits seen so far.",
+  "settings": { "base": 10, "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "329 457 657 839 436 720 355"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

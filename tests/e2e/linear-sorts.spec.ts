@@ -101,3 +101,38 @@ test.describe('counting sort', () => {
     await practice(page, 'counting-sort', 11235);
   });
 });
+
+test.describe('radix sort', () => {
+  test.beforeEach(({ page }) => open(page, 'radix-sort', 'Radix sort'));
+
+  test('sorts by the last digit first, through buckets', async ({ page }) => {
+    await load(page, '21 11 22 12');
+    await sort(page);
+    await toEnd(page);
+    await expect(narration(page)).toContainText(
+      'Sorted: 11, 12, 21, 22. 2 passes of 4 values and 10 buckets, and not a single comparison.',
+    );
+    await backTo(page, 'After pass 1, A is sorted by its last digit: 21, 11, 22, 12.');
+    await backTo(
+      page,
+      'A[3] = 12: its digit worth the 1s is 2, so it goes to the back of bucket 2.',
+    );
+    await expect(stage(page)).toHaveAttribute('aria-label', /Buckets: 1: 21 11; 2: 22 12\./);
+  });
+
+  test('a smaller base means more passes', async ({ page }) => {
+    const panel = page.locator('details.options');
+    await panel.locator('summary').click();
+    await page.getByRole('spinbutton', { name: /^Base/ }).fill('2');
+    await page.getByRole('spinbutton', { name: /^Base/ }).press('Tab');
+    await expect(code(page)).toContainText('mod 2]');
+    await load(page, '13 6 9 2 11 4');
+    await sort(page);
+    await toEnd(page);
+    await expect(narration(page)).toContainText('4 passes of 6 values and 2 buckets');
+  });
+
+  test('a practice question is graded and played', async ({ page }) => {
+    await practice(page, 'radix-sort', 27182);
+  });
+});

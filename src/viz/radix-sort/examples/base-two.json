@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "radix-sort",
+  "id": "base-two",
+  "title": "Base 2: two buckets, one pass per bit",
+  "notes": "13 is 1101 in base 2, so there are four passes, each splitting the values into those with a 0 bit and those with a 1 bit. Small buckets, many passes.",
+  "settings": { "base": 2, "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "13 6 9 2 11 4"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

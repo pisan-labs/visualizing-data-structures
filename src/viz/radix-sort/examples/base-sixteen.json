@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "radix-sort",
+  "id": "base-sixteen",
+  "title": "Base 16: two passes for values up to 255",
+  "notes": "255 is FF in base 16, two digits, so two passes do it; base 10 needs three. A bigger base means fewer passes but more buckets to visit in each one.",
+  "settings": { "base": 16, "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "200 13 77 150 34 255"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

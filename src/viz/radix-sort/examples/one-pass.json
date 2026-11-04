@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "radix-sort",
+  "id": "one-pass",
+  "title": "Values below the base: one pass",
+  "notes": "Every value is a single digit, so one pass puts each in its own bucket and collecting them sorts A. That one pass is a counting sort.",
+  "settings": { "base": 10, "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "7 3 9 0 5"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

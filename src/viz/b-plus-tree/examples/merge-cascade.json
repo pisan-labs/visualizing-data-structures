@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "viz": "b-plus-tree",
+  "id": "merge-cascade",
+  "title": "Merges climb to the root and the tree gets shorter",
+  "notes": "Deleting 100 makes its leaf merge, which empties the parent. The parent merges with its sibling, pulling 70 down from the root, and the empty root goes away.",
+  "settings": {
+    "order": "4"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 100],
+    ["insert", 30],
+    ["insert", 90],
+    ["insert", 50],
+    ["insert", 40],
+    ["insert", 60],
+    ["insert", 10],
+    ["insert", 80],
+    ["insert", 20],
+    ["insert", 70],
+    ["delete", 30],
+    ["delete", 100]
+  ],
+  "at": {
+    "op": 10,
+    "step": 99
+  }
+}

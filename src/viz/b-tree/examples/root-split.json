@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "b-tree",
+  "id": "root-split",
+  "title": "The root splits and the tree grows",
+  "notes": "The root already holds 2t - 1 = 5 keys when 60 arrives. CLRS splits it before going down: 30 moves up into a new root, and the tree is one level taller.",
+  "settings": {
+    "t": "3",
+    "split": "down"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60]
+  ],
+  "at": {
+    "op": 4,
+    "step": 99
+  }
+}

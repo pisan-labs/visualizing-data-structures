@@ -1,0 +1,38 @@
+{
+  "format": 1,
+  "viz": "b-tree",
+  "id": "ascending",
+  "title": "Ascending keys leave nodes half full",
+  "notes": "Each split leaves its left half with t - 1 keys, and ascending keys never come back to it. Try the same keys with splits on the way back up: the tree is one level shorter.",
+  "settings": {
+    "t": "3",
+    "split": "down"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["insert", 90],
+    ["insert", 100],
+    ["insert", 110],
+    ["insert", 120],
+    ["insert", 130],
+    ["insert", 140],
+    ["insert", 150],
+    ["insert", 160],
+    ["insert", 170],
+    ["insert", 180],
+    ["insert", 190],
+    ["insert", 200]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

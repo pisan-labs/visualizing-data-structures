@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "viz": "b-plus-tree",
+  "id": "delete-leaf",
+  "title": "Delete from a leaf with keys to spare",
+  "notes": "The leaf [70 80 90] can lose a key and still have 2, the fewest a leaf may hold. 70 also stays in the root as a separator. That is fine: it still sends every search the right way.",
+  "settings": {
+    "order": "4"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["insert", 90],
+    ["delete", 70]
+  ],
+  "at": {
+    "op": 8,
+    "step": 99
+  }
+}

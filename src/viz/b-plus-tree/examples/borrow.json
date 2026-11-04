@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "viz": "b-plus-tree",
+  "id": "borrow",
+  "title": "An underflowing leaf borrows from a sibling",
+  "notes": "Deleting 50 leaves [60] with 1 key. Its right sibling has 3, so 70 moves over, and the separator between them becomes a copy of 80, the new first key on the right.",
+  "settings": {
+    "order": "4"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["insert", 90],
+    ["delete", 50]
+  ],
+  "at": {
+    "op": 8,
+    "step": 99
+  }
+}

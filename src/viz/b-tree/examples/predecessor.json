@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "viz": "b-tree",
+  "id": "predecessor",
+  "title": "Case 2a: the predecessor takes the key's place",
+  "notes": "30 is in the root. The child before it has 3 keys, so its largest key, 25, moves up in place of 30, and then the old copy of 25 is deleted from the leaf.",
+  "settings": {
+    "t": "3",
+    "split": "down"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["insert", 90],
+    ["insert", 25],
+    ["delete", 30]
+  ],
+  "at": {
+    "op": 9,
+    "step": 99
+  }
+}

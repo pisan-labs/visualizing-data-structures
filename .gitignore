@@ -7,3 +7,7 @@ test-results/
 
 # Agent worktrees (separate checkouts, never committed)
 .claude/worktrees/
+
+# Python bytecode from the code-tab tests
+__pycache__/
+*.pyc

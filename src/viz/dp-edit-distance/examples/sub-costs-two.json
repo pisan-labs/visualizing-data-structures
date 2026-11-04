@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "dp-edit-distance",
+  "id": "sub-costs-two",
+  "title": "A substitution costs 2: intention to execution is 8",
+  "notes": "When a substitution costs as much as a delete plus an insert, it saves nothing, so the cheapest alignment changes. The distance goes from 5 to 8.",
+  "settings": { "ins": 1, "del": 1, "sub": 2 },
+  "seed": 1,
+  "ops": [["load", "intention", "execution"], ["fill"], ["trace"]],
+  "at": { "op": 1, "step": 0 }
+}

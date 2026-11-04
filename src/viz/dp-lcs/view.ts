@@ -33,7 +33,8 @@ export function view(step: Step<LcsState, LcsExtra>, _settings: LcsSettings): Sc
     cols: n + 1,
     colHeads: 2,
     rowHeads: [30, 36],
-    below: STRIP_H + 4,
+    // The LCS strip only exists while tracing back, a separate operation; filling gets the room.
+    below: extra.length ? STRIP_H + 4 : 0,
   };
   const g = tableGeometry(frame);
   const links: TableLink[] = (extra.reads ?? []).map((r) => ({

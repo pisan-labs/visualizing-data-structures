@@ -205,3 +205,42 @@ test.describe('Longest common subsequence', () => {
     await practice(page, 'dp-lcs', 97531);
   });
 });
+
+test.describe('Edit distance', () => {
+  test.beforeEach(({ page }) => open(page, 'dp-edit-distance', 'Edit distance'));
+
+  test('turns kitten into sitting and shows the alignment', async ({ page }) => {
+    await press(page, 'Fill the table');
+    await toEnd(page);
+    await expect(narration(page)).toContainText(
+      "D[6][7] = 3: turning 'kitten' into 'sitting' costs 3.",
+    );
+    await press(page, 'Trace back');
+    await toEnd(page);
+    await expect(narration(page)).toContainText(
+      'Read the alignment from left to right: 2 substitutions, 1 insert, and 4 matches. Total cost 3.',
+    );
+    await expect(stage(page)).toHaveAttribute(
+      'aria-label',
+      /Alignment so far: k to s \(substitute\), i to i \(match\),/,
+    );
+    await backTo(page, "D[6][7] = 3 came from D[6][6] = 2, left: insert 'g', cost 1.");
+  });
+
+  test('a substitution that costs 2 changes the distance', async ({ page }) => {
+    const panel = page.locator('details.options');
+    await panel.locator('summary').click();
+    await page.getByLabel('A substitution costs').fill('2');
+    await page.getByLabel('A substitution costs').press('Tab');
+    await expect(code(page)).toContainText('cost = 0 if A[i] == B[j] else 2');
+    await type(page, 'Two words', 'intention execution');
+    await press(page, 'Load');
+    await press(page, 'Fill the table');
+    await toEnd(page);
+    await expect(narration(page)).toContainText("turning 'intention' into 'execution' costs 8.");
+  });
+
+  test('a practice question is graded and played', async ({ page }) => {
+    await practice(page, 'dp-edit-distance', 86420);
+  });
+});

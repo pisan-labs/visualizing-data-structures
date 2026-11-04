@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "recursion-dag",
+  "id": "binom-six-three",
+  "title": "C(6, 3): the worst case for this n",
+  "notes": "k = n / 2 gives the largest answer, 20, and the plain recursion makes 2 × 20 - 1 = 39 calls. The DAG has 15 boxes: with a memo, 19 calls.",
+  "settings": { "problem": "binom" },
+  "seed": 1,
+  "ops": [["call", "6 3"]],
+  "at": { "op": -1, "step": 0 }
+}

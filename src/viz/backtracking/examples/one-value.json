@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "backtracking",
+  "id": "one-value",
+  "title": "One value, two subsets",
+  "notes": "The smallest search: take 5 or skip it. Three calls, two outputs, [5] and [].",
+  "settings": { "problem": "subsets", "target": 0 },
+  "seed": 1,
+  "ops": [["run", "5"]],
+  "at": { "op": -1, "step": 0 }
+}

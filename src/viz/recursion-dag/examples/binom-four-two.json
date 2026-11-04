@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "recursion-dag",
+  "id": "binom-four-two",
+  "title": "C(4, 2): Pascal's triangle appears",
+  "notes": "Choosing 2 of 4 things. The DAG lays the subproblems out like Pascal's triangle, and C(2, 1) is shared by two callers. 11 calls in the tree, 8 boxes in the DAG.",
+  "settings": { "problem": "binom" },
+  "seed": 1,
+  "ops": [["call", "4 2"]],
+  "at": { "op": -1, "step": 0 }
+}

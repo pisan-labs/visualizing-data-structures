@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "dp-knapsack",
+  "id": "everything-fits",
+  "title": "Room for everything",
+  "notes": "The three items weigh 6 together, exactly the capacity, so the best is to take them all: 8. The walk back takes an item in every row.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["items", "1:1 2:3 3:4"], ["capacity", 6], ["fill"], ["trace"]],
+  "at": { "op": 2, "step": 0 }
+}

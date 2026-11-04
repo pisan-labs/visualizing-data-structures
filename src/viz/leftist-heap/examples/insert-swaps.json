@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "leftist-heap",
+  "id": "insert-swaps",
+  "title": "An insert that swaps children",
+  "notes": "25 walks down the right path, 10 then 15, and lands as the right child of 15. That makes npl(15) = 1, longer than npl(20) = 0 on the left of the root, so the root swaps its children on the way back up.",
+  "settings": { "npl": "-1" },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 15],
+    ["insert", 30],
+    ["insert", 25]
+  ],
+  "at": { "op": 3, "step": 1000000 }
+}

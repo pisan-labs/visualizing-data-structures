@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "fibonacci-heap",
+  "id": "union-lazy",
+  "title": "Union in O(1)",
+  "notes": "Five keys in this heap, four in the other. Union splices the two root lists together and keeps the smaller minimum: no links, no comparisons beyond one. The next extractMin consolidates the trees of both heaps at once.",
+  "settings": { "view": "logical" },
+  "seed": 1,
+  "ops": [
+    ["insert", 30],
+    ["insert", 12],
+    ["insert", 45],
+    ["insert", 21],
+    ["insert", 38],
+    ["union", "17 8 26 50"],
+    ["deletemin"]
+  ],
+  "at": { "op": 4, "step": 1000000 }
+}

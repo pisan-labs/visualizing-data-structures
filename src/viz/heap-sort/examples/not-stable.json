@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "heap-sort",
+  "id": "not-stable",
+  "title": "Equal values can change order",
+  "notes": "9 7 7 3 5 1 is a max-heap already. In the first round of phase 2 the two 7s tie for the root, and the tie goes to the left one, the 7 that started in A[2]. It leaves the heap next and takes A[5], so the other 7 ends up in front of it. Heap sort is not stable.",
+  "settings": {
+    "index": "one",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "9 7 7 3 5 1"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

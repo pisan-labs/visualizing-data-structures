@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "binary-heap",
+  "id": "delete-sifts-up",
+  "title": "Delete from the middle can sift up",
+  "notes": "delete(4) removes 10. The last key, 85, moves into the gap, but 85 came from the other side of the tree and is bigger than its new parent, 50. So this time the key moves up, not down.",
+  "settings": { "order": "max", "index": "one", "build": "bottom-up" },
+  "seed": 1,
+  "ops": [
+    ["build", "95 50 90 10 20 80 85"],
+    ["delete", 4]
+  ],
+  "at": { "op": 0, "step": 1000000 }
+}

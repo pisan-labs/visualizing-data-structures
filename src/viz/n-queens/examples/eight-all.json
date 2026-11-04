@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "n-queens",
+  "id": "eight-all",
+  "title": "All 92 solutions for eight queens",
+  "notes": "The worst case on this page: 2056 placements and as many backtracks. The run stops at each solution instead of every move.",
+  "settings": { "n": 8, "goal": "all" },
+  "seed": 1,
+  "ops": [["solve"]],
+  "at": { "op": -1, "step": 0 }
+}

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "counting-sort",
+  "id": "big-k",
+  "title": "Four values, k = 20: most of C is empty",
+  "notes": "Only four values, but one of them is 20, so C needs 21 counts and the prefix loop runs 20 times. The work is n + k, and here k is the big part. With values up to a million, C would need a million counts.",
+  "settings": { "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "20 0 3 1"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

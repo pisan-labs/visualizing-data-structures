@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "binomial-queue",
+  "id": "union-binary",
+  "title": "Union is binary addition",
+  "notes": "6 keys (110 in binary: a B₂ and a B₁) united with 7 keys (111: a B₂, a B₁ and a B₀). The two B₁s link into a B₂, a carry, which meets the two B₂s already there: three of a kind, so the first stays and the other two link into a B₃. 110 + 111 = 1101.",
+  "settings": { "view": "logical" },
+  "seed": 1,
+  "ops": [
+    ["insert", 12],
+    ["insert", 31],
+    ["insert", 8],
+    ["insert", 27],
+    ["insert", 45],
+    ["insert", 19],
+    ["merge", "22 6 38 15 50 9 33"]
+  ],
+  "at": { "op": 5, "step": 1000000 }
+}

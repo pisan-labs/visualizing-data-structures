@@ -87,16 +87,18 @@ test('a twenty-key tree with t = 2 stays readable', async ({ page }) => {
   await op(page, 'Insert', '15 82 47 3 66 29 91 54 8 73 38 60 21 95 12 44 77 33 58 86');
   await toEnd(page);
   await expect(stage(page)).toHaveAttribute('aria-label', /20 keys/);
-  // Every key label is drawn at least 9 CSS pixels tall, phone included.
-  const heights = await stage(page)
-    .locator('text.shape')
-    .evaluateAll((els) =>
-      els
-        .filter((e) => /^-?\d+$/.test(e.textContent ?? ''))
-        .map((e) => e.getBoundingClientRect().height),
-    );
-  expect(heights.length).toBeGreaterThanOrEqual(20);
-  expect(Math.min(...heights)).toBeGreaterThanOrEqual(9);
+  // Every key label is drawn at least 9 CSS pixels tall, phone included. Measure again until the
+  // last step has finished animating.
+  const heights = () =>
+    stage(page)
+      .locator('text.shape')
+      .evaluateAll((els) =>
+        els
+          .filter((e) => /^-?\d+$/.test(e.textContent ?? ''))
+          .map((e) => e.getBoundingClientRect().height),
+      );
+  await expect.poll(async () => (await heights()).length).toBeGreaterThanOrEqual(20);
+  await expect.poll(async () => Math.min(...(await heights()))).toBeGreaterThanOrEqual(9);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );

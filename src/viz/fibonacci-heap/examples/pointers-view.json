@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "fibonacci-heap",
+  "id": "pointers-view",
+  "title": "The same heap, as pointers",
+  "notes": "Nine inserts and one extractMin leave a single B₃, drawn the way the nodes are linked: a child pointer from each parent, doubly linked lists of siblings, and the circular root list. Then a decrease-key cuts a node loose and marks its parent.",
+  "settings": { "view": "internal" },
+  "seed": 1,
+  "ops": [
+    ["insert", 27],
+    ["insert", 14],
+    ["insert", 9],
+    ["insert", 33],
+    ["insert", 21],
+    ["insert", 45],
+    ["insert", 6],
+    ["insert", 38],
+    ["insert", 17],
+    ["deletemin"],
+    ["decrease", 45, 11]
+  ],
+  "at": { "op": 8, "step": 1000000 }
+}

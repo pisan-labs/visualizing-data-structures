@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "factorial",
+  "id": "missing-base",
+  "title": "Forgetting the base case",
+  "notes": "With no base case, factorial(3) calls factorial(2), 1, 0, -1, ... and never stops. The stack has room for 6 frames, so the seventh call overflows it.",
+  "settings": { "style": "plain", "base": "none", "limit": 6 },
+  "seed": 1,
+  "ops": [["factorial", 3]],
+  "at": { "op": -1, "step": 0 }
+}

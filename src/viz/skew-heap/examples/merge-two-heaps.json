@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "skew-heap",
+  "id": "merge-two-heaps",
+  "title": "Merge two heaps along their right paths",
+  "notes": "The same keys as the leftist heap merge. The walk down goes back and forth between the two right paths, and every winner swaps its children on the way back up.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insert", 12],
+    ["insert", 59],
+    ["insert", 7],
+    ["insert", 4],
+    ["insert", 15],
+    ["insert", 53],
+    ["merge", "24 47 5 38 46"]
+  ],
+  "at": { "op": 5, "step": 1000000 }
+}

@@ -99,3 +99,15 @@
 2026-11-04 [decision] All development moved from dev to main (consistent with Yusuf's other projects); dev retired; Yusuf deploys to Netlify by hand for now. session-relay's handoff commit goes on main
 
 2026-11-04 [code] Merged wave 2F: B-tree (CLRS, t = 2 to 4, delete cases named), 2-4 tree (transfer, fusion), B+ tree (copy up vs push up, range over linked leaves), skip list (seeded coin flips); multiway layout in src/layouts/multiway.ts; all with practice
+
+2026-11-04 [code] Fixed a B-tree conformance failure: a repeated insert with split-on-the-way-up returned the old state after showing the working copy; regression test added
+
+2026-11-04 [code] Merged wave 2I: factorial (plain, tail, tail-call optimised), reversing a string, Fibonacci call tree with memo, recursion tree vs memoized DAG, N-Queens, backtracking (subsets, permutations, pruning); call stack and recursion tree layout in src/layouts/calls.ts; all with practice
+
+2026-11-04 [code] Merged wave 2G: binary heap (CLRS max-heap, 1- or 0-based, two builds), leftist, skew, binomial queue, Fibonacci heap (consolidate, cascading cuts, potential), heap sort; heap and forest layouts; all with practice
+
+2026-11-04 [code] Merged wave 2J: dynamic programming (Fibonacci, making change, LCS, edit distance, 0/1 knapsack) with a table layout in src/layouts/table.ts; counting, radix and bucket sort; all with practice
+
+2026-11-04 [code] A page being replaced no longer rewrites the address after it is gone, and hash navigation reads the address it went to (a fast jump to #practice could lose the set); the B-tree readability test waits for animation to finish
+
+2026-11-04 [doc] HANDOFF.md added for session-relay: hourly status report only when something is new, handover check 15:56 and session start 16:52 Europe/Berlin; routines trig_01YFFf7haBUVw55QnJE6zbfH, trig_019edEXqKvVwcMM1CsPVQpUD, trig_014pSjnKeCWEgQXUWgZECJGR

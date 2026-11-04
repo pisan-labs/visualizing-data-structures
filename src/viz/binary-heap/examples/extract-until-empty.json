@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "binary-heap",
+  "id": "extract-until-empty",
+  "title": "Extract until empty: the keys come out sorted",
+  "notes": "Seven extracts empty the heap, and the keys come out largest first: 40, 35, 30, 25, 20, 15, 10. Each time, the last key moves to the root and sinks back down. Heap sort is this idea, done in place.",
+  "settings": { "order": "max", "index": "one", "build": "bottom-up" },
+  "seed": 1,
+  "ops": [
+    ["build", "40 30 35 10 20 25 15"],
+    ["extract"],
+    ["extract"],
+    ["extract"],
+    ["extract"],
+    ["extract"],
+    ["extract"],
+    ["extract"]
+  ],
+  "at": { "op": 0, "step": 1000000 }
+}

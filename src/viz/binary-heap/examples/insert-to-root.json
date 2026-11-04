@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "binary-heap",
+  "id": "insert-to-root",
+  "title": "An insert that climbs to the root",
+  "notes": "50 is bigger than every key in the heap. It starts as the new leaf in A[8] and swaps with its parent at every level: A[4], A[2], then A[1]. That is the O(log n) worst case.",
+  "settings": { "order": "max", "index": "one", "build": "bottom-up" },
+  "seed": 1,
+  "ops": [
+    ["build", "40 30 35 10 20 25 15"],
+    ["insert", 50]
+  ],
+  "at": { "op": 0, "step": 1000000 }
+}

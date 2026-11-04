@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "dp-lcs",
+  "id": "length-four",
+  "title": "ABCBDAB and BDCABA: an LCS of length 4",
+  "notes": "Fill the table row by row, then trace back from the bottom-right corner. Each match on the way back is a character of the LCS. With ties going up, the walk finds BCBA.",
+  "settings": { "tie": "up" },
+  "seed": 1,
+  "ops": [["load", "ABCBDAB", "BDCABA"], ["fill"], ["trace"]],
+  "at": { "op": 0, "step": 0 }
+}

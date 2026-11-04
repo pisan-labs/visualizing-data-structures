@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "dp-fibonacci",
+  "id": "bottom-up",
+  "title": "Bottom-up: fill the table from the left",
+  "notes": "F(10) from the base cases up. Each cell is the sum of the two to its left, which are always filled already: nine additions in all.",
+  "settings": { "style": "bottomup" },
+  "seed": 1,
+  "ops": [["fib", 10]],
+  "at": { "op": 0, "step": 0 }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "heap-sort",
+  "id": "sorted-input",
+  "title": "Sorted input: every value sinks while building",
+  "notes": "Ascending order is upside down for a max-heap: every parent is smaller than its children. Each sift in phase 1 takes its value down to a leaf, 4 swaps, the most any 7 values need. Being sorted already does not help phase 2: 21 comparisons and 16 swaps in all.",
+  "settings": {
+    "index": "one",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "10 20 30 40 50 60 70"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

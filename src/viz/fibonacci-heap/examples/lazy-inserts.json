@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "fibonacci-heap",
+  "id": "lazy-inserts",
+  "title": "Lazy inserts, then one big tidy-up",
+  "notes": "Thirteen inserts just add thirteen one-node trees to the root list: Φ climbs to 13. Then one extractMin removes 6 and consolidate links the other twelve into a B₃ and a B₂. That one operation does all the work the inserts put off, and Φ drops back to 2.",
+  "settings": { "view": "logical" },
+  "seed": 1,
+  "ops": [
+    ["insert", 27],
+    ["insert", 14],
+    ["insert", 9],
+    ["insert", 33],
+    ["insert", 21],
+    ["insert", 45],
+    ["insert", 6],
+    ["insert", 38],
+    ["insert", 17],
+    ["insert", 50],
+    ["insert", 12],
+    ["insert", 29],
+    ["insert", 41],
+    ["deletemin"]
+  ],
+  "at": { "op": 12, "step": 1000000 }
+}

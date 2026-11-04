@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "recursion-dag",
+  "id": "nothing-shared",
+  "title": "C(6, 1): nothing to share",
+  "notes": "Every call leads to a different subproblem, so the tree and the DAG have the same 11 boxes. A memo only pays off when subproblems repeat.",
+  "settings": { "problem": "binom" },
+  "seed": 1,
+  "ops": [["call", "6 1"]],
+  "at": { "op": -1, "step": 0 }
+}

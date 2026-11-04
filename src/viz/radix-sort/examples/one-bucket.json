@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "radix-sort",
+  "id": "one-bucket",
+  "title": "Every value ends in 0: one bucket takes them all",
+  "notes": "In pass 1 all six values land in bucket 0. That costs nothing extra: each value is still moved once per pass, so the time stays the number of passes times n plus the base.",
+  "settings": { "base": 10, "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "120 450 30 780 990 60"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

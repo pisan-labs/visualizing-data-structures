@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "binomial-queue",
+  "id": "delete-min-children",
+  "title": "extractMin: the children become a queue",
+  "notes": "The minimum, 10, is the root of the B₃. Its children are a B₂, a B₁ and a B₀; reversed, they form a queue of their own, which is united with the B₀ left behind. 1001 − 1 = 1000: everything links back into one B₃.",
+  "settings": { "view": "logical" },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 30],
+    ["insert", 20],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 70],
+    ["insert", 60],
+    ["insert", 80],
+    ["insert", 90],
+    ["deletemin"]
+  ],
+  "at": { "op": 8, "step": 1000000 }
+}

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "dp-edit-distance",
+  "id": "costly-delete",
+  "title": "Deletes cost 3: abc to cab by substituting",
+  "notes": "With every edit costing 1, abc becomes cab with an insert and a delete: 2. Make a delete cost 3 and three substitutions are cheaper. The costs decide the alignment.",
+  "settings": { "ins": 1, "del": 3, "sub": 1 },
+  "seed": 1,
+  "ops": [["load", "abc", "cab"], ["fill"], ["trace"]],
+  "at": { "op": 1, "step": 0 }
+}

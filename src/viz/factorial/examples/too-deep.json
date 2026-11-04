@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "factorial",
+  "id": "too-deep",
+  "title": "Correct, but too deep for the stack",
+  "notes": "The base case is fine, but factorial(7) needs 8 frames and this stack has room for 5. Real stacks are much bigger, but they run out the same way: Python stops at about 1000 frames.",
+  "settings": { "style": "plain", "base": "zero", "limit": 5 },
+  "seed": 1,
+  "ops": [["factorial", 7]],
+  "at": { "op": -1, "step": 0 }
+}

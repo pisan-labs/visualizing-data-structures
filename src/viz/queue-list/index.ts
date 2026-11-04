@@ -21,6 +21,7 @@ import {
   type QueueListSettings,
   type QueueListState,
 } from './model';
+import { queueListPractice } from './practice';
 import { view } from './view';
 
 export const MAX_VALUE_LENGTH = 6;
@@ -118,6 +119,7 @@ export const queueList: VizDef<QueueListState, QueueListSettings, QueueListExtra
     cpp: cppSource,
     script: (calls: OpCall[]) => codeScript(calls),
   },
+  practice: queueListPractice(() => queueList),
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [fifo, firstEnqueue, lastDequeue, underflow, longLine] as unknown as SavedExample[],
 };

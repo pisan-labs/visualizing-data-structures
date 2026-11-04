@@ -23,6 +23,7 @@ import {
   type DequeSettings,
   type DequeState,
 } from './model';
+import { dequePractice } from './practice';
 import { view } from './view';
 
 export const MAX_VALUE_LENGTH = 6;
@@ -173,6 +174,7 @@ export const dequeArray: VizDef<DequeState, DequeSettings, DequeExtra> = {
     cpp: cppSource,
     script: (calls: OpCall[], settings: Settings) => codeScript(calls, settings as DequeSettings),
   },
+  practice: dequePractice(() => dequeArray),
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [
     bothEnds,

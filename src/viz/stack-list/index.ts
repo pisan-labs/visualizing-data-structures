@@ -21,6 +21,7 @@ import {
   type StackListSettings,
   type StackListState,
 } from './model';
+import { stackListPractice } from './practice';
 import { view } from './view';
 
 export const MAX_VALUE_LENGTH = 6;
@@ -111,6 +112,7 @@ export const stackList: VizDef<StackListState, StackListSettings, StackListExtra
     cpp: cppSource,
     script: (calls: OpCall[]) => codeScript(calls),
   },
+  practice: stackListPractice(() => stackList),
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [lifo, firstPush, underflow, noOverflow, reverseWord] as unknown as SavedExample[],
 };

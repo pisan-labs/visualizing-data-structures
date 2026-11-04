@@ -24,6 +24,7 @@ import {
   type DynSettings,
   type DynState,
 } from './model';
+import { dynamicPractice } from './practice';
 import { view } from './view';
 
 export const MAX_VALUE_LENGTH = 6;
@@ -196,6 +197,7 @@ export const dynamicArray: VizDef<DynState, DynSettings, DynExtra> = {
     cpp: cppSource,
     script: (calls: OpCall[], settings: Settings) => codeScript(calls, settings as DynSettings),
   },
+  practice: dynamicPractice(() => dynamicArray),
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [
     doubling,

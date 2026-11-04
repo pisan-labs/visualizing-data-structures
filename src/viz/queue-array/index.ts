@@ -22,6 +22,7 @@ import {
   type QueueSettings,
   type QueueState,
 } from './model';
+import { queuePractice } from './practice';
 import { view } from './view';
 
 export const MAX_VALUE_LENGTH = 6;
@@ -170,6 +171,7 @@ export const queueArray: VizDef<QueueState, QueueSettings, QueueExtra> = {
     cpp: cppSource,
     script: (calls: OpCall[], settings: Settings) => codeScript(calls, settings as QueueSettings),
   },
+  practice: queuePractice(() => queueArray),
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [
     fifo,

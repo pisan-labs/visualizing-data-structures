@@ -21,6 +21,7 @@ import {
   type DequeListSettings,
   type DequeListState,
 } from './model';
+import { dequeListPractice } from './practice';
 import { view } from './view';
 
 export const MAX_VALUE_LENGTH = 6;
@@ -138,6 +139,7 @@ export const dequeList: VizDef<DequeListState, DequeListSettings, DequeListExtra
     cpp: cppSource,
     script: (calls: OpCall[]) => codeScript(calls),
   },
+  practice: dequeListPractice(() => dequeList),
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [bothEnds, firstAdd, lastRemove, removeLast, underflow] as unknown as SavedExample[],
 };

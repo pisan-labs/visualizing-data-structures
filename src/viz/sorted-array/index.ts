@@ -24,6 +24,7 @@ import {
   type SortedSettings,
   type SortedState,
 } from './model';
+import { sortedPractice } from './practice';
 import { view } from './view';
 
 /** Whole numbers only: the array keeps them in numeric order. */
@@ -173,6 +174,7 @@ export const sortedArray: VizDef<SortedState, SortedSettings, SortedExtra> = {
     cpp: cppSource,
     script: (calls: OpCall[], settings: Settings) => codeScript(calls, settings as SortedSettings),
   },
+  practice: sortedPractice(() => sortedArray),
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [
     binarySearch,

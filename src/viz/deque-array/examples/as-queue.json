@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "deque-array",
+  "id": "as-queue",
+  "title": "A deque used as a queue",
+  "notes": "Add at the back and remove from the front and the deque behaves like a queue: the first value in is the first one out.",
+  "settings": { "capacity": 8, "full": "gap", "layout": "ring" },
+  "seed": 1,
+  "ops": [
+    ["addLast", 1],
+    ["addLast", 2],
+    ["addLast", 3],
+    ["removeFirst"],
+    ["removeFirst"],
+    ["removeFirst"]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

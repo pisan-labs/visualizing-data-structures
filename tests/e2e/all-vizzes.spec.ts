@@ -54,14 +54,21 @@ for (const id of ids) {
 
     test('fits the screen and has no axe violations', async ({ page }) => {
       await page.goto(`/${id}/`);
-      const overflow = await page.evaluate(
-        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-      );
-      expect(overflow).toBeLessThanOrEqual(0);
+      const overflow = () =>
+        page.evaluate(
+          () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        );
+      expect(await overflow()).toBeLessThanOrEqual(0);
       const results = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
         .analyze();
       expect(results.violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
+      // Text widths depend on the fonts a device has, and the default font differs between
+      // machines (CI resolves it to DejaVu Sans, which is wide). Check with a wide font too.
+      await page.addStyleTag({
+        content: ":root { --font: 'DejaVu Sans', Verdana, sans-serif !important; }",
+      });
+      expect(await overflow()).toBeLessThanOrEqual(0);
     });
   });
 }

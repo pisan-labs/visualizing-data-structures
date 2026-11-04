@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "deque-array",
+  "id": "wraps",
+  "title": "Both ends wrap past index 0",
+  "notes": "The very first addFirst on an empty deque moves front from 0 back to the last index. Later removeLast moves rear back past 0 as well, and addLast wraps it forward again.",
+  "settings": { "capacity": 6, "full": "gap", "layout": "ring" },
+  "seed": 1,
+  "ops": [["addFirst", 1], ["addFirst", 2], ["removeLast"], ["addLast", 3], ["addFirst", 4]],
+  "at": { "op": -1, "step": 0 }
+}

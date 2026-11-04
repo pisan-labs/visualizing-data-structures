@@ -1,4 +1,3 @@
-import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, SavedExample, Settings, Value, VizDef } from '../../engine/types';
 import cppSource from './code/cpp/binary_tree.hpp?raw';
@@ -27,92 +26,22 @@ import {
   type BTExtra,
   type BTSettings,
   type BTState,
-  type Token,
 } from './model';
+import { binaryTreePractice } from './practice';
+import {
+  completeList,
+  fullShape,
+  randomShape,
+  randomTreeList,
+  shapeToList,
+  skewedList,
+} from './shapes';
 import { view } from './view';
 
 /** Accept a level-order list and hand the operation its canonical text. */
 export function parseList(text: string): Value | Error {
   const tokens = parseLevelOrder(text);
   return tokens instanceof Error ? tokens : formatLevelOrder(tokens);
-}
-
-type Shape = { left: Shape | null; right: Shape | null };
-
-/** Level-order list of a shape, numbering the nodes 1, 2, 3, ... level by level. */
-function shapeToList(root: Shape | null): string {
-  if (!root) return '_';
-  const out: Token[] = [];
-  const queue: (Shape | null)[] = [root];
-  let n = 0;
-  while (queue.length) {
-    const x = queue.shift()!;
-    if (!x) {
-      out.push(null);
-      continue;
-    }
-    out.push(++n);
-    queue.push(x.left, x.right);
-  }
-  while (out[out.length - 1] === null) out.pop();
-  return formatLevelOrder(out);
-}
-
-const leaf = (): Shape => ({ left: null, right: null });
-
-/** A random shape: each new node takes a random free child spot. */
-export function randomShape(rng: Rng, n: number): Shape | null {
-  if (n <= 0) return null;
-  const root = leaf();
-  const spots: [Shape, 'left' | 'right'][] = [
-    [root, 'left'],
-    [root, 'right'],
-  ];
-  for (let k = 1; k < n; k++) {
-    const [parent, side] = spots.splice(rng.int(0, spots.length - 1), 1)[0]!;
-    const child = leaf();
-    parent[side] = child;
-    spots.push([child, 'left'], [child, 'right']);
-  }
-  return root;
-}
-
-/** A random full tree (every node has 0 or 2 children) with n nodes, n odd. */
-function fullShape(rng: Rng, n: number): Shape {
-  const root = leaf();
-  const leaves = [root];
-  for (let count = 1; count + 2 <= n; count += 2) {
-    const x = leaves.splice(rng.int(0, leaves.length - 1), 1)[0]!;
-    x.left = leaf();
-    x.right = leaf();
-    leaves.push(x.left, x.right);
-  }
-  return root;
-}
-
-function completeList(n: number): string {
-  return Array.from({ length: n }, (_, i) => i + 1).join(' ');
-}
-
-function skewedList(n: number): string {
-  const out: string[] = ['1'];
-  for (let k = 2; k <= n; k++) out.push(String(k), '_');
-  if (out[out.length - 1] === '_') out.pop();
-  return out.join(' ');
-}
-
-/** A random shape with random distinct values, for practice. */
-function randomTreeList(rng: Rng, n: number): string {
-  const values: number[] = [];
-  while (values.length < n) {
-    const v = rng.int(1, 99);
-    if (!values.includes(v)) values.push(v);
-  }
-  let k = 0;
-  return shapeToList(randomShape(rng, n))
-    .split(' ')
-    .map((t) => (t === '_' ? t : String(values[k++])))
-    .join(' ');
 }
 
 const size = (n: number) => Math.max(1, Math.min(n, MAX_NODES));
@@ -178,6 +107,7 @@ export const binaryTree: VizDef<BTState, BTSettings, BTExtra> = {
     sizes: [7, 15, 31],
   },
   explain,
+  practice: binaryTreePractice(() => binaryTree),
   complexity: [
     {
       op: 'preorder, inorder, postorder',

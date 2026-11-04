@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "sorted-array",
+  "id": "delete",
+  "title": "Delete finds the item, then closes the gap",
+  "notes": "delete(25) uses binary search to find 25, then shifts the three bigger items left. delete(99) finds nothing and changes nothing.",
+  "settings": { "mode": "sorted", "capacity": 10 },
+  "seed": 1,
+  "ops": [
+    ["insert", 15],
+    ["insert", 25],
+    ["insert", 35],
+    ["insert", 45],
+    ["insert", 55],
+    ["delete", 25],
+    ["delete", 99]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

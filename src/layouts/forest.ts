@@ -24,6 +24,7 @@
  *       style 'tree'      a plain line from each parent to each child: forestEdgeId(child)
  *       style 'pointers'  left-child, right-sibling: an arrow from a node to its first child,
  *                         childPtrId(parent), and from each child to the next, siblingPtrId(id)
+ *                         (pointing both ways with `doubly`, for doubly linked sibling lists)
  *     Roles come from `roles` by those ids; a role on nodeShapeId(id) also colors its label.
  *
  *   The root list (the arrows between roots, a head pointer) is drawn by the view, which knows
@@ -185,6 +186,8 @@ export interface DrawForestOptions {
   children(id: ForestId): ForestId[];
   roles?: ReadonlyMap<string, MarkRole>;
   style?: 'tree' | 'pointers';
+  /** With style 'pointers': sibling lists are doubly linked, so their arrows point both ways. */
+  doubly?: boolean;
   baseRole?(id: ForestId): MarkRole | undefined;
   /** Extra CSS class for a node's circle. Default 'live'. */
   nodeClass?(id: ForestId): string;
@@ -215,7 +218,8 @@ export function drawForest(layout: ForestLayout, opts: DrawForestOptions): Shape
         shapes.push({
           kind: 'arrow',
           id: siblingPtrId(k),
-          ...trimmedLine(a, b, r, r + 2),
+          ...trimmedLine(a, b, r + (opts.doubly ? 2 : 0), r + 2),
+          head: opts.doubly ? 'both' : 'end',
           role: roles.get(siblingPtrId(k)),
         });
       });

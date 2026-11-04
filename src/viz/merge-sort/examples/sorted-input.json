@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "merge-sort",
+  "id": "sorted-input",
+  "title": "Sorted input: fewer comparisons, same work",
+  "notes": "Every merge empties L before touching R, so each merge makes only as many comparisons as L has values: 12 in all for 8 values. It still copies and writes every value on every level: 24 writes.",
+  "settings": { "style": "topdown", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "10 20 30 40 50 60 70 80"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

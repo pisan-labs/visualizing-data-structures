@@ -3,6 +3,8 @@
   import type { Session } from './session.svelte';
 
   let { session }: { session: Session } = $props();
+  // Unique per instance: a compare page shows two of these.
+  const uid = $props.id();
 
   const vars = $derived(Object.entries(session.current.step.vars ?? {}));
   const before = $derived.by(() => {
@@ -12,8 +14,8 @@
   const fmt = (v: Scalar) => (typeof v === 'string' ? `"${v}"` : String(v));
 </script>
 
-<section class="vars card" aria-labelledby="vars-heading">
-  <h2 id="vars-heading">Variables</h2>
+<section class="vars card" aria-labelledby="{uid}-vars">
+  <h2 id="{uid}-vars">Variables</h2>
   {#if vars.length}
     <dl>
       {#each vars as [name, value] (name)}

@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "linear-search",
+  "id": "first-slot",
+  "title": "In the first slot: one comparison",
+  "notes": "The best case. 42 is in A[0], so the first comparison finds it.",
+  "settings": { "sentinel": false, "draw": "cells" },
+  "seed": 1,
+  "ops": [
+    ["load", "42 17 63 8 35 24"],
+    ["search", 42]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

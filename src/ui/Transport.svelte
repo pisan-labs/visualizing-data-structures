@@ -1,21 +1,23 @@
 <script lang="ts">
   import type { Level } from '../engine/types';
   import Icon from './Icon.svelte';
+  import type { Playback } from './pair.svelte';
   import type { Session } from './session.svelte';
   import { setPref } from './state.svelte';
 
-  let { session }: { session: Session } = $props();
+  // `session` plays (one page, or a compare page's pair); `scrub`, when given, adds a timeline
+  // slider for that one session.
+  let { session, scrub }: { session: Playback; scrub?: Session } = $props();
 
-  const visible = $derived(session.timeline.visibleIndices(session.detail));
+  const visible = $derived(scrub ? scrub.timeline.visibleIndices(scrub.detail) : []);
   const pos = $derived.by(() => {
     let p = 0;
     visible.forEach((v, i) => {
-      if (v <= session.cursor) p = i;
+      if (scrub && v <= scrub.cursor) p = i;
     });
     return p;
   });
   const speeds = [0.25, 0.5, 1, 1.5, 2, 4];
-  const last = $derived(session.timeline.length - 1);
 </script>
 
 <div class="transport card" role="group" aria-label="Playback">
@@ -23,7 +25,7 @@
     <button
       class="icon-btn"
       onclick={() => session.prevOp()}
-      disabled={session.cursor === 0}
+      disabled={session.atStart}
       aria-label="Back to the previous operation"
       title="Previous operation"
     >
@@ -58,7 +60,7 @@
     <button
       class="icon-btn"
       onclick={() => session.nextOp()}
-      disabled={session.cursor >= last}
+      disabled={session.atEnd}
       aria-label="Forward to the next operation"
       title="Next operation"
     >
@@ -66,17 +68,19 @@
     </button>
   </div>
 
-  <input
-    class="scrub"
-    type="range"
-    min="0"
-    max={Math.max(0, visible.length - 1)}
-    value={pos}
-    disabled={visible.length < 2}
-    aria-label="Timeline"
-    aria-valuetext="Step {pos + 1} of {visible.length}"
-    oninput={(e) => session.jump(visible[Number(e.currentTarget.value)] ?? 0)}
-  />
+  {#if scrub}
+    <input
+      class="scrub"
+      type="range"
+      min="0"
+      max={Math.max(0, visible.length - 1)}
+      value={pos}
+      disabled={visible.length < 2}
+      aria-label="Timeline"
+      aria-valuetext="Step {pos + 1} of {visible.length}"
+      oninput={(e) => scrub.jump(visible[Number(e.currentTarget.value)] ?? 0)}
+    />
+  {/if}
 
   <div class="selects">
     <label>

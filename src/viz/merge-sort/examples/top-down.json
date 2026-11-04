@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "merge-sort",
+  "id": "top-down",
+  "title": "Split, sort the halves, merge",
+  "notes": "CLRS's recursive version. The brackets on top are the call stack: each call splits its range at the middle, and the merges happen on the way back up. Watch the values drop into L and R and come back in order.",
+  "settings": { "style": "topdown", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "74 52 19 8 33 61 25 47"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

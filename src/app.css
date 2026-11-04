@@ -274,6 +274,7 @@ button {
 :root.presenting footer.site,
 :root.presenting .viz .back,
 :root.presenting .viz .blurb,
+:root.presenting .viz .compare-menu,
 :root.presenting .viz details.options,
 :root.presenting .viz .tabs,
 :root.presenting .viz .feedback {

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "selection-sort",
+  "id": "smallest-first",
+  "title": "Select the smallest, swap it to the front",
+  "notes": "Each pass scans the unsorted part with j, keeps min pointing at the smallest value so far, and makes one swap at the end. Watch min jump only when j finds something smaller.",
+  "settings": { "select": "min", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "38 71 14 56 23 89 45"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

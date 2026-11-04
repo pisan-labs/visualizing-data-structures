@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "shell-sort",
+  "id": "not-stable",
+  "title": "Equal values can change order",
+  "notes": "Two 33s in different lists. With gap 3, the second 33 jumps three places to the front, past the first one, and nothing puts them back. Shell sort is not stable.",
+  "settings": { "gaps": "shell", "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "50 33 12 33 71 25"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

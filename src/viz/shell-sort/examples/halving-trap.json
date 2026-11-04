@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "shell-sort",
+  "id": "halving-trap",
+  "title": "A trap for Shell's halving gaps",
+  "notes": "The large values sit in the even slots and the small ones in the odd slots. Gaps 8, 4 and 2 only ever compare even slots with even slots and odd with odd, so they move nothing, and the final pass has to do everything. Switch to Knuth's gaps and compare.",
+  "settings": { "gaps": "shell", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "61 11 62 12 63 13 64 14 65 15 66 16 67 17 68 18"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "binary-search",
+  "id": "lower-bound",
+  "title": "Lower bound: the first value at least 7",
+  "notes": "lowerBound never stops early. It narrows the window until lo = hi = 1, the first 7, after 4 probes.",
+  "settings": { "variant": "lower", "style": "iterative", "draw": "cells" },
+  "seed": 1,
+  "ops": [
+    ["load", "2 7 7 7 7 7 9 12"],
+    ["search", 7]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "linear-search",
+  "id": "found",
+  "title": "Found after five comparisons",
+  "notes": "The values are in no particular order, so the only way to find 35 is to look. x moves along A until it sits over a match: 5 comparisons for 6 values.",
+  "settings": { "sentinel": false, "draw": "cells" },
+  "seed": 1,
+  "ops": [
+    ["load", "42 17 63 8 35 24"],
+    ["search", 35]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

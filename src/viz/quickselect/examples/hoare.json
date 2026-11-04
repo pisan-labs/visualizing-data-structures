@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "quickselect",
+  "id": "hoare",
+  "title": "Hoare's partition: narrow down until one value is left",
+  "notes": "Hoare's partition does not put the pivot in its final place, so there is no early hit. Quickselect keeps the part that holds A[2] until a single value is left: the 3rd smallest, 30.",
+  "settings": { "partition": "hoare", "pivot": "first", "draw": "bars" },
+  "seed": 1,
+  "ops": [
+    ["load", "50 90 10 80 20 70 30 60"],
+    ["select", 3]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

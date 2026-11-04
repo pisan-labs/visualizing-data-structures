@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "linear-search",
+  "id": "not-found",
+  "title": "Not there: every value is checked",
+  "notes": "The worst case. 50 is not in A, and there is no way to know that without looking at all 6 values. The search returns -1.",
+  "settings": { "sentinel": false, "draw": "cells" },
+  "seed": 1,
+  "ops": [
+    ["load", "42 17 63 8 35 24"],
+    ["search", 50]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

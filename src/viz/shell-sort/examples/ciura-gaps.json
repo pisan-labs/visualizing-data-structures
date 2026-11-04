@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "shell-sort",
+  "id": "ciura-gaps",
+  "title": "Ciura's gaps on 20 values",
+  "notes": "Ciura's sequence (1, 4, 10, 23, 57, ...) was found by running experiments, not by a formula. For 20 values the gaps are 10, 4 and 1.",
+  "settings": { "gaps": "ciura", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "57 12 88 34 5 71 23 96 41 9 66 18 79 30 2 54 85 47 13 62"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

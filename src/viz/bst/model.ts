@@ -250,12 +250,12 @@ function* descend(
     const child = W.n(x)[side];
     const where =
       child === null
-        ? `${key} has no ${side} child, so x = nil.`
-        : `go ${side} to ${W.key(child)}.`;
+        ? `but ${key} has no ${side} child, so x = nil.`
+        : `so go ${side} to ${W.key(child)}.`;
     const nil = child === null ? { parent: x, side } : undefined;
     yield step(
       c,
-      `${name}: ${cmp(k, key)}, so ${where}`,
+      `${name}: ${cmp(k, key)}, ${where}`,
       side === 'left' ? lines.left : lines.right,
       level,
       [nodeMark(x, 'compare'), ...(child === null ? [mark('nil', 'active')] : [])],
@@ -619,7 +619,7 @@ function neighbor(which: 'successor' | 'predecessor'): Op {
         c.vars.y = W.key(y);
         yield step(
           c,
-          `${W.key(x)} is the ${down} child of ${W.key(y)}, so ${W.key(y)} comes ${which === 'successor' ? 'before' : 'after'} it too. Keep climbing.`,
+          `${W.key(x)} is the ${down} child of ${W.key(y)}, so ${W.key(y)} is ${which === 'successor' ? 'smaller' : 'larger'} than ${k}. Keep climbing.`,
           [`${p}.loop`, `${p}.climb`],
           2,
           [nodeMark(found, 'active'), nodeMark(y, 'compare'), mark(edgeShapeId(x), 'active')],

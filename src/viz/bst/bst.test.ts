@@ -283,7 +283,7 @@ describe('binary search tree', () => {
     const says = t.entries[5]!.steps.map((s) => s.say);
     expect(says).toContain('search(45): 45 < 50, so go left to 30.');
     expect(says).toContain('search(45): 45 > 30, so go right to 40.');
-    expect(says).toContain('search(45): 45 > 40, so 40 has no right child, so x = nil.');
+    expect(says).toContain('search(45): 45 > 40, but 40 has no right child, so x = nil.');
     expect(says.at(-1)).toContain('45 is not in the tree');
   });
 

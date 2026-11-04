@@ -587,7 +587,8 @@ export function callNodeShapes(
   let ly: number;
   if (twoLines) {
     lx = box.x - labelW / 2;
-    ly = hasValue ? box.y - size * 0.18 : box.y + size * 0.36;
+    // Low enough to clear a tag badge on the top edge.
+    ly = hasValue ? box.y - size * 0.05 : box.y + size * 0.36;
   } else {
     const total = labelW + (hasValue ? size * 0.5 + valueW : 0);
     lx = box.x - Math.min(total, box.w - size * 0.5) / 2;
@@ -611,7 +612,7 @@ export function callNodeShapes(
       kind: 'text',
       id: `${id}-value`,
       x: twoLines ? box.x : lx + labelW + size * 0.5,
-      y: twoLines ? box.y + size * 1.02 : ly,
+      y: twoLines ? box.y + size * 1.06 : ly,
       text: call.value!,
       size: twoLines ? fitSize(call.value!, box.w - size * 0.5, valueSize) : valueSize,
       anchor: twoLines ? 'middle' : 'start',

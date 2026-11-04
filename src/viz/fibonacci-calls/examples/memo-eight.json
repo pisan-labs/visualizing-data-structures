@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "fibonacci-calls",
+  "id": "memo-eight",
+  "title": "fib(8) with a memo: 15 calls instead of 67",
+  "notes": "Only the left edge of the tree is computed. Every other call is a base case or a memo hit, and everything below a hit is cut off.",
+  "settings": { "memo": "memo" },
+  "seed": 1,
+  "ops": [["fib", 8]],
+  "at": { "op": -1, "step": 0 }
+}

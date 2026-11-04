@@ -314,6 +314,23 @@ export function* compareNeighbors(
   return false;
 }
 
+/**
+ * After a sort: did equal values end up in a different order than they started in? Returns a
+ * sentence for the narration, or "" when every group of equal values kept its order.
+ */
+export function stabilityNote(start: readonly Item[], end: readonly Item[]): string {
+  const pos = new Map(start.map((x, i) => [x.uid, i]));
+  const seen = new Map<number, number[]>();
+  for (const x of end) seen.set(x.value, [...(seen.get(x.value) ?? []), pos.get(x.uid) ?? 0]);
+  for (const [value, order] of seen) {
+    if (order.every((p, k) => k === 0 || order[k - 1]! < p)) continue;
+    return order.length === 2
+      ? ` The two ${value}s ended up in the opposite order from how they started, so this run was not stable.`
+      : ` The ${value}s ended up in a different order from how they started, so this run was not stable.`;
+  }
+  return '';
+}
+
 /** Is the array (live values) in non-decreasing order? Returns the first descent, if any. */
 export function firstDescent(vs: readonly number[]): number {
   for (let i = 0; i + 1 < vs.length; i++) if (vs[i]! > vs[i + 1]!) return i;

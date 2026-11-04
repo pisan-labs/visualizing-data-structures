@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "selection-sort",
+  "id": "not-stable",
+  "title": "Equal values can change order",
+  "notes": "Two 27s. The first swap sends the 27 in A[0] past the other 27, and nothing ever swaps them back: they finish in the opposite order. Selection sort is not stable.",
+  "settings": { "select": "min", "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "27 27 9 41 33"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

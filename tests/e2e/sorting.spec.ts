@@ -115,3 +115,25 @@ test.describe('cocktail shaker sort', () => {
     await expect(narration(page)).toContainText('Sorted: 1, 2, 3, 4.');
   });
 });
+
+test.describe('selection sort', () => {
+  test.beforeEach(({ page }) => open(page, 'selection-sort', 'Selection sort'));
+
+  test('says when equal values change order', async ({ page }) => {
+    await load(page, '27 27 9 41 33');
+    await run(page, 'Sort');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('10 comparisons and 4 swaps');
+    await expect(narration(page)).toContainText('The two 27s ended up in the opposite order');
+    await expect(page.locator('.vars')).toContainText('swaps');
+  });
+
+  test('selecting the maximum mirrors the code', async ({ page }) => {
+    await option(page, 'The maximum, which goes to the end');
+    await expect(code(page)).toContainText('swap A[last] and A[max]');
+    await load(page, '3 1 2');
+    await run(page, 'Sort');
+    await toEnd(page);
+    await backTo(page, 'Swap A[2] = 2 with A[max] = 3.');
+  });
+});

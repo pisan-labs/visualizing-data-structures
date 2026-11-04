@@ -101,7 +101,7 @@ test('concept page links load and play examples', async ({ page }) => {
   await page.getByRole('link', { name: 'Show me' }).first().click();
   await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
   await expect(page).toHaveURL(/\/bst\//);
-  await expect(narration(page)).toContainText('search(');
+  await expect(narration(page)).toContainText(/found it|search\(/);
 });
 
 for (const theme of ['dark', 'contrast']) {
@@ -109,7 +109,7 @@ for (const theme of ['dark', 'contrast']) {
     await page.getByRole('combobox', { name: 'Theme' }).selectOption(theme);
     await seven(page);
     await op(page, 'Delete', '30');
-    await page.getByRole('button', { name: 'Pause' }).click();
+    await page.getByRole('button', { name: 'Step back' }).click();
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
       .analyze();

@@ -114,7 +114,7 @@ for (const theme of ['dark', 'contrast']) {
     await build(page, '1 2 3 4 5');
     await toEnd(page);
     await page.getByRole('button', { name: 'Postorder', exact: true }).click();
-    await page.getByRole('button', { name: 'Pause' }).click();
+    await page.getByRole('button', { name: 'Step back' }).click();
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
       .analyze();

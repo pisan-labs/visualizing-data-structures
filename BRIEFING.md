@@ -4,7 +4,8 @@
 
 Interactive visualizations of data structures and algorithms for university data
 structures and algorithms courses. The 50 pages of the Galles/Lucet site are the reference
-for coverage; we add every candidate in `PLAN.md` question 10 and possibly more. We write
+for coverage. The plan adds the candidates from VisuAlgo, csvistool and Coddy (`PLAN.md`
+Appendix B): 108 planned pages in `src/viz/catalog.ts`, 16 of them marked advanced. We write
 all code ourselves.
 
 Every visualization explains itself: step narration, highlighted pseudocode, live
@@ -21,7 +22,7 @@ the browser, exported as files, and embedded in Canvas.
   interpolates between scenes and draws them as SVG.
 - **Saved example:** settings + seed + the list of operations, plus a format version.
   Share links compress it into the URL hash.
-- **Hosting:** Netlify, custom domain `<name>.pisan.me`. GitHub Actions runs CI.
+- **Hosting:** Netlify site `stepwise-pisan-labs`, domain `stepwise.pisan.me`; publishing is locked until Yusuf releases it. GitHub Actions runs CI.
 - **License:** MIT for code; CC BY 4.0 for written explanations.
 - **Conventions:** toggles wherever textbooks differ; CLRS is the default.
 - **Pseudocode:** first; one real language after Phase 2.

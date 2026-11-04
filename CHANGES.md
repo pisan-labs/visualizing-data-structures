@@ -25,3 +25,7 @@
 2026-11-04 [decision] Logo A (staircase of array cells, amber "current step" cell) applied after the 15-minute window; B and C kept in session notes; switch via public/favicon.svg and src/ui/Logo.svelte
 
 2026-11-04 [note] stepwise.pisan.me set as primary domain on Netlify site stepwise-pisan-labs; Cloudflare CNAME created (DNS only) via claude-built-apps "Set Netlify domain" workflow
+
+2026-11-04 [note] Three agents surveyed VisuAlgo, csvistool (Georgia Tech CS 1332) and Coddy; comparison and borrowed ideas in PLAN.md 3.3 (Coddy details are from search summaries: bot wall)
+
+2026-11-04 [plan] PLAN v2: lessons, Big-O self-tests, practice sets, trace table, code tabs and URL proposals, build in waves of parallel agents; catalog grows to 108 pages (16 advanced)

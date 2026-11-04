@@ -36,7 +36,7 @@
                 <span class="blurb">{def.blurb}</span>
               {:else}
                 <span class="planned">{item.title}</span>
-                <span class="tag">planned</span>
+                <span class="tag">{item.advanced ? 'advanced, planned' : 'planned'}</span>
               {/if}
             </li>
           {/each}

@@ -1,534 +1,464 @@
-# Visualizing Data Structures: Plan
+# StepWise: Plan
 
-v1, 2026-11-04. Status: **Phase 0 done. Phase 1 (Stack, array) built and waiting for your
-review.** Decisions are in section 11 and `BRIEFING.md`. Working name: Stepwise (pending your
-pick). Deployment waits on connecting the repo to Netlify.
+v2, 2026-11-04. **Status:** Phase 0 and Phase 1 (Stack, array) are done and green in CI.
+
+v2 adds:
+- what we learned from VisuAlgo, csvistool and Coddy (3.3);
+- new teaching features (4.7);
+- a proposed URL change (5.7) and code testing (5.8);
+- a parallel build in waves (7);
+- an expanded catalog (Appendix B).
+
+Questions waiting for an answer are in section 12. Under the standing rule, if there is no answer
+within 15 minutes, the recommendation goes ahead.
 
 ---
 
 ## 1. Goal
 
-Build our own interactive data-structure and algorithm visualizations. We use the
-Galles/Lucet site (<https://cmps-people.ok.ubc.ca/ylucet/DS/Algorithms.html>, based on
-<https://www.cs.usfca.edu/~galles/visualization>) as a reference for coverage and behavior,
-and we fix its main weaknesses:
+StepWise (<https://stepwise.pisan.me>) is our own set of interactive data structure and
+algorithm visualizations for university courses. The Galles/Lucet site
+(<https://cmps-people.ok.ubc.ca/ylucet/DS/Algorithms.html>) sets the baseline coverage: 50
+pages, Appendix A. The catalog grows from there to everything in Appendix B.
 
-| Weakness today | What we build instead |
+We aim to beat every site we surveyed on six things:
+
+| Area | Target |
 |---|---|
-| Looks dated; fixed 1000×500 canvas | Modern UI that scales from phone to lecture projector, with light/dark/high-contrast themes |
-| Not responsive | Layout that adapts to screen size; pan/zoom and pinch on the drawing |
-| Examples cannot be saved | Share links, a saved-examples library, file export/import, embed mode, and curated examples |
-| Little explanation | Step-by-step narration, highlighted pseudocode, live variables, a concept page per topic, and "predict the next step" questions |
-| Missing features | See section 4 |
+| Phones | Every page works on a phone in portrait |
+| Access | Keyboard and screen-reader access, axe-clean |
+| History | Stepping back through the whole session, not just the last operation |
+| Explanation | Narration, synced pseudocode and live variables at every step |
+| Saving | Saving and sharing, step position included |
+| License | Open: code under MIT, text under CC BY |
 
-The long-term target is every visualization on the existing site (50 pages, section 3.1),
-plus additions you choose (question 10).
+## 2. Non-goals (v1)
 
-## 2. Proposed non-goals (for v1)
+- Accounts or server-side storage. Saving works without a server (4.3).
+- LMS grade passback (LTI). Embedding in Canvas is in scope.
+- Copying code, text, examples or designs from any site we looked at.
+- Old browsers.
+- Analytics, tracking, beacons, tag managers or third-party CDNs.
+- Translations, for now (question 12.6). UI strings stay in one module so this stays possible.
+- Running code that learners type (question 12.7).
+- Joke algorithms (bogo sort and friends) in the main catalog.
 
-- User accounts or server-side storage. Saving works without a server; see 4.3.
-- LMS grade passback (LTI). An iframe embed in Canvas is in scope; graded integration is not.
-- Copying Galles/Lucet code. We write our own and use their site only to see which
-  operations and options exist and how they behave.
-- Old browsers. We target current Chrome, Edge, Firefox and Safari, including iOS and Android.
-- Analytics or tracking (question 13).
+## 3. What other sites taught us
 
-## 3. What the existing site taught us
+### 3.1 Galles/Lucet, the original reference
 
-### 3.1 Inventory
+50 pages, all loading without errors on 2026-11-04 (Appendix A). Worth keeping:
+- step back across the whole session;
+- variant switches (null leaves, null path lengths, B-tree degree, union-find options, probe types);
+- three views of one graph;
+- recursive vs memoized vs table DP;
+- typed coin flips for skip lists.
 
-I checked the site on 2026-11-04. It has **50 pages, and all of them load with no
-JavaScript errors.** The comparison-sort page holds 6 algorithms, so there are 55
-algorithms in all. Appendix A lists every page with its controls.
+### 3.2 Problems Phase 1 already fixed
 
-| Family | Pages |
-|---|---|
-| Basics | Stack (array, linked list), Queue (array, linked list) |
-| Recursion | Factorial, Reverse string, N-Queens |
-| Indexing | BST, AVL, Red-Black, Splay, Skip list, Open hash, Closed hash, Closed hash with buckets, B-tree, B+ tree |
-| Sorting | Comparison sorts (bubble, selection, insertion, shell, merge, quick), Bucket, Counting, Radix, Heap sort |
-| Strings | Boyer-Moore, KMP, Trie, Compressed trie, Huffman |
-| Heap-like | Binary heap, Binomial queue, Fibonacci heap, Leftist heap, Skew heap |
-| Graphs | BFS, DFS, Connected components, Dijkstra, Prim, Topological sort (indegree, DFS), Floyd-Warshall, Kruskal |
-| Dynamic programming | Fibonacci, Making change, LCS |
-| Geometry | 2D rotate/scale, 2D rotate/translate, 2D change of coordinates, 3D rotate/scale, 3D change of coordinates |
-| Other | Disjoint sets |
+- **Logic mixed with drawing.** Drawing commands at pixel positions are replaced by snapshot steps and shared layouts.
+- **Ordering.** Numbers no longer sort as strings ("-2" before "-3").
+- **Fixed canvas.** A 1000×500 canvas is replaced by a responsive layout.
+- **Explanation.** Narration and pseudocode are added.
+- **Input.** Bulk and random input are added.
+- **Saving.** Work can now be saved and shared.
 
-### 3.2 Features worth keeping
+### 3.3 VisuAlgo, csvistool and Coddy (surveyed 2026-11-04)
 
-- Full undo history. Step back can walk back through every earlier operation, not only the current one.
-- Play/pause, step forward/back, skip, and a speed slider.
-- Variant switches that teach something:
-  - Red-black: show null leaves.
-  - Leftist heap: show null path lengths.
-  - B-tree: max degree 3–7, and preemptive split/merge.
-  - Disjoint sets: path compression, union by rank, and two rank definitions.
-  - Closed hashing: linear, quadratic, or double hashing.
-  - Binomial and Fibonacci heaps: logical vs internal representation.
-- Graph pages show the same graph three ways: drawn, adjacency list, and adjacency matrix.
-- DP pages run the same problem three ways: recursive, memoized, and table, plus greedy for making change.
-- Skip list lets the student type the coin flips, so its "random" behavior can be reproduced.
+Full notes are in the session scratchpad. The Coddy pages sit behind a bot check, which we did
+not try to get past, so its page details come from search-engine summaries. Its topic list was
+verified from Coddy's sitemap.
 
-### 3.3 Problems to fix
+| | VisuAlgo (NUS) | csvistool (Georgia Tech CS 1332) | Coddy | StepWise |
+|---|---|---|---|---|
+| Coverage | 26 modules, deep on algorithms (flow, matching, suffix structures, range trees, geometry, TSP, NP reductions) | 47 pages following a Java DS&A syllabus | 29 introductory topics | Appendix B, about 100 planned |
+| Phone | Portrait blocked; landscape lacks play buttons | Drawings clip or vanish at 390 px | Not verified | Works at 375 px, tested in CI |
+| Keyboard and screen reader | Controls not focusable, no ARIA | 6 axe violations on one page; narration drawn on the canvas | Not verified | axe-clean in 3 themes; narration announced |
+| History | Last operation only | Step back across the session; no scrubber | Play and step only | Whole session, scrubber, detail levels |
+| Explanation | Narration per frame and synced pseudocode (sometimes coarse); lecture slides that drive the drawing | Thin narration; pseudocode on 31 of 47 pages in plain and formal versions; Big-O tables with hidden answers | Article, static trace table, code in 5 languages | Narration, synced pseudocode and variables; concept page |
+| Practice | Seeded quizzes; answer by clicking the drawing | Big-O answers revealed on click | Inside gated courses | Planned (4.7) |
+| Saving and sharing | URL parameters; Share on some pages only; step not saved | Incoming URL parameters only | None found | Links with the step, browser library, files, embed |
+| Themes | None | Dark page, but the drawing stays white | Unknown | Light, dark, high contrast |
+| Openness | Closed; forks banned | BSD; engine derived from Galles | Closed; reuse forbidden | MIT code, CC BY text |
 
-- **Algorithm logic is mixed with drawing.** Each operation emits drawing commands with
-  pixel coordinates, for example `cmd("Move", id, xpos, ypos)` in `StackArray.push`.
-  Layout is hand-placed per page, the code can't be tested without a canvas, and every
-  command needs a hand-written undo.
-- **String comparison everywhere.** The FAQ admits that "-2" sorts before "-3". We give
-  numeric keys numeric order and make string keys an explicit choice.
-- **Fixed canvas.** Per the FAQ, phone users must type in a smaller canvas size, which is
-  then stored in a cookie. Sorting pages need 900 px of width and graphs need 1000 px.
-- **No narration or pseudocode.** Only a few on-canvas labels, such as "Pushing Value:".
-- **Limited input.** One value per operation, with no bulk entry and no random fill for
-  trees. Graphs come only from "New Graph" (random); students can't build their own graph.
-- **No saving or sharing.** All work is lost on reload.
-- **Small gaps in coverage.** The array stack has a fixed capacity of 30 and no resizing.
-  There is no general linked list, no deque, and no rehashing.
+**Ideas we take, as ideas only. No material is reused.**
+- **From VisuAlgo:**
+  - lessons whose buttons drive the live drawing, with a deep link per section;
+  - seeded practice answered by clicking the drawing;
+  - "killer" inputs that make worst cases concrete;
+  - graph text input in three formats with layout templates;
+  - heap building with best and worst inputs;
+  - visible tombstones in hash tables;
+  - BST extras: predecessor/successor, select/rank, shape presets;
+  - recursion tree vs memoized DAG;
+  - a Master theorem tree.
+- **From csvistool:**
+  - Big-O self-test tables with hidden answers, plus a reason and an example for each case;
+  - plain-English and formal pseudocode;
+  - pseudocode that follows the settings (theirs does not);
+  - graph state panels;
+  - string matching shown as one row per alignment;
+  - many textbook-variant toggles;
+  - building a state from text with validation;
+  - readable URL parameters;
+  - presets on every page;
+  - catalog search and related links;
+  - a feedback link.
+- **From Coddy:**
+  - a live trace table, which we can generate from our steps;
+  - real code in Python, Java and C++ (we will test ours);
+  - pointer and memory views;
+  - "when to use / when to avoid" and failure cases on concept pages;
+  - richer embed options;
+  - "build the answer" exercises;
+  - assignment links.
+
+**What we avoid:**
+- Blocking phones, or laying drawings out at fixed pixel positions.
+- Controls that aren't focusable; meaning carried by color alone.
+- Overlays that cover the drawing; a canvas that scrolls by itself.
+- Narration only as a canvas label.
+- Silently accepting or truncating bad input; silently changing the learner's graph.
+- Answers hidden behind accounts.
+- Stub pages, placeholder text, or template tokens leaking into narration.
+- Examples named after textbook figure numbers.
+- Colors that mean different things on different pages.
+- Running JavaScript that learners type.
+- Inbound-only URL state; a last-operation-only timeline; coarse pseudocode.
+- Untested code in several languages.
+- Duplicate pages per search keyword.
+- Bot walls, analytics, ads, accounts, upsells.
 
 ## 4. Features
 
-### 4.1 Core experience (every visualization)
+Items marked ✔ are already built.
 
-- A timeline over the whole session history, with:
-  - play/pause, step back/forward, and jump to the start or end of an operation;
-  - a scrubber you can drag;
-  - a speed setting.
-- **Detail level.** Each step is tagged as a milestone, normal, or fine detail (for
-  example, every comparison). Students choose how deep to go, and coarse playback skips
-  the fine steps.
-- **History panel.** A list of the operations done so far. Clicking one jumps to it;
-  editing and replaying the list makes "what if I had inserted 40 first?" quick to try.
-- **Counters** where they mean something: comparisons, swaps, array accesses, rotations,
-  probes.
-- **Invariant overlays** you can toggle:
-  - BST order, AVL balance factors, red-black properties, heap order, B-tree fill;
-  - violations are highlighted during the rebalancing steps.
-- Keyboard shortcuts: Space toggles play/pause; ← and → step; PageUp/PageDown also step,
-  so a presentation clicker can drive the animation.
+### 4.1 Core experience
+- ✔ Timeline over the whole session: play/pause, step, jump between operations, scrubber, speed.
+- ✔ Detail levels: milestones, normal, every detail.
+- ✔ History with jump and undo.
+- ✔ Keyboard and clicker shortcuts.
+- **To add:**
+  - `-` and `+` change the speed;
+  - counters (comparisons, swaps, probes, rotations) shown as variables;
+  - readouts such as N and tree height;
+  - invariant overlays.
 
-### 4.2 Explanation layer
+### 4.2 Explanation
+- ✔ Narration, highlighted pseudocode, variables panel, concept page.
+- Pseudocode and lessons gain more in v2 (4.7).
 
-- **Narration** on every step, for example: "15 < 20, so go to the left child." It is
-  also read out to screen readers.
-- A **pseudocode panel** that highlights the line currently running. Pseudocode comes
-  first; a C++ (or other language) toggle is question 2.
-- A **variables panel** showing values such as `top`, `i`, `j`, `pivot`, `lo`, `hi`, and
-  `current`.
-- A **concept page** per visualization:
-  - the idea in a few paragraphs;
-  - operations with their best, average, and worst cost;
-  - invariants and common mistakes;
-  - related structures;
-  - "try this" prompts that each link to a prepared example.
-- **Predict the next step** (quiz mode): at decision points the animation pauses and
-  asks, for example, "Which node becomes the new root?" The student answers by clicking,
-  then gets feedback. The engine supports this from day one; when the UI gets built is
-  question 11.
-
-### 4.3 Saving and sharing (no server needed)
-
-1. **Share link.** The example is compressed into the URL, which works in Canvas,
-   Discord, and email. Large examples fall back to a file.
-2. **My examples.** Named examples saved in the browser. The UI warns that clearing
-   site data deletes them.
-3. **Export/import** of examples as `.json` files. This is the durable copy.
-4. **Embed mode** (`?embed=1`): minimal controls for an iframe in Canvas pages or slides.
-5. **Curated examples.** Instructor-written examples stored in the repo and shown in a
-   per-visualization gallery, for example "AVL double rotation" or "delete a node with
-   two children."
-6. **Image export** of the current step as PNG or SVG. Animated GIF/video comes later.
-
-An example stores the starting settings and the list of operations, not pictures, so the
-files stay small:
-
-```json
-{
-  "format": 1,
-  "viz": "bst",
-  "title": "Delete a node with two children",
-  "settings": { "keys": "number", "deleteWith": "successor" },
-  "seed": 42,
-  "ops": [["insert", 50], ["insert", 30], ["insert", 70], ["insert", 60], ["delete", 50]],
-  "at": { "op": 4, "step": 0 },
-  "notes": "Watch where 60 ends up."
-}
-```
-
-Randomness (skip-list coin flips, random graphs, shuffled arrays) comes from a seeded
-generator, so every replay is identical. The `format` field lets old links keep working
-after the code changes, and CI replays every curated example to catch breakage.
+### 4.3 Saving and sharing
+- ✔ Share links that include the step.
+- ✔ Browser library, JSON files, embed mode, curated examples.
+- **To add:**
+  - **Readable URL parameters** next to the compressed code, for example `?ops=insert:50,30,70;delete:50&mode=avl`. Instructors can write these by hand.
+  - **Embed options:** theme, which panels show, starting step, autoplay, minimal or full controls.
 
 ### 4.4 Input
-
-- **Key type**: numbers, which sort numerically (the default), or strings, which sort
-  alphabetically.
-- **Bulk entry** (`50 30 70 20 40`), **random fill** with a chosen size, and **presets**
-  such as sorted, reverse-sorted, and many duplicates. Presets matter for showing worst
-  cases.
-- A **graph editor**:
-  - click to add vertices, drag to connect them, edit weights;
-  - directed or undirected;
-  - import and export as an edge list;
-  - sample graphs.
-- Clicking nodes and cells in the drawing to act on them, as well as typing values.
+- ✔ Bulk entry and a random value.
+- **To add:**
+  - **Presets on every page:** random, sorted, reverse, nearly sorted, many duplicates, skewed, balanced, and a best and worst case where one exists.
+  - **Build a state from text with validation.** Examples: a level-order tree, B-tree nodes, an edge list. Invalid input leaves the current state alone and says why.
+  - **Graph editor and graph text input:**
+    - formats: edge list, adjacency list, adjacency matrix, with 0- or 1-based numbering;
+    - layout templates: DAG layers, bipartite, tree, grid, flow;
+    - live readouts: V, E, connected, tree, DAG, bipartite.
+  - **Typed operation scripts,** for example `insert 50 30 70; delete 50`. They convert to and from the example format.
 
 ### 4.5 Responsive and accessible
-
-- Wide screens show the drawing with side panels. Phones stack them, and the panels
-  become tabs.
-- The drawing scales to its container, with pan, zoom, and fit-to-screen.
-- WCAG 2.2 AA:
-  - every control works from the keyboard;
-  - color is never the only signal (labels and shapes as well);
-  - motion respects `prefers-reduced-motion`;
-  - narration goes to an ARIA live region.
-- Light, dark, and high-contrast themes.
+- ✔ Phone through projector, three themes, keyboard, reduced motion, announced narration.
+- ✔ axe checks in CI on every page.
+- **To add:**
+  - a shape or label in addition to color wherever meaning is encoded (edge types, visited states);
+  - one meaning per color across the whole site.
 
 ### 4.6 Instructor features
+- ✔ Embed in Canvas.
+- **To add:**
+  - presentation mode;
+  - compare mode, moved earlier to wave 2 (BST vs AVL, Kruskal vs Prim, heap as array vs tree);
+  - printable concept pages;
+  - assignment links (see 4.7);
+  - catalog pathways ("Data structures", "Algorithms").
 
-- **Presentation mode**: large type, full screen, hidden extra controls, clicker-friendly.
-- **Compare mode** (later): two visualizations side by side on the same input, such as
-  BST vs AVL, or quicksort vs merge sort racing.
-- Embed and curated examples, as described in 4.3.
+### 4.7 New teaching features in v2
+
+| Feature | What it is | When |
+|---|---|---|
+| **Lessons** | Concept-page sections with "Show me" buttons that load an example and play it on the live drawing, then hand control back. Each section has a deep link (`/bst/#lesson=delete`). They live in the side panel, never in an overlay. | Framework in wave 1 (lead); content as part of each page's definition of done |
+| **Big-O self-test** | A table per page of best, average and worst cases per operation. Answers are hidden until clicked; each has a one-line reason and a one-click example. | Framework now; data from each page |
+| **Concept checks** | One or two multiple-choice questions per concept section, with the explanation shown after answering. | With lessons |
+| **Practice sets** | Generated from a seed in the browser, graded in the browser. Answer by clicking nodes or cells in order (with undo), typing a number, or choosing an option. The link carries the seed, so instructors can hand out the same set. Includes "build the answer" exercises. | Framework in wave 3; questions per page |
+| **Trace table** | One row per milestone step, built from the step variables. Click a row to jump; export as CSV or Markdown. | Framework now (generic, no work per page) |
+| **Pseudocode v2** | Formal and plain-English versions share line ids; the text follows the settings; lines are fine-grained. | Type in place now; pages fill it in |
+| **Code tabs** | Static Python, Java and C++ for each page, run in CI against our model (5.8). Not line-synced; pseudocode stays the synced panel. | Question 12.1 |
+| **Pointer and memory views** | Named pointers (head, tail, cur, prev) as labeled arrows, an explicit null, unreachable nodes marked, call frames with their local variables. | Linked lists (wave 1) and recursion (wave 2) |
+| **Graph state panels** | Visited set, frontier (queue, stack or priority queue), distance and parent tables, call stack vs explicit stack. | Graphs (wave 3) |
+| **Precondition checks** | Explain why an algorithm cannot run as asked (Dijkstra with a negative edge, MST on a disconnected graph) instead of silently changing the input. | With each page |
+| **Catalog** | Search, tags, pathways, related links on every page. Counts are generated, never written by hand. | Wave 1 (lead) |
+| **Feedback link** | Opens a GitHub issue prefilled with the page id and the current example link. | Wave 1 (lead) |
 
 ## 5. Architecture
 
-### 5.1 Step model
+### 5.1 to 5.5: as built in Phase 1
 
-Each operation is a TypeScript generator over an immutable model of the data structure.
-It yields one step per moment a student can pause on:
+Each operation is a TypeScript generator that yields immutable steps. A step holds:
+- the state;
+- marks (element id plus a role);
+- narration;
+- pseudocode line ids;
+- variables;
+- a detail level;
+- an optional quiz prompt.
 
-```ts
-interface Step<S> {
-  state: S;                       // snapshot of the data structure at this moment
-  marks: Mark[];                  // element ids + role: compare | visit | swap | new | remove | found | error
-  say: string;                    // narration
-  lines: string[];                // pseudocode line ids to highlight
-  vars?: Record<string, Scalar>;  // top, i, j, pivot ...
-  level: 1 | 2 | 3;               // milestone, normal, fine detail
-  ask?: Prompt;                   // optional "predict the next step" question
-}
+Views are pure functions from a step to a scene of shapes with stable ids. The renderer blends
+scenes by id and draws SVG. The stack is Svelte 5, TypeScript, Vite, Vitest, fast-check,
+Playwright and axe. See `CLAUDE.md`.
 
-type Operation<S, A extends unknown[]> =
-  (state: S, ...args: A) => Generator<Step<S>, S>;
-```
+### 5.6 Shared layouts (by wave)
 
-The timeline runs the operations and stores their steps. Stepping back means moving to
-the previous step, so there is no undo code to write.
-
-Each view is a pure function, `view(state, marks) → Scene`. A scene is a list of shapes
-(cells, nodes, edges, labels, pointers), each with a **stable id**. The animator matches
-shapes between two scenes by id:
-
-- shapes in both scenes slide or recolor;
-- new shapes fade or grow in;
-- removed shapes fade out.
-
-### 5.2 Why steps instead of the legacy command lists
-
-| | Command list (Galles/Lucet) | Steps (proposed) |
+| Layout | First used | Reused by |
 |---|---|---|
-| Algorithm code | Mixed with drawing commands and pixel coordinates | Only about the data structure |
-| Step back / undo | Each command needs an inverse | Go to the previous snapshot |
-| Testing | Needs a canvas | Plain unit tests on states |
-| Narration and pseudocode | Not supported | Built into every step |
-| Layout | Hand-placed per page | Shared layout engines (5.4) |
-| Special motions (a value flying along a path) | Easy | Need transient "ghost" elements in the step |
-| Memory | Small | One snapshot per step: fine at teaching sizes, with structural sharing if ever needed |
+| Array cells | Stack (array) ✔ | Queues, hashing, sorts, DP tables |
+| Bars with counters | Sorting (wave 1) | Searching, heap sort |
+| Linked nodes with named pointers | Lists (wave 1) | Stacks, queues, chaining, skip list, LRU |
+| Binary tree (tidy layout) | BST (wave 1) | AVL, red-black, splay, treap, heaps, Huffman, recursion trees |
+| Multiway tree and forest | B-tree (wave 2) | 2-4 tree, B+ tree, trie, binomial, Fibonacci, union-find |
+| Call stack and recursion tree | Recursion (wave 2) | DP, backtracking, Master theorem |
+| Graph, plus adjacency list and matrix | Graphs (wave 3) | Flow, matching, MST, shortest paths |
+| String alignment rows | Strings (wave 3) | Suffix structures |
+| Grid | Grid BFS (wave 3) | N-Queens |
+| Plane geometry and 3D | Geometry (wave 4) | Convex hull, polygons, transforms |
 
-### 5.3 Rendering: SVG
+### 5.7 URL scheme v2 (question 12.2)
 
-SVG is sharp at any size, follows the CSS themes, and is easy to click on. Its elements
-can also carry accessible names. Canvas would only pay off with thousands of elements,
-far beyond teaching sizes. The 3D geometry pages, if kept, would use a separate WebGL
-renderer (Three.js).
+Today every route is a hash: `#/bst?ex=...`. The proposal:
+- **One real, pre-rendered page per visualization:** `/bst/`. It carries its own title, description and preview image, plus the concept text for search engines.
+- **The hash keeps only the state:** `/bst/#ex=...&step=...`.
 
-### 5.4 Shared layout engines
+**Why:**
+- Link previews in Canvas, Discord and email show the right page.
+- Search engines can index each page.
+- Netlify serves the folders without rewrite rules.
+- It is cheap now and expensive once links are out in the world.
 
-| Layout | Used by |
-|---|---|
-| Array / cells (with wraparound, circular view, bars) | Array stack and queue, dynamic array, all sorts, hashing tables, counting/radix/bucket sort |
-| Linked nodes and pointers | Linked-list stack and queue, linked lists, separate chaining, skip list |
-| Binary tree (tidy layout) | BST, AVL, red-black, splay, heaps, leftist, skew, Huffman |
-| Multiway tree / forest | B-tree, B+ tree, trie, compressed trie, binomial, Fibonacci, disjoint sets |
-| Graph (placed or preset positions) plus adjacency list and matrix | All graph algorithms |
-| Table / matrix | DP tables, KMP failure function, Boyer-Moore tables, Floyd-Warshall |
-| Call stack and recursion tree | Factorial, reverse, N-Queens, recursive DP |
-| Board | N-Queens |
-| 2D/3D coordinate space | Geometry pages |
+Old `#/bst` links keep working through a redirect.
 
-The roadmap is ordered so that each phase adds one layout engine and then reuses it.
+### 5.8 Testing the code tabs (if 12.1 is yes)
 
-### 5.5 Tech stack
+Each visualization gets `code/python`, `code/java` and `code/cpp`. Each implements the same
+operations and includes a small driver that reads operations on standard input and prints
+results. A Vitest suite does the checking:
+1. it generates random operation scripts with fast-check;
+2. it runs them through our TypeScript model to get the expected output;
+3. it runs the three programs on the same scripts;
+4. it compares the outputs.
 
-Common to every option:
-
-- TypeScript (strict) and Vite;
-- Vitest, fast-check (property-based tests), and Playwright with axe-core;
-- ESLint and Prettier;
-- GitHub Actions for CI;
-- static hosting.
-
-The UI framework is an open choice (question 4):
-
-| Option | Pros | Cons |
-|---|---|---|
-| **Svelte 5** | Small output; SVG with keyed lists is natural; simple to read | Fewer students know it; smaller ecosystem |
-| **React** | Most familiar to students and contributors; biggest ecosystem | Heavier; its rendering model is a poor fit for per-frame animation (we would bypass it in the animator) |
-| **Vanilla TS + Web Components** | No framework churn; longest shelf life | More hand-written plumbing for ~50 control panels |
-
-**Recommendation: Svelte 5.** Choose React if you expect students to contribute. The
-engine and layouts are plain TypeScript either way, so switching frameworks later would
-only mean rewriting the UI layer.
-
-Hosting (question 5):
-
-| Option | Pros | Cons |
-|---|---|---|
-| **GitHub Pages** | Free; lives with the code; deploys from Actions | No built-in preview link per pull request |
-| Cloudflare Pages / Netlify | Free tier; preview link per pull request | Another account to manage |
-
-**Decision: Netlify**, with a custom domain `<name>.pisan.me`. Netlify builds every push
-to `main` and gives each pull request a preview link. GitHub Actions runs the tests.
-Routing uses the URL hash (`#/bst?ex=...`), so no server rewrite rules are needed.
-
-### 5.6 Repository layout
-
-```
-src/
-  engine/      step model, timeline, seeded RNG, example (de)serialization
-  render/      scene diff and tween, SVG shapes, pan/zoom
-  layouts/     array, linked, binary-tree, multiway-tree, graph, table, call-stack
-  ui/          app shell, catalog page, control bar, panels, settings, themes
-  viz/
-    stack-array/
-      model.ts           state type and operations (generators)
-      view.ts            state → scene
-      pseudocode.ts      lines with ids
-      Controls.svelte    operation inputs
-      explain.md         concept page
-      examples/*.json    curated examples
-      stack-array.test.ts
-tests/e2e/     Playwright
-```
+CI already has Python, Java and a C++ compiler.
 
 ## 6. Quality
 
-- **Unit tests** for every visualization:
-  - each operation's final state matches a simple reference implementation;
-  - invariants hold on **every** step, not just at the end;
-  - property-based tests run random sequences of operations.
-- **Shared checks** across all visualizations:
-  - every step has narration;
-  - every pseudocode line id exists;
-  - every curated example replays.
-- **End-to-end tests:**
-  - a smoke test per visualization at desktop and phone sizes;
-  - a share-link round trip;
-  - a keyboard-only run;
-  - an axe accessibility scan.
-- **Performance targets.** These are goals I have not yet measured:
-  - first load of the shell plus one visualization under 150 KB gzipped;
-  - each visualization loaded on demand;
-  - smooth animation with up to ~200 shapes on a mid-range phone.
-- **CI** runs lint, type check, unit tests, and end-to-end tests on every push. Pushes to
-  `main` deploy automatically.
+- **Unit tests on every page:**
+  - comparison against a reference implementation;
+  - invariants on every step;
+  - property-based tests.
+- **Shared conformance tests:**
+  - narration on every step;
+  - valid line ids;
+  - marks that point at shapes;
+  - unique shape ids;
+  - curated examples that replay;
+  - concept-page links to examples that exist;
+  - the folder name matches the id;
+  - every page is listed in the catalog.
 
-## 7. Roadmap
+  New: no unfilled `{...}` tokens in narration, and no "TODO", "???" or "future work" in user-facing text.
+- **Browser tests:** every operation of every page runs on desktop and phone with an axe scan (`tests/e2e/all-vizzes.spec.ts`); page-specific tests sit on top.
+- **CI** runs everything on every push. Netlify builds `main` and pull-request previews; publishing is locked until Yusuf releases it.
 
-Sizes are relative (S < M < L < XL). I have no calendar estimates yet; the first two
-phases will show the real pace.
+## 7. Roadmap: building in waves
 
-| Phase | Content | Adds | Size |
-|---|---|---|---|
-| 0 | Repo setup, CI, deploy pipeline, `BRIEFING.md` | | S |
-| **1** | **Vertical slice: Stack (array)** | Engine, timeline, array layout, panels, saving, responsive shell | L |
-| ✔ | **Checkpoint: you review it live** | | |
-| **2** | **Second slice: BST** (insert, delete, find, min/max, four traversals, bulk/random fill) | Binary tree layout, subtree motion | M–L |
-| ✔ | **Checkpoint: review; freeze engine API v1** | | |
-| 3 | Linear: Stack (linked list), Queue (circular array), Queue (linked list); additions: linked lists, dynamic array | Linked layout | M |
-| 4 | Sorting: 6 comparison sorts, counting, radix, bucket; counters; race mode | Bars, counters | L |
-| 5 | Balanced trees: AVL, red-black, splay | Rotations, invariant overlays | L |
-| 6 | Heaps: binary heap (array and tree views), heap sort, leftist, skew, binomial, Fibonacci | Multiway forest | L |
-| 7 | Hashing: chaining, open addressing (3 probe types), buckets; addition: rehashing | | M |
-| 8 | Recursion: factorial, reverse, N-Queens | Call stack, recursion tree, board | M |
-| 9 | Graphs: editor and 3 views, BFS, DFS, components, both topological sorts, Dijkstra, Prim, disjoint sets, Kruskal, Floyd-Warshall | Graph layout and editor | XL |
-| 10 | Multiway and strings: B-tree, B+ tree, trie, compressed trie, skip list, Huffman, KMP, Boyer-Moore | | XL |
-| 11 | DP: Fibonacci, making change, LCS (plus additions) | Table and recursion tree together | M |
-| 12 | Geometry, 2D and 3D (if in scope, question 9) | WebGL renderer | L |
-| 13 | Ongoing: quiz mode everywhere, compare mode, GIF/video export, more curated examples | | — |
+Agents work in parallel, one family each, each in its own git worktree and branch. The lead
+(Claude in the main session) works alongside them:
+- writes each brief;
+- builds the shared frameworks;
+- reviews every branch, runs all tests, looks at screenshots, and merges.
 
-The order follows reuse of the layout engines and a typical data-structures course.
-Question 8 is whether to reorder it to match your course calendar.
+There are four or five agents per wave, and an hourly report goes to Yusuf.
 
-### Phase 1 exit criteria (vertical slice)
+| Wave | Parallel agents (families) | Lead in the same wave |
+|---|---|---|
+| ✔ 0 | Phase 0 setup, Phase 1 Stack (array) | |
+| **1** | **A. Trees I:** general binary tree (build from level order, four traversals showing the stack or queue), BST (insert, delete with successor/predecessor toggle, search, min/max, predecessor/successor, select/rank, lower bound, shape presets, duplicate policy, key-value mode, N/height readout)<br>**B. Lists:** singly, doubly and circular linked lists with named pointers; Floyd cycle detection<br>**C. Stacks, queues, deques, arrays:** stack (linked list), queue (circular array, linked list), deque (circular array, linked list), dynamic array (doubling, amortized cost), sorted vs unsorted array<br>**D. Sorting and searching:** linear search, binary search (variants), bubble, cocktail shaker, selection, insertion, shell, merge, quicksort (pivot rules, Lomuto/Hoare), quickselect | Big-O self-test, presets, plain-English pseudocode, trace table, lesson framework, URL scheme v2, catalog search and pathways, feedback link, code-test harness (if 12.1) |
+| **2** | **E. Balanced and self-adjusting trees:** AVL, red-black (null-leaf toggle), splay, treap<br>**F. Multiway trees:** B-tree (degree, preemptive split), 2-4 tree preset, B+ tree, skip list<br>**G. Heaps:** binary heap (array and tree, two build methods, update-key, delete), heap sort, leftist, skew, binomial, Fibonacci<br>**H. Hashing and maps:** chaining, open addressing (linear, quadratic, double; tombstones; load factor), buckets, rehashing, hash functions, key-value mode, LRU cache<br>**I. Recursion and DP:** factorial, reverse, Fibonacci call tree, N-Queens, backtracking, recursion tree vs memo DAG, Fibonacci/change/LCS/edit distance/knapsack tables; counting, radix and bucket sorts | Compare mode; practice-set framework; first lessons; presentation mode |
+| **3** | **J. Graphs I:** editor and representations, BFS (including grid), DFS (recursive and explicit stack), components, bipartite check, topological sort (both), SCC (Kosaraju, Tarjan), cut vertices and bridges<br>**K. Graphs II:** Dijkstra (decrease-key vs lazy), Bellman-Ford (with early exit and SPFA), DAG shortest paths, A*, Floyd-Warshall, Prim, Kruskal, union-find<br>**L. Strings:** brute force, KMP, Boyer-Moore (Galil), Rabin-Karp, trie, compressed trie, Huffman<br>**M. Foundations:** memory model, Big-O growth lab, recurrences and the Master theorem | Practice sets for waves 1–2; printable pages |
+| **4** | **N. Flow and matching:** Ford-Fulkerson/Edmonds-Karp with residual graph and min cut, Dinic, min-cost flow, bipartite matching, Hopcroft-Karp, Hungarian, blossom<br>**O. Geometry:** convex hull (Graham, Andrew, Jarvis), polygon algorithms, 2D and 3D transforms<br>**P. Range queries and suffixes:** prefix sums, difference array, sparse table, Fenwick tree, segment tree (lazy), suffix array with LCP, suffix tree<br>**Q. Hard problems:** NP-completeness reduction map, TSP (exact vs approximate), 2-SAT, vertex cover, Steiner tree, bitmask subsets | Polish, lessons for remaining pages |
 
-The Stack (array) visualization is live at a public URL and has:
+The order follows the shared layouts: each wave reuses what the previous one built. Advanced
+items (Appendix B) come after the core of their family.
 
-- push, pop, peek, and clear, with an overflow message at capacity;
-- play/pause, step back and forward across the whole history, scrubber, speed, and detail level;
-- narration, highlighted pseudocode, and a variables panel;
-- share link, My examples, JSON export/import, and embed mode;
-- correct behavior at 375 px phone width and on a 1920 px projector, plus dark mode,
-  keyboard shortcuts, and reduced motion;
-- a concept page for stacks and three curated examples;
-- unit, end-to-end, and accessibility tests passing in CI;
-- a catalog page listing what exists.
+## 8. Definition of done (per visualization, v2)
 
-## 8. Definition of done (per visualization)
-
-1. Operations implemented as step generators that follow the chosen textbook's
-   conventions (question 12).
-2. Unit tests: comparison against a reference implementation, invariants on every step,
-   and property-based tests.
-3. Every step narrated and mapped to pseudocode lines.
-4. A concept page with the idea, a cost table, invariants, common mistakes, and
-   "try this" prompts.
-5. At least 3 curated examples, one for each tricky case.
-6. Works at phone and projector sizes and from the keyboard alone; the axe scan is clean.
-7. Share link and embed covered by end-to-end tests.
-8. Listed in the catalog with a thumbnail.
+1. **Operations** are step generators. Variant toggles cover textbook differences, with CLRS
+   as the default, and the pseudocode follows the settings.
+2. **Unit tests:** comparison against a reference implementation, invariants on every step, and
+   property-based tests. All shared checks pass.
+3. **Steps:** every step is narrated and mapped to fine-grained pseudocode lines, in formal and
+   plain-English versions. Counters and readouts appear as variables.
+4. **Concept page** in Yusuf's voice:
+   - the idea, and operations with their costs;
+   - how it works and its variants;
+   - when to use it and when to avoid it;
+   - failure cases and common mistakes;
+   - "try this" links.
+5. **Big-O self-test** data, with a reason and an example for each case.
+6. **Examples and presets:**
+   - at least 3 curated examples, including edge and worst cases;
+   - presets that suit the structure;
+   - titles name the idea, not a textbook figure.
+7. **Code tabs** pass the shared tests (if 12.1).
+8. **Browser checks** pass on desktop and phone: keyboard, axe, no horizontal scroll. These run automatically.
+9. **Catalog:** listed with tags.
 
 ## 9. Risks
 
 | Risk | Mitigation |
 |---|---|
-| Tree and graph animations look jumpy or the layout shifts unexpectedly | BST comes second, to test this early; stable ids; tidy-tree layout; review checkpoint |
-| Narration and concept pages for 50+ visualizations are a lot of text | I draft from a template and you review; per-visualization checklist |
-| Scope creep (50 pages + additions + features) | Phase exit criteria; additions wait until the original 50 are done unless you rank them higher |
-| Saved links break when an algorithm changes | Format version field; CI replays every curated example |
-| Big graphs and B-trees are too large for phones | Pan, zoom, fit-to-screen; smaller presets on phones |
-| Browser storage gets cleared and saved examples vanish | Share links and file export are the durable copies, and the UI says so |
-| Framework churn over the years | Engine and layouts in plain TypeScript; thin UI layer |
+| Parallel agents make inconsistent choices | One shared brief, the reference implementation, shared conformance tests, and a lead review of every branch |
+| Merge conflicts | One folder per page; the registry finds pages by itself; agents don't touch shared files without saying so |
+| Explanations for about 100 pages are uneven | A concept-page template, the voice skill, and lead spot checks; Yusuf edits as he likes |
+| Tree and graph layouts jump during animation | Stable ids, tidy-tree layout, screenshots reviewed before merge |
+| Code tabs drift from the model | Code is run against the model on every push |
+| Scope keeps growing | Waves with clear lists; advanced items come after the core |
+| Phone screens are too small for big graphs | Pan, zoom, fit, smaller presets on phones |
+| Saved links break when a model changes | Format version field; curated examples replayed in CI |
 
 ## 10. Licensing and credit
 
-We write our own code. The Galles/Lucet code is under the FreeBSD license, so copying it
-would be allowed with their notice, but we don't need to. The About page will credit
-both projects as inspiration. For our own license, see question 6.
+We write everything ourselves:
+- **Code:** MIT.
+- **Explanations:** CC BY 4.0.
 
-## 11. Decisions (2026-11-04)
+What the surveyed sites allow:
+- **VisuAlgo and Coddy:** their terms forbid reuse. We took ideas only.
+- **csvistool and Galles/Lucet:** BSD-licensed. We still don't copy them.
+
+The About page credits Galles and Lucet as inspiration.
+
+## 11. Decisions
 
 | # | Question | Decision |
 |---|---|---|
 | 1 | Audience | University data structures and algorithms courses |
-| 2 | Code panel | Pseudocode now; one real language after Phase 2 |
-| 3 | Saving | No server in v1 (share links, browser library, file export, embed, curated examples) |
+| 2 | Code panel | Pseudocode now; real languages: see 12.1 |
+| 3 | Saving | No server in v1 |
 | 4 | UI framework | Svelte 5; no student contributors expected |
-| 5 | Hosting | Netlify, custom domain `<name>.pisan.me`; public repo |
-| 6 | License | MIT for code, CC BY 4.0 for written explanations |
-| 7 | Slices | Stack (array), then BST, review after each |
-| 8 | Order and pace | As fast as the quota allows; no external deadlines; roadmap order stands |
+| 5 | Hosting | Netlify site `stepwise-pisan-labs`, final domain `stepwise.pisan.me`; public repo; publishing locked until Yusuf releases it |
+| 6 | License | MIT code, CC BY 4.0 text |
+| 7 | Slices | Stack done; BST is in wave 1 |
+| 8 | Pace | As fast as the quota allows; parallel agents; hourly reports; 15-minute rule for decisions |
 | 9 | Geometry | In scope, last |
-| 10 | Additions | All the candidates below, and possibly more |
-| 11 | Quiz mode | Engine support in Phase 1, UI after Phase 5 |
-| 12 | Conventions | Toggles wherever textbooks differ; CLRS as the default |
+| 10 | Additions | Everything in Appendix B, and possibly more |
+| 11 | Quiz mode | Engine support exists; see 4.7 for the new timing |
+| 12 | Conventions | Toggles wherever textbooks differ; CLRS default |
 | 13 | Analytics | None |
-| 14 | Name | **StepWise** (capital W), domain `stepwise.pisan.me` |
-| 15 | Canvas embed | Yes, in v1 |
-| 16 | Explanations | Claude writes in Yusuf's voice; no approval step; Yusuf edits as needed |
+| 14 | Name and logo | **StepWise** (capital W); logo A, a staircase of array cells |
+| 15 | Canvas embed | Yes |
+| 16 | Explanations | Claude writes in Yusuf's voice; no approval step |
 
-### Original questions (for the record)
+## 12. Open questions (asked 2026-11-04)
 
-Questions marked **[blocks slice]** needed an answer before Phase 1 started.
+Each has a recommendation, which goes ahead after 15 minutes without an answer.
 
-1. **Audience.** Which courses and levels is this for? This sets the depth of the
-   explanations and which families come first. *(No recommendation; I need to know.)*
-2. **[blocks slice] Code panel language.** Pseudocode only, or pseudocode plus C++ (or
-   Java or Python)? Each extra language has to be mapped step by step and kept in sync.
-   *Recommendation: pseudocode now; add one real language after Phase 2 if your courses
-   need it.*
-3. **[blocks slice] Saving scope.** Is the no-server approach in 4.3 enough for v1? Or do
-   you need accounts and cloud storage, or a way for students to submit saved work to you?
-   *Recommendation: no server in v1.*
-4. **[blocks slice] UI framework.** Svelte 5, React, or vanilla (5.5)? Do you expect
-   student contributors? *Recommendation: Svelte 5, or React if students will contribute.*
-5. **[blocks slice] Hosting.** GitHub Pages on `pisan-labs`? Is the repo public, or may
-   it become public? Do you want a custom domain? *Recommendation: public repo, GitHub
-   Pages, no custom domain for now.*
-6. **[blocks slice] License.** *Recommendation: MIT for code, CC BY 4.0 for written
-   explanations.*
-7. **[blocks slice] Slices.** Stack (array) first, then BST, with a review after each?
-   *Recommendation: yes.*
-8. **Order and deadlines.** Should the phases after the slices follow your course
-   calendar? Is there a date by which a specific set must be live, such as the start of
-   a quarter? *(No recommendation; depends on your schedule.)*
-9. **Geometry pages** (5 pages on 2D/3D matrix transforms): in scope? They are graphics
-   rather than data structures. *Recommendation: keep them, but last.*
-10. **Additions** beyond the existing 50 pages. Candidates: singly and doubly linked
-    lists, dynamic array resizing, deque, binary search, treap, hash rehashing,
-    Bellman-Ford, strongly connected components, A*, edit distance, 0/1 knapsack,
-    quickselect. *Recommendation: linked lists, dynamic array, and rehashing early
-    (Phases 3 and 7); the rest after the original set.*
-11. **Quiz mode timing.** *Recommendation: engine support in Phase 1, UI after Phase 5,
-    when there are enough decision-heavy visualizations (rotations, sorts) to use it.*
-12. **Textbook conventions.** Which textbook should behavior match? This decides choices
-    like the BST delete rule (successor or predecessor), min- or max-heap, how B-tree
-    degree is defined, and which red-black variant to use. *Recommendation: name your
-    textbook; otherwise CLRS conventions, with toggles where variants matter.*
-13. **Analytics.** *Recommendation: none, for student privacy.*
-14. **Name and look.** A site name? UW colors or neutral? *Recommendation: a neutral
-    look with its own palette; you pick the name.*
-15. **Canvas embedding** in v1? *Recommendation: yes; it is cheap once share links exist.*
-16. **Who writes explanations?** *Recommendation: I draft from a template and you review
-    and edit.*
+1. **Code tabs.** Should each page also show static Python, Java and C++, tested in CI against
+   our model? Pseudocode would stay the only panel synced with the animation.
+   *Recommendation: yes, all three languages, with plain-English pseudocode as well.*
+2. **URLs.** Switch to one pre-rendered page per visualization (`/bst/`), with the state in
+   the hash (5.7)? *Recommendation: yes, now, before links spread.*
+3. **Lessons.** Concept-page sections with "Show me" buttons that drive the live drawing,
+   each with its own link. *Recommendation: yes. I build the framework in wave 1, and every page
+   gets lessons as part of its definition of done.*
+4. **Practice.** When should seeded, browser-graded practice sets and assignment links come?
+   *Recommendation: Big-O self-tests and concept checks with each page from now on; the
+   practice-set framework moves up to wave 2 (it was after Phase 5).*
+5. **Advanced topics.** Flow, matching, suffix structures, Fenwick and segment trees, 2-SAT,
+   TSP, the NP-reduction map, polygons, vertex cover, Steiner tree.
+   *Recommendation: all in the catalog, marked advanced, built in wave 4. Leave out joke sorts.*
+6. **Translations.** *Recommendation: English only for now, with UI strings kept in one
+   module. Revisit if you want another language.*
+7. **Tracing students' own code**, as Python Tutor does. *Recommendation: no. Typed operation
+   scripts cover "try my own scenario".*
+8. **Parallelism.** *Recommendation: 4 agents per wave, as in section 7, with the lead reviewing
+   and merging. More agents would make reviews the bottleneck.*
+9. **Pathways in the catalog.** *Recommendation: two generic ones, "Data structures" and
+   "Algorithms". Say if you want course-specific ones.*
+10. **Feedback link.** *Recommendation: yes, a prefilled GitHub issue on the public repo (issues
+    must be turned on).*
+11. **Time zone.** I assume UTC+1, from your commit timestamp. *Recommendation: confirm or
+    correct.*
 
 ---
 
-## Appendix A: Existing pages and their controls
+## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 
-Captured from the live site on 2026-11-04.
-
-| Page | Controls today |
+| Page | Controls |
 |---|---|
 | StackArray | value; Push, Pop, Clear (fixed capacity 30) |
 | StackLL | value; Push, Pop, Clear |
-| QueueArray | value; Enqueue, Dequeue, Clear |
-| QueueLL | value; Enqueue, Dequeue, Clear |
-| RecFact | n; Factorial |
-| RecReverse | string; Reverse |
-| RecQueens | board size 1–8; Queens |
-| BST | Insert, Delete, Find (one value each); Print |
-| AVLtree | Insert, Delete, Find; Print |
-| RedBlack | Insert, Delete, Find; Print; show null leaves |
-| SplayTree | Insert, Delete, Find; Print |
-| SkipList | key, coin flips (e.g. 110100); Lookup, Insert, Remove |
-| OpenHash | Insert, Delete, Find; hash integers or strings |
-| ClosedHash | Insert, Delete, Find; integers or strings; linear, quadratic, or double hashing |
-| ClosedHashBucket | Insert, Delete, Find; integers or strings |
-| BTree | Insert, Delete, Find, Print, Clear; max degree 3–7; preemptive split/merge (even degrees) |
+| QueueArray / QueueLL | value; Enqueue, Dequeue, Clear |
+| RecFact / RecReverse | n or string; Factorial / Reverse |
+| RecQueens | board size 1–8 |
+| BST, AVLtree, SplayTree | Insert, Delete, Find (one value each); Print |
+| RedBlack | the same, plus show null leaves |
+| SkipList | key, coin flips; Lookup, Insert, Remove |
+| OpenHash / ClosedHashBucket | Insert, Delete, Find; integers or strings |
+| ClosedHash | the same, plus linear, quadratic or double hashing |
+| BTree | Insert, Delete, Find, Print, Clear; max degree 3–7; preemptive split/merge |
 | BPlusTree | Insert, Delete, Find, Print, Clear; max degree 3–7 |
-| ComparisonSort | Randomize, Change size; Insertion, Selection, Bubble, Quick, Merge, Shell |
-| BucketSort | Randomize; Bucket sort |
-| CountingSort | Randomize; Counting sort |
-| RadixSort | Randomize; Radix sort |
-| HeapSort | Randomize; Heap sort |
-| BoyerMoore | text, pattern; Search, Reset |
-| KnuthMorrisPratt | text, pattern; Build failure function, Search, Reset |
-| Trie | key; Lookup, Insert, Remove |
-| CompressedTrie | key; Lookup, Insert, Remove |
-| Huffman | text; Build tree, Reset |
-| Heap | value; Insert, Remove smallest, Clear, BuildHeap |
-| BinomialQueue | value; Insert, Remove smallest, Clear; logical or internal view |
-| FibonacciHeap | value; Insert, Remove smallest, Clear; logical or internal view |
-| LeftistHeap | value; Insert, Remove smallest, Clear; show null path lengths |
-| SkewHeap | value; Insert, Remove smallest, Clear |
-| BFS | start vertex; Run; New graph; directed or undirected; small or large; drawn, adjacency list, or matrix view |
-| DFS | same as BFS |
-| ConnectedComponent | Run; New graph; small or large; 3 views |
-| Dijkstra | same as BFS |
-| Prim | start vertex; Run; New graph; small or large; 3 views |
-| TopoSortIndegree | Run; New graph; small or large; 3 views |
-| TopoSortDFS | Run; New graph; small or large; 3 views |
-| Floyd | Run; New graph; directed or undirected; small or large; 3 views |
-| Kruskal | Run; New graph; small or large; 3 views |
-| DPFib | n; Recursive, Table, Memoized |
-| DPChange | amount; Recursive, Table, Memoized, Greedy; coins [1,5,10,25] or [1,4,6,10] |
-| DPLCS | S1, S2; Recursive, Table, Memoized |
-| RotateScale2D | angle, scale x/y; Transform; row or column major; +y up or down; rotate-then-scale or scale-then-rotate; Change shape |
-| RotateTranslate2D | angle, translate x/y; Transform; row or column major; +y up or down; Change shape |
-| ChangingCoordinates2D | x, y; Transform point; hand→world or world→hand; row or column major; show all axes; Move objects |
-| RotateScale3D | x/y/z angle; Rotate; x/y/z scale; Scale; row or column major; Change shape |
-| ChangingCoordinates3D | x, y, z; Transform point; hand→world or world→hand; row or column major; show all axes; Move objects |
-| DisjointSets | Find, Union; path compression; union by rank; rank = number of nodes or estimated height |
+| ComparisonSort | Randomize, Change size; insertion, selection, bubble, quick, merge, shell |
+| Bucket/Counting/Radix/HeapSort | Randomize; run |
+| BoyerMoore / KnuthMorrisPratt | text, pattern; Search (KMP also builds the failure function) |
+| Trie / CompressedTrie | key; Lookup, Insert, Remove |
+| Huffman | text; Build tree |
+| Heap | Insert, Remove smallest, Clear, BuildHeap |
+| BinomialQueue / FibonacciHeap | Insert, Remove smallest, Clear; logical or internal view |
+| LeftistHeap / SkewHeap | Insert, Remove smallest, Clear (Leftist: show null path lengths) |
+| BFS, DFS, Dijkstra | start vertex; New graph; directed/undirected; small/large; 3 views |
+| ConnectedComponent, Prim, TopoSort×2, Kruskal, Floyd | New graph; small/large; 3 views (Prim takes a start vertex; Floyd directed or not) |
+| DPFib / DPChange / DPLCS | recursive, table, memoized (Change: greedy too; two coin sets) |
+| 2D/3D geometry (5 pages) | angles, scales, translations; row or column major; +y up or down; hand↔world space |
+| DisjointSets | Find, Union; path compression; union by rank; rank = nodes or estimated height |
+
+## Appendix B: Catalog additions in v2
+
+The source of truth is `src/viz/catalog.ts`. These come from the surveys, beyond the
+Galles/Lucet list and the v1 additions. Source key: V = VisuAlgo, C = csvistool, D = Coddy.
+
+**Core**
+- **Lists:** circular linked list (C); Floyd cycle detection (V).
+- **Stacks, queues, arrays:** deque as both array and linked list (C); sorted vs unsorted array (V).
+- **Searching and sorting:** linear search (D); binary search variants (D); cocktail shaker sort (C).
+- **Trees:** general binary tree with traversals (D); 2-4 tree preset (C).
+- **Maps:** key-value mode on BST, AVL and hash pages (C, D). This is a mode, not new pages.
+- **Recursion:** Fibonacci call tree (D); recursion tree vs memo DAG (V).
+- **Foundations:** memory model (D); Big-O growth lab (D); recurrences and the Master theorem (V).
+- **Graphs:**
+  - representations (V, C);
+  - bipartite check (V);
+  - cut vertices and bridges (V);
+  - DAG shortest paths (V);
+  - grid BFS (D).
+- **Flow and matching:** max flow with min cut; bipartite matching (V).
+- **Strings:** brute force (C); Rabin-Karp (C).
+- **Geometry:** convex hull (V).
+- **Hard problems:** NP-completeness reduction map (V).
+
+**Advanced**
+- LRU cache (C).
+- Backtracking decision trees (D).
+- Static range queries; Fenwick tree; segment tree (V).
+- Suffix array; suffix tree (V).
+- Dinic and min-cost flow; Hopcroft-Karp, Hungarian, blossom (V).
+- 2-SAT; TSP; vertex cover; Steiner tree; bitmask subsets (V).
+- Polygon algorithms (V).

@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "viz": "fibonacci-heap",
+  "id": "delete-node",
+  "title": "delete: decrease to −∞, then extract",
+  "notes": "Deleting 33 from inside the tree: its key drops to −∞, which cuts it from 17 (and marks 17) and makes it the minimum. Then extractMin removes it, its child 57 joins the root list, and consolidate tidies up.",
+  "settings": { "view": "logical" },
+  "seed": 1,
+  "ops": [
+    ["insert", 41],
+    ["insert", 17],
+    ["insert", 29],
+    ["insert", 8],
+    ["insert", 35],
+    ["insert", 52],
+    ["insert", 23],
+    ["insert", 46],
+    ["insert", 12],
+    ["insert", 38],
+    ["insert", 26],
+    ["insert", 60],
+    ["insert", 31],
+    ["insert", 19],
+    ["insert", 44],
+    ["insert", 57],
+    ["insert", 33],
+    ["deletemin"],
+    ["delete", 33]
+  ],
+  "at": { "op": 17, "step": 1000000 }
+}

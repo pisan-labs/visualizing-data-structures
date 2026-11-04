@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "binary-heap",
+  "id": "build-bottom-up",
+  "title": "Build bottom-up: sift down from the middle",
+  "notes": "Twelve keys in ascending order, the worst order for a max-heap. Bottom-up build copies them in and sifts down from A[6] back to the root: 16 comparisons and 9 swaps. Compare with the same list built one insert at a time.",
+  "settings": { "order": "max", "index": "one", "build": "bottom-up" },
+  "seed": 1,
+  "ops": [["build", "5 10 15 20 25 30 35 40 45 50 55 60"]],
+  "at": { "op": -1, "step": 0 }
+}

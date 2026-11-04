@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "skew-heap",
+  "id": "insert-swaps-all",
+  "title": "Every winner swaps",
+  "notes": "The same five inserts as the leftist heap example. 25 walks down the right path, 10 then 15, and on the way back up both 15 and 10 swap their children. No npl, no check: a skew heap always swaps.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 15],
+    ["insert", 30],
+    ["insert", 25]
+  ],
+  "at": { "op": 3, "step": 1000000 }
+}

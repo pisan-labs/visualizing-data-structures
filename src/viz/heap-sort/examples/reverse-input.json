@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "heap-sort",
+  "id": "reverse-input",
+  "title": "Reverse sorted: already a max-heap",
+  "notes": "Every value is at least as big as everything after it, so A is a max-heap before phase 1 starts: 6 comparisons and no swaps. Phase 2 does not care. 18 comparisons and 11 swaps in all, against 21 and 16 for the same values sorted.",
+  "settings": {
+    "index": "one",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "70 60 50 40 30 20 10"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

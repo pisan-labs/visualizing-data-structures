@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "binary-heap",
+  "id": "build-by-inserts",
+  "title": "Build one insert at a time: the same list",
+  "notes": "The same twelve ascending keys, inserted one at a time. Every new key is the largest so far, so it climbs all the way to the root: 25 comparisons and 25 swaps, against 16 and 9 for the bottom-up build.",
+  "settings": { "order": "max", "index": "one", "build": "insert" },
+  "seed": 1,
+  "ops": [["build", "5 10 15 20 25 30 35 40 45 50 55 60"]],
+  "at": { "op": -1, "step": 0 }
+}

@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "binomial-queue",
+  "id": "insert-carries",
+  "title": "An insert that carries all the way",
+  "notes": "Seven keys make a B₂, a B₁ and a B₀: 7 = 111 in binary. Inserting one more is 111 + 1 = 1000. The new B₀ links with the old one, the B₁ they make links with the B₁, and that B₂ links with the B₂: three links, one B₃.",
+  "settings": { "view": "logical" },
+  "seed": 1,
+  "ops": [
+    ["insert", 30],
+    ["insert", 10],
+    ["insert", 50],
+    ["insert", 20],
+    ["insert", 60],
+    ["insert", 40],
+    ["insert", 70],
+    ["insert", 5]
+  ],
+  "at": { "op": 6, "step": 1000000 }
+}

@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "binary-heap",
+  "id": "update-both-ways",
+  "title": "Update a key up, then down",
+  "notes": "First the leaf A[7] grows from 15 to 45 and sifts up to the root. Then the root shrinks from 45 to 5 and sifts down to a leaf. A changed key only ever moves one way.",
+  "settings": { "order": "max", "index": "one", "build": "bottom-up" },
+  "seed": 1,
+  "ops": [
+    ["build", "40 30 35 10 20 25 15"],
+    ["update", 7, 45],
+    ["update", 1, 5]
+  ],
+  "at": { "op": 0, "step": 1000000 }
+}

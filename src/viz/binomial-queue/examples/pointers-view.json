@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "binomial-queue",
+  "id": "pointers-view",
+  "title": "The same union, as pointers",
+  "notes": "The union from 'Union is binary addition', drawn the way the nodes really are: each node points to its leftmost child and to its next sibling, the roots form a list from head, and every node keeps its degree.",
+  "settings": { "view": "internal" },
+  "seed": 1,
+  "ops": [
+    ["insert", 12],
+    ["insert", 31],
+    ["insert", 8],
+    ["insert", 27],
+    ["insert", 45],
+    ["insert", 19],
+    ["merge", "22 6 38 15 50 9 33"]
+  ],
+  "at": { "op": 5, "step": 1000000 }
+}

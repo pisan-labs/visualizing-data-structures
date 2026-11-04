@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "heap-sort",
+  "id": "build-bottom-up",
+  "title": "Build a max-heap from the bottom up",
+  "notes": "Ten values. A[6..10] are leaves, so phase 1 sifts down A[5], then A[4], and so on back to the root: 14 comparisons and 7 swaps, and 16 ends up on top. Then phase 2 moves one value to the end per round, 42 comparisons and 30 swaps in all.",
+  "settings": {
+    "index": "one",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "4 1 3 2 16 9 10 14 8 7"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

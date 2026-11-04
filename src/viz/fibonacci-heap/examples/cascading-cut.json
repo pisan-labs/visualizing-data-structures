@@ -1,0 +1,33 @@
+{
+  "format": 1,
+  "viz": "fibonacci-heap",
+  "id": "cascading-cut",
+  "title": "A cascading cut",
+  "notes": "One tree of 16 keys. Lowering 44 to 15 cuts it from 19, and 19 gets a mark. Lowering 41 to 14 cuts it from 17, and 17 gets a mark. Then lowering 31 to 9 cuts 31 from 19; 19 was marked, so it is cut too, and so is 17 above it. Three cuts from one decreaseKey, and every mark is gone.",
+  "settings": { "view": "logical" },
+  "seed": 1,
+  "ops": [
+    ["insert", 41],
+    ["insert", 17],
+    ["insert", 29],
+    ["insert", 8],
+    ["insert", 35],
+    ["insert", 52],
+    ["insert", 23],
+    ["insert", 46],
+    ["insert", 12],
+    ["insert", 38],
+    ["insert", 26],
+    ["insert", 60],
+    ["insert", 31],
+    ["insert", 19],
+    ["insert", 44],
+    ["insert", 57],
+    ["insert", 33],
+    ["deletemin"],
+    ["decrease", 44, 15],
+    ["decrease", 41, 14],
+    ["decrease", 31, 9]
+  ],
+  "at": { "op": 17, "step": 1000000 }
+}

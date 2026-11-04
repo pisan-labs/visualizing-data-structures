@@ -81,3 +81,7 @@
 2026-11-04 [decision] deriveSeed mixes the seed before the operation index: nearby seeds shared numbers (set 12346 repeated a question of set 12345). Random runs change; the two examples whose prose quotes random counts got new seeds that keep the same numbers
 
 2026-11-04 [code] Long pseudocode scrolls inside the side column on desktop and follows the current line; long lines wrap at their indent instead of scrolling one by one on phones
+
+2026-11-04 [code] Merged wave 2H: separate chaining, open addressing (linear, quadratic, double; tombstones), buckets, rehashing with amortized cost, LRU cache; all with practice
+
+2026-11-04 [code] Fixed the intermittent doubly-linked-list conformance failure: insertAt at the end cited a sentinel-only pseudocode line with the sentinel off; regression test added

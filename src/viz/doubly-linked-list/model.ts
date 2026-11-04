@@ -510,7 +510,8 @@ const insertAt: Op = {
         s.nil !== null
           ? `i = n, so the new node goes at the end, just before the sentinel: succ = nil.`
           : `i = n, so the new node goes at the end, after tail. There is no node to put it in front of.`,
-        ['insertAt.atEnd', 'insertAt.succNil'],
+        // Without a sentinel there is no "succ = nil" line: the end case has its own branch.
+        s.nil !== null ? ['insertAt.atEnd', 'insertAt.succNil'] : ['insertAt.atEnd'],
         { ptrs: { new: uid, succ }, nullAt: { succ: 'after' }, pending: uid, vars },
       );
     } else {

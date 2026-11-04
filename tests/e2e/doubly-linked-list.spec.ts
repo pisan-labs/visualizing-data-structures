@@ -5,7 +5,10 @@ const stage = (page: Page) => page.locator('.stage > svg');
 
 async function op(page: Page, button: string, text?: string) {
   if (text !== undefined) await page.getByLabel('Value or index').fill(text);
-  await page.getByRole('button', { name: button, exact: true }).click();
+  const b = page.getByRole('button', { name: button, exact: true });
+  // Less common operations sit under "More operations"; open it when the button is hidden.
+  if (!(await b.isVisible())) await page.locator('details.more > summary').click();
+  await b.click();
 }
 
 test.beforeEach(async ({ page }) => {

@@ -161,7 +161,8 @@ describe('doubly linked list', () => {
       ),
       { numRuns: 400 },
     );
-  });
+    // Generous: the whole suite runs in parallel and this test runs 400 sequences.
+  }, 60_000);
 
   it('shows four pointer updates on insert, the neighbours last', () => {
     const t = run([

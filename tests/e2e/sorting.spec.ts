@@ -187,3 +187,25 @@ test.describe('shell sort', () => {
     await expect(narration(page)).toContainText('Sorted:');
   });
 });
+
+test.describe('merge sort', () => {
+  test.beforeEach(({ page }) => open(page, 'merge-sort', 'Merge sort'));
+
+  test('splits, copies into L and R, and merges back', async ({ page }) => {
+    await load(page, '30 10 20');
+    await run(page, 'Sort');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('Sorted: 10, 20, 30.');
+    await backTo(page, 'merge(A, 0, 1, 2): copy A[0..1] into L and A[2] into R.', 30);
+    await expect(stage(page)).toHaveAttribute('aria-label', /Auxiliary copies: 10, 30, 20\./);
+    await expect(page.locator('.vars')).toContainText('depth');
+  });
+
+  test('bottom-up merges runs with loops', async ({ page }) => {
+    await option(page, 'Bottom-up: merge runs of 1, 2, 4, ... with loops');
+    await expect(code(page)).toContainText('width = 2 * width');
+    await loadExample(page, 'Bottom-up: runs of 1, 2, 4, 8');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('Sorted: 8, 19, 25, 33, 47, 52, 61, 74.');
+  });
+});

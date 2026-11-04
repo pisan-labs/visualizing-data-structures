@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "merge-sort",
+  "id": "worst-case",
+  "title": "Interleaved runs: the most comparisons",
+  "notes": "The values are arranged so that every merge alternates between L and R to the very end: 17 comparisons for 8 values, the most merge sort ever needs. Still O(n log n).",
+  "settings": { "style": "topdown", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "10 50 30 70 20 60 40 80"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

@@ -95,7 +95,9 @@
  *     A new call slides out of its parent.
  *
  *   callNodeShapes(box, call, roles, options) draws one box the same way, for layouts that
- *   place nodes themselves (a memoized DAG, a table of subproblems).
+ *   place nodes themselves (a memoized DAG, a table of subproblems). options: size, twoLines,
+ *   enterFrom, and shapeId (the box's id, default callShapeId(call.id); the label, value and
+ *   tag ids add "-label", "-value", "-tag" and "-tagtext" to it).
  *   callTreeBounds(layout, dx, dy, levelNotes): the bounds after an offset, notes included.
  *
  * Helpers: monoWidth(text, size), fitSize(text, width, size, min), unionBounds, padBounds.
@@ -552,11 +554,16 @@ export function callNodeShapes(
   box: { x: number; y: number; w: number; h: number },
   call: TreeCall,
   roles: ReadonlyMap<string, MarkRole> = new Map(),
-  opts: { size?: number; twoLines?: boolean; enterFrom?: { x: number; y: number } } = {},
+  opts: {
+    size?: number;
+    twoLines?: boolean;
+    enterFrom?: { x: number; y: number };
+    shapeId?: string;
+  } = {},
 ): Shape[] {
   const size = opts.size ?? 12.5;
   const twoLines = opts.twoLines ?? true;
-  const id = callShapeId(call.id);
+  const id = opts.shapeId ?? callShapeId(call.id);
   const shapes: Shape[] = [];
   const role = roles.get(id) ?? NODE_ROLE[call.state];
   const dim = call.state === 'done';

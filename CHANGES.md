@@ -109,3 +109,5 @@
 2026-11-04 [code] Merged wave 2J: dynamic programming (Fibonacci, making change, LCS, edit distance, 0/1 knapsack) with a table layout in src/layouts/table.ts; counting, radix and bucket sort; all with practice
 
 2026-11-04 [code] A page being replaced no longer rewrites the address after it is gone, and hash navigation reads the address it went to (a fast jump to #practice could lose the set); the B-tree readability test waits for animation to finish
+
+2026-11-04 [doc] HANDOFF.md added for session-relay: hourly status report only when something is new, handover check 15:56 and session start 16:52 Europe/Berlin; routines trig_01YFFf7haBUVw55QnJE6zbfH, trig_019edEXqKvVwcMM1CsPVQpUD, trig_014pSjnKeCWEgQXUWgZECJGR

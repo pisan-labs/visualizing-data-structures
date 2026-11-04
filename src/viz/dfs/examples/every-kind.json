@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "dfs",
+  "id": "every-kind",
+  "title": "A directed graph with every kind of edge",
+  "notes": "Tree edges A>B, B>C, C>F and D>E; back edges C>A and E>D; a forward edge A>C; and cross edges D>B and E>F. D is not reachable from A, so it starts a second tree.",
+  "settings": {
+    "style": "recursive",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A>B, A>C, B>C, C>A, C>F, D>B, D>E, E>D, E>F"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

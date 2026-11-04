@@ -1,5 +1,6 @@
 /**
- * BFS: the graph on top, and under it the queue and a table of color (or visited), d and π.
+ * BFS: the graph, and under or beside it (whichever reads better) the queue and a table of
+ * color (or visited), d and π.
  * During a run the vertices in the queue wear a dashed ring, the vertex being scanned is
  * marked u, finished vertices are green, discovered vertices carry their distance, tree edges
  * become arrows from parent to child, edges passed over turn dashed, and edges not looked at
@@ -13,6 +14,7 @@ import {
   drawTable,
   layoutGraph,
   padBounds,
+  placePanels,
   unionBounds,
   type VertexLook,
 } from '../../layouts/graph';
@@ -62,44 +64,49 @@ export function view(step: Step<BfsState, BfsExtra>, settings: BfsSettings): Sce
   const shapes: Shape[] = [...drawn.shapes];
   const boxes: Bounds[] = [drawn.bounds];
   if (r) {
-    const x = drawn.bounds.x;
-    let y = below(drawn.bounds, 22);
     const n = g.vertices.length;
-    const queue = drawRow(shapes, {
-      id: 'q',
-      label: 'Q',
-      labelW: 44,
-      cells: r.queue.map((v) => ({ key: v, text: v, from: layout.pos[v] })),
-      x,
-      y,
-      roles,
-      perRow: 12,
-      ends: ['front', 'back'],
-    });
-    // Room for the longest the queue can get, so the picture does not shift as it grows.
-    boxes.push(queue, { x, y, w: 44 + Math.min(n, 12) * 34, h: 40 });
-    y = below({ ...queue, h: Math.max(queue.h, 40) }, 14);
     const flags = settings.marking === 'visited';
-    const table = drawTable(shapes, {
-      id: 'tbl',
-      x,
-      y,
-      columns: g.vertices,
-      head: 'v',
-      rows: [
-        {
-          key: 'color',
-          label: flags ? 'visited' : 'color',
-          cells: g.vertices.map((v) => ({
-            text: flags ? (r.color[v] === 'white' ? 'F' : 'T') : COLOR_LETTER[r.color[v]!],
-          })),
-        },
-        { key: 'd', label: 'd', cells: g.vertices.map((v) => ({ text: dText(r.d[v] ?? null) })) },
-        { key: 'pi', label: 'π', cells: g.vertices.map((v) => ({ text: r.pi[v] ?? '–' })) },
-      ],
-      roles,
-    });
-    boxes.push(table);
+    boxes.push(
+      placePanels(shapes, drawn.bounds, (out, x, y0) => {
+        const queue = drawRow(out, {
+          id: 'q',
+          label: 'Q',
+          labelW: 44,
+          cells: r.queue.map((v) => ({ key: v, text: v, from: layout.pos[v] })),
+          x,
+          y: y0,
+          roles,
+          perRow: 12,
+          ends: ['front', 'back'],
+        });
+        // Room for the longest the queue can get, so nothing moves as it grows.
+        const room = { x, y: y0, w: 44 + Math.min(n, 12) * 34, h: 40 };
+        const table = drawTable(out, {
+          id: 'tbl',
+          x,
+          y: below(unionBounds(queue, room), 14),
+          columns: g.vertices,
+          head: 'v',
+          rows: [
+            {
+              key: 'color',
+              label: flags ? 'visited' : 'color',
+              cells: g.vertices.map((v) => ({
+                text: flags ? (r.color[v] === 'white' ? 'F' : 'T') : COLOR_LETTER[r.color[v]!],
+              })),
+            },
+            {
+              key: 'd',
+              label: 'd',
+              cells: g.vertices.map((v) => ({ text: dText(r.d[v] ?? null) })),
+            },
+            { key: 'pi', label: 'π', cells: g.vertices.map((v) => ({ text: r.pi[v] ?? '–' })) },
+          ],
+          roles,
+        });
+        return unionBounds(queue, room, table);
+      }),
+    );
   }
   const label = r ? `${describe(state)} ${describeRun(g, r)}` : describe(state);
   return { shapes, bounds: padBounds(unionBounds(...boxes), 14), label };

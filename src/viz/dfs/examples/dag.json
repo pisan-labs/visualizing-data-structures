@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "dfs",
+  "id": "dag",
+  "title": "A DAG: no back edges",
+  "notes": "This directed graph has no cycle, so DFS finds no back edge. List the vertices by finish time, last to first, and every edge points forward: that is a topological order.",
+  "settings": {
+    "style": "recursive",
+    "layout": "layered"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A>B, A>C, B>D, C>D, C>E, D>F, E>F"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

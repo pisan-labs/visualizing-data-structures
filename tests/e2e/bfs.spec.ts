@@ -130,3 +130,32 @@ test('compare mode runs both sides on the same graph', async ({ page }) => {
     );
   }
 });
+
+test('compare mode puts BFS and DFS side by side on the same graph', async ({ page }) => {
+  await page.goto('/bfs/#compare=dfs');
+  await expect(
+    page.getByRole('heading', { name: 'Breadth-first search vs Depth-first search' }),
+  ).toBeVisible();
+  const sides = page.locator('.sides > .side');
+  // Both start from the same graph.
+  for (const i of [0, 1]) {
+    await expect(sides.nth(i).locator('.stage > svg')).toHaveAttribute(
+      'aria-label',
+      /^An undirected graph with 8 vertices and 10 edges\. A with B, C; B with A, D, E;/,
+    );
+  }
+  await fast(page);
+  await op(page, 'Load', 'A-B, A-C, B-D, C-D, D-E');
+  await op(page, 'Run BFS from', 'A');
+  await toEnd(page);
+  await expect(sides.nth(0).locator('.narration .chip')).toHaveText('run("A")');
+  await expect(sides.nth(1).locator('.narration .chip')).toHaveText('run("A")');
+  await expect(sides.nth(0).locator('.stage > svg')).toHaveAttribute(
+    'aria-label',
+    /5 vertices and 5 edges.*BFS from A\. Queue: empty\. Distances so far: A 0, B 1, C 1, D 2, E 3\./,
+  );
+  await expect(sides.nth(1).locator('.stage > svg')).toHaveAttribute(
+    'aria-label',
+    /5 vertices and 5 edges.*DFS from A, time 10\. Times so far: A 1\/10, B 2\/9, C 4\/5, D 3\/8, E 6\/7\./,
+  );
+});

@@ -47,7 +47,8 @@
  *   Edge keys are "u-v" as stored in the graph (u before v when undirected).
  *
  * Panels (each takes x, y, appends shapes, and returns its bounds, so a view can stack them
- * under or beside the graph; `below(bounds)` and `beside(bounds)` give the next spot):
+ * under or beside the graph; `below(bounds)` and `beside(bounds)` give the next spot, and
+ * `placePanels` puts a whole block under or beside the graph, whichever reads better):
  *   drawRow       a labeled row of cells: a queue (front first), a visited set, an order.
  *   drawColumn    a labeled stack, top first: the call stack or an explicit stack.
  *   drawTable     columns per vertex and rows such as d, π, color.
@@ -1028,6 +1029,55 @@ export function drawGraph(
 }
 
 // ---------------------------------------------------------------------------------------------
+// Arranging panels around the graph
+
+/**
+ * The stages a picture has to read on: a 1366 x 768 laptop (wide and short) and a phone in
+ * portrait (narrow and tall), in pixels.
+ */
+const STAGES = [
+  { w: 884, h: 305 },
+  { w: 362, h: 585 },
+];
+
+/** How large a scene of this size is drawn on the smaller of the two stages (pixels per unit). */
+export function fitScore(b: Bounds): number {
+  return Math.min(...STAGES.map((s) => Math.min(s.w / b.w, s.h / b.h)));
+}
+
+/** Move shapes by (dx, dy). Where they slide in from stays put: it is a place in the scene. */
+export function translate(shapes: Shape[], dx: number, dy: number): Shape[] {
+  return shapes.map((s) => {
+    if (s.kind === 'arrow')
+      return { ...s, x1: s.x1 + dx, y1: s.y1 + dy, x2: s.x2 + dx, y2: s.y2 + dy };
+    return { ...s, x: s.x + dx, y: s.y + dy };
+  });
+}
+
+/**
+ * Put a block of panels under the graph or beside it, whichever keeps the whole picture larger
+ * on both a laptop and a phone (`fitScore`). `draw(shapes, x, y)` draws the block with its top
+ * left corner at (x, y) and returns its box; keep its size the same through a run (reserve
+ * room for what grows), so the block does not jump between the two places. Beside the graph,
+ * the block starts a little lower, clear of the stage's zoom buttons in the top right corner.
+ */
+export function placePanels(
+  shapes: Shape[],
+  graph: Bounds,
+  draw: (shapes: Shape[], x: number, y: number) => Bounds,
+): Bounds {
+  const block: Shape[] = [];
+  const box = draw(block, 0, 0);
+  const under = { x: graph.x - box.x, y: below(graph, 22) - box.y };
+  const side = { x: beside(graph, 30) - box.x, y: graph.y + 34 - box.y };
+  const total = (p: Pt) =>
+    padBounds(unionBounds(graph, { ...box, x: box.x + p.x, y: box.y + p.y }), 14);
+  const at = fitScore(total(side)) > fitScore(total(under)) * 1.05 ? side : under;
+  shapes.push(...translate(block, at.x, at.y));
+  return { ...box, x: box.x + at.x, y: box.y + at.y };
+}
+
+// ---------------------------------------------------------------------------------------------
 // Panels
 
 export interface PanelCell {
@@ -1144,13 +1194,15 @@ export function drawRow(shapes: Shape[], o: RowOptions): Bounds {
     });
     return { x: o.x, y: o.y, w: labelW + textWidth(text, 13), h: CELL_H };
   }
+  // With captions under the ends, lines leave room for them.
+  const linePitch = CELL_H + (o.ends ? 20 : 8);
   let lines = 1;
   o.cells.forEach((c, i) => {
     const line = Math.floor(i / perRow);
     lines = line + 1;
-    cellShapes(shapes, o.id, c, x0 + (i % perRow) * pitch, o.y + line * (CELL_H + 8), w, roles);
+    cellShapes(shapes, o.id, c, x0 + (i % perRow) * pitch, o.y + line * linePitch, w, roles);
   });
-  let h = lines * (CELL_H + 8) - 8;
+  let h = lines * linePitch - (o.ends ? 20 : 8);
   if (o.ends) {
     const last = o.cells.length - 1;
     const capY = o.y + h + 13;
@@ -1159,7 +1211,7 @@ export function drawRow(shapes: Shape[], o: RowOptions): Bounds {
         kind: 'text',
         id: sid,
         x: x0 + (k % perRow) * pitch + w / 2,
-        y: o.y + Math.floor(k / perRow) * (CELL_H + 8) + CELL_H + 13,
+        y: o.y + Math.floor(k / perRow) * linePitch + CELL_H + 13,
         text,
         size: 12,
         anchor: 'middle',

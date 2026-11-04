@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "dfs",
+  "id": "deep",
+  "title": "Deep first: one long path through the graph",
+  "notes": "From A the search goes A, B, D, G, E, C, F, H without backing up once: every vertex has a white neighbour to go to. The three edges left over, E-B, C-A and H-G, are back edges.",
+  "settings": {
+    "style": "recursive",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, B-D, B-E, C-E, C-F, D-G, E-G, F-H, G-H"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

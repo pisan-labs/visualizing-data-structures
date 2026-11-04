@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "dfs",
+  "id": "stack-reversed",
+  "title": "Push in reverse to get the recursion's order back",
+  "notes": "Pushing each vertex's neighbours from Z to A leaves the first one in name order on top. The discovery and finish times match the recursive search exactly.",
+  "settings": {
+    "style": "stackrev",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, B-D, B-E, C-E, C-F, D-G, E-G, F-H, G-H"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

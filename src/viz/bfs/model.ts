@@ -179,7 +179,9 @@ const run: Op = {
       r.v = undefined;
       const adj = neighbours(g, u);
       yield step(
-        `Dequeue ${u} from the front (d = ${r.d[u]}). Now look at its ${g.directed ? 'out-' : ''}neighbours in order: ${adj.length ? listWords(adj) : 'there are none'}.`,
+        adj.length
+          ? `Dequeue ${u} from the front (d = ${r.d[u]}). Now look at its ${g.directed ? 'out-' : ''}neighbours in order: ${listWords(adj)}.`
+          : `Dequeue ${u} from the front (d = ${r.d[u]}). It has no ${g.directed ? 'edges out' : 'neighbours'}.`,
         ['while', 'deq'],
         2,
         [...vmark(u, 'active')],
@@ -229,7 +231,7 @@ const run: Op = {
       if (!flags) {
         r.color[u] = 'black';
         yield step(
-          `Every neighbour of ${u} has been looked at, so ${u} is done: color it black.${r.queue.length ? ` The queue is now ${r.queue.join(', ')}.` : ' The queue is empty.'}`,
+          `${adj.length ? `Every neighbour of ${u} has been looked at, so ${u}` : u} is done: color it black.${r.queue.length ? ` The queue is now ${r.queue.join(', ')}.` : ' The queue is empty.'}`,
           ['black'],
           2,
           [...vmark(u, 'done'), mark(cellId('color', u), 'new')],

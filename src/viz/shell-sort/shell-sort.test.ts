@@ -55,10 +55,16 @@ describe('shell sort', { timeout: 60_000 }, () => {
     expect(gapsFor('shell', 20)).toEqual([10, 5, 2, 1]);
     expect(gapsFor('knuth', 16)).toEqual([13, 4, 1]);
     expect(gapsFor('knuth', 8)).toEqual([4, 1]);
+    // Integer division, as in Sedgewick and Wayne, so a gap never reaches n.
+    expect(gapsFor('knuth', 13)).toEqual([4, 1]);
+    expect(gapsFor('knuth', 4)).toEqual([1]);
     expect(gapsFor('ciura', 20)).toEqual([10, 4, 1]);
     expect(gapsFor('ciura', 3)).toEqual([1]);
     for (const rule of ['shell', 'knuth', 'ciura'] as const)
-      for (let n = 2; n <= 20; n++) expect(gapsFor(rule, n).at(-1)).toBe(1);
+      for (let n = 2; n <= 20; n++) {
+        expect(gapsFor(rule, n).at(-1)).toBe(1);
+        expect(gapsFor(rule, n)[0], `${rule}, n = ${n}`).toBeLessThan(n);
+      }
   });
 
   it("finds Shell's halving gaps useless on interleaved input, and Knuth's gaps less so", () => {

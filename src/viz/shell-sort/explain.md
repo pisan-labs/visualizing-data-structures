@@ -32,7 +32,7 @@ Q: With Shell's original gaps (n/2, n/4, ..., 1), which gaps sort 10 values?
 The **Gap sequence** option has three choices.
 
 - Shell's original: n/2, n/4, ..., 1. Easy to remember, and the worst case is still O(n²).
-- Knuth's: 1, 4, 13, 40, ..., each 3h + 1, starting from the first one that reaches n/3. The worst case drops to O(n^1.5).
+- Knuth's: 1, 4, 13, 40, ..., each 3h + 1, starting from the first one that reaches n/3 (rounded down), so the first gap is always less than n. The worst case drops to O(n^1.5).
 - Ciura's: 1, 4, 10, 23, 57, 132, 301, 701, found by experiment rather than by a formula. Nobody has proved a bound for it, but in experiments it does better than the other two. [Show me](#play:ciura-gaps)
 
 Every sequence ends with 1. That last pass is a plain insertion sort, so the result is always sorted; the gaps before it only decide how much work is left for it.

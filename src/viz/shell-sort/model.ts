@@ -44,7 +44,8 @@ export function gapsFor(rule: ShellSettings['gaps'], n: number): number[] {
   }
   if (rule === 'knuth') {
     let h = 1;
-    while (h < n / 3) h = 3 * h + 1;
+    // Integer division, as in Sedgewick and Wayne: the first gap is always less than n.
+    while (h < Math.floor(n / 3)) h = 3 * h + 1;
     const out: number[] = [];
     for (; h > 0; h = Math.floor(h / 3)) out.push(h);
     return out;
@@ -71,7 +72,7 @@ function* shell(r: Run, rule: ShellSettings['gaps']): Gen {
   const gaps = gapsFor(rule, n);
   yield r.step({
     say: `${RULE_NAME[rule]} gaps for n = ${n}: ${gaps.join(', ')}. For each gap h, insertion sort every list of values h apart; the last gap is always 1.`,
-    lines: ['init'],
+    lines: rule === 'knuth' ? ['init', 'grow'] : ['init'],
     level: 2,
     vars: { n },
   });
@@ -266,14 +267,17 @@ export function pseudocode(st: ShellSettings): PseudoBlock[] {
       op: 'sort',
       lines: [
         sig,
-        knuth
-          ? L(
-              'init',
-              1,
-              'h = 1; while h < n / 3: h = 3h + 1',
-              'Find the largest gap in 1, 4, 13, 40, ...',
-            )
-          : L('init', 1, 'h = floor(n / 2)', 'Start with a gap of half the array.'),
+        ...(knuth
+          ? [
+              L(
+                'init',
+                1,
+                'h = 1; while h < floor(n / 3)',
+                'Find the first gap in 1, 4, 13, 40, ...',
+              ),
+              L('grow', 2, 'h = 3h + 1', 'that reaches a third of n.'),
+            ]
+          : [L('init', 1, 'h = floor(n / 2)', 'Start with a gap of half the array.')]),
         L('gap', 1, 'while h > 0', 'For each gap, largest first:'),
         ...body,
         knuth

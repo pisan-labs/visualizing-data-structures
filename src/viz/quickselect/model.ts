@@ -97,18 +97,15 @@ const select: Op = {
         });
         return run.v(p);
       }
-      yield run.step({
-        say: `quickselect(A, ${p}, ${r}): the ${rank(k)} value belongs in A[${t}]. Partition ${span(p, r)} and see which side of the pivot A[${t}] falls on.`,
-        lines: ['base', 'part'],
-        level: 2,
-        vars: vars(),
-        extra: extra(),
-      });
       const q = yield* partition(run, p, r, settings, rng, {
         calls,
         vars,
         pointers: target,
         faded,
+        intro: {
+          say: `quickselect(A, ${p}, ${r}): the ${rank(k)} value belongs in A[${t}]. Partition ${span(p, r)} and see which side A[${t}] falls on.`,
+          lines: ['base', 'part'],
+        },
       });
       if (lomuto && q === t) {
         yield run.step({

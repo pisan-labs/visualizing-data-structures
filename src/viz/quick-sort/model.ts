@@ -44,36 +44,32 @@ const sort: Op = {
     const calls = () => stack.map((c) => ({ ...c }));
 
     function* quicksort(p: number, r: number): Gen {
+      // An empty range needs no step; the partition step already said that part is empty.
+      if (p > r) return;
       stack.push({ from: p, to: r });
       const depth = stack.length - 1;
       maxDepth = Math.max(maxDepth, depth);
       const vars = () => ({ p, r, depth });
-      if (p >= r) {
-        if (p === r) run.done.add(p);
+      if (p === r) {
+        run.done.add(p);
         yield run.step({
-          say:
-            p === r
-              ? `quicksort(A, ${p}, ${r}): one value, so it is already in its final place.`
-              : `quicksort(A, ${p}, ${r}): an empty range, nothing to do.`,
+          say: `quicksort(A, ${p}, ${r}): one value, so it is already in its final place.`,
           lines: ['test'],
           level: 2,
           vars: vars(),
-          extra: {
-            calls: calls(),
-            regions: p === r ? [{ id: 'window', from: p, to: r, tone: 'window' }] : [],
-          },
+          extra: { calls: calls(), regions: [{ id: 'window', from: p, to: r, tone: 'window' }] },
         });
         stack.pop();
         return;
       }
-      yield run.step({
-        say: `quicksort(A, ${p}, ${r}) at depth ${depth}: partition ${span(p, r)} around a pivot.`,
-        lines: ['test', 'part'],
-        level: 2,
-        vars: vars(),
-        extra: { calls: calls(), regions: [{ id: 'window', from: p, to: r, tone: 'window' }] },
+      const q = yield* partition(run, p, r, settings, rng, {
+        calls,
+        vars,
+        intro: {
+          say: `quicksort(A, ${p}, ${r}) at depth ${depth}: partition ${span(p, r)}.`,
+          lines: ['test', 'part'],
+        },
       });
-      const q = yield* partition(run, p, r, settings, rng, { calls, vars });
       const [lo, hi] = lomuto ? [q - 1, q + 1] : [q, q + 1];
       yield run.step({
         say: lomuto

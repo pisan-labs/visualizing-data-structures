@@ -48,6 +48,8 @@ export interface Around {
   pointers?: () => BarsPointer[];
   /** Index ranges out of play (quickselect fades the side it no longer needs). */
   faded?: () => { from: number; to: number }[];
+  /** Said before the partition's first step (the call it belongs to), with its lines. */
+  intro?: { say: string; lines: string[] };
 }
 
 const RULE_TEXT: Record<PivotRule, string> = {
@@ -103,6 +105,15 @@ export function* partition(
   });
 
   // Choose the pivot and move it to A[r] (Lomuto) or A[p] (Hoare).
+  // The first step of the partition also announces the call it belongs to.
+  let intro = around.intro;
+  const first = (say: string, lines: string[]) => {
+    const out = intro
+      ? { say: `${intro.say} ${say}`, lines: [...intro.lines, ...lines] }
+      : { say, lines };
+    intro = undefined;
+    return out;
+  };
   const natural = lomuto ? 'last' : 'first';
   const c = choosePivot(run, p, r, st.pivot, rng);
   if (st.pivot !== natural) {
@@ -118,10 +129,12 @@ export function* partition(
       run.count('swaps');
     }
     yield run.step({
-      say: moved
-        ? `${why} Swap it into A[${home}], where ${lomuto ? 'Lomuto' : 'Hoare'}'s partition expects the pivot.`
-        : `${why} It is already in A[${home}], where ${lomuto ? 'Lomuto' : 'Hoare'}'s partition expects the pivot.`,
-      lines: ['choose'],
+      ...first(
+        moved
+          ? `${why} Swap it into A[${home}], where ${lomuto ? 'Lomuto' : 'Hoare'}'s partition expects the pivot.`
+          : `${why} It is already in A[${home}], where ${lomuto ? 'Lomuto' : 'Hoare'}'s partition expects the pivot.`,
+        ['choose'],
+      ),
       level: 2,
       marks: moved
         ? [mark(run.id(home), 'found'), mark(run.id(c), 'active')]
@@ -158,8 +171,10 @@ export function* partition(
     });
     const vars = () => ({ ...around.vars(), x, i, j });
     yield run.step({
-      say: `The pivot is x = A[${r}] = ${x}. i = ${i}: nothing is known to be ≤ ${x} yet. Walk j from ${p} to ${r - 1}.`,
-      lines: ['pivot', 'init'],
+      ...first(
+        `The pivot is x = A[${r}] = ${x}. i = ${i}: nothing is known to be ≤ ${x} yet. Walk j from ${p} to ${r - 1}.`,
+        ['pivot', 'init'],
+      ),
       level: 2,
       marks: [px],
       vars: vars(),
@@ -181,16 +196,19 @@ export function* partition(
         });
         continue;
       }
-      yield run.step({
-        say: question,
-        lines: ['loop', 'cmp'],
-        level: 3,
-        marks: [px, mark(run.id(j), 'compare')],
-        vars: vars(),
-        extra: extra(j - 1),
-      });
+      const self = i + 1 === j;
+      if (!self) {
+        // Something is about to move: show the question first.
+        yield run.step({
+          say: question,
+          lines: ['loop', 'cmp'],
+          level: 3,
+          marks: [px, mark(run.id(j), 'compare')],
+          vars: vars(),
+          extra: extra(j - 1),
+        });
+      }
       i++;
-      const self = i === j;
       const displaced = run.v(i);
       if (!self) {
         run.swap(i, j);
@@ -198,9 +216,9 @@ export function* partition(
       }
       yield run.step({
         say: self
-          ? `Yes: i = ${i}. A[i] and A[j] are the same slot, so ${v} stays put and the ≤ ${x} part grows.`
+          ? `${question} Yes: i = ${i}. A[i] and A[j] are the same slot, so ${v} stays put and the ≤ ${x} part grows.`
           : `Yes: i = ${i}, and swap A[${i}] = ${displaced} with A[${j}] = ${v}. ${v} joins the ≤ ${x} part.`,
-        lines: ['inc', 'swap'],
+        lines: self ? ['loop', 'cmp', 'inc', 'swap'] : ['inc', 'swap'],
         level: 2,
         marks: self
           ? [px, mark(run.id(i), 'active')]
@@ -265,8 +283,10 @@ export function* partition(
   });
   const vars = () => ({ ...around.vars(), x, i, j });
   yield run.step({
-    say: `The pivot is x = A[${p}] = ${x}. Start i just before ${span(p, r)} and j just after it.`,
-    lines: ['pivot', 'init'],
+    ...first(
+      `The pivot is x = A[${p}] = ${x}. Start i just before ${span(p, r)} and j just after it.`,
+      ['pivot', 'init'],
+    ),
     level: 2,
     marks: [px],
     vars: vars(),

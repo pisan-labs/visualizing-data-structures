@@ -135,8 +135,31 @@ function* merge(run: Run, p: number, q: number, r: number, around: Around): Gen 
       yield* take(false, `${y.value} < ${x.value}, so take from R: `, ['takeR', 'inc']);
     }
   }
-  while (i < nL) yield* take(true, 'R is used up, so copy the rest of L: ', ['restL']);
-  while (j < nR) yield* take(false, 'L is used up, so copy the rest of R: ', ['restR']);
+  // The leftovers of one run move up together: no comparisons are needed for them.
+  if (i < nL || j < nR) {
+    const fromL = i < nL;
+    const moved: Item[] = [];
+    const k0 = k;
+    while (i < nL || j < nR) {
+      const at = fromL ? p + i : q + 1 + j;
+      const item = aux[at]!;
+      run.a[k] = item;
+      aux[at] = { uid: 0, value: item.value, stale: true };
+      run.count('writes');
+      moved.push(item);
+      if (fromL) i++;
+      else j++;
+      k++;
+    }
+    yield run.step({
+      say: `${fromL ? 'R' : 'L'} is used up, so copy the rest of ${fromL ? 'L' : 'R'} into ${span(k0, k - 1)}: ${moved.map((x) => x.value).join(', ')}.`,
+      lines: [fromL ? 'restL' : 'restR'],
+      level: 2,
+      marks: moved.map((x) => mark(`v${x.uid}`, 'active')),
+      vars: vars(),
+      extra: extra(),
+    });
+  }
   yield run.step({
     say: `${span(p, r)} is sorted: ${values(run, p, r)}.`,
     lines: ['merge'],
@@ -157,23 +180,21 @@ function* topDown(run: Run): Gen {
     stack.push({ from: p, to: r });
     const depth = stack.length - 1;
     const vars = (q?: number) => ({ p, ...(q === undefined ? {} : { q }), r, depth });
+    // A single value returns at once; its parent's split step already says so.
     if (p >= r) {
-      yield run.step({
-        say: `mergeSort(A, ${p}, ${r}): one value is already sorted, so return.`,
-        lines: ['base'],
-        level: 2,
-        vars: vars(),
-        extra: {
-          calls: calls(),
-          regions: [{ id: 'window', from: p, to: r, tone: 'window' }],
-        },
-      });
       stack.pop();
       return;
     }
     const q = Math.floor((p + r) / 2);
+    const single = [p === q ? `A[${p}]` : '', q + 1 === r ? `A[${r}]` : ''].filter(Boolean);
     yield run.step({
-      say: `mergeSort(A, ${p}, ${r}): split ${span(p, r)} at q = ${q} into ${span(p, q)} and ${span(q + 1, r)}.`,
+      say:
+        `mergeSort(A, ${p}, ${r}): split ${span(p, r)} at q = ${q} into ${span(p, q)} and ${span(q + 1, r)}.` +
+        (single.length === 2
+          ? ' Both halves are single values, which are already sorted.'
+          : single.length === 1
+            ? ` ${single[0]} on its own is already sorted.`
+            : ''),
       lines: ['base', 'mid'],
       level: 2,
       vars: vars(q),

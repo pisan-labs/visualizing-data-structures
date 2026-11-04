@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "viz": "b-plus-tree",
+  "id": "merge",
+  "title": "An underflowing leaf merges with a sibling",
+  "notes": "Deleting 10 leaves [20] with 1 key, and its only sibling has no key to spare. The two leaves merge, and their separator, 30, is simply dropped from the parent.",
+  "settings": {
+    "order": "4"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["insert", 90],
+    ["delete", 10]
+  ],
+  "at": {
+    "op": 8,
+    "step": 99
+  }
+}

@@ -19,6 +19,8 @@ export interface BNode {
   keys: BKey[];
   /** Children, left to right; empty for a leaf. An internal node has keys.length + 1. */
   kids: number[];
+  /** B+ trees only: the next leaf to the right (null for the last leaf). */
+  next?: number | null;
 }
 
 export interface BState {
@@ -116,7 +118,12 @@ export class Work {
 function copyNodes(nodes: Record<number, BNode>): Record<number, BNode> {
   const out: Record<number, BNode> = {};
   for (const [k, n] of Object.entries(nodes))
-    out[Number(k)] = { uid: n.uid, keys: n.keys.map((x) => ({ ...x })), kids: [...n.kids] };
+    out[Number(k)] = {
+      uid: n.uid,
+      keys: n.keys.map((x) => ({ ...x })),
+      kids: [...n.kids],
+      ...(n.next !== undefined ? { next: n.next } : {}),
+    };
   return out;
 }
 

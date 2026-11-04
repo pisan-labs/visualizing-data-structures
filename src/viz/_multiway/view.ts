@@ -24,11 +24,11 @@ export const BAND_Y = -(NODE_H + 24);
 /** The narrowest a scene gets, so a small tree is not blown up to fill the stage. */
 const MIN_W = 300;
 
-export function layoutOf(s: BState): MultiwayLayout<number> {
+export function layoutOf(s: BState, gap = 8): MultiwayLayout<number> {
   return layoutMultiway(
     s.root,
     { kids: (u) => s.nodes[u]!.kids, width: (u) => nodeWidth(s.nodes[u]!.keys.length) },
-    { gap: 10, levelGap: 60 },
+    { gap, levelGap: 56 },
   );
 }
 
@@ -38,6 +38,8 @@ export function argShapes(
   x: number,
   y: number,
   roles: ReadonlyMap<string, MarkRole>,
+  /** Prefix for the shape ids, so a page can show two arguments. */
+  prefix = 'arg',
 ): { shapes: Shape[]; box: Bounds } {
   const shapes: Shape[] = [];
   const long = arg.uid === undefined && arg.text.length > 3;
@@ -45,7 +47,7 @@ export function argShapes(
   const bx = x + 18;
   shapes.push({
     kind: 'text',
-    id: 'arg-label',
+    id: `${prefix}-label`,
     x,
     y: y + NODE_H / 2 + 5,
     text: arg.name,
@@ -55,29 +57,29 @@ export function argShapes(
   });
   shapes.push({
     kind: 'rect',
-    id: 'arg-box',
+    id: `${prefix}-box`,
     x: bx,
     y,
     w,
     h: NODE_H,
     r: 6,
     cls: 'ghost',
-    role: roles.get('arg-box') ?? (arg.error ? 'error' : undefined),
+    role: roles.get(`${prefix}-box`) ?? (arg.error ? 'error' : undefined),
   });
   if (long) {
     shapes.push({
       kind: 'text',
-      id: 'key-arg',
+      id: `key-${prefix}`,
       x: bx + w / 2,
       y: y + NODE_H / 2 + 5,
       text: arg.text,
       size: 13,
       anchor: 'middle',
       weight: 'bold',
-      role: roles.get('arg-box') ?? (arg.error ? 'error' : undefined),
+      role: roles.get(`${prefix}-box`) ?? (arg.error ? 'error' : undefined),
     });
   } else {
-    const id = arg.uid ?? 'arg';
+    const id = arg.uid ?? prefix;
     shapes.push(
       ...keyCell({ id, text: arg.text }, bx + NODE_PAD, y + NODE_PAD, {
         role: roles.get(`cell-${id}`),

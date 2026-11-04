@@ -41,9 +41,9 @@ import type { Bounds, Shape } from '../render/scene';
 export type MultiId = string | number;
 
 /** Width of one key cell, in scene units. Narrow enough for a 20-key tree on a phone. */
-export const CELL = 26;
+export const CELL = 24;
 /** Space between the frame and the cells inside it. */
-export const NODE_PAD = 3;
+export const NODE_PAD = 2;
 /** Height of a node's frame. */
 export const NODE_H = CELL + 2 * NODE_PAD;
 
@@ -54,7 +54,7 @@ export function nodeWidth(keys: number): number {
 
 /** Font size for a key, so up to four characters fit in a cell. */
 export function keyFontSize(text: string): number {
-  return text.length <= 2 ? 14 : text.length === 3 ? 12 : 10;
+  return text.length <= 2 ? 15 : text.length === 3 ? 11.5 : 9.5;
 }
 
 export interface MultiwayAccess<Id extends MultiId> {
@@ -63,7 +63,7 @@ export interface MultiwayAccess<Id extends MultiId> {
 }
 
 export interface MultiwayOptions {
-  /** Smallest horizontal gap between neighbouring subtrees. Default 10. */
+  /** Smallest horizontal gap between neighbouring subtrees. Default 8. */
   gap?: number;
   /** From the top of one level to the top of the next. Default 58. */
   levelGap?: number;
@@ -101,7 +101,7 @@ export function layoutMultiway<Id extends MultiId>(
   tree: MultiwayAccess<Id>,
   options: MultiwayOptions = {},
 ): MultiwayLayout<Id> {
-  const gap = options.gap ?? 10;
+  const gap = options.gap ?? 8;
   const levelGap = options.levelGap ?? 58;
   const nodeH = options.nodeH ?? NODE_H;
 

@@ -47,3 +47,5 @@
 2026-11-04 [code] Typed operation scripts in the History tab (edit and replay, line-numbered errors), -/+ speed keys, embed options (fixed theme, autoplay) in the link and the embed-code builder
 
 2026-11-04 [code] Canonical versions of shared changes the agents duplicated: buttons with several values (ControlButton.args names), circles styled like cells, wrapped code blocks on concept pages; agents asked to merge dev
+
+2026-11-04 [note] GitHub Issues turned on for pisan-labs/visualizing-data-structures; the per-page feedback link now works

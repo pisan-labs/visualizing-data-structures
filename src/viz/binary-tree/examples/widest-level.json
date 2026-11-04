@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "binary-tree",
+  "id": "widest-level",
+  "title": "The queue holds a whole level",
+  "notes": "In a complete tree of 15 nodes the last level has 8 of them, and they are all in the queue at once.",
+  "settings": { "mode": "recursive", "nulls": false },
+  "seed": 1,
+  "ops": [["build", "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15"], ["levelorder"]],
+  "at": { "op": 0, "step": 99 }
+}

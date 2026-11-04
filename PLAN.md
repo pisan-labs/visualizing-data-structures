@@ -373,7 +373,7 @@ The About page credits Galles and Lucet as inspiration.
 | 21 | Learners' own code | Not traced; typed operation scripts instead (12.7) |
 | 22 | Parallelism | 4 agents per wave; the lead reviews and merges (12.8) |
 | 23 | Pathways | "Data structures" and "Algorithms" (12.9) |
-| 24 | Feedback | Prefilled GitHub issue link on every page; needs issues turned on (12.10) |
+| 24 | Feedback | Prefilled GitHub issue link on every page; Issues turned on by Yusuf (12.10) |
 | 25 | Time zone | UTC+1 assumed for reports (12.11) |
 | 26 | Deploys | Work goes to `dev` (CI runs there); `main` is what Netlify publishes and moves only when Yusuf says "deploy" (`git push origin dev:main`). Each production deploy costs 15 Netlify credits |
 

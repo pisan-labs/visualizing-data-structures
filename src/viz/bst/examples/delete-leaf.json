@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "viz": "bst",
+  "id": "delete-leaf",
+  "title": "Delete a leaf",
+  "notes": "20 has no children, so deleting it only clears a pointer in its parent. Nothing else moves.",
+  "settings": {
+    "delete": "successor",
+    "dupes": "reject",
+    "mode": "keys"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 30],
+    ["insert", 70],
+    ["insert", 20],
+    ["insert", 40],
+    ["insert", 60],
+    ["insert", 80],
+    ["delete", 20]
+  ],
+  "at": {
+    "op": 6,
+    "step": 99
+  }
+}

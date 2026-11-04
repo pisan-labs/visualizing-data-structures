@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "binary-tree",
+  "id": "call-stack",
+  "title": "The call stack in a recursive inorder walk",
+  "notes": "Each call waits on the stack while its left subtree is walked. The stack never holds more than one path from the root.",
+  "settings": { "mode": "recursive", "nulls": false },
+  "seed": 1,
+  "ops": [["build", "4 2 6 1 3 5 7"], ["inorder"]],
+  "at": { "op": 0, "step": 99 }
+}

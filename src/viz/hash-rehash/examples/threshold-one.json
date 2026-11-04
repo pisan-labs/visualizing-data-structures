@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "hash-rehash",
+  "id": "threshold-one",
+  "title": "Threshold 1.0: grow only when full",
+  "notes": "With threshold 1.0 the table grows only when it is completely full, like the dynamic tables in CLRS. These keys all hash to slot 1, so the 5th insert probes every slot of the full-to-be table. The 6th insert finds no room and the table grows to 11.",
+  "settings": { "m0": 5, "threshold": "1.0", "grow": "prime" },
+  "seed": 1,
+  "ops": [
+    ["insert", 1],
+    ["insert", 6],
+    ["insert", 11],
+    ["insert", 16],
+    ["insert", 21],
+    ["insert", 26]
+  ],
+  "at": { "op": 4, "step": 100 }
+}

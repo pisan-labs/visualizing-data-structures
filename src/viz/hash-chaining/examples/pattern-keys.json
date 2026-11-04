@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "hash-chaining",
+  "id": "pattern-keys",
+  "title": "Keys with a pattern meet a bad table size",
+  "notes": "With m = 10, k mod 10 is just the last digit, so 10, 20, 30, 40, 50 and 60 all land in bucket 0. Change m to 7 or 11 in Options and they spread out.",
+  "settings": { "m": 10, "hash": "division", "mode": "keys", "where": "head" },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

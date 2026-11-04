@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "hash-open",
+  "id": "tombstones",
+  "title": "Tombstones: search skips them, insert reuses them",
+  "notes": "Deleting 33 leaves a tombstone (DEL) in slot 1. The search for 44 steps over it; stopping there would lose 44. Then insert 55 probes all the way to an empty slot, to be sure 55 is new, and goes back to reuse slot 1.",
+  "settings": { "m": 11, "probe": "linear", "h2": "clrs" },
+  "seed": 1,
+  "ops": [
+    ["insert", 22],
+    ["insert", 33],
+    ["insert", 44],
+    ["delete", 33],
+    ["search", 44],
+    ["insert", 55]
+  ],
+  "at": { "op": 2, "step": 100 }
+}

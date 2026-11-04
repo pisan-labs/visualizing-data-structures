@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "lru-cache",
+  "id": "hit-moves-to-front",
+  "title": "A hit moves the key to the front",
+  "notes": "After three puts, 1 is the least recently used. get(1) moves it to the front, one pointer at a time, so when put(4, 40) needs room it evicts 2 instead of 1. The last get(2) misses.",
+  "settings": { "capacity": 3 },
+  "seed": 1,
+  "ops": [
+    ["put", 1, 10],
+    ["put", 2, 20],
+    ["put", 3, 30],
+    ["get", 1],
+    ["put", 4, 40],
+    ["get", 2]
+  ],
+  "at": { "op": 2, "step": 100 }
+}

@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "lru-cache",
+  "id": "update-existing",
+  "title": "put on a cached key is a use too",
+  "notes": "put(1, 15) finds 1 already cached: it replaces the value and moves 1 to the front, without a new node. So put(4, 40) evicts 2, the least recently used.",
+  "settings": { "capacity": 3 },
+  "seed": 1,
+  "ops": [
+    ["put", 1, 10],
+    ["put", 2, 20],
+    ["put", 3, 30],
+    ["put", 1, 15],
+    ["put", 4, 40],
+    ["get", 1]
+  ],
+  "at": { "op": 2, "step": 100 }
+}

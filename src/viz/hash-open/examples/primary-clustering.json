@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "hash-open",
+  "id": "primary-clustering",
+  "title": "Primary clustering",
+  "notes": "22, 33 and 44 all start at slot 0 and pile up in slots 0 to 2. Then 1 and 13, which start at slots 1 and 2, land at the end of the run instead of in their own slots. By the time 55 arrives it needs 6 probes, and a search for a missing key that starts in the run walks all of it.",
+  "settings": { "m": 11, "probe": "linear", "h2": "clrs" },
+  "seed": 1,
+  "ops": [
+    ["insert", 22],
+    ["insert", 33],
+    ["insert", 44],
+    ["insert", 1],
+    ["insert", 13],
+    ["insert", 55],
+    ["search", 66]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

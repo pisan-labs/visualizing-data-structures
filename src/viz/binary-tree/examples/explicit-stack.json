@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "binary-tree",
+  "id": "explicit-stack",
+  "title": "Inorder with an explicit stack",
+  "notes": "The same walk as the recursive version, but a stack you manage replaces the call stack: go left pushing nodes, pop, visit, go right.",
+  "settings": { "mode": "iterative", "nulls": false },
+  "seed": 1,
+  "ops": [["build", "4 2 6 1 3 5 7"], ["inorder"]],
+  "at": { "op": 0, "step": 99 }
+}

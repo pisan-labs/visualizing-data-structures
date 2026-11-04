@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "binary-tree",
+  "id": "build-gaps",
+  "title": "Gaps in a level-order list",
+  "notes": "_ marks a missing child, and only real nodes get children. The second list has a value with no node to hang from, so it is rejected and the tree stays.",
+  "settings": { "mode": "recursive", "nulls": true },
+  "seed": 1,
+  "ops": [["build", "A B C _ D E _ _ F"], ["build", "A _ _ D"], ["levelorder"]],
+  "at": { "op": -1, "step": 0 }
+}

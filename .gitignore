@@ -4,3 +4,6 @@ playwright-report/
 test-results/
 .DS_Store
 *.local
+
+# Agent worktrees (separate checkouts, never committed)
+.claude/worktrees/

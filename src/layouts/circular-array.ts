@@ -69,6 +69,8 @@ interface Geometry {
   cell(i: number): Box;
   index(i: number): Point;
   indexSize: number;
+  /** Multiplier for label sizes, so a long row still has readable text on a phone. */
+  font: number;
   pointer(i: number, which: 'front' | 'rear', text: string): PointerGeometry;
   /** Row labels carry their values ("front = 3"); ring labels stay short to fit side by side. */
   pointerText(which: 'front' | 'rear', value: number): string;
@@ -89,6 +91,10 @@ function exitDistance(o: Point, u: Point, b: Box): number {
 }
 
 const textWidth = (text: string, size: number) => text.length * size * 0.6;
+
+/** A value's font size, scaled up for long rows but never wider than the space it sits in. */
+const fit = (text: string, scale: number, room: number) =>
+  Math.min(valueSize(text) * scale, (room - 8) / (0.6 * Math.max(1, text.length)));
 
 /**
  * The ring: index 0 at the top, indices increasing clockwise, index labels inside the ring,
@@ -120,6 +126,7 @@ function ring(n: number): Geometry {
       return { x: cx + d * u.x, y: cy + d * u.y + 5 };
     },
     indexSize: 15,
+    font: 1,
     pointer(i, which, text) {
       const a = angle(i);
       const u = { x: Math.cos(a), y: Math.sin(a) };
@@ -161,24 +168,38 @@ function ring(n: number): Geometry {
   };
 }
 
+/**
+ * On a phone the stage's zoom buttons cover the top right corner of the drawing: about 34 px
+ * of a 362 px wide picture. In scene units that grows with the drawing's width.
+ */
+export const zoomButtonsHeight = (width: number) => Math.ceil((34 * width) / 362);
+
 function row(n: number, readouts: number): Geometry {
   const x0 = 46;
   const w = 62;
   const h = 50;
-  const y0 = 156;
+  const width = x0 + n * w + 46;
+  // Keep the value boxes (and their labels) below the zoom buttons.
+  const y0 = Math.max(156, zoomButtonsHeight(width) + 150);
   const xOf = (i: number) => x0 + i * w;
   const right = xOf(n);
   const under = y0 + h + 116;
   const mid = y0 + h - 10;
+  // Past 8 cells a phone shrinks the row below readable sizes, so the labels grow with it.
+  const font = Math.max(1, width / 588);
   return {
     cell: (i) => ({ x: xOf(i), y: y0, w, h }),
     index: (i) => ({ x: xOf(i) + w / 2, y: y0 + h + 21 }),
     indexSize: 15,
-    pointer(i, which) {
+    font,
+    pointer(i, which, text) {
       const x = xOf(i) + w / 2;
+      // Labels at either end stay inside the dashed return path.
+      const half = textWidth(text, LABEL * font) / 2;
+      const tx = Math.max(x0 - 16 + half, Math.min(right + 16 - half, x));
       return which === 'front'
-        ? { x1: x, y1: y0 - 42, x2: x, y2: y0 - 6, tx: x, ty: y0 - 50 }
-        : { x1: x, y1: y0 + h + 72, x2: x, y2: y0 + h + 30, tx: x, ty: y0 + h + 92 };
+        ? { x1: x, y1: y0 - 42, x2: x, y2: y0 - 6, tx, ty: y0 - 50 }
+        : { x1: x, y1: y0 + h + 72, x2: x, y2: y0 + h + 30, tx, ty: y0 + h + 92 };
     },
     pointerText: (which, value) => `${which} = ${value}`,
     readout: (k) => ({ x: x0 + k * 170, y: under + 36, anchor: 'start' }),
@@ -201,6 +222,7 @@ export function drawCircular(d: CircularDrawing): { shapes: Shape[]; bounds: Bou
   const n = d.capacity;
   const g = d.layout === 'row' ? row(n, d.readouts.length) : ring(n);
   const role = (id: string) => d.roles.get(id);
+  const f = g.font;
   const shapes: Shape[] = [];
 
   // The wraparound sits underneath everything else.
@@ -237,7 +259,7 @@ export function drawCircular(d: CircularDrawing): { shapes: Shape[]; bounds: Bou
       x: ix.x,
       y: ix.y,
       text: String(i),
-      size: g.indexSize,
+      size: g.indexSize * f,
       anchor: 'middle',
       cls: 'index',
       mono: true,
@@ -251,7 +273,7 @@ export function drawCircular(d: CircularDrawing): { shapes: Shape[]; bounds: Bou
         x: c.x + c.w / 2,
         y: c.y + c.h / 2 + 7,
         text,
-        size: valueSize(text),
+        size: fit(text, f, c.w),
         anchor: 'middle',
         weight: 'bold',
         role: role(`v${slot.uid}`) ?? (live ? undefined : 'stale'),
@@ -265,7 +287,7 @@ export function drawCircular(d: CircularDrawing): { shapes: Shape[]; bounds: Bou
       id: 'name',
       ...g.name,
       text: 'A',
-      size: 16,
+      size: 16 * f,
       cls: 'label',
       mono: true,
     });
@@ -290,7 +312,7 @@ export function drawCircular(d: CircularDrawing): { shapes: Shape[]; bounds: Bou
       x: p.tx,
       y: p.ty,
       text,
-      size: LABEL,
+      size: LABEL * f,
       anchor: 'middle',
       mono: true,
       role: role(which),
@@ -306,7 +328,7 @@ export function drawCircular(d: CircularDrawing): { shapes: Shape[]; bounds: Bou
       x: at.x,
       y: at.y,
       text: r.text,
-      size: LABEL,
+      size: LABEL * f,
       anchor: at.anchor,
       mono: true,
       role: role(r.id),
@@ -336,7 +358,7 @@ export function drawCircular(d: CircularDrawing): { shapes: Shape[]; bounds: Bou
         x: box.x,
         y: box.y - 32,
         text: 'x',
-        size: 14,
+        size: 14 * f,
         anchor: 'middle',
         cls: 'label',
         mono: true,
@@ -347,7 +369,7 @@ export function drawCircular(d: CircularDrawing): { shapes: Shape[]; bounds: Bou
         x: box.x,
         y: box.y + 3,
         text,
-        size: valueSize(text),
+        size: fit(text, f, BOX_W),
         anchor: 'middle',
         weight: 'bold',
         role: role(`v${uid}`),
@@ -378,7 +400,7 @@ export function drawCircular(d: CircularDrawing): { shapes: Shape[]; bounds: Bou
         x: box.x,
         y: box.y - 32,
         text: label,
-        size: 14,
+        size: 14 * f,
         anchor: 'middle',
         cls: 'label',
         mono: true,
@@ -389,7 +411,7 @@ export function drawCircular(d: CircularDrawing): { shapes: Shape[]; bounds: Bou
         x: box.x,
         y: box.y + 3,
         text,
-        size: valueSize(text),
+        size: fit(text, f, BOX_W),
         anchor: 'middle',
         weight: 'bold',
         role: role('out'),

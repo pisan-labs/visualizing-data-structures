@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "recursion-dag",
+  "id": "fib-five",
+  "title": "fib(5): 15 calls, 6 subproblems",
+  "notes": "The tree draws every call; the DAG draws each subproblem once, with an arrow for each call it makes. 6 boxes and 8 arrows: with a memo, the same recursion makes 9 calls.",
+  "settings": { "problem": "fib" },
+  "seed": 1,
+  "ops": [["call", "5"]],
+  "at": { "op": -1, "step": 0 }
+}

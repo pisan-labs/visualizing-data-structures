@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "recursion-dag",
+  "id": "fib-eight",
+  "title": "fib(8): 67 calls against 9 subproblems",
+  "notes": "The tree grows by about 1.6 times for each step up in n. The DAG grows by one box and two arrows: 15 calls with a memo.",
+  "settings": { "problem": "fib" },
+  "seed": 1,
+  "ops": [["call", "8"]],
+  "at": { "op": -1, "step": 0 }
+}

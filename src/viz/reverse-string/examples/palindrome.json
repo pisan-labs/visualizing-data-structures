@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "reverse-string",
+  "id": "palindrome",
+  "title": "A palindrome comes back the same",
+  "notes": "LEVEL reads the same both ways, so every swap trades a letter for an equal one. The work is the same as for any five letters.",
+  "settings": { "variant": "swap" },
+  "seed": 1,
+  "ops": [["reverse", "LEVEL"]],
+  "at": { "op": -1, "step": 0 }
+}

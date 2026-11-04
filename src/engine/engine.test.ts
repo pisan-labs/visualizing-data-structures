@@ -10,6 +10,8 @@ import {
   validateExample,
 } from './example';
 import { deriveSeed, makeRng } from './rng';
+import { parseScript, toScript } from './script';
+import type { OpCall } from './types';
 import { Timeline } from './timeline';
 
 describe('timeline', () => {
@@ -142,5 +144,29 @@ describe('interpolate', () => {
   it('lands exactly on the target', () => {
     const end = interpolate(a, b, 1);
     expect(end.shapes.map((s) => s.id).sort()).toEqual(['new', 'r']);
+  });
+});
+
+describe('typed scripts', () => {
+  it('parses operations by name or label, bulk values, comments and semicolons', () => {
+    const r = parseScript(stackArray, '# warm up\npush 10 20; Pop\npeek\n\nclear');
+    expect(r).toEqual({ calls: [['push', 10], ['push', 20], ['pop'], ['peek'], ['clear']] });
+  });
+
+  it('round-trips through toScript', () => {
+    const calls: OpCall[] = [['push', 'S'], ['push', 3], ['pop']];
+    expect(parseScript(stackArray, toScript(calls))).toEqual({ calls });
+  });
+
+  it('explains what is wrong, with the line number', () => {
+    expect(parseScript(stackArray, 'push 1\nfly 2')).toEqual({
+      error: expect.stringMatching(/^Line 2: "fly" is not an operation/),
+    });
+    expect(parseScript(stackArray, 'pop 3')).toEqual({ error: 'Line 1: pop takes no values.' });
+    expect(parseScript(stackArray, 'push')).toEqual({ error: 'Line 1: push needs a value.' });
+    expect(parseScript(stackArray, 'push toolongvalue')).toEqual({
+      error: expect.stringMatching(/^Line 1: "toolongvalue": Keep values to 6/),
+    });
+    expect(parseScript(stackArray, '  ')).toEqual({ error: 'The script is empty.' });
   });
 });

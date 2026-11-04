@@ -1,4 +1,4 @@
-import { vizzes } from './registry';
+import { liveIds } from './registry';
 
 /**
  * Everything planned for the site, by family (PLAN.md Appendix B). Items whose id is in the
@@ -13,14 +13,24 @@ export interface CatalogItem {
   advanced?: boolean;
 }
 
+export type Pathway = 'structures' | 'algorithms';
+
 export interface Family {
   name: string;
+  /** Which course pathways list this family. */
+  pathways: Pathway[];
   items: CatalogItem[];
 }
+
+export const pathways: { id: Pathway; label: string }[] = [
+  { id: 'structures', label: 'Data structures' },
+  { id: 'algorithms', label: 'Algorithms' },
+];
 
 export const families: Family[] = [
   {
     name: 'Stacks, queues and arrays',
+    pathways: ['structures'],
     items: [
       { id: 'stack-array', title: 'Stack (array)' },
       { id: 'stack-list', title: 'Stack (linked list)' },
@@ -34,6 +44,7 @@ export const families: Family[] = [
   },
   {
     name: 'Linked lists',
+    pathways: ['structures'],
     items: [
       { id: 'linked-list', title: 'Singly linked list', added: true },
       { id: 'doubly-linked-list', title: 'Doubly linked list', added: true },
@@ -43,6 +54,7 @@ export const families: Family[] = [
   },
   {
     name: 'Searching and sorting',
+    pathways: ['algorithms'],
     items: [
       { id: 'linear-search', title: 'Linear search', added: true },
       { id: 'binary-search', title: 'Binary search (and its variants)', added: true },
@@ -62,6 +74,7 @@ export const families: Family[] = [
   },
   {
     name: 'Trees',
+    pathways: ['structures'],
     items: [
       { id: 'binary-tree', title: 'Binary tree and traversals', added: true },
       { id: 'bst', title: 'Binary search tree' },
@@ -77,6 +90,7 @@ export const families: Family[] = [
   },
   {
     name: 'Heaps and priority queues',
+    pathways: ['structures'],
     items: [
       { id: 'binary-heap', title: 'Binary heap' },
       { id: 'leftist-heap', title: 'Leftist heap' },
@@ -87,6 +101,7 @@ export const families: Family[] = [
   },
   {
     name: 'Hashing and maps',
+    pathways: ['structures'],
     items: [
       { id: 'hash-chaining', title: 'Separate chaining' },
       { id: 'hash-open', title: 'Open addressing (linear, quadratic, double)' },
@@ -97,6 +112,7 @@ export const families: Family[] = [
   },
   {
     name: 'Recursion',
+    pathways: ['structures', 'algorithms'],
     items: [
       { id: 'factorial', title: 'Factorial' },
       { id: 'reverse-string', title: 'Reversing a string' },
@@ -113,6 +129,7 @@ export const families: Family[] = [
   },
   {
     name: 'Dynamic programming',
+    pathways: ['algorithms'],
     items: [
       { id: 'dp-fibonacci', title: 'Fibonacci numbers' },
       { id: 'dp-change', title: 'Making change' },
@@ -123,6 +140,7 @@ export const families: Family[] = [
   },
   {
     name: 'Foundations',
+    pathways: ['structures', 'algorithms'],
     items: [
       { id: 'memory-model', title: 'Memory model: values, references, aliasing', added: true },
       { id: 'big-o-lab', title: 'Big-O growth lab', added: true },
@@ -132,6 +150,7 @@ export const families: Family[] = [
   },
   {
     name: 'Strings',
+    pathways: ['algorithms'],
     items: [
       { id: 'brute-force-search', title: 'Brute-force string search', added: true },
       { id: 'kmp', title: 'Knuth-Morris-Pratt' },
@@ -146,6 +165,7 @@ export const families: Family[] = [
   },
   {
     name: 'Graphs',
+    pathways: ['structures', 'algorithms'],
     items: [
       { id: 'graph-representations', title: 'Graph representations', added: true },
       { id: 'bfs', title: 'Breadth-first search' },
@@ -170,6 +190,7 @@ export const families: Family[] = [
   },
   {
     name: 'Flow and matching',
+    pathways: ['algorithms'],
     items: [
       { id: 'max-flow', title: 'Maximum flow and minimum cut', added: true },
       { id: 'bipartite-matching', title: 'Bipartite matching', added: true },
@@ -185,6 +206,7 @@ export const families: Family[] = [
   },
   {
     name: 'Range queries',
+    pathways: ['structures'],
     items: [
       { id: 'range-queries', title: 'Prefix sums and sparse tables', added: true, advanced: true },
       { id: 'fenwick-tree', title: 'Fenwick tree', added: true, advanced: true },
@@ -193,6 +215,7 @@ export const families: Family[] = [
   },
   {
     name: 'Geometry',
+    pathways: ['algorithms'],
     items: [
       { id: 'convex-hull', title: 'Convex hull', added: true },
       { id: 'polygon', title: 'Polygon algorithms', added: true, advanced: true },
@@ -205,6 +228,7 @@ export const families: Family[] = [
   },
   {
     name: 'Hard problems',
+    pathways: ['algorithms'],
     items: [
       { id: 'np-reductions', title: 'NP-completeness reductions map', added: true },
       {
@@ -219,4 +243,4 @@ export const families: Family[] = [
   },
 ];
 
-export const isLive = (id: string): boolean => vizzes.some((v) => v.id === id);
+export const isLive = (id: string): boolean => liveIds.includes(id);

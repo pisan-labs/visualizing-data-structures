@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "viz": "two-four-tree",
+  "id": "transfer-left",
+  "title": "Underflow fixed by a transfer from the left",
+  "notes": "Deleting 40 empties its leaf. The left sibling [10 20] is a 3-node, so it sends 20 up and the parent sends 30 down.",
+  "settings": {
+    "swap": "pred"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["insert", 90],
+    ["delete", 50],
+    ["delete", 40]
+  ],
+  "at": {
+    "op": 9,
+    "step": 99
+  }
+}

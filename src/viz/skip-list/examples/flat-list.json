@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "viz": "skip-list",
+  "id": "flat-list",
+  "title": "Unlucky flips: a skip list that is just a list",
+  "notes": "Every flip came up tails, so every node is 1 level tall. search(90) has no express lane and walks the whole list: the O(n) worst case.",
+  "settings": {
+    "p": "1/4",
+    "maxLevel": 5,
+    "draw": "across"
+  },
+  "seed": 5,
+  "ops": [
+    ["insert", 30],
+    ["insert", 10],
+    ["insert", 70],
+    ["insert", 50],
+    ["insert", 90],
+    ["insert", 20],
+    ["insert", 60],
+    ["insert", 40],
+    ["insert", 80],
+    ["search", 90]
+  ],
+  "at": {
+    "op": 8,
+    "step": 99
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "viz": "skip-list",
+  "id": "delete-tallest",
+  "title": "Deleting the tallest node lowers the list",
+  "notes": "90 is the only node 3 levels tall. When it goes, the head has nothing on level 3, so the list drops to 2 levels.",
+  "settings": {
+    "p": "1/2",
+    "maxLevel": 5,
+    "draw": "across"
+  },
+  "seed": 11,
+  "ops": [
+    ["insert", 30],
+    ["insert", 10],
+    ["insert", 70],
+    ["insert", 50],
+    ["insert", 90],
+    ["insert", 20],
+    ["insert", 60],
+    ["insert", 40],
+    ["insert", 80],
+    ["delete", 90]
+  ],
+  "at": {
+    "op": 8,
+    "step": 99
+  }
+}

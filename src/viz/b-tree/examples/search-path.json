@@ -1,0 +1,41 @@
+{
+  "format": 1,
+  "viz": "b-tree",
+  "id": "search-path",
+  "title": "Search reads one node per level",
+  "notes": "Three searches on a tree of height 2: 90 is in the root, 170 is in a leaf, and 75 is not there at all. None reads more than 3 nodes.",
+  "settings": {
+    "t": "3",
+    "split": "down"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["insert", 90],
+    ["insert", 100],
+    ["insert", 110],
+    ["insert", 120],
+    ["insert", 130],
+    ["insert", 140],
+    ["insert", 150],
+    ["insert", 160],
+    ["insert", 170],
+    ["insert", 180],
+    ["insert", 190],
+    ["insert", 200],
+    ["search", 90],
+    ["search", 170],
+    ["search", 75]
+  ],
+  "at": {
+    "op": 19,
+    "step": 99
+  }
+}

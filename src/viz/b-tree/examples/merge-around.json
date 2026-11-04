@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "viz": "b-tree",
+  "id": "merge-around",
+  "title": "Case 2c: merge the children around the key",
+  "notes": "Both children around 30 have only t - 1 = 2 keys, so neither can give one up. 30 and the right child merge into the left child, and 30 is deleted from there.",
+  "settings": {
+    "t": "3",
+    "split": "down"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80],
+    ["insert", 90],
+    ["delete", 30]
+  ],
+  "at": {
+    "op": 8,
+    "step": 99
+  }
+}

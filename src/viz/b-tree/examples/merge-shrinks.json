@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "viz": "b-tree",
+  "id": "merge-shrinks",
+  "title": "Merges on the way down make the tree shorter",
+  "notes": "Every node on the way to 10 has the minimum, 1 key. The first merge takes the root's only key, so the merged node becomes the root and the tree loses a level. A second merge follows one level down.",
+  "settings": {
+    "t": "2",
+    "split": "down"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 70],
+    ["insert", 90],
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 60],
+    ["insert", 40],
+    ["insert", 30],
+    ["insert", 50],
+    ["insert", 80],
+    ["delete", 10]
+  ],
+  "at": {
+    "op": 8,
+    "step": 99
+  }
+}

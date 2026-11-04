@@ -334,16 +334,22 @@
 
   .tabs {
     padding: 0 0 12px;
+    container-type: inline-size;
   }
 
+  /* Label widths depend on the fonts a device has. If the tabs do not fit in one row, they wrap
+     to a second row instead of widening the page. */
   .tablist {
     display: flex;
+    flex-wrap: wrap;
     border-bottom: 1px solid var(--line);
   }
 
   [role='tab'] {
     flex: 1;
     min-height: 44px;
+    padding: 0 8px;
+    overflow-wrap: break-word;
     border: 0;
     border-bottom: 3px solid transparent;
     background: none;
@@ -354,6 +360,15 @@
   [role='tab'][aria-selected='true'] {
     color: var(--text);
     border-bottom-color: var(--accent);
+  }
+
+  /* Six labels need about 520 pixels in one row with a wide font. A narrower card, as on a
+     phone, shows the tabs in rows of three. */
+  @container (max-width: 560px) {
+    .tablist {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 
   .panel {

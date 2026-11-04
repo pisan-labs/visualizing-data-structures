@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { stackArray } from '../viz/stack-array';
 import { interpolate } from '../render/interpolate';
-import type { Scene } from '../render/scene';
+import { shapesBounds, type Scene } from '../render/scene';
 import {
   decodeExample,
   encodeExample,
@@ -193,5 +193,21 @@ describe('practice sets', () => {
     expect(isCorrect({ kind: 'sequence', value: ['10', 'A'] }, '10')).toBe(false);
     expect(isCorrect({ kind: 'sequence', value: [] }, '  ')).toBe(true);
     expect(answerText({ kind: 'sequence', value: [] })).toBe('(nothing)');
+  });
+});
+
+describe('shapesBounds', () => {
+  it('boxes what is drawn, skipping invisible shapes', () => {
+    expect(
+      shapesBounds(
+        [
+          { kind: 'rect', id: 'a', x: 10, y: 20, w: 30, h: 10 },
+          { kind: 'circle', id: 'b', x: 100, y: 50, r: 5 },
+          { kind: 'text', id: 'gone', x: 900, y: 900, text: 'x', opacity: 0 },
+        ],
+        0,
+      ),
+    ).toEqual({ x: 10, y: 20, w: 95, h: 35 });
+    expect(shapesBounds([])).toBeNull();
   });
 });

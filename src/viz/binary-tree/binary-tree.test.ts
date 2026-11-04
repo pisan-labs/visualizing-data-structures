@@ -261,3 +261,88 @@ describe('binary tree', () => {
     }
   });
 });
+
+/** Read a level-order list the LeetCode way, written independently of the model. */
+function refFromList(text: string): Ref | null {
+  const words = text.split(' ');
+  if (words[0] === '_') return null;
+  const node = (w: string): Ref => ({ value: Number(w), left: null, right: null });
+  const root = node(words[0]!);
+  const queue = [root];
+  for (let i = 1; i < words.length && queue.length; i += 2) {
+    const x = queue.shift()!;
+    for (const [side, w] of [
+      ['left', words[i]],
+      ['right', words[i + 1]],
+    ] as const) {
+      if (w === undefined || w === '_') continue;
+      x[side] = node(w);
+      queue.push(x[side]!);
+    }
+  }
+  return root;
+}
+
+describe('binary tree practice', () => {
+  const kinds = binaryTree.practice!;
+
+  it('offers four kinds of question', () => {
+    expect(kinds.map((k) => k.id)).toEqual([
+      'traversal',
+      'which-list',
+      'stack-depth',
+      'queue-peak',
+    ]);
+  });
+
+  it('gets every answer right, checked against the reference tree', () => {
+    for (let seed = 1; seed <= 60; seed++) {
+      for (const k of kinds) {
+        const q = k.make(makeRng(seed));
+        const ref = refFromList(String(q.setup[0]![1]));
+        const a = q.answer;
+        if (k.id === 'traversal') {
+          const walk = q.watch![0]![0] as Order | 'levelorder';
+          expect(a).toEqual({ kind: 'sequence', value: REF[walk](ref).map(String) });
+        } else if (k.id === 'which-list') {
+          if (a.kind !== 'choice') throw new Error('which-list is a choice');
+          expect(a.options[a.correct]).toBe(refList(ref));
+          a.options.forEach((o, i) => {
+            if (i !== a.correct) expect(refList(refFromList(o))).not.toBe(refList(ref));
+          });
+        } else if (k.id === 'stack-depth') {
+          expect(a).toEqual({ kind: 'number', value: refHeight(ref) + 1 });
+        } else {
+          // The most nodes ever waiting: the root at first, then after each enqueue.
+          let peak = 1;
+          const queue = [ref!];
+          while (queue.length) {
+            const x = queue.shift()!;
+            for (const c of [x.left, x.right]) {
+              if (!c) continue;
+              queue.push(c);
+              peak = Math.max(peak, queue.length);
+            }
+          }
+          expect(a).toEqual({ kind: 'number', value: peak });
+        }
+      }
+    }
+  });
+
+  it('shows the answer by playing the asked operation after the setup', () => {
+    for (const k of kinds) {
+      const q = k.make(makeRng(7));
+      const t = new Timeline(
+        binaryTree,
+        { ...binaryTree.defaults, ...q.settings } as BTSettings,
+        1,
+        [...q.setup, ...q.watch!],
+      );
+      expect(t.entries.map((e) => e.call[0])).toEqual([
+        ...q.setup.map((c) => c[0]),
+        ...q.watch!.map((c) => c[0]),
+      ]);
+    }
+  });
+});

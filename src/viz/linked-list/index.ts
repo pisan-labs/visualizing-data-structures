@@ -1,5 +1,3 @@
-import { Timeline } from '../../engine/timeline';
-import type { Entry } from '../../engine/timeline';
 import type { OpCall, SavedExample, Settings, Value, VizDef } from '../../engine/types';
 import cppSource from './code/cpp/linked_list.hpp?raw';
 import javaSource from './code/java/SinglyLinkedList.java?raw';
@@ -26,6 +24,7 @@ import {
   type ListSettings,
   type ListState,
 } from './model';
+import { listScript } from './driver';
 import { view } from './view';
 
 const each = (op: string, vs: Value[]): OpCall[] => vs.map((v) => [op, v] as OpCall);
@@ -187,7 +186,8 @@ export const linkedList: VizDef<ListState, ListSettings, ListExtra> = {
     python: pythonSource,
     java: javaSource,
     cpp: cppSource,
-    script: (calls: OpCall[], settings: Settings) => codeScript(calls, settings as ListSettings),
+    script: (calls: OpCall[], settings: Settings) =>
+      listScript(linkedList, calls, settings as ListSettings, values),
   },
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [
@@ -200,50 +200,5 @@ export const linkedList: VizDef<ListState, ListSettings, ListExtra> = {
     boundaries,
   ] as unknown as SavedExample[],
 };
-
-const isIndex = (v: Value | undefined) => typeof v === 'number' && Number.isInteger(v);
-
-/** Calls the typed code can take: an index must be a whole number (an int in Java and C++). */
-function runnable([op, a, b]: OpCall): boolean {
-  if (op === 'insertAt') return isIndex(a) && b !== undefined;
-  if (op === 'removeAt' || op === 'get') return isIndex(a);
-  return true;
-}
-
-/** The driver's line for one operation, from the model's last step. */
-function result(e: Entry<ListState, ListExtra>): string {
-  const last = e.steps[e.steps.length - 1]!;
-  const failed = last.lines.some((l) => l.endsWith('.error'));
-  const returned = String(last.vars?.returned);
-  switch (e.call[0]) {
-    case 'insertAt':
-      return failed ? 'index error' : 'ok';
-    case 'removeHead':
-    case 'removeTail':
-      return failed ? 'empty' : returned;
-    case 'removeAt':
-    case 'get':
-      return failed ? 'index error' : returned;
-    case 'removeValue':
-    case 'search':
-      return returned;
-    default:
-      return 'ok';
-  }
-}
-
-/**
- * Driver protocol for the code tabs: one operation per line ("insertAt 2 42"), then "print".
- * Results: inserts and reverse -> ok | index error; removeHead/removeTail -> value | empty;
- * removeAt/get -> value | index error; removeValue -> true | false; search -> index or -1;
- * print -> the values from head, or "empty".
- */
-function codeScript(calls: OpCall[], settings: ListSettings) {
-  const usable = calls.filter(runnable);
-  const t = new Timeline(linkedList, settings, 1, usable);
-  const input = [...usable.map((c) => c.join(' ')), 'print'];
-  const expected = [...t.entries.map(result), values(t.endState()).join(' ') || 'empty'];
-  return { input, expected };
-}
 
 export default linkedList;

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "quick-sort",
+  "id": "median-of-three",
+  "title": "Median of three fixes sorted input",
+  "notes": "Same sorted values, but the pivot is the median of the first, middle and last values. On sorted input that is the middle value, so every split is even and the calls stay shallow.",
+  "settings": { "partition": "lomuto", "pivot": "median3", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "10 20 30 40 50 60 70 80"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

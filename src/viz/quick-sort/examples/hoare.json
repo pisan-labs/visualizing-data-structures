@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "quick-sort",
+  "id": "hoare",
+  "title": "Hoare's partition: two indices walk toward each other",
+  "notes": "The pivot is the first value. j walks left past bigger values, i walks right past smaller ones, and each time both stop they swap. Then switch to Lomuto's partition and compare: Lomuto makes 13 swaps to Hoare's 7, but only 16 comparisons to Hoare's 37, because Hoare spends three or four comparisons on every range of two values.",
+  "settings": { "partition": "hoare", "pivot": "first", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "50 90 10 80 20 70 30 60"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

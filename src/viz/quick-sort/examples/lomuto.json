@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "quick-sort",
+  "id": "lomuto",
+  "title": "Partition around the last value",
+  "notes": "CLRS's version. The pivot is the last value of the range. j looks at every other value; the ones that are not bigger than the pivot are swapped into the growing part on the left. Then the pivot moves between the two parts, into its final place.",
+  "settings": { "partition": "lomuto", "pivot": "last", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "38 81 22 57 13 64 49 30"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

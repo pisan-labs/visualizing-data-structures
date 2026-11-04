@@ -244,7 +244,8 @@ export function barsGeometry(frame: BarsFrame): BarsGeometry {
     row: (id) => geo.get(id) ?? geo.get(rows[0]!)!,
     callsTop,
     callsHeight,
-    regionLane: (k) => regionTop + 22 + k * REGION_LANE,
+    // Lane 0 is the one right above the bands; extra lanes stack upward.
+    regionLane: (k) => regionTop + 22 + ((frame.regionLanes ?? 1) - 1 - k) * REGION_LANE,
     heldTop,
     barHeight,
   };

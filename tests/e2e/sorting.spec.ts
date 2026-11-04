@@ -41,7 +41,8 @@ async function toEnd(page: Page) {
 }
 
 async function option(page: Page, label: string) {
-  await page.getByText('Options').click();
+  const panel = page.locator('details.options');
+  if ((await panel.getAttribute('open')) === null) await panel.locator('summary').click();
   await page.getByLabel(label).check();
 }
 
@@ -207,5 +208,32 @@ test.describe('merge sort', () => {
     await loadExample(page, 'Bottom-up: runs of 1, 2, 4, 8');
     await toEnd(page);
     await expect(narration(page)).toContainText('Sorted: 8, 19, 25, 33, 47, 52, 61, 74.');
+  });
+});
+
+test.describe('quicksort', () => {
+  test.beforeEach(({ page }) => open(page, 'quick-sort', 'Quicksort'));
+
+  test('partitions around the pivot and places it', async ({ page }) => {
+    await load(page, '30 10 20');
+    await run(page, 'Sort');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('Sorted: 10, 20, 30.');
+    await backTo(page, 'Partition done: 20 is in its final place, A[1].', 30);
+    await expect(page.locator('.vars')).toContainText('depth');
+  });
+
+  test('sorted input with the last pivot is the worst case', async ({ page }) => {
+    await loadExample(page, 'Sorted input, last value as pivot: the worst case');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('28 comparisons');
+    await expect(narration(page)).toContainText('7 levels deep');
+  });
+
+  test("Hoare's partition changes the code", async ({ page }) => {
+    await option(page, "Hoare's: two indices walk toward each other");
+    await expect(code(page)).toContainText('hoarePartition(A, p, r)');
+    await option(page, 'Median of first, middle and last');
+    await expect(code(page)).toContainText('the median of A[p], A[mid], A[r]');
   });
 });

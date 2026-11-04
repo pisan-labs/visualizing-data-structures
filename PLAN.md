@@ -374,7 +374,8 @@ The About page credits Galles and Lucet as inspiration.
 | 23 | Pathways | "Data structures" and "Algorithms" (12.9) |
 | 24 | Feedback | Prefilled GitHub issue link on every page; Issues turned on by Yusuf (12.10) |
 | 25 | Time zone | UTC+1 assumed for reports (12.11) |
-| 26 | Deploys | Work goes to `dev` (CI runs there); `main` is what Netlify publishes and moves only when Yusuf says "deploy" (`git push origin dev:main`). Each production deploy costs 15 Netlify credits |
+| 26 | Deploys | Work goes to `dev` (CI runs there); `main` is what Netlify publishes and moves only when Yusuf says "deploy" (`git push origin dev:main`). Each production deploy costs 15 Netlify credits. Replaced by 27 |
+| 27 | Branches (later on 2026-11-04) | All work goes to `main`, as in Yusuf's other projects; `dev` is retired. Yusuf deploys to Netlify by hand for now |
 
 ## 12. Questions asked 2026-11-04
 

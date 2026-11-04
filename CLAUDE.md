@@ -24,10 +24,9 @@ everything on every push; Netlify builds and deploys `main` (`netlify.toml`).
 
 ## Branches and deploys
 
-- Work on `dev` and push `dev`. CI runs on `dev` and `main`.
-- `main` is what Netlify publishes. Each production deploy costs Netlify credits, so move `main`
-  only when Yusuf says "deploy": `git push origin dev:main` (a fast-forward of tested work).
-- Agent worktrees branch from `dev` and are merged back into `dev` by the lead.
+- Work on `main` and push `main`, as in Yusuf's other projects. CI runs on every push.
+- Yusuf deploys to Netlify by hand for now. Never start, publish or roll back a Netlify deploy.
+- Agent worktrees branch from `main` and are merged back into `main` by the lead.
 
 ## Architecture
 

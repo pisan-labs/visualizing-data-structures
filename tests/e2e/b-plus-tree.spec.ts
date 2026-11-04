@@ -110,14 +110,16 @@ test('a twenty-key tree stays readable', async ({ page }) => {
   await op(page, 'Insert', '15 82 47 3 66 29 91 54 8 73 38 60 21 95 12 44 77 33 58 86');
   await toEnd(page);
   await expect(stage(page)).toHaveAttribute('aria-label', /20 keys/);
-  const heights = await stage(page)
-    .locator('text.shape')
-    .evaluateAll((els) =>
-      els
-        .filter((e) => /^-?\d+$/.test(e.textContent ?? ''))
-        .map((e) => e.getBoundingClientRect().height),
-    );
-  expect(Math.min(...heights)).toBeGreaterThanOrEqual(9);
+  // Measure again until the last step has finished animating.
+  const heights = () =>
+    stage(page)
+      .locator('text.shape')
+      .evaluateAll((els) =>
+        els
+          .filter((e) => /^-?\d+$/.test(e.textContent ?? ''))
+          .map((e) => e.getBoundingClientRect().height),
+      );
+  await expect.poll(async () => Math.min(...(await heights()))).toBeGreaterThanOrEqual(9);
 });
 
 test('no axe violations mid-range in the contrast theme, and no sideways scroll', async ({

@@ -29,7 +29,7 @@ async function example(page: Page, title: string) {
     .click();
 }
 
-/** The smallest key label on the stage, in CSS pixels. */
+/** The smallest key label on the stage, in CSS pixels. Poll it: the last step may still be animating. */
 async function smallestKey(page: Page): Promise<number> {
   const heights = await stage(page)
     .locator('text.shape')
@@ -100,7 +100,7 @@ test('drawing the list down keeps a long list readable', async ({ page }) => {
   // The drawing itself is taller than wide (the stage letterboxes it).
   const [, , w, h] = ((await stage(page).getAttribute('viewBox')) ?? '').split(' ').map(Number);
   expect(h!).toBeGreaterThan(w!);
-  expect(await smallestKey(page)).toBeGreaterThanOrEqual(9);
+  await expect.poll(() => smallestKey(page)).toBeGreaterThanOrEqual(9);
 });
 
 test('fourteen keys across stay readable', async ({ page }) => {
@@ -108,7 +108,7 @@ test('fourteen keys across stay readable', async ({ page }) => {
   await op(page, 'Insert', '15 82 47 3 66 29 91 54 8 73 38 60 21 95');
   await toEnd(page);
   await expect(stage(page)).toHaveAttribute('aria-label', /14 keys/);
-  expect(await smallestKey(page)).toBeGreaterThanOrEqual(9);
+  await expect.poll(() => smallestKey(page)).toBeGreaterThanOrEqual(9);
 });
 
 test('a practice set grades an answer and shows it on the list', async ({ page }) => {

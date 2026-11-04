@@ -3,6 +3,7 @@
  * keys, the hash functions with their arithmetic spelled out for narration, and small numeric
  * helpers.
  */
+import type { Rng } from '../../engine/rng';
 import type { Value } from '../../engine/types';
 
 /** A key: a whole number, or a short word when a string hash is chosen. */
@@ -100,10 +101,24 @@ export function readKey(raw: Value, fn: HashFn): KeyArg | Error {
 
 /** Whole-number keys only (open addressing, buckets, rehashing). */
 export function readNumber(raw: Value): number | Error {
-  const a = readKey(raw, 'division');
-  if (a instanceof Error) return a;
-  if (a.value !== null) return new Error('This table stores keys only. Type a number such as 42.');
-  return a.key as number;
+  const text = String(raw).trim();
+  if (!DIGITS.test(text))
+    return new Error(`Keys here are whole numbers from 0 to ${MAX_KEY}, such as 42.`);
+  const k = Number(text);
+  return k > MAX_KEY ? new Error(`Keep keys between 0 and ${MAX_KEY}.`) : k;
+}
+
+/** The input box's parser for pages that take whole numbers only. */
+export function parseNumberInput(token: string): Value | Error {
+  return token.trim() ? readNumber(token) : new Error('Type a key first.');
+}
+
+/** n different keys from 1 to 99 (more room when n is large). */
+export function distinctKeys(rng: Rng, n: number): number[] {
+  const hi = Math.max(99, 3 * n);
+  const keys = new Set<number>();
+  while (keys.size < n) keys.add(rng.int(1, hi));
+  return [...keys];
 }
 
 /** A key in narration: words in quotes, numbers as they are. */

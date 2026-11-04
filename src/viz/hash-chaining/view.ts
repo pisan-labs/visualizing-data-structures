@@ -4,12 +4,12 @@ import {
   drawNode,
   NODE,
   nodeWidth,
-  valueFontSize,
   type Box,
   type NodeStatus,
   type Pt,
 } from '../../layouts/linked';
 import type { Scene, Shape } from '../../render/scene';
+import { ARG_BAND, argAndFormula } from '../hash-open/grid';
 import {
   describe,
   nid,
@@ -33,7 +33,7 @@ const PITCH = NW + COL_GAP;
 const MARGIN = 14;
 const MIN_W = 440;
 /** Band across the top for the key and its hash. */
-const TOP = 52;
+const TOP = ARG_BAND;
 const LABEL = 16;
 const BUCKET_W = 40;
 const BUCKET_H = 30;
@@ -246,42 +246,9 @@ export function view(step: Step<ChainState, ChainExtra>, settings: ChainSettings
     });
   }
 
-  if (extra.arg) {
-    const { text, uid, error } = extra.arg;
-    const w = Math.max(56, text.length * 11 + 24);
-    const box = { x: MARGIN, y: 12, w, h: 36 };
-    shapes.push({
-      kind: 'rect',
-      id: 'arg-box',
-      ...box,
-      r: 8,
-      cls: 'ghost',
-      role: error ? 'error' : roles.get('arg-box'),
-    });
-    shapes.push({
-      kind: 'text',
-      id: uid === undefined ? 'arg' : `${nid(uid)}.v`,
-      x: box.x + w / 2,
-      y: box.y + box.h / 2 + 6,
-      text,
-      size: valueFontSize(text),
-      anchor: 'middle',
-      weight: 'bold',
-      role: error ? 'error' : undefined,
-    });
-  }
-  if (extra.formula) {
-    const left = extra.arg ? MARGIN + Math.max(56, extra.arg.text.length * 11 + 24) + 12 : MARGIN;
-    shapes.push({
-      kind: 'text',
-      id: 'formula',
-      x: left,
-      y: 36,
-      text: extra.formula,
-      size: 15,
-      mono: true,
-    });
-  }
+  shapes.push(
+    ...argAndFormula(extra.arg, extra.formula, MARGIN, roles.get('arg-box'), (u) => `${nid(u)}.v`),
+  );
 
   return { shapes, bounds: { x: 0, y: 0, w: W, h: H }, label: label(step, settings) };
 }

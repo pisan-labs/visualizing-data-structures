@@ -1,4 +1,3 @@
-import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, SavedExample, Settings, VizDef } from '../../engine/types';
 import cppSource from './code/cpp/chained_hash_table.hpp?raw';
@@ -13,7 +12,7 @@ import oneBucket from './examples/one-bucket.json';
 import patternKeys from './examples/pattern-keys.json';
 import tailInsert from './examples/tail-insert.json';
 import explain from './explain.md?raw';
-import { parseKeyInput, readKey } from './hashing';
+import { distinctKeys, parseKeyInput, readKey } from './hashing';
 import {
   defaults,
   describe,
@@ -28,14 +27,6 @@ import {
 } from './model';
 import { chainingPractice } from './practice';
 import { view } from './view';
-
-/** n different keys from 1 to 99 (more room when n is large). */
-export function distinctKeys(rng: Rng, n: number): number[] {
-  const hi = Math.max(99, 3 * n);
-  const keys = new Set<number>();
-  while (keys.size < n) keys.add(rng.int(1, hi));
-  return [...keys];
-}
 
 const inserts = (keys: number[]): OpCall[] => keys.map((k) => ['insert', k] as OpCall);
 

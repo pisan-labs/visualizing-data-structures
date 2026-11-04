@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "hash-open",
+  "id": "secondary-clustering",
+  "title": "Secondary clustering",
+  "notes": "Quadratic probing jumps around, so no long run forms. But keys that start at the same slot still follow the same path: 44 retraces the probes of 11, 22 and 33 before it finds slot 9. Double hashing avoids this.",
+  "settings": { "m": 11, "probe": "quadratic", "h2": "clrs" },
+  "seed": 1,
+  "ops": [
+    ["insert", 11],
+    ["insert", 22],
+    ["insert", 33],
+    ["insert", 44]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

@@ -140,7 +140,8 @@ describe('singly linked list', () => {
       ),
       { numRuns: 400 },
     );
-  });
+    // Generous: the whole suite runs in parallel and this test runs 400 sequences.
+  }, 60_000);
 
   it('links the new node in before moving head', () => {
     const t = run([

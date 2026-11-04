@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "sorted-array",
+  "id": "bounds",
+  "title": "Lower and upper bound around duplicates",
+  "notes": "The three 20s sit from index 1 up to, but not including, index 4. lowerBound(20) finds where they start, upperBound(20) where they stop, and the difference counts them. lowerBound(25) says where 25 would go.",
+  "settings": { "mode": "sorted", "capacity": 10 },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 20],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["lowerBound", 20],
+    ["upperBound", 20],
+    ["lowerBound", 25],
+    ["upperBound", 99]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

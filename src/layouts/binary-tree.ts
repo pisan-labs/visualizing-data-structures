@@ -9,6 +9,11 @@
  * overlaps, and draws the same subtree the same way wherever it appears, so small changes to
  * a tree move only the nodes near the change. That keeps animations calm.
  *
+ * Plain Reingold-Tilford lets a deeper subtree tuck a node right under a neighboring leaf, where
+ * it looks like that leaf's child. So the outline of every node also keeps the spot where
+ * nilSpot draws each of its missing children: no node of another subtree comes within
+ * `radius + gap` of it sideways. (With `nulls`, the null squares themselves take that room.)
+ *
  * API
  *
  *   layoutBinaryTree(root, { left, right }, options) -> TreeLayout
@@ -119,6 +124,7 @@ export function layoutBinaryTree<Id extends TreeId>(
   const nullDrop = options.nullDrop ?? levelGap * 0.7;
   const half = (id: Id) => (options.width ? options.width(id) : 2 * radius) / 2;
   const lone = radius + gap / 2;
+  const nilDx = nilOffset(radius, gap);
 
   const children = (id: Id): [Item<Id> | null, Item<Id> | null] => {
     const pick = (c: Id | null, side: Side): Item<Id> | null =>
@@ -168,6 +174,23 @@ export function layoutBinaryTree<Id extends TreeId>(
       }
       out.l.push(lo);
       out.r.push(hi);
+    }
+    // Keep the nil spot of each missing child free: a zero-width point one level down, so a
+    // node of a neighboring subtree stays at least radius + gap away from it sideways.
+    if (!options.nulls) {
+      for (const [item, x] of [
+        [a, -nilDx],
+        [b, nilDx],
+      ] as const) {
+        if (item !== null) continue;
+        if (out.l.length < 2) {
+          out.l.push(x);
+          out.r.push(x);
+        } else {
+          out.l[1] = Math.min(out.l[1]!, x);
+          out.r[1] = Math.max(out.r[1]!, x);
+        }
+      }
     }
     return out;
   };
@@ -354,8 +377,20 @@ export function nilSpot<Id extends TreeId>(
 ): { x: number; y: number } {
   const p = layout.nodes.get(parent);
   if (!p) return { x: 0, y: 0 };
-  const dx = (layout.radius + layout.gap / 2) * 0.55;
-  return { x: p.x + (side === 'left' ? -dx : dx), y: p.y + layout.levelGap * 0.55 };
+  const dx = nilOffset(layout.radius, layout.gap);
+  // A little over halfway down, but never so high that the marker touches its parent. The
+  // layout keeps nodes of other subtrees at least radius + gap away from this spot sideways.
+  const clear = layout.radius + NIL_SIZE / Math.SQRT2 + 1;
+  const dy = Math.max(layout.levelGap * 0.55, Math.sqrt(Math.max(0, clear * clear - dx * dx)));
+  return { x: p.x + (side === 'left' ? -dx : dx), y: p.y + dy };
+}
+
+/** Side of the nil marker that nilSpot makes room for. */
+export const NIL_SIZE = 12;
+
+/** How far to the side of its parent a nil marker sits. */
+function nilOffset(radius: number, gap: number): number {
+  return (radius + gap / 2) * 0.55;
 }
 
 /** Grow bounds by `margin` on every side. */

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "cocktail-sort",
+  "id": "duplicates",
+  "title": "Equal values keep their order",
+  "notes": "Two 44s, two 21s and two 9s. Neighbors swap only when they are strictly out of order, in both directions, so cocktail shaker sort is stable.",
+  "settings": { "shrink": "one", "draw": "cells" },
+  "seed": 1,
+  "ops": [["load", "44 21 44 9 21 9"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

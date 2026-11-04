@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "cocktail-sort",
+  "id": "last-swap",
+  "title": "Shrinking to the last swap",
+  "notes": "Only the middle is out of order. Each pass moves its end of the window to where it last swapped, so the sorted ends are skipped after one look: 15 comparisons instead of 24.",
+  "settings": { "shrink": "last", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "11 19 27 52 38 45 33 60 74 86"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

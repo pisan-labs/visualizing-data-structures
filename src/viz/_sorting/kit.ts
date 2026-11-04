@@ -202,9 +202,13 @@ export class Run {
   step(spec: StepSpec): ArrayStep {
     const marks = [...(spec.marks ?? [])];
     const marked = new Set(marks.map((m) => m.id));
+    // Final values inside a "done" region are drawn as done by the layout; mark the rest.
+    const covered = (i: number) =>
+      (spec.extra?.regions ?? []).some((r) => r.tone === 'done' && r.from <= i && i <= r.to);
     for (const i of this.done) {
       const item = this.a[i];
-      if (item && !item.stale && !marked.has(vid(item))) marks.push(mark(vid(item), 'done'));
+      if (item && !item.stale && !marked.has(vid(item)) && !covered(i))
+        marks.push(mark(vid(item), 'done'));
     }
     return {
       state: this.state(),
@@ -230,6 +234,85 @@ export class Run {
 
 const single = (word: string) =>
   word.endsWith('ies') ? `${word.slice(0, -3)}y` : word.endsWith('s') ? word.slice(0, -1) : word;
+
+/** Contiguous runs of final places, drawn as green "sorted" regions. */
+export function doneRegions(r: Run, label = 'sorted'): BarsRegion[] {
+  const idx = [...r.done].sort((x, y) => x - y);
+  const out: BarsRegion[] = [];
+  let start = -1;
+  idx.forEach((i, k) => {
+    if (start < 0) start = i;
+    if (idx[k + 1] !== i + 1) {
+      out.push({ id: `final-${out.length}`, from: start, to: i, tone: 'done', label });
+      start = -1;
+    }
+  });
+  return out;
+}
+
+export interface PairOptions {
+  /** Walking from the back: talk about A[lo + 1] and its left neighbor. */
+  back: boolean;
+  extra: () => ArrayExtra;
+  vars: () => Record<string, Scalar>;
+  /** Pseudocode lines for the compare step, the "no swap" step and the swap step. */
+  lines: { compare: string[]; stay: string[]; swap: string[] };
+  /** Runs right after a swap, before its step is shown (to set a flag the step displays). */
+  onSwap?: () => void;
+}
+
+/**
+ * Compare the neighbors A[lo] and A[lo + 1] and swap them if they are out of order: a level-3
+ * step for the comparison and a level-2 step for what happens. Returns whether they swapped.
+ * Shared by bubble sort and cocktail shaker sort.
+ */
+export function* compareNeighbors(
+  r: Run,
+  lo: number,
+  o: PairOptions,
+): Generator<ArrayStep, boolean, void> {
+  const hi = lo + 1;
+  const [x, y] = [r.v(lo), r.v(hi)];
+  r.count('comparisons');
+  const pair = (role: MarkRole) => [mark(r.id(lo), role), mark(r.id(hi), role)];
+  yield r.step({
+    say: o.back
+      ? `Compare ${at(hi, y)} with its left neighbor, ${at(lo, x)}.`
+      : `Compare ${at(lo, x)} with its right neighbor, ${at(hi, y)}.`,
+    lines: o.lines.compare,
+    level: 3,
+    marks: pair('compare'),
+    vars: o.vars(),
+    extra: o.extra(),
+  });
+  if (x > y) {
+    r.swap(lo, hi);
+    r.count('swaps');
+    o.onSwap?.();
+    yield r.step({
+      say: o.back
+        ? `${y} < ${x}, so swap them. ${y} moves left to A[${lo}].`
+        : `${x} > ${y}, so swap them. ${x} moves right to A[${hi}].`,
+      lines: o.lines.swap,
+      level: 2,
+      marks: pair('active'),
+      vars: o.vars(),
+      extra: o.extra(),
+    });
+    return true;
+  }
+  yield r.step({
+    say: o.back
+      ? `${y} is not smaller than ${x}, so they stay where they are.`
+      : `${x} is not bigger than ${y}, so they stay where they are.`,
+    lines: o.lines.stay,
+    level: 2,
+    marks: pair('compare'),
+    vars: o.vars(),
+    extra: o.extra(),
+  });
+  return false;
+}
 
 /** Is the array (live values) in non-decreasing order? Returns the first descent, if any. */
 export function firstDescent(vs: readonly number[]): number {

@@ -95,3 +95,23 @@ test.describe('bubble sort', () => {
     await expect(narration(page)).toContainText('6 comparisons and no swaps');
   });
 });
+
+test.describe('cocktail shaker sort', () => {
+  test.beforeEach(({ page }) => open(page, 'cocktail-sort', 'Cocktail shaker sort'));
+
+  test('a backward pass carries a small value to the front', async ({ page }) => {
+    await loadExample(page, 'A small value stuck at the end');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('18 comparisons and 7 swaps');
+    await backTo(page, 'End of the backward pass: A[0] = 10 is in its final place.', 30);
+  });
+
+  test('the shrink option changes the code', async ({ page }) => {
+    await option(page, 'To where the pass last swapped');
+    await expect(code(page)).toContainText('hi = last');
+    await load(page, '4 3 2 1');
+    await run(page, 'Sort');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('Sorted: 1, 2, 3, 4.');
+  });
+});

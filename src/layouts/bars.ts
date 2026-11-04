@@ -15,8 +15,9 @@
  *   - `pointers`: named indices (i, j, lo, mid, hi, pivot, min, key...) drawn as arrows under
  *     their row. Labels that would overlap move to a second lane. Positions -1 and `slots`
  *     (one past the end) are allowed, and so are fractions.
- *   - `regions`: shaded index ranges. `done` (final positions), `window` (the active subarray,
- *     dashed) or `plain` (a gray band, e.g. "sorted so far" or "<= pivot"), with optional labels.
+ *   - `regions`: shaded index ranges. `done` (final positions; values inside are drawn as done),
+ *     `window` (the active subarray, dashed) or `plain` (a gray band, e.g. "sorted so far" or
+ *     "<= pivot"), with optional labels.
  *   - `faded`: index ranges that are out of play (eliminated halves); their values fade.
  *   - `calls`: the call stack, outermost first, as nested brackets in the top lane. The last
  *     one is the running call. Brackets get thinner as the stack gets deeper.
@@ -128,7 +129,7 @@ export interface BarsContent {
 
 const PAD = 10;
 /** The stage's zoom buttons sit over the top right corner; keep content below them. */
-const PAD_TOP = 30;
+const PAD_TOP = 46;
 const MIN_W = 520;
 const FONT = { value: 25, index: 22, pointer: 24, label: 22, held: 21 };
 const BAR_H = 190;
@@ -266,6 +267,11 @@ export function barsScene(
   const fadedSet = new Set<string>();
   for (const f of content.faded ?? [])
     for (let i = f.from; i <= f.to; i++) fadedSet.add(`${f.row ?? firstRow}:${i}`);
+  // Values inside a "done" region are drawn as done unless a mark says otherwise.
+  const doneSet = new Set<string>();
+  for (const r of content.regions ?? [])
+    if (r.tone === 'done')
+      for (let i = r.from; i <= r.to; i++) doneSet.add(`${r.row ?? firstRow}:${i}`);
 
   // Regions: bands behind the values, labels above them.
   const regionLabels: { id: string; text: string; x: number; w: number; row: string }[] = [];
@@ -425,7 +431,8 @@ export function barsScene(
       if (!item || item.uid === content.held?.uid) return;
       const vid = `v${item.uid}`;
       const faded = fadedSet.has(`${row.id}:${i}`);
-      const role = roles.get(vid) ?? (faded ? 'stale' : undefined);
+      const done = doneSet.has(`${row.id}:${i}`);
+      const role = roles.get(vid) ?? (done ? 'done' : faded ? 'stale' : undefined);
       const opacity = faded && !roles.has(vid) ? 0.35 : undefined;
       const h = bars ? barH(item.value) : CELL_H - 6;
       shapes.push({

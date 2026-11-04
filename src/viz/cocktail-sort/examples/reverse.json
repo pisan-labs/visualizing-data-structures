@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "cocktail-sort",
+  "id": "reverse",
+  "title": "Reverse order: no help from the second direction",
+  "notes": "The worst case. Every comparison swaps: 36 of each for 9 values, the same as bubble sort.",
+  "settings": { "shrink": "one", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "90 80 70 60 50 40 30 20 10"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "cocktail-sort",
+  "id": "already-sorted",
+  "title": "Sorted input: one pass and done",
+  "notes": "The best case. The first forward pass compares 7 pairs, swaps nothing, and the sort stops.",
+  "settings": { "shrink": "one", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "14 26 38 41 57 69 72 85"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

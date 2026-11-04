@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "cocktail-sort",
+  "id": "shaker",
+  "title": "Back and forth",
+  "notes": "Random order. The forward pass sends the largest value to the end, the backward pass sends the smallest to the front, and the window between them shrinks from both sides.",
+  "settings": { "shrink": "one", "draw": "bars" },
+  "seed": 1,
+  "ops": [["load", "37 82 15 64 9 51 26 73"], ["sort"]],
+  "at": { "op": 0, "step": 0 }
+}

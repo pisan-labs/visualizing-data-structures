@@ -1,10 +1,11 @@
 import type { OpSpec, PseudoBlock, PseudoLine, Scalar } from '../../engine/types';
-import type { BarsPointer, BarsRegion } from '../../layouts/bars';
+import type { BarsPointer } from '../../layouts/bars';
 import {
   at,
+  compareNeighbors,
+  doneRegions,
   loadOp,
   makeState,
-  mark,
   plural,
   Run,
   span,
@@ -40,21 +41,11 @@ export function init(): ArrayState {
   return makeState(START);
 }
 
-const sortedRegion = (from: number, to: number): BarsRegion[] =>
-  to >= from ? [{ id: 'final', from, to, tone: 'done', label: 'sorted' }] : [];
-
-/** Final region for the done set, which is always a prefix or a suffix here. */
-function finalRegion(r: Run): BarsRegion[] {
-  if (r.done.size === 0) return [];
-  const idx = [...r.done];
-  return sortedRegion(Math.min(...idx), Math.max(...idx));
-}
-
 /**
  * Compare one neighbor pair (lo, lo + 1) and swap it if it is out of order.
  * Yields a level-3 "compare" step and a level-2 outcome. Returns whether it swapped.
  */
-function* comparePair(
+function comparePair(
   r: Run,
   lo: number,
   down: boolean,
@@ -62,48 +53,16 @@ function* comparePair(
   vars: () => Record<string, Scalar>,
   onSwap: { lines: string[]; then?: () => void },
 ): Generator<ArrayStep, boolean, void> {
-  const hi = lo + 1;
-  const [x, y] = [r.v(lo), r.v(hi)];
-  r.count('comparisons');
-  const extra = (): ArrayExtra => ({ pointers: ptrs(), regions: finalRegion(r) });
-  yield r.step({
-    say: down
-      ? `Compare ${at(hi, y)} with its left neighbor, ${at(lo, x)}.`
-      : `Compare ${at(lo, x)} with its right neighbor, ${at(hi, y)}.`,
-    lines: ['inner', 'cmp'],
-    level: 3,
-    marks: [mark(r.id(lo), 'compare'), mark(r.id(hi), 'compare')],
-    vars: vars(),
-    extra: extra(),
+  return compareNeighbors(r, lo, {
+    back: down,
+    extra: () => ({ pointers: ptrs(), regions: finalRegion(r) }),
+    vars,
+    lines: { compare: ['inner', 'cmp'], stay: ['cmp'], swap: ['swap', ...onSwap.lines] },
+    onSwap: onSwap.then,
   });
-  if (x > y) {
-    r.swap(lo, hi);
-    r.count('swaps');
-    onSwap.then?.();
-    yield r.step({
-      say: down
-        ? `${y} < ${x}, so swap them. ${y} moves left to A[${lo}].`
-        : `${x} > ${y}, so swap them. ${x} moves right to A[${hi}].`,
-      lines: ['swap', ...onSwap.lines],
-      level: 2,
-      marks: [mark(r.id(lo), 'active'), mark(r.id(hi), 'active')],
-      vars: vars(),
-      extra: extra(),
-    });
-    return true;
-  }
-  yield r.step({
-    say: down
-      ? `${y} is not smaller than ${x}, so they stay where they are.`
-      : `${x} is not bigger than ${y}, so they stay where they are.`,
-    lines: ['cmp'],
-    level: 2,
-    marks: [mark(r.id(lo), 'compare'), mark(r.id(hi), 'compare')],
-    vars: vars(),
-    extra: extra(),
-  });
-  return false;
 }
+
+const finalRegion = (r: Run) => doneRegions(r);
 
 /** CLRS shape: n - 1 passes, optionally stopping after a pass with no swaps. */
 function* passes(r: Run, down: boolean, early: boolean): Gen {

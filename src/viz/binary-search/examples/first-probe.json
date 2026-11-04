@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "binary-search",
+  "id": "first-probe",
+  "title": "Right in the middle: one probe",
+  "notes": "The best case. 31 is in A[4], the first middle, so the first probe finds it.",
+  "settings": { "variant": "exact", "style": "iterative", "draw": "cells" },
+  "seed": 1,
+  "ops": [
+    ["load", "8 12 17 24 31 35 42 50 57 63"],
+    ["search", 31]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

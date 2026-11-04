@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "binary-search",
+  "id": "recursive",
+  "title": "Recursive: one call per probe",
+  "notes": "20 values and a miss. Each call looks at one value and calls itself on half its window. After 5 probes the 6th call gets an empty window and returns -1.",
+  "settings": { "variant": "exact", "style": "recursive", "draw": "cells" },
+  "seed": 1,
+  "ops": [
+    ["load", "3 9 14 20 27 31 38 42 47 53 58 64 69 71 76 80 85 90 94 99"],
+    ["search", 70]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

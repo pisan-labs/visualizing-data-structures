@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "binary-search",
+  "id": "first-occurrence",
+  "title": "First occurrence: keep looking left",
+  "notes": "Same values. A 7 at A[3] is only a candidate: r remembers it and the search keeps going left. It returns 1 after 3 probes.",
+  "settings": { "variant": "first", "style": "iterative", "draw": "cells" },
+  "seed": 1,
+  "ops": [
+    ["load", "2 7 7 7 7 7 9 12"],
+    ["search", 7]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

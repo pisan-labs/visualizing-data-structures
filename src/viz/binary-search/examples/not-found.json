@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "binary-search",
+  "id": "not-found",
+  "title": "Not there: down to an empty window",
+  "notes": "40 is not in A. Four probes shrink the window to nothing: lo ends at 6 and hi at 5, and the search returns -1.",
+  "settings": { "variant": "exact", "style": "iterative", "draw": "cells" },
+  "seed": 1,
+  "ops": [
+    ["load", "8 12 17 24 31 35 42 50 57 63"],
+    ["search", 40]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

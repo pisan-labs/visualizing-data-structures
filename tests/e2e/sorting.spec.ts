@@ -293,3 +293,46 @@ test.describe('linear search', () => {
     await expect(code(page)).toContainText('A[n] = x');
   });
 });
+
+test.describe('binary search', () => {
+  test.beforeEach(({ page }) => open(page, 'binary-search', 'Binary search'));
+
+  test('halves the window until it finds x', async ({ page }) => {
+    await form(page).getByLabel('Values or x').fill('42');
+    await run(page, 'Search');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('A[6] = 42 is x. Found it: return 6.');
+    await expect(stage(page)).toHaveAttribute(
+      'aria-label',
+      /lo at index 6, mid at index 6, hi at index 6\./,
+    );
+    await expect(page.locator('.vars')).toContainText('probes');
+  });
+
+  test('refuses unsorted values until they are sorted', async ({ page }) => {
+    await load(page, '42 17 63 8 35 24');
+    await expect(narration(page)).toContainText('A is not sorted: A[0] = 42 comes before');
+    await form(page).getByLabel('Values or x').fill('35');
+    await run(page, 'Search');
+    await expect(narration(page)).toContainText('Press Sort A to sort it first');
+    await run(page, 'Sort A');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('Sorted A with a library sort: 8, 17, 24, 35');
+    await form(page).getByLabel('Values or x').fill('35');
+    await run(page, 'Search');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('Found it: return 3.');
+  });
+
+  test('lower bound and the recursive style change the code', async ({ page }) => {
+    await option(page, 'Lower bound: the first value ≥ x');
+    await expect(code(page)).toContainText('lo = 0; hi = n');
+    await option(page, 'Recursive: a call for each half');
+    await expect(code(page)).toContainText('return lowerBound(A, x, mid + 1, hi)');
+    await loadExample(page, 'Recursive: one call per probe');
+    await toEnd(page);
+    await expect(narration(page)).toContainText(
+      'Every call passes -1 back up, so search(A, x, 0, 19) returns -1',
+    );
+  });
+});

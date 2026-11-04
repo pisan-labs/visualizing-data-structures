@@ -1,6 +1,6 @@
 # B+ tree
 
-A B+ tree is a B-tree with two changes. Every key lives in a leaf, and the keys in the internal nodes are only copies, signposts that tell a search which way to go. And the leaves are linked left to right, so once you have found one key, the next one is in the same leaf or one link away.
+A B+ tree is a [B-tree](/b-tree/) with two changes. Every key lives in a leaf, and the keys in the internal nodes are only copies, signposts that tell a search which way to go. And the leaves are linked left to right, so once you have found one key, the next one is in the same leaf or one link away.
 
 Most relational databases build their indexes this way. The reason is the query you'll write a hundred times: every order between two dates, every student with a grade from 80 to 89. A B+ tree answers it with one trip down the tree and then a walk along the leaves, reading pages in order.
 

@@ -24,7 +24,7 @@ CLRS describes a B-tree by its minimum degree t, which is at least 2.
 
 The last rule is the clever one. A B-tree never gets lopsided, because it only grows and shrinks at the root. With n keys, the height is at most log_t((n + 1) / 2). If every node holds 1000 keys, a tree of height 2 holds 1000 + 1001 × 1000 + 1001² × 1000 keys, just over a billion, and any of them is at most 3 disk reads away. Keep the root in memory and it's 2.
 
-The **Minimum degree t** option goes from 2 to 4 so that the trees fit on a screen. t = 2 gives nodes of 1 to 3 keys, which is a 2-3-4 tree. Some books describe a B-tree by its order m instead, the most children a node may have. Under CLRS's rules, m = 2t.
+The **Minimum degree t** option goes from 2 to 4 so that the trees fit on a screen. t = 2 gives nodes of 1 to 3 keys, which is a [2-4 tree](/two-four-tree/). Some books describe a B-tree by its order m instead, the most children a node may have. Under CLRS's rules, m = 2t.
 
 ```check
 Q: With t = 3, how many keys can a node other than the root hold?
@@ -93,7 +93,7 @@ Q: With t = 3, the root is [30 60] and its children are [10 20], [40 50] and [70
 
 Use a B-tree when the data lives on disk, or anywhere one read costs much more than a comparison. Most databases keep their indexes in B-trees (usually the B+ tree variant), and many file systems use them for directories. They work in memory too: scanning a node that sits in a few cache lines is cheaper than chasing a pointer per comparison. Rust's standard `BTreeMap` is a B-tree with t = 6.
 
-If everything fits in memory and you only look up exact keys, a hash table is simpler and faster. If you need sorted keys in memory, a red-black tree is easier to get right. And if you mostly read ranges of keys, have a look at the B+ tree, which keeps every key in the leaves and links the leaves in order.
+If everything fits in memory and you only look up exact keys, a hash table is simpler and faster. If you need sorted keys in memory, a [red-black tree](/red-black/) is easier to get right. And if you mostly read ranges of keys, have a look at the [B+ tree](/b-plus-tree/), which keeps every key in the leaves and links the leaves in order.
 
 ## Common mistakes
 

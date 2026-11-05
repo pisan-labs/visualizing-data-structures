@@ -459,7 +459,7 @@ const submasks: Op = {
     yield {
       state: done,
       marks: [],
-      say: `sub reached 0, so stop. x has ${plural(k, 'set bit')} and ${plural(list.length, 'submask')}, listed from largest to smallest, with no number skipped over by hand.`,
+      say: `sub reached 0, so stop. x has ${plural(k, 'set bit')} and ${plural(list.length, 'submask')}, listed from largest to smallest. The loop never visited a number that is not a submask.`,
       lines: ['mask.zero'],
       vars: vars(done, { found: list.length, 'bit ops': ops }),
       level: 1,

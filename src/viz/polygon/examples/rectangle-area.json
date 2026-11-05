@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "polygon",
+  "id": "rectangle-area",
+  "title": "The area of a rectangle",
+  "notes": "An 8 by 7 rectangle, so the answer had better be 56. Watch the two edges that face away from the origin cancel the extra area the other two add.",
+  "settings": {
+    "inside": "ray"
+  },
+  "seed": 1,
+  "ops": [["load", "2,2 10,2 10,9 2,9"], ["area"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

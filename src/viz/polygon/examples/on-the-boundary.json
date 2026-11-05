@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "polygon",
+  "id": "on-the-boundary",
+  "title": "A point on an edge",
+  "notes": "q sits on the inside edge of the L. Counting crossings cannot answer this, so check each edge for q first.",
+  "settings": {
+    "inside": "ray"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "2,2 10,2 10,5 5,5 5,10 2,10"],
+    ["inside", 5, 7]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

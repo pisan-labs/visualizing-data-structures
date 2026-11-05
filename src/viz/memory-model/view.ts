@@ -167,7 +167,7 @@ export function view(step: Step<MemState, undefined>, settings: MemSettings): Sc
       if (target) {
         // A three-part line through the gutter right of the stack, ending at the target's box.
         const right = bx + boxW;
-        const gx = right + 14 + 10 * lane++;
+        const gx = right + 26 + 10 * lane++;
         const y1 = vy + BOX_H / 2;
         const y2 = target.y + BOX_H / 2;
         const role = roles.get(id);

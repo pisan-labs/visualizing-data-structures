@@ -126,8 +126,12 @@ export function view(step: Step<MtState, undefined>, settings: MtSettings): Scen
       `leaves: ${r.a === 1 ? '1 call' : `${r.a}^(log${sub(r.b)} n) = ${nc} calls`} on size 1, Θ(1) each`,
     );
   } else y += 3 * LINE;
-  if (s.compared) text('trend', trend(r), 13.5);
-  else y += LINE;
+  // The trend reads "a / b^d = 3/2 > 1: each level ...": two lines, so phones keep it legible.
+  const [ratio, ...rest] = trend(r).split(': ');
+  if (s.compared) {
+    text('trend', `${ratio}:`, 13.5);
+    text('trend-2', rest.join(': '), 13.5);
+  } else y += 2 * LINE;
 
   const resultY = y + 4;
   if (s.result) {
@@ -201,7 +205,11 @@ export function view(step: Step<MtState, undefined>, settings: MtSettings): Scen
     }
   }
 
-  const width = Math.max(treeBox.x + treeBox.w + 20, 600, monoWidth(trend(r), 13.5) + 40);
-  const height = tableY + (CHECK_ROWS + 1) * ROW;
+  const longest = Math.max(
+    ...[trend(r).split(': ').slice(1).join(': '), recText(r)].map((t) => monoWidth(t, 13.5)),
+  );
+  const width = Math.max(treeBox.x + treeBox.w + 20, 480, longest + 40);
+  // Room for the numeric check only once it runs, so a plain solve fills the stage.
+  const height = s.check ? tableY + (CHECK_ROWS + 1) * ROW : resultY + 50;
   return { shapes, bounds: { x: 0, y: 0, w: width, h: height }, label: describe(s) };
 }

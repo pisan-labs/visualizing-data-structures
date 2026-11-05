@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "rotate-scale-2d",
+  "id": "mirror",
+  "title": "A mirror image",
+  "notes": "Scale x by −1. det S = −1: the area is the same, but the shape is flipped, so the F now reads backwards.",
+  "settings": {
+    "about": "origin",
+    "convention": "column",
+    "shape": "letter"
+  },
+  "seed": 1,
+  "ops": [["scale", -1, 1]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

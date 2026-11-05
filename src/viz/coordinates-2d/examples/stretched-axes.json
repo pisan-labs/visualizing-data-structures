@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "coordinates-2d",
+  "id": "stretched-axes",
+  "title": "Stretched axes",
+  "notes": "u is twice as long as a world unit and v half as long. The same world point gets smaller numbers along the long axis and bigger ones along the short axis.",
+  "settings": {
+    "form": "affine"
+  },
+  "seed": 1,
+  "ops": [
+    ["origin", 0, 0],
+    ["axes", 2, 0, 0, 0.5],
+    ["toLocal", 4, 2],
+    ["toWorld", 1, 6]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

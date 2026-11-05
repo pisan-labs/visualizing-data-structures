@@ -25,7 +25,7 @@ def main():
             out.append(ray_cast(poly, q))
         elif op == "winding":
             out.append(winding_number(poly, q))
-    print("\n".join(out))
+    sys.stdout.write("".join(line + "\n" for line in out))
 
 
 main()

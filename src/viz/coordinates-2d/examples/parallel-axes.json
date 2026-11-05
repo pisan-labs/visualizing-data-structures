@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "coordinates-2d",
+  "id": "parallel-axes",
+  "title": "Axes on one line",
+  "notes": "u = (1, 1) and v = (2, 2) point the same way, so det M = 0. Every combination a·u + b·v lands on one line, and no inverse exists.",
+  "settings": {
+    "form": "affine"
+  },
+  "seed": 1,
+  "ops": [["axes", 1, 1, 2, 2]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "rotate-scale-2d",
+  "id": "uniform-scale",
+  "title": "Twice as big",
+  "notes": "Scale by 2 in both directions. Lengths double, so the area grows by det S = 4. The shape also moves away from the origin, because scaling is about the origin.",
+  "settings": {
+    "about": "origin",
+    "convention": "column",
+    "shape": "letter"
+  },
+  "seed": 1,
+  "ops": [["scale", 2, 2]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

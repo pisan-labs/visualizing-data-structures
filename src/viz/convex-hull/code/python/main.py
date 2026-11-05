@@ -14,7 +14,7 @@ def main():
         points = list(zip(nums[0::2], nums[1::2]))
         hull = graham_scan(points)
         out.append(" ".join(f"{x},{y}" for x, y in hull) if hull else "empty")
-    print("\n".join(out))
+    sys.stdout.write("".join(line + "\n" for line in out))
 
 
 main()

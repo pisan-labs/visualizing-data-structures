@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "rotate-scale-2d",
+  "id": "uniform-commutes",
+  "title": "When order does not matter",
+  "notes": "A uniform scale looks the same in every direction, so rotating before or after it gives the same shape.",
+  "settings": {
+    "about": "origin",
+    "convention": "column",
+    "shape": "letter"
+  },
+  "seed": 1,
+  "ops": [["order", 45, 2, 2]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

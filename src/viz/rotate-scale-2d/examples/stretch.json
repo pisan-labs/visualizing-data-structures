@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "rotate-scale-2d",
+  "id": "stretch",
+  "title": "Stretch one way, squash the other",
+  "notes": "Scale by 2 in x and 0.5 in y. det S = 1, so the area is unchanged even though the shape looks quite different.",
+  "settings": {
+    "about": "origin",
+    "convention": "column",
+    "shape": "square"
+  },
+  "seed": 1,
+  "ops": [
+    ["scale", 2, 0.5],
+    ["rotate", 45]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

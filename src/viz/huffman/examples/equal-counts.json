@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "huffman",
+  "id": "equal-counts",
+  "title": "Equal counts: nothing to gain",
+  "notes": "Four symbols, 4 of each. Every code has 2 bits, the same as a fixed-length code, so the 16 symbols take 32 bits either way.",
+  "settings": {
+    "ties": "leaves"
+  },
+  "seed": 1,
+  "ops": [["build", "a:4 b:4 c:4 d:4"], ["encode"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

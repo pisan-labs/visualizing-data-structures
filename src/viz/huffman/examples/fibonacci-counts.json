@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "huffman",
+  "id": "fibonacci-counts",
+  "title": "Fibonacci counts make the deepest tree",
+  "notes": "Each count is the sum of the two before it, so every new tree is again one of the two lightest and the tree grows into a chain. The codes run from 1 bit to 5; with six symbols, no code can be longer.",
+  "settings": {
+    "ties": "leaves"
+  },
+  "seed": 1,
+  "ops": [["build", "a:1 b:1 c:2 d:3 e:5 f:8"], ["encode"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

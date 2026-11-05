@@ -12,7 +12,7 @@ async function op(page: Page, name: string, value?: string) {
   if (value !== undefined) await page.getByLabel('Word', { exact: true }).fill(value);
   const button = page.getByRole('button', { name, exact: true });
   // Less common operations sit under "More operations".
-  if (!(await button.isVisible())) await page.getByText('More operations').click();
+  if (!(await button.isVisible())) await page.getByText('More operations', { exact: true }).click();
   await button.click();
 }
 

@@ -103,12 +103,10 @@ export const twoSat: VizDef<SatState, SatSettings, SatExtra> = {
       make: (rng) => [['load', randomFormula(rng, rng.int(3, 5))]],
     },
     presets: [
-      preset('Random, 1.5 clauses per variable', (rng, n) => randomFormula(rng, n)),
-      preset('Random, 2.5 clauses per variable (often unsatisfiable)', (rng, n) =>
-        randomFormula(rng, n, 2.5),
-      ),
+      preset('Random, few clauses', (rng, n) => randomFormula(rng, n)),
+      preset('Random, many clauses', (rng, n) => randomFormula(rng, n, 2.5)),
       preset('A chain of implications', (_rng, n) => chainFormula(n, false)),
-      preset('A chain that contradicts itself', (_rng, n) => chainFormula(n, true)),
+      preset('A chain, contradicting itself', (_rng, n) => chainFormula(n, true)),
       preset('Only single literals', (rng, n) =>
         VARS.slice(0, n)
           .split('')

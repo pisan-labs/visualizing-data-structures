@@ -86,10 +86,10 @@ export const generalMatching: VizDef<BlState, BlSettings, BlExtra> = {
     presets: [
       preset('Random graph', (rng, n) => randomGraph(rng, n, { density: 0.2 })),
       preset('Triangles along a path', (_rng, n) => triangles(n)),
-      preset('Two odd cycles and a bridge', (_rng, n) => twoOddCycles(n)),
+      preset('Two odd cycles', (_rng, n) => twoOddCycles(n)),
       preset('Odd cycle', (_rng, n) => cycleGraph(n % 2 ? n : n + 1)),
       preset('Complete graph', (_rng, n) => completeGraph(Math.min(n, 7))),
-      preset('Random tree (no odd cycles)', (rng, n) => randomTree(rng, n)),
+      preset('Random tree', (rng, n) => randomTree(rng, n)),
     ],
     sizes: [5, 6, 8, 10],
   },

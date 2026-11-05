@@ -119,7 +119,7 @@ export function view(step: Step<BlState, BlExtra>, settings: BlSettings): Scene 
         r: rad,
         cls: 'ghost',
         role: roles.get(id) ?? 'found',
-        z: 0,
+        z: -1,
       });
       shapes.push({
         kind: 'text',

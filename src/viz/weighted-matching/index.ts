@@ -95,13 +95,11 @@ export const weightedMatching: VizDef<HmState, HmSettings, HmExtra> = {
     presets: [
       preset('Random costs 1 to 9', (rng, n) => randomMatrix(rng, n)),
       preset('Random costs 1 to 99', (rng, n) => randomMatrix(rng, n, 99)),
-      preset('Products (i + 1)(j + 1): many updates', (_rng, n) => productMatrix(n)),
-      preset('Cheap diagonal: no updates', (rng, n) =>
+      preset('Products: many updates', (_rng, n) => productMatrix(n)),
+      preset('Cheap diagonal', (rng, n) =>
         randomMatrix(rng, n).map((r, i) => r.map((c, j) => (i === j ? 0 : c))),
       ),
-      preset('All the same: every assignment ties', (_rng, n) =>
-        Array.from({ length: n }, () => Array(n).fill(5)),
-      ),
+      preset('All the same', (_rng, n) => Array.from({ length: n }, () => Array(n).fill(5))),
       preset('Everyone wants column 1', (rng, n) =>
         randomMatrix(rng, n).map((r) => r.map((c, j) => (j === 0 ? 1 : c + 3))),
       ),

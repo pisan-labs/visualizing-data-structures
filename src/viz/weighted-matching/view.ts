@@ -102,7 +102,7 @@ function drawMatrix(
   const inT = (j: number) => !!r?.T[j];
   const inS = (i: number) => !!r?.S.includes(i);
   // Column headers and v.
-  text(out, 'v-label', x + nameW + potW / 2, yV + 18, 'v', { cls: 'label', mono: true });
+  text(out, 'v-label', x + nameW / 2, yV + 18, 'v', { cls: 'label', mono: true });
   for (let j = 0; j < n; j++) {
     const cx = x0 + j * (CW + 2) + CW / 2;
     text(out, `ch-${j}`, cx, yNames + 15, colName(j), {
@@ -120,7 +120,7 @@ function drawMatrix(
     });
   }
   // Rows: name, u, cells.
-  text(out, 'u-label', x + nameW + potW / 2, y0 - 6, 'u', { cls: 'label', mono: true });
+  text(out, 'u-label', x + nameW + potW / 2, yNames + 15, 'u', { cls: 'label', mono: true });
   for (let i = 0; i < n; i++) {
     const cy = y0 + i * (CH + 2);
     const rowRole =

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "bridges",
+  "id": "bowtie",
+  "title": "A root with two children",
+  "notes": "Two triangles meet at A. DFS starts at A, goes around the first triangle, and has to come back to A to reach the second: A has two children, so A is a cut vertex. No edge is a bridge.",
+  "settings": {
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-C, A-D, A-E, D-E"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

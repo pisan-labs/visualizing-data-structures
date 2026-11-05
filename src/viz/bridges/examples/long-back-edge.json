@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "bridges",
+  "id": "long-back-edge",
+  "title": "One back edge saves a chain",
+  "notes": "Without F-B, every edge from B to F would be a bridge. The back edge climbs from F to B, so C, D, E and F all get low = 2 and their edges are on a cycle. Only A-B is a bridge, and B is the one cut vertex.",
+  "settings": {
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, B-C, C-D, D-E, E-F, F-B"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

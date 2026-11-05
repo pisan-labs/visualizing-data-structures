@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "topo-dfs",
+  "id": "cycle",
+  "title": "A cycle stops the sort",
+  "notes": "D>B leads back to B while B is still gray. That back edge closes the cycle B \u2192 C \u2192 D \u2192 B, and there is no topological order.",
+  "settings": {
+    "onCycle": "stop",
+    "layout": "layered"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B, A>E, B>C, C>D, D>B, E>D"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

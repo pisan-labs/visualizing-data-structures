@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "topo-dfs",
+  "id": "backward-chain",
+  "title": "A chain named backwards",
+  "notes": "Every arc points from a later letter to an earlier one. A has no arcs out, so it finishes at once, and every vertex starts its own tree: L ends up F, E, D, C, B, A, the reverse of name order.",
+  "settings": {
+    "onCycle": "stop",
+    "layout": "layered"
+  },
+  "seed": 1,
+  "ops": [["load", "B>A, C>B, D>C, E>D, F>E"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

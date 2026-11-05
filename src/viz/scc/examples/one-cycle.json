@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "scc",
+  "id": "one-cycle",
+  "title": "One big cycle",
+  "notes": "Every vertex reaches every other one around the cycle, so the whole graph is one component, and the component graph is a single vertex.",
+  "settings": {
+    "algorithm": "kosaraju",
+    "condense": true,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B, B>C, C>D, D>E, E>F, F>A"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

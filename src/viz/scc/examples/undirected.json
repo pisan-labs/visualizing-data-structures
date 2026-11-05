@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "scc",
+  "id": "undirected",
+  "title": "Undirected: the connected pieces",
+  "notes": "Each edge goes both ways, so a component is just a connected piece: {A, B, C} and {D, E}.",
+  "settings": {
+    "algorithm": "kosaraju",
+    "condense": true,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, B-C, D-E"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "scc",
+  "id": "four-components",
+  "title": "Four components",
+  "notes": "A, B and E sit on one cycle, C and D on another, F and G on a third, and H on none. In the component graph {A, B, E} points to {C, D} and {F, G}, {C, D} points to {F, G}, and everything ends at {H}.",
+  "settings": {
+    "algorithm": "kosaraju",
+    "condense": true,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B, B>C, B>E, B>F, C>D, C>G, D>C, D>H, E>A, E>F, F>G, G>F, G>H"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

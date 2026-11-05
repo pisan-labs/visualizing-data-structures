@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "bridges",
+  "id": "two-pieces",
+  "title": "Two pieces",
+  "notes": "D is not reachable from A, so it roots a second DFS tree. Each piece is checked on its own. The first is a tree: all three edges are bridges, C is a cut vertex, and so is the root A, which has two children. The triangle D, F, G has none.",
+  "settings": {
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, C-E, D-F, D-G, F-G"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -306,7 +306,7 @@ function* hungarian(cost: number[][], r: HmRun, step: StepFn): Generator<HmStep,
           r.T[j] = true;
           r.prev[j] = i;
           found.push(j);
-          if (r.colMate[j] < 0) {
+          if (r.colMate[j]! < 0) {
             free = j;
             yield step(
               `Cell ${rowName(i)},${colName(j)} is tight and column ${colName(j)} is free. That is an augmenting path.`,
@@ -319,7 +319,7 @@ function* hungarian(cost: number[][], r: HmRun, step: StepFn): Generator<HmStep,
               ],
             );
           } else {
-            const m = r.colMate[j];
+            const m = r.colMate[j]!;
             r.S.push(m);
             yield step(
               `Cell ${rowName(i)},${colName(j)} is tight, but column ${colName(j)} is matched to row ${rowName(m)}. Put ${colName(j)} in T and ${rowName(m)} in S: the tree grows by a matched edge.`,

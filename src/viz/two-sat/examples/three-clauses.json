@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "two-sat",
+  "id": "three-clauses",
+  "title": "Three clauses",
+  "notes": "(a ∨ ¬b) ∧ (b ∨ c) ∧ (¬a ∨ ¬c). Six literals and six arcs. They fall into two components, {a, b, ¬c} and {¬a, ¬b, c}: each is a whole assignment, and the topological order picks one.",
+  "settings": { "algorithm": "kosaraju", "layout": "pairs" },
+  "seed": 1,
+  "ops": [["load", "a | !b, b | c, !a | !c"], ["run"]],
+  "at": { "op": 0, "step": 0 }
+}

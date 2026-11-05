@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "two-sat",
+  "id": "forced",
+  "title": "Single literals",
+  "notes": "A clause with one literal, such as a, is a ∨ a: it becomes the single arc ¬a → a. Here a must be true and b false, and the third clause comes for free.",
+  "settings": { "algorithm": "kosaraju", "layout": "pairs" },
+  "seed": 1,
+  "ops": [["load", "a, !b, a | b"], ["run"]],
+  "at": { "op": 0, "step": 0 }
+}

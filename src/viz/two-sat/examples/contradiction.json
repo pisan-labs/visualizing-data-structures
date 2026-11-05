@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "two-sat",
+  "id": "contradiction",
+  "title": "Every combination ruled out",
+  "notes": "Four clauses, one against each of the four ways to set a and b. a and ¬a end up in one component, so the formula is unsatisfiable.",
+  "settings": { "algorithm": "kosaraju", "layout": "pairs" },
+  "seed": 1,
+  "ops": [["load", "a | b, a | !b, !a | b, !a | !b"], ["run"]],
+  "at": { "op": 0, "step": 0 }
+}

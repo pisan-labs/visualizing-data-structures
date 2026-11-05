@@ -38,7 +38,7 @@ def main():
             out.append(" ".join(map(str, subsets(args[0]))))
         elif op == "submasks":
             out.append(" ".join(map(str, submasks(x))))
-    print("\n".join(out))
+    sys.stdout.write("".join(line + "\n" for line in out))
 
 
 main()

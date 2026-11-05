@@ -13,7 +13,7 @@ def main():
         if parts[0] == "count":
             f = getattr(growth, parts[1])
             out.append(str(f(int(parts[2]))))
-    print("\n".join(out))
+    sys.stdout.write("".join(line + "\n" for line in out))
 
 
 main()

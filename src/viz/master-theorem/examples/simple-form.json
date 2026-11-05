@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "master-theorem",
+  "id": "simple-form",
+  "title": "The simplified form",
+  "notes": "Many courses compare a with b^d instead of naming cases. 4T(n/2) + n has a = 4 > 2 = b^d, so the leaves win: \u0398(n\u00b2).",
+  "settings": { "form": "simple" },
+  "seed": 1,
+  "ops": [
+    ["solve", "4 2 1"],
+    ["solve", "4 2 2"],
+    ["solve", "4 2 3"]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

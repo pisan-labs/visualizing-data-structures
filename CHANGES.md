@@ -145,3 +145,5 @@
 2026-11-05 [code] Merged wave 4C: topological sort by DFS (same start DAG as the in-degree page), SCC (Kosaraju or Tarjan, condensation graph), cut vertices and bridges (d/low, root rule); main now holds 87 of 108 pages
 
 2026-11-05 [code] The "Show me" e2e checks share tests/e2e/helpers.ts showMe(): playback can end before the test looks for Pause (Boyer-Moore flaked in 4 agent runs), so a timeline that changed and stands at its end also counts
+
+2026-11-05 [code] Merged wave 4H: convex hull (Graham, monotone chain, gift wrapping), polygon algorithms (shoelace, ray casting or winding, convexity), 2D change of coordinates, 2D rotation and scale; shared src/layouts/plane.ts; main holds 91 of 108 pages

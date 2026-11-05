@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "suffix-array",
+  "id": "banana",
+  "title": "BANANA",
+  "notes": "Build the suffix array of BANANA by prefix doubling: two rounds of pairs sort all six suffixes. Then Kasai fills in the LCP column.",
+  "settings": { "method": "doubling" },
+  "seed": 1,
+  "ops": [["load", "BANANA"], ["build"]]
+}

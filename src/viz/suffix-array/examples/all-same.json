@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "suffix-array",
+  "id": "all-same",
+  "title": "One letter repeated",
+  "notes": "AAAAAAAA is the worst case for both builds: doubling needs every round, and every direct comparison reads a whole suffix. The LCPs climb 0, 1, 2 and so on.",
+  "settings": { "method": "doubling" },
+  "seed": 1,
+  "ops": [["load", "AAAAAAAA"], ["build"], ["search", "AAA"], ["repeat"]]
+}

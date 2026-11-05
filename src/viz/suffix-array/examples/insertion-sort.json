@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "suffix-array",
+  "id": "insertion-sort",
+  "title": "Sorting suffixes directly",
+  "notes": "The naive build: insertion sort, comparing whole suffixes. Each comparison reads characters until the two suffixes differ.",
+  "settings": { "method": "naive" },
+  "seed": 1,
+  "ops": [["load", "BANANA"], ["build"]]
+}

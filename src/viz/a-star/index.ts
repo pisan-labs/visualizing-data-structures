@@ -66,7 +66,7 @@ export const aStar: VizDef<AStarState, AStarSettings, AStarExtra> = {
         { value: '4', label: '4 neighbours: up, down, left, right' },
         { value: '8', label: '8 neighbours: diagonals too' },
       ],
-      help: 'Every move costs 1, a diagonal too. With diagonals, Manhattan overestimates; Chebyshev is exact on an open grid.',
+      help: 'Every move costs 1, a diagonal too. With diagonals, Manhattan and Euclidean overestimate; Chebyshev is exact on an open grid.',
     },
   ],
   defaults,

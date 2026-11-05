@@ -28,7 +28,7 @@ export const MAX_COLS = 14;
 export const MAX_INPUT = 200;
 
 /**
- * Where both pages start: a wall between S and T with a way around below it. BFS fills the
+ * Where both pages start: a wall between S and T, with a gap low down. BFS fills the
  * grid ring by ring; A* with the Manhattan distance heads for T and works around the wall.
  */
 export const START_LINES = [
@@ -36,7 +36,7 @@ export const START_LINES = [
   '.S.....#...',
   '.......#...',
   '...#...#.T.',
-  '...#...#...',
+  '...#.......',
   '...#####...',
   '...........',
 ];
@@ -77,8 +77,7 @@ export function listWords(xs: readonly string[]): string {
   return `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`;
 }
 
-export const plural = (n: number, one: string, many = `${one}s`) =>
-  `${n} ${n === 1 ? one : many}`;
+export const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
 export type Moves = '4' | '8';
 
@@ -320,7 +319,9 @@ export function mazeGrid(rng: Rng, rows: number, cols: number): Grid {
         [r + 2, c],
         [r, c - 2],
       ] as [number, number][]
-    ).filter(([nr, nc]) => nr >= 0 && nc >= 0 && nr <= rMax && nc <= cMax && cells[nr]![nc] === '#');
+    ).filter(
+      ([nr, nc]) => nr >= 0 && nc >= 0 && nr <= rMax && nc <= cMax && cells[nr]![nc] === '#',
+    );
     if (!next.length) {
       stack.pop();
       continue;
@@ -349,4 +350,3 @@ export function gridPresets(then: OpCall[]): NonNullable<Controls['presets']> {
     },
   ];
 }
-

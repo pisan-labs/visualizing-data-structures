@@ -53,7 +53,12 @@ function pathArrows(g: Grid, r: AStarRun): GridArrow[] {
   if (r.end !== 'found') return [];
   const out: GridArrow[] = [];
   for (let i = 0; i + 1 < r.path.length; i++)
-    out.push({ id: `path-${i}`, from: rc(g, r.path[i]!), to: rc(g, r.path[i + 1]!), role: 'found' });
+    out.push({
+      id: `path-${i}`,
+      from: rc(g, r.path[i]!),
+      to: rc(g, r.path[i + 1]!),
+      role: 'found',
+    });
   return out;
 }
 

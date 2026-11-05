@@ -89,7 +89,11 @@ export const gridBfs: VizDef<BfsGridState, BfsGridSettings, BfsGridExtra> = {
     },
     {
       op: 'Neighbour checks per cell',
-      best: { cost: 'O(1)', why: 'A cell boxed in by walls has nothing to check.', example: 'maze' },
+      best: {
+        cost: 'O(1)',
+        why: 'A cell boxed in by walls has nothing to check.',
+        example: 'maze',
+      },
       average: {
         cost: 'O(1)',
         why: 'At most 4 checks, or 8 with diagonals, however big the grid.',
@@ -120,8 +124,7 @@ export const gridBfs: VizDef<BfsGridState, BfsGridSettings, BfsGridExtra> = {
     python: pythonSource,
     java: javaSource,
     cpp: cppSource,
-    script: (calls: OpCall[], settings: Settings) =>
-      codeScript(calls, settings as BfsGridSettings),
+    script: (calls: OpCall[], settings: Settings) => codeScript(calls, settings as BfsGridSettings),
   },
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [

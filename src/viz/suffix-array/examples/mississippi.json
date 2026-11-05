@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "suffix-array",
+  "id": "mississippi",
+  "title": "The longest repeat in MISSISSIPPI",
+  "notes": "The largest LCP is 4: ISSIPPI and ISSISSIPPI share ISSI. The longest repeated substring is always a common prefix of two neighbours.",
+  "settings": { "method": "doubling" },
+  "seed": 1,
+  "ops": [["load", "MISSISSIPPI"], ["build"], ["repeat"]]
+}

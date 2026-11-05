@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "disjoint-sets",
+  "id": "rank-keeps-short",
+  "title": "By rank, height stays at most log n",
+  "notes": "Pairs, then pairs of pairs: union by rank's tallest tree on 8 elements. Compression is off, so the height reaches 3 = log₂ 8, and find(0) walks 3 pointers. It cannot get taller.",
+  "settings": {
+    "union": "rank",
+    "path": "none"
+  },
+  "seed": 1,
+  "ops": [
+    ["union", 0, 1],
+    ["union", 2, 3],
+    ["union", 4, 5],
+    ["union", 6, 7],
+    ["union", 0, 2],
+    ["union", 4, 6],
+    ["union", 0, 4],
+    ["find", 0]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

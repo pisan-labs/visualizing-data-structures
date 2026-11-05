@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "kruskal",
+  "id": "lightest-first",
+  "title": "Lightest first, skip the cycles",
+  "notes": "Kruskal takes C-D, A-C, E-G, B-E, F-H, A-B and D-F, in that order: 7 edges, weight 19. The other 7 edges all close cycles and are rejected.",
+  "settings": {
+    "stop": false,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "A-B:4, A-C:2, A-D:6, B-D:5, B-E:3, C-D:1, C-F:7, D-E:8, D-F:4, D-G:6, E-G:2, F-G:5, F-H:3, G-H:9"
+    ],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

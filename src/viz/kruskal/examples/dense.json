@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "kruskal",
+  "id": "dense",
+  "title": "A complete graph: most edges are rejected",
+  "notes": "Six vertices and 15 edges. Only 5 can join the tree, so 10 are rejected. On a dense graph, sorting the edges is most of the work.",
+  "settings": {
+    "stop": false,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "A-B:6, A-C:11, A-D:5, A-E:10, A-F:4, B-C:3, B-D:8, B-E:2, B-F:7, C-D:11, C-E:5, C-F:10, D-E:8, D-F:2, E-F:5"
+    ],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

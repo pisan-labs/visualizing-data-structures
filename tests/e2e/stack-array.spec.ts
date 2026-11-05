@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -203,8 +204,7 @@ test('concept checks give feedback and Show me plays an example', async ({ page 
   await check.getByRole('button', { name: 'Try again' }).click();
   await check.getByRole('button', { name: '2', exact: true }).click();
   await expect(check).toContainText('Yes.');
-  await page.getByRole('link', { name: 'Show me' }).first().click();
-  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await showMe(page, page.getByRole('link', { name: 'Show me' }).first());
 });
 
 test('old /#/ links move to the page address and keep their state', async ({ page }) => {
@@ -309,8 +309,7 @@ test('an assignment link opens the same practice set and grades answers', async 
   else await first.getByRole('textbox').fill(answer === '(nothing)' ? '' : answer);
   await first.getByRole('button', { name: 'Check' }).click();
   await expect(feedback).toContainText('Yes.');
-  await first.getByRole('button', { name: 'Show me' }).click();
-  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await showMe(page, first.getByRole('button', { name: 'Show me' }));
 });
 
 test('presentation mode hides the chrome and Escape leaves it', async ({ page, isMobile }) => {

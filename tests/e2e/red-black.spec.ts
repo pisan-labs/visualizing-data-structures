@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -103,8 +104,7 @@ test('a practice set loads and plays an answer', async ({ page }) => {
   const first = page.locator('.question').first();
   await first.getByRole('button', { name: 'Check' }).click();
   await expect(first.locator('.feedback')).toContainText('Not quite. The answer is');
-  await first.getByRole('button', { name: 'Show me' }).click();
-  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await showMe(page, first.getByRole('button', { name: 'Show me' }));
 });
 
 for (const theme of ['dark', 'contrast']) {

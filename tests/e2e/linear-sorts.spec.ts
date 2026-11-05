@@ -3,6 +3,7 @@
  * through all-vizzes.spec.ts.
  */
 import { expect, test, type Page } from '@playwright/test';
+import { showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -66,8 +67,7 @@ async function practice(page: Page, id: string, seed: number) {
   else await first.getByRole('textbox').fill(answer === '(nothing)' ? '' : answer);
   await first.getByRole('button', { name: 'Check' }).click();
   await expect(feedback).toContainText('Yes.');
-  await first.getByRole('button', { name: 'Show me' }).click();
-  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await showMe(page, first.getByRole('button', { name: 'Show me' }));
 }
 
 test.describe('counting sort', () => {

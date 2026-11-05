@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -77,8 +78,7 @@ test('counting every solution finds 10 for five queens', async ({ page }) => {
 
 test('"Show me" links load an example and play it', async ({ page }) => {
   await page.getByRole('tab', { name: 'Learn' }).click();
-  await page.getByRole('link', { name: 'Show me' }).first().click();
-  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await showMe(page, page.getByRole('link', { name: 'Show me' }).first());
 });
 
 test('a practice question is graded and Show me plays the answer', async ({ page }) => {

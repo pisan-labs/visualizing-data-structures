@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -76,8 +77,7 @@ test('C(n, k) explains what it needs', async ({ page }) => {
 
 test('"Show me" links load an example and play it', async ({ page }) => {
   await page.getByRole('tab', { name: 'Learn' }).click();
-  await page.getByRole('link', { name: 'Show me' }).first().click();
-  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await showMe(page, page.getByRole('link', { name: 'Show me' }).first());
   await expect(narration(page)).toContainText('fib(');
 });
 
@@ -85,8 +85,7 @@ test('a practice question is graded and Show me plays the answer', async ({ page
   await page.goto('/recursion-dag/#practice=27182&n=5');
   await expect(page.locator('.question')).toHaveCount(5);
   const first = await answerFirst(page);
-  await first.getByRole('button', { name: 'Show me' }).click();
-  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await showMe(page, first.getByRole('button', { name: 'Show me' }));
 });
 
 for (const theme of ['dark', 'contrast']) {

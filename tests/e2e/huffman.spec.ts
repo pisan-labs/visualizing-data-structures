@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -117,8 +118,7 @@ test('a practice set grades an answer and shows it on the drawing', async ({ pag
   else await first.getByRole('textbox').fill(answer);
   await first.getByRole('button', { name: 'Check' }).click();
   await expect(feedback).toContainText('Yes.');
-  await first.getByRole('button', { name: 'Show me' }).click();
-  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await showMe(page, first.getByRole('button', { name: 'Show me' }));
   await expect(stage(page)).toHaveAttribute('aria-label', /Huffman tree|priority queue/);
 });
 
@@ -127,8 +127,7 @@ test('concept page links load and play examples', async ({ page }) => {
   await page.getByRole('link', { name: 'One common letter, four rare ones' }).first().click();
   await expect(page.getByText('Loaded "One common letter, four rare ones"')).toBeVisible();
   await page.getByRole('tab', { name: 'Learn' }).click();
-  await page.getByRole('link', { name: 'Show me' }).first().click();
-  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await showMe(page, page.getByRole('link', { name: 'Show me' }).first());
   await expect(narration(page)).toContainText(/abracadabra|lightest|Count/);
 });
 

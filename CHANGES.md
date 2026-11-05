@@ -143,3 +143,5 @@
 2026-11-05 [code] Merged wave 4D: memory model (frames, heap, aliasing; Python/Java or C++ setting), Big-O growth lab, recurrences and the Master theorem (recursion tree, CLRS or simplified cases), bitmasks and subsets
 
 2026-11-05 [code] Merged wave 4C: topological sort by DFS (same start DAG as the in-degree page), SCC (Kosaraju or Tarjan, condensation graph), cut vertices and bridges (d/low, root rule); main now holds 87 of 108 pages
+
+2026-11-05 [code] The "Show me" e2e checks share tests/e2e/helpers.ts showMe(): playback can end before the test looks for Pause (Boyer-Moore flaked in 4 agent runs), so a timeline that changed and stands at its end also counts

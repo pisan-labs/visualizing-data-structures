@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -125,8 +126,7 @@ test('a practice set grades an answer and shows it on the tree', async ({ page }
   );
   await expect(page.locator('.question')).toHaveCount(5);
   const first = await answerFirst(page);
-  await first.getByRole('button', { name: 'Show me' }).click();
-  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await showMe(page, first.getByRole('button', { name: 'Show me' }));
   await expect(stage(page)).toHaveAttribute('aria-label', /A binary tree with \d+ nodes/);
 });
 

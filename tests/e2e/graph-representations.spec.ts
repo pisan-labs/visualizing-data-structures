@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -94,8 +95,7 @@ test('a practice question is graded and shown on the drawing', async ({ page }) 
   else await first.getByRole('textbox').fill(answer);
   await first.getByRole('button', { name: 'Check' }).click();
   await expect(feedback).toContainText('Yes.');
-  await first.getByRole('button', { name: 'Show me' }).click();
-  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await showMe(page, first.getByRole('button', { name: 'Show me' }));
   await expect(stage(page)).toHaveAttribute('aria-label', /graph with \d+ vertices/);
 });
 
@@ -106,6 +106,5 @@ test('concept page links load and play examples', async ({ page }) => {
     page.getByText('Loaded "Worst case for the list: v at the end of a long list"'),
   ).toBeVisible();
   await page.getByRole('tab', { name: 'Learn' }).click();
-  await page.getByRole('link', { name: 'Show me' }).first().click();
-  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await showMe(page, page.getByRole('link', { name: 'Show me' }).first());
 });

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "boyer-moore",
+  "id": "worst-case",
+  "title": "AAA…A and BAAA: the worst case for Horspool",
+  "notes": "Every shift matches AAA from the right before B fails, and the text character under the end of P is always an A, so P slides one place: 13 shifts of 4 comparisons, 52 in all. Switch to both rules to see the good suffix fix it.",
+  "settings": { "rules": "horspool" },
+  "seed": 1,
+  "ops": [["load", "AAAAAAAAAAAAAAAA / BAAA"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

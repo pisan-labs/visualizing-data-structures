@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "boyer-moore",
+  "id": "two-matches",
+  "title": "Two matches, four alignments",
+  "notes": "Horspool tries 4 of the 11 shifts and makes 14 comparisons; brute force makes 30. Each slide reads one table entry: the one for the text character under the last position of P.",
+  "settings": { "rules": "horspool" },
+  "seed": 1,
+  "ops": [["load", "GABABABACABABACG / ABABAC"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

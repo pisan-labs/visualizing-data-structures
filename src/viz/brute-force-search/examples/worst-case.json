@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "brute-force-search",
+  "id": "worst-case",
+  "title": "The worst case: AAA…AB and AAAB",
+  "notes": "Every shift matches three As before the B fails, and the last shift matches. That is 13 shifts of 4 comparisons each, 52 in all: m(n − m + 1), the most any text of 16 characters can cost with a pattern of 4.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["load", "AAAAAAAAAAAAAAAB / AAAB"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

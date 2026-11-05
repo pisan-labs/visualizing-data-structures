@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "rabin-karp",
+  "id": "bigger-q",
+  "title": "A bigger q: no spurious hits",
+  "notes": "The same digits with q = 101 instead of 13. Remainders now range over 101 values, and the only hit is the real match at shift 6.",
+  "settings": { "radix": "auto", "q": 101 },
+  "seed": 1,
+  "ops": [["load", "31415926535897932384 / 2653"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

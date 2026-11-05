@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "brute-force-search",
+  "id": "too-long",
+  "title": "A pattern longer than the text",
+  "notes": "With m > n there is no shift at all: the loop runs from 0 to n − m, a negative number, so it never starts. The search returns an empty list without comparing anything.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["load", "ABRA / ABRACADABRA"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

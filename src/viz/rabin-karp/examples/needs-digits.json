@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "rabin-karp",
+  "id": "needs-digits",
+  "title": "d = 10 needs digits",
+  "notes": "With the radix set to 10, each character must be a decimal digit, and G is not one. The search explains that and leaves everything as it was. Choose d = 256 or Automatic to search letters.",
+  "settings": { "radix": "10", "q": 13 },
+  "seed": 1,
+  "ops": [["load", "GABABABACABABACG / ABABAC"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

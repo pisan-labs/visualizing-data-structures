@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "brute-force-search",
+  "id": "no-match",
+  "title": "No match: ABRAX is not in ABRACADABRA",
+  "notes": "The first shift gets as far as ABRA before C meets X. Every other shift fails within two comparisons. The search still has to try all 7 shifts to be sure: 13 comparisons for nothing.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["load", "ABRACADABRA / ABRAX"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

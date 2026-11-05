@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "kmp",
+  "id": "keeps-three",
+  "title": "A slide that keeps three characters",
+  "notes": "Shift 1 matches ABABA before T[6] = B meets C. ABA is both a prefix and a suffix of ABABA, so P slides two places and its first three characters already match: i stays at 6. Two matches in 16 comparisons, where brute force needs 30.",
+  "settings": { "name": "pi" },
+  "seed": 1,
+  "ops": [["load", "GABABABACABABACG / ABABAC"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

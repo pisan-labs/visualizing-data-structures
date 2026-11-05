@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "boyer-moore",
+  "id": "every-shift",
+  "title": "A match at every shift: O(mn) again",
+  "notes": "AAA occurs at all eight shifts. After each match the good-suffix rule can only slide one place, and every shift compares all three characters again: 24 comparisons. Galil’s rule, which remembers what already matched, is the usual fix.",
+  "settings": { "rules": "full" },
+  "seed": 1,
+  "ops": [["load", "AAAAAAAAAA / AAA"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

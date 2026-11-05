@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "rabin-karp",
+  "id": "spurious-hit",
+  "title": "A spurious hit at shift 6",
+  "notes": "With d = 256 and q = 13, the window BACABA at shift 6 has the same hash as ABABAC. The characters disagree at once, so it costs one comparison. The real matches at 3 and 9 cost six each.",
+  "settings": { "radix": "auto", "q": 13 },
+  "seed": 1,
+  "ops": [["load", "GABABABACABABACG / ABABAC"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "kmp",
+  "id": "every-shift",
+  "title": "A match at every shift, one comparison each",
+  "notes": "AAA occurs at all eight shifts. After the first match, every slide keeps two As, so each new match costs a single comparison: 10 in all, one per character of the text. Brute force needs 24.",
+  "settings": { "name": "pi" },
+  "seed": 1,
+  "ops": [["load", "AAAAAAAAAA / AAA"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

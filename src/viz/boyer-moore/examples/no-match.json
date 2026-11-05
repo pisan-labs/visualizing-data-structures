@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "boyer-moore",
+  "id": "no-match",
+  "title": "No match after two comparisons",
+  "notes": "C is not in ABRA, so the first mismatch slides P five places. The second lands it past the end. Two comparisons settle it; brute force needs 13.",
+  "settings": { "rules": "horspool" },
+  "seed": 1,
+  "ops": [["load", "ABRACADABRA / ABRAX"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

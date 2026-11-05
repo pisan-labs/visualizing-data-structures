@@ -149,7 +149,7 @@ export function alignGeometry(frame: AlignFrame): AlignGeometry {
 
   let y = PAD;
   const aboveTop = y;
-  if (frame.above) y += frame.above + 6;
+  if (frame.above) y += frame.above + 12;
   const pointerTop = y;
   if (frame.pointer) y += POINTER_H;
   y += INDEX_H + lanes * FOUND_LANE + 4;

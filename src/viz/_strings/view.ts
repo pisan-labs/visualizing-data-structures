@@ -14,7 +14,18 @@ import {
 } from '../../layouts/align';
 import { tableGeometry, tableScene, type TableContent, type TableFrame } from '../../layouts/table';
 import type { Bounds, Shape } from '../../render/scene';
-import { andList, foundText, plural, type Attempt, type MatchExtra, type MatchState } from './kit';
+import {
+  andList,
+  foundText,
+  plural,
+  type Attempt,
+  type MatchExtra,
+  type MatchState,
+  type Shift,
+} from './kit';
+
+/** "+3", or "+3 gs" with the Boyer-Moore rule that chose it (a tie needs no name). */
+const byText = (by: Shift) => `+${by.amount}${by.rule && by.rule !== 'tie' ? ` ${by.rule}` : ''}`;
 
 const rowOf = (a: Attempt, k: number): AlignRow => ({
   id: k,
@@ -22,7 +33,7 @@ const rowOf = (a: Attempt, k: number): AlignRow => ({
   cells: a.cells,
   found: a.end === 'match',
   label: `s=${a.s}`,
-  ...(a.by ? { by: `+${a.by.amount}` } : {}),
+  ...(a.by ? { by: byText(a.by) } : {}),
 });
 
 /** The alignments so far, then the live one or the next one. Before a search: P at shift 0. */
@@ -41,7 +52,7 @@ export function rowsOf(state: MatchState): AlignRow[] {
       shift: s.next.s,
       cells: known,
       label: `s=${s.next.s}`,
-      ...(s.next.by ? { by: `+${s.next.by.amount}` } : {}),
+      ...(s.next.by ? { by: byText(s.next.by) } : {}),
     });
   }
   return rows;

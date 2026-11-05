@@ -40,8 +40,10 @@ export const START_PATTERN = 'ABABAC';
 /** How the pattern got to an alignment from the one before. */
 export interface Shift {
   amount: number;
-  /** A short reason for the drawing and the trace: "π[4] = 3", "bad character". */
+  /** A short reason for the trace: "π[4] = 3". */
   why?: string;
+  /** Boyer-Moore: the rule that chose the shift, drawn after it ("+3 gs"); 'tie' when both agree. */
+  rule?: 'bc' | 'gs' | 'tie';
 }
 
 export interface Attempt {

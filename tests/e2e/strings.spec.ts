@@ -165,6 +165,41 @@ test.describe('Knuth-Morris-Pratt', () => {
   });
 });
 
+test.describe('Boyer-Moore', () => {
+  test.beforeEach(({ page }) => open(page, 'boyer-moore', 'Boyer-Moore'));
+
+  test('Horspool slides by the character under the end of P', async ({ page }) => {
+    await press(page, 'Search');
+    await toEnd(page);
+    await expect(narration(page)).toContainText(
+      'Done. P occurs at shifts 3, 9. 14 comparisons in 4 alignments, out of 11 possible shifts: fewer comparisons than the text has characters.',
+    );
+    await expect(stage(page)).toHaveAttribute('aria-label', /shift: A 1, B 2, any other 6\./);
+    await backTo(page, "T[6] = 'B'. shift['B'] = 2: slide 2 places");
+    await expect(
+      page.locator('.code li.active').filter({ hasText: 's = s + shift[T[s + m − 1]]' }),
+    ).toHaveCount(1);
+  });
+
+  test('with both rules, the good suffix fixes the worst case and says so', async ({ page }) => {
+    await page.locator('details.options > summary').click();
+    await page.getByLabel('Bad character and good suffix: take the bigger shift').check();
+    await expect(page.locator('.code')).toContainText('s = s + max(gs[j], j − last[T[s + j]])');
+    await load(page, 'AAAAAAAAAAAAAAAA / BAAA');
+    await press(page, 'Search');
+    await toEnd(page);
+    await expect(narration(page)).toContainText(
+      'Done. P does not occur in T. 16 comparisons in 4 alignments, out of 13 possible shifts.',
+    );
+    await backTo(page, 'The good-suffix rule wins: 4, so s = 4.');
+    await expect(stage(page).locator('text', { hasText: '+4 gs' })).toHaveCount(1);
+  });
+
+  test('a practice question is graded and played', async ({ page }) => {
+    await practice(page, 'boyer-moore', 97531);
+  });
+});
+
 test.describe('Compare mode', () => {
   const sides = (page: Page) => page.locator('.sides > .side');
   const said = (page: Page, i: number) => sides(page).nth(i).locator('.narration p');

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "boyer-moore",
+  "id": "good-suffix",
+  "title": "The good suffix rescues AAA…A and BAAA",
+  "notes": "Same text and pattern as the worst case for Horspool. Now, after AAA matches and B fails, the good-suffix rule sees that AAA occurs nowhere else in BAAA and that BAAA does not start with an A, so P slides all 4 places: 16 comparisons instead of 52.",
+  "settings": { "rules": "full" },
+  "seed": 1,
+  "ops": [["load", "AAAAAAAAAAAAAAAA / BAAA"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

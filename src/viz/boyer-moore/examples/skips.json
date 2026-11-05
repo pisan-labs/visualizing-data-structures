@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "boyer-moore",
+  "id": "skips",
+  "title": "Big jumps: most of the text is never read",
+  "notes": "Most letters of the text are not in HIDING at all, so P often slides all six places. Finding the match takes 10 comparisons for 23 characters of text.",
+  "settings": { "rules": "horspool" },
+  "seed": 1,
+  "ops": [["load", "WHEREISTHEPATTERNHIDING / HIDING"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

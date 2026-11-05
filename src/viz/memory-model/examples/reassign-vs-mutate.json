@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "memory-model",
+  "id": "reassign-vs-mutate",
+  "title": "Reassigning is not changing",
+  "notes": "ys.append changes the shared list. ys = [9] does not: it points ys at a new list and leaves xs where it was. That is the difference between mutating and reassigning.",
+  "settings": { "lang": "refs" },
+  "seed": 1,
+  "ops": [
+    ["run", "xs = [1, 2]"],
+    ["run", "ys = xs"],
+    ["run", "ys.append(3)"],
+    ["run", "ys = [9]"],
+    ["run", "ys.append(8)"]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

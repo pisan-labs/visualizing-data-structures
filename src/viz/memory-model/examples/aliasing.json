@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "memory-model",
+  "id": "aliasing",
+  "title": "Two names, one list",
+  "notes": "ys = xs copies the reference, not the list. After ys.append(4), printing xs shows the 4 too: there was only ever one list.",
+  "settings": { "lang": "refs" },
+  "seed": 1,
+  "ops": [
+    ["run", "xs = [1, 2, 3]"],
+    ["run", "ys = xs"],
+    ["run", "ys.append(4)"]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

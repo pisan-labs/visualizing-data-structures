@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "memory-model",
+  "id": "numbers-copy",
+  "title": "Numbers are copied",
+  "notes": "y = x copies the number 5. Changing y afterwards leaves x alone, in every language.",
+  "settings": { "lang": "refs" },
+  "seed": 1,
+  "ops": [
+    ["run", "x = 5"],
+    ["run", "y = x"],
+    ["run", "y = 6"]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

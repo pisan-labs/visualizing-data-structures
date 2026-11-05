@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "kruskal",
+  "id": "forest",
+  "title": "Two pieces: a spanning forest",
+  "notes": "No edge joins A, B, C and D to E, F and G, so no tree can span them all. Kruskal does not need to know: it ends with two trees, one per piece, 5 edges for 7 vertices.",
+  "settings": {
+    "stop": false,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B:2, A-C:3, B-C:1, C-D:4, E-F:5, F-G:1, E-G:2"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "prim",
+  "id": "other-root",
+  "title": "Start somewhere else, get the same tree",
+  "notes": "Prim from H instead of A. The vertices join in a different order, but this graph has only one minimum spanning tree, so the edges come out the same: weight 19.",
+  "settings": {
+    "queue": "decrease",
+    "start": "H",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "A-B:4, A-C:2, A-D:6, B-D:5, B-E:3, C-D:1, C-F:7, D-E:8, D-F:4, D-G:6, E-G:2, F-G:5, F-H:3, G-H:9"
+    ],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

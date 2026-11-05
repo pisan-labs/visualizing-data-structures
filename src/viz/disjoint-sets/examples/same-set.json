@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "disjoint-sets",
+  "id": "same-set",
+  "title": "Union inside one set does nothing",
+  "notes": "After union(0, 1) and union(1, 2), the three are one set. union(0, 2) finds the same root twice and stops: there is nothing to link.",
+  "settings": {
+    "union": "rank",
+    "path": "compress"
+  },
+  "seed": 1,
+  "ops": [
+    ["union", 0, 1],
+    ["union", 1, 2],
+    ["union", 0, 2]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

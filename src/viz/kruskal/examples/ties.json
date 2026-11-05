@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "kruskal",
+  "id": "ties",
+  "title": "Equal weights: ties go in name order",
+  "notes": "The four sides of the square weigh 1. Kruskal takes A-B, A-D and B-C, in that order, and rejects C-D: by then C and D are joined. Another tie rule would give another tree of the same weight.",
+  "settings": {
+    "stop": false,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B:1, B-C:1, C-D:1, A-D:1, A-C:2, B-D:2"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

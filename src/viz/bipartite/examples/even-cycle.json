@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "bipartite",
+  "id": "even-cycle",
+  "title": "An even cycle: the sides alternate all the way round",
+  "notes": "Six vertices in a ring. Going round, the sides go 0, 1, 0, 1, 0, 1, and the last edge, F back to A, joins side 1 to side 0. Every even cycle splits this way.",
+  "settings": {
+    "method": "bfs",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, B-C, C-D, D-E, E-F, A-F"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

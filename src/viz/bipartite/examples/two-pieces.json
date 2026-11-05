@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "bipartite",
+  "id": "two-pieces",
+  "title": "Two pieces: every piece has to pass",
+  "notes": "A, B and C form a path, which splits fine. The outer loop then starts again at D, on side 0. D, E and F form a triangle, so the graph is not bipartite, even though its first piece is.",
+  "settings": {
+    "method": "bfs",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, B-C, D-E, E-F, D-F"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

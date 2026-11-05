@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "connected-components",
+  "id": "deep-path",
+  "title": "A path with DFS: the call stack gets deep",
+  "notes": "Depth-first search on a path opens a VISIT call for every vertex before any of them returns: seven calls deep on seven vertices. On a path of a million vertices, recursion like this can overflow the stack.",
+  "settings": {
+    "method": "dfs",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, B-C, C-D, D-E, E-F, F-G"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

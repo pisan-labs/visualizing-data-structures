@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "connected-components",
+  "id": "three-pieces",
+  "title": "Three pieces, found one search at a time",
+  "notes": "A, B, C and D form one piece, E and F another, and G, H and I a third. The outer loop starts a new search at A, then E, then G: each one labels a whole piece.",
+  "settings": {
+    "method": "bfs",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-D, C-D, E-F, G-H, H-I, G-I"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

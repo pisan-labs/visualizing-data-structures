@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "bipartite",
+  "id": "pentagon",
+  "title": "A clash far from the start",
+  "notes": "A is on side 0, B and C on side 1, and D and E both on side 0. The edge D-E joins two vertices on the same side. Following π up from D and from E meets at A: the odd cycle D, B, A, C, E has 5 edges.",
+  "settings": {
+    "method": "bfs",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-D, C-E, D-E, E-F"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

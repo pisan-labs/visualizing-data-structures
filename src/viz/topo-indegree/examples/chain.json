@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "topo-indegree",
+  "id": "chain",
+  "title": "A chain: only one order",
+  "notes": "Each vertex waits on the one before it, so only one vertex is ever ready. There is exactly one topological order, and the queue never holds more than one vertex.",
+  "settings": {
+    "ready": "fifo",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B, B>C, C>D, D>E, E>F"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

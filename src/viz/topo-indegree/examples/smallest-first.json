@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "topo-indegree",
+  "id": "smallest-first",
+  "title": "Smallest first: a different order, just as correct",
+  "notes": "The same graph as First ready, first out. When D and C are both ready, a priority queue takes C, the smaller name. The order is A, B, C, D, E. Both orders put every arc forward.",
+  "settings": {
+    "ready": "smallest",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>D, B>C, C>E, D>E"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

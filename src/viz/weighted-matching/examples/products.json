@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "weighted-matching",
+  "id": "products",
+  "title": "Everyone wants the same job",
+  "notes": "c[i][j] = (i + 1)(j + 1). Every row's cheapest cell is in column 1, so the tight cells keep piling into one column and the potentials change again and again. The best answer pairs the biggest row with the smallest column.",
+  "settings": { "goal": "min" },
+  "seed": 1,
+  "ops": [["load", "1 2 3 4 5; 2 4 6 8 10; 3 6 9 12 15; 4 8 12 16 20; 5 10 15 20 25"], ["run"]],
+  "at": { "op": 0, "step": 0 }
+}

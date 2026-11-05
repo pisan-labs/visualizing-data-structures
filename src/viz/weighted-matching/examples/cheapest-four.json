@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "weighted-matching",
+  "id": "cheapest-four",
+  "title": "Four workers, four jobs",
+  "notes": "The reductions leave rows B and C both wanting column 4, so the algorithm has to change the potentials twice. The cheapest assignment, A→2, B→4, C→3, D→1, costs 9.",
+  "settings": { "goal": "min" },
+  "seed": 1,
+  "ops": [["load", "4 2 6 7; 6 2 9 1; 7 8 4 1; 2 2 3 5"], ["run"]],
+  "at": { "op": 0, "step": 0 }
+}

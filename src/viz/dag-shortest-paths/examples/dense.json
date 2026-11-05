@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "dag-shortest-paths",
+  "id": "dense",
+  "title": "Every pair joined: still one relaxation per edge",
+  "notes": "Six vertices and all 15 edges a DAG on them can have. The topological order is A, D, B, F, C, E, and each of the 15 edges is relaxed exactly once.",
+  "settings": {
+    "goal": "shortest",
+    "layout": "layered"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "A>B:4, A>C:9, A>D:1, A>E:12, A>F:6, B>C:3, B>E:7, B>F:1, D>B:2, D>C:8, D>E:9, D>F:6, F>C:1, F>E:5, C>E:2"
+    ],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

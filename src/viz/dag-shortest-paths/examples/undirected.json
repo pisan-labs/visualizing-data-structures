@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "dag-shortest-paths",
+  "id": "undirected",
+  "title": "An undirected graph is refused",
+  "notes": "Every undirected edge goes both ways, so A-B alone is the cycle A \u2192 B \u2192 A. DAG shortest paths needs a directed graph with no cycles.",
+  "settings": {
+    "goal": "shortest",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B:1, B-C:2, A-C:3"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "fenwick-tree",
+  "id": "whole-array",
+  "title": "A query of the whole array",
+  "notes": "16 is a power of two, so prefix(16) reads one entry: T[16] covers everything. sum(1, 16) is the same walk, because prefix(0) is 0.",
+  "settings": { "build": "linear" },
+  "seed": 1,
+  "ops": [
+    ["build", "3 8 1 6 2 9 4 7 5 2 8 3 6 1 7 4"],
+    ["prefix", 16],
+    ["sum", 1, 16]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

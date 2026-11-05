@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "fenwick-tree",
+  "id": "build-by-adds",
+  "title": "Building with one add per value",
+  "notes": "Start from zeros and add each value along its update path. The same sixteen values take 48 additions, against 15 for the linear build: O(n log n).",
+  "settings": { "build": "updates" },
+  "seed": 1,
+  "ops": [["build", "3 8 1 6 2 9 4 7 5 2 8 3 6 1 7 4"]],
+  "at": { "op": -1, "step": 0 }
+}

@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "fenwick-tree",
+  "id": "longest-update",
+  "title": "The longest update: changing A[1]",
+  "notes": "Every power of two covers A[1], so add(1, 2) climbs through T[1], T[2], T[4], T[8] and T[16]: ⌊log₂ 16⌋ + 1 = 5 entries, the most any add touches here.",
+  "settings": { "build": "linear" },
+  "seed": 1,
+  "ops": [
+    ["build", "3 8 1 6 2 9 4 7 5 2 8 3 6 1 7 4"],
+    ["add", 1, 2]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

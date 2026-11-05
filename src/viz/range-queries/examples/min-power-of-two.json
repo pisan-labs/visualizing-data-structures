@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "range-queries",
+  "id": "min-power-of-two",
+  "title": "A range whose length is a power of two",
+  "notes": "min(4, 11) covers exactly 8 values, so the window that starts at i and the one that ends at j are the same window. min(6, 6) covers one value and reads row 0, which is A.",
+  "settings": { "structure": "sparse" },
+  "seed": 1,
+  "ops": [
+    ["build", "12 7 19 3 25 14 8 21 5 30 17 9 26 2 11 16"],
+    ["query", 4, 11],
+    ["query", 6, 6]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "segment-tree",
+  "id": "uneven-tree",
+  "title": "Ten values: leaves at two depths",
+  "notes": "When n is not a power of two, halving gives ranges of uneven sizes, and some leaves sit one level higher than others. The tree still has 2n − 1 = 19 nodes, and queries still visit at most four per level.",
+  "settings": { "combine": "sum" },
+  "seed": 1,
+  "ops": [
+    ["build", "4 9 2 7 5 3 8 1 6 2"],
+    ["query", 3, 8]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

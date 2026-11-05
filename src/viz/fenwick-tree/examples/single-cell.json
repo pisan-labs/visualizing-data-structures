@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "fenwick-tree",
+  "id": "single-cell",
+  "title": "A range of one cell",
+  "notes": "sum(7, 7) is prefix(7) − prefix(6). The first walk reads T[7], T[6] and T[4]; the second reads T[6] and T[4] again, so all that survives is T[7], which is A[7].",
+  "settings": { "build": "linear" },
+  "seed": 1,
+  "ops": [
+    ["build", "3 8 1 6 2 9 4 7 5 2 8 3 6 1 7 4"],
+    ["sum", 7, 7]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

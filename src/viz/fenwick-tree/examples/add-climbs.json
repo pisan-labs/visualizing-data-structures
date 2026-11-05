@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "fenwick-tree",
+  "id": "add-climbs",
+  "title": "An add climbs through every range that contains i",
+  "notes": "add(5, 3) changes T[5], T[6], T[8] and T[16]: each step adds the lowest set bit, and each box contains the one before it.",
+  "settings": { "build": "linear" },
+  "seed": 1,
+  "ops": [
+    ["build", "3 8 1 6 2 9 4 7 5 2 8 3 6 1 7 4"],
+    ["add", 5, 3]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

@@ -132,3 +132,68 @@ test.describe('Brute-force string search', () => {
     await practice(page, 'brute-force-search', 24680);
   });
 });
+
+test.describe('Knuth-Morris-Pratt', () => {
+  test.beforeEach(({ page }) => open(page, 'kmp', 'Knuth-Morris-Pratt'));
+
+  test('builds π, then slides past what matched without going back', async ({ page }) => {
+    await press(page, 'Search');
+    await toEnd(page);
+    await expect(narration(page)).toContainText(
+      'Done. P occurs at shifts 3, 9. Matching made 16 comparisons in 4 alignments; building π made 7.',
+    );
+    await expect(stage(page)).toHaveAttribute('aria-label', /π = 0, 0, 1, 2, 3, 0\./);
+    await backTo(page, "Shift 1 matched 'ABABA', then T[6] ≠ P[5].");
+    await expect(narration(page)).toContainText('i stays at 6: compare T[6] with P[3] next.');
+    await expect(
+      page.locator('.code li.active').filter({ hasText: 's = s + q − π[q − 1]' }),
+    ).toHaveCount(1);
+    await backTo(page, "π[4] = 3: 'ABA' is the longest proper prefix of P[0..4]");
+  });
+
+  test('calls the table the failure function when asked', async ({ page }) => {
+    await page.locator('details.options > summary').click();
+    await page.getByLabel('f, the failure function').check();
+    await expect(page.locator('.code')).toContainText('q = f[q − 1]');
+    await press(page, 'Build the table');
+    await toEnd(page);
+    await expect(narration(page)).toContainText('f is ready: [0, 0, 1, 2, 3, 0]');
+  });
+
+  test('a practice question is graded and played', async ({ page }) => {
+    await practice(page, 'kmp', 13579);
+  });
+});
+
+test.describe('Compare mode', () => {
+  const sides = (page: Page) => page.locator('.sides > .side');
+  const said = (page: Page, i: number) => sides(page).nth(i).locator('.narration p');
+  const drawing = (page: Page, i: number) => sides(page).nth(i).locator('.stage > svg');
+
+  test('brute force and KMP run on the same input', async ({ page }) => {
+    await page.goto('/brute-force-search/#compare=kmp');
+    await expect(
+      page.getByRole('heading', { name: 'Brute-force string search vs Knuth-Morris-Pratt' }),
+    ).toBeVisible();
+    await page.getByRole('combobox', { name: 'Speed' }).selectOption('4');
+    for (const i of [0, 1])
+      await expect(drawing(page, i)).toHaveAttribute(
+        'aria-label',
+        /Text T = GABABABACABABACG, 16 characters\. Pattern P = ABABAC/,
+      );
+    await load(page, 'ABRACADABRA / ABRA');
+    await form(page).getByRole('button', { name: 'Search', exact: true }).click();
+    await toEnd(page);
+    await expect(said(page, 0)).toContainText(
+      'Done. P occurs at shifts 0, 7. Brute force tried all 8 shifts and made 16 comparisons',
+    );
+    await expect(said(page, 1)).toContainText(
+      'Done. P occurs at shifts 0, 7. Matching made 13 comparisons',
+    );
+    for (const i of [0, 1])
+      await expect(drawing(page, i)).toHaveAttribute(
+        'aria-label',
+        /Text T = ABRACADABRA.*Found at shifts 0 and 7\./,
+      );
+  });
+});

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "kmp",
+  "id": "build-table",
+  "title": "Building π for AABAACAABAA",
+  "notes": "Only the table this time (Build the table, under More operations). Watch the copy of P fall back at P[5] = C, from the border AA to A to nothing, and then climb to π[10] = 5.",
+  "settings": { "name": "pi" },
+  "seed": 1,
+  "ops": [["load", "AABAACAABAAAABAACAAB / AABAACAABAA"], ["prefix"]],
+  "at": { "op": 0, "step": 0 }
+}

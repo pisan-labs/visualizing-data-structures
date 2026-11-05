@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "kmp",
+  "id": "overlapping",
+  "title": "Overlapping matches: ABABA in ABABABABAB",
+  "notes": "After each match, π[4] = 3 says the last three characters, ABA, start the next possible match. P slides two places and keeps them, so the three matches cost 9 comparisons in all.",
+  "settings": { "name": "pi" },
+  "seed": 1,
+  "ops": [["load", "ABABABABAB / ABABA"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

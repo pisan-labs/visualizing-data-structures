@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "kmp",
+  "id": "worst-case",
+  "title": "AAA…AB and AAAB: brute force at its worst",
+  "notes": "Brute force needs 52 comparisons here. KMP needs 28: after three As and a mismatch it keeps two As and compares the same text character again. That is close to its own limit of 2n − m + 1 = 29.",
+  "settings": { "name": "pi" },
+  "seed": 1,
+  "ops": [["load", "AAAAAAAAAAAAAAAB / AAAB"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

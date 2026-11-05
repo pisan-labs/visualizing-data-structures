@@ -6,9 +6,11 @@
  * Rabin-Karp pages; suffix structures can reuse it.
  *
  * Call `alignScene(frame, content)` from a view and wrap the result in a Scene with a label.
- * A table under the rows (a prefix function, shift tables) comes from src/layouts/table.ts:
- * reserve room with `frame.below` and `frame.belowWidth`, then `placeTable` moves the table's
- * shapes into that room, centered under the text.
+ * A table (a prefix function, shift tables) comes from src/layouts/table.ts and goes above the
+ * text: reserve room with `frame.above` and `frame.aboveWidth`, then `placeTable` moves the
+ * table's shapes into that room. Above, not below: the rows under the text keep room for
+ * alignments still to come, and a table under that room would float far from a short search.
+ * Empty slots at the bottom also crop away in a still picture (a practice question).
  *
  * - `frame` fixes the framing. Keep it the same for every step of an operation, so the camera
  *   stays still while the pattern slides:
@@ -20,7 +22,7 @@
  *     matches go in different lanes; with more overlaps than lanes they share.
  *   - `values`: reserve a lane under the text for one value per shift, such as Rabin-Karp's
  *     window hashes, each under the first character of its window.
- *   - `below`, `belowWidth`: room reserved under the rows for a table, and its width.
+ *   - `above`, `aboveWidth`: room reserved at the top for a table, and its width.
  * - `content` is what this step shows:
  *   - `text`: the top row, normally the text T. While a table is built from the pattern alone
  *     (KMP's prefix function, a good-suffix table), the pattern takes the top row: set
@@ -68,8 +70,8 @@ export interface AlignFrame {
   pointer?: boolean;
   foundLanes?: number;
   values?: boolean;
-  below?: number;
-  belowWidth?: number;
+  above?: number;
+  aboveWidth?: number;
 }
 
 export interface AlignRow {
@@ -111,9 +113,11 @@ export interface AlignGeometry {
   textBottom: number;
   /** Top of row slot k, 0 nearest the text. */
   rowTop(k: number): number;
-  /** Top of the room reserved below. */
-  belowTop: number;
-  /** Center of the text row, for centering a table under it. */
+  /** Top of the room reserved above the text for a table. */
+  aboveTop: number;
+  /** Top of the pointer lane. */
+  pointerTop: number;
+  /** Center of the text row, for centering a table over it. */
   centerX: number;
   /** Rows shown at once. */
   slots: number;
@@ -126,7 +130,7 @@ const POINTER_H = 40;
 const INDEX_H = 22;
 const FOUND_LANE = 7;
 const VALUE_H = 30;
-const GAP = 16;
+const GAP = 14;
 
 /** Column pitch for this many columns: 48 units down to 30. */
 export function pitchFor(cols: number): number {
@@ -135,15 +139,18 @@ export function pitchFor(cols: number): number {
 
 export function alignGeometry(frame: AlignFrame): AlignGeometry {
   const pitch = pitchFor(frame.cols);
-  const cellH = pitch <= 36 ? 38 : Math.min(50, pitch + 4);
+  const cellH = pitch <= 36 ? 38 : Math.min(44, pitch);
   const slots = Math.max(1, frame.rows ?? 4);
   const lanes = frame.foundLanes ?? 2;
   const gridW = frame.cols * pitch;
   const natural = NAME_W + gridW + PAD;
-  const width = Math.max(MIN_W, natural + PAD, (frame.belowWidth ?? 0) + 2 * PAD);
+  const width = Math.max(MIN_W, natural + PAD, (frame.aboveWidth ?? 0) + 2 * PAD);
   const x0 = (width - natural) / 2 + NAME_W;
 
   let y = PAD;
+  const aboveTop = y;
+  if (frame.above) y += frame.above + 6;
+  const pointerTop = y;
   if (frame.pointer) y += POINTER_H;
   y += INDEX_H + lanes * FOUND_LANE + 4;
   const textTop = y;
@@ -151,9 +158,7 @@ export function alignGeometry(frame: AlignFrame): AlignGeometry {
   y = textBottom + (frame.values ? VALUE_H + 4 : 0) + GAP;
   const rowsTop = y;
   const slotH = cellH + GAP;
-  y = rowsTop + slots * slotH - GAP + 12;
-  const belowTop = y;
-  const height = belowTop + (frame.below ?? 0) + PAD;
+  const height = rowsTop + slots * slotH - GAP + PAD;
   return {
     width,
     height,
@@ -164,7 +169,8 @@ export function alignGeometry(frame: AlignFrame): AlignGeometry {
     textTop,
     textBottom,
     rowTop: (k) => rowsTop + k * slotH,
-    belowTop,
+    aboveTop,
+    pointerTop,
     centerX: x0 + gridW / 2,
     slots,
   };
@@ -282,7 +288,7 @@ export function alignScene(
   if (frame.pointer && content.pointer) {
     const p = content.pointer;
     const x = g.cx(p.at);
-    const top = PAD;
+    const top = g.pointerTop;
     const role = roles.get('ptr') ?? p.role ?? 'active';
     shapes.push({
       kind: 'text',

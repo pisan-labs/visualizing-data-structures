@@ -5,11 +5,14 @@
 import type { MarkRole, Step } from '../../engine/types';
 import {
   alignScene,
+  placeTable,
+  prefixIds,
   type AlignContent,
   type AlignFrame,
   type AlignGeometry,
   type AlignRow,
 } from '../../layouts/align';
+import { tableGeometry, tableScene, type TableContent, type TableFrame } from '../../layouts/table';
 import type { Bounds, Shape } from '../../render/scene';
 import { andList, foundText, plural, type Attempt, type MatchExtra, type MatchState } from './kit';
 
@@ -54,8 +57,8 @@ export interface MatchViewOptions {
   frame: Omit<AlignFrame, 'cols'>;
   /** Where the text pointer is when the step does not say. */
   pointerOf?: (state: MatchState) => number | undefined;
-  /** Shapes under the rows: a table placed with the geometry. */
-  below?: (g: AlignGeometry, roles: ReadonlyMap<string, MarkRole>) => Shape[];
+  /** Shapes over the text: a table placed with the geometry. */
+  above?: (g: AlignGeometry, roles: ReadonlyMap<string, MarkRole>) => Shape[];
   /** The value lane (Rabin-Karp's window hashes). */
   values?: AlignContent['values'];
 }
@@ -97,7 +100,7 @@ export function matchShapes(
     if (extra.pair) content.pair = { ...extra.pair, row: currentRow(state) };
   }
   const out = alignScene(frame, content);
-  if (opts.below) out.shapes.push(...opts.below(out.geometry, roles));
+  if (opts.above) out.shapes.push(...opts.above(out.geometry, roles));
   return out;
 }
 
@@ -119,3 +122,36 @@ export function describeMatch(state: MatchState): string {
 }
 
 export { foundText };
+
+/** The size of a table drawn by src/layouts/table.ts: its headers and grid. */
+export function tableSize(frame: TableFrame): { width: number; height: number } {
+  const g = tableGeometry(frame);
+  const heads = (frame.rowHeads ?? [40]).reduce((a, b) => a + b, 0);
+  return { width: heads + frame.cols * g.cellW, height: g.gridBottom - (g.headY(0) - 21) };
+}
+
+/**
+ * A table from src/layouts/table.ts, moved so its top is at `top`. `at` places
+ * it: centered on `centerX`, or with its first column's left edge at `gridLeft` (so a table
+ * indexed like the pattern lines up with the top row's columns). With a `prefix`, its shape
+ * ids (and the marks that point at them) get the prefix, so two tables can share a scene.
+ */
+export function tableAt(
+  frame: TableFrame,
+  content: TableContent,
+  at: { centerX: number } | { gridLeft: number },
+  top: number,
+  prefix = '',
+): Shape[] {
+  const g = tableGeometry(frame);
+  const roles = new Map<string, MarkRole>();
+  for (const [id, role] of content.roles ?? [])
+    if (id.startsWith(prefix)) roles.set(id.slice(prefix.length), role);
+  const { shapes } = tableScene(frame, { ...content, roles });
+  const heads = (frame.rowHeads ?? [40]).reduce((a, b) => a + b, 0);
+  const box = { left: g.gridLeft - heads, right: g.gridRight, top: g.headY(0) - 21 };
+  const centerX =
+    'centerX' in at ? at.centerX : at.gridLeft - g.gridLeft + (box.left + box.right) / 2;
+  const placed = placeTable(shapes, box, centerX, top);
+  return prefix ? prefixIds(placed, prefix) : placed;
+}

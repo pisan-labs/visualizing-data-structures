@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "kmp",
+  "id": "no-match",
+  "title": "No match, but every slide keeps AB",
+  "notes": "ABCAB keeps matching and C keeps meeting D. Each time, π[4] = 2: P slides three places with AB already in place. Four alignments and 18 comparisons to be sure ABCABD is not there; brute force makes 31.",
+  "settings": { "name": "pi" },
+  "seed": 1,
+  "ops": [["load", "ABCABCABCABCABCA / ABCABD"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

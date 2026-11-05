@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "prim",
+  "id": "lazy-queue",
+  "title": "The lazy queue: insert again, skip stale",
+  "notes": "The same graph with the lazy queue. D goes in twice, at 6 and then at 1, and E twice, at 8 and at 3. The old entries come out later and are skipped as stale. Same tree, same weight.",
+  "settings": {
+    "queue": "lazy",
+    "start": "A",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "A-B:4, A-C:2, A-D:6, B-D:5, B-E:3, C-D:1, C-F:7, D-E:8, D-F:4, D-G:6, E-G:2, F-G:5, F-H:3, G-H:9"
+    ],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

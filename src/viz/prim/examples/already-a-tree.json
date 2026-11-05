@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "prim",
+  "id": "already-a-tree",
+  "title": "A graph that is already a tree",
+  "notes": "Every edge is in the only spanning tree. Each vertex has one way in, so no key ever drops twice.",
+  "settings": {
+    "queue": "decrease",
+    "start": "A",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B:3, A-C:5, B-D:2, B-E:7, C-F:1, C-G:4"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

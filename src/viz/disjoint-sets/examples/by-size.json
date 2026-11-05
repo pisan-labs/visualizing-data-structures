@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "disjoint-sets",
+  "id": "by-size",
+  "title": "By size: the smaller tree goes under",
+  "notes": "Union by size counts nodes instead of ranks. Every union here joins two roots, so each one costs a single link.",
+  "settings": {
+    "union": "size",
+    "path": "compress"
+  },
+  "seed": 1,
+  "ops": [
+    ["union", 0, 1],
+    ["union", 2, 1],
+    ["union", 3, 4],
+    ["union", 4, 1],
+    ["union", 5, 6],
+    ["union", 1, 6]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

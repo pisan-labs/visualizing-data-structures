@@ -117,6 +117,35 @@ test('a practice question is graded and shown on the drawing', async ({ page }) 
   await expect(stage(page)).toHaveAttribute('aria-label', /Dijkstra from A\./);
 });
 
+test('compare mode puts Dijkstra and Bellman-Ford on the same graph', async ({ page }) => {
+  await page.goto('/dijkstra/#compare=bellman-ford');
+  await expect(
+    page.getByRole('heading', { name: "Dijkstra's shortest paths vs Bellman-Ford" }),
+  ).toBeVisible();
+  const sides = page.locator('.sides > .side');
+  // Both start from the same weighted graph.
+  for (const i of [0, 1]) {
+    await expect(sides.nth(i).locator('.stage > svg')).toHaveAttribute(
+      'aria-label',
+      /^A weighted directed graph with 7 vertices and 10 edges\. A to B \(weight 5\), C \(weight 2\);/,
+    );
+  }
+  await fast(page);
+  await op(page, 'Load', 'A>B:4, A>C:1, C>B:2, B>D:1, C>D:5');
+  await op(page, 'Run Dijkstra from', 'A');
+  await toEnd(page);
+  await expect(sides.nth(0).locator('.narration .chip')).toHaveText('run("A")');
+  await expect(sides.nth(1).locator('.narration .chip')).toHaveText('run("A")');
+  await expect(sides.nth(0).locator('.stage > svg')).toHaveAttribute(
+    'aria-label',
+    /4 vertices and 5 edges.*Dijkstra from A\. Settled: A, C, B, D\. Queue: empty\. Distances so far: A 0, B 3, C 1, D 4\./,
+  );
+  await expect(sides.nth(1).locator('.stage > svg')).toHaveAttribute(
+    'aria-label',
+    /4 vertices and 5 edges.*Bellman-Ford from A\..*Distances so far: A 0, B 3, C 1, D 4\./,
+  );
+});
+
 test('compare mode runs both queues on the same graph', async ({ page }) => {
   await page.goto('/dijkstra/#compare=dijkstra');
   const sides = page.locator('.sides > .side');

@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bellman-ford",
+  "id": "worst-order",
+  "title": "Edges in the worst order: every pass counts",
+  "notes": "The path runs H, G, F, ... A, but the edges are listed from B>A up to H>G, against the path. Each pass gets exactly one more vertex right, so all 7 passes are needed.",
+  "settings": {
+    "early": true,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "B>A:6, C>B:2, D>C:5, E>D:1, F>E:4, G>F:1, H>G:3"],
+    ["run", "H"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

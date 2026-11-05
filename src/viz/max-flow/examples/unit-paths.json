@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "max-flow",
+  "id": "unit-paths",
+  "title": "Unit capacities count disjoint paths",
+  "notes": "With every capacity 1, the maximum flow is the largest number of paths from s to t that share no arc. Here it is 3: s has three arcs out, and the cut finds three arcs that every path must use.",
+  "settings": {
+    "method": "bfs",
+    "residual": false,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [["load", "s>a, s>b, s>c, a>d, b>d, b>e, c>e, d>t, e>t, c>f, f>t"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

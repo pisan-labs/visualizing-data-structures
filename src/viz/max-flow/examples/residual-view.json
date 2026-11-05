@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "max-flow",
+  "id": "residual-view",
+  "title": "The residual network, step by step",
+  "notes": "The same run, drawn as the residual network: each arc shows the room left on it, and the dashed arcs are reverse arcs, flow that could be taken back. At the end no arc leaves the s side.",
+  "settings": {
+    "method": "bfs",
+    "residual": true,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [["load", "s>a:16, s>b:13, b>a:4, a>c:12, c>b:9, b>d:14, d>c:7, c>t:20, d>t:4"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

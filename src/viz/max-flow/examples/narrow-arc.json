@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "max-flow",
+  "id": "narrow-arc",
+  "title": "One narrow arc decides everything",
+  "notes": "Two well-connected halves joined by c→d, capacity 3. However wide the rest is, the flow is 3, and the minimum cut is that one arc.",
+  "settings": {
+    "method": "bfs",
+    "residual": false,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "s>a:8, s>b:6, a>b:5, a>c:7, b>c:9, c>d:3, d>e:8, d>f:6, e>t:9, f>t:7, e>f:4"],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

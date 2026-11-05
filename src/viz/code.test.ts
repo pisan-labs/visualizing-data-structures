@@ -24,12 +24,19 @@ const toolchain: Record<Lang, boolean> = {
   cpp: available('g++', ['--version']),
 };
 
-/** Values the random scripts may use: small integers and letters this page accepts. */
+/**
+ * Values the random scripts may use: small integers, letters, and words that share prefixes (so
+ * word pages see an insert split a compressed-trie edge), whichever this page accepts.
+ */
+const WORDS =
+  'an and ant any be bee beat bed car card care cart do dog dot ten tea team tear'.split(' ');
+
 function valuePool(def: AnyVizDef): Value[] {
   const parse = def.controls.input?.parse;
   const candidates = [
     ...Array.from({ length: 60 }, (_, i) => String(i)),
     ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
+    ...WORDS,
   ];
   if (!parse) return [];
   return candidates.map((c) => parse(c)).filter((v): v is Value => !(v instanceof Error));

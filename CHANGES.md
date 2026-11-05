@@ -129,3 +129,5 @@
 2026-11-05 [code] Merged wave 3R: prefix sums and sparse tables (range-queries), Fenwick tree (low bit shown in binary), segment tree with lazy propagation; columns layout in src/layouts/columns.ts; all with practice
 
 2026-11-05 [code] Merged wave 3M: trie (pruning or lazy delete), compressed trie (splits and merges named), Huffman coding (forest priority queue, tie rule setting, encode and decode); trie layout in src/layouts/trie.ts; all with practice
+
+2026-11-05 [code] The code-tab test's random scripts also try words that share prefixes, so word pages (tries) exercise edge splits in all three languages

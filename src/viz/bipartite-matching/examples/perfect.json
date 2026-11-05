@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "bipartite-matching",
+  "id": "perfect",
+  "title": "A perfect matching",
+  "notes": "Four workers and four jobs, and every vertex ends up matched. B only likes 1, which A already has, so A moves over to 3 to make room.",
+  "settings": {
+    "method": "kuhn",
+    "layout": "columns"
+  },
+  "seed": 1,
+  "ops": [["load", "A-1, A-3, B-1, C-2, C-3, D-2, D-4"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

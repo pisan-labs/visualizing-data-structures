@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "bipartite-matching",
+  "id": "rematch",
+  "title": "Moving a partner to make room",
+  "notes": "B wants 1, which A has, so A moves to 2. C then wants 2: A moves back to 1 and B moves to 3. Each step flips an augmenting path. E only likes 3, and nobody can give it up, so E stays free.",
+  "settings": {
+    "method": "kuhn",
+    "layout": "columns"
+  },
+  "seed": 1,
+  "ops": [["load", "A-1, A-2, B-1, B-3, C-2, C-4, D-2, D-3, E-3"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

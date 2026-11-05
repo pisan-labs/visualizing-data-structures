@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "bipartite-matching",
+  "id": "longer-and-longer",
+  "title": "Augmenting paths that keep growing",
+  "notes": "Each worker's first choice is taken, so every new worker pushes all the earlier ones along: the augmenting paths have 1, 3, 5, 7 and 9 edges. This is where Kuhn's algorithm does its most work.",
+  "settings": {
+    "method": "kuhn",
+    "layout": "columns"
+  },
+  "seed": 1,
+  "ops": [["load", "A-1, A-2, B-1, B-3, C-2, C-4, D-3, D-5, E-4, E-6"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

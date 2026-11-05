@@ -138,7 +138,7 @@ function runVars(net: Network, r: McRun): Record<string, Scalar> {
 /** The final answer in the code tabs' words. */
 export function runSummary(net: Network, r: McRun): string {
   const flows = net.graph.edges.map((e) => `${e.u}>${e.v}:${r.flow[keyOf(e)] ?? 0}`).join(' ');
-  return `${r.value} ${r.cost} | ${r.paths.length} | ${flows}`;
+  return `${r.value} ${r.cost} | ${r.paths.length} | ${flows}`.trimEnd();
 }
 
 function pathOf(pi: Record<string, string | null>, s: string, t: string): string[] {

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "bipartite-matching",
+  "id": "too-few-jobs",
+  "title": "Too few jobs for a group: Hall's condition",
+  "notes": "A, B and C only like jobs 1 and 2, so at most two of them can be matched, however the rest is chosen. The maximum matching leaves one of them free.",
+  "settings": {
+    "method": "kuhn",
+    "layout": "columns"
+  },
+  "seed": 1,
+  "ops": [["load", "A-1, A-2, B-1, B-2, C-1, C-2, D-2, D-3, D-4"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

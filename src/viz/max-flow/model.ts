@@ -142,7 +142,7 @@ function pathParts(net: Network, flow: Flow, p: string[]): string[] {
 export function runSummary(net: Network, r: MfRun): string {
   const flows = net.graph.edges.map((e) => `${e.u}>${e.v}:${r.flow[keyOf(e)] ?? 0}`).join(' ');
   const side = [...(r.side ?? [])].sort(compareNames).join(' ');
-  return `${r.value} | ${r.paths.length} | ${side} | ${flows}`;
+  return `${r.value} | ${r.paths.length} | ${side} | ${flows}`.trimEnd();
 }
 
 const run: Op = {

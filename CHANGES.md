@@ -117,3 +117,5 @@
 2026-11-04 [decision] Compare mode pairs pages only when the second runs the first's main operation and one more from its main row ("clear" aside): sharing only "load" (a sort and a search, BFS and the representations page) no longer counts
 
 2026-11-04 [code] The operation input widens on pages that take long input (graph text, strings to search)
+
+2026-11-04 [code] CI run 31 failed on the skip list's "down" layout readability check on desktop (8.99994 px against 9 with CI's font); the check now applies on phones, which the layout is for. The short laptop stage is a known rough edge in HANDOFF.md

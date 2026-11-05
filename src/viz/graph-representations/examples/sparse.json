@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "graph-representations",
+  "id": "sparse",
+  "title": "A sparse graph: the matrix is mostly zeros",
+  "notes": "A path of 8 vertices has 7 edges, but its matrix has 64 cells and 50 of them are 0. hasEdge(D, E) takes 2 checks in the list, 1 in the matrix and 4 in the edge list.",
+  "settings": {
+    "layout": "force",
+    "arrange": "wide"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, B-C, C-D, D-E, E-F, F-G, G-H"],
+    ["hasEdge", "D-E"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

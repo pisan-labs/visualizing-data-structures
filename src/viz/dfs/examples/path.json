@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "dfs",
+  "id": "path",
+  "title": "A path: the call stack grows to V",
+  "notes": "On a path from A, every call makes one more call before anything returns. The call stack holds all 8 vertices at once, the most it can.",
+  "settings": {
+    "style": "recursive",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, B-C, C-D, D-E, E-F, F-G, G-H"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "graph-representations",
+  "id": "weighted",
+  "title": "Weights: in the list entries and the matrix cells",
+  "notes": "With weights, each list entry carries its weight and each matrix cell holds one. An empty cell means no edge, so a weight of 0 still shows.",
+  "settings": {
+    "layout": "force",
+    "arrange": "wide"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B:4, A-C:2, B-C:5, B-D:10, C-E:3, D-E:4, D-F:11, E-F:0"],
+    ["hasEdge", "B-D"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

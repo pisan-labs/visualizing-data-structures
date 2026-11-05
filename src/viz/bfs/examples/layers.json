@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bfs",
+  "id": "layers",
+  "title": "Rings around A: distances 0 to 3",
+  "notes": "BFS from A finds B and C at distance 1, then D, E and F at 2, then G and H at 3. The queue always holds at most two distances at once.",
+  "settings": {
+    "marking": "colors",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, B-D, B-E, C-E, C-F, D-G, E-G, F-H, G-H"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

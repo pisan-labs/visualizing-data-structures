@@ -9,7 +9,7 @@ Last written: Wednesday 4 November 2026, 21:10, when the relay was set up (not a
 
 - Nothing is published yet. Yusuf deploys to Netlify by hand (site `stepwise-pisan-labs`, domain
   `stepwise.pisan.me`); sessions never start, publish or roll back a deploy.
-- `main` holds 57 of the 108 catalog pages, every one with a concept page, examples, Big-O
+- `main` holds 60 of the 108 catalog pages, every one with a concept page, examples, Big-O
   self-test, presets, Python/Java/C++ code tabs, a practice set and tests.
 - Site features: per-page URLs, saved and shared examples, embeds, presentation mode, compare
   mode (`/<page>/#compare=<other>`), printable concept pages, practice sets with assignment links.
@@ -28,23 +28,29 @@ Last written: Wednesday 4 November 2026, 21:10, when the relay was set up (not a
 
 ## Branches still unmerged
 
-- `worktree-agent-a236de13415c4ea73` (local only, in this container): agent K, the wave 3 graph
-  foundation (graph model and text parser in `src/viz/_graph/`, `src/layouts/graph.ts`, pages
-  `graph-representations`, `bfs`, `dfs`). Running when this was written; it must be merged
-  before any handover.
+Local only, in this container, each an agent still running when this was written (all must be
+merged before a handover):
+- string matching (brute force, KMP, Boyer-Moore, Rabin-Karp) with an alignment layout;
+- tries, compressed tries and Huffman coding;
+- range queries (prefix sums and sparse tables, Fenwick tree, segment tree);
+- shortest paths (Dijkstra, Bellman-Ford, DAG shortest paths, Floyd-Warshall) on the graph
+  foundation.
 
 ## Next, in order
 
-1. Merge agent K after its checks, with repeated conformance runs on its pages
+1. Merge each running agent after its checks, with repeated conformance runs on its pages
    (`npx vitest run src/viz/conformance.test.ts -t "<ids>"`, 10 or more times).
-2. Wave 3 graphs on K's foundation, about four pages per agent: shortest paths (Dijkstra,
-   Bellman-Ford, DAG shortest paths, A*, Floyd-Warshall); MST and union-find (Prim, Kruskal,
+2. More graph pages on the foundation in `src/viz/_graph/` and `src/layouts/graph.ts` (BFS and
+   DFS are the reference pages), about four per agent: MST and union-find (Prim, Kruskal,
    disjoint sets); connectivity (components, bipartite, topological sorts, SCC, bridges, grid
-   BFS); flow and matching. Then strings, range queries, geometry, foundations, hard problems
-   (see `src/viz/catalog.ts` and PLAN.md section 7).
+   BFS, A*); flow and matching. Then the suffix structures, geometry, foundations and hard
+   problems (see `src/viz/catalog.ts` and PLAN.md section 7).
 3. Tech debt: unify `src/layouts/node-chain.ts` with `src/layouts/linked.ts`, with screenshots
    before and after.
-4. Known rough edges from the agents' reports: at 1366x768 the desktop stage is about 305 to 320
+4. Shared rendering requests from the graph agent: arrow lines colored by role (only active
+   and error have line colors now; tree edges get only a green head), and views sized to the
+   stage's aspect ratio (DFS draws at about 0.6x on a 1366x768 laptop).
+5. Known rough edges from the agents' reports: at 1366x768 the desktop stage is about 305 to 320
    px tall, so tall scenes (merge sort, recursion trees, DP tables, mid-rehash) draw text at
    11 to 13 px; the hash page's "all keys collide" preset could now use the settings presets
    receive instead of its hidden fill operation.

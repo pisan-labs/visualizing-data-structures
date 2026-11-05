@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bfs",
+  "id": "middle-start",
+  "title": "Start in the middle: a different tree",
+  "notes": "The same graph as Rings around A, searched from E. Every vertex is within 2 edges of E, and the tree looks nothing like the one from A.",
+  "settings": {
+    "marking": "colors",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, B-D, B-E, C-E, C-F, D-G, E-G, F-H, G-H"],
+    ["run", "E"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

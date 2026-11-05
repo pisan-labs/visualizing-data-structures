@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "graph-representations",
+  "id": "add-vertex-copy",
+  "title": "Adding a vertex: an empty list, or a whole new matrix",
+  "notes": "Adding I costs the list one new empty list. The matrix has no spare row or column, so it copies all 64 cells into a 9 by 9 matrix.",
+  "settings": {
+    "layout": "force",
+    "arrange": "wide"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, B-D, B-E, C-E, C-F, D-G, E-G, F-H, G-H"],
+    ["addVertex", "I"],
+    ["addEdge", "H-I"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

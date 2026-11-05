@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "floyd-warshall",
+  "id": "negative-cycle",
+  "title": "A negative cycle on the diagonal",
+  "notes": "A \u2192 B \u2192 C \u2192 A weighs 1 - 2 - 1 = -2. In round B, D[C][C] drops below 0: C can come back to itself with a negative total. The diagonal shows every vertex on the cycle, and no pair that passes through it has a shortest path.",
+  "settings": {
+    "paths": "pred",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B:1, B>C:-2, C>A:-1, C>D:2"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

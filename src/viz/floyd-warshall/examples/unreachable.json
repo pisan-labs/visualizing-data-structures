@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "floyd-warshall",
+  "id": "unreachable",
+  "title": "Some pairs stay at \u221e",
+  "notes": "Two pieces with no edge between them: A, B, C and D, E. No round can join them, so every entry between the pieces stays \u221e, and asking for a path from A to D says there is none.",
+  "settings": {
+    "paths": "pred",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B:4, B>C:1, A>C:6, D>E:2, E>D:3"], ["run"], ["path", "A", "D"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

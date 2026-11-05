@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "floyd-warshall",
+  "id": "next-hop",
+  "title": "A next-hop matrix reads paths forwards",
+  "notes": "The same graph as the first example, keeping next[i][j], the first step from i toward j, instead of \u03a0. Reading A to D walks forwards: next[A][D] = B, next[B][D] = C, next[C][D] = D.",
+  "settings": {
+    "paths": "next",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B:3, A>C:8, B>C:2, B>D:7, C>D:1, D>A:2"], ["run"], ["path", "A", "D"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

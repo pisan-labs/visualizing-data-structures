@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "segment-tree",
+  "id": "whole-array",
+  "title": "A query of the whole array",
+  "notes": "query(0, 7) is a full overlap at the root, so the answer is the root's value: one node visited.",
+  "settings": { "combine": "sum" },
+  "seed": 1,
+  "ops": [
+    ["build", "5 3 8 1 9 2 7 4"],
+    ["query", 0, 7]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "segment-tree",
+  "id": "worst-query",
+  "title": "A query that visits the most nodes",
+  "notes": "query(1, 14) leaves out only the two ends, so it is a partial overlap on both sides all the way down: 15 of the 31 nodes are visited, about four per level.",
+  "settings": { "combine": "sum" },
+  "seed": 1,
+  "ops": [
+    ["build", "5 3 8 1 9 2 7 4 6 2 8 3 1 7 5 2"],
+    ["query", 1, 14]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

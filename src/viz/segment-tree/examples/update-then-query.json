@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "segment-tree",
+  "id": "update-then-query",
+  "title": "Update a value, then query",
+  "notes": "update(5, 10) walks down to the leaf for 5 and fixes one node per level on the way back up. The queries after it see the new value.",
+  "settings": { "combine": "sum" },
+  "seed": 1,
+  "ops": [
+    ["build", "5 3 8 1 9 2 7 4"],
+    ["query", 4, 7],
+    ["update", 5, 10],
+    ["query", 4, 7],
+    ["query", 0, 7]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

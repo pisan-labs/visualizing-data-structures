@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "segment-tree",
+  "id": "range-minimum",
+  "title": "Range minimums with range adds",
+  "notes": "With minimums, a node holds the smallest value of its range. Adding x to a whole range raises its minimum by x, not by x times its length, so the tags work the same way.",
+  "settings": { "combine": "min" },
+  "seed": 1,
+  "ops": [
+    ["build", "5 3 8 1 9 2 7 4"],
+    ["query", 1, 6],
+    ["add", 0, 3, 4],
+    ["query", 1, 6],
+    ["query", 2, 3]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

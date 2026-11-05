@@ -212,6 +212,8 @@ export interface SpanBoxOptions {
   label?: string;
   /** 'left' puts the label on the value's line, and leaves it out when both do not fit. */
   labelAt?: 'top' | 'left';
+  /** Largest font size for a label at the top. Default FONT.label. */
+  labelSize?: number;
   value?: string | null;
   /** Largest font size for the value. Default FONT.value. */
   valueSize?: number;
@@ -270,7 +272,7 @@ export function spanBox(cols: Cols, o: SpanBoxOptions): Shape[] {
       left = x + 7 + lw;
     }
   } else if (o.label) {
-    const size = fitSize(o.label, w - 8, FONT.label, 10);
+    const size = fitSize(o.label, w - 8, o.labelSize ?? FONT.label, 10);
     shapes.push({
       kind: 'text',
       id: `${o.id}-l`,

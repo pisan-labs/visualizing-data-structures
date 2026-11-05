@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "fenwick-tree",
+  "id": "add-then-query",
+  "title": "Adds followed by queries",
+  "notes": "Ask for sum(2, 6), change two values, and ask again. Each add touches a few entries of T, and the next query sees the change straight away.",
+  "settings": { "build": "linear" },
+  "seed": 1,
+  "ops": [
+    ["build", "5 3 8 1 9 2 7 4"],
+    ["sum", 2, 6],
+    ["add", 3, 5],
+    ["add", 6, -2],
+    ["sum", 2, 6],
+    ["prefix", 8]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

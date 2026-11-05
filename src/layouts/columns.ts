@@ -30,7 +30,9 @@
  *   spanBox(cols, opts) -> Shape[]
  *     A box over columns lo..hi (a segment tree node, a Fenwick responsibility range): the box
  *     `${id}`, a small label at its top `${id}-l` (such as a range, "4–7"), and the value
- *     `${id}-v`, centered in the room under the label. A role on the box colors all three.
+ *     `${id}-v`, centered in the room under the label. With `labelAt: 'left'` the label sits on
+ *     the value's line instead, for one-line boxes, and is left out when both do not fit. A
+ *     role on the box colors all three.
  *
  *   bracket(cols, opts) -> Shape[]
  *     A bracket over (ticks down) or under (ticks up) columns lo..hi, with a label: the bar
@@ -206,9 +208,13 @@ export interface SpanBoxOptions {
   hi: number;
   top: number;
   h: number;
-  /** Small text at the top of the box. */
+  /** Small text: at the top of the box, or left of the value with `labelAt: 'left'`. */
   label?: string;
+  /** 'left' puts the label on the value's line, and leaves it out when both do not fit. */
+  labelAt?: 'top' | 'left';
   value?: string | null;
+  /** Largest font size for the value. Default FONT.value. */
+  valueSize?: number;
   role?: MarkRole;
   /** Role for the value alone (for example 'stale'). The box's role wins. */
   valueRole?: MarkRole;
@@ -218,6 +224,9 @@ export interface SpanBoxOptions {
   inset?: number;
   opacity?: number;
 }
+
+/** Font size of a label that spanBox draws left of the value. */
+const SIDE_LABEL = 17;
 
 export function spanBox(cols: Cols, o: SpanBoxOptions): Shape[] {
   const inset = o.inset ?? 3;
@@ -237,8 +246,30 @@ export function spanBox(cols: Cols, o: SpanBoxOptions): Shape[] {
       opacity: o.opacity,
     },
   ];
+  const value = o.value ?? '';
+  const valueSize = fitSize(value, w - 6, o.valueSize ?? FONT.value, 11);
+  const labelRole = o.role === 'active' || o.role === 'error' ? o.role : undefined;
+  // The value is centered in the room left: right of `left`, under `room`.
   let room = o.top;
-  if (o.label) {
+  let left = x;
+  if (o.label && o.labelAt === 'left') {
+    const lw = monoWidth(o.label, SIDE_LABEL);
+    if (lw + monoWidth(value, valueSize) + 22 <= w) {
+      shapes.push({
+        kind: 'text',
+        id: `${o.id}-l`,
+        x: x + 7,
+        y: o.top + o.h / 2 + SIDE_LABEL * 0.36,
+        text: o.label,
+        size: SIDE_LABEL,
+        cls: 'label',
+        mono: true,
+        role: labelRole,
+        opacity: o.opacity,
+      });
+      left = x + 7 + lw;
+    }
+  } else if (o.label) {
     const size = fitSize(o.label, w - 8, FONT.label, 10);
     shapes.push({
       kind: 'text',
@@ -250,21 +281,20 @@ export function spanBox(cols: Cols, o: SpanBoxOptions): Shape[] {
       anchor: 'middle',
       cls: 'label',
       mono: true,
-      role: o.role === 'active' || o.role === 'error' ? o.role : undefined,
+      role: labelRole,
       opacity: o.opacity,
     });
     room = o.top + size + 3;
   }
-  if (o.value !== undefined && o.value !== null && o.value !== '') {
-    const size = fitSize(o.value, w - 8, FONT.value, 11);
+  if (value !== '') {
     const mid = (room + o.top + o.h) / 2;
     shapes.push({
       kind: 'text',
       id: `${o.id}-v`,
-      x: x + w / 2,
-      y: mid + size * 0.36,
-      text: o.value,
-      size,
+      x: (left + x + w) / 2,
+      y: mid + valueSize * 0.36,
+      text: value,
+      size: valueSize,
       anchor: 'middle',
       weight: 'bold',
       mono: true,

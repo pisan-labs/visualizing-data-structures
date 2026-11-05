@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "connected-components",
+  "id": "one-piece",
+  "title": "A connected graph: one search labels everything",
+  "notes": "Every vertex can reach every other, so the search from A labels all of them, and the outer loop finds nothing left. Each edge is checked once from each end: 20 checks for 10 edges.",
+  "settings": {
+    "method": "bfs",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-D, B-E, C-E, C-F, D-G, E-G, F-H, G-H"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

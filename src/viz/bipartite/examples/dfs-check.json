@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "bipartite",
+  "id": "dfs-check",
+  "title": "The same check by depth-first search",
+  "notes": "DFS goes A, B, D, E, C, flipping sides each step down. At C it finds the edge back to A, both on side 0. The odd cycle C, E, D, B, A is the pentagon's cycle, found from the other end.",
+  "settings": {
+    "method": "dfs",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-D, C-E, D-E, E-F"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

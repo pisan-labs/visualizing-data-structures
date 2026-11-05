@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "bipartite",
+  "id": "grid",
+  "title": "A grid: bipartite like a chessboard",
+  "notes": "On a grid, the sides are the black and white squares of a chessboard. Every edge joins neighbours, which differ in color, so the check reads every edge from both ends and says yes.",
+  "settings": {
+    "method": "bfs",
+    "layout": "grid"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, B-C, D-E, E-F, G-H, H-I, A-D, B-E, C-F, D-G, E-H, F-I"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

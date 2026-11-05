@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "connected-components",
+  "id": "union-find",
+  "title": "Union-find: merge sets, edge by edge",
+  "notes": "Union-find reads the edges in order and merges the sets at their ends. B-C and B-D join sets that are already one, so they add nothing. The sets left at the end are the components: 3 of them.",
+  "settings": {
+    "method": "union-find",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-C, A-D, B-D, E-F, G"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "topo-indegree",
+  "id": "wide",
+  "title": "Many sources, one sink",
+  "notes": "A to F have nothing before them, so all six are ready at once and the queue is full from the start. G waits for all six arcs to go. Any order of A to F works, as long as G comes last.",
+  "settings": {
+    "ready": "fifo",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>G, B>G, C>G, D>G, E>G, F>G"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

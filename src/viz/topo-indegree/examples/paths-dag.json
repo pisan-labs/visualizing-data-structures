@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "topo-indegree",
+  "id": "paths-dag",
+  "title": "A DAG whose names are out of order",
+  "notes": "C>B means C has to come before B, even though B comes first alphabetically. A is the only vertex with in-degree 0, so it goes first. Removing A's arcs frees C, removing C's frees B, and so on: A, C, B, E, D, F, G.",
+  "settings": {
+    "ready": "fifo",
+    "layout": "layered"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B, A>C, B>D, B>E, C>B, C>D, D>G, E>D, E>F, F>G"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

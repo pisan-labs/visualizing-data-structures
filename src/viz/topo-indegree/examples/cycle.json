@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "topo-indegree",
+  "id": "cycle",
+  "title": "A cycle: the vertices that never get out",
+  "notes": "A and F go out, but B, C and D wait on each other: B>C, C>D and D>B form a cycle. E waits on D, so it is stuck too. The queue empties with 4 vertices left, and the graph has no topological order.",
+  "settings": {
+    "ready": "fifo",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B, A>F, B>C, C>D, D>B, D>E"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

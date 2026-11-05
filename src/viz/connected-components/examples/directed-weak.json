@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "connected-components",
+  "id": "directed-weak",
+  "title": "A directed graph: arcs count both ways",
+  "notes": "Connected components ignore direction. Nothing leads from B back to C, but C>B still joins them. The result is 2 weakly connected components. Strongly connected components are a different question.",
+  "settings": {
+    "method": "bfs",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B, C>B, B>D, E>F, F>G"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

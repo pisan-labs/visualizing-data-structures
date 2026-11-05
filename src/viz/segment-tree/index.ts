@@ -68,7 +68,7 @@ export const segmentTree: VizDef<SegState, SegSettings, SegExtra> = {
       { op: 'query', label: 'Query', usesInput: true, primary: true, args: ['l', 'r'] },
       { op: 'add', label: 'Range add', usesInput: true, args: ['l', 'r', 'an amount'] },
       { op: 'update', label: 'Update', usesInput: true, args: ['an index', 'a new value'] },
-      { op: 'build', label: 'Build', usesInput: true },
+      { op: 'build', label: 'Build', usesInput: true, more: true },
     ],
     random: { label: 'Random array', make: (rng) => [buildCall(randomValues(rng, 8))] },
     presets: valuePresets(),

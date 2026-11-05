@@ -68,7 +68,7 @@ export const fenwickTree: VizDef<FenState, FenSettings, FenExtra> = {
       { op: 'prefix', label: 'Prefix sum', usesInput: true, primary: true },
       { op: 'sum', label: 'Range sum', usesInput: true, args: ['l', 'r'] },
       { op: 'add', label: 'Add', usesInput: true, args: ['an index', 'an amount'] },
-      { op: 'build', label: 'Build', usesInput: true },
+      { op: 'build', label: 'Build', usesInput: true, more: true },
     ],
     random: { label: 'Random array', make: (rng) => [buildCall(randomValues(rng, 8))] },
     presets: valuePresets(),

@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "dag-shortest-paths",
+  "id": "middle-start",
+  "title": "Starting in the middle",
+  "notes": "The same graph as the first example, from C. A comes before C in the order, so A stays at \u221e and relaxing its edges changes nothing. Everything after C is reached.",
+  "settings": {
+    "goal": "shortest",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A>B:5, A>C:2, B>D:4, B>E:2, C>B:1, C>D:6, D>G:3, E>D:1, E>F:4, F>G:1"],
+    ["run", "C"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

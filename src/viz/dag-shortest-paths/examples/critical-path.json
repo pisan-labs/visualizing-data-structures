@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "dag-shortest-paths",
+  "id": "critical-path",
+  "title": "The critical path of a project",
+  "notes": "Each edge is a task, and its weight is how many days it takes; a task can start once the tasks before it are done. The longest path, A \u2192 C \u2192 D \u2192 F \u2192 G, takes 12 days, so no schedule can finish sooner.",
+  "settings": {
+    "goal": "longest",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A>B:3, A>C:2, B>D:4, C>D:6, C>E:3, D>F:3, E>F:5, F>G:1"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

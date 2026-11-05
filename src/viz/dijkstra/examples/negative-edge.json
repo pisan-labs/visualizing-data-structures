@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "dijkstra",
+  "id": "negative-edge",
+  "title": "A negative edge: Dijkstra refuses",
+  "notes": "C\u2192B has weight -3. Dijkstra would settle B at 2 before it ever looks at C, but A \u2192 C \u2192 B costs 1. Run it to read why, then load the same graph on the Bellman-Ford page.",
+  "settings": {
+    "queue": "decrease",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A>B:2, A>C:4, C>B:-3, B>D:2"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

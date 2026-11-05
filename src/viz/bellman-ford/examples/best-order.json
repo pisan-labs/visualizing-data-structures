@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bellman-ford",
+  "id": "best-order",
+  "title": "Edges in the best order: two passes",
+  "notes": "The edges are listed along the path, so the first pass finds every distance. With early stopping on, the second pass changes nothing and Bellman-Ford stops there.",
+  "settings": {
+    "early": true,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A>B:3, B>C:1, C>D:4, D>E:1, E>F:5, F>G:2, G>H:6"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

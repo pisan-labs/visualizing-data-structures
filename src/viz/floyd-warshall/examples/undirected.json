@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "floyd-warshall",
+  "id": "undirected",
+  "title": "Undirected: a symmetric matrix",
+  "notes": "Every edge goes both ways, so D[i][j] = D[j][i] all the way through. Round B finds A to C through B (5 instead of 6), and round C reaches D.",
+  "settings": {
+    "paths": "pred",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B:2, B-C:3, A-C:6, C-D:1"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

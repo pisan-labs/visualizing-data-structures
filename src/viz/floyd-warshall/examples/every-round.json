@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "floyd-warshall",
+  "id": "every-round",
+  "title": "Every round opens new paths",
+  "notes": "Four vertices on a loop. Round A gives D two new paths through A, round B three, round C two and round D three. By the end every pair has a path, and D[B][A] = 5 goes B, C, D, A.",
+  "settings": {
+    "paths": "pred",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B:3, A>C:8, B>C:2, B>D:7, C>D:1, D>A:2"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

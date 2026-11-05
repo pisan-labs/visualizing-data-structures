@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "dag-shortest-paths",
+  "id": "negative-weights",
+  "title": "Negative weights are fine in a DAG",
+  "notes": "B\u2192C weighs -4 and C\u2192E weighs -2. Dijkstra would refuse this graph, but here every d is final before its edges are relaxed, so negative weights do no harm.",
+  "settings": {
+    "goal": "shortest",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A>B:3, A>C:6, B>C:-4, B>D:2, C>D:1, C>E:-2, D>E:2"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

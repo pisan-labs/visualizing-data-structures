@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "dijkstra",
+  "id": "roads",
+  "title": "Roads go both ways",
+  "notes": "An undirected graph of 8 vertices and 14 edges, like a small road map. Each road can be used in either direction, so RELAX looks at it from both ends. The keys of E, F and G drop as shorter routes turn up.",
+  "settings": {
+    "queue": "decrease",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "A-B:2, A-C:6, A-E:7, A-F:6, B-E:3, B-F:3, C-D:4, C-F:7, D-F:4, D-G:2, E-G:7, E-H:1, F-G:2, G-H:9"
+    ],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

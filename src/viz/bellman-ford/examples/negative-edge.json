@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bellman-ford",
+  "id": "negative-edge",
+  "title": "A negative edge Dijkstra refuses",
+  "notes": "C\u2192B has weight -3. Bellman-Ford does not mind: the first pass sets B to 2 and then to 1 through C, and the second pass passes the saving on to D.",
+  "settings": {
+    "early": false,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A>B:2, A>C:4, C>B:-3, B>D:2"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

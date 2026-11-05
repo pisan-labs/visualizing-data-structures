@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "floyd-warshall",
+  "id": "read-a-path",
+  "title": "Reading a path backwards from \u03a0",
+  "notes": "After the run, \u03a0[A][D] = C says the vertex before D is C, \u03a0[A][C] = B says the one before C is B, and \u03a0[A][B] = A ends it: A \u2192 B \u2192 C \u2192 D, weight 6.",
+  "settings": {
+    "paths": "pred",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B:3, A>C:8, B>C:2, B>D:7, C>D:1, D>A:2"], ["run"], ["path", "A", "D"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

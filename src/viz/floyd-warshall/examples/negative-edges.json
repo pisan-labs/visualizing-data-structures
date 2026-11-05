@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "floyd-warshall",
+  "id": "negative-edges",
+  "title": "Negative edges, no negative cycle",
+  "notes": "C\u2192B weighs -3, but the only cycle, C \u2192 B \u2192 D \u2192 C, weighs 4. Floyd-Warshall handles that fine: D[A][B] ends at -1, through C.",
+  "settings": {
+    "paths": "pred",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B:4, A>C:2, C>B:-3, B>D:2, D>C:5"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

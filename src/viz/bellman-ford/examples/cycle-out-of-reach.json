@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bellman-ford",
+  "id": "cycle-out-of-reach",
+  "title": "A negative cycle A cannot reach",
+  "notes": "D \u2192 E \u2192 F \u2192 D weighs -1, but no edge leads from A's side to it. The distances from A are fine, D, E and F stay at \u221e, and Bellman-Ford returns TRUE.",
+  "settings": {
+    "early": false,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A>B:2, B>C:3, D>E:1, E>F:-3, F>D:1, F>C:2"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "dijkstra",
+  "id": "closest-first",
+  "title": "Closest first: D's distance drops twice",
+  "notes": "Dijkstra settles A, C, B, E, D, F and G, in that order. D's key goes from 8 to 7 to 6 as C, B and E are settled, and F\u2192G changes nothing because G already has 9.",
+  "settings": {
+    "queue": "decrease",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A>B:5, A>C:2, B>D:4, B>E:2, C>B:1, C>D:6, D>G:3, E>D:1, E>F:4, F>G:1"],
+    ["run", "A"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

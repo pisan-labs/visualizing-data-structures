@@ -135,3 +135,11 @@
 2026-11-05 [decision] First handover moved to 06:50 at Yusuf's request (context at 80%, nothing running); the session-start routine now looks only for a marker commit made since 15:30 that day, so an early handover cannot start a second session at 16:52
 
 2026-11-05 [note] Session session_01JyJzMZHCY1tEoov2vYAuJv took over the relay at 06:49 and moved the three StepWise routines; wave 4 started with four agents (13 pages), paused as WIP at the usage limit
+
+2026-11-05 [code] Merged wave 4B: connected components (BFS, DFS or union-find), bipartite check (odd cycle drawn on failure), topological sort by in-degree (FIFO or smallest-first; cycle named); all with practice
+
+2026-11-05 [code] Merged wave 4A: Prim (decrease-key or lazy), Kruskal (sorted edges, union-find forest, rejected edges dashed), disjoint sets (rank, size or naive; compression, halving or none); Prim and Kruskal share a start graph for compare mode
+
+2026-11-05 [code] Merged wave 4D: memory model (frames, heap, aliasing; Python/Java or C++ setting), Big-O growth lab, recurrences and the Master theorem (recursion tree, CLRS or simplified cases), bitmasks and subsets
+
+2026-11-05 [code] Merged wave 4C: topological sort by DFS (same start DAG as the in-degree page), SCC (Kosaraju or Tarjan, condensation graph), cut vertices and bridges (d/low, root rule); main now holds 87 of 108 pages

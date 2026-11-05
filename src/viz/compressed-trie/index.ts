@@ -63,7 +63,7 @@ export const compressedTrie: VizDef<RadixState, RadixSettings, RadixExtra> = {
       { op: 'insert', label: 'Insert', usesInput: true, bulk: true, primary: true },
       { op: 'search', label: 'Search', usesInput: true },
       { op: 'startsWith', label: 'Starts with', usesInput: true },
-      { op: 'delete', label: 'Delete', usesInput: true, bulk: true, more: true },
+      { op: 'delete', label: 'Delete', usesInput: true, bulk: true },
       { op: 'clear', label: 'Clear', usesInput: false, more: true },
     ],
     presets: [

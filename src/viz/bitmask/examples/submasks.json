@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "bitmask",
+  "id": "submasks",
+  "title": "Submasks of a mask",
+  "notes": "x = 1011 has three set bits, so it has 2^3 = 8 submasks. sub = (sub - 1) & x walks through them from largest to smallest and skips every number that is not a subset of x.",
+  "settings": { "width": 8, "popcount": "kernighan" },
+  "seed": 1,
+  "ops": [["load", 11], ["submasks"]],
+  "at": { "op": -1, "step": 0 }
+}

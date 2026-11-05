@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "bitmask",
+  "id": "set-clear-toggle",
+  "title": "Set, clear, toggle, test",
+  "notes": "x = 37 is the set {0, 2, 5}. Set bit 1, clear bit 0, toggle bit 5 twice, then test bits 2 and 3. Each change touches one bit and leaves the rest alone.",
+  "settings": { "width": 8, "popcount": "kernighan" },
+  "seed": 1,
+  "ops": [
+    ["load", 37],
+    ["set", 1],
+    ["clear", 0],
+    ["toggle", 5],
+    ["toggle", 5],
+    ["test", 2],
+    ["test", 3]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

@@ -123,3 +123,5 @@
 2026-11-05 [code] Merged wave 3L: brute-force search, KMP (prefix function or failure function), Boyer-Moore (Horspool or bad character plus good suffix), Rabin-Karp (rolling hash, spurious hits); alignment layout in src/layouts/align.ts; all with practice
 
 2026-11-05 [code] Merged wave 3N: Dijkstra (CLRS decrease-key or lazy heap; refuses negative edges), Bellman-Ford (negative cycles drawn), DAG shortest and longest paths, Floyd-Warshall with path reconstruction; all with practice
+
+2026-11-05 [code] Adjacency-matrix cells get their own id segment: a vertex named c or r made a cell's id equal a header's (found by the shortest-paths agent); regression test added

@@ -119,6 +119,15 @@ const callArb: fc.Arbitrary<OpCall> = fc.oneof(
 );
 
 describe('graph representations', () => {
+  it('gives every shape its own id, even for vertices named like the matrix headers', () => {
+    // A matrix cell's id once equalled a column header's when a vertex was named "c".
+    const t = new Timeline(def, defaults, 1, [['load', 'c-r, r-x, c-x']]);
+    const step = t.at(t.length - 1).step;
+    expect(step.say).not.toMatch(/not a|cannot|error/i);
+    const ids = def.view(step, defaults).shapes.map((sh) => sh.id);
+    expect(ids.filter((id, i) => ids.indexOf(id) !== i)).toEqual([]);
+  });
+
   it('matches a reference graph, answers and costs included, on every step', () => {
     fc.assert(
       fc.property(fc.array(callArb, { maxLength: 30 }), (calls) => {

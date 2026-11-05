@@ -78,7 +78,7 @@ const zero = (): Costs => ({ list: 0, matrix: 0, edges: 0 });
 /** Shape ids in the three panels (see src/layouts/graph.ts). */
 export const listHead = (u: string) => `al-${u}`;
 export const listEntry = (u: string, v: string) => `al-${u}-${v}`;
-export const matrixCell = (u: string, v: string) => `am-${u}-${v}`;
+export const matrixCell = (u: string, v: string) => `am-m-${u}-${v}`;
 export const matrixRow = (u: string) => `am-r-${u}`;
 export const edgeRow = (key: string) => `el-${key}`;
 

@@ -1461,7 +1461,8 @@ export function drawAdjList(shapes: Shape[], g: GraphLike, o: ReprOptions): Boun
 
 /**
  * The adjacency matrix: row u, column v holds the weight of u -> v, or 0. Ids: cell
- * `${id}-${u}-${v}` (text `-t`), row header `${id}-r-${u}`, column header `${id}-c-${v}`.
+ * `${id}-m-${u}-${v}` (text `-t`), row header `${id}-r-${u}`, column header `${id}-c-${v}`. The
+ * cell's own `m` segment keeps it apart from the headers even for vertices named r or c.
  */
 export function drawAdjMatrix(shapes: Shape[], g: GraphLike, o: ReprOptions): Bounds {
   const roles = o.roles ?? new Map<string, MarkRole>();
@@ -1503,7 +1504,7 @@ export function drawAdjMatrix(shapes: Shape[], g: GraphLike, o: ReprOptions): Bo
       role: roles.get(`${o.id}-r-${u}`),
     });
     g.vertices.forEach((v, j) => {
-      const cid = `${o.id}-${u}-${v}`;
+      const cid = `${o.id}-m-${u}-${v}`;
       const value = w.get(`${u}-${v}`);
       const role = roles.get(cid);
       shapes.push({

@@ -412,8 +412,8 @@ export function pseudocode(settings: McSettings): PseudoBlock[] {
     L(
       'find',
       2,
-      dij ? 'd = DIJKSTRA(G_f, c + h(u) - h(v))' : 'd = BELLMAN-FORD(G_f, c, s)',
-      dij ? 'find distances on reduced costs,' : 'find the cheapest distances,',
+      dij ? 'd = DIJKSTRA(G_f, c_h, s)' : 'd = BELLMAN-FORD(G_f, c, s)',
+      dij ? 'Dijkstra on c(u,v) + h(u) - h(v),' : 'find the cheapest distances,',
     ),
     L('cf', 2, 'p = cheapest path s to t', 'take the cheapest path to t,'),
     L(

@@ -1,4 +1,3 @@
-import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, Settings, VizDef } from '../../engine/types';
 import { shuffle } from '../_graph/presets';

@@ -10,15 +10,7 @@
     "layout": "lr"
   },
   "seed": 1,
-  "ops": [
-    [
-      "load",
-      "s>a, s>b, s>c, a>d, b>d, b>e, c>e, d>t, e>t, c>f, f>t"
-    ],
-    [
-      "run"
-    ]
-  ],
+  "ops": [["load", "s>a, s>b, s>c, a>d, b>d, b>e, c>e, d>t, e>t, c>f, f>t"], ["run"]],
   "at": {
     "op": 0,
     "step": 0

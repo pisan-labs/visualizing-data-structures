@@ -364,7 +364,7 @@ const run: Op = {
           if (shortest !== null && dist[u]! >= shortest) continue;
           for (const v of neighbours(g, u)) {
             r.checks++;
-            const w = r.mate[v];
+            const w = r.mate[v] ?? null;
             if (w === null) {
               if (shortest === null) shortest = dist[u]! + 1;
             } else if (dist[w] === INF) {
@@ -415,7 +415,7 @@ const run: Op = {
             }
             const v = nb[f.i++]!;
             r.checks++;
-            const w = r.mate[v];
+            const w = r.mate[v] ?? null;
             if (w === null) {
               if (shortest === dist[f.u]! + 1) {
                 r.path.push(v);
@@ -561,15 +561,10 @@ export function pseudocode(settings: BmSettings): PseudoBlock[] {
         lines: [
           L('sig', 0, 'HOPCROFT-KARP(G = (L ∪ R, E))', 'Maximum matching, in phases:'),
           L('init', 1, 'M = ∅', 'Start with no edges matched.'),
-          L('phase', 1, 'while BFS finds a free R vertex', 'While some augmenting path is left:'),
-          L(
-            'bfs',
-            2,
-            'layer L from all free L vertices',
-            'layer the graph from every free left vertex,',
-          ),
-          L('dfs', 2, 'DFS each free u along layers', 'find disjoint shortest paths by DFS,'),
-          L('dead', 3, 'dead end: drop u from layers', 'dropping dead ends for this phase,'),
+          L('phase', 1, 'while a free R vertex in reach', 'While some augmenting path is left:'),
+          L('bfs', 2, 'BFS: layers from free L', 'layer the graph from every free left vertex,'),
+          L('dfs', 2, 'DFS each free u by layers', 'find disjoint shortest paths by DFS,'),
+          L('dead', 3, 'dead end: drop u', 'dropping dead ends for this phase,'),
           L('flip', 2, 'M = M ⊕ P for each path P', 'and flip every path found.'),
           L('ret', 1, 'return M', 'No augmenting path: M is maximum.'),
         ],
@@ -587,7 +582,7 @@ export function pseudocode(settings: BmSettings): PseudoBlock[] {
         L('skip', 4, 'if v visited: next; mark v', 'skip it if this search saw it.'),
         L('free', 4, 'if match(v) = NIL', 'If v is free, the path ends here.'),
         L('recurse', 4, 'or TRY(match(v))', 'Or rematch v’s partner elsewhere.'),
-        L('flip', 5, 'match(v) = u; return TRUE', 'Then flip: u takes v.'),
+        L('flip', 5, 'match(v)=u; return TRUE', 'Then flip: u takes v.'),
         L('fail', 3, 'return FALSE', 'No way through: u stays free.'),
         L('ret', 1, 'return the matching', 'No path left: the matching is maximum.'),
       ],

@@ -396,8 +396,8 @@ export function pseudocode(settings: MfSettings): PseudoBlock[] {
     ),
     L('cf', 2, 'c_f(p) = min c_f(u, v) on p', 'its bottleneck is its tightest arc.'),
     L('each', 2, 'for each (u, v) on p', 'For each arc on the path:'),
-    L('fwd', 3, 'if (u, v) in E: (u, v).f += c', 'a real arc carries more,'),
-    L('back', 3, 'else (v, u).f -= c', 'a reverse arc takes flow back.'),
+    L('fwd', 3, 'if (u,v) ∈ E: (u,v).f += c', 'a real arc carries more,'),
+    L('back', 3, 'else (v,u).f -= c', 'a reverse arc takes flow back.'),
     L('cut', 1, 'S = vertices s reaches in G_f', 'What s still reaches is the cut.'),
     L('ret', 1, 'return f', 'The flow is maximum.'),
   ];

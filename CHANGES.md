@@ -125,3 +125,5 @@
 2026-11-05 [code] Merged wave 3N: Dijkstra (CLRS decrease-key or lazy heap; refuses negative edges), Bellman-Ford (negative cycles drawn), DAG shortest and longest paths, Floyd-Warshall with path reconstruction; all with practice
 
 2026-11-05 [code] Adjacency-matrix cells get their own id segment: a vertex named c or r made a cell's id equal a header's (found by the shortest-paths agent); regression test added
+
+2026-11-05 [code] Merged wave 3R: prefix sums and sparse tables (range-queries), Fenwick tree (low bit shown in binary), segment tree with lazy propagation; columns layout in src/layouts/columns.ts; all with practice

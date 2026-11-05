@@ -127,3 +127,5 @@
 2026-11-05 [code] Adjacency-matrix cells get their own id segment: a vertex named c or r made a cell's id equal a header's (found by the shortest-paths agent); regression test added
 
 2026-11-05 [code] Merged wave 3R: prefix sums and sparse tables (range-queries), Fenwick tree (low bit shown in binary), segment tree with lazy propagation; columns layout in src/layouts/columns.ts; all with practice
+
+2026-11-05 [code] Merged wave 3M: trie (pruning or lazy delete), compressed trie (splits and merges named), Huffman coding (forest priority queue, tie rule setting, encode and decode); trie layout in src/layouts/trie.ts; all with practice

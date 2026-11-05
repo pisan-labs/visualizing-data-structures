@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "memory-model",
+  "id": "cpp-pass",
+  "title": "Pass by value, pass by reference",
+  "notes": "grow(xs) gets a copy and changes nothing outside. growRef(xs) and resetRef(xs) get a reference and change xs itself. Same for numbers: bump(n) versus bumpRef(n).",
+  "settings": { "lang": "values" },
+  "seed": 1,
+  "ops": [
+    ["run", "xs = [1, 2]"],
+    ["run", "grow(xs)"],
+    ["run", "growRef(xs)"],
+    ["run", "resetRef(xs)"],
+    ["run", "n = 1"],
+    ["run", "bump(n)"],
+    ["run", "bumpRef(n)"]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

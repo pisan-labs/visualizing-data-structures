@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "bitmask",
+  "id": "popcount-one-bit",
+  "title": "Counting a single bit",
+  "notes": "128 has one set bit, so the x & (x - 1) loop runs once, even though a scan from bit 0 reaches the top bit last.",
+  "settings": { "width": 8, "popcount": "kernighan" },
+  "seed": 1,
+  "ops": [["load", 128], ["popcount"]],
+  "at": { "op": -1, "step": 0 }
+}

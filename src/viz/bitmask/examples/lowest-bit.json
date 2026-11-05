@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "bitmask",
+  "id": "lowest-bit",
+  "title": "The lowest set bit",
+  "notes": "x & -x keeps only the lowest 1. Try it on 40 = 101000, on an odd number, and on 0, which has no set bit at all.",
+  "settings": { "width": 8, "popcount": "kernighan" },
+  "seed": 1,
+  "ops": [["load", 40], ["lowbit"], ["load", 7], ["lowbit"], ["load", 0], ["lowbit"]],
+  "at": { "op": -1, "step": 0 }
+}

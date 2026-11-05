@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "memory-model",
+  "id": "bump-number",
+  "title": "A function cannot change your number",
+  "notes": "bump(n) adds 1 to its own copy and returns it. The caller's n stays 5 unless it saves the result.",
+  "settings": { "lang": "refs" },
+  "seed": 1,
+  "ops": [
+    ["run", "n = 5"],
+    ["run", "bump(n)"]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

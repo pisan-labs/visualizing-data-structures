@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "bitmask",
+  "id": "empty-set",
+  "title": "The empty set",
+  "notes": "x = 0 is the empty set. Testing a bit says no, the lowest set bit is 0, there are no bits to count, and the only submask is 0 itself.",
+  "settings": { "width": 8, "popcount": "kernighan" },
+  "seed": 1,
+  "ops": [["test", 3], ["lowbit"], ["popcount"], ["submasks"]],
+  "at": { "op": -1, "step": 0 }
+}

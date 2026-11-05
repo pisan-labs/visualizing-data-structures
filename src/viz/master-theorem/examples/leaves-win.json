@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "master-theorem",
+  "id": "leaves-win",
+  "title": "Leaves dominate: Karatsuba",
+  "notes": "T(n) = 3T(n/2) + n. The work grows by 3/2 per level, so the bottom of the tree, n^(log\u2082 3) \u2248 n^1.585 leaves, decides the answer: case 1.",
+  "settings": { "form": "clrs" },
+  "seed": 1,
+  "ops": [["solve", "3 2 1"], ["check"]],
+  "at": { "op": -1, "step": 0 }
+}

@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "memory-model",
+  "id": "cpp-copy",
+  "title": "C++ copies the whole list",
+  "notes": "In C++, ys = xs copies all three values. ys.append(4) changes ys only; xs stays [1, 2, 3]. The copied counter shows the price.",
+  "settings": { "lang": "values" },
+  "seed": 1,
+  "ops": [
+    ["run", "xs = [1, 2, 3]"],
+    ["run", "ys = xs"],
+    ["run", "ys.append(4)"]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

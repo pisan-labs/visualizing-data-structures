@@ -133,3 +133,5 @@
 2026-11-05 [code] The code-tab test's random scripts also try words that share prefixes, so word pages (tries) exercise edge splits in all three languages
 
 2026-11-05 [decision] First handover moved to 06:50 at Yusuf's request (context at 80%, nothing running); the session-start routine now looks only for a marker commit made since 15:30 that day, so an early handover cannot start a second session at 16:52
+
+2026-11-05 [note] Session session_01JyJzMZHCY1tEoov2vYAuJv took over the relay at 06:49 and moved the three StepWise routines; wave 4 started with four agents (13 pages), paused as WIP at the usage limit

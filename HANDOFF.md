@@ -132,14 +132,21 @@ Nothing open.
 
 ### Scheduling
 
-- Previous session: `session_01JyJzMV9R79kmMm2TxMzCD9` (lineage depth 0, limit 8). It started
-  the relay on Wednesday 4 November.
-- The session-start routine now looks only for a marker commit made since 15:30 that day, so
-  today's 16:52 run finds this morning's early handover and does nothing.
-- Routines aimed at it, to move at takeover:
-  - `trig_01YFFf7haBUVw55QnJE6zbfH`: StepWise hourly status report, `46 * * * *`.
-  - `trig_019edEXqKvVwcMM1CsPVQpUD`: StepWise handoff check, `CRON_TZ=Europe/Berlin 56 15 * * *`.
-  - `trig_014pSjnKeCWEgQXUWgZECJGR`: StepWise daily handoff (session start),
+- Current session: `session_01JyJzMZHCY1tEoov2vYAuJv` (lineage depth 1, limit 8). It took over on
+  Thursday 5 November at 06:49 from `session_01JyJzMV9R79kmMm2TxMzCD9`, which started the relay
+  on Wednesday 4 November.
+- The session-start routine looks only for a marker commit made since 15:30 that day, so an
+  early handover cannot start a second session at 16:52.
+- Routines aimed at the current session, to move at the next takeover:
+  - `trig_01WrodgXYXHnQCWP71RxfbU2`: StepWise hourly status report, `46 * * * *`.
+  - `trig_01Tg9X7MLii8DWA6vMVaY1VP`: StepWise handoff check, `CRON_TZ=Europe/Berlin 56 15 * * *`.
+  - `trig_01EZxsysCxTEvpueRRchrmfk`: StepWise daily handoff (session start),
     `CRON_TZ=Europe/Berlin 52 16 * * *`.
+- Wave 4 agents started at 06:55 on 5 November in this container's worktrees
+  (`.claude/worktrees/`, branches `worktree-agent-*`, local only), stopped at the usage limit with
+  their work committed as WIP: prim/kruskal/disjoint-sets (E2E_PORT 4206),
+  connected-components/bipartite/topo-indegree (4207), topo-dfs/scc/bridges (4208),
+  memory-model/big-o-lab/master-theorem/bitmask (4209). Resume them with SendMessage after the
+  limit resets; nothing of theirs is on main yet.
 - The account's other routines (DSA, TPT, product ideas, reminders) belong to other projects:
   never move or change them.

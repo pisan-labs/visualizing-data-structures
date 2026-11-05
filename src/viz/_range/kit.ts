@@ -84,12 +84,7 @@ export const span = (lo: number, hi: number, name = 'A'): string =>
 export const and = (xs: (string | number)[]) =>
   xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`;
 
-/** "5 + 3 + 8" with negative terms written as subtraction: "5 − 3 + 8". */
-export function sumText(xs: number[]): string {
-  return xs.map((x, k) => (k === 0 ? String(x) : x < 0 ? `− ${-x}` : `+ ${x}`)).join(' ');
-}
-
-/** "28 − 8", with a negative right side in parentheses: "28 − (−8)". */
+/** "28 − 8", with a negative right side in parentheses: "28 − (-8)". */
 export const minus = (a: number, b: number) => `${a} − ${b < 0 ? `(${b})` : b}`;
 
 /** "16 + 9", "16 − 9" for a negative right side. */
@@ -110,9 +105,6 @@ export function choice(rng: Rng, right: string, wrong: string[], count = 4) {
   const options = shuffle(rng, [right, ...others]);
   return { kind: 'choice' as const, options, correct: options.indexOf(right) };
 }
-
-/** Inline code for a call in a prompt: `query(2, 5)`. */
-export const code = ([op, ...args]: OpCall) => `\`${op}(${args.join(', ')})\``;
 
 // ----- Presets -----
 

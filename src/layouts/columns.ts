@@ -196,9 +196,6 @@ export function cellRow(cols: Cols, o: CellRowOptions): { shapes: Shape[]; botto
   return { shapes, bottom: o.top + h + (o.index === false ? 0 : FONT.index + 8) };
 }
 
-/** Width of a row name drawn by cellRow, for reserving room on the left. */
-export const nameWidth = (name: string) => monoWidth(name, FONT.name) + 10;
-
 // ---------------------------------------------------------------------------------------------
 // Boxes over a range of columns
 

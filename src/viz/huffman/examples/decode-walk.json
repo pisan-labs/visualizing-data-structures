@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "huffman",
+  "id": "decode-walk",
+  "title": "Decoding walks the tree",
+  "notes": "01101110 goes left to a, then 110 to b, 111 to r and 0 to a: abra. Every leaf sends the walk back to the root. 011 reaches a, then runs out two steps down: not a message.",
+  "settings": {
+    "ties": "leaves"
+  },
+  "seed": 1,
+  "ops": [
+    ["build", "abracadabra"],
+    ["decode", "01101110"],
+    ["decode", "011"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 99
+  }
+}

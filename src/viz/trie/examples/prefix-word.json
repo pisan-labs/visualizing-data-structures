@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "trie",
+  "id": "prefix-word",
+  "title": "A word that is a prefix of another",
+  "notes": "After cart, inserting car adds no nodes: its path is already there. It only puts a second ring on the r node. Then ca is not found, because no word ends at its node, and car is.",
+  "settings": {
+    "delete": "prune"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", "cart"],
+    ["insert", "car"],
+    ["search", "ca"],
+    ["search", "car"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 99
+  }
+}

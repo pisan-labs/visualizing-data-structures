@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "compressed-trie",
+  "id": "search-miss",
+  "title": "Four ways a search can end",
+  "notes": "bat finds no edge that starts with b. cat follows the edge car until its third letter, where r and t differ. ca runs out inside the edge car. cart is found.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insert", "car"],
+    ["insert", "cart"],
+    ["insert", "dog"],
+    ["search", "bat"],
+    ["search", "cat"],
+    ["search", "ca"],
+    ["search", "cart"]
+  ],
+  "at": {
+    "op": 2,
+    "step": 99
+  }
+}

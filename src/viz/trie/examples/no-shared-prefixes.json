@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "trie",
+  "id": "no-shared-prefixes",
+  "title": "No shared prefixes: one branch per word",
+  "notes": "Every word starts with a different letter, so nothing is shared: each letter gets its own node. Five words with 23 letters take 24 nodes, the most a trie can need.",
+  "settings": {
+    "delete": "prune"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", "apple"],
+    ["insert", "bird"],
+    ["insert", "cloud"],
+    ["insert", "drum"],
+    ["insert", "eagle"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

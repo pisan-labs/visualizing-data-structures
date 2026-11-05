@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "huffman",
+  "id": "one-symbol",
+  "title": "A single symbol",
+  "notes": "aaaa has one symbol, so the tree is a single leaf and its path from the root is empty. A code needs at least one bit, so a gets 0, and 000 decodes to aaa.",
+  "settings": {
+    "ties": "leaves"
+  },
+  "seed": 1,
+  "ops": [["build", "aaaa"], ["encode"], ["decode", "000"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

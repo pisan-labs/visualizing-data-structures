@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "compressed-trie",
+  "id": "split-edge",
+  "title": "Insert splits an edge",
+  "notes": "card goes in as one edge. care shares car with it and then differs, so the edge card splits into car and d, and e hangs next to d. cat then splits car into ca and r.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insert", "card"],
+    ["insert", "care"],
+    ["insert", "cat"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 99
+  }
+}

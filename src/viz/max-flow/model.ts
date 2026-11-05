@@ -31,6 +31,7 @@ import {
   pathText,
   order,
   setText,
+  START_TEXT,
   push,
   residual,
   touching,
@@ -49,8 +50,6 @@ export interface MfSettings {
 
 export const defaults: MfSettings = { method: 'bfs', residual: false, layout: 'lr' };
 
-/** Classic shape: 6 vertices, 9 arcs, max flow 23 in three augmenting paths. */
-export const START_TEXT = 's>a:16, s>b:13, b>a:4, a>c:12, c>b:9, b>d:14, d>c:7, c>t:20, d>t:4';
 export const startNetwork = (): Network => parseNetwork(START_TEXT) as Network;
 
 export const QUIET_AFTER = 30;

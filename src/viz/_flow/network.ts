@@ -263,3 +263,11 @@ export function describeNetwork(net: Network, costs = false): string {
 /** A set of vertices: {s, a, b}, or { s } (spaced, so it never reads as a template slot). */
 export const setText = (xs: string[]): string =>
   xs.length === 1 ? `{ ${xs[0]} }` : `{${xs.join(', ')}}`;
+
+/**
+ * The network both flow pages start with, so compare mode puts them side by side on the same
+ * one: 6 vertices and 9 arcs, maximum flow 23 (three paths with Edmonds-Karp), and costs that
+ * make the last cheapest path send flow back along a→b.
+ */
+export const START_TEXT =
+  's>a:16:7, s>b:13:4, b>a:4:1, a>c:12:6, c>b:9:9, b>d:14:5, d>c:7:3, c>t:20:9, d>t:4:6';

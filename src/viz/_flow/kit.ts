@@ -30,6 +30,7 @@ import {
   drawGraph,
   edgeId,
   layoutGraph,
+  scaleLayout,
   type GraphLayout,
   type GraphTemplate,
   type Pt,
@@ -136,7 +137,7 @@ export function layoutSettingFlow(): SettingSpec {
 
 const COL = 124;
 const ROW = 80;
-const lrCache = new WeakMap<Network, GraphLayout>();
+const lrCache = new WeakMap<Network, Map<number, GraphLayout>>();
 
 /**
  * Columns from s to t: s alone on the left, t alone on the right, and every other vertex in the
@@ -144,8 +145,8 @@ const lrCache = new WeakMap<Network, GraphLayout>();
  * distance back from t, and the rest into the middle column. Within a column, vertices are
  * sorted a few times by the average height of their neighbours, which removes most crossings.
  */
-function columns(net: Network): GraphLayout {
-  const hit = lrCache.get(net);
+function columns(net: Network, spread: number): GraphLayout {
+  const hit = lrCache.get(net)?.get(spread);
   if (hit) return hit;
   const g = net.graph;
   const near = new Map(g.vertices.map((v) => [v, [] as string[]]));
@@ -190,7 +191,7 @@ function columns(net: Network): GraphLayout {
   for (const v of g.vertices) byCol[col.get(v)!]!.push(v);
   const y = new Map<string, number>();
   const place = () =>
-    byCol.forEach((vs) => vs.forEach((v, i) => y.set(v, (i - (vs.length - 1) / 2) * ROW)));
+    byCol.forEach((vs) => vs.forEach((v, i) => y.set(v, (i - (vs.length - 1) / 2) * ROW * spread)));
   place();
   for (let sweep = 0; sweep < 4; sweep++) {
     for (const vs of byCol) {
@@ -206,7 +207,7 @@ function columns(net: Network): GraphLayout {
     place();
   }
   const pos: Record<string, Pt> = {};
-  for (const v of g.vertices) pos[v] = { x: col.get(v)! * COL, y: y.get(v)! };
+  for (const v of g.vertices) pos[v] = { x: col.get(v)! * COL * spread, y: y.get(v)! };
   const r = VERTEX_R;
   const xs = g.vertices.map((v) => pos[v]!.x);
   const ys = g.vertices.map((v) => pos[v]!.y);
@@ -219,13 +220,17 @@ function columns(net: Network): GraphLayout {
       }
     : { x: 0, y: 0, w: 0, h: 0 };
   const out = { pos, r, bounds };
-  lrCache.set(net, out);
+  const byNet = lrCache.get(net) ?? new Map<number, GraphLayout>();
+  byNet.set(spread, out);
+  lrCache.set(net, byNet);
   return out;
 }
 
 /** The layout of a network. */
-export function networkLayout(net: Network, template: FlowTemplate): GraphLayout {
-  return template === 'lr' ? columns(net) : layoutGraph(net.graph, template);
+export function networkLayout(net: Network, template: FlowTemplate, spread = 1): GraphLayout {
+  if (template === 'lr') return columns(net, spread);
+  const base = layoutGraph(net.graph, template);
+  return spread === 1 ? base : scaleLayout(base, spread);
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -284,6 +289,7 @@ export function residualCost(net: Network, u: string, v: string, flow: Flow): nu
  * one straight away from its arc until its box clears the line.
  */
 function clearLabels(shapes: Shape[]) {
+  const normals = new Map<string, { nx: number; ny: number }>();
   const lines = new Map<string, Extract<Shape, { kind: 'arrow' }>[]>();
   for (const sh of shapes) {
     if (sh.kind !== 'arrow' || !sh.id.startsWith('e-')) continue;
@@ -322,6 +328,35 @@ function clearLabels(shapes: Shape[]) {
       sh.x += best.nx * (need - best.d);
       sh.y += best.ny * (need - best.d);
     }
+    normals.set(sh.id, best);
+  }
+  // Labels that still overlap each other move apart, each along its own normal.
+  const labels = shapes.filter(
+    (sh): sh is Extract<Shape, { kind: 'text' }> => sh.kind === 'text' && normals.has(sh.id),
+  );
+  const box = (t: Extract<Shape, { kind: 'text' }>) => {
+    const size = t.size ?? 13;
+    const w = textWidth(t.text, size) + 4;
+    return { x: t.x - w / 2, y: t.y - size, w, h: size + 4 };
+  };
+  for (let round = 0; round < 6; round++) {
+    let moved = false;
+    for (let i = 0; i < labels.length; i++)
+      for (let j = i + 1; j < labels.length; j++) {
+        const a = box(labels[i]!);
+        const b = box(labels[j]!);
+        const ox = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x);
+        const oy = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
+        if (ox <= 0 || oy <= 0) continue;
+        const by = Math.min(ox, oy) / 2 + 1;
+        for (const t of [labels[i]!, labels[j]!]) {
+          const n = normals.get(t.id)!;
+          t.x += n.nx * by;
+          t.y += n.ny * by;
+        }
+        moved = true;
+      }
+    if (!moved) break;
   }
 }
 

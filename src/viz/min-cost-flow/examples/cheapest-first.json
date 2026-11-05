@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "min-cost-flow",
+  "id": "cheapest-first",
+  "title": "Cheapest paths first: 23 units for 467",
+  "notes": "Five paths, each the cheapest left: 15, 20, 21, 22 and 23 per unit. The last one goes back along a→b at a cost of -1, moving flow off an arc it no longer pays to use.",
+  "settings": {
+    "method": "bellman-ford",
+    "target": 0,
+    "residual": false,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "s>a:16:7, s>b:13:4, b>a:4:1, a>c:12:6, c>b:9:9, b>d:14:5, d>c:7:3, c>t:20:9, d>t:4:6"
+    ],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

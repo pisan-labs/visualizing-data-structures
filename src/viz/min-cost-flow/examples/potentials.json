@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "min-cost-flow",
+  "id": "potentials",
+  "title": "Dijkstra with potentials",
+  "notes": "The same five paths as Bellman-Ford finds, but each search runs Dijkstra on reduced costs c(u, v) + h(u) - h(v), which are never negative. After each search the potentials h grow by the distances.",
+  "settings": {
+    "method": "dijkstra",
+    "target": 0,
+    "residual": false,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "s>a:16:7, s>b:13:4, b>a:4:1, a>c:12:6, c>b:9:9, b>d:14:5, d>c:7:3, c>t:20:9, d>t:4:6"
+    ],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

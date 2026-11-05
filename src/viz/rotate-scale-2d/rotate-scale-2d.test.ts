@@ -6,10 +6,8 @@ import type { Vec } from '../../layouts/plane';
 import { parseNumber, rotateScale2d } from '.';
 import { SHAPES, fixed2, type RsSettings } from './model';
 
-const settings = (s: Partial<RsSettings> = {}): RsSettings => ({
-  ...(rotateScale2d.defaults as RsSettings),
-  ...s,
-});
+const settings = (s: Partial<RsSettings> = {}): RsSettings =>
+  ({ ...rotateScale2d.defaults, ...s }) as RsSettings;
 
 /** Shoelace area, signed. */
 const area = (pts: Vec[]) =>

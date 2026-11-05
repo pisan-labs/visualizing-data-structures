@@ -17,6 +17,12 @@ describe('which pages can be compared', () => {
     expect(canCompare(byId('bst'), byId('bst'))).toBe(true);
     // A stack and a queue share nothing that matters.
     expect(canCompare(byId('stack-array'), byId('queue-array'))).toBe(false);
+    // Sharing only "load" is not enough: a sort and a search, BFS and the representations page.
+    expect(canCompare(byId('bubble-sort'), byId('linear-search'))).toBe(false);
+    expect(canCompare(byId('bubble-sort'), byId('merge-sort'))).toBe(true);
+    expect(canCompare(byId('bfs'), byId('graph-representations'))).toBe(false);
+    expect(canCompare(byId('bfs'), byId('dfs'))).toBe(true);
+    expect(canCompare(byId('bst'), byId('avl'))).toBe(true);
   });
 
   it('shares only operations with the same name and number of values', () => {

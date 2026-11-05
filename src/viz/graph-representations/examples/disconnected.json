@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "graph-representations",
+  "id": "disconnected",
+  "title": "Two pieces and a vertex with no edges",
+  "notes": "F has no edges, so Adj[F] is empty and row F is all zeros. The edge list has no row for F at all: it keeps F in a separate list of vertices.",
+  "settings": {
+    "layout": "force",
+    "arrange": "wide"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, B-C, A-C, D-E, F"],
+    ["neighbours", "F"],
+    ["hasEdge", "C-D"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "graph-representations",
+  "id": "list-worst",
+  "title": "Worst case for the list: v at the end of a long list",
+  "notes": "A is joined to every other vertex, so Adj[A] holds all 7 of them, and H is last. The list needs 7 checks; the matrix still needs 1.",
+  "settings": {
+    "layout": "force",
+    "arrange": "wide"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, A-D, A-E, A-F, A-G, A-H"],
+    ["hasEdge", "A-H"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

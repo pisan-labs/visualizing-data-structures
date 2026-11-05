@@ -49,7 +49,7 @@ Q: A window's hash equals p. What do you know about the window?
 
 ## Digits or characters
 
-CLRS works with digits and d = 10, because then the hash is a number you can check by hand. For other text, each character is its code (A is 65) and d = 256; nothing else changes. **Radix d** in the options picks one, and Automatic chooses 10 for digits and 256 for anything else. With d = 10 forced, letters are not digits, and the search says so instead of guessing. [d = 10 needs digits](#example:needs-digits)
+CLRS uses digits and d = 10. Then the hash is the window read as an ordinary number, mod q, and you can check it by hand. For other text, each character is its code (A is 65) and d = 256; nothing else changes. **Radix d** in the options picks one, and Automatic chooses 10 for digits and 256 for anything else. With d = 10 forced, letters are not digits, and the search says so instead of guessing. [d = 10 needs digits](#example:needs-digits)
 
 ## How fast is it?
 

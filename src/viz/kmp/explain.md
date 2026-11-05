@@ -49,7 +49,7 @@ Q: What is π for P = AABAAB?
 
 ## Prefix function or failure function?
 
-CLRS calls the table the prefix function, π. Many other books call it the failure function, because it says where to go when a comparison fails. The numbers are the same; the **Call the table** option switches the name. Books also index it differently: CLRS counts from 1, so its π[q] is about P[1..q], which is our π[q − 1]. Check which version a piece of code uses before you borrow it.
+CLRS calls the table the prefix function, π. Many other books call it the failure function: it says where to go when a comparison fails. The numbers are the same; the **Call the table** option switches the name. Books also index it differently: CLRS counts from 1, so its π[q] is about P[1..q], which is our π[q − 1]. Check which version a piece of code uses before you borrow it.
 
 ## When to use it
 

@@ -3,79 +3,82 @@
 The rolling handoff for the StepWise cloud sessions (the session-relay skill). Each handover
 rewrites this file; it never gets a dated copy. Times are Europe/Berlin.
 
-Last written: Thursday 5 November 2026, 06:50, for the first handover. Yusuf asked for it at 06:45, ahead of the 16:52 start, so the previous session started this one directly.
+Last written: Thursday 5 November 2026, 20:50, at Yusuf's request to wrap up for the day. This is
+not a handover: the current session stays the relay session and continues later.
 
 ## What is live
 
 - Nothing is published yet. Yusuf deploys to Netlify by hand (site `stepwise-pisan-labs`, domain
   `stepwise.pisan.me`); sessions never start, publish or roll back a deploy.
-- `main` holds 74 of the 108 catalog pages. Every one has a concept page, curated examples, a
-  Big-O self-test, presets, Python/Java/C++ code tabs, a practice set and tests.
-- Site features: per-page URLs, saved and shared examples, embeds, presentation mode, compare
-  mode (`/<page>/#compare=<other>`), printable concept pages, practice sets with assignment links.
-- CI (`.github/workflows/ci.yml`) runs on every push to `main`. Runs 34 to 36 passed (the last at
-  06:24 Thursday). Runs 37 and 38, the first to include the trie and Huffman merge, were still
-  running when this was written: check them first.
+- `main` (`267834f` before this commit) holds 91 of the 108 catalog pages, each with a concept
+  page, curated examples, a Big-O self-test, presets, Python/Java/C++ code tabs, a practice set
+  and tests.
+- CI: runs 44 to 46 passed (the last on `267834f`, 17:15 to 17:39).
 
-## Merged since the session started (Wednesday 4 and Thursday 5 November)
+## Merged on Thursday 5 November
 
-- Wed 09:13 to 14:50, wave 1 (23 pages): binary tree and BST; linked lists and cycle detection;
-  stacks, queues, deques and arrays; searching and sorting.
-- Wed 15:06 to 21:00, wave 2: AVL, red-black, splay, treap; hashing and the LRU cache; B-tree,
-  2-4 tree, B+ tree, skip list; recursion; heaps and heap sort; dynamic programming, counting,
-  radix and bucket sort.
-- Wed 21:41 to Thu 06:08, wave 3: graph foundation (graph representations, BFS, DFS); string
-  matching (brute force, KMP, Boyer-Moore, Rabin-Karp); shortest paths (Dijkstra, Bellman-Ford,
-  DAG shortest paths, Floyd-Warshall); range queries (prefix sums and sparse tables, Fenwick tree,
-  segment tree); trie, compressed trie, Huffman coding.
-- Lead features and fixes: practice sets, presentation mode, compare mode, printable concept
-  pages, CI font fixes, operation queueing during playback, seed mixing, address-sync race fix.
-- Shared layouts in `src/layouts/`: binary-tree, bars, circular-array, linked, node-chain,
-  multiway, heap, forest, calls, table, graph, align, columns, trie. Graph helpers in
-  `src/viz/_graph/`.
+- 06:49, `session_01JyJzMZHCY1tEoov2vYAuJv` took over the relay.
+- 12:10, wave 4 batch 1 (13 pages): prim, kruskal, disjoint-sets; connected-components,
+  bipartite, topo-indegree; topo-dfs, scc, bridges; memory-model, big-o-lab, master-theorem,
+  bitmask.
+- 12:55, `tests/e2e/helpers.ts` `showMe()`: the "Show me" checks also accept a replay that
+  already ended (the Boyer-Moore practice test flaked in four agent runs).
+- 17:09 (pushed 17:15), wave 4H (4 pages): convex-hull, polygon, coordinates-2d, rotate-scale-2d; shared
+  `src/layouts/plane.ts` for the later transform pages.
 
 ## Branches still unmerged
 
-None. Every agent branch (`worktree-agent-*`, local only) is merged into `main`.
+Three wave 4 batch 2 branches, pushed to origin as backups. Their agents stopped at the usage
+limit (between about 17:15 and 18:00) during their final checks; their worktrees are in this container under
+`.claude/worktrees/`, so resume them with SendMessage if the container survives, else check out
+the branches. None is verified end to end yet:
+
+- `worktree-agent-a821abc5bc340c0ac` (`9f8f92f`, E2E_PORT 4212): grid-bfs, a-star, suffix-array,
+  new `src/layouts/grid.ts`. Its last commit adds the e2e specs; whether the full suite, 10
+  conformance runs and full e2e passed is not known.
+- `worktree-agent-aa81297ea160adf81` (`0cdee5c`, 4213): max-flow, bipartite-matching,
+  min-cost-flow. 10 conformance runs were clean; the full e2e had just started.
+- `worktree-agent-aa205b40a571e95f4` (`2930f80`, 4214): weighted-matching, general-matching,
+  two-sat. Was waiting on a background test run; results not known.
+
+Before merging each: check for files outside its page folders (new layout and e2e spec files
+are expected), `--no-ff` merge, conformance 10 times, full suite, e2e on its pages, then push.
+Several branches start with commits titled "WIP:"; their content is complete per the agents.
 
 ## Next, in order
 
-1. Wave 4, the 34 pages still in `src/viz/catalog.ts`, about three or four per agent, each
-   briefed like the wave 3 briefs (in this session's history; copy their structure: read first,
-   setup with its own `E2E_PORT`, the assignment, "every page also needs", rules, final report):
-   - MST and union-find: `prim`, `kruskal`, `disjoint-sets` (on `src/viz/_graph/`, `load` and
-     `run`, so compare mode pairs Prim with Kruskal);
-   - connectivity: `connected-components`, `bipartite`, `topo-indegree`, `topo-dfs`, `scc`,
-     `bridges`;
-   - grids: `grid-bfs`, `a-star` (a grid layout; N-Queens has a board in its own folder);
-   - flow and matching: `max-flow`, `bipartite-matching`, `min-cost-flow`, `weighted-matching`,
-     `general-matching`, `two-sat`;
-   - geometry: `convex-hull`, `polygon`, `rotate-scale-2d`, `rotate-translate-2d`,
-     `coordinates-2d`, `rotate-scale-3d`, `coordinates-3d`;
-   - foundations: `memory-model`, `big-o-lab`, `master-theorem` (can reuse
-     `src/layouts/calls.ts`), `bitmask`;
-   - suffix structures: `suffix-array`, `suffix-tree`;
-   - hard problems: `np-reductions`, `tsp`, `vertex-cover`, `steiner-tree`.
-2. Shared rendering requests from the agents:
-   - arrow lines colored by role (only active and error have line colors; tree edges get only a
-     green head);
-   - views sized to the stage's aspect ratio. At 1366x768 the desktop stage is about 305 px tall,
-     so tall scenes (DFS, merge sort, deep tries, DP tables) draw text at 10 to 13 px;
-   - the wider input for long inputs pushes buttons to a second row on some pages (the
-     Fenwick tree and segment tree pages moved Build under More operations);
+1. Finish and merge the three branches above.
+2. Look into `src/viz/skip-list/skip-list.test.ts` "matches a reference skip list, coin flips and
+   search paths included": it failed once in a full `npm test` on main at about 17:40 while three
+   agents were running, then passed 5 of 5 alone. Find the seed or timeout behind it (root
+   cause, not a retry).
+3. Wave 4 batch 3, the last 8 pages: `rotate-translate-2d`, `rotate-scale-3d`,
+   `coordinates-3d` (reuse `src/layouts/plane.ts`), `suffix-tree`, `np-reductions`, `tsp`,
+   `vertex-cover`, `steiner-tree`.
+4. Shared rendering requests from the agents:
+   - a categorical palette for groups (SCC and component colors repeat after five);
+   - stroke colors for arrows in every role (`found`, `new`, `done`, `compare`), and a thicker
+     `done` edge, in `src/ui/Shapes.svelte`;
+   - a filled polygon shape kind in `src/render/scene.ts` (shoelace triangles, unit square);
+   - smaller arrowheads for short vectors;
+   - `src/ui/OpControls.svelte` hiding the size select when a page's presets take no size
+     (then the Master theorem presets can go back to fixed recurrences);
+   - views sized to the stage's aspect ratio (tall scenes are small at 1366x768; Kruskal,
+     convex hull and polygon also draw small on laptops);
+   - the wider input for long inputs pushes buttons to a second row on some pages;
    - a three-value button's error reads "needs l and r and an amount";
-   - graph pages start on their own sample graphs, so compare mode across families starts on
-     different graphs until Load;
    - `src/viz/_paths/overlap.ts` (a label-overlap checker) could become a shared test.
-3. Tech debt: unify `src/layouts/node-chain.ts` with `src/layouts/linked.ts`, with screenshots
+5. Code-tab coverage: random scripts give the master-theorem and memory-model drivers nothing
+   to run; only curated examples test them.
+6. Tech debt: unify `src/layouts/node-chain.ts` with `src/layouts/linked.ts`, with screenshots
    before and after.
-4. The "All colliding keys" preset on the four hashing pages (hash-chaining, hash-open,
-   hash-buckets, hash-rehash) uses a hidden `fill` operation on each page; presets now receive
-   the settings (`Preset.make` in `src/engine/types.ts`), so it could become plain inserts.
+7. The "All colliding keys" preset on the four hashing pages uses a hidden `fill` operation;
+   presets now receive the settings (`Preset.make`), so it could become plain inserts.
 
 ## Waiting on Yusuf
 
-Nothing open.
+Nothing open. (This session could not install `.githooks` with `git config core.hooksPath`:
+auto mode refused it as persistence. Lint and tests were run by hand before every push.)
 
 ## Dated tasks
 
@@ -103,7 +106,8 @@ Nothing open.
   session.
 - Concept pages are written in Yusuf's voice: invoke `anthropic-skills:write-like-pisan` first.
 - Agents: about four at a time, each in its own worktree with its own `E2E_PORT` (ports up to
-  4205 have been used; start new ones at 4206), told not to edit shared files, to add practice
+  4215 have been used; start new ones at 4216), told not to edit shared files, to name e2e specs after their pages, to use
+  `showMe()` from `tests/e2e/helpers.ts` for "Show me" checks, to commit WIP before a limit stop, to add practice
   sets, to keep rows able to wrap for CI's wider font, to poll (`expect.poll`) when measuring
   the drawing, and not to push. The lead checks the branch for files outside the agent's
   folders, merges with `--no-ff`, runs the conformance check 10 or more times on the new pages
@@ -134,7 +138,7 @@ Nothing open.
 
 - Current session: `session_01JyJzMZHCY1tEoov2vYAuJv` (lineage depth 1, limit 8). It took over on
   Thursday 5 November at 06:49 from `session_01JyJzMV9R79kmMm2TxMzCD9`, which started the relay
-  on Wednesday 4 November.
+  on Wednesday 4 November. Context was at 24% at 15:41.
 - The session-start routine looks only for a marker commit made since 15:30 that day, so an
   early handover cannot start a second session at 16:52.
 - Routines aimed at the current session, to move at the next takeover:
@@ -142,15 +146,5 @@ Nothing open.
   - `trig_01Tg9X7MLii8DWA6vMVaY1VP`: StepWise handoff check, `CRON_TZ=Europe/Berlin 56 15 * * *`.
   - `trig_01EZxsysCxTEvpueRRchrmfk`: StepWise daily handoff (session start),
     `CRON_TZ=Europe/Berlin 52 16 * * *`.
-- Wave 4 agents started at 06:55 on 5 November and stopped at the usage limit with their work
-  committed as WIP. The branches are pushed to origin as a backup (not merged):
-  - `worktree-agent-a363cfb926bbc7c1f` (71e547d): prim, kruskal, disjoint-sets.
-  - `worktree-agent-abea496d65b7d74bd` (926a0e9): connected-components, bipartite, topo-indegree.
-  - `worktree-agent-a4a2653da0afe3f55` (b936b90): topo-dfs, scc, bridges.
-  - `worktree-agent-a623f1d5e970be25f` (24b40c3): memory-model, big-o-lab, master-theorem, bitmask.
-
-  All 13 pages are written. Still to do on each: the full `npm test`, the 10 conformance runs and
-  the full e2e. Before merging, make `topo-dfs` and `topo-indegree` start on the same DAG with
-  `run` taking no input (compare mode). Resume the agents with SendMessage if the container
-  survives; otherwise check out the branches. Requests: a categorical palette for groups, and a
-  thicker `done` arrow style in `src/ui/Shapes.svelte`.
+- The account's other routines (DSA, Chess TD, TPT, product ideas, reminders) belong to other
+  projects: never move or change them.

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "rabin-karp",
+  "id": "every-shift",
+  "title": "A hit at every shift: O(mn)",
+  "notes": "Every window is AAA, so every hash is a hit and every hit is checked character by character: 8 windows of 3 comparisons. Hashing saves nothing when the answer really is everywhere.",
+  "settings": { "radix": "auto", "q": 13 },
+  "seed": 1,
+  "ops": [["load", "AAAAAAAAAA / AAA"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

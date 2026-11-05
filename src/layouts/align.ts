@@ -42,7 +42,9 @@
  *   - `pair`: the text column and pattern cell compared now. A dashed guide joins them when
  *     earlier rows sit in between.
  *   - `found`: shifts where the pattern was found, drawn as bars over the text.
- *   - `values`: one value per shift for the value lane, with the lane's name.
+ *   - `values`: one value per shift for the value lane, with the lane's name. `tones` color
+ *     values that stay colored (a match, a spurious hit) and `dashed` gives some a dashed
+ *     border as well.
  *   - `roles`: the step's marks by shape id. A mark beats the color a row's `cells` give.
  *
  * Shape ids (use them as mark ids):
@@ -57,7 +59,8 @@
  *
  * Sizes are in scene units. The pitch shrinks with the column count, from 48 down to 30 units,
  * so a text of 24 characters is about 800 units wide and its letters stay near 11 px on a
- * phone in portrait (about 362 px of drawing), and bigger on a 1366x768 laptop.
+ * phone in portrait (about 362 px of drawing), and bigger on a 1366x768 laptop. A wide, short
+ * frame keeps a band at the top empty, clear of the stage's zoom buttons.
  */
 import type { MarkRole } from '../engine/types';
 import type { Bounds, Shape } from '../render/scene';
@@ -96,7 +99,14 @@ export interface AlignContent {
   pointer?: { name: string; at: number; role?: MarkRole };
   pair?: { i: number; row: string | number; j: number };
   found?: readonly number[];
-  values?: { name: string; items: readonly (string | null | undefined)[] };
+  values?: {
+    name: string;
+    items: readonly (string | null | undefined)[];
+    /** A color for a value that stays (a match, a spurious hit); marks still win. */
+    tones?: readonly (MarkRole | undefined)[];
+    /** Values drawn with a dashed border, so their meaning does not rest on color. */
+    dashed?: readonly boolean[];
+  };
   roles?: ReadonlyMap<string, MarkRole>;
 }
 
@@ -124,12 +134,14 @@ export interface AlignGeometry {
 }
 
 const PAD = 12;
+/** Clear of the stage's zoom buttons, for wide drawings. */
+const PAD_TOP = 46;
 const NAME_W = 58;
 const MIN_W = 460;
 const POINTER_H = 40;
 const INDEX_H = 22;
 const FOUND_LANE = 7;
-const VALUE_H = 30;
+const VALUE_H = 36;
 const GAP = 14;
 
 /** Column pitch for this many columns: 48 units down to 30. */
@@ -147,7 +159,22 @@ export function alignGeometry(frame: AlignFrame): AlignGeometry {
   const width = Math.max(MIN_W, natural + PAD, (frame.aboveWidth ?? 0) + 2 * PAD);
   const x0 = (width - natural) / 2 + NAME_W;
 
-  let y = PAD;
+  // A wide, short drawing fills the stage's width, so its top right corner sits under the
+  // stage's zoom buttons: keep a band clear there. A taller one is drawn narrower than the
+  // stage, so the corner is empty anyway.
+  const body =
+    (frame.above ? frame.above + 12 : 0) +
+    (frame.pointer ? POINTER_H : 0) +
+    INDEX_H +
+    lanes * FOUND_LANE +
+    4 +
+    cellH +
+    (frame.values ? VALUE_H + 4 : 0) +
+    GAP +
+    slots * (cellH + GAP) -
+    GAP +
+    2 * PAD;
+  let y = body < width * 0.5 ? PAD_TOP : PAD;
   const aboveTop = y;
   if (frame.above) y += frame.above + 12;
   const pointerTop = y;
@@ -181,7 +208,7 @@ const charSize = (pitch: number) => Math.round(Math.min(28, pitch * 0.84));
 
 /** Font size for a value in the value lane: smaller for longer values. */
 const valueSize = (text: string, pitch: number) =>
-  Math.max(11, Math.min(17, Math.floor((pitch - 2) / (Math.max(1, text.length) * 0.6))));
+  Math.max(11, Math.min(22, Math.floor((pitch - 4) / (Math.max(1, text.length) * 0.6))));
 
 const ROLE: Record<Cmp, MarkRole> = { match: 'done', mismatch: 'error', known: 'done' };
 
@@ -330,7 +357,7 @@ export function alignScene(
     content.values.items.forEach((v, s) => {
       if (v === null || v === undefined || v === '') return;
       const id = `hv-${s}`;
-      const role = roles.get(id);
+      const role = roles.get(id) ?? content.values!.tones?.[s];
       const size = valueSize(v, pitch);
       shapes.push({
         kind: 'rect',
@@ -340,7 +367,7 @@ export function alignScene(
         w: pitch - 4,
         h: VALUE_H - 4,
         r: 6,
-        cls: 'cell live',
+        cls: content.values!.dashed?.[s] ? 'cell live ghost' : 'cell live',
         role,
       });
       shapes.push({

@@ -70,6 +70,8 @@ export interface MatchViewOptions {
   pointerOf?: (state: MatchState) => number | undefined;
   /** Shapes over the text: a table placed with the geometry. */
   above?: (g: AlignGeometry, roles: ReadonlyMap<string, MarkRole>) => Shape[];
+  /** Change the rows before they are drawn (Rabin-Karp shows p where the shift would go). */
+  mapRows?: (rows: AlignRow[], state: MatchState) => AlignRow[];
   /** The value lane (Rabin-Karp's window hashes). */
   values?: AlignContent['values'];
 }
@@ -100,7 +102,7 @@ export function matchShapes(
     : {
         text: state.text,
         pattern: state.pattern,
-        rows: rowsOf(state),
+        rows: opts.mapRows ? opts.mapRows(rowsOf(state), state) : rowsOf(state),
         found: state.search?.found ?? [],
         roles,
         ...(opts.values ? { values: opts.values } : {}),

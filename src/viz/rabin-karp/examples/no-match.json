@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "rabin-karp",
+  "id": "no-match",
+  "title": "No match, three spurious hits",
+  "notes": "9999 is not in the text, but the windows at 8, 13 and 14 leave the same remainder mod 13. Each one costs a character comparison before it is ruled out.",
+  "settings": { "radix": "auto", "q": 13 },
+  "seed": 1,
+  "ops": [["load", "31415926535897932384 / 9999"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

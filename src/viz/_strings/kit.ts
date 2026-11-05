@@ -404,18 +404,27 @@ export function loadOp<Pre, Set>(opts: LoadOptions = {}): OpSpec<MatchState<Pre>
 export interface Engine<Pre, Set> {
   /** Build what the search needs from P alone, when `run.pre` is null (π, shift tables). */
   prepare?: (run: Run<Pre>, settings: Set) => Gen<Pre>;
-  /** Start a search: `run.begin()` and any steps before the first alignment. */
-  start: (run: Run<Pre>, settings: Set) => Gen<Pre>;
+  /**
+   * Start a search: `run.begin()` and any steps before the first alignment. Returning false
+   * means the search cannot run as asked (Rabin-Karp's d = 10 on letters): its last step says
+   * why, and the state stays as it was.
+   */
+  start: (run: Run<Pre>, settings: Set) => Gen<Pre, boolean | void>;
   /** One alignment, from `run.s.next`: compare, close it, and say where the pattern goes. */
   attempt: (run: Run<Pre>, settings: Set) => Gen<Pre>;
   /** The step that ends a search. */
   finish: (run: Run<Pre>, settings: Set) => MatchStep<Pre>;
 }
 
-function* opening<Pre, Set>(engine: Engine<Pre, Set>, run: Run<Pre>, settings: Set): Gen<Pre> {
-  if (run.search?.next) return;
+/** Carry on with the search in progress, or start one. False: it could not start. */
+function* opening<Pre, Set>(
+  engine: Engine<Pre, Set>,
+  run: Run<Pre>,
+  settings: Set,
+): Gen<Pre, boolean> {
+  if (run.search?.next) return true;
   if (engine.prepare && run.pre === null) yield* engine.prepare(run, settings);
-  yield* engine.start(run, settings);
+  return (yield* engine.start(run, settings)) !== false;
 }
 
 /** `search` and `next`, the same on every page. */
@@ -428,7 +437,7 @@ export function searchOps<Pre, Set>(
       arity: 0,
       *run(s, _args, { settings }) {
         const run = new Run(s);
-        yield* opening(engine, run, settings);
+        if (!(yield* opening(engine, run, settings))) return s;
         while (run.search?.next) yield* engine.attempt(run, settings);
         yield engine.finish(run, settings);
         return run.snapshot();
@@ -439,7 +448,7 @@ export function searchOps<Pre, Set>(
       arity: 0,
       *run(s, _args, { settings }) {
         const run = new Run(s);
-        yield* opening(engine, run, settings);
+        if (!(yield* opening(engine, run, settings))) return s;
         if (run.search?.next) yield* engine.attempt(run, settings);
         if (!run.search?.next) yield engine.finish(run, settings);
         return run.snapshot();

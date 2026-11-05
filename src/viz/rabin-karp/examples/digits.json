@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "rabin-karp",
+  "id": "digits",
+  "title": "Digits of π: one match, two spurious hits",
+  "notes": "All digits, so d = 10 and each window is a 4-digit number mod 13. 2653 occurs at shift 6. The windows at 9 and 15 have the same remainder, 1, and turn out to be spurious.",
+  "settings": { "radix": "auto", "q": 13 },
+  "seed": 1,
+  "ops": [["load", "31415926535897932384 / 2653"], ["search"]],
+  "at": { "op": 0, "step": 0 }
+}

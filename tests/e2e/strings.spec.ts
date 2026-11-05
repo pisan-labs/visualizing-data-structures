@@ -200,6 +200,42 @@ test.describe('Boyer-Moore', () => {
   });
 });
 
+test.describe('Rabin-Karp', () => {
+  test.beforeEach(({ page }) => open(page, 'rabin-karp', 'Rabin-Karp'));
+
+  test('rolls the hash with real numbers and checks every hit', async ({ page }) => {
+    await load(page, '31415926535897932384 / 2653');
+    await press(page, 'Search');
+    await toEnd(page);
+    await expect(narration(page)).toContainText(
+      'Done. P occurs at shift 6. 17 hash checks, 2 spurious hits (at 9, 15), and 6 character comparisons.',
+    );
+    await expect(stage(page)).toHaveAttribute('aria-label', /Spurious hits at 9 and 15\./);
+    await backTo(
+      page,
+      't₁ = (10 × (8 − 3 × 12) + 5) mod 13 = (10 × −28 + 5) mod 13 = −275 mod 13 = 11.',
+    );
+    await expect(
+      page.locator('.code li.active').filter({ hasText: 't = (d·(t − T[s]·h)' }),
+    ).toHaveCount(1);
+  });
+
+  test('refuses d = 10 on letters and says why', async ({ page }) => {
+    await page.locator('details.options > summary').click();
+    await page.getByLabel('d = 10: each character is a decimal digit').check();
+    await press(page, 'Search');
+    await toEnd(page);
+    await expect(narration(page)).toContainText(
+      "With d = 10, each character is a decimal digit, but 'G' is not one.",
+    );
+    await expect(page.locator('.narration.error')).toBeVisible();
+  });
+
+  test('a practice question is graded and played', async ({ page }) => {
+    await practice(page, 'rabin-karp', 86420);
+  });
+});
+
 test.describe('Compare mode', () => {
   const sides = (page: Page) => page.locator('.sides > .side');
   const said = (page: Page, i: number) => sides(page).nth(i).locator('.narration p');

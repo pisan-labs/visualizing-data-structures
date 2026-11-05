@@ -142,11 +142,15 @@ Nothing open.
   - `trig_01Tg9X7MLii8DWA6vMVaY1VP`: StepWise handoff check, `CRON_TZ=Europe/Berlin 56 15 * * *`.
   - `trig_01EZxsysCxTEvpueRRchrmfk`: StepWise daily handoff (session start),
     `CRON_TZ=Europe/Berlin 52 16 * * *`.
-- Wave 4 agents started at 06:55 on 5 November in this container's worktrees
-  (`.claude/worktrees/`, branches `worktree-agent-*`, local only), stopped at the usage limit with
-  their work committed as WIP: prim/kruskal/disjoint-sets (E2E_PORT 4206),
-  connected-components/bipartite/topo-indegree (4207), topo-dfs/scc/bridges (4208),
-  memory-model/big-o-lab/master-theorem/bitmask (4209). Resume them with SendMessage after the
-  limit resets; nothing of theirs is on main yet.
-- The account's other routines (DSA, TPT, product ideas, reminders) belong to other projects:
-  never move or change them.
+- Wave 4 agents started at 06:55 on 5 November and stopped at the usage limit with their work
+  committed as WIP. The branches are pushed to origin as a backup (not merged):
+  - `worktree-agent-a363cfb926bbc7c1f` (71e547d): prim, kruskal, disjoint-sets.
+  - `worktree-agent-abea496d65b7d74bd` (926a0e9): connected-components, bipartite, topo-indegree.
+  - `worktree-agent-a4a2653da0afe3f55` (b936b90): topo-dfs, scc, bridges.
+  - `worktree-agent-a623f1d5e970be25f` (24b40c3): memory-model, big-o-lab, master-theorem, bitmask.
+
+  All 14 pages are written. Still to do on each: the full `npm test`, the 10 conformance runs and
+  the full e2e. Before merging, make `topo-dfs` and `topo-indegree` start on the same DAG with
+  `run` taking no input (compare mode). Resume the agents with SendMessage if the container
+  survives; otherwise check out the branches. Requests: a categorical palette for groups, and a
+  thicker `done` arrow style in `src/ui/Shapes.svelte`.

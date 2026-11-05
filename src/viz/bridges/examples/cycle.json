@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "bridges",
+  "id": "cycle",
+  "title": "A cycle: nothing is fragile",
+  "notes": "Every edge is on the cycle, so removing any one leaves a path. The back edge E-A gives every vertex low = 1, so nothing is a cut vertex and nothing is a bridge.",
+  "settings": {
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, B-C, C-D, D-E, E-A"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

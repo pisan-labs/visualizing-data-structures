@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "topo-dfs",
+  "id": "keep-going",
+  "title": "Keep going past a cycle",
+  "notes": "The same graph, but the search does not stop at the back edge D>B. L still comes out in decreasing finish time, and D>B is the one edge that points backward in it.",
+  "settings": {
+    "onCycle": "finish",
+    "layout": "layered"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B, A>E, B>C, C>D, D>B, E>D"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

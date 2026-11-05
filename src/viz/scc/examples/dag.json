@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "scc",
+  "id": "dag",
+  "title": "A DAG: every vertex alone",
+  "notes": "No cycles at all, so no two vertices can reach each other. Each vertex is its own component, and the component graph is the graph itself.",
+  "settings": {
+    "algorithm": "kosaraju",
+    "condense": true,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B, A>C, B>D, C>D, D>E"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

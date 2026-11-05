@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "bridges",
+  "id": "two-triangles",
+  "title": "Two triangles and a tail",
+  "notes": "The triangles A, B, C and D, E, F hold together on their own. C-D, F-G and G-H do not: each is a bridge, and C, D, F and G are cut vertices. The root A has one child, so it is not.",
+  "settings": {
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-C, C-D, D-E, D-F, E-F, F-G, G-H"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

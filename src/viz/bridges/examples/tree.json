@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "bridges",
+  "id": "tree",
+  "title": "A tree: everything is fragile",
+  "notes": "A tree has no cycles, so every edge is a bridge, and every vertex with two or more neighbours is a cut vertex. The leaves D, E and F are not.",
+  "settings": {
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-D, B-E, C-F"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

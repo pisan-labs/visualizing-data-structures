@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "topo-dfs",
+  "id": "getting-dressed",
+  "title": "Getting dressed",
+  "notes": "Each arc says what has to go on first: undershorts (Und) before pants, socks (Sox) before shoes, shirt (Shi) before tie. The watch (Wat) depends on nothing and nothing depends on it, so it can go anywhere.",
+  "settings": {
+    "onCycle": "stop",
+    "layout": "layered"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "Und>Pan, Und>Sho, Pan>Sho, Pan>Blt, Shi>Blt, Shi>Tie, Tie>Jkt, Blt>Jkt, Sox>Sho, Wat"
+    ],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

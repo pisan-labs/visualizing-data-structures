@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "topo-dfs",
+  "id": "last-goes-first",
+  "title": "The last tree goes to the front",
+  "notes": "G comes last in name order, so it starts the last depth-first tree. It also finishes last, so it ends up at the front of L: G, A, D, E, B, C, F.",
+  "settings": {
+    "onCycle": "stop",
+    "layout": "layered"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B, A>D, B>C, C>F, D>C, D>E, E>F, G>D, G>E"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

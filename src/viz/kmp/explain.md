@@ -13,7 +13,7 @@ Brute force forgets. In GABABABACABABACG it matches ABABA at shift 1, fails on t
 
 The search keeps a shift s and a count q: at shift s, the first q characters of P are known to match. Compare T[s + q] with P[q] and keep going while they agree. When a mismatch comes after q matches, the text under P[0..q − 1] is exactly P[0..q − 1]. P can only start again where one of its prefixes lines up with a suffix of that, and the longest such prefix is π[q − 1] characters long. So slide P by q − π[q − 1], and count those π[q − 1] characters as matched: q = π[q − 1]. With nothing matched (q = 0), slide one place. [Show me](#play:keeps-three)
 
-In the drawing, a dashed green cell is known to match without being compared. The table sits under the rows, and the value a slide reads lights up.
+In the drawing, a dashed green cell is known to match without being compared. The table sits above the text, and the value a slide reads lights up.
 
 ## The text pointer never moves back
 
@@ -34,7 +34,7 @@ Q: P = ABABAC, so π = 0 0 1 2 3 0. At some shift, ABABA matched and then the te
 
 ## Building the table
 
-Building π is KMP run on P against itself. For each i from 1 to m − 1, q is the longest border found so far. If P[q] = P[i], the border grows: q = q + 1. If not, fall back to the next shorter border, q = π[q − 1], and try again, down to q = 0. The drawing puts P on top and slides a copy of P under it, so π[j] ends up right under P[j]. [Building π for AABAACAABAA](#example:build-table) falls back twice at the C before it climbs to π[10] = 5. [Show me](#play:build-table)
+Building π is KMP run on P against itself. For each i from 1 to m − 1, q is the longest border found so far. If P[q] = P[i], the border grows: q = q + 1. If not, fall back to the next shorter border, q = π[q − 1], and try again, down to q = 0. The drawing puts P under the table and slides a copy of P under it, so π[j] ends up right above P[j]. [Building π for AABAACAABAA](#example:build-table) falls back twice at the C before it climbs to π[10] = 5. [Show me](#play:build-table)
 
 Why is this O(m) when there is a loop inside a loop? q goes up by at most one for each i, and every fallback takes it down by at least one. It cannot fall more than it has climbed, so the fallbacks add fewer than m comparisons in all.
 

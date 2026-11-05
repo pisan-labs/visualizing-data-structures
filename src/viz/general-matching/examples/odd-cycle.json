@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "general-matching",
+  "id": "odd-cycle",
+  "title": "Five in a ring",
+  "notes": "A cycle of five vertices: one vertex always stays free. The last phase finds a blossom, contracts the whole ring into one vertex, and then has nowhere to go. That is the proof that two edges is the best we can do.",
+  "settings": { "layout": "circle" },
+  "seed": 1,
+  "ops": [["load", "A-B, B-C, C-D, D-E, A-E"], ["run"]],
+  "at": { "op": 0, "step": 0 }
+}

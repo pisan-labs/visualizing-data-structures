@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "general-matching",
+  "id": "through-a-blossom",
+  "title": "A path through a triangle",
+  "notes": "Six vertices and one triangle, A, B and D. The augmenting path the last phase finds goes through the triangle, so the search contracts it, finds the path, and expands the triangle to flip it.",
+  "settings": { "layout": "force" },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, A-D, B-D, B-E, C-F, E-F"], ["run"]],
+  "at": { "op": 0, "step": 0 }
+}

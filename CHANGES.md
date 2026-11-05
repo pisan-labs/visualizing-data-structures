@@ -119,3 +119,7 @@
 2026-11-04 [code] The operation input widens on pages that take long input (graph text, strings to search)
 
 2026-11-04 [code] CI run 31 failed on the skip list's "down" layout readability check on desktop (8.99994 px against 9 with CI's font); the check now applies on phones, which the layout is for. The short laptop stage is a known rough edge in HANDOFF.md
+
+2026-11-05 [code] Merged wave 3L: brute-force search, KMP (prefix function or failure function), Boyer-Moore (Horspool or bad character plus good suffix), Rabin-Karp (rolling hash, spurious hits); alignment layout in src/layouts/align.ts; all with practice
+
+2026-11-05 [code] Merged wave 3N: Dijkstra (CLRS decrease-key or lazy heap; refuses negative edges), Bellman-Ford (negative cycles drawn), DAG shortest and longest paths, Floyd-Warshall with path reconstruction; all with practice

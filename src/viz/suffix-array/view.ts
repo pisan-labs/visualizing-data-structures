@@ -18,10 +18,10 @@ import {
   type SuffixState,
 } from './model';
 
-const PITCH = 20;
-const ROW_H = 26;
+const PITCH = 24;
+const ROW_H = 30;
 const TEXT_TOP = 52;
-const HEAD_Y = TEXT_TOP + 26 + 30;
+const HEAD_Y = TEXT_TOP + 30 + 30;
 const ROW0 = HEAD_Y + 10;
 const X_LO = 4;
 const X_MID = 24;
@@ -29,9 +29,9 @@ const X_HI = 52;
 const X_I = 88;
 const X_SA = 120;
 const X_LCP = 156;
-const X_SUF = 184;
+const X_SUF = 186;
 
-export function view(step: Step<SuffixState, SuffixExtra>, _settings?: SuffixSettings): Scene {
+export function view(step: Step<SuffixState, SuffixExtra>, settings?: SuffixSettings): Scene {
   const s = step.state;
   const t = s.text;
   const n = t.length;
@@ -41,9 +41,10 @@ export function view(step: Step<SuffixState, SuffixExtra>, _settings?: SuffixSet
   const lcp = extra.lcp ?? s.lcp ?? null;
   const shapes: Shape[] = [];
   const cols = Math.max(n, extra.search?.pattern.length ?? 0, 6);
-  const xKey = X_SUF + cols * PITCH + 34;
-  const xRank = xKey + 66;
-  const width = xRank + 30;
+  const xKey = X_SUF + cols * PITCH + 44;
+  const xRank = xKey + 70;
+  // The pair and rank columns only take room when the build is by doubling.
+  const width = settings?.method === 'naive' ? xKey - 20 : xRank + 30;
   const rowY = (i: number) => ROW0 + i * ROW_H;
   const charX = (j: number) => X_SUF + j * PITCH + PITCH / 2;
   const text = (
@@ -52,10 +53,10 @@ export function view(step: Step<SuffixState, SuffixExtra>, _settings?: SuffixSet
     y: number,
     value: string,
     o: Partial<Extract<Shape, { kind: 'text' }>> = {},
-  ) => shapes.push({ kind: 'text', id, x, y, text: value, size: 14, mono: true, ...o });
+  ) => shapes.push({ kind: 'text', id, x, y, text: value, size: 16, mono: true, ...o });
 
   // The text, with its indices, over the suffix column.
-  text('t-name', X_SUF - 12, TEXT_TOP + 18, 'T', { anchor: 'end', cls: 'label', weight: 'bold' });
+  text('t-name', X_SUF - 12, TEXT_TOP + 21, 'T', { anchor: 'end', cls: 'label', weight: 'bold' });
   const spot = new Map<number, MarkRole>();
   for (const sp of extra.spots ?? [])
     for (let j = sp.from; j < sp.from + sp.len; j++) spot.set(j, sp.role);
@@ -67,20 +68,20 @@ export function view(step: Step<SuffixState, SuffixExtra>, _settings?: SuffixSet
       x: X_SUF + j * PITCH,
       y: TEXT_TOP,
       w: PITCH,
-      h: 26,
+      h: 30,
       r: 0,
       cls: 'live',
       role,
     });
-    text(`${textId(j)}-c`, charX(j), TEXT_TOP + 18, t[j]!, {
+    text(`${textId(j)}-c`, charX(j), TEXT_TOP + 21, t[j]!, {
       anchor: 'middle',
       weight: 'bold',
-      size: 15,
+      size: 18,
       role: role === 'found' ? 'found' : undefined,
     });
-    text(`ti-${j}`, charX(j), TEXT_TOP - 6, String(j), {
+    text(`ti-${j}`, charX(j), TEXT_TOP - 7, String(j), {
       anchor: 'middle',
-      size: 10,
+      size: 12,
       cls: 'index',
     });
   }
@@ -88,7 +89,7 @@ export function view(step: Step<SuffixState, SuffixExtra>, _settings?: SuffixSet
   // Column heads.
   const doubling = extra.rank !== undefined;
   const head = (id: string, x: number, value: string, anchor: 'middle' | 'start' = 'middle') =>
-    text(id, x, HEAD_Y, value, { anchor, size: 12, cls: 'label' });
+    text(id, x, HEAD_Y, value, { anchor, size: 13, cls: 'label' });
   head('hd-i', X_I, 'i');
   head('hd-sa', X_SA, 'SA');
   head('hd-lcp', X_LCP, 'LCP');
@@ -104,7 +105,7 @@ export function view(step: Step<SuffixState, SuffixExtra>, _settings?: SuffixSet
     const len = n - p;
     const id = rowId(p);
     const role = roles.get(id);
-    text(`ri-${i}`, X_I, y + 17, String(i), { anchor: 'middle', size: 11, cls: 'index' });
+    text(`ri-${i}`, X_I, y + 20, String(i), { anchor: 'middle', size: 13, cls: 'index' });
     shapes.push({
       kind: 'rect',
       id,
@@ -130,23 +131,23 @@ export function view(step: Step<SuffixState, SuffixExtra>, _settings?: SuffixSet
         z: 1.5,
       });
     }
-    text(`${id}-sa`, X_SA, y + 18, String(p), {
+    text(`${id}-sa`, X_SA, y + 21, String(p), {
       anchor: 'middle',
       weight: 'bold',
       role: role === 'found' || role === 'active' ? role : undefined,
     });
     for (let j = 0; j < len; j++) {
-      text(`${id}-c${j}`, charX(j), y + 18, t[p + j]!, {
+      text(`${id}-c${j}`, charX(j), y + 21, t[p + j]!, {
         anchor: 'middle',
-        size: 15,
+        size: 18,
         role: h && j < h.len && (h.role === 'found' || h.role === 'error') ? h.role : undefined,
       });
     }
     if (doubling) {
       const key = extra.keys?.[p];
       if (key)
-        text(`${id}-key`, xKey, y + 18, `(${key[0]}, ${key[1]})`, { anchor: 'middle', size: 13 });
-      text(`${id}-rk`, xRank, y + 18, String(extra.rank![p]), { anchor: 'middle', weight: 'bold' });
+        text(`${id}-key`, xKey, y + 21, `(${key[0]}, ${key[1]})`, { anchor: 'middle', size: 15 });
+      text(`${id}-rk`, xRank, y + 21, String(extra.rank![p]), { anchor: 'middle', weight: 'bold' });
     }
   });
 
@@ -167,7 +168,7 @@ export function view(step: Step<SuffixState, SuffixExtra>, _settings?: SuffixSet
       role: roles.get(id),
     });
     if (v !== null && v !== undefined)
-      text(`${id}-t`, X_LCP, y + 18, String(v), {
+      text(`${id}-t`, X_LCP, y + 21, String(v), {
         anchor: 'middle',
         weight: 'bold',
         role: roles.get(id) === 'found' ? 'found' : undefined,
@@ -180,12 +181,12 @@ export function view(step: Step<SuffixState, SuffixExtra>, _settings?: SuffixSet
   if (sr) {
     const ptr = (name: string, x: number, row: number | undefined, role?: MarkRole) => {
       if (row === undefined) return;
-      text(`ptr-${name}`, x, rowY(row) + 17, name, { size: 12, role, weight: 'bold' });
+      text(`ptr-${name}`, x, rowY(row) + 20, name, { size: 14, role, weight: 'bold' });
     };
     ptr('lo', X_LO, sr.found ? undefined : sr.lo);
     ptr('mid', X_MID, sr.mid, 'active');
     ptr('hi', X_HI, sr.found ? undefined : sr.hi);
-    text('p-name', X_SUF - 12, bottom + 18, 'P', { anchor: 'end', cls: 'label', weight: 'bold' });
+    text('p-name', X_SUF - 12, bottom + 21, 'P', { anchor: 'end', cls: 'label', weight: 'bold' });
     [...sr.pattern].forEach((ch, j) => {
       shapes.push({
         kind: 'rect',
@@ -193,16 +194,16 @@ export function view(step: Step<SuffixState, SuffixExtra>, _settings?: SuffixSet
         x: X_SUF + j * PITCH,
         y: bottom,
         w: PITCH,
-        h: 26,
+        h: 30,
         r: 0,
         cls: 'live',
         role: sr.found && sr.found[1] > sr.found[0] ? 'found' : undefined,
       });
-      text(`p-${j}-c`, charX(j), bottom + 18, ch, { anchor: 'middle', weight: 'bold', size: 15 });
+      text(`p-${j}-c`, charX(j), bottom + 21, ch, { anchor: 'middle', weight: 'bold', size: 18 });
     });
   }
 
-  const height = bottom + 26 + 12;
+  const height = bottom + 30 + 12;
   return { shapes, bounds: { x: 0, y: 0, w: width, h: height }, label: label(step) };
 }
 

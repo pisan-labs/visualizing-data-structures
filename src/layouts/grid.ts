@@ -14,8 +14,8 @@
  *   - `wall(r, c)`: whether a cell is a wall. Walls are drawn gray and hatched with three
  *     diagonal lines, so they do not rest on color alone.
  *   - `cell(r, c)`: an open cell's look: `text` in the middle (a distance, f), small corner
- *     labels (`tl`, `tr`, `bl`, `br`: a name, g, h), a `role` that stays (frontier, closed,
- *     path), and `dim` to fade it.
+ *     labels (`tl`, `tr`, `bl`, `br`: g, h), a bold `tag` at the bottom left (S, T), a `role`
+ *     that stays (frontier, closed, path), and `dim` to fade it.
  *   - `arrows`: short arrows between neighbouring cells (8 directions), across their shared
  *     edge or corner, clear of the middle text: parent pointers, or the steps of a path.
  *   - `colNames`, `rowNames`: the header labels. Default A, B, C... and 1, 2, 3...
@@ -23,7 +23,7 @@
  *
  * Shape ids (use them as mark ids):
  * - `cell-<r>-<c>`: a cell. Marking it colors its box and its middle text (`cell-<r>-<c>-t`)
- *   unless that text has a mark of its own. Corner labels are `cell-<r>-<c>-tl` and so on.
+ *   unless that text has a mark of its own. Corner labels are `cell-<r>-<c>-tl` and so on, the tag `cell-<r>-<c>-tag`.
  * - `wall-<r>-<c>-<k>`: the hatch lines of a wall, k = 0, 1, 2.
  * - `<arrow id>`: an arrow, with the id the page gave it.
  * - `gcol-<c>`, `grow-<r>`: the header labels.
@@ -57,6 +57,8 @@ export interface GridCellLook {
   tr?: string;
   bl?: string;
   br?: string;
+  /** A bold label at the bottom left, such as S or T. */
+  tag?: string;
   role?: MarkRole;
   dim?: boolean;
 }
@@ -157,8 +159,8 @@ export function arrowEnds(
   const ux = (bx - ax) / len;
   const uy = (by - ay) / len;
   const diagonal = from[0] !== to[0] && from[1] !== to[1];
-  // Orthogonal: 0.3 of a cell from each center. Diagonal: closer to the shared corner.
-  const trim = g.cell * (diagonal ? 0.45 : 0.3);
+  // Orthogonal: 0.36 of a cell from each center, so the arrow is mostly its head. Diagonal: closer to the shared corner.
+  const trim = g.cell * (diagonal ? 0.5 : 0.36);
   return {
     x1: ax + ux * trim,
     y1: ay + uy * trim,
@@ -175,7 +177,7 @@ export function gridScene(
   const roles = content.roles ?? new Map<string, MarkRole>();
   const shapes: Shape[] = [];
   const cell = g.cell;
-  const small = Math.max(9, Math.round(cell * 0.22));
+  const small = Math.max(10, Math.round(cell * 0.28));
 
   for (let c = 0; c < frame.cols; c++) {
     shapes.push({
@@ -272,6 +274,20 @@ export function gridScene(
           opacity,
         });
       };
+      if (look?.tag) {
+        shapes.push({
+          kind: 'text',
+          id: `${id}-tag`,
+          x: x + 3,
+          y: y + cell - 4,
+          text: look.tag,
+          size: small + 1,
+          weight: 'bold',
+          mono: true,
+          role: roles.get(`${id}-tag`),
+          opacity,
+        });
+      }
       corner('tl', look?.tl);
       corner('tr', look?.tr);
       corner('bl', look?.bl);

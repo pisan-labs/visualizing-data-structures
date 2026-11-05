@@ -44,7 +44,7 @@ function cellLook(g: Grid, k: number, r: AStarRun | undefined, eight: boolean): 
     size: 15,
     tl: corners ? fmt(r.g[k]!) : undefined,
     tr: corners ? fmt(r.h[k]!) : undefined,
-    bl: tag,
+    tag,
     role,
   };
 }

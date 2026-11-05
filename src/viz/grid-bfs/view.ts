@@ -35,7 +35,7 @@ export function cellLook(g: Grid, k: number, r: GridRun | undefined): GridCellLo
   else if (k === r.u) role = 'active';
   else if (r.queue.includes(k)) role = 'visit';
   else if (r.order.includes(k)) role = 'done';
-  return { text: String(r.d[k]), tl: tag, role };
+  return { text: String(r.d[k]), tag, role };
 }
 
 export function parentArrows(g: Grid, r: GridRun): GridArrow[] {

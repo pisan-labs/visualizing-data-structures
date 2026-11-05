@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "topo-dfs",
+  "id": "dense",
+  "title": "Every pair joined",
+  "notes": "Six vertices and all 15 arcs, each pointing along one hidden order. Only one topological order exists, and DFS has to look at every arc to find it.",
+  "settings": {
+    "onCycle": "stop",
+    "layout": "layered"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "C>A, C>B, C>D, C>E, C>F, F>A, F>B, F>D, F>E, A>B, A>D, A>E, E>B, E>D, D>B"],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

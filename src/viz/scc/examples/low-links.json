@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "scc",
+  "id": "low-links",
+  "title": "Low-links climbing back",
+  "notes": "Tarjan on two cycles joined by C>D. F reaches D, so F.low and E.low drop to D's index, and D roots {D, E, F}. Then C reaches A, and A roots {A, B, C}.",
+  "settings": {
+    "algorithm": "tarjan",
+    "condense": true,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B, B>C, C>A, C>D, D>E, E>F, F>D"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

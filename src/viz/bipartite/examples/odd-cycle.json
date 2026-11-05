@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "bipartite",
+  "id": "odd-cycle",
+  "title": "An odd cycle: one edge too many",
+  "notes": "Seven vertices in a ring. The sides alternate until the two searches meet on the far side: D and E end up on the same side, joined by an edge. The whole ring is the odd cycle.",
+  "settings": {
+    "method": "bfs",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, B-C, C-D, D-E, E-F, F-G, A-G"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

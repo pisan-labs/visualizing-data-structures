@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "connected-components",
+  "id": "isolated",
+  "title": "No edges: every vertex is its own component",
+  "notes": "Six vertices and no edges. Each search ends where it starts, so there are six components. The outer loop does all the work.",
+  "settings": {
+    "method": "bfs",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A, B, C, D, E, F"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

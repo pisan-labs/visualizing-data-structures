@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "topo-indegree",
+  "id": "fifo-order",
+  "title": "First ready, first out",
+  "notes": "A and B start ready. Removing A's arc frees D, which waits in the queue behind B. Then B frees C, which waits behind D. The queue gives A, B, D, C, E.",
+  "settings": {
+    "ready": "fifo",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>D, B>C, C>E, D>E"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

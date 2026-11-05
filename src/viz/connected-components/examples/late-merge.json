@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "connected-components",
+  "id": "late-merge",
+  "title": "Union-find: ranks grow, paths get compressed",
+  "notes": "Two sets grow around E and D, each of rank 1. C-G joins them: a tie, so D goes under E and E's rank grows to 2. Then FIND-SET(C) walks C → D → E, and path compression points C straight at E. The last edge, C-H, adds nothing.",
+  "settings": {
+    "method": "union-find",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-E, A-G, A-H, B-H, C-D, C-F, C-G, C-H"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "bipartite",
+  "id": "triangle",
+  "title": "A triangle: the smallest odd cycle",
+  "notes": "B and C both get side 1 from A, and then the edge B-C joins them. The check stops after four edge checks, without looking at D or E: the triangle A, B, C is proof enough.",
+  "settings": {
+    "method": "bfs",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-C, C-D, D-E"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

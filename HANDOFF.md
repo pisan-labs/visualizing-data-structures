@@ -149,7 +149,7 @@ Nothing open.
   - `worktree-agent-a4a2653da0afe3f55` (b936b90): topo-dfs, scc, bridges.
   - `worktree-agent-a623f1d5e970be25f` (24b40c3): memory-model, big-o-lab, master-theorem, bitmask.
 
-  All 14 pages are written. Still to do on each: the full `npm test`, the 10 conformance runs and
+  All 13 pages are written. Still to do on each: the full `npm test`, the 10 conformance runs and
   the full e2e. Before merging, make `topo-dfs` and `topo-indegree` start on the same DAG with
   `run` taking no input (compare mode). Resume the agents with SendMessage if the container
   survives; otherwise check out the branches. Requests: a categorical palette for groups, and a

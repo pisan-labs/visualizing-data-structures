@@ -16,7 +16,8 @@ const ROW = 54;
 const X0 = 130;
 const TOP = 60;
 const MAX_ROWS = 3;
-const LIST_COLS = 4;
+/** Two tall columns rather than four wide ones, so the drawing stays legible on a phone. */
+const LIST_COLS = 2;
 const LIST_ROWS = (1 << MAX_LISTED_BITS) / LIST_COLS;
 const LIST_PITCH = 22;
 const LIST_SIZE = 12.5;

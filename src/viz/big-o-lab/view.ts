@@ -1,7 +1,6 @@
 import type { MarkRole, Step } from '../../engine/types';
 import type { Scene, Shape } from '../../render/scene';
 import {
-  FNS,
   FN_LABEL,
   count,
   countShort,
@@ -26,6 +25,8 @@ export function view(step: Step<LabState, undefined>, settings: LabSettings): Sc
   const speed = speedOf(settings);
   const counts = state.shown.map((f) => count(f, state.n));
   const log = settings.scale === 'log';
+  // Room for the curves shown (at least four), so a few bars are not lost in a wide chart.
+  const cols = Math.max(4, state.shown.length);
   // Heights from logarithms, so 2ⁿ and n! never overflow.
   const lgMax = Math.max(-Infinity, ...counts.map((c) => c.lg));
   const lgPlus = (lg: number) => (lg === -Infinity ? 0 : lg < 12 ? Math.log10(10 ** lg + 1) : lg);
@@ -62,7 +63,7 @@ export function view(step: Step<LabState, undefined>, settings: LabSettings): Sc
     id: 'axis',
     x1: X0 - 14,
     y1: BASE,
-    x2: X0 + FNS.length * COL,
+    x2: X0 + cols * COL,
     y2: BASE,
     head: 'none',
   });
@@ -102,7 +103,7 @@ export function view(step: Step<LabState, undefined>, settings: LabSettings): Sc
     shapes.push({
       kind: 'text',
       id: 'empty',
-      x: X0 + (FNS.length * COL) / 2,
+      x: X0 + (cols * COL) / 2,
       y: (TOP + BASE) / 2,
       text: 'No curves shown: use More operations to show some.',
       size: 14,
@@ -177,7 +178,7 @@ export function view(step: Step<LabState, undefined>, settings: LabSettings): Sc
 
   return {
     shapes,
-    bounds: { x: 0, y: 0, w: X0 + FNS.length * COL + 16, h: BASE + 60 },
+    bounds: { x: 0, y: 0, w: X0 + cols * COL + 16, h: BASE + 60 },
     label: describe(state, settings),
   };
 }

@@ -28,7 +28,7 @@ export function view(step: Step<MemState, undefined>, settings: MemSettings): Sc
   const shapes: Shape[] = [];
   const boxW = refs ? 64 : MAX_ITEMS * CELL + 8;
   const frameW = NAME_W + boxW + 16;
-  const heapX = X0 + frameW + (refs ? 120 : 60);
+  const heapX = X0 + frameW + (refs ? 96 : 60);
 
   shapes.push({
     kind: 'text',
@@ -167,7 +167,7 @@ export function view(step: Step<MemState, undefined>, settings: MemSettings): Sc
       if (target) {
         // A three-part line through the gutter right of the stack, ending at the target's box.
         const right = bx + boxW;
-        const gx = right + 14 + 10 * lane++;
+        const gx = right + 26 + 10 * lane++;
         const y1 = vy + BOX_H / 2;
         const y2 = target.y + BOX_H / 2;
         const role = roles.get(id);
@@ -244,9 +244,13 @@ export function view(step: Step<MemState, undefined>, settings: MemSettings): Sc
     });
   });
 
-  const stackH = TOP + HEAD + MAX_VARS * ROW + GAP + HEAD + ROW + GAP;
-  const heapH = TOP + MAX_OBJECTS * OBJ_PITCH;
-  const width = refs ? heapX + MAX_ITEMS * OBJ_CELL + 80 : X0 + frameW + 70;
+  // Room for main's variables plus one more and a call frame, and for one more list, so the
+  // camera stays put through a statement and only grows when memory does.
+  const mainVars = Math.min(MAX_VARS, s.frames[0]!.vars.length + 1);
+  const stackH = TOP + HEAD + mainVars * ROW + GAP + HEAD + ROW + GAP;
+  const heapH = TOP + Math.min(MAX_OBJECTS + 1, s.heap.length + 1) * OBJ_PITCH;
+  const widest = Math.max(4, ...s.heap.map((o) => o.items.length + 1));
+  const width = refs ? heapX + Math.min(MAX_ITEMS, widest) * OBJ_CELL + 80 : X0 + frameW + 70;
   return {
     shapes,
     bounds: { x: 0, y: 0, w: width, h: Math.max(stackH, heapH) + 10 },

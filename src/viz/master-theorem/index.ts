@@ -84,18 +84,21 @@ export const masterTheorem: VizDef<MtState, MtSettings, undefined> = {
       label: 'Random recurrence',
       make: (rng) => [solveOf(rng.int(1, 8), rng.int(2, 4), rng.int(0, 3))],
     },
+    // The size picked next to a preset is b, the factor each call shrinks the problem by.
     presets: [
-      { label: 'Merge sort', make: () => [solveOf(2, 2, 1), ['check']] },
-      { label: 'Binary search', make: () => [solveOf(1, 2, 0), ['check']] },
-      { label: 'Karatsuba', make: () => [solveOf(3, 2, 1), ['check']] },
-      { label: 'Strassen', make: () => [solveOf(7, 2, 2), ['check']] },
-      { label: 'Root dominates', make: () => [solveOf(2, 2, 2), ['check']] },
+      { label: 'Levels tie: T(n) = bT(n/b) + n', make: (_rng, b) => [solveOf(b, b, 1), ['check']] },
+      { label: 'Root wins: T(n) = bT(n/b) + n²', make: (_rng, b) => [solveOf(b, b, 2), ['check']] },
       {
-        label: 'Random recurrence',
-        make: (rng) => [solveOf(rng.int(1, 8), rng.int(2, 4), rng.int(0, 3)), ['check']],
+        label: 'Leaves win: T(n) = b²T(n/b) + n',
+        make: (_rng, b) => [solveOf(b * b, b, 1), ['check']],
+      },
+      { label: 'One call: T(n) = T(n/b) + 1', make: (_rng, b) => [solveOf(1, b, 0), ['check']] },
+      {
+        label: 'Random a and d, split by b',
+        make: (rng, b) => [solveOf(rng.int(1, 8), b, rng.int(0, 3)), ['check']],
       },
     ],
-    sizes: [1],
+    sizes: [2, 3, 4],
   },
   explain,
   complexity: [

@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "a-star",
+  "id": "manhattan",
+  "title": "Manhattan heads for T",
+  "notes": "The default: h is rows plus columns to T. A* runs straight at the wall, then works around it, and leaves much of the grid untouched.",
+  "settings": { "heuristic": "manhattan", "weight": "1", "moves": "4" },
+  "seed": 1,
+  "ops": [
+    ["load", "........... .S.....#... .......#... ...#...#.T. ...#....... ...#####... ..........."],
+    ["run"]
+  ]
+}

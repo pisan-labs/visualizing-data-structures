@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "a-star",
+  "id": "diagonal-overestimate",
+  "title": "Manhattan with diagonals",
+  "notes": "With 8 neighbours a diagonal move costs 1, but Manhattan counts it as 2. The guess overestimates, A* closes cells too early, and the path it returns takes 12 moves where 9 would do.",
+  "settings": { "heuristic": "manhattan", "weight": "1", "moves": "8" },
+  "seed": 1,
+  "ops": [["load", "....#.#..# ...#....#T .##...#.#. .#...##... .##....... S...#....."], ["run"]]
+}

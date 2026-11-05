@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "a-star",
+  "id": "zero-heuristic",
+  "title": "h = 0 is Dijkstra",
+  "notes": "The same grid with h = 0. f is just g, so A* fans out in every direction like BFS and expands far more cells for the same path.",
+  "settings": { "heuristic": "zero", "weight": "1", "moves": "4" },
+  "seed": 1,
+  "ops": [
+    ["load", "........... .S.....#... .......#... ...#...#.T. ...#....... ...#####... ..........."],
+    ["run"]
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "a-star",
+  "id": "no-path",
+  "title": "No way through",
+  "notes": "T is walled in. No heuristic helps: A* expands every cell S can reach before the open set runs dry.",
+  "settings": { "heuristic": "manhattan", "weight": "1", "moves": "4" },
+  "seed": 1,
+  "ops": [["load", "S....#.... .##..#.... ....##.### .#.....### .#..##.#T# ......####"], ["run"]]
+}

@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "grid-bfs",
+  "id": "eight-moves",
+  "title": "Eight neighbours",
+  "notes": "The same grid as Around the wall, with diagonal moves allowed. The rings become squares, and the path to T is shorter.",
+  "settings": { "moves": "8" },
+  "seed": 1,
+  "ops": [
+    ["load", "........... .S.....#... .......#... ...#...#.T. ...#....... ...#####... ..........."],
+    ["run"]
+  ]
+}

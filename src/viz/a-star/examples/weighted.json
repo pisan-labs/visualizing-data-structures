@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "a-star",
+  "id": "weighted",
+  "title": "Weight 5: nearly greedy",
+  "notes": "f = g + 5h trusts the guess five times over. A* charges at T, runs into walls, and returns a path of 21 moves where 13 would do. Set the weight to 1 to compare.",
+  "settings": { "heuristic": "manhattan", "weight": "5", "moves": "4" },
+  "seed": 1,
+  "ops": [["load", "........## ....#.##.T .....###.. ..##..#... ...##..#.. S........."], ["run"]]
+}

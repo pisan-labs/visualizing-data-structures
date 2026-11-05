@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "grid-bfs",
+  "id": "open-field",
+  "title": "An open field",
+  "notes": "No walls at all. With 4 neighbours the rings are diamonds: the distance from S is the Manhattan distance, rows apart plus columns apart.",
+  "settings": { "moves": "4" },
+  "seed": 1,
+  "ops": [["load", "S....... ........ ........ ........ ........ .......T"], ["run"]]
+}

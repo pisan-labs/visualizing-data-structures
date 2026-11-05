@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "a-star",
+  "id": "straight-line",
+  "title": "A straight line",
+  "notes": "Nothing in the way. Manhattan is exact here, and the tie-break on h keeps A* on the line: it expands only the cells of the path.",
+  "settings": { "heuristic": "manhattan", "weight": "1", "moves": "4" },
+  "seed": 1,
+  "ops": [["load", ".......... S........T .........."], ["run"]]
+}

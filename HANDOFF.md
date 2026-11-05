@@ -13,13 +13,14 @@ Last written: Thursday 5 November 2026, about 06:45, for the first handover.
   Big-O self-test, presets, Python/Java/C++ code tabs, a practice set and tests.
 - Site features: per-page URLs, saved and shared examples, embeds, presentation mode, compare
   mode (`/<page>/#compare=<other>`), printable concept pages, practice sets with assignment links.
-- CI (`.github/workflows/ci.yml`) runs on every push to `main`; it was green at run 34 on
-  Wednesday 22:04 (the skip-list readability fix). Check the later runs with the workflow list.
+- CI (`.github/workflows/ci.yml`) runs on every push to `main`. Runs 34 to 36 passed (the last at
+  06:24 Thursday). Runs 37 and 38, the first to include the trie and Huffman merge, were still
+  running when this was written: check them first.
 
 ## Merged since the session started (Wednesday 4 and Thursday 5 November)
 
-- Wed 09:13 to 14:50, wave 1: binary tree and BST; linked lists and cycle detection; stacks,
-  queues, deques and arrays; searching and sorting (10 pages).
+- Wed 09:13 to 14:50, wave 1 (23 pages): binary tree and BST; linked lists and cycle detection;
+  stacks, queues, deques and arrays; searching and sorting.
 - Wed 15:06 to 21:00, wave 2: AVL, red-black, splay, treap; hashing and the LRU cache; B-tree,
   2-4 tree, B+ tree, skip list; recursion; heaps and heap sort; dynamic programming, counting,
   radix and bucket sort.
@@ -29,8 +30,9 @@ Last written: Thursday 5 November 2026, about 06:45, for the first handover.
   segment tree); trie, compressed trie, Huffman coding.
 - Lead features and fixes: practice sets, presentation mode, compare mode, printable concept
   pages, CI font fixes, operation queueing during playback, seed mixing, address-sync race fix.
-- Shared layouts in `src/layouts/`: binary-tree, bars, linked, node-chain, multiway, heap,
-  forest, calls, table, graph, align, columns, trie. Graph helpers in `src/viz/_graph/`.
+- Shared layouts in `src/layouts/`: binary-tree, bars, circular-array, linked, node-chain,
+  multiway, heap, forest, calls, table, graph, align, columns, trie. Graph helpers in
+  `src/viz/_graph/`.
 
 ## Branches still unmerged
 
@@ -59,16 +61,17 @@ None. Every agent branch (`worktree-agent-*`, local only) is merged into `main`.
      green head);
    - views sized to the stage's aspect ratio. At 1366x768 the desktop stage is about 305 px tall,
      so tall scenes (DFS, merge sort, deep tries, DP tables) draw text at 10 to 13 px;
-   - the wider input for long inputs pushes buttons to a second row on some pages (the range
-     query pages moved Build under More operations);
+   - the wider input for long inputs pushes buttons to a second row on some pages (the
+     Fenwick tree and segment tree pages moved Build under More operations);
    - a three-value button's error reads "needs l and r and an amount";
    - graph pages start on their own sample graphs, so compare mode across families starts on
      different graphs until Load;
    - `src/viz/_paths/overlap.ts` (a label-overlap checker) could become a shared test.
 3. Tech debt: unify `src/layouts/node-chain.ts` with `src/layouts/linked.ts`, with screenshots
    before and after.
-4. The hashing page's "all keys collide" preset could use the settings presets now receive
-   instead of its hidden fill operation.
+4. The "All colliding keys" preset on the four hashing pages (hash-chaining, hash-open,
+   hash-buckets, hash-rehash) uses a hidden `fill` operation on each page; presets now receive
+   the settings (`Preset.make` in `src/engine/types.ts`), so it could become plain inserts.
 
 ## Waiting on Yusuf
 
@@ -110,6 +113,8 @@ Nothing open.
   worktrees survive, so resume agents with SendMessage when the limit resets.
 - Never hand over while agents are running: their worktrees and notices live in the old
   container.
+- The `dev` branch is retired: all work goes to `main`. It is fully merged; this session could
+  not delete it on GitHub (HTTP 403), and nothing uses it.
 
 ### Parameters
 
@@ -122,7 +127,7 @@ Nothing open.
 | Handover check | 15:56 |
 | Session start | 16:52 |
 | Handoff marker | a commit on `main` with exactly the subject `docs: the handoff of <D Month>` (no pull requests) |
-| Merge rule | `npm run lint` passes, then push `main`; CI runs on the push |
+| Merge rule | `npm run lint && npm run check && npm test` pass (and `npm run e2e` when `src/ui`, `src/render` or a view changed), then push `main`; CI runs on the push |
 | Project rule | never hand over while subagents are running |
 
 ### Scheduling

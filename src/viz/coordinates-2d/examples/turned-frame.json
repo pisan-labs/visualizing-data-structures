@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "coordinates-2d",
+  "id": "turned-frame",
+  "title": "A point in a turned frame",
+  "notes": "Frame B sits at (2, 1), turned 30°. Subtract its origin, then undo the turn: because the axes are perpendicular unit vectors, undoing M is just two dot products.",
+  "settings": {
+    "form": "affine"
+  },
+  "seed": 1,
+  "ops": [["toLocal", 5, 4]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

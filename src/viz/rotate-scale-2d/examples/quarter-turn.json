@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "rotate-scale-2d",
+  "id": "quarter-turn",
+  "title": "A quarter turn",
+  "notes": "Rotate by 90°. R sends e₁ to (0, 1) and e₂ to (−1, 0), so every (x, y) goes to (−y, x). Then turn back by −90°.",
+  "settings": {
+    "about": "origin",
+    "convention": "column",
+    "shape": "letter"
+  },
+  "seed": 1,
+  "ops": [
+    ["rotate", 90],
+    ["rotate", -90]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

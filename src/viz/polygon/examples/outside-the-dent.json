@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "polygon",
+  "id": "outside-the-dent",
+  "title": "Outside, in the dent of the L",
+  "notes": "First q = (7, 8), in the notch of the L: its ray to the right crosses no edge, so it is outside. Then q = (3, 8), in the upright of the L: one crossing, so it is inside.",
+  "settings": {
+    "inside": "ray"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "2,2 10,2 10,5 5,5 5,10 2,10"],
+    ["inside", 7, 8],
+    ["inside", 3, 8]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

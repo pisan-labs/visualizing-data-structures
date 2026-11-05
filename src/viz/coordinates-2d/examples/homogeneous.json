@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "coordinates-2d",
+  "id": "homogeneous",
+  "title": "One 3×3 matrix does it all",
+  "notes": "The homogeneous form puts the axes and the origin in one matrix acting on (a, b, 1). Turn B by 90°, move it to (−3, 2), and convert both ways.",
+  "settings": {
+    "form": "homogeneous"
+  },
+  "seed": 1,
+  "ops": [
+    ["angle", 90],
+    ["origin", -3, 2],
+    ["toWorld", 2, 1],
+    ["toLocal", 0, 0]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "convex-hull",
+  "id": "all-collinear",
+  "title": "Every point on one line",
+  "notes": "Six points on one line, in a jumbled order. The hull is just the segment between the two end points.",
+  "settings": {
+    "algorithm": "graham"
+  },
+  "seed": 1,
+  "ops": [["load", "5,3 1,1 9,5 3,2 11,6 7,4"], ["hull"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

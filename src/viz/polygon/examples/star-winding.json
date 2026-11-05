@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "polygon",
+  "id": "star-winding",
+  "title": "The same star, winding number",
+  "notes": "The boundary goes around the centre twice, so its winding number is 2 and the nonzero rule calls it inside. This is why SVG and canvas let you pick the fill rule.",
+  "settings": {
+    "inside": "winding"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "6,11 9,2 1,7 11,7 3,2"],
+    ["inside", 6, 6],
+    ["inside", 6, 9]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

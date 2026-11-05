@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "rotate-scale-2d",
+  "id": "about-a-point",
+  "title": "Turning about a point",
+  "notes": "Rotate about the pivot c = (3, 2) instead of the origin: slide c to the origin, rotate, slide back. The point c stays where it is.",
+  "settings": {
+    "about": "pivot",
+    "convention": "column",
+    "shape": "house"
+  },
+  "seed": 1,
+  "ops": [
+    ["pivot", 3, 2],
+    ["rotate", 90],
+    ["scale", 1.5, 1.5]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

@@ -3,7 +3,7 @@
 The rolling handoff for the StepWise cloud sessions (the session-relay skill). Each handover
 rewrites this file; it never gets a dated copy. Times are Europe/Berlin.
 
-Last written: Thursday 5 November 2026, about 06:45, for the first handover.
+Last written: Thursday 5 November 2026, 06:50, for the first handover. Yusuf asked for it at 06:45, ahead of the 16:52 start, so the previous session started this one directly.
 
 ## What is live
 
@@ -134,6 +134,8 @@ Nothing open.
 
 - Previous session: `session_01JyJzMV9R79kmMm2TxMzCD9` (lineage depth 0, limit 8). It started
   the relay on Wednesday 4 November.
+- The session-start routine now looks only for a marker commit made since 15:30 that day, so
+  today's 16:52 run finds this morning's early handover and does nothing.
 - Routines aimed at it, to move at takeover:
   - `trig_01YFFf7haBUVw55QnJE6zbfH`: StepWise hourly status report, `46 * * * *`.
   - `trig_019edEXqKvVwcMM1CsPVQpUD`: StepWise handoff check, `CRON_TZ=Europe/Berlin 56 15 * * *`.

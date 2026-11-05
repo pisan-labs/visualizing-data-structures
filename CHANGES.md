@@ -131,3 +131,5 @@
 2026-11-05 [code] Merged wave 3M: trie (pruning or lazy delete), compressed trie (splits and merges named), Huffman coding (forest priority queue, tie rule setting, encode and decode); trie layout in src/layouts/trie.ts; all with practice
 
 2026-11-05 [code] The code-tab test's random scripts also try words that share prefixes, so word pages (tries) exercise edge splits in all three languages
+
+2026-11-05 [decision] First handover moved to 06:50 at Yusuf's request (context at 80%, nothing running); the session-start routine now looks only for a marker commit made since 15:30 that day, so an early handover cannot start a second session at 16:52

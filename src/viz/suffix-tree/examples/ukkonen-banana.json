@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "suffix-tree",
+  "id": "ukkonen-banana",
+  "title": "Ukkonen on BANANA",
+  "notes": "One phase per character of BANANA$. Leaves grow by themselves; the active point waits while a repeat (ANA) is already in the tree, and $ forces the waiting suffixes out, with suffix links taking the shortcut.",
+  "settings": { "method": "ukkonen" },
+  "seed": 1,
+  "ops": [["load", "BANANA"], ["build"]]
+}

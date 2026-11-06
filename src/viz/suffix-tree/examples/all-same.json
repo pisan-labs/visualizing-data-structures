@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "suffix-tree",
+  "id": "all-same",
+  "title": "One letter repeated",
+  "notes": "AAAAAA: every suffix is a prefix of the one before it, so the tree is a long spine with a leaf off each node. Inserting the suffixes walks far down each time, the worst case for the simple build.",
+  "settings": { "method": "naive" },
+  "seed": 1,
+  "ops": [["load", "AAAAAA"], ["build"], ["count", "AA"], ["repeat"]]
+}

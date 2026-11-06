@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "suffix-tree",
+  "id": "banana",
+  "title": "BANANA",
+  "notes": "Insert the seven suffixes of BANANA$ one at a time. The first goes straight in as one long edge; later ones walk down and split edges where they leave. Then search for NA: two leaves below the end of the walk say where it starts.",
+  "settings": { "method": "naive" },
+  "seed": 1,
+  "ops": [["load", "BANANA"], ["build"], ["search", "NA"]]
+}

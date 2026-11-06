@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "suffix-tree",
+  "id": "mississippi",
+  "title": "The longest repeat in MISSISSIPPI",
+  "notes": "The deepest internal node, counted in characters, spells ISSI, which occurs at positions 1 and 4. Then search for SSI: two leaves.",
+  "settings": { "method": "naive" },
+  "seed": 1,
+  "ops": [["load", "MISSISSIPPI"], ["build"], ["repeat"], ["search", "SSI"]]
+}

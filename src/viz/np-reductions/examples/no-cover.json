@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "np-reductions",
+  "id": "no-cover",
+  "title": "Asking for too much",
+  "notes": "A triangle with a tail has no independent set of size 3, so its vertex cover question, with k = 4 - 3 = 1, is a no too: one vertex cannot touch all four edges.",
+  "settings": { "check": "witness" },
+  "seed": 1,
+  "ops": [["load", "A-B, B-C, C-A, C-D k=3"], ["toVc"]]
+}

@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "np-reductions",
+  "id": "complement",
+  "title": "Independent set to clique",
+  "notes": "Flip every pair: joined becomes not joined. The vertices B and D, independent in the square with one diagonal, are joined in the complement, a clique of the same size.",
+  "settings": { "check": "witness" },
+  "seed": 1,
+  "ops": [["load", "A-B, B-C, C-D, D-A, A-C k=2"], ["toClique"]]
+}

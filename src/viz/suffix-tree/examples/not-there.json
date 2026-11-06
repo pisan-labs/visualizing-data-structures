@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "suffix-tree",
+  "id": "not-there",
+  "title": "A pattern that is not there",
+  "notes": "Search for NAB in BANANA: the walk matches NA, then the tree has $ or N where the pattern has B. Then count CAB, which falls off at the root.",
+  "settings": { "method": "naive" },
+  "seed": 1,
+  "ops": [["load", "BANANA"], ["build"], ["search", "NAB"], ["count", "CAB"]]
+}

@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "np-reductions",
+  "id": "clique-route",
+  "title": "Clique to vertex cover",
+  "notes": "The route most textbooks take: a clique of size k in G is a vertex cover of size n - k in the complement. Here the triangle A, B, C leaves D and E to cover every edge of the complement.",
+  "settings": { "check": "witness" },
+  "seed": 1,
+  "ops": [["load", "clique: A-B, A-C, B-C, C-D, D-E k=3"], ["toVc"]]
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "bipartite-matching",
+  "id": "two-phases",
+  "title": "Hopcroft-Karp needs a second phase",
+  "notes": "Phase 1 matches A, B and C with single edges. In phase 2 the shortest augmenting path is D – 2 = C – 4, with 3 edges. E is left free.",
+  "settings": {
+    "method": "hopcroft-karp",
+    "layout": "columns"
+  },
+  "seed": 1,
+  "ops": [["load", "A-1, A-2, B-1, B-3, C-2, C-4, D-2, D-3, E-3"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

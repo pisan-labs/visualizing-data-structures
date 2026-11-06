@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "bipartite-matching",
+  "id": "two-colours",
+  "title": "Sides found by two-colouring",
+  "notes": "No numbers in the names, so the page splits the vertices itself: A goes left, its neighbours right, theirs left, and so on. This 6-cycle with a chord splits into A, C, E and B, D, F.",
+  "settings": {
+    "method": "kuhn",
+    "layout": "columns"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, B-C, C-D, D-E, E-F, F-A, A-D"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

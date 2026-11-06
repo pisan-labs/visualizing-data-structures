@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "bipartite-matching",
+  "id": "phases",
+  "title": "Hopcroft-Karp: all short paths at once",
+  "notes": "The same chain, matched in phases. The first breadth-first search finds that one-edge paths exist, and the depth-first searches take five of them in one phase. Nothing is left for a second phase.",
+  "settings": {
+    "method": "hopcroft-karp",
+    "layout": "columns"
+  },
+  "seed": 1,
+  "ops": [["load", "A-1, A-2, B-1, B-3, C-2, C-4, D-3, D-5, E-4, E-6"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

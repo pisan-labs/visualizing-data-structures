@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "min-cost-flow",
+  "id": "residual-costs",
+  "title": "The residual network, with costs",
+  "notes": "The same network drawn as its residual network. After the first push, the dashed reverse arcs b→a, t→b and a→s have costs -1, -1 and -1: going back along one gives its cost back.",
+  "settings": {
+    "method": "bellman-ford",
+    "target": 0,
+    "residual": true,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [["load", "s>a:1:1, a>b:1:1, b>t:1:1, s>b:1:3, a>t:1:4"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

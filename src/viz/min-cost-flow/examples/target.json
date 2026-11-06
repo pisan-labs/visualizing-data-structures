@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "min-cost-flow",
+  "id": "target",
+  "title": "Only 10 units, as cheaply as possible",
+  "notes": "With the target set to 10, the first path sends 4 units at 15 each, the second 4 at 20, and the third only 2 of the 5 it has room for, at 21. Total 60 + 80 + 42 = 182, the least any 10 units can cost.",
+  "settings": {
+    "method": "bellman-ford",
+    "target": 10,
+    "residual": false,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "s>a:16:7, s>b:13:4, b>a:4:1, a>c:12:6, c>b:9:9, b>d:14:5, d>c:7:3, c>t:20:9, d>t:4:6"
+    ],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

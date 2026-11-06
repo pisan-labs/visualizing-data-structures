@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "min-cost-flow",
+  "id": "cheap-but-narrow",
+  "title": "Cheap but narrow, then wide but dear",
+  "notes": "The cheap route through a takes one unit at 2 per unit; the rest must go through b at 10 per unit. Min-cost flow does not lower the flow to save money: it sends all 6 units, the cheap one first.",
+  "settings": {
+    "method": "bellman-ford",
+    "target": 0,
+    "residual": false,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [["load", "s>a:1:1, a>t:1:1, s>b:5:5, b>t:5:5"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

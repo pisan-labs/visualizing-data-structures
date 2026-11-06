@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "min-cost-flow",
+  "id": "no-route",
+  "title": "No route to t: nothing to pay",
+  "notes": "No path leads from s to t, so the first search fails. The flow is 0 and so is the cost.",
+  "settings": {
+    "method": "bellman-ford",
+    "target": 0,
+    "residual": false,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [["load", "s>a:3:2, b>t:2:1, b>a:2:1"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

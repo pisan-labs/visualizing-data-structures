@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "max-flow",
+  "id": "take-flow-back",
+  "title": "Taking flow back",
+  "notes": "Every capacity is 1. The first path, s→a→d→t, blocks both obvious routes. The second path goes s→c→d→a→b→e→t: it uses the reverse arc d→a, which cancels the unit on a→d.",
+  "settings": {
+    "method": "bfs",
+    "residual": false,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [["load", "s>a:1, a>b:1, b>e:1, e>t:1, s>c:1, c>d:1, d>t:1, a>d:1"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

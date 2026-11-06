@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "vertex-cover",
+  "id": "star",
+  "title": "A star needs one vertex",
+  "notes": "A touches every edge. The matching method takes A-B and stops with 2 vertices; greedy would take A alone.",
+  "settings": {
+    "method": "matching",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, A-D, A-E, A-F"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

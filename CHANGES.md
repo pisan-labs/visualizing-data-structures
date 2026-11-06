@@ -153,3 +153,7 @@
 2026-11-06 [code] The skip-list reference property test failed once on 5 November: no counterexample in 2000 more cases, but it takes 15 s alone and about 42 s under load against the 60 s default timeout; it now has an explicit 180 s budget
 
 2026-11-06 [code] Merged wave 4J: suffix tree (naive insertion or Ukkonen with active point and suffix links), NP-completeness reductions map (five steppable reductions with certificate checks); main holds 102 of 108 pages
+
+2026-11-06 [code] Merged wave 4K: traveling salesperson (tree walk, nearest neighbour, Held-Karp, 2-opt), minimum vertex cover (matching, greedy, exact), Steiner tree (metric-closure approximation, exact); src/viz/_approx/kit.ts; main holds 105 of 108 pages
+
+2026-11-06 [code] tests/e2e/dfs.spec.ts readability check polls its text heights: right after stepping back, fading-in shapes measure 0 px (flaked once under full-suite load)

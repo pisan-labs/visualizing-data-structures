@@ -91,15 +91,17 @@ test('ten vertices with the call stack, table and nesting stay readable', async 
   await op(page, 'Run DFS from', 'A');
   await toEnd(page);
   for (let i = 0; i < 12; i++) await page.getByRole('button', { name: 'Step back' }).click();
-  const heights = await stage(page)
-    .locator('text.shape')
-    .evaluateAll((els) =>
-      els
-        .filter((e) => /^([A-J]|\d+|\d+\/\d*|\(?[A-J]\)?)$/.test(e.textContent ?? ''))
-        .map((e) => e.getBoundingClientRect().height),
-    );
-  expect(heights.length).toBeGreaterThan(40);
-  expect(Math.min(...heights)).toBeGreaterThanOrEqual(9);
+  // Poll: right after stepping back, shapes that are fading in still measure 0 px tall.
+  const heights = () =>
+    stage(page)
+      .locator('text.shape')
+      .evaluateAll((els) =>
+        els
+          .filter((e) => /^([A-J]|\d+|\d+\/\d*|\(?[A-J]\)?)$/.test(e.textContent ?? ''))
+          .map((e) => e.getBoundingClientRect().height),
+      );
+  await expect.poll(async () => (await heights()).length).toBeGreaterThan(40);
+  await expect.poll(async () => Math.min(...(await heights()))).toBeGreaterThanOrEqual(9);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );

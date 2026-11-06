@@ -37,23 +37,17 @@ merged work.
 
 ## Next, in order
 
-1. A full `npm run e2e` on main with all 108 pages, with nothing else running.
-2. Shared rendering requests from the agents:
-   - an undirected tree edge style without an arrowhead (Steiner trees, matchings);
-   - cap the preset select's width (a long label made phones scroll sideways);
-   - `{A}` counts as a template leftover in the conformance check, so set notation needs spaces;
-   - a categorical palette for groups (SCC and component colors repeat after five);
-   - stroke colors for arrows in every role (`found`, `new`, `done`, `compare`), and a thicker
-     `done` edge, in `src/ui/Shapes.svelte`;
-   - a filled polygon shape kind in `src/render/scene.ts` (shoelace triangles, unit square);
-   - smaller arrowheads for short vectors;
-   - `src/ui/OpControls.svelte` hiding the size select when a page's presets take no size
-     (then the Master theorem presets can go back to fixed recurrences);
-   - views sized to the stage's aspect ratio (tall scenes are small at 1366x768; Kruskal,
-     convex hull and polygon also draw small on laptops);
-   - the wider input for long inputs pushes buttons to a second row on some pages;
-   - a three-value button's error reads "needs l and r and an amount";
-   - `src/viz/_paths/overlap.ts` (a label-overlap checker) could become a shared test.
+1. Views sized to the stage's aspect ratio. At 1366x768 the desktop stage is about 305 px tall,
+   so tall scenes (DFS, merge sort, deep tries, DP tables, Kruskal, convex hull, polygon) draw
+   small. It changes framing on every page: take screenshots before and after on desktop and
+   phone.
+2. Smaller shared requests still open: the wider input for long inputs pushes buttons to a
+   second row on some pages; a three-value button's error reads "needs l and r and an amount";
+   `src/viz/_paths/overlap.ts` could become a shared test; the Master theorem presets can go
+   back to fixed recurrences now that `sizes: []` hides the size select. Done on 6 November:
+   role colours for arrow lines, group colours g1 to g8, filled polygons, the preset select
+   width, `settled()` before axe scans. Declined: loosening the `{A}` leftover check (it also
+   catches a missing `$`, such as `{CAPACITY}`).
 3. Code-tab coverage: random scripts give the master-theorem and memory-model drivers nothing
    to run; only curated examples test them.
 4. Tech debt: unify `src/layouts/node-chain.ts` with `src/layouts/linked.ts`, with screenshots

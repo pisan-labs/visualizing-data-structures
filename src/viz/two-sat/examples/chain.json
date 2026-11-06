@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "two-sat",
+  "id": "chain",
+  "title": "A chain of implications",
+  "notes": "a implies b, b implies c, c implies d, and d implies ¬a. So a forces ¬a, and a must be false. After that, b, c and d only have to respect b → c → d.",
+  "settings": { "algorithm": "kosaraju", "layout": "pairs" },
+  "seed": 1,
+  "ops": [["load", "!a | b, !b | c, !c | d, !d | !a"], ["run"]],
+  "at": { "op": 0, "step": 0 }
+}

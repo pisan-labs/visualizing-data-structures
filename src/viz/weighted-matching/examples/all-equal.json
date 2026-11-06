@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "weighted-matching",
+  "id": "all-equal",
+  "title": "Every assignment ties",
+  "notes": "All nine costs are 5, so all 3! = 6 assignments cost 15. Every cell is tight after the row reduction, and the algorithm takes the first free column each time.",
+  "settings": { "goal": "min" },
+  "seed": 1,
+  "ops": [["load", "5 5 5; 5 5 5; 5 5 5"], ["run"]],
+  "at": { "op": 0, "step": 0 }
+}

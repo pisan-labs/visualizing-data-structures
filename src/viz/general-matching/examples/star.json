@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "general-matching",
+  "id": "star",
+  "title": "A star",
+  "notes": "Every edge touches A, so a matching has at most one edge. The first phase takes A-B, and the second finds only odd vertices to grow into.",
+  "settings": { "layout": "force" },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, A-D, A-E"], ["run"]],
+  "at": { "op": 0, "step": 0 }
+}

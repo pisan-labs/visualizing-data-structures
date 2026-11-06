@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "two-sat",
+  "id": "three-clauses-tarjan",
+  "title": "Three clauses, with Tarjan",
+  "notes": "The same formula with Tarjan's algorithm. It finds the components in reverse topological order, so the rule reads the order backwards. Compare the values with Kosaraju's.",
+  "settings": { "algorithm": "tarjan", "layout": "pairs" },
+  "seed": 1,
+  "ops": [["load", "a | !b, b | c, !a | !c"], ["run"]],
+  "at": { "op": 0, "step": 0 }
+}

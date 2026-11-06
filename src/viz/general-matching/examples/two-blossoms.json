@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "general-matching",
+  "id": "two-blossoms",
+  "title": "Two blossoms",
+  "notes": "The first phases match quickly. After that the search has to contract two odd cycles in all before it finds its paths, and expand them to flip one.",
+  "settings": { "layout": "force" },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, A-H, B-D, B-E, C-H, D-F, D-G, E-H, F-G"], ["run"]],
+  "at": { "op": 0, "step": 0 }
+}

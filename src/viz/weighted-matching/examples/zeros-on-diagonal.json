@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "weighted-matching",
+  "id": "zeros-on-diagonal",
+  "title": "Every row has its own cheap job",
+  "notes": "Each row's cheapest cell is in a different column. The reductions make the diagonal tight, every phase ends at once, and the potentials never change.",
+  "settings": { "goal": "min" },
+  "seed": 1,
+  "ops": [["load", "1 5 7 6; 8 2 9 4; 6 7 3 8; 9 5 6 1"], ["run"]],
+  "at": { "op": 0, "step": 0 }
+}

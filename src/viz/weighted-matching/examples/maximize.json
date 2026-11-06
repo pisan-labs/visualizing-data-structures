@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "weighted-matching",
+  "id": "maximize",
+  "title": "Profits instead of costs",
+  "notes": "The same numbers, read as profits. The algorithm still minimizes, but on M − c with M = 9, so the cheapest assignment there is the most valuable one here.",
+  "settings": { "goal": "max" },
+  "seed": 1,
+  "ops": [["load", "4 2 6 7; 6 2 9 1; 7 8 4 1; 2 2 3 5"], ["run"]],
+  "at": { "op": 0, "step": 0 }
+}

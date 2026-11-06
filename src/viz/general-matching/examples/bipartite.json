@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "general-matching",
+  "id": "bipartite",
+  "title": "No odd cycles, no blossoms",
+  "notes": "A bipartite graph: every cycle is even, so no edge ever joins two even vertices of the same tree. The algorithm never contracts anything and behaves like plain augmenting paths.",
+  "settings": { "layout": "force" },
+  "seed": 1,
+  "ops": [["load", "A-D, A-E, B-D, B-F, C-E, C-F"], ["run"]],
+  "at": { "op": 0, "step": 0 }
+}

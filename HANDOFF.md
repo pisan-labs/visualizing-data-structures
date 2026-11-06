@@ -3,45 +3,45 @@
 The rolling handoff for the StepWise cloud sessions (the session-relay skill). Each handover
 rewrites this file; it never gets a dated copy. Times are Europe/Berlin.
 
-Last written: Thursday 5 November 2026, 20:50, at Yusuf's request to wrap up for the day. This is
-not a handover: the current session stays the relay session and continues later.
+Last written: Friday 6 November 2026, 12:20. Not a handover: the current session stays the
+relay session.
 
 ## What is live
 
 - Nothing is published yet. Yusuf deploys to Netlify by hand (site `stepwise-pisan-labs`, domain
   `stepwise.pisan.me`); sessions never start, publish or roll back a deploy.
-- `main` (`123aaa7` on Friday 6 November) holds 100 of the 108 catalog pages, each with a concept
-  page, curated examples, a Big-O self-test, presets, Python/Java/C++ code tabs, a practice set
-  and tests.
-- CI: runs 44 to 46 passed (the last on `267834f`, 17:15 to 17:39).
+- `main` holds all 108 catalog pages, each with a concept page, curated examples, a Big-O
+  self-test, presets, Python/Java/C++ code tabs, a practice set and tests.
+- CI: runs up to 50 passed; the pushes of 6 November after `0693bdb` were not yet checked when
+  this was written.
 
-## Merged on Thursday 5 November
+## Merged since the last handover (5 and 6 November)
 
-- 06:49, `session_01JyJzMZHCY1tEoov2vYAuJv` took over the relay.
-- 12:10, wave 4 batch 1 (13 pages): prim, kruskal, disjoint-sets; connected-components,
-  bipartite, topo-indegree; topo-dfs, scc, bridges; memory-model, big-o-lab, master-theorem,
-  bitmask.
-- 12:55, `tests/e2e/helpers.ts` `showMe()`: the "Show me" checks also accept a replay that
-  already ended (the Boyer-Moore practice test flaked in four agent runs).
-- 17:09 (pushed 17:15), wave 4H (4 pages): convex-hull, polygon, coordinates-2d, rotate-scale-2d; shared
-  `src/layouts/plane.ts` for the later transform pages.
+- Thu 5 Nov: 06:49 takeover; 12:10 wave 4 batch 1 (13 pages); 12:55 `showMe()` e2e helper;
+  17:15 geometry (convex-hull, polygon, coordinates-2d, rotate-scale-2d, `src/layouts/plane.ts`).
+- Fri 6 Nov:
+  - 08:27 (pushed 08:42), grid-bfs, a-star, suffix-array (`src/layouts/grid.ts`, `src/viz/_grid/`);
+    max-flow, bipartite-matching, min-cost-flow (`src/viz/_flow/`); weighted-matching,
+    general-matching, two-sat;
+  - 08:50, the skip-list reference test gets a 180 s budget (it timed out under load: 2000
+    more random cases found no counterexample);
+  - 11:48, suffix-tree (naive or Ukkonen), np-reductions;
+  - 11:52, tsp, vertex-cover, steiner-tree (`src/viz/_approx/kit.ts`); the DFS
+    readability e2e check polls its heights;
+  - 12:13, rotate-translate-2d, rotate-scale-3d, coordinates-3d (`src/layouts/space.ts`).
 
 ## Branches still unmerged
 
-None. The three wave 4 batch 2 branches were merged on Friday 6 November at about 08:30 after
-10 conformance runs, the full suite (2121 tests) and e2e on their nine pages (152 tests);
-main holds 100 of 108 pages.
+None. Every wave 4 branch is merged. Their `worktree-agent-*` copies on origin are backups of
+merged work.
 
 ## Next, in order
 
-1. Look into `src/viz/skip-list/skip-list.test.ts` "matches a reference skip list, coin flips and
-   search paths included": it failed once in a full `npm test` on main at about 17:40 while three
-   agents were running, then passed 5 of 5 alone. Find the seed or timeout behind it (root
-   cause, not a retry).
-2. Wave 4 batch 3, the last 8 pages: `rotate-translate-2d`, `rotate-scale-3d`,
-   `coordinates-3d` (reuse `src/layouts/plane.ts`), `suffix-tree`, `np-reductions`, `tsp`,
-   `vertex-cover`, `steiner-tree`.
-3. Shared rendering requests from the agents:
+1. A full `npm run e2e` on main with all 108 pages, with nothing else running.
+2. Shared rendering requests from the agents:
+   - an undirected tree edge style without an arrowhead (Steiner trees, matchings);
+   - cap the preset select's width (a long label made phones scroll sideways);
+   - `{A}` counts as a template leftover in the conformance check, so set notation needs spaces;
    - a categorical palette for groups (SCC and component colors repeat after five);
    - stroke colors for arrows in every role (`found`, `new`, `done`, `compare`), and a thicker
      `done` edge, in `src/ui/Shapes.svelte`;
@@ -54,11 +54,11 @@ main holds 100 of 108 pages.
    - the wider input for long inputs pushes buttons to a second row on some pages;
    - a three-value button's error reads "needs l and r and an amount";
    - `src/viz/_paths/overlap.ts` (a label-overlap checker) could become a shared test.
-4. Code-tab coverage: random scripts give the master-theorem and memory-model drivers nothing
+3. Code-tab coverage: random scripts give the master-theorem and memory-model drivers nothing
    to run; only curated examples test them.
-5. Tech debt: unify `src/layouts/node-chain.ts` with `src/layouts/linked.ts`, with screenshots
+4. Tech debt: unify `src/layouts/node-chain.ts` with `src/layouts/linked.ts`, with screenshots
    before and after.
-6. The "All colliding keys" preset on the four hashing pages uses a hidden `fill` operation;
+5. The "All colliding keys" preset on the four hashing pages uses a hidden `fill` operation;
    presets now receive the settings (`Preset.make`), so it could become plain inserts.
 
 ## Waiting on Yusuf

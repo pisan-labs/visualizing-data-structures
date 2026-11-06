@@ -157,3 +157,5 @@
 2026-11-06 [code] Merged wave 4K: traveling salesperson (tree walk, nearest neighbour, Held-Karp, 2-opt), minimum vertex cover (matching, greedy, exact), Steiner tree (metric-closure approximation, exact); src/viz/_approx/kit.ts; main holds 105 of 108 pages
 
 2026-11-06 [code] tests/e2e/dfs.spec.ts readability check polls its text heights: right after stepping back, fading-in shapes measure 0 px (flaked once under full-suite load)
+
+2026-11-06 [code] Merged wave 4I: 2D rotation and translation (homogeneous or 2x2 plus offset), 3D rotation and scale (isometric or oblique), 3D change of coordinates; src/layouts/space.ts; all 108 catalog pages are on main

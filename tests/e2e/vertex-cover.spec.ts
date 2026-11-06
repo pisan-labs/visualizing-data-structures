@@ -84,8 +84,8 @@ test('concept page links load and play examples', async ({ page }) => {
 });
 
 test('a practice set grades an answer and plays it', async ({ page }) => {
-  await page.goto('/vertex-cover/#practice=24680&n=4');
-  await expect(page.locator('.question')).toHaveCount(4);
+  await page.goto('/vertex-cover/#practice=24680&n=5');
+  await expect(page.locator('.question')).toHaveCount(5);
   const first = page.locator('.question').first();
   await first.getByRole('button', { name: 'Check' }).click();
   const feedback = first.locator('.feedback');

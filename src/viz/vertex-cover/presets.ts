@@ -59,7 +59,7 @@ export function vcPresets(): Preset[] {
     p('Random graph', (rng, n) => randomGraph(rng, n, { density: 0.25 })),
     p('Dense graph', (rng, n) => randomGraph(rng, n, { density: 0.6 })),
     p('Random tree', randomTree),
-    p('Disjoint edges (the matching takes twice the optimum)', (_rng, n) => disjointEdges(n)),
+    p('Disjoint edges (worst for matching)', (_rng, n) => disjointEdges(n)),
     p('Star (one vertex covers it all)', (_rng, n) => starGraph(n)),
     p('Path', (_rng, n) => pathGraph(n)),
     p('Cycle', (_rng, n) => cycleGraph(n)),

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "tsp",
+  "id": "tree-trap",
+  "title": "A bad walk around a good tree",
+  "notes": "The tree is fine, but its preorder jumps back and forth across the map. The tour is 45% longer than the best one, still under the factor 2.",
+  "settings": {
+    "method": "mst",
+    "improve": false
+  },
+  "seed": 1,
+  "ops": [["load", "A(60,10) B(60,60) C(40,60) D(0,50) E(50,80) F(90,40) G(30,20)"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

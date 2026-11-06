@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "tsp",
+  "id": "nearest-trap",
+  "title": "Nearest neighbour paints itself into a corner",
+  "notes": "Every move takes the closest city, and the last ones left are far apart. Nearest neighbour ends 44% longer than the best tour.",
+  "settings": {
+    "method": "nearest",
+    "improve": false
+  },
+  "seed": 1,
+  "ops": [["load", "A(0,60) B(20,40) C(40,60) D(70,40) E(30,40) F(10,30) G(20,80)"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

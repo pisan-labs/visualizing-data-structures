@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "tsp",
+  "id": "not-metric",
+  "title": "No triangle inequality, no guarantee",
+  "notes": "Going A-C-B costs 3, far less than the edge A-B (60). The tree walk is forced onto long edges and ends far beyond twice the optimum.",
+  "settings": {
+    "method": "mst",
+    "improve": false
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B:60, A-C:1, A-D:1, A-E:3, B-C:2, B-D:1, B-E:3, C-D:2, C-E:1, D-E:57"],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

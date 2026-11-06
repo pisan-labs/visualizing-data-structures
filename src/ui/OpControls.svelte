@@ -135,17 +135,19 @@
               <option value={i}>{p.label}</option>
             {/each}
           </select>
-          <label for="preset-size" class="visually-hidden">How many</label>
-          <select
-            id="preset-size"
-            class="field"
-            value={size}
-            onchange={(e) => (presetSize = Number(e.currentTarget.value))}
-          >
-            {#each sizes as n (n)}
-              <option value={n}>{n}</option>
-            {/each}
-          </select>
+          {#if sizes.length}
+            <label for="preset-size" class="visually-hidden">How many</label>
+            <select
+              id="preset-size"
+              class="field"
+              value={size}
+              onchange={(e) => (presetSize = Number(e.currentTarget.value))}
+            >
+              {#each sizes as n (n)}
+                <option value={n}>{n}</option>
+              {/each}
+            </select>
+          {/if}
           <button type="button" class="btn" onclick={fill}>Fill</button>
         </div>
       {/if}
@@ -231,6 +233,13 @@
   .presets select {
     min-height: 36px;
     color: var(--text);
+  }
+
+  /* A long preset label must not widen the row past the screen on phones. */
+  #preset {
+    min-width: 0;
+    max-width: 100%;
+    text-overflow: ellipsis;
   }
 
   .error {

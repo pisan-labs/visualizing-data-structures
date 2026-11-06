@@ -159,3 +159,5 @@
 2026-11-06 [code] tests/e2e/dfs.spec.ts readability check polls its text heights: right after stepping back, fading-in shapes measure 0 px (flaked once under full-suite load)
 
 2026-11-06 [code] Merged wave 4I: 2D rotation and translation (homogeneous or 2x2 plus offset), 3D rotation and scale (isometric or oblique), 3D change of coordinates; src/layouts/space.ts; all 108 catalog pages are on main
+
+2026-11-06 [code] Arrow lines take their role colour (found, new, done thicker, compare, visit, remove) with matching heads; the preset select cannot widen past the screen; sizes: [] hides the preset size select. The {A} leftover check stays strict: it also catches a missing $ such as {CAPACITY}

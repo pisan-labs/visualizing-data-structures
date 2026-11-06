@@ -13,12 +13,14 @@
   const uid = nextUid();
 
   const roleClass = (role?: string) => (role ? `role-${role}` : '');
+  // Arrow roles with their own colored head; any other role draws the base head.
+  const HEAD_ROLES = ['active', 'error', 'found', 'new', 'done', 'compare', 'visit', 'remove'];
   const markerFor = (role?: string) =>
-    `url(#arrow-${uid}-${role && ['active', 'error', 'found', 'new', 'done'].includes(role) ? role : 'base'})`;
+    `url(#arrow-${uid}-${role && HEAD_ROLES.includes(role) ? role : 'base'})`;
 </script>
 
 <defs>
-  {#each ['base', 'active', 'error', 'found', 'new', 'done'] as r (r)}
+  {#each ['base', ...HEAD_ROLES] as r (r)}
     <marker
       id="arrow-{uid}-{r}"
       viewBox="0 0 10 10"
@@ -217,5 +219,39 @@
   .arrowhead.role-new,
   .arrowhead.role-done {
     fill: var(--c-new);
+  }
+  .arrowhead.role-compare {
+    fill: var(--c-compare);
+  }
+  .arrowhead.role-visit {
+    fill: var(--c-visit);
+  }
+  .arrowhead.role-remove {
+    fill: var(--c-remove);
+  }
+  /* Lines take their role's color too, so a tree or matching edge reads without its head. */
+  .arrow.role-found {
+    stroke: var(--c-found);
+    stroke-width: 3;
+  }
+  .arrow.role-new {
+    stroke: var(--c-new);
+    stroke-width: 3;
+  }
+  .arrow.role-done {
+    stroke: var(--c-new);
+    stroke-width: 4;
+  }
+  .arrow.role-compare {
+    stroke: var(--c-compare);
+    stroke-width: 3;
+  }
+  .arrow.role-visit {
+    stroke: var(--c-visit);
+    stroke-width: 3;
+  }
+  .arrow.role-remove {
+    stroke: var(--c-remove);
+    stroke-width: 3;
   }
 </style>

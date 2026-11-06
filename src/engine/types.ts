@@ -116,7 +116,7 @@ export interface Controls {
    * `make` returns the operations to run (for example one insert per value, or one "load").
    */
   presets?: Preset[];
-  /** Sizes offered for presets. Default [5, 8, 12]. */
+  /** Sizes offered for presets. Default [5, 8, 12]; [] hides the size select. */
   sizes?: number[];
 }
 

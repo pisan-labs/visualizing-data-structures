@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "grid-bfs",
+  "id": "around-the-wall",
+  "title": "Around the wall",
+  "notes": "S has to go around the wall to reach T. BFS fills the grid ring by ring, so it expands most of the cells on the left before it gets there.",
+  "settings": { "moves": "4" },
+  "seed": 1,
+  "ops": [
+    ["load", "........... .S.....#... .......#... ...#...#.T. ...#....... ...#####... ..........."],
+    ["run"]
+  ]
+}

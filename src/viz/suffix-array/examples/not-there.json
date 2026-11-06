@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "suffix-array",
+  "id": "not-there",
+  "title": "A pattern that is not there",
+  "notes": "NAB does not occur in BANANA. The binary searches still run, and they meet at the row where NAB would go.",
+  "settings": { "method": "doubling" },
+  "seed": 1,
+  "ops": [["load", "BANANA"], ["build"], ["search", "NAB"]]
+}

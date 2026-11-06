@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "a-star",
+  "id": "open-field",
+  "title": "An open field",
+  "notes": "Every path that only goes right and down is shortest, so many cells tie on f. Breaking ties toward the smaller h dives straight for T.",
+  "settings": { "heuristic": "manhattan", "weight": "1", "moves": "4" },
+  "seed": 1,
+  "ops": [["load", "S....... ........ ........ ........ ........ .......T"], ["run"]]
+}

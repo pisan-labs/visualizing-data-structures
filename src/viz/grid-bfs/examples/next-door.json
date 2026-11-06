@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "grid-bfs",
+  "id": "next-door",
+  "title": "T next door",
+  "notes": "T is one move from S. BFS dequeues S, finds T among its neighbours, and dequeues T next: the best case.",
+  "settings": { "moves": "4" },
+  "seed": 1,
+  "ops": [["load", "........ ..ST.... ........ ........"], ["run"]]
+}

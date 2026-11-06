@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "suffix-array",
+  "id": "distinct",
+  "title": "Every letter different",
+  "notes": "ALGORITHM has no repeated letter, so the first character settles every comparison and every LCP is 0. Nothing repeats.",
+  "settings": { "method": "doubling" },
+  "seed": 1,
+  "ops": [["load", "ALGORITHM"], ["build"], ["repeat"]]
+}

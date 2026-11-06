@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "grid-bfs",
+  "id": "maze",
+  "title": "A maze",
+  "notes": "Corridors one cell wide. Most cells have one or two open neighbours, and the queue stays short.",
+  "settings": { "moves": "4" },
+  "seed": 1,
+  "ops": [
+    ["load", "S.#...... .##.####. ...#...#. ##.#.#.#. ...#.#... .###.###. .....#..T"],
+    ["run"]
+  ]
+}

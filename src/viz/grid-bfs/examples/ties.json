@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "grid-bfs",
+  "id": "ties",
+  "title": "Many shortest paths",
+  "notes": "Every path that only goes right and down is shortest. BFS keeps the one it finds first, so the neighbour order (north, east, south, west) decides which.",
+  "settings": { "moves": "4" },
+  "seed": 1,
+  "ops": [["load", "S.... ..... ..... ....T"], ["run"]]
+}

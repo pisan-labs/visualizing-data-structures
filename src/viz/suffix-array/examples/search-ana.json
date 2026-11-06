@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "suffix-array",
+  "id": "search-ana",
+  "title": "Search for ANA",
+  "notes": "ANA occurs twice in BANANA, overlapping. Both suffixes that start with it sit in neighbouring rows, and two binary searches find the top and the bottom of that block.",
+  "settings": { "method": "doubling" },
+  "seed": 1,
+  "ops": [["load", "BANANA"], ["build"], ["search", "ANA"]]
+}

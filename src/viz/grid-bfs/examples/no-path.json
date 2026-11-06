@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "grid-bfs",
+  "id": "no-path",
+  "title": "No way through",
+  "notes": "T is walled in. BFS reaches every cell it can and only then gives up: the worst case, every reachable cell expanded.",
+  "settings": { "moves": "4" },
+  "seed": 1,
+  "ops": [["load", "S....#.... .##..#.... ....##.### .#.....### .#..##.#T# ......####"], ["run"]]
+}

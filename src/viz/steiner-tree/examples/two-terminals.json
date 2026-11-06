@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "steiner-tree",
+  "id": "two-terminals",
+  "title": "Two terminals: a shortest path",
+  "notes": "With two terminals a Steiner tree is a shortest path. Brute force still tries all 64 sets of the six other vertices.",
+  "settings": {
+    "method": "exact",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B:3, A-C:4, B-C:2, B-D:3, C-E:4, C-F:2, D-F:2, D-G:4, E-F:3, F-H:3, G-H:3"],
+    ["terminals", "A H"],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "steiner-tree",
+  "id": "hidden-hub",
+  "title": "A hub the approximation never sees",
+  "notes": "Five terminals, each two joined by an edge of weight 2, and a hub F at distance 1 from all of them. Every shortest path between terminals is a direct edge, so the approximation pays 4 × 2 = 8. The star through F costs 5: ratio 1.6, the worst the guarantee allows for five terminals.",
+  "settings": {
+    "method": "approx",
+    "layout": "circle"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "A-B:2, A-C:2, A-D:2, A-E:2, A-F:1, B-C:2, B-D:2, B-E:2, B-F:1, C-D:2, C-E:2, C-F:1, D-E:2, D-F:1, E-F:1"
+    ],
+    ["terminals", "A B C D E"],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -33,7 +33,7 @@ test('3-SAT to IND-SET builds triangles and carries the certificate', async ({ p
   await expect(narration(page)).toContainText(
     'In each triangle, take a vertex whose literal is true',
   );
-  await expect(page.locator('.vars')).toContainText(/answer\s*=\s*"yes"/);
+  await expect(page.locator('.vars')).toContainText(/answer\s*"yes"/);
   await expect(stage(page)).toHaveAttribute(
     'aria-label',
     /INDEPENDENT-SET: a graph with 9 vertices/,
@@ -47,7 +47,7 @@ test('an unsatisfiable formula maps to a no', async ({ page }) => {
   await button(page, 'To IND-SET').click();
   await toEnd(page);
   await expect(narration(page)).toContainText('no maps to no');
-  await expect(page.locator('.vars')).toContainText(/answer\s*=\s*"no"/);
+  await expect(page.locator('.vars')).toContainText(/answer\s*"no"/);
 });
 
 test('the chain goes on to V-COVER and SET-COVER', async ({ page }) => {
@@ -69,7 +69,7 @@ test('a graph goes to CLIQUE through the complement', async ({ page }) => {
   await button(page, 'To CLIQUE').click();
   await toEnd(page);
   await expect(narration(page)).toContainText('a clique of size 2');
-  await expect(page.locator('.vars')).toContainText(/E\s*=\s*1\b/);
+  await expect(page.locator('.vars')).toContainText(/E\s*1k/);
 });
 
 test('a reduction that cannot start here says why', async ({ page }) => {

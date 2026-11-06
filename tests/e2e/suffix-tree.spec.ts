@@ -16,7 +16,7 @@ async function toEnd(page: Page) {
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/suffix-tree/');
-  await expect(page.getByRole('heading', { name: 'Suffix tree' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Suffix tree', exact: true })).toBeVisible();
 });
 
 test('Build puts the suffixes of BANANA$ in a tree', async ({ page }) => {

@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "rotate-scale-3d",
+  "id": "mirror",
+  "title": "A mirror image",
+  "notes": "Scale x by −1. The determinant is negative, which is how you can tell a matrix contains a reflection.",
+  "settings": {
+    "projection": "isometric",
+    "convention": "column",
+    "shape": "cube"
+  },
+  "seed": 1,
+  "ops": [["scale", -1, 1, 1]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

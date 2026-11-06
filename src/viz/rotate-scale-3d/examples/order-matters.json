@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "rotate-scale-3d",
+  "id": "order-matters",
+  "title": "Order matters",
+  "notes": "Rotate by 90° about x and then about y, against y and then x. In 3D the two orders land in different places.",
+  "settings": {
+    "projection": "isometric",
+    "convention": "column",
+    "shape": "cube"
+  },
+  "seed": 1,
+  "ops": [["order", 90]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

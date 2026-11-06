@@ -1,0 +1,3 @@
+# Reductions
+
+[Triangles](#example:triangles)

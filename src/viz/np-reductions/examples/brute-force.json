@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "np-reductions",
+  "id": "brute-force",
+  "title": "Solving it the slow way",
+  "notes": "Brute force tries assignments in order. Here the very first one, everything false, already works, which is the best case. Then the reduction carries that assignment across without searching again.",
+  "settings": { "check": "witness" },
+  "seed": 1,
+  "ops": [["load", "!a | b, !b | !c, a | !c"], ["check"], ["toIs"]]
+}

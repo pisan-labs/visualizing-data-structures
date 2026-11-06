@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "np-reductions",
+  "id": "chain",
+  "title": "From 3-SAT to SET-COVER",
+  "notes": "Three reductions in a row: the formula becomes a graph, the independent set question becomes a vertex cover question with k = n - k, and the cover becomes a choice of sets. The certificate travels the whole way.",
+  "settings": { "check": "witness" },
+  "seed": 1,
+  "ops": [["load", "a | b | !c, !a | !b, b | c"], ["toIs"], ["toVc"], ["toSc"]]
+}

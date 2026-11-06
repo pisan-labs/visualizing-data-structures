@@ -169,7 +169,11 @@ export const suffixTree: VizDef<StState, StSettings, StExtra> = {
     },
     {
       op: 'count(P)',
-      best: { cost: 'O(1)', why: 'P falls off the tree at the root: count 0.', example: 'not-there' },
+      best: {
+        cost: 'O(1)',
+        why: 'P falls off the tree at the root: count 0.',
+        example: 'not-there',
+      },
       average: {
         cost: 'O(m + k)',
         why: 'The walk, then one visit per leaf below (the subtree has fewer than 2k nodes).',
@@ -183,13 +187,21 @@ export const suffixTree: VizDef<StState, StSettings, StExtra> = {
     },
     {
       op: 'Longest repeated substring',
-      best: { cost: 'O(n)', why: 'Only the root is internal: nothing repeats.', example: 'all-different' },
+      best: {
+        cost: 'O(n)',
+        why: 'Only the root is internal: nothing repeats.',
+        example: 'all-different',
+      },
       average: {
         cost: 'O(n)',
         why: 'One traversal, carrying the depth down from the parent.',
         example: 'mississippi',
       },
-      worst: { cost: 'O(n)', why: 'There are at most n internal nodes to visit.', example: 'all-same' },
+      worst: {
+        cost: 'O(n)',
+        why: 'There are at most n internal nodes to visit.',
+        example: 'all-same',
+      },
     },
   ],
   code: {

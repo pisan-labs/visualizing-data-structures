@@ -47,7 +47,9 @@ function checkTree(s: StState, prefix: string, final: boolean) {
     }
   }
   if (final)
-    expect(leaves.sort((a, b) => a - b)).toEqual(Array.from({ length: prefix.length }, (_, i) => i));
+    expect(leaves.sort((a, b) => a - b)).toEqual(
+      Array.from({ length: prefix.length }, (_, i) => i),
+    );
 }
 
 const textArb = fc

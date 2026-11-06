@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "np-reductions",
+  "id": "triangles",
+  "title": "A triangle per clause",
+  "notes": "Three clauses become three triangles, and every x is joined to every ¬x in another clause. k = 3. Brute force finds a satisfying assignment, and one true literal per triangle is an independent set of size 3.",
+  "settings": { "check": "witness" },
+  "seed": 1,
+  "ops": [["load", "a | !b | c, !a | b | c, a | b | !c"], ["toIs"]]
+}

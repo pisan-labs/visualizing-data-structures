@@ -295,7 +295,14 @@ function* naiveBuild(s0: S, c: Counters): Gen {
       }
       // The suffix leaves the edge after k characters: split it there.
       const mid = tr.next++;
-      tr.nodes[mid] = { start: e.start, end: e.start + k, kids: [], parent: u, leaf: null, link: null };
+      tr.nodes[mid] = {
+        start: e.start,
+        end: e.start + k,
+        kids: [],
+        parent: u,
+        leaf: null,
+        link: null,
+      };
       const at = tr.nodes[u]!.kids.indexOf(child);
       tr.nodes[u]!.kids[at] = mid;
       e.start += k;
@@ -347,7 +354,8 @@ function* ukkonenBuild(s0: S, c: Counters): Gen {
     for (const v of Object.values(t.nodes)) if (v.end === -1) v.end = end;
     return { text, tree: t };
   };
-  const edgeLen = (v: number) => (tr.nodes[v]!.end === -1 ? end : tr.nodes[v]!.end) - tr.nodes[v]!.start;
+  const edgeLen = (v: number) =>
+    (tr.nodes[v]!.end === -1 ? end : tr.nodes[v]!.end) - tr.nodes[v]!.start;
   const activeEdge = () => (len > 0 ? kidStarting(tr, src, node, src[edge]!) : null);
   const where = (s: S) => {
     const at = node === root ? 'the root' : `node ${q(spell(s, node))}`;
@@ -367,7 +375,9 @@ function* ukkonenBuild(s0: S, c: Counters): Gen {
     phase: { i, remainder },
     active: { node, edge: activeEdge(), len },
     spots: [
-      ...(remainder > 1 ? [{ from: i - remainder + 1, len: remainder - 1, role: 'visit' as MarkRole }] : []),
+      ...(remainder > 1
+        ? [{ from: i - remainder + 1, len: remainder - 1, role: 'visit' as MarkRole }]
+        : []),
       { from: i, len: 1, role: 'active' as MarkRole },
     ],
     ...more,
@@ -405,7 +415,14 @@ function* ukkonenBuild(s0: S, c: Counters): Gen {
       c.chars++;
       if (child === null) {
         const leaf = tr.next++;
-        tr.nodes[leaf] = { start: i, end: -1, kids: [], parent: node, leaf: i - remainder + 1, link: null };
+        tr.nodes[leaf] = {
+          start: i,
+          end: -1,
+          kids: [],
+          parent: node,
+          leaf: i - remainder + 1,
+          link: null,
+        };
         addKid(tr, src, node, leaf);
         const linked = last;
         if (last !== null) {
@@ -457,7 +474,6 @@ function* ukkonenBuild(s0: S, c: Counters): Gen {
         // Rule 3: the suffix is already in the tree, and so are all the shorter ones.
         const linked = last !== null && node !== root;
         if (linked) tr.nodes[last!]!.link = node;
-        last = null;
         len++;
         s = snap();
         yield {
@@ -474,14 +490,28 @@ function* ukkonenBuild(s0: S, c: Counters): Gen {
       // Rule 2 with a split: the suffix leaves the edge in the middle.
       const e = tr.nodes[child]!;
       const mid = tr.next++;
-      tr.nodes[mid] = { start: e.start, end: e.start + len, kids: [], parent: node, leaf: null, link: null };
+      tr.nodes[mid] = {
+        start: e.start,
+        end: e.start + len,
+        kids: [],
+        parent: node,
+        leaf: null,
+        link: null,
+      };
       const pos = tr.nodes[node]!.kids.indexOf(child);
       tr.nodes[node]!.kids[pos] = mid;
       e.start += len;
       e.parent = mid;
       tr.nodes[mid]!.kids.push(child);
       const leaf = tr.next++;
-      tr.nodes[leaf] = { start: i, end: -1, kids: [], parent: mid, leaf: i - remainder + 1, link: null };
+      tr.nodes[leaf] = {
+        start: i,
+        end: -1,
+        kids: [],
+        parent: mid,
+        leaf: i - remainder + 1,
+        link: null,
+      };
       addKid(tr, src, mid, leaf);
       const linked = last;
       if (last !== null) tr.nodes[last]!.link = mid;
@@ -493,11 +523,7 @@ function* ukkonenBuild(s0: S, c: Counters): Gen {
       s = snap();
       yield {
         state: s,
-        marks: [
-          mark(nodeId(mid), 'new'),
-          mark(nodeId(leaf), 'new'),
-          mark(edgeId(leaf), 'new'),
-        ],
+        marks: [mark(nodeId(mid), 'new'), mark(nodeId(leaf), 'new'), mark(edgeId(leaf), 'new')],
         say: `The edge has ${q(src[at]!)} where we need ${q(ch)}: split it after ${split} with a new internal node and add leaf ${tr.nodes[leaf]!.leaf} (rule 2).${linked !== null ? ` The node made just before in this phase gets a suffix link to this one.` : ''} ${moved} remainder = ${remainder}.`,
         lines: ['u.while', 'u.split', 'u.leaf', ...(linked !== null ? ['u.link'] : []), 'u.next'],
         level: 2,
@@ -765,7 +791,11 @@ const countOp: Op = {
         arg,
         path: w.path,
         counted: [...counted],
-        spots: occurrences(s, w.at).map((p) => ({ from: p, len: pat.length, role: 'found' as MarkRole })),
+        spots: occurrences(s, w.at).map((p) => ({
+          from: p,
+          len: pat.length,
+          role: 'found' as MarkRole,
+        })),
       },
     };
     return s;
@@ -845,7 +875,10 @@ const repeatOp: Op = {
     for (let v: number | null = best; v !== null; v = tr.nodes[v]!.parent) path.unshift(v);
     yield {
       state: s,
-      marks: [mark(nodeId(best), 'found'), ...leavesUnder(tr, best).map((v) => mark(nodeId(v), 'found'))],
+      marks: [
+        mark(nodeId(best), 'found'),
+        ...leavesUnder(tr, best).map((v) => mark(nodeId(v), 'found')),
+      ],
       say: `The deepest internal node spells ${q(sub)}, ${plural(sub.length, 'character')}: the longest repeated substring. The leaves below it say where: positions ${andList(at)}.`,
       lines: ['r.ret'],
       level: 1,
@@ -894,33 +927,73 @@ export const ops = { load, build: buildOp, search: searchOp, count: countOp, rep
 
 // ----- Pseudocode -----
 
-const L = (id: string, indent: number, text: string, plain: string) => ({ id, indent, text, plain });
+const L = (id: string, indent: number, text: string, plain: string) => ({
+  id,
+  indent,
+  text,
+  plain,
+});
 
 export function pseudocode(settings: StSettings): PseudoBlock[] {
   const build =
     settings.method === 'ukkonen'
       ? [
-          L('u.sig', 0, 'UKKONEN(T$)', "Build the tree in one pass over T$:"),
+          L('u.sig', 0, 'UKKONEN(T$)', 'Build the tree in one pass over T$:'),
           L('u.for', 1, 'for i = 0 to n', 'For each character, in order:'),
           L('u.rem', 2, 'remainder = remainder + 1', 'one more suffix waits to go in.'),
           L('u.while', 2, 'while remainder > 0', 'While some suffix still waits,'),
           L('u.walk', 3, 'if length ≥ |edge|: walk down', 'skip down past whole edges;'),
-          L('u.three', 3, 'if next char on edge == T[i]: length++; break', 'if it is already there, stop this phase;'),
+          L(
+            'u.three',
+            3,
+            'if next char on edge == T[i]: length++; break',
+            'if it is already there, stop this phase;',
+          ),
           L('u.none', 3, 'if no edge for T[i]: new leaf', 'if there is no edge, add a leaf;'),
-          L('u.split', 3, 'else split the edge, new leaf', 'otherwise split the edge and add a leaf;'),
+          L(
+            'u.split',
+            3,
+            'else split the edge, new leaf',
+            'otherwise split the edge and add a leaf;',
+          ),
           L('u.leaf', 3, 'leaf end = current end', 'the leaf grows with every later phase.'),
           L('u.link', 3, 'link(previous new node) = this node', 'Point the last new node here.'),
-          L('u.next', 3, 'remainder--; follow link or drop a char', 'Move to the next shorter suffix.'),
+          L(
+            'u.next',
+            3,
+            'remainder--; follow link or drop a char',
+            'Move to the next shorter suffix.',
+          ),
           L('u.done', 1, 'return the tree', 'Every suffix is in.'),
         ]
       : [
           L('n.sig', 0, 'SUFFIX-TREE(T$)', 'Build the tree one suffix at a time:'),
           L('n.for', 1, 'for i = 0 to n', 'For each suffix, longest first,'),
           L('n.walk', 2, 'walk down while T[j..] matches', 'follow the edges that match it;'),
-          L('n.down', 3, 'whole edge matched: go to its node', 'a whole edge matched: go on from its end.'),
-          L('n.none', 2, 'if no edge starts with T[j]', 'If no edge starts with the next character,'),
-          L('n.split', 2, 'if it differs inside an edge: split', 'if it differs inside an edge, split it there;'),
-          L('n.leaf', 2, 'add leaf i with label T[j..]', 'hang a leaf with the rest of the suffix.'),
+          L(
+            'n.down',
+            3,
+            'whole edge matched: go to its node',
+            'a whole edge matched: go on from its end.',
+          ),
+          L(
+            'n.none',
+            2,
+            'if no edge starts with T[j]',
+            'If no edge starts with the next character,',
+          ),
+          L(
+            'n.split',
+            2,
+            'if it differs inside an edge: split',
+            'if it differs inside an edge, split it there;',
+          ),
+          L(
+            'n.leaf',
+            2,
+            'add leaf i with label T[j..]',
+            'hang a leaf with the rest of the suffix.',
+          ),
           L('n.done', 1, 'return the tree', 'Every suffix is in.'),
         ];
   return [

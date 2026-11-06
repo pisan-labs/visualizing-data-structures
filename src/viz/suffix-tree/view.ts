@@ -144,7 +144,17 @@ export function view(step: Step<StState, StExtra>, _settings?: StSettings): Scen
   for (let j = 0; j < src.length; j++) {
     const role = roles.get(textId(j)) ?? spot.get(j);
     const x = x0 + j * PITCH;
-    shapes.push({ kind: 'rect', id: textId(j), x, y: TEXT_Y, w: PITCH, h: CELL_H, r: 0, cls: 'live', role });
+    shapes.push({
+      kind: 'rect',
+      id: textId(j),
+      x,
+      y: TEXT_Y,
+      w: PITCH,
+      h: CELL_H,
+      r: 0,
+      cls: 'live',
+      role,
+    });
     shapes.push({
       kind: 'text',
       id: `${textId(j)}-c`,

@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "np-reductions",
+  "id": "unsat",
+  "title": "No maps to no",
+  "notes": "(a), (¬a ∨ b), (¬b ∨ c), (¬c) cannot all be true: a forces b, b forces c, and the last clause says not c. The graph asks for an independent set of 4 vertices, and the largest it has is 3.",
+  "settings": { "check": "witness" },
+  "seed": 1,
+  "ops": [["load", "(a), (!a | b), (!b | c), (!c)"], ["toIs"]]
+}

@@ -10,7 +10,7 @@ not a handover: the current session stays the relay session and continues later.
 
 - Nothing is published yet. Yusuf deploys to Netlify by hand (site `stepwise-pisan-labs`, domain
   `stepwise.pisan.me`); sessions never start, publish or roll back a deploy.
-- `main` (`267834f` before this commit) holds 91 of the 108 catalog pages, each with a concept
+- `main` (`123aaa7` on Friday 6 November) holds 100 of the 108 catalog pages, each with a concept
   page, curated examples, a Big-O self-test, presets, Python/Java/C++ code tabs, a practice set
   and tests.
 - CI: runs 44 to 46 passed (the last on `267834f`, 17:15 to 17:39).

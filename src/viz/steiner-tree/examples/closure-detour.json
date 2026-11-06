@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "steiner-tree",
+  "id": "closure-detour",
+  "title": "Shortest paths are not the whole story",
+  "notes": "The shortest path from A to E goes A-C-E, so the approximation uses C-E (4). The best tree reaches E through F instead, with C-F (2), because F is on the way to G and H anyway: 17 against 15.",
+  "settings": {
+    "method": "approx",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B:3, A-C:4, B-C:2, B-D:3, C-E:4, C-F:2, D-F:2, D-G:4, E-F:3, F-H:3, G-H:3"],
+    ["terminals", "A E G H"],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

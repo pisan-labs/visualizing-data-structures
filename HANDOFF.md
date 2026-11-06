@@ -28,34 +28,20 @@ not a handover: the current session stays the relay session and continues later.
 
 ## Branches still unmerged
 
-Three wave 4 batch 2 branches, pushed to origin as backups. Their agents stopped at the usage
-limit (between about 17:15 and 18:00) during their final checks; their worktrees are in this container under
-`.claude/worktrees/`, so resume them with SendMessage if the container survives, else check out
-the branches. None is verified end to end yet:
-
-- `worktree-agent-a821abc5bc340c0ac` (`9f8f92f`, E2E_PORT 4212): grid-bfs, a-star, suffix-array,
-  new `src/layouts/grid.ts`. Its last commit adds the e2e specs; whether the full suite, 10
-  conformance runs and full e2e passed is not known.
-- `worktree-agent-aa81297ea160adf81` (`0cdee5c`, 4213): max-flow, bipartite-matching,
-  min-cost-flow. 10 conformance runs were clean; the full e2e had just started.
-- `worktree-agent-aa205b40a571e95f4` (`2930f80`, 4214): weighted-matching, general-matching,
-  two-sat. Was waiting on a background test run; results not known.
-
-Before merging each: check for files outside its page folders (new layout and e2e spec files
-are expected), `--no-ff` merge, conformance 10 times, full suite, e2e on its pages, then push.
-Several branches start with commits titled "WIP:"; their content is complete per the agents.
+None. The three wave 4 batch 2 branches were merged on Friday 6 November at about 08:30 after
+10 conformance runs, the full suite (2121 tests) and e2e on their nine pages (152 tests);
+main holds 100 of 108 pages.
 
 ## Next, in order
 
-1. Finish and merge the three branches above.
-2. Look into `src/viz/skip-list/skip-list.test.ts` "matches a reference skip list, coin flips and
+1. Look into `src/viz/skip-list/skip-list.test.ts` "matches a reference skip list, coin flips and
    search paths included": it failed once in a full `npm test` on main at about 17:40 while three
    agents were running, then passed 5 of 5 alone. Find the seed or timeout behind it (root
    cause, not a retry).
-3. Wave 4 batch 3, the last 8 pages: `rotate-translate-2d`, `rotate-scale-3d`,
+2. Wave 4 batch 3, the last 8 pages: `rotate-translate-2d`, `rotate-scale-3d`,
    `coordinates-3d` (reuse `src/layouts/plane.ts`), `suffix-tree`, `np-reductions`, `tsp`,
    `vertex-cover`, `steiner-tree`.
-4. Shared rendering requests from the agents:
+3. Shared rendering requests from the agents:
    - a categorical palette for groups (SCC and component colors repeat after five);
    - stroke colors for arrows in every role (`found`, `new`, `done`, `compare`), and a thicker
      `done` edge, in `src/ui/Shapes.svelte`;
@@ -68,11 +54,11 @@ Several branches start with commits titled "WIP:"; their content is complete per
    - the wider input for long inputs pushes buttons to a second row on some pages;
    - a three-value button's error reads "needs l and r and an amount";
    - `src/viz/_paths/overlap.ts` (a label-overlap checker) could become a shared test.
-5. Code-tab coverage: random scripts give the master-theorem and memory-model drivers nothing
+4. Code-tab coverage: random scripts give the master-theorem and memory-model drivers nothing
    to run; only curated examples test them.
-6. Tech debt: unify `src/layouts/node-chain.ts` with `src/layouts/linked.ts`, with screenshots
+5. Tech debt: unify `src/layouts/node-chain.ts` with `src/layouts/linked.ts`, with screenshots
    before and after.
-7. The "All colliding keys" preset on the four hashing pages uses a hidden `fill` operation;
+6. The "All colliding keys" preset on the four hashing pages uses a hidden `fill` operation;
    presets now receive the settings (`Preset.make`), so it could become plain inserts.
 
 ## Waiting on Yusuf

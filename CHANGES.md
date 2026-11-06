@@ -147,3 +147,5 @@
 2026-11-05 [code] The "Show me" e2e checks share tests/e2e/helpers.ts showMe(): playback can end before the test looks for Pause (Boyer-Moore flaked in 4 agent runs), so a timeline that changed and stands at its end also counts
 
 2026-11-05 [code] Merged wave 4H: convex hull (Graham, monotone chain, gift wrapping), polygon algorithms (shoelace, ray casting or winding, convexity), 2D change of coordinates, 2D rotation and scale; shared src/layouts/plane.ts; main holds 91 of 108 pages
+
+2026-11-06 [code] Merged wave 4E (grid BFS, A* with heuristic and weight settings, suffix array with LCP; src/layouts/grid.ts), 4F (max flow and min cut, bipartite matching, min-cost flow; src/viz/_flow/) and 4G (Hungarian weighted matching, blossom general matching, 2-SAT); main holds 100 of 108 pages

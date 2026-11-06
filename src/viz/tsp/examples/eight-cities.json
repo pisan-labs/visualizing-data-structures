@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "tsp",
+  "id": "eight-cities",
+  "title": "Held-Karp on eight cities",
+  "notes": "127 sets of the seven other cities and 448 entries: still instant, but every extra city doubles the table. Trying every tour would mean 2520 of them.",
+  "settings": {
+    "method": "exact",
+    "improve": false
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A(10,20) B(30,80) C(90,90) D(70,10) E(50,50) F(0,60) G(80,50) H(40,0)"],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

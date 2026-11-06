@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "tsp",
+  "id": "two-opt-fix",
+  "title": "2-opt untangles a crossing",
+  "notes": "Nearest neighbour gives 310. 2-opt swaps edges until no swap helps, and here it reaches the optimum, 275.",
+  "settings": {
+    "method": "nearest",
+    "improve": true
+  },
+  "seed": 1,
+  "ops": [["load", "A(10,50) B(30,90) C(60,80) D(90,90) E(80,40) F(50,10) G(40,50)"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

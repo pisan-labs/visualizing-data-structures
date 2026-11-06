@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "tsp",
+  "id": "on-a-circle",
+  "title": "Cities on a circle",
+  "notes": "When the cities sit on a circle, the best tour goes round it. Nearest neighbour finds it here: ratio 1.",
+  "settings": {
+    "method": "nearest",
+    "improve": false
+  },
+  "seed": 1,
+  "ops": [["load", "A(45,90) B(87,59) C(71,9) D(19,9) E(3,59)"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "tsp",
+  "id": "exact-table",
+  "title": "Held-Karp fills its table",
+  "notes": "Five cities: 15 sets of the four cities other than A, 32 entries in all. Each entry picks the best city to come from, using only entries for sets one smaller.",
+  "settings": {
+    "method": "exact",
+    "improve": false
+  },
+  "seed": 1,
+  "ops": [["load", "A(10,10) B(80,20) C(50,90) D(20,60) E(60,50)"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

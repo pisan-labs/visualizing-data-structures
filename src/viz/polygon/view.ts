@@ -32,6 +32,7 @@ export function view(step: Step<PolyState, PolyExtra>, settings: PolySettings): 
     id: 'e',
     pts: v.map((p, i) => ({ key: i, at: p })),
     roles,
+    fill: true,
   });
 
   // Shoelace: the triangle that edge i makes with the origin.
@@ -40,6 +41,12 @@ export function view(step: Step<PolyState, PolyExtra>, settings: PolySettings): 
     const b = v[(extra.edge + 1) % n]!;
     const o = { x: 0, y: 0 };
     const role = roles.get('tri') === 'error' ? 'error' : 'active';
+    shapes.push({
+      kind: 'polygon',
+      id: 'tri-fill',
+      points: [o, a, b].map((q) => plane.at(q)),
+      role,
+    });
     drawSegment(shapes, plane, { id: 'tri-a', a: o, b: a, dashed: true, role });
     drawSegment(shapes, plane, { id: 'tri-b', a: o, b, dashed: true, role });
     const term = a.x * b.y - b.x * a.y;

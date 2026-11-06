@@ -40,6 +40,8 @@ function shift(s: Shape, dy: number): Shape {
   if (out.kind === 'arrow') {
     out.y1 += dy;
     out.y2 += dy;
+  } else if (out.kind === 'polygon') {
+    out.points = out.points.map((q) => ({ x: q.x, y: q.y + dy }));
   } else {
     out.y += dy;
   }
@@ -80,6 +82,8 @@ export function view(step: Step<LruState, LruExtra>, _settings: LruSettings): Sc
     if (moved.kind === 'arrow') {
       moved.x1 += dx;
       moved.x2 += dx;
+    } else if (moved.kind === 'polygon') {
+      moved.points = moved.points.map((q) => ({ x: q.x + dx, y: q.y }));
     } else {
       moved.x += dx;
     }

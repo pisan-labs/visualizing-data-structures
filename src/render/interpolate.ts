@@ -16,6 +16,12 @@ function mix(a: Shape, b: Shape, t: number): Shape {
   out.opacity = lerp(a.opacity ?? 1, b.opacity ?? 1, t);
   if (a.kind === 'text' && b.kind === 'text' && a.text !== b.text)
     out.text = t < 0.5 ? a.text : b.text;
+  // Polygons with the same number of corners move corner by corner; otherwise they snap.
+  if (a.kind === 'polygon' && b.kind === 'polygon' && a.points.length === b.points.length)
+    out.points = b.points.map((q, i) => ({
+      x: lerp(a.points[i]!.x, q.x, t),
+      y: lerp(a.points[i]!.y, q.y, t),
+    }));
   return out as unknown as Shape;
 }
 

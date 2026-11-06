@@ -377,6 +377,8 @@ export interface PolygonOptions {
   dashed?: boolean;
   opacity?: number;
   z?: number;
+  /** Tint the inside: true for the default tint, or a role for its color. Id `${id}-fill`. */
+  fill?: boolean | MarkRole;
 }
 
 /** Edge id of the edge from vertex key a to vertex key b. */
@@ -388,6 +390,14 @@ export function drawPolygon(shapes: Shape[], plane: Plane, g: PolygonOptions): s
   const closed = g.closed ?? true;
   const ids: string[] = [];
   const count = closed && n > 2 ? n : n - 1;
+  if (g.fill && closed && n > 2)
+    shapes.push({
+      kind: 'polygon',
+      id: `${g.id}-fill`,
+      points: g.pts.map((p) => plane.at(p.at)),
+      role: g.fill === true ? undefined : g.fill,
+      opacity: g.opacity,
+    });
   for (let i = 0; i < count; i++) {
     const a = g.pts[i]!;
     const b = g.pts[(i + 1) % n]!;

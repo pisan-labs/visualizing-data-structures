@@ -72,6 +72,12 @@
       marker-start={s.head === 'both' ? markerFor(s.role) : undefined}
       opacity={s.opacity ?? 1}
     />
+  {:else if s.kind === 'polygon'}
+    <polygon
+      class="shape polygon {s.cls ?? ''} {roleClass(s.role)}"
+      points={s.points.map((q) => `${q.x},${q.y}`).join(' ')}
+      opacity={s.opacity ?? 1}
+    />
   {:else if s.kind === 'circle'}
     <circle
       class="shape circle {s.cls ?? ''} {roleClass(s.role)}"
@@ -137,6 +143,32 @@
   .circle.arrowhead {
     fill: var(--text-2);
     stroke: none;
+  }
+
+  /* Filled areas: a faint tint of the role's color, no outline (lines draw the edges). */
+  .polygon {
+    fill: var(--text-2);
+    fill-opacity: 0.12;
+    stroke: none;
+  }
+  .polygon.role-active {
+    fill: var(--c-active);
+  }
+  .polygon.role-found {
+    fill: var(--c-found);
+  }
+  .polygon.role-new,
+  .polygon.role-done {
+    fill: var(--c-new);
+  }
+  .polygon.role-error {
+    fill: var(--c-error);
+  }
+  .polygon.role-compare {
+    fill: var(--c-compare);
+  }
+  .polygon.role-visit {
+    fill: var(--c-visit);
   }
 
   /* Roles */

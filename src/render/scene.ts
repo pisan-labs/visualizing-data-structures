@@ -11,7 +11,7 @@ interface ShapeBase {
   /** Extra CSS class names. */
   cls?: string;
   opacity?: number;
-  /** Paint order; higher is on top. Default: arrows 0, rects/circles 1, text 2. */
+  /** Paint order; higher is on top. Default: polygons -1, arrows 0, rects/circles 1, text 2. */
   z?: number;
   /** When the shape first appears, slide in from this point instead of only fading in. */
   enterFrom?: { x: number; y: number };
@@ -56,7 +56,13 @@ export interface CircleShape extends ShapeBase {
   r: number;
 }
 
-export type Shape = RectShape | TextShape | ArrowShape | CircleShape;
+/** A filled area, such as a triangle in the shoelace formula; drawn behind lines by default. */
+export interface PolygonShape extends ShapeBase {
+  kind: 'polygon';
+  points: { x: number; y: number }[];
+}
+
+export type Shape = RectShape | TextShape | ArrowShape | CircleShape | PolygonShape;
 
 export interface Bounds {
   x: number;
@@ -75,7 +81,7 @@ export interface Scene {
 
 export function defaultZ(s: Shape): number {
   if (s.z !== undefined) return s.z;
-  return s.kind === 'arrow' ? 0 : s.kind === 'text' ? 2 : 1;
+  return s.kind === 'polygon' ? -1 : s.kind === 'arrow' ? 0 : s.kind === 'text' ? 2 : 1;
 }
 
 /**
@@ -98,6 +104,7 @@ export function shapesBounds(shapes: Shape[], pad = 10): Bounds | null {
     if (s.kind === 'rect') add(s.x, s.y, s.x + s.w, s.y + s.h);
     else if (s.kind === 'circle') add(s.x - s.r, s.y - s.r, s.x + s.r, s.y + s.r);
     else if (s.kind === 'arrow') add(s.x1, s.y1, s.x2, s.y2);
+    else if (s.kind === 'polygon') for (const q of s.points) add(q.x, q.y, q.x, q.y);
     else {
       const size = s.size ?? 16;
       const w = s.text.length * size * 0.6;

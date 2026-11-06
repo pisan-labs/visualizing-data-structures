@@ -17,6 +17,7 @@ const MIN_COL = 50;
 /** Move a shape right by dx. */
 function shift(s: Shape, dx: number): Shape {
   if (s.kind === 'arrow') return { ...s, x1: s.x1 + dx, x2: s.x2 + dx };
+  if (s.kind === 'polygon') return { ...s, points: s.points.map((q) => ({ x: q.x + dx, y: q.y })) };
   return { ...s, x: s.x + dx };
 }
 

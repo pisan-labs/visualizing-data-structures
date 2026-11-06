@@ -514,6 +514,8 @@ export function translate(shapes: readonly Shape[], dx: number, dy: number): Sha
     const enterFrom = s.enterFrom && { x: s.enterFrom.x + dx, y: s.enterFrom.y + dy };
     if (s.kind === 'arrow')
       return { ...s, x1: s.x1 + dx, y1: s.y1 + dy, x2: s.x2 + dx, y2: s.y2 + dy, enterFrom };
+    if (s.kind === 'polygon')
+      return { ...s, points: s.points.map((q) => ({ x: q.x + dx, y: q.y + dy })), enterFrom };
     return { ...s, x: s.x + dx, y: s.y + dy, enterFrom };
   });
 }

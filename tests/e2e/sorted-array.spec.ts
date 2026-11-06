@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { settled } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -75,6 +76,7 @@ test('a binary search step has no axe violations in high contrast', async ({ pag
   await openExample(page, 'Searching for a value that is not there', '10. search(55)');
   await page.getByRole('button', { name: 'Step back' }).click();
   await expect(stage(page).getByText('mid', { exact: true })).toBeVisible();
+  await settled(page);
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();

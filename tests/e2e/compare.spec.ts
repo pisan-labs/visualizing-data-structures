@@ -1,12 +1,13 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { settled } from './helpers';
 
 const sides = (page: Page) => page.locator('.sides > .side');
 const stageOf = (page: Page, i: number) => sides(page).nth(i).locator('.stage > svg');
 const narrationOf = (page: Page, i: number) => sides(page).nth(i).locator('.narration p');
 
 /** The address follows the work 400 ms after each change; wait until it stops changing. */
-async function settled(page: Page) {
+async function addressSettled(page: Page) {
   let last = '';
   for (let i = 0; i < 20 && page.url() !== last; i++) {
     last = page.url();
@@ -74,7 +75,7 @@ test('each side keeps its own options, and a reload keeps both', async ({ page }
   await expect(stageOf(page, 0)).toHaveAttribute('aria-label', /The root is 60\./);
   await expect(stageOf(page, 1)).toHaveAttribute('aria-label', /The root is 40\./);
   // The address keeps both sides.
-  await settled(page);
+  await addressSettled(page);
   await expect(page).toHaveURL(/#compare=bst&ex=.+&exb=/);
   await page.reload();
   await expect(stageOf(page, 0)).toHaveAttribute('aria-label', /The root is 60\./);
@@ -91,6 +92,7 @@ test('a comparison fits the screen and has no axe violations', async ({ page }) 
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
   expect(await overflow()).toBeLessThanOrEqual(0);
+  await settled(page);
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();

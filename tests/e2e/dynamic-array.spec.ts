@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { settled } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -100,6 +101,7 @@ test('the copying step has no axe violations in dark mode', async ({ page }) => 
   await page.getByRole('button', { name: 'Step back' }).click();
   await page.getByRole('button', { name: 'Step back' }).click();
   await expect(stage(page).getByText('new array B, 8 slots')).toBeVisible();
+  await settled(page);
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();

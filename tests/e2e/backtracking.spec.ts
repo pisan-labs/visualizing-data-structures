@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { showMe } from './helpers';
+import { settled, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -138,6 +138,7 @@ for (const theme of ['dark', 'contrast']) {
     await loadExample(page, 'Subsets with sum 9, pruned');
     for (let i = 0; i < 14; i++) await page.getByRole('button', { name: 'Step forward' }).click();
     await expect(stage(page).locator('rect.ghost').first()).toBeVisible();
+    await settled(page);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
       .analyze();

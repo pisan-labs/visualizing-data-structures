@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { showMe } from './helpers';
+import { settled, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -138,6 +138,7 @@ for (const theme of ['dark', 'contrast']) {
     await op(page, 'Build', 'a:7 b:3 c:12 d:5 e:9 f:2 g:15 h:4 i:6 j:1');
     await toEnd(page);
     await stepUntil(page, 'Take the two lightest trees');
+    await settled(page);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
       .analyze();

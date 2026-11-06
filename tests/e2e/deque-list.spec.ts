@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { settled } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -61,6 +62,7 @@ test('a two-way link step has no axe violations in dark mode', async ({ page }) 
   await page.getByRole('combobox', { name: 'Theme' }).selectOption('dark');
   await openExample(page, 'Adding and removing at both ends', '3. addFirst(5)');
   await page.getByRole('button', { name: 'Step back' }).click();
+  await settled(page);
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();

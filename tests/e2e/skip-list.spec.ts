@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { showMe } from './helpers';
+import { settled, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -150,6 +150,7 @@ test('no axe violations while flipping, in the dark theme', async ({ page }) => 
   await fast(page);
   await op(page, 'Insert', '30 10 70 50');
   await page.getByRole('button', { name: 'Step back' }).click();
+  await settled(page);
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();

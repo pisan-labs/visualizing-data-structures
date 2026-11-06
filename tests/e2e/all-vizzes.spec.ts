@@ -6,6 +6,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
+import { settled } from './helpers';
 
 const root = path.resolve('src/viz');
 const ids = fs
@@ -59,6 +60,7 @@ for (const id of ids) {
           () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
         );
       expect(await overflow()).toBeLessThanOrEqual(0);
+      await settled(page);
       const results = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
         .analyze();

@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { showMe } from './helpers';
+import { settled, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -74,6 +74,7 @@ for (const theme of ['dark', 'contrast']) {
     await page.getByRole('button', { name: 'Find path', exact: true }).click();
     await toEnd(page);
     for (let i = 0; i < 10; i++) await page.getByRole('button', { name: 'Step back' }).click();
+    await settled(page);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
       .analyze();

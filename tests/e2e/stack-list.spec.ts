@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { settled } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -60,6 +61,7 @@ test('the garbage step has no axe violations in dark mode', async ({ page }) => 
   await page.getByRole('button', { name: 'Pop', exact: true }).click();
   await expect(narration(page)).toContainText('Return x = 6', { timeout: 10_000 });
   await page.getByRole('button', { name: 'Step back' }).click();
+  await settled(page);
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();

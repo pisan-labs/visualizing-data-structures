@@ -163,3 +163,5 @@
 2026-11-06 [code] Arrow lines take their role colour (found, new, done thicker, compare, visit, remove) with matching heads; the preset select cannot widen past the screen; sizes: [] hides the preset size select. The {A} leftover check stays strict: it also catches a missing $ such as {CAPACITY}
 
 2026-11-06 [code] Eight group roles g1 to g8 (GroupRole, groupRole(k)) with their own colours in the light, dark and contrast themes; connected components, SCC and 2-SAT use them instead of cycling five state colours
+
+2026-11-06 [code] Axe scans wait for the drawing to settle (tests/e2e/helpers.ts settled()): the factorial contrast scan failed once under load on phone, likely a shape caught mid-fade, and passed 8 of 8 alone; all 372 axe tests pass

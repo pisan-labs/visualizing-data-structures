@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { settled } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -78,6 +79,7 @@ test('the counted row drawing has no axe violations', async ({ page }) => {
   await page.getByLabel('As a row, the way it sits in memory').check();
   await page.getByRole('combobox', { name: 'Theme' }).selectOption('contrast');
   await add(page, 'first', '5');
+  await settled(page);
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();

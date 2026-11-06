@@ -20,3 +20,28 @@ export async function showMe(page: Page, trigger: Locator): Promise<void> {
     })
     .toBe('played');
 }
+
+/**
+ * Wait until the drawing stops moving: no CSS transitions running and the stage markup unchanged
+ * for a few frames. Axe measures colors as drawn, so a shape caught mid-fade can fail contrast.
+ */
+export async function settled(page: Page): Promise<void> {
+  await page.waitForFunction(
+    () =>
+      new Promise<boolean>((done) => {
+        const snap = () =>
+          Array.from(document.querySelectorAll('svg'))
+            .map((s) => s.innerHTML)
+            .join('|');
+        const before = snap();
+        let frames = 0;
+        const tick = () => {
+          if (++frames < 8) return requestAnimationFrame(tick);
+          done(document.getAnimations().length === 0 && snap() === before);
+        };
+        requestAnimationFrame(tick);
+      }),
+    undefined,
+    { polling: 100, timeout: 10_000 },
+  );
+}

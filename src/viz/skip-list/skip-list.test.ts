@@ -144,9 +144,10 @@ describe('skip list', () => {
           const st = settings as SkipSettings;
           const tl = new Timeline(skipList, st, seed, calls);
           const ref = new Ref();
+          const entries = tl.entries;
           calls.forEach(([op, raw], i) => {
             const k = Number(raw);
-            const entry = tl.entries[i]!;
+            const entry = entries[i]!;
             const last = entry.steps.at(-1)!;
             if (op === 'search' || op === 'insert' || op === 'delete') {
               const w = ref.walk(k);
@@ -174,7 +175,9 @@ describe('skip list', () => {
       ),
       { numRuns: 250 },
     );
-  });
+    // 250 runs of up to 80 operations take about 15 s alone and over 40 s when several suites
+    // share the machine, close to the 60 s default; it timed out once that way.
+  }, 180_000);
 
   it('holds the same keys as a sorted set', () => {
     fc.assert(

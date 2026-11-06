@@ -149,3 +149,5 @@
 2026-11-05 [code] Merged wave 4H: convex hull (Graham, monotone chain, gift wrapping), polygon algorithms (shoelace, ray casting or winding, convexity), 2D change of coordinates, 2D rotation and scale; shared src/layouts/plane.ts; main holds 91 of 108 pages
 
 2026-11-06 [code] Merged wave 4E (grid BFS, A* with heuristic and weight settings, suffix array with LCP; src/layouts/grid.ts), 4F (max flow and min cut, bipartite matching, min-cost flow; src/viz/_flow/) and 4G (Hungarian weighted matching, blossom general matching, 2-SAT); main holds 100 of 108 pages
+
+2026-11-06 [code] The skip-list reference property test failed once on 5 November: no counterexample in 2000 more cases, but it takes 15 s alone and about 42 s under load against the 60 s default timeout; it now has an explicit 180 s budget

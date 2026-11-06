@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "rotate-translate-2d",
+  "id": "slide-only",
+  "title": "Only a slide",
+  "notes": "A translation moves every vertex by the same vector. The rotation part of M stays the identity.",
+  "settings": {
+    "form": "homogeneous",
+    "convention": "column",
+    "shape": "letter"
+  },
+  "seed": 1,
+  "ops": [["translate", 3, -4]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

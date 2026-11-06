@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "rotate-scale-3d",
+  "id": "flatten",
+  "title": "Squashed flat",
+  "notes": "Scale z by 0 and the cube collapses onto the floor. det S = 0, and no matrix can undo it.",
+  "settings": {
+    "projection": "isometric",
+    "convention": "column",
+    "shape": "cube"
+  },
+  "seed": 1,
+  "ops": [["scale", 1, 1, 0]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "rotate-translate-2d",
+  "id": "matrix-plus-offset",
+  "title": "A matrix plus an offset",
+  "notes": "The same motions written as a 2×2 rotation R and an offset t: p' = R p + t. Composing multiplies the Rs and turns the earlier t.",
+  "settings": {
+    "form": "affine",
+    "convention": "column",
+    "shape": "letter"
+  },
+  "seed": 1,
+  "ops": [
+    ["rotate", 45],
+    ["translate", 2, 2],
+    ["rotate", 45]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

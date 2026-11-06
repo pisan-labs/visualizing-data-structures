@@ -162,15 +162,15 @@ export interface MapProblem {
 
 export const MAP: MapProblem[] = [
   { id: 'sat', name: 'SAT', col: 0, row: 0 },
-  { id: '3sat', name: '3-SAT', col: 1, row: 0 },
-  { id: 'ssum', name: 'SUBSET-SUM', col: 2, row: 0 },
-  { id: '3col', name: '3-COLOR', col: 0, row: 1 },
+  { id: '3sat', name: '3-SAT', col: 0, row: 1 },
+  { id: '3col', name: '3-COLOR', col: 1, row: 0 },
   { id: 'is', name: 'IND-SET', col: 1, row: 1 },
-  { id: 'clique', name: 'CLIQUE', col: 2, row: 1 },
-  { id: 'vc', name: 'V-COVER', col: 1, row: 2 },
-  { id: 'sc', name: 'SET-COVER', col: 2, row: 2 },
-  { id: 'ham', name: 'HAM-CYCLE', col: 1, row: 3 },
-  { id: 'tsp', name: 'TSP', col: 2, row: 3 },
+  { id: 'ssum', name: 'SUBSET-SUM', col: 1, row: 2 },
+  { id: 'clique', name: 'CLIQUE', col: 2, row: 0 },
+  { id: 'vc', name: 'V-COVER', col: 2, row: 1 },
+  { id: 'tsp', name: 'TSP', col: 2, row: 2 },
+  { id: 'sc', name: 'SET-COVER', col: 3, row: 1 },
+  { id: 'ham', name: 'HAM-CYCLE', col: 3, row: 2 },
 ];
 
 /** Reductions on the map: A → B means B is at least as hard as A. `walk` ones run here. */
@@ -405,27 +405,31 @@ export function smallestCover(f: Family): number {
 // ---------------------------------------------------------------------------------------------
 // The reductions themselves (pure, polynomial; the code tabs implement exactly these)
 
-/** Positions of the triangles: up to three in a row. */
+/**
+ * Positions of the clause gadgets: the triangles sit around a circle, each with one corner
+ * pointing out, so the edges between clauses cross the empty middle instead of running along
+ * a row of vertices.
+ */
 function gadgetPos(f: Formula): Record<string, Pt> {
   const m = f.clauses.length;
-  const cols = m <= 3 ? m : 2;
+  const ring = m === 1 ? 0 : m === 2 ? 84 : m === 3 ? 104 : 124;
+  const r = 40;
   const pos: Record<string, Pt> = {};
+  const round = (x: number) => Math.round(x * 10) / 10;
   f.clauses.forEach((c, j) => {
-    const cx = (j % cols) * 156;
-    const cy = Math.floor(j / cols) * 150;
+    const t = -Math.PI / 2 + (2 * Math.PI * j) / m;
+    const cx = ring * Math.cos(t);
+    const cy = ring * Math.sin(t);
+    const at = (a: number, d = r) => ({
+      x: round(cx + d * Math.cos(a)),
+      y: round(cy + d * Math.sin(a)),
+    });
     const spots =
       c.length === 3
-        ? [
-            { x: cx, y: cy - 34 },
-            { x: cx - 40, y: cy + 34 },
-            { x: cx + 40, y: cy + 34 },
-          ]
+        ? [0, 1, 2].map((i) => at(t + (2 * Math.PI * i) / 3))
         : c.length === 2
-          ? [
-              { x: cx - 38, y: cy },
-              { x: cx + 38, y: cy },
-            ]
-          : [{ x: cx, y: cy }];
+          ? [at(t - Math.PI / 2, 36), at(t + Math.PI / 2, 36)]
+          : [at(0, 0)];
     c.forEach((l, i) => (pos[litVertex(f, l, j)] = spots[i]!));
   });
   return pos;
@@ -1274,7 +1278,7 @@ export function pseudocode(settings: NpSettings): PseudoBlock[] {
 }
 
 export function initialSay(s: S): string {
-  return `The reductions map. Each arrow is a polynomial-time translation between problems. Start from the formula ${formulaText(s.inst.formula!)}: press Reduce to IND-SET to walk the first solid arrow, or load your own formula or graph.`;
+  return `The reductions map. Each arrow is a polynomial-time translation between problems. Start from the formula ${formulaText(s.inst.formula!)}: press To IND-SET to walk the first solid arrow, or load your own formula or graph.`;
 }
 
 export const initialVars = (s: S) => vars(s);

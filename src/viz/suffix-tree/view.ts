@@ -104,23 +104,45 @@ export function view(step: Step<StState, StExtra>, _settings?: StSettings): Scen
   // Suffix links (Ukkonen only sets them).
   for (const n of layout.nodes.values()) {
     const to = tr.nodes[n.id]!.link;
-    if (to === null || to === undefined || to === n.id) continue;
+    // Links to the root are left out: every node without a link falls back to the root anyway.
+    if (to === null || to === undefined || to === n.id || to === tr.root) continue;
     const b = layout.nodes.get(to);
     if (!b) continue;
-    const dx = b.x - n.x;
-    const dy = b.y - n.y;
-    const len = Math.hypot(dx, dy) || 1;
+    // Bend each link to the left of its direction, so it does not run along a row of nodes
+    // or on top of another link.
+    const len = Math.hypot(b.x - n.x, b.y - n.y) || 1;
+    const bend = Math.min(36, 10 + 0.12 * len);
+    const c = {
+      x: (n.x + b.x) / 2 + ((b.y - n.y) / len) * bend,
+      y: (n.y + b.y) / 2 - ((b.x - n.x) / len) * bend,
+    };
+    const from = (p: { x: number; y: number }, q: { x: number; y: number }, by: number) => {
+      const d = Math.hypot(q.x - p.x, q.y - p.y) || 1;
+      return { x: p.x + ((q.x - p.x) / d) * by, y: p.y + ((q.y - p.y) / d) * by };
+    };
+    const p0 = from(n, c, R + 2);
+    const p1 = from(b, c, R + 3);
+    const look = { dashed: true, cls: 'ghost', opacity: 0.85 } as const;
+    shapes.push({
+      kind: 'arrow',
+      id: `sl-${n.id}-a`,
+      x1: p0.x,
+      y1: p0.y,
+      x2: c.x,
+      y2: c.y,
+      head: 'none',
+      ...look,
+    });
+    boxes.push({ x: c.x - 4, y: c.y - 4, w: 8, h: 8 });
     shapes.push({
       kind: 'arrow',
       id: `sl-${n.id}`,
-      x1: n.x + (dx / len) * (R + 2),
-      y1: n.y + (dy / len) * (R + 2),
-      x2: b.x - (dx / len) * (R + 3),
-      y2: b.y - (dy / len) * (R + 3),
-      dashed: true,
+      x1: c.x,
+      y1: c.y,
+      x2: p1.x,
+      y2: p1.y,
       head: 'end',
-      cls: 'ghost',
-      opacity: 0.8,
+      ...look,
     });
   }
 

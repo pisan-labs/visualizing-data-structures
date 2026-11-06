@@ -18,7 +18,7 @@ import {
   type GraphLayout,
   type GraphLike,
 } from '../../layouts/graph';
-import type { Bounds, Scene, Shape } from '../../render/scene';
+import { shapesBounds, type Bounds, type Scene, type Shape } from '../../render/scene';
 import {
   ARCS,
   MAP,
@@ -36,10 +36,10 @@ import {
   type UGraph,
 } from './model';
 
-const COL = 136;
+const COL = 142;
 const ROW = 74;
 const BOX_H = 30;
-const MAP_TEXT = 13;
+const MAP_TEXT = 14;
 
 function drawMap(s: NpState, roles: Map<string, MarkRole>, extra: NpExtra): Scene {
   const shapes: Shape[] = [];
@@ -108,7 +108,9 @@ function drawMap(s: NpState, roles: Map<string, MarkRole>, extra: NpExtra): Scen
     });
   }
   const maxW = Math.max(...MAP.map((p) => width(p.name)));
-  const top: Bounds = { x: -maxW / 2, y: -BOX_H / 2, w: 2 * COL + maxW, h: 3 * ROW + BOX_H };
+  const cols = Math.max(...MAP.map((p) => p.col));
+  const rows = Math.max(...MAP.map((p) => p.row));
+  const top: Bounds = { x: -maxW / 2, y: -BOX_H / 2, w: cols * COL + maxW, h: rows * ROW + BOX_H };
   const legend = drawLegend(shapes, {
     id: 'key',
     items: ['A → B: A reduces to B', 'solid: step through it here', 'dashed: on the map only'],
@@ -197,7 +199,12 @@ export function view(step: Step<NpState, NpExtra>, _settings?: NpSettings): Scen
       });
     }
     shapes.push(...drawn.shapes);
-    graphBox = unionBounds(drawn.bounds, layout.bounds);
+    // Bent edges can reach past the vertices: keep the panel clear of them.
+    graphBox = unionBounds(
+      drawn.bounds,
+      layout.bounds,
+      shapesBounds(drawn.shapes, 4) ?? layout.bounds,
+    );
     boxes.push(graphBox);
   }
 
@@ -263,7 +270,7 @@ export function view(step: Step<NpState, NpExtra>, _settings?: NpSettings): Scen
         x,
         y,
         roles,
-        perRow: cellW > 150 ? 1 : 2,
+        perRow: Math.max(1, Math.floor(390 / (cellW + 4))),
         cellW,
       });
       parts.push(clauses);
@@ -302,7 +309,7 @@ export function view(step: Step<NpState, NpExtra>, _settings?: NpSettings): Scen
         x,
         y,
         roles,
-        perRow: Math.max(1, Math.floor(330 / (cellW + 4))),
+        perRow: Math.max(1, Math.floor(390 / (cellW + 4))),
         cellW,
         empty: 'none yet',
       });
@@ -320,7 +327,7 @@ export function view(step: Step<NpState, NpExtra>, _settings?: NpSettings): Scen
         x,
         y,
         roles,
-        perRow: 9,
+        perRow: 12,
         cellW: 30,
         empty: 'no edges',
       });

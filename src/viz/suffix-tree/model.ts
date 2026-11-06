@@ -434,7 +434,9 @@ function* ukkonenBuild(s0: S, c: Counters): Gen {
         const at = node === root ? 'the root' : `node ${q(spell(s, node))}`;
         const sayLink =
           linked !== null
-            ? ` The node made just before in this phase gets a suffix link to ${at}.`
+            ? node === root
+              ? ' The node made just before in this phase gets its suffix link: the root (links to the root are not drawn).'
+              : ` The node made just before in this phase gets a suffix link to ${at}.`
             : '';
         const fromNode = node;
         const moved = advance(i);

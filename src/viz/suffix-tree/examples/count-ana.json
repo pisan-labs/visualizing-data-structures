@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "suffix-tree",
+  "id": "count-ana",
+  "title": "Count ANA",
+  "notes": "ANA occurs twice in BANANA, and the two copies overlap. The walk for ANA ends at an internal node; count the leaves below it.",
+  "settings": { "method": "naive" },
+  "seed": 1,
+  "ops": [["load", "BANANA"], ["build"], ["count", "ANA"]]
+}

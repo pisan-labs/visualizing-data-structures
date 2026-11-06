@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "suffix-tree",
+  "id": "all-different",
+  "title": "All letters different",
+  "notes": "In ABCDEF every suffix starts with its own letter, so each one hangs straight off the root and the root is the only internal node. Nothing repeats.",
+  "settings": { "method": "naive" },
+  "seed": 1,
+  "ops": [["load", "ABCDEF"], ["build"], ["repeat"]]
+}

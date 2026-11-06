@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "vertex-cover",
+  "id": "brute-force",
+  "title": "Every set, smallest first",
+  "notes": "A five-cycle with a chord. No set of 2 vertices covers it, so brute force tries all 1 + 5 + 10 sets of 0, 1 and 2 vertices, then finds a cover of 3.",
+  "settings": {
+    "method": "brute",
+    "layout": "circle"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, A-E, B-C, C-D, D-E"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -126,7 +126,7 @@ export function view(step: Step<RtState, RtExtra>, settings: RtSettings): Scene 
     const { rt, tr } = extra.compare;
     drawPolygon(shapes, plane, { id: 'rt-e', pts: key(rt), role: 'active', dashed: true });
     shapes.push(
-      text('rt', { x: plane.rect.x, y: below + 22 }, 'dashed blue: rotate, then translate', {
+      text('rt', { x: plane.rect.x, y: below + 16 }, 'dashed blue: rotate, then translate', {
         size: 12,
         bold: true,
         role: roles.get('rt') ?? 'active',
@@ -135,7 +135,7 @@ export function view(step: Step<RtState, RtExtra>, settings: RtSettings): Scene 
     if (tr.length) {
       drawPolygon(shapes, plane, { id: 'tr-e', pts: key(tr), role: 'error', dashed: true });
       shapes.push(
-        text('tr', { x: plane.rect.x, y: below + 40 }, 'dashed red: translate, then rotate', {
+        text('tr', { x: plane.rect.x, y: below + 32 }, 'dashed red: translate, then rotate', {
           size: 12,
           bold: true,
           role: roles.get('tr') ?? 'error',
@@ -146,7 +146,7 @@ export function view(step: Step<RtState, RtExtra>, settings: RtSettings): Scene 
 
   // Matrices under the plane: the operation's and the running total.
   const homo = settings.form === 'homogeneous';
-  const y0 = below + 60;
+  const y0 = below + 44;
   const rowH = homo ? 3 * 22 + 4 : 2 * 22 + 4;
   const width = plane.rect.x + plane.rect.w + 24;
   let x = plane.rect.x;

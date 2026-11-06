@@ -6,6 +6,7 @@ import {
   dot3,
   fmtVec3,
   fromColumns,
+  inBall,
   matMul3,
   orthonormal3,
   rotation3,
@@ -13,8 +14,10 @@ import {
   type Vec3,
 } from '../../layouts/space';
 
-/** Points and origins are typed from −R to R; the drawing fits that cube. */
-export const R = 4;
+/** Points and origins are typed from −R to R. */
+export const R = 3;
+/** The drawing fits the ball of this radius. */
+export const VIEW = 5;
 
 export interface Coord3State {
   /** Frame B: its origin and three axes, in world coordinates. */
@@ -324,7 +327,7 @@ const toWorld: Op = {
     } satisfies CStep;
     const p = toWorldOf(s.o, s.u, s.v, s.w, { x: a, y: b, z: c });
     const q = sub3(p, s.o);
-    const outside = Math.max(Math.abs(p.x), Math.abs(p.y), Math.abs(p.z)) > R;
+    const outside = !inBall(p, VIEW);
     s = { ...s, p, conversions: s.conversions + 1, mults: s.mults + 9 };
     yield {
       state: s,

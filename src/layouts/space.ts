@@ -4,7 +4,7 @@
  * drawn with the helpers in plane.ts, so shapes keep their ids and the renderer animates them.
  *
  *   project(p, kind)                                    3D point to 2D world point
- *   makeSpace({ kind, reach, unit, x, y })              a plane window that fits ±reach on each axis
+ *   makeSpace({ kind, reach, unit, x, y })              a plane window that fits the ball |p| ≤ reach
  *   drawAxes3(shapes, space, { id, reach })             x, y, z axes with names, and a faint floor grid
  *   drawSegment3 / drawVector3 / drawPoint3             plane.ts shapes at projected points
  *
@@ -156,7 +156,7 @@ export interface Space {
 
 export interface SpaceOptions {
   kind: Projection;
-  /** The window fits the cube [−reach, reach]³. */
+  /** The window fits every point within this distance of the origin. */
   reach: number;
   /** Scene units per world unit. */
   unit: number;
@@ -164,25 +164,32 @@ export interface SpaceOptions {
   y?: number;
 }
 
-/** A plane window just big enough for the cube [−reach, reach]³ under the projection. */
+/**
+ * A plane window just big enough for the ball of radius `reach` under the projection. The
+ * projection is linear, so the ball's shadow reaches r·|row| along each screen axis.
+ */
 export function makeSpace(o: SpaceOptions): Space {
-  const r = o.reach;
-  const corners: Vec[] = [];
-  for (const x of [-r, r])
-    for (const y of [-r, r]) for (const z of [-r, r]) corners.push(project({ x, y, z }, o.kind));
-  const xs = corners.map((c) => c.x);
-  const ys = corners.map((c) => c.y);
+  const e = [
+    project({ x: 1, y: 0, z: 0 }, o.kind),
+    project({ x: 0, y: 1, z: 0 }, o.kind),
+    project({ x: 0, y: 0, z: 1 }, o.kind),
+  ];
+  const hx = o.reach * Math.hypot(e[0]!.x, e[1]!.x, e[2]!.x);
+  const hy = o.reach * Math.hypot(e[0]!.y, e[1]!.y, e[2]!.y);
   const plane = makePlane({
-    xmin: Math.min(...xs),
-    xmax: Math.max(...xs),
-    ymin: Math.min(...ys),
-    ymax: Math.max(...ys),
+    xmin: -hx,
+    xmax: hx,
+    ymin: -hy,
+    ymax: hy,
     unit: o.unit,
     x: o.x,
     y: o.y,
   });
   return { plane, kind: o.kind, at: (p) => plane.at(project(p, o.kind)) };
 }
+
+/** Whether a 3D point is inside the ball the window was made for. */
+export const inBall = (p: Vec3, r: number) => len3(p) <= r + 1e-9;
 
 export interface Axes3Options {
   id: string;

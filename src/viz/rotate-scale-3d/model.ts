@@ -6,6 +6,7 @@ import {
   column3,
   det3,
   fmtVec3,
+  inBall,
   mat3Text,
   matMul3,
   rotation3,
@@ -15,8 +16,8 @@ import {
   type Vec3,
 } from '../../layouts/space';
 
-/** The drawing fits −R to R on every axis; transforms that push a vertex further are refused. */
-export const R = 4;
+/** The drawing fits the ball of radius R; transforms that push a vertex further out are refused. */
+export const R = 4.5;
 
 export type ShapeName = 'cube' | 'wedge';
 
@@ -139,8 +140,7 @@ export function numArg(x: Value | undefined, lo: number, hi: number): number | n
   return k >= lo && k <= hi ? k : null;
 }
 
-export const fits = (ps: Vec3[]) =>
-  ps.every((p) => Math.max(Math.abs(p.x), Math.abs(p.y), Math.abs(p.z)) <= R + 1e-9);
+export const fits = (ps: Vec3[]) => ps.every((p) => inBall(p, R));
 
 function* bad(s: S, settings: Rs3Settings, say: string): Generator<RStep, S, void> {
   yield { state: s, marks: [], say, lines: [], vars: vars(s, settings), level: 1 };
@@ -178,7 +178,7 @@ function* transform(
     yield {
       state: s,
       marks: [mark('sh', 'error')],
-      say: `${intro} That would move the shape off the drawing (beyond ±${R}), so it is not applied. Press Reset to start again.`,
+      say: `${intro} That would move the shape off the drawing (farther than ${R} from the origin), so it is not applied. Press Reset to start again.`,
       lines: [`${line}.m`],
       vars: vars(s, settings),
       level: 1,

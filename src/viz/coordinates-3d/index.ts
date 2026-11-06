@@ -110,7 +110,7 @@ export const coordinates3d: VizDef<Coord3State, Coord3Settings, Coord3Extra> = {
     ],
     random: {
       label: 'Random point',
-      make: (rng) => [['toLocal', rng.int(-4, 4), rng.int(-4, 4), rng.int(-4, 4)]],
+      make: (rng) => [['toLocal', rng.int(-3, 3), rng.int(-3, 3), rng.int(-3, 3)]],
     },
     // The size picked next to a preset is an angle in degrees.
     presets: [
@@ -119,7 +119,7 @@ export const coordinates3d: VizDef<Coord3State, Coord3Settings, Coord3Extra> = {
         make: (rng, deg) => [
           ['origin', rng.int(-2, 2), rng.int(-2, 2), rng.int(0, 2)],
           ['turn', deg, 0],
-          ['toLocal', rng.int(-4, 4), rng.int(-4, 4), rng.int(-4, 4)],
+          ['toLocal', rng.int(-3, 3), rng.int(-3, 3), rng.int(-3, 3)],
         ],
       },
       {
@@ -134,7 +134,7 @@ export const coordinates3d: VizDef<Coord3State, Coord3Settings, Coord3Extra> = {
         make: (rng) => [
           ['origin', 0, 0, 0],
           ['axes', 1, 0, 0, 1, 1, 0, 0, 0, 1],
-          ['toLocal', rng.int(-4, 4), rng.int(-4, 4), rng.int(-4, 4)],
+          ['toLocal', rng.int(-3, 3), rng.int(-3, 3), rng.int(-3, 3)],
         ],
       },
       {
@@ -142,7 +142,7 @@ export const coordinates3d: VizDef<Coord3State, Coord3Settings, Coord3Extra> = {
         make: (rng) => [
           ['turn', 0, 0],
           ['origin', rng.int(-3, 3), rng.int(-3, 3), rng.int(-3, 3)],
-          ['toLocal', rng.int(-4, 4), rng.int(-4, 4), rng.int(-4, 4)],
+          ['toLocal', rng.int(-3, 3), rng.int(-3, 3), rng.int(-3, 3)],
         ],
       },
     ],

@@ -20,14 +20,18 @@ export function view(step: Step<RsState, Rs3Extra>, settings: Rs3Settings): Scen
   const { state: s, extra = {} } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const iso = settings.projection !== 'oblique';
+  // The scene is at least 480 wide, so two 3×3 matrices fit side by side; centre the drawing.
+  const probe = makeSpace({ kind: settings.projection, reach: R + 0.3, unit: iso ? 34 : 38 });
+  const width = Math.max(probe.plane.rect.w + 40, 480);
   const space = makeSpace({
     kind: settings.projection,
-    reach: R,
-    unit: iso ? 25 : 32,
-    x: 20,
+    reach: R + 0.3,
+    unit: iso ? 34 : 38,
+    x: (width - probe.plane.rect.w) / 2,
     y: 0,
   });
   const pl = space.plane;
+  const x0 = 16;
   const shapes: Shape[] = [];
   drawAxes3(shapes, space, { id: 'ax', reach: 3.4, floor: 3 });
   const def = SHAPES[settings.shape] ?? SHAPES.cube;
@@ -98,7 +102,7 @@ export function view(step: Step<RsState, Rs3Extra>, settings: Rs3Settings): Scen
   const below = pl.rect.y + pl.rect.h;
   if (extra.compare) {
     shapes.push(
-      text('xy', { x: pl.rect.x, y: below + 4 }, 'dashed blue: about x, then about y', {
+      text('xy', { x: x0, y: below + 4 }, 'dashed blue: about x, then about y', {
         size: 12,
         bold: true,
         role: roles.get('xy') ?? 'active',
@@ -106,7 +110,7 @@ export function view(step: Step<RsState, Rs3Extra>, settings: Rs3Settings): Scen
     );
     if (extra.compare.yx.length)
       shapes.push(
-        text('yx', { x: pl.rect.x, y: below + 22 }, 'dashed red: about y, then about x', {
+        text('yx', { x: x0, y: below + 22 }, 'dashed red: about y, then about x', {
           size: 12,
           bold: true,
           role: roles.get('yx') ?? 'error',
@@ -117,9 +121,9 @@ export function view(step: Step<RsState, Rs3Extra>, settings: Rs3Settings): Scen
   // Matrices under the drawing: the running total M, then the operation's matrix.
   const y0 = below + 38;
   const rowH = 3 * 22 + 4;
-  const width = pl.rect.x + pl.rect.w + 20;
   const transpose = settings.convention === 'row';
-  let x = pl.rect.x;
+  let x = x0;
+  let used = 1;
   let y = y0;
   let right = width;
   const place = (id: string, name: string, m: Mat3, mRole?: MarkRole, nameRole?: MarkRole) => {
@@ -131,8 +135,9 @@ export function view(step: Step<RsState, Rs3Extra>, settings: Rs3Settings): Scen
         .map((j) => Math.max(24, ...rows.map((r) => textW(r[j]!, 14))) + 14)
         .reduce((p, q) => p + q, 0) +
       10;
-    if (x > pl.rect.x && x + est > width - 4) {
-      x = pl.rect.x;
+    if (x > x0 && x + est > width - 4) {
+      x = x0;
+      used++;
       y += rowH + 16;
     }
     shapes.push(
@@ -148,12 +153,12 @@ export function view(step: Step<RsState, Rs3Extra>, settings: Rs3Settings): Scen
   };
   place('mt', 'M', s.m);
   if (extra.op) place('op', extra.op.name, extra.op.m, 'active', 'active');
-  // Room for two rows of matrices, so the framing stays still from step to step.
-  const yb = y0 + 2 * rowH + 16 + 24;
+  // Room for the rows this setting usually needs, so the framing stays still.
+  const yb = y0 + Math.max(used, 1) * (rowH + 16) + 8;
   shapes.push(
     text(
       'conv',
-      { x: pl.rect.x, y: yb },
+      { x: x0, y: yb },
       `${transpose ? "row vectors: p' = p M" : "column vectors: p' = M p"} · ${iso ? 'isometric' : 'oblique'} view`,
       { size: 13 },
     ),

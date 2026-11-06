@@ -13,7 +13,7 @@ import {
 } from '../../layouts/space';
 import type { Scene, Shape } from '../../render/scene';
 import {
-  R,
+  VIEW,
   describe,
   frameMatrix,
   inverseMatrix,
@@ -26,16 +26,20 @@ export function view(step: Step<Coord3State, Coord3Extra>, settings: Coord3Setti
   const { state: s, extra = {} } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const iso = settings.projection !== 'oblique';
+  // The scene is at least 480 wide, so two 3×3 matrices fit side by side; centre the drawing.
+  const probe = makeSpace({ kind: settings.projection, reach: VIEW, unit: iso ? 32 : 37 });
+  const width = Math.max(probe.plane.rect.w + 40, 480);
   const space = makeSpace({
     kind: settings.projection,
-    reach: R,
-    unit: iso ? 25 : 32,
-    x: 20,
+    reach: VIEW,
+    unit: iso ? 32 : 37,
+    x: (width - probe.plane.rect.w) / 2,
     y: 0,
   });
   const pl = space.plane;
+  const x0 = 16;
   const shapes: Shape[] = [];
-  drawAxes3(shapes, space, { id: 'ax', reach: 3.4, floor: 3 });
+  drawAxes3(shapes, space, { id: 'ax', reach: 4, floor: 3 });
 
   // Frame B's unit box (o + any mix of u, v, w with weights 0 or 1), faint and dashed.
   const corner = (a: number, b: number, c: number): Vec3 =>
@@ -167,8 +171,8 @@ export function view(step: Step<Coord3State, Coord3Extra>, settings: Coord3Setti
   const below = pl.rect.y + pl.rect.h;
   const y0 = below + 16;
   const rowH = (homo ? 4 : 3) * 22 + 4;
-  const width = pl.rect.x + pl.rect.w + 20;
-  let x = pl.rect.x;
+  let x = x0;
+  let used = 1;
   let y = y0;
   let right = width;
   const place = (id: string, name: string, rows: string[][], role?: MarkRole) => {
@@ -179,8 +183,9 @@ export function view(step: Step<Coord3State, Coord3Extra>, settings: Coord3Setti
         .map((_, j) => Math.max(24, ...rows.map((r) => textW(r[j]!, 14))) + 14)
         .reduce((p, q) => p + q, 0) +
       10;
-    if (x > pl.rect.x && x + est > width - 4) {
-      x = pl.rect.x;
+    if (x > x0 && x + est > width - 4) {
+      x = x0;
+      used++;
       y += rowH + 16;
     }
     shapes.push(
@@ -202,16 +207,16 @@ export function view(step: Step<Coord3State, Coord3Extra>, settings: Coord3Setti
   place('m', homo ? 'T' : 'M', frameMatrix(s, settings));
   if (extra.inverse)
     place('mi', homo ? 'T⁻¹' : 'M⁻¹', inverseMatrix(s, settings), roles.get('inv'));
-  // Room for two rows of matrices, so the framing stays still from step to step.
-  const yb = y0 + 2 * rowH + 16 + 24;
+  // Room for the rows this setting usually needs, so the framing stays still.
+  const yb = y0 + Math.max(used, homo ? 2 : 1) * (rowH + 16) + 8;
   const [line1, line2] =
     s.p && s.local
       ? [`p = ${fmtVec3(s.p)} in the world`, `   = ${fmtVec3(s.local)} in B`]
       : s.local
         ? [`(a, b, c) = ${fmtVec3(s.local)} in B`, '']
         : ['world axes: solid', 'frame B: u, v, w and its unit box, dashed'];
-  shapes.push(text('readout', { x: pl.rect.x, y: yb }, line1, { size: 14, bold: !!s.p }));
-  shapes.push(text('readout2', { x: pl.rect.x, y: yb + 19 }, line2, { size: 14, bold: !!s.p }));
+  shapes.push(text('readout', { x: x0, y: yb }, line1, { size: 14, bold: !!s.p }));
+  shapes.push(text('readout2', { x: x0, y: yb + 19 }, line2, { size: 14, bold: !!s.p }));
 
   return {
     shapes,

@@ -10,7 +10,7 @@
  * rest are faint. When the run is done, arcs between components are dashed. A plain state (no
  * run, as in practice pictures) draws just the graph.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import { groupRole, type MarkRole, type Step } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -40,8 +40,8 @@ import {
 } from './model';
 
 /** Component colors, in order; they repeat after five. */
-export const PALETTE: MarkRole[] = ['found', 'visit', 'compare', 'done', 'remove'];
-export const compRole = (k: number): MarkRole => PALETTE[k % PALETTE.length]!;
+/** Component k (from 0) gets its own group color; the number tells them apart past eight. */
+export const compRole = (k: number): MarkRole => groupRole(k + 1);
 
 function look(r: SccRun, v: string): VertexLook | undefined {
   if (v === r.u) return 'current';

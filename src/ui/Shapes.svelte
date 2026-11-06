@@ -5,6 +5,7 @@
 </script>
 
 <script lang="ts">
+  import { GROUP_ROLES } from '../engine/types';
   import type { Shape } from '../render/scene';
 
   /** Draws scene shapes inside an <svg>. Used by the stage and by static pictures. */
@@ -14,7 +15,10 @@
 
   const roleClass = (role?: string) => (role ? `role-${role}` : '');
   // Arrow roles with their own colored head; any other role draws the base head.
-  const HEAD_ROLES = ['active', 'error', 'found', 'new', 'done', 'compare', 'visit', 'remove'];
+  const HEAD_ROLES = [
+    ...['active', 'error', 'found', 'new', 'done', 'compare', 'visit', 'remove'],
+    ...GROUP_ROLES,
+  ];
   const markerFor = (role?: string) =>
     `url(#arrow-${uid}-${role && HEAD_ROLES.includes(role) ? role : 'base'})`;
 </script>
@@ -253,5 +257,102 @@
   .arrow.role-remove {
     stroke: var(--c-remove);
     stroke-width: 3;
+  }
+  /* Group colors tell groups apart; text keeps its own color for contrast. */
+  .rect.role-g1,
+  .circle.role-g1 {
+    stroke: var(--c-g1);
+    stroke-width: 3;
+  }
+  .arrow.role-g1 {
+    stroke: var(--c-g1);
+    stroke-width: 3;
+  }
+  .arrowhead.role-g1 {
+    fill: var(--c-g1);
+  }
+  .rect.role-g2,
+  .circle.role-g2 {
+    stroke: var(--c-g2);
+    stroke-width: 3;
+  }
+  .arrow.role-g2 {
+    stroke: var(--c-g2);
+    stroke-width: 3;
+  }
+  .arrowhead.role-g2 {
+    fill: var(--c-g2);
+  }
+  .rect.role-g3,
+  .circle.role-g3 {
+    stroke: var(--c-g3);
+    stroke-width: 3;
+  }
+  .arrow.role-g3 {
+    stroke: var(--c-g3);
+    stroke-width: 3;
+  }
+  .arrowhead.role-g3 {
+    fill: var(--c-g3);
+  }
+  .rect.role-g4,
+  .circle.role-g4 {
+    stroke: var(--c-g4);
+    stroke-width: 3;
+  }
+  .arrow.role-g4 {
+    stroke: var(--c-g4);
+    stroke-width: 3;
+  }
+  .arrowhead.role-g4 {
+    fill: var(--c-g4);
+  }
+  .rect.role-g5,
+  .circle.role-g5 {
+    stroke: var(--c-g5);
+    stroke-width: 3;
+  }
+  .arrow.role-g5 {
+    stroke: var(--c-g5);
+    stroke-width: 3;
+  }
+  .arrowhead.role-g5 {
+    fill: var(--c-g5);
+  }
+  .rect.role-g6,
+  .circle.role-g6 {
+    stroke: var(--c-g6);
+    stroke-width: 3;
+  }
+  .arrow.role-g6 {
+    stroke: var(--c-g6);
+    stroke-width: 3;
+  }
+  .arrowhead.role-g6 {
+    fill: var(--c-g6);
+  }
+  .rect.role-g7,
+  .circle.role-g7 {
+    stroke: var(--c-g7);
+    stroke-width: 3;
+  }
+  .arrow.role-g7 {
+    stroke: var(--c-g7);
+    stroke-width: 3;
+  }
+  .arrowhead.role-g7 {
+    fill: var(--c-g7);
+  }
+  .rect.role-g8,
+  .circle.role-g8 {
+    stroke: var(--c-g8);
+    stroke-width: 3;
+  }
+  .arrow.role-g8 {
+    stroke: var(--c-g8);
+    stroke-width: 3;
+  }
+  .arrowhead.role-g8 {
+    fill: var(--c-g8);
   }
 </style>

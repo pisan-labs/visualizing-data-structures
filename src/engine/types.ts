@@ -7,7 +7,24 @@ export type Scalar = string | number | boolean | null;
 
 /** How a step wants an element drawn. Views map these to colors and styles. */
 export type MarkRole =
-  'active' | 'compare' | 'visit' | 'new' | 'remove' | 'found' | 'error' | 'done' | 'stale';
+  | 'active'
+  | 'compare'
+  | 'visit'
+  | 'new'
+  | 'remove'
+  | 'found'
+  | 'error'
+  | 'done'
+  | 'stale'
+  | GroupRole;
+
+/** Categorical colors for telling groups apart (components, SCCs, sets); not states. */
+export type GroupRole = 'g1' | 'g2' | 'g3' | 'g4' | 'g5' | 'g6' | 'g7' | 'g8';
+
+export const GROUP_ROLES: GroupRole[] = ['g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8'];
+
+/** The group color for group k (1-based), cycling after eight; pair it with a number. */
+export const groupRole = (k: number): GroupRole => GROUP_ROLES[(((k - 1) % 8) + 8) % 8]!;
 
 export interface Mark {
   id: string;

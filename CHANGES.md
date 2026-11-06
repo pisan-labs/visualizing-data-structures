@@ -161,3 +161,5 @@
 2026-11-06 [code] Merged wave 4I: 2D rotation and translation (homogeneous or 2x2 plus offset), 3D rotation and scale (isometric or oblique), 3D change of coordinates; src/layouts/space.ts; all 108 catalog pages are on main
 
 2026-11-06 [code] Arrow lines take their role colour (found, new, done thicker, compare, visit, remove) with matching heads; the preset select cannot widen past the screen; sizes: [] hides the preset size select. The {A} leftover check stays strict: it also catches a missing $ such as {CAPACITY}
+
+2026-11-06 [code] Eight group roles g1 to g8 (GroupRole, groupRole(k)) with their own colours in the light, dark and contrast themes; connected components, SCC and 2-SAT use them instead of cycling five state colours

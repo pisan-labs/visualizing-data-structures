@@ -4,7 +4,7 @@
  * (BFS) or the open VISIT calls (DFS), and a table of cc per vertex. Union-find shows the
  * parent p and rank of every vertex instead of a queue, and colors the sets as they merge.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import { groupRole, type MarkRole, type Step } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -30,10 +30,8 @@ import {
   type CcState,
 } from './model';
 
-/** Component colors, in turn. The badge carries the number as well. */
-export const PALETTE: MarkRole[] = ['visit', 'found', 'compare', 'new', 'remove'];
-
-export const colorOf = (k: number): MarkRole => PALETTE[(k - 1) % PALETTE.length]!;
+/** Component k (from 1) gets its own group color; the badge carries the number as well. */
+export const colorOf = (k: number): MarkRole => groupRole(k);
 
 /** Union-find: the sets of more than one vertex, numbered by their smallest vertex. */
 function setNumbers(g: Graph, r: CcRun): Map<string, number> {

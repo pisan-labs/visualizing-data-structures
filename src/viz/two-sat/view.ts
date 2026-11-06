@@ -7,7 +7,7 @@
  * built. Each component gets a color from a small palette and its number shows in the
  * components row, so color is never the only cue. A contradiction (x and ¬x together) is red.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import { groupRole, type MarkRole, type Step } from '../../engine/types';
 import {
   VERTEX_R,
   below,
@@ -38,8 +38,8 @@ import {
   type SatState,
 } from './model';
 
-export const PALETTE: MarkRole[] = ['found', 'visit', 'compare', 'done', 'remove'];
-export const compRole = (k: number): MarkRole => PALETTE[k % PALETTE.length]!;
+/** Component k (from 0) gets its own group color; the number tells them apart past eight. */
+export const compRole = (k: number): MarkRole => groupRole(k + 1);
 
 function graphOf(s: SatState, arcs: [number, number][]): GraphLike {
   return {

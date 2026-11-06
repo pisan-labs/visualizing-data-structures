@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "vertex-cover",
+  "id": "matching-doubles",
+  "title": "The matching takes every vertex",
+  "notes": "Four edges taken in order share no vertex, so the matching method ends with all 8 vertices. A minimum cover has 4 (A, C, E, G): ratio 2, the worst the guarantee allows.",
+  "settings": {
+    "method": "matching",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-D, B-C, B-E, C-F, D-E, D-G, E-H, F-G, G-H"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

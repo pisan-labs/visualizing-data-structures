@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "vertex-cover",
+  "id": "greedy-trap",
+  "title": "Greedy takes the wrong side",
+  "notes": "The six vertices I to N cover every edge. But A has 6 edges, more than any of them, so greedy takes A, then B, and so on: 8 vertices. Bigger graphs of this shape push greedy toward ln n times the optimum.",
+  "settings": {
+    "method": "greedy",
+    "layout": "layered"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "A-I, A-J, A-K, A-L, A-M, A-N, B-I, B-J, B-K, B-L, B-M, C-I, C-J, C-K, C-L, D-I, D-J, D-K, E-L, E-M, E-N, F-I, F-J, G-K, G-L, H-M, H-N"
+    ],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "vertex-cover",
+  "id": "complete",
+  "title": "A complete graph needs all but one",
+  "notes": "In a complete graph every pair is an edge, so a cover may leave out only one vertex. Brute force has to get through all the smaller sets first.",
+  "settings": {
+    "method": "brute",
+    "layout": "circle"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, A-D, A-E, A-F, B-C, B-D, B-E, B-F, C-D, C-E, C-F, D-E, D-F, E-F"],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

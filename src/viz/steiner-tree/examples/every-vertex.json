@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "steiner-tree",
+  "id": "every-vertex",
+  "title": "Every vertex a terminal",
+  "notes": "With no other vertices to choose, there is one set S, the empty one, and the answer is a minimum spanning tree.",
+  "settings": {
+    "method": "exact",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B:3, A-C:1, B-C:2, B-D:4, C-D:5, C-E:2, D-E:3"],
+    ["terminals", "A B C D E"],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

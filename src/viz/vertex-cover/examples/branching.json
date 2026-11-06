@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "vertex-cover",
+  "id": "branching",
+  "title": "Branching on an uncovered edge",
+  "notes": "Every cover has A or B, because of the edge A-B. Branching tries both, then branches again on the next uncovered edge, and stops a branch once it cannot beat the best cover so far.",
+  "settings": {
+    "method": "branch",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-D, B-C, B-E, C-F, D-E, D-G, E-H, F-G, G-H"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

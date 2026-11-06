@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "steiner-tree",
+  "id": "shared-paths",
+  "title": "Paths that share edges",
+  "notes": "The paths for two closure edges run along the same edges, so putting them back costs less than the closure tree says. Here the approximation finds a minimum tree, weight 11.",
+  "settings": {
+    "method": "approx",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B:4, A-C:6, A-D:6, A-E:1, A-F:3, B-C:8, B-G:1, C-D:9, D-F:3, D-G:1, D-H:7, F-H:2"],
+    ["terminals", "B C E"],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

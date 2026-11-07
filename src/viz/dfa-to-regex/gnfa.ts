@@ -218,8 +218,7 @@ export function paths(g: Gnfa, q: string): Through {
 }
 
 /** The states that can still be ripped: every state but the new start and accept. */
-export const inner = (g: Gnfa): string[] =>
-  g.states.filter((q) => q !== g.start && q !== g.accept);
+export const inner = (g: Gnfa): string[] => g.states.filter((q) => q !== g.start && q !== g.accept);
 
 /** How many labels ripping q rewrites: arrows in times arrows out. */
 export function weight(g: Gnfa, q: string): number {

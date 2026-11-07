@@ -15,12 +15,21 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { makeRng } from '../../engine/rng';
 import {
+  ROW_GAP,
   drawAutomaton,
+  fixedLayout,
   layers,
-  layoutFromLayers,
+  type Pt,
   type StateLayout,
 } from '../../layouts/automaton';
-import { below, beside, padBounds, textWidth, unionBounds } from '../../layouts/graph';
+import {
+  below,
+  beside,
+  clearOfButtons,
+  padBounds,
+  textWidth,
+  unionBounds,
+} from '../../layouts/graph';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import type { Automaton } from '../_automata/automaton';
 import { automatonKey } from '../_automata/page';
@@ -78,16 +87,38 @@ export function allRuns(dfa: Automaton, settings: DrSettings): DrRun[] {
   if (!hit) {
     hit = [];
     const gen = ops.convert.run({ dfa }, [], { settings, rng: makeRng(0) });
-    for (let r = gen.next(); !r.done; r = gen.next()) if (r.value.extra?.run) hit.push(r.value.extra.run);
+    for (let r = gen.next(); !r.done; r = gen.next())
+      if (r.value.extra?.run) hit.push(r.value.extra.run);
     if (runCache.size > 100) runCache.clear();
     runCache.set(key, hit);
   }
   return hit;
 }
 
+/** Layers sit further apart than the shared LAYER_GAP: an arrow has to hold a label of
+ * LABEL_MAX characters. */
+const ALONG = 150;
+const layoutCache = new Map<string, StateLayout>();
+
+/** s, then the DFA's breadth-first layers, then f, each layer centered on the widest. */
 function gnfaLayout(dfa: Automaton, across: boolean): StateLayout {
+  const key = `${across}|${automatonKey(dfa)}`;
+  const hit = layoutCache.get(key);
+  if (hit) return hit;
   const { s, f } = endNames(dfa);
-  return layoutFromLayers([[s], ...layers(dfa), [f]], across);
+  const ls = [[s], ...layers(dfa), [f]];
+  const widest = Math.max(...ls.map((l) => l.length));
+  const pos: Record<string, Pt> = {};
+  ls.forEach((layer, i) =>
+    layer.forEach((q, j) => {
+      const off = (j - (layer.length - 1) / 2 + (widest - 1) / 2) * ROW_GAP;
+      pos[q] = across ? { x: i * ALONG, y: off } : { x: off, y: i * ALONG };
+    }),
+  );
+  const out = fixedLayout(pos, across);
+  if (layoutCache.size > 100) layoutCache.clear();
+  layoutCache.set(key, out);
+  return out;
 }
 
 const asAutomaton = (g: Gnfa): Automaton => ({
@@ -231,10 +262,21 @@ function arrange(dfa: Automaton, settings: DrSettings, stage?: StageSize): Frame
       continue;
     }
     for (const under of [false, true]) {
-      const tx = under ? diagram.x : beside(diagram, 30);
-      const ty = under ? below(diagram, 22) : diagram.y;
-      const table: Bounds = { x: tx, y: ty, w: tableW(cols), h: height };
-      candidates.push({ across, tx, ty, cols, bounds: unionBounds(diagram, table) });
+      let table: Bounds = {
+        x: under ? diagram.x : beside(diagram, 30),
+        y: under ? below(diagram, 22) : diagram.y,
+        w: tableW(cols),
+        h: height,
+      };
+      // Beside, the table's top right corner can reach under the stage's zoom buttons.
+      if (stage) table = clearOfButtons(table, diagram, stage);
+      candidates.push({
+        across,
+        tx: table.x,
+        ty: table.y,
+        cols,
+        bounds: unionBounds(diagram, table),
+      });
     }
   }
   const best = pickBest(candidates, stage);
@@ -243,7 +285,11 @@ function arrange(dfa: Automaton, settings: DrSettings, stage?: StageSize): Frame
   return best;
 }
 
-export function view(step: Step<DfaState, DrExtra>, settings: DrSettings, stage?: StageSize): Scene {
+export function view(
+  step: Step<DfaState, DrExtra>,
+  settings: DrSettings,
+  stage?: StageSize,
+): Scene {
   const dfa = step.state.dfa;
   const r = step.extra?.run;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));

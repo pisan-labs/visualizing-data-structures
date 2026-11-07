@@ -69,7 +69,8 @@ export const MAX_DFA_STATES = 6;
 export const MAX_TEXT = 300;
 
 /** Even b's after the first a: a dead-free DFA whose answer shows a star inside a star. */
-export const START_TEXT = 'start q0; accept q1; q0 b -> q0; q0 a -> q1; q1 a -> q1; q1 b -> q2; q2 b -> q1; q2 a -> q2';
+export const START_TEXT =
+  'start q0; accept q1; q0 b -> q0; q0 a -> q1; q1 a -> q1; q1 b -> q2; q2 b -> q1; q2 a -> q2';
 
 export type Phase = 'gnfa' | 'merged' | 'pick' | 'parts' | 'pair' | 'ripped' | 'done';
 
@@ -235,9 +236,7 @@ function pickSay(g: Gnfa, q: string, order: Order, first: boolean): string {
     ? `Its loop is ${t.loop.text}, so R2 = ${t.loop.text}.`
     : 'It has no loop, so R2 = ∅.';
   if (!w) {
-    const none = !t.ins.length
-      ? `No arrow enters ${q}`
-      : `No arrow leaves ${q} for another state`;
+    const none = !t.ins.length ? `No arrow enters ${q}` : `No arrow leaves ${q} for another state`;
     return `${why} ${none}, so no path runs through it: ripping it just deletes it and its arrows.`;
   }
   return `${why} ${loop} Arrows come in from ${words(t.ins)} and go out to ${words(t.outs)}: ${plural(w, 'label')} to rewrite.`;
@@ -385,7 +384,7 @@ const convert: Op = {
           ...arrowMarks(g2, q, q, 'compare'),
           ...arrowMarks(g2, q, x, 'compare'),
         ];
-        yield step(partsSay(u, q), ['pair', 'parts'], 3, [
+        yield step(partsSay(u, q), ['pair', 'parts', 'parts2'], 3, [
           ...partMarks(r.g),
           ...arrowMarks(r.g, p, x, 'active'),
         ]);
@@ -458,7 +457,12 @@ export function pseudocode(settings: DrSettings): PseudoBlock[] {
   const pick =
     settings.order === 'name'
       ? L('pick', 2, 'q = first state ≠ s, f', 'take the next state in name order;')
-      : L('pick', 2, 'q = state with fewest in × out', 'take the one with the fewest paths through it;');
+      : L(
+          'pick',
+          2,
+          'q = state with fewest in × out',
+          'take the one with the fewest paths through it;',
+        );
   return [
     {
       op: 'convert',
@@ -470,10 +474,23 @@ export function pseudocode(settings: DrSettings): PseudoBlock[] {
         L('while', 1, 'while states ≠ s, f remain', 'While a state besides s and f is left:'),
         pick,
         L('pair', 2, 'for each p → q, q → r', 'for each arrow in and arrow out,'),
-        L('parts', 3, 'R1 = p→q, R2 = q→q, R3 = q→r, R4 = p→r', 'read the four labels (∅ for none);'),
+        L('parts', 3, 'R1 = p→q; R2 = q→q', 'read the label in, the loop,'),
+        L(
+          'parts2',
+          3,
+          'R3 = q→r; R4 = p→r',
+          'the label out and the one that skips q (∅ for none);',
+        ),
         L('rule', 3, 'p → r = R1(R2)*R3 ∪ R4', 'the new label skips q.'),
         ...(settings.simplify === 'identities'
-          ? [L('simplify', 3, 'simplify with ∅, ε identities', 'Drop ∅ and ε where they change nothing.')]
+          ? [
+              L(
+                'simplify',
+                3,
+                'simplify with ∅, ε identities',
+                'Drop ∅ and ε where they change nothing.',
+              ),
+            ]
           : []),
         L('remove', 2, 'remove q', 'Then remove q.'),
         L('return', 1, 'return label(s → f)', 'The label from s to f is the answer.'),

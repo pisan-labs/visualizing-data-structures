@@ -56,8 +56,7 @@ export function dfaToRegexPractice(def: () => Def): PracticeKind[] {
           const at = done[rng.int(0, done.length - 1)]!;
           const [p, q] = at.pair!;
           const before = first.g;
-          const R = (x: string, y: string): Regex =>
-            label(before, x, y)?.r ?? { kind: 'empty' };
+          const R = (x: string, y: string): Regex => label(before, x, y)?.r ?? { kind: 'empty' };
           const R1 = R(p, rip);
           const R2 = R(rip, rip);
           const R3 = R(rip, q);

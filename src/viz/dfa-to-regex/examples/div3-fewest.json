@@ -3,7 +3,7 @@
   "viz": "dfa-to-regex",
   "id": "div3-fewest",
   "title": "Divisible by 3 in binary: fewest paths first",
-  "notes": "q2 has one arrow in and one out, so it goes first, and its loop becomes the 1* in 01*0. Then q1, then q0, leaving the textbook answer (0∪1(01*0)*1)*.",
+  "notes": "q2 has one arrow in and one out, so it goes first, and its loop becomes the 1* in 01*0. Then q1, then q0, leaving (1(01*0)*1∪0)*: read 0, or a 1, any number of 01*0 detours, and another 1, as often as you like.",
   "settings": {
     "order": "fewest",
     "simplify": "identities"
@@ -14,9 +14,7 @@
       "load",
       "start q0; accept q0; q0 0 -> q0; q0 1 -> q1; q1 0 -> q2; q1 1 -> q0; q2 0 -> q1; q2 1 -> q2"
     ],
-    [
-      "convert"
-    ]
+    ["convert"]
   ],
   "at": {
     "op": 0,

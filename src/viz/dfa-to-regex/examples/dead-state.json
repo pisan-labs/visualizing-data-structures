@@ -14,9 +14,7 @@
       "load",
       "start q0; accept q2; q0 a -> q1; q0 b -> q3; q1 a -> q3; q1 b -> q2; q2 a,b -> q2; q3 a,b -> q3"
     ],
-    [
-      "convert"
-    ]
+    ["convert"]
   ],
   "at": {
     "op": 0,

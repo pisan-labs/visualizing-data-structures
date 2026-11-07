@@ -120,6 +120,12 @@ describe.each(vizzes.map((v) => [v.id, v] as const))('%s', (_id, def) => {
       checkTimeline(def, new Timeline(def, ex.settings, ex.seed, ex.ops), STAGES);
     }
     expect(ids.size).toBe(def.examples.length);
+    if (def.opening) {
+      // The page runs the opening example's operations with the reader's settings, not its own.
+      expect([...ids], 'opening names a curated example').toContain(def.opening);
+      const ex = def.examples.find((e) => e.id === def.opening)!;
+      checkTimeline(def, new Timeline(def, def.defaults, ex.seed, ex.ops), STAGES);
+    }
   });
 
   it('links from the concept page only to examples that exist', () => {

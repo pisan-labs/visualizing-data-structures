@@ -209,3 +209,7 @@
 2026-11-07 [code] Merged product-construction (wave 5C): union, intersection, difference, symmetric difference and complement of two DFAs, drawn as a grid of pairs; input A | B
 
 2026-11-07 [note] Deployed at 18:45 on Yusuf's "deploy": main fast-forwarded 92b03fe..acb0ea6 after CI run 75 passed; live bundle matched the local build and all 120 pages return 200
+
+2026-11-07 [decision] Chomsky hierarchy opens on the whole map (all 11 languages placed); default taken at 19:03 with no answer, undo by saying "empty map back"
+
+2026-11-07 [code] VizDef.opening: an example a page runs on arrival when the link has none (src/ui/VizPage.svelte); the conformance check replays it with default settings

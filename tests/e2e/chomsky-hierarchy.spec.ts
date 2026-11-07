@@ -30,6 +30,17 @@ test.beforeEach(async ({ page }) => {
   ).toBeVisible();
 });
 
+test('the page opens on the whole map, with every step in the history', async ({ page }) => {
+  for (const token of ['aⁿbⁿ', 'ww', 'HALT'])
+    await expect(svgText(page, new RegExp(`^${token}$`))).toHaveCount(1);
+  const counter = page.locator('.narration .muted');
+  await expect(counter).toHaveText(/^Step (\d+) of \1$/);
+  await page.getByRole('slider').press('Home');
+  await expect(counter).toHaveText(/^Step 1 of \d+$/);
+  await settled(page);
+  await expect(svgText(page, /^aⁿbⁿ$/)).toHaveCount(0);
+});
+
 test('the map shows each level with its machine and grammar form', async ({ page }) => {
   for (const title of ['All languages', 'Recursively enumerable', 'Decidable', 'Regular'])
     await expect(svgText(page, new RegExp(`^${title}$`))).toHaveCount(1);

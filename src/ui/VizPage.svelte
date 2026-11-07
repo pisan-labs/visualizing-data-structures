@@ -57,6 +57,9 @@
           'error',
         );
       }
+    } else if (def.opening) {
+      const ex = def.examples.find((e) => e.id === def.opening);
+      if (ex) session.fill(ex.ops);
     }
     ready = true;
     if (autoplay) session.play();

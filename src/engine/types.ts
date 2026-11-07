@@ -266,6 +266,12 @@ export interface VizDef<S, Set extends Settings, X = unknown> {
   practice?: PracticeKind[];
   /** The animated thumbnail next to the page's title in the catalog. */
   preview?: PreviewSpec;
+  /**
+   * Id of a curated example whose operations the page runs on arrival, when the link carries no
+   * example, so a page whose empty start says little opens on a full picture. It opens at the last
+   * step with every step in the history, and keeps the reader's settings.
+   */
+  opening?: string;
 }
 
 // Erased form used by generic UI code.

@@ -132,6 +132,9 @@ everything on every push; Netlify builds and deploys `main` (`netlify.toml`).
 - Catalog thumbnails: `preview` in the `VizDef` names a curated example (and a step level, and
   shape ids to hide); `src/render/preview.ts` strips it to bare shapes and `scripts/prerender.mjs`
   writes `dist/previews.json`.
+- Opening view: a page whose empty start says little can set `opening` in the `VizDef` to a
+  curated example id; with no example in the link, the page runs its operations with the
+  reader's settings and opens on the last step (the Chomsky hierarchy opens on the whole map).
 - The app loads each visualization on demand (`src/viz/registry.ts`); tests and prerender use
   `src/viz/all.ts`.
 - No analytics or tracking. No external fonts or CDNs.

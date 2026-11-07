@@ -209,6 +209,7 @@ export const chomskyHierarchy: VizDef<ChState, ChSettings, ChExtra> = {
   ],
   practice: chomskyPractice(() => chomskyHierarchy),
   preview: { example: 'whole-map', level: 2 },
+  opening: 'whole-map',
   code: {
     python: pythonSource,
     java: javaSource,

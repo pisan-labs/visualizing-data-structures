@@ -144,6 +144,7 @@ export const fibonacciCalls: VizDef<FibState, FibSettings, undefined> = {
     memoFive,
     memoEight,
   ] as unknown as SavedExample[],
+  preview: { example: 'fifteen-calls', level: 2 },
 };
 
 /**

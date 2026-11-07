@@ -199,6 +199,7 @@ export const bipartiteMatching: VizDef<BmState, BmSettings, BmExtra> = {
     twoColours,
   ] as unknown as SavedExample[],
   practice: matchingPractice(() => bipartiteMatching),
+  preview: { example: 'rematch', level: 2 },
 };
 
 const lines = (s: BmState) => {

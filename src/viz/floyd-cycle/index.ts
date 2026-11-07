@@ -126,6 +126,7 @@ export const floydCycle: VizDef<FState, FSettings, FExtra> = {
   practice: floydPractice(() => floydCycle),
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [rho, noCycle, fullCycle, selfLoop, tiny, longTail] as unknown as SavedExample[],
+  preview: { example: 'rho', level: 2 },
 };
 
 /**

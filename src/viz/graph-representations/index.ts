@@ -195,6 +195,7 @@ export const graphRepresentations: VizDef<RepState, RepSettings, RepExtra> = {
     removeVertex,
   ] as unknown as SavedExample[],
   practice: repPractice(() => graphRepresentations),
+  preview: { example: 'dense', level: 3 },
 };
 
 const graphLines = (g: Graph) => [

@@ -183,6 +183,7 @@ export const backtracking: VizDef<BtState, BtSettings, undefined> = {
     targetSum,
     outOfReach,
   ] as unknown as SavedExample[],
+  preview: { example: 'subsets-three', level: 2 },
 };
 
 /**

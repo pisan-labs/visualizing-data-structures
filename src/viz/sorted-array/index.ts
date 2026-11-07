@@ -186,6 +186,7 @@ export const sortedArray: VizDef<SortedState, SortedSettings, SortedExtra> = {
     deleteExample,
     reverseFull,
   ] as unknown as SavedExample[],
+  preview: { example: 'binary-search', level: 2 },
 };
 
 function result(op: string, last: Step<SortedState, SortedExtra>): string {

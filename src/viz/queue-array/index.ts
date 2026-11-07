@@ -181,6 +181,7 @@ export const queueArray: VizDef<QueueState, QueueSettings, QueueExtra> = {
     fullCount,
     underflow,
   ] as unknown as SavedExample[],
+  preview: { example: 'wraparound', level: 2 },
 };
 
 /**

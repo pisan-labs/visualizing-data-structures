@@ -145,6 +145,7 @@ export const dfs: VizDef<DfsState, DfsSettings, DfsExtra> = {
     middleStart,
   ] as unknown as SavedExample[],
   practice: dfsPractice(() => dfs),
+  preview: { example: 'every-kind', level: 2, hide: ['vn-', 'cs-', 'tbl-'] },
 };
 
 const graphLines = (g: Graph) => [

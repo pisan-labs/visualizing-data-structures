@@ -139,6 +139,7 @@ export const linearSearch: VizDef<ArrayState, LinearSettings, ArrayExtra> = {
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [found, notFound, firstSlot, duplicates, sentinel] as unknown as SavedExample[],
   practice: linearPractice(() => linearSearch),
+  preview: { example: 'found', level: 3 },
 };
 
 export default linearSearch;

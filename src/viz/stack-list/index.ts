@@ -115,6 +115,7 @@ export const stackList: VizDef<StackListState, StackListSettings, StackListExtra
   practice: stackListPractice(() => stackList),
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [lifo, firstPush, underflow, noOverflow, reverseWord] as unknown as SavedExample[],
+  preview: { example: 'reverse-word', level: 2 },
 };
 
 /**

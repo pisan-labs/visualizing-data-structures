@@ -185,6 +185,7 @@ export const dequeArray: VizDef<DequeState, DequeSettings, DequeExtra> = {
     fullCount,
     underflow,
   ] as unknown as SavedExample[],
+  preview: { example: 'both-ends', level: 2 },
 };
 
 /**

@@ -117,6 +117,7 @@ export const selectionSort: VizDef<ArrayState, SelectionSettings, ArrayExtra> = 
     notStable,
   ] as unknown as SavedExample[],
   practice: selectionPractice(() => selectionSort),
+  preview: { example: 'smallest-first', level: 2 },
 };
 
 export default selectionSort;

@@ -105,7 +105,11 @@ everything on every push; Netlify builds and deploys `main` (`netlify.toml`).
     - Compute every answer by running the model; never write one by hand.
     - Answers are a choice, a number, or a sequence.
     - Add `watch` operations so "Show me" can play the answer.
-13. **Tests.**
+13. **Thumbnail.** `preview: { example, level?, hide? }` picks the curated example the catalog
+    plays on hover, stripped of text. Pick one that shows the idea and ends full, not empty; use a
+    finer `level` when it has fewer than about 12 steps; `hide` side panels (tables, queues, call
+    stacks) by shape id prefix so the main picture fills the 72x44 box. Look at it on the catalog.
+14. **Tests.**
     - `src/viz/conformance.test.ts` checks every page automatically: narration (no `{token}`
       or `undefined` leftovers), line ids, plain pseudocode, marks, unique shape ids, Big-O
       rows, presets, examples, links, and no placeholder text.
@@ -121,6 +125,9 @@ everything on every push; Netlify builds and deploys `main` (`netlify.toml`).
 - Every visualization has its own page, `/<viz-id>/`, written by `scripts/prerender.mjs` after
   `vite build` (title, description, preview tags, canonical URL). The hash holds only state:
   `#ex=<code>&embed=1&lesson=<section>`. Old `/#/<viz-id>?...` links redirect.
+- Catalog thumbnails: `preview` in the `VizDef` names a curated example (and a step level, and
+  shape ids to hide); `src/render/preview.ts` strips it to bare shapes and `scripts/prerender.mjs`
+  writes `dist/previews.json`.
 - The app loads each visualization on demand (`src/viz/registry.ts`); tests and prerender use
   `src/viz/all.ts`.
 - No analytics or tracking. No external fonts or CDNs.

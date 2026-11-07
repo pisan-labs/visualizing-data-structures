@@ -186,6 +186,7 @@ export const binomialQueue: VizDef<BinState, BinSettings, BinExtra> = {
     decreaseBubble,
     pointersView,
   ] as unknown as SavedExample[],
+  preview: { example: 'insert-carries', level: 2 },
 };
 
 /**

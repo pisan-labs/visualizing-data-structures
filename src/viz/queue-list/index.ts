@@ -122,6 +122,7 @@ export const queueList: VizDef<QueueListState, QueueListSettings, QueueListExtra
   practice: queueListPractice(() => queueList),
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [fifo, firstEnqueue, lastDequeue, underflow, longLine] as unknown as SavedExample[],
+  preview: { example: 'long-line' },
 };
 
 /**

@@ -154,6 +154,7 @@ export const topoDfs: VizDef<TopoState, TopoSettings, TopoExtra> = {
     dense,
   ] as unknown as SavedExample[],
   practice: topoPractice(() => topoDfs),
+  preview: { example: 'getting-dressed', level: 2, hide: ['vn-', 'L-', 'tbl-'] },
 };
 
 const graphLines = (g: Graph) => [

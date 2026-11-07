@@ -119,6 +119,7 @@ export const insertionSort: VizDef<ArrayState, InsertionSettings, ArrayExtra> = 
     duplicates,
   ] as unknown as SavedExample[],
   practice: insertionPractice(() => insertionSort),
+  preview: { example: 'shift-right', level: 2 },
 };
 
 export default insertionSort;

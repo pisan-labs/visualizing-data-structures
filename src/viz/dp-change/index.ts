@@ -166,6 +166,7 @@ export const dpChange: VizDef<ChangeState, ChangeSettings, ChangeExtra> = {
     mostWork,
   ] as unknown as SavedExample[],
   practice: changePractice(() => dpChange),
+  preview: { example: 'most-work' },
 };
 
 /**

@@ -142,6 +142,7 @@ export const dpFibonacci: VizDef<FibState, FibSettings, FibExtra> = {
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [bottomUp, memoOrder, memoHits, baseCases, largest] as unknown as SavedExample[],
   practice: fibPractice(() => dpFibonacci),
+  preview: { example: 'bottom-up' },
 };
 
 /**

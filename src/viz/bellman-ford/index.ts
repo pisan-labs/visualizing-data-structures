@@ -174,6 +174,7 @@ export const bellmanFord: VizDef<BfState, BfSettings, BfExtra> = {
     undirectedNegative,
   ] as unknown as SavedExample[],
   practice: bellmanFordPractice(() => bellmanFord),
+  preview: { example: 'passes', level: 2, hide: ['vn-', 'ord-', 'ps-', 'tbl-'] },
 };
 
 const graphLines = (g: Graph) => [

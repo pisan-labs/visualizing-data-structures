@@ -209,6 +209,7 @@ export const dynamicArray: VizDef<DynState, DynSettings, DynExtra> = {
     thrash,
     badIndex,
   ] as unknown as SavedExample[],
+  preview: { example: 'doubling', level: 2 },
 };
 
 function result(last: Step<DynState, DynExtra>): string {

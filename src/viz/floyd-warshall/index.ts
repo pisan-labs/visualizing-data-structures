@@ -162,6 +162,7 @@ export const floydWarshall: VizDef<FwState, FwSettings, FwExtra> = {
     nextHop,
   ] as unknown as SavedExample[],
   practice: floydPractice(() => floydWarshall),
+  preview: { example: 'every-round', level: 2, hide: ['P:'] },
 };
 
 const graphLines = (g: Graph) => [

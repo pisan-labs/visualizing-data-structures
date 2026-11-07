@@ -163,6 +163,7 @@ export const bipartite: VizDef<BipState, BipSettings, BipExtra> = {
     dfsCheck,
   ] as unknown as SavedExample[],
   practice: bipartitePractice(() => bipartite),
+  preview: { example: 'even-cycle', level: 2, hide: ['vn-', 'q-', 'tbl-'] },
 };
 
 const graphLines = (g: Graph) => [

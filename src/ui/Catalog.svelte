@@ -1,11 +1,26 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { SITE_NAME, TAGLINE } from '../site';
+  import type { PreviewPoster } from '../render/preview';
   import { families, isLive, pathways, type Pathway } from '../viz/catalog';
+  import PreviewThumb from './PreviewThumb.svelte';
+
+  // Thumbnails are made at build time (scripts/prerender.mjs; the dev server makes them on
+  // request). Without them the catalog is a plain list, so a failed fetch is ignored.
+  let posters = $state.raw<Record<string, PreviewPoster>>({});
+  let playing = $state<string | null>(null);
 
   onMount(() => {
     document.title = `${SITE_NAME}: ${TAGLINE}`;
+    fetch('/previews.json')
+      .then((r) => (r.ok ? r.json() : {}))
+      .then((p: Record<string, PreviewPoster>) => (posters = p))
+      .catch(() => {});
   });
+
+  const stop = (id: string) => {
+    if (playing === id) playing = null;
+  };
 
   const total = families.reduce((n, f) => n + f.items.length, 0);
   const live = families.reduce((n, f) => n + f.items.filter((i) => isLive(i.id)).length, 0);
@@ -81,7 +96,21 @@
             {@const live = isLive(item.id)}
             <li class:live>
               {#if live}
-                <a href="/{item.id}/">{item.title}</a>
+                {@const poster = posters[item.id]}
+                <a
+                  href="/{item.id}/"
+                  onpointerenter={() => (playing = item.id)}
+                  onpointerleave={() => stop(item.id)}
+                  onfocus={() => (playing = item.id)}
+                  onblur={() => stop(item.id)}
+                >
+                  {#if poster}<PreviewThumb
+                      id={item.id}
+                      {poster}
+                      playing={playing === item.id}
+                    />{/if}
+                  <span>{item.title}</span>
+                </a>
               {:else}
                 <span class="planned">{item.title}</span>
                 <span class="tag">{item.advanced ? 'advanced, planned' : 'planned'}</span>
@@ -204,6 +233,9 @@
   }
 
   li.live a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-weight: 700;
   }
 

@@ -133,6 +133,7 @@ export const mergeSort: VizDef<ArrayState, MergeSettings, ArrayExtra> = {
     duplicates,
   ] as unknown as SavedExample[],
   practice: mergePractice(() => mergeSort),
+  preview: { example: 'top-down', level: 2 },
 };
 
 export default mergeSort;

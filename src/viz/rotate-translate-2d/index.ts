@@ -232,6 +232,7 @@ export const rotateTranslate2d: VizDef<RtState, RtSettings, RtExtra> = {
     matrixPlusOffset,
     rowVectors,
   ] as unknown as SavedExample[],
+  preview: { example: 'undo-it-all', level: 3, hide: ['op-', 'mt-'] },
 };
 
 /**

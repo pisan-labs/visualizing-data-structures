@@ -142,6 +142,7 @@ export const dequeList: VizDef<DequeListState, DequeListSettings, DequeListExtra
   practice: dequeListPractice(() => dequeList),
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [bothEnds, firstAdd, lastRemove, removeLast, underflow] as unknown as SavedExample[],
+  preview: { example: 'both-ends', level: 2 },
 };
 
 /**

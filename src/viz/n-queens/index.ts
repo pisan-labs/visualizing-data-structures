@@ -135,6 +135,7 @@ export const nQueens: VizDef<QueenState, QueenSettings, QueenExtra> = {
     sixAll,
     eightAll,
   ] as unknown as SavedExample[],
+  preview: { example: 'four-first', level: 2 },
 };
 
 /**

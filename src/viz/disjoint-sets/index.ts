@@ -226,6 +226,7 @@ export const disjointSets: VizDef<DSState, DSSettings, DSExtra> = {
     sameSet,
   ] as unknown as SavedExample[],
   practice: dsPractice(() => disjointSets),
+  preview: { example: 'compression', level: 2 },
 };
 
 /**

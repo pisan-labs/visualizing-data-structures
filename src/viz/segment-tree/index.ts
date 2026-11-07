@@ -148,6 +148,7 @@ export const segmentTree: VizDef<SegState, SegSettings, SegExtra> = {
     rangeMinimum,
     unevenTree,
   ] as unknown as SavedExample[],
+  preview: { example: 'three-cases', level: 2 },
 };
 
 /**

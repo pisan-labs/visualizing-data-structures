@@ -130,6 +130,7 @@ export const bubbleSort: VizDef<ArrayState, BubbleSettings, ArrayExtra> = {
     duplicates,
   ] as unknown as SavedExample[],
   practice: bubblePractice(() => bubbleSort),
+  preview: { example: 'reverse', level: 2 },
 };
 
 export default bubbleSort;

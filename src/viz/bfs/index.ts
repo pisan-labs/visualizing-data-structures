@@ -151,6 +151,7 @@ export const bfs: VizDef<BfsState, BfsSettings, BfsExtra> = {
     dense,
   ] as unknown as SavedExample[],
   practice: bfsPractice(() => bfs),
+  preview: { example: 'layers', level: 2, hide: ['vn-', 'q-', 'tbl-'] },
 };
 
 const graphLines = (g: Graph) => [

@@ -191,6 +191,7 @@ export const bitmask: VizDef<BitState, BitSettings, BitExtra> = {
     submasks,
     emptySet,
   ] as unknown as SavedExample[],
+  preview: { example: 'set-clear-toggle', level: 2 },
 };
 
 /**

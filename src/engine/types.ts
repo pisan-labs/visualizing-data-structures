@@ -223,6 +223,16 @@ export interface StageSize {
   h: number;
 }
 
+/** The catalog thumbnail: one curated example played as bare shapes (no text). */
+export interface PreviewSpec {
+  /** Id of the curated example to play; default the first. */
+  example?: string;
+  /** Finest step level to include; default 1 (milestones only). */
+  level?: Level;
+  /** Shape id prefixes to leave out, besides the input and output boxes every preview drops. */
+  hide?: string[];
+}
+
 export interface VizDef<S, Set extends Settings, X = unknown> {
   id: string;
   title: string;
@@ -254,6 +264,8 @@ export interface VizDef<S, Set extends Settings, X = unknown> {
   code?: CodeTabs;
   /** Generators for seeded practice sets (the Practice tab). */
   practice?: PracticeKind[];
+  /** The animated thumbnail next to the page's title in the catalog. */
+  preview?: PreviewSpec;
 }
 
 // Erased form used by generic UI code.

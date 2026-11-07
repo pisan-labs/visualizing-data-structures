@@ -167,6 +167,7 @@ export const dagShortestPaths: VizDef<DagState, DagSettings, DagExtra> = {
     undirected,
   ] as unknown as SavedExample[],
   practice: dagPractice(() => dagShortestPaths),
+  preview: { example: 'sort-then-relax', level: 2, hide: ['vn-', 'L-', 'tbl-'] },
 };
 
 const graphLines = (g: Graph) => [

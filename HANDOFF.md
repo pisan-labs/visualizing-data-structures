@@ -95,8 +95,10 @@ auto mode refused it as persistence. Lint and tests were run by hand before ever
   cannot be restored, rotating secrets, rewriting shared history, publishing outside the
   session.
 - Concept pages are written in Yusuf's voice: invoke `anthropic-skills:write-like-pisan` first.
+- Agent worktrees start from `main` (the default branch), not `next`: tell every agent to run
+  `git reset --hard next` first (seen 7 November).
 - Agents: about four at a time, each in its own worktree with its own `E2E_PORT` (ports up to
-  4227 have been used; start new ones at 4228), told not to edit shared files, to name e2e specs after their pages, to use
+  4241 have been used; start new ones at 4242), told not to edit shared files, to name e2e specs after their pages, to use
   `showMe()` from `tests/e2e/helpers.ts` for "Show me" checks, to commit WIP before a limit stop, to add practice
   sets, to keep rows able to wrap for CI's wider font, to poll (`expect.poll`) when measuring
   the drawing, and not to push. The lead checks the branch for files outside the agent's

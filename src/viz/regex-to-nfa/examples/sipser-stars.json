@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "regex-to-nfa",
+  "id": "sipser-stars",
+  "title": "Stars inside stars, Sipser's way",
+  "notes": "Under Sipser's construction a star keeps the accept states of its body, adds one more, and sends an ε-arrow back from each of them. Nested stars keep all of them, so the arrows pile up: here 7 states carry 12 arrows. Thompson's construction adds exactly 2 states and 4 arrows per star, whatever is inside.",
+  "settings": {
+    "construction": "sipser",
+    "union": "|"
+  },
+  "seed": 1,
+  "ops": [
+    ["build", "((a*)*b)*"],
+    ["run", "abb"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

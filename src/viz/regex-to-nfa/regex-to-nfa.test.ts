@@ -5,12 +5,22 @@ import type { StageSize } from '../../engine/types';
 import { STATE_R, stateId } from '../../layouts/automaton';
 import type { CircleShape, Shape } from '../../render/scene';
 import { accepts, closure } from '../_automata/automaton';
-import { matches, parseRegex, showRegex, type Regex } from '../_automata/regex';
+import {
+  matches,
+  parseRegex,
+  readRegex,
+  regexSize as size,
+  showRegex,
+  showRegex as show,
+  type Regex,
+  type UnionSign,
+} from '../_automata/regex';
 import regexToNfa, { parseInput } from '.';
 import { construct, pending, type Construction } from './construct';
 import { pictures } from './layout';
 import { drawn, readWord, type RxSettings } from './model';
-import { parse, show, size, type UnionSign } from './syntax';
+
+const parse = (text: string, union: UnionSign) => readRegex(text, { union });
 
 const LAPTOP: StageSize = { w: 880, h: 384 };
 const PHONE: StageSize = { w: 360, h: 536 };
@@ -39,16 +49,24 @@ function regexArb(sign: UnionSign): fc.Arbitrary<Regex> {
 const wordArb = fc.array(fc.constantFrom('a', 'b'), { maxLength: 7 }).map((w) => w.join(''));
 
 describe('reading expressions', () => {
-  it('agrees with the kit when | is union', () => {
+  it('reads the same tree as parseRegex, with | as union by default', () => {
     fc.assert(
       fc.property(fc.stringMatching(/^[ab|*+?()ε∅]{0,12}$/), (text) => {
-        const mine = parse(text, '|');
+        const tree = parse(text, '|');
         const kit = parseRegex(text);
-        expect(mine instanceof Error, text).toBe(kit instanceof Error);
-        if (!(mine instanceof Error) && !(kit instanceof Error)) expect(mine.tree.r).toEqual(kit);
+        expect(tree instanceof Error, text).toBe(kit instanceof Error);
+        if (!(tree instanceof Error) && !(kit instanceof Error)) expect(tree.tree.r).toEqual(kit);
       }),
       { numRuns: 2000 },
     );
+  });
+
+  it('reads eps as ε only as a word of its own', () => {
+    expect(show(parseRegex('steps') as Regex)).toBe('steps');
+    expect(size(parseRegex('steps') as Regex)).toBe(5);
+    expect(show(parseRegex('(eps|a)b') as Regex)).toBe('(ε|a)b');
+    expect((parse('a eps', '|') as Exclude<ReturnType<typeof parse>, Error>).text).toBe('aε');
+    expect((parse('aeps', '|') as Exclude<ReturnType<typeof parse>, Error>).text).toBe('aeps');
   });
 
   it('reads + as union when asked, and keeps * and ?', () => {
@@ -130,14 +148,13 @@ describe.each(['thompson', 'sipser'] as Construction[])('%s construction', (how)
     );
   });
 
-  it('makes at most 2 states per symbol or operator (Thompson: 4 for ?)', () => {
+  it('makes at most 2 states per symbol or operator (Thompson: exactly 2)', () => {
     fc.assert(
       fc.property(regexArb('|'), (r) => {
         const p = parse(show(r), '|') as Exclude<ReturnType<typeof parse>, Error>;
         const { nfa } = construct(p, how);
-        const opts = (show(r).match(/\?/g) ?? []).length;
         const m = size(r);
-        if (how === 'thompson') expect(nfa.states.length).toBe(2 * m + 2 * opts);
+        if (how === 'thompson') expect(nfa.states.length).toBe(2 * m);
         else expect(nfa.states.length).toBeLessThanOrEqual(2 * m);
       }),
     );

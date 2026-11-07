@@ -56,11 +56,15 @@ class ThompsonNfa {
   size_t pos_ = 0;
   Piece whole_{0, 0};
 
-  // One token per character (ε and ∅ take several bytes); "eps" becomes ε, spaces go.
+  // One token per character (ε and ∅ take several bytes); "eps" on its own (not inside a
+  // word such as "steps") becomes ε, and spaces go.
   static std::vector<std::string> tokenize(const std::string& text) {
+    auto alnum = [&](size_t j) {
+      return j < text.size() && std::isalnum(static_cast<unsigned char>(text[j]));
+    };
     std::vector<std::string> out;
     for (size_t i = 0; i < text.size();) {
-      if (text.compare(i, 3, "eps") == 0) {
+      if (text.compare(i, 3, "eps") == 0 && (i == 0 || !alnum(i - 1)) && !alnum(i + 3)) {
         out.push_back(EPS);
         i += 3;
         continue;
@@ -141,16 +145,11 @@ class ThompsonNfa {
     Piece p = atom();
     while (peek() == "*" || peek() == "+" || peek() == "?") {
       std::string op = tokens_[pos_++];
-      if (op == "?") {  // R? is R|ε
-        Piece e = piece(EPS);
-        p = either(p, e);
-        continue;
-      }
       Piece loop{newState(), newState()};
       add(loop.start, EPS, p.start);
-      add(p.accept, EPS, p.start);  // repeat
+      if (op != "?") add(p.accept, EPS, p.start);  // repeat
       add(p.accept, EPS, loop.accept);
-      if (op == "*") add(loop.start, EPS, loop.accept);  // skip
+      if (op != "+") add(loop.start, EPS, loop.accept);  // skip
       p = loop;
     }
     return p;

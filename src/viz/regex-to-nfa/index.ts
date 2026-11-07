@@ -28,7 +28,7 @@ import {
   type RxSettings,
   type RxState,
 } from './model';
-import { parse, show, type UnionSign } from './syntax';
+import { readRegex, showRegex, type UnionSign } from '../_automata/regex';
 import { rxPractice } from './practice';
 import { view } from './view';
 
@@ -150,7 +150,7 @@ export const regexToNfa: VizDef<RxState, RxSettings, RxExtra> = {
         why: 'Every part costs the same constant amount, however deeply it is nested.',
         example: 'linear-size',
       },
-      note: 'm is the number of symbols and operators. The NFA has exactly 2m states (2 more for each ?, built as R|ε), and at most 2 arrows leave any state.',
+      note: 'm is the number of symbols and operators. The NFA has exactly 2m states, and at most 2 arrows leave any state.',
     },
     {
       op: "build(R), Sipser's construction",
@@ -224,8 +224,8 @@ function codeScript(calls: OpCall[], settings: RxSettings) {
   for (const [op, arg] of calls) {
     const text = String(arg ?? '');
     if (op === 'build') {
-      const p = parse(text, settings.union);
-      sent.push(['build', p instanceof Error ? ')' : show(p.tree.r, '|')]);
+      const p = readRegex(text, { union: settings.union });
+      sent.push(['build', p instanceof Error ? ')' : showRegex(p.tree.r, '|')]);
     } else {
       const w = readWord(text);
       sent.push(['run', w instanceof Error ? '-' : w || 'ε']);

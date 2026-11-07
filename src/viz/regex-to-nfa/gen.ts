@@ -1,7 +1,6 @@
 /** Random expressions and words, for the presets and the practice questions. */
 import type { Rng } from '../../engine/rng';
-import type { Regex } from '../_automata/regex';
-import { show, type UnionSign } from './syntax';
+import { showRegex, type Regex, type UnionSign } from '../_automata/regex';
 
 const pick = <T>(rng: Rng, xs: readonly T[]): T => xs[rng.int(0, xs.length - 1)]!;
 
@@ -31,7 +30,7 @@ export function randomRegex(rng: Rng, n: number, alphabet = ['a', 'b'], plus = f
 /** A random expression's text, written with the union sign, kept to `max` characters. */
 export function randomText(rng: Rng, n: number, sign: UnionSign, max = 24): string {
   for (let tries = 0; ; tries++) {
-    const text = show(randomRegex(rng, n, ['a', 'b'], sign === '|'), sign);
+    const text = showRegex(randomRegex(rng, n, ['a', 'b'], sign === '|'), sign);
     if (text.length <= max || tries > 20)
       return text.length <= max ? text : 'a(a|b)*b'.replace('|', sign);
   }

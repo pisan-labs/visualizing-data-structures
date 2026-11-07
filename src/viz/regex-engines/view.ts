@@ -69,7 +69,11 @@ const SLOT = 22;
 const BAR_W = 8;
 const AXIS_W = 46;
 const KEY_H = 26;
-const chartBox = (limit: number) => ({ w: AXIS_W + limit * SLOT + 40, h: KEY_H + PLOT_H + 40 });
+/** Wide enough for the bars (and the word "cap" after them) and for the key over them. */
+const chartBox = (limit: number) => ({
+  w: AXIS_W + Math.max(limit * SLOT + 40, 300),
+  h: KEY_H + PLOT_H + 40,
+});
 
 type Part = { w: number; h: number };
 type Side = 'right' | 'below';
@@ -448,7 +452,7 @@ function drawChart(
     });
   };
   key('ch-key-bt', x0, 'g2', 'backtracking');
-  key('ch-key-nfa', x0 + 120, 'g1', 'NFA simulation');
+  key('ch-key-nfa', x0 + 150, 'g1', 'NFA simulation');
   // Powers of ten, the cap at the top.
   for (let k = 0; k <= DECADES; k++) {
     const y = y0 - k * DECADE_H;
@@ -514,7 +518,7 @@ function drawChart(
     id: 'ch-axis-t',
     x: x0,
     y: y0 + 34,
-    text: `steps (log scale) for ${g.unit} repeated n times`,
+    text: `steps (log scale) for ${g.unit.length > 1 ? `(${g.unit})` : g.unit}ⁿ`,
     size: 12,
     cls: 'label',
   });

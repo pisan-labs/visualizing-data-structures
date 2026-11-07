@@ -60,15 +60,14 @@ export function enginesPractice(def: () => Def): PracticeKind[] {
           const k = rng.int(1, w.length);
           const prefix = w.slice(0, k);
           const set = end([['match', `${r} ; ${prefix}`]], settings).sim!.set;
-          if (set.length > 6) continue;
+          // A set the learner can type, and one that is still alive (an empty one is too easy).
+          if (!set.length || set.length > 6) continue;
           return {
             prompt: `This is the NFA for ${code(r)}. The NFA simulation reads ${code(w)}. Which states are live after it reads the first ${k === 1 ? 'symbol' : `${k} symbols`}, ${code(prefix)}? Type them in name order, or leave it blank if none are.`,
             setup: [['load', `${r} ; ${w}`]],
             settings,
             answer: { kind: 'sequence', value: set },
-            explain: set.length
-              ? `Move every live state along its ${prefix.at(-1)}-arrows, then follow ε-arrows from the states reached: ${set.join(', ')}.`
-              : `No live state has an arrow for ${code(prefix.at(-1)!)} at that point, so the set is empty: every path has died.`,
+            explain: `Move every live state along its ${prefix.at(-1)}-arrows at once, then follow ε-arrows from the states reached: ${set.join(', ')}.`,
             watch: [['match', w]],
           };
         }
@@ -111,7 +110,7 @@ export function enginesPractice(def: () => Def): PracticeKind[] {
             setup: [['load', `${r} ; ${w}`]],
             settings,
             answer: { kind: 'sequence', value: visits },
-            explain: `It follows one path: ${visits.join(', ')}. At ${visits.at(-1)} no arrow leads on, so it backs up to the latest choice on its stack.`,
+            explain: `It follows one path: ${visits.join(', ')}. At ${visits.at(-1)} it cannot go on (no arrow matches what is left of the word), so it backs up to the latest choice on its stack.`,
             watch: [['match', w]],
           };
         }
@@ -161,8 +160,10 @@ export function enginesPractice(def: () => Def): PracticeKind[] {
           const bt = s.bt!.steps;
           const nfa = s.sim!.steps;
           const correct = bt === nfa ? 2 : bt < nfa ? 0 : 1;
-          // Keep the clear cases: the same count, or one at least half again the other.
+          // Keep the clear cases: one count at least half again the other, or the same count on a
+          // word that fails (then the backtracker has visited every live state exactly once).
           if (bt !== nfa && Math.max(bt, nfa) < 1.5 * Math.min(bt, nfa)) continue;
+          if (bt === nfa && s.bt!.result === 'accept') continue;
           return {
             prompt: `Both engines match ${code(w)} against ${code(r)}. Which one takes fewer steps?`,
             setup: [['load', `${r} ; ${w}`]],
@@ -172,7 +173,7 @@ export function enginesPractice(def: () => Def): PracticeKind[] {
                 ? 'Few paths are tried here, one state at a time, while the simulation carries every live state along at each position.'
                 : correct === 1
                   ? 'The backtracker tries many paths that reach the same states at the same positions; the simulation visits each state once per position.'
-                  : 'Each symbol can be read only one way, so the backtracker never backs up far, and both visit the same states.'
+                  : 'Here no state is visited twice at the same position, so the backtracker does exactly the work of the simulation.'
             }`,
             watch: [['match', w]],
           };

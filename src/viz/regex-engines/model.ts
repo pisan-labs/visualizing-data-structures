@@ -356,10 +356,12 @@ function compareSay(s: S, bt: BtView, sim: SimView): string {
   if (bt.result === 'stopped')
     return `The backtracker gave up after ${fmt(bt.steps)} steps without an answer; the NFA simulation ${verdictWord(sim.result!)} ${w} in ${fmt(sim.steps)}. The simulation never needs more than ${s.nfa.states.length} steps per position: one for each state.`;
   const both = `Both ${bt.result === 'accept' ? 'accept' : 'reject'} ${w}: the backtracker in ${plural(bt.steps, 'step')}, the NFA simulation in ${plural(sim.steps, 'step')}.`;
-  if (bt.steps >= 2 * sim.steps)
-    return `${both} The backtracker did ${Math.round(bt.steps / sim.steps)} times the work: it visited some states at the same position again and again, once for each path that leads there.`;
-  if (sim.steps >= 2 * bt.steps)
-    return `${both} Here the backtracker did less work: its first path matched, while the simulation carried every live state along.`;
+  const ratio = bt.steps / sim.steps;
+  const times = (r: number) => (r < 10 ? r.toFixed(1) : fmt(Math.round(r)));
+  if (ratio >= 1.5)
+    return `${both} The backtracker did ${times(ratio)} times the work: it visited some states at the same position again and again, once for each path that leads there.`;
+  if (ratio <= 1 / 1.5)
+    return `${both} Here the backtracker did less work: ${bt.result === 'accept' ? 'one of its first paths matched' : 'few paths were open to it'}, while the simulation carried every live state along.`;
   return `${both} About the same work: this expression leaves few ways to try.`;
 }
 

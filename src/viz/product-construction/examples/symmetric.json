@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "product-construction",
+  "id": "symmetric",
+  "title": "Exactly one count is even: a symmetric difference",
+  "notes": "A accepts an even number of a's, B an even number of b's. The symmetric difference accepts a word when exactly one of the two counts is even: the pairs (p0, q1) and (p1, q0).",
+  "settings": {
+    "op": "symmetric"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start p0; accept p0; p0 a -> p1; p1 a -> p0; p0 b -> p0; p1 b -> p1 | start q0; accept q0; q0 a -> q0; q0 b -> q1; q1 a -> q1; q1 b -> q0"
+    ],
+    ["build"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

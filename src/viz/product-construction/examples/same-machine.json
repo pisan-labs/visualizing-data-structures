@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "product-construction",
+  "id": "same-machine",
+  "title": "A machine with itself: only the diagonal",
+  "notes": "A and B are the same machine with different state names. They always move the same way, so the product only reaches (p0, q0) and (p1, q1), 2 of the 4 pairs. The union of a language with itself is the language: the best case for the product's size.",
+  "settings": {
+    "op": "union"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start p0; accept p1; p0 a -> p0; p0 b -> p1; p1 a -> p0; p1 b -> p1 | start q0; accept q1; q0 a -> q0; q0 b -> q1; q1 a -> q0; q1 b -> q1"
+    ],
+    ["build"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

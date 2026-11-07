@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "product-construction",
+  "id": "run-all-three",
+  "title": "One word, three machines",
+  "notes": "Run abba on A, B and the product at once. After each symbol the product is in the pair of A's state and B's state. At the end A accepts (two a's) and B rejects (it ends in a), and for a union one is enough.",
+  "settings": {
+    "op": "union"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start p0; accept p0; p0 a -> p1; p1 a -> p0; p0 b -> p0; p1 b -> p1 | start q0; accept q1; q0 a -> q0; q0 b -> q1; q1 a -> q0; q1 b -> q1"
+    ],
+    ["build"],
+    ["run", "abba"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

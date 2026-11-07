@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "nfa-to-dfa",
+  "id": "ends-in-ab",
+  "title": "Ends in ab: no blow-up",
+  "notes": "The NFA guesses where the final ab starts. Its DFA needs only 3 states, as many as the NFA: the sets {q0}, {q0,q1} and {q0,q2} remember how much of ab was just read.",
+  "settings": {
+    "subsets": "reachable"
+  },
+  "seed": 1,
+  "ops": [["load", "start q0; accept q2; q0 a,b -> q0; q0 a -> q1; q1 b -> q2"], ["convert"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

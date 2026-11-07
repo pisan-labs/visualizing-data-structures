@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "nfa-to-dfa",
+  "id": "dead-state",
+  "title": "Starts with ab: the empty set is a dead state",
+  "notes": "The NFA has no move on b at the start, and none on a after the first a. In the DFA those moves go to ∅, a state that loops on every symbol and never accepts.",
+  "settings": {
+    "subsets": "reachable"
+  },
+  "seed": 1,
+  "ops": [["load", "start q0; accept q2; q0 a -> q1; q1 b -> q2; q2 a,b -> q2"], ["convert"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

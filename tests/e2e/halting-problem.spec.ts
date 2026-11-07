@@ -121,8 +121,9 @@ test('six programs and a 40-step run stay readable and fit', async ({ page }) =>
     await size.fill('6');
     await size.press('Enter');
   });
-  await expect(narration(page)).toContainText('The table is built: 36 runs');
   await fast(page);
+  await toEnd(page);
+  await expect(narration(page)).toContainText('The table is built: 36 runs');
   await run(page, '6 5');
   await toEnd(page);
   await expect(narration(page)).toContainText('M6 accepts ⟨M5⟩ after 40 steps.');
@@ -161,7 +162,7 @@ test('six programs and a 40-step run stay readable and fit', async ({ page }) =>
 test('"Show me" links load an example and play it', async ({ page }) => {
   await page.getByRole('tab', { name: 'Learn' }).click();
   await showMe(page, page.getByRole('link', { name: 'Show me' }).first());
-  await expect(narration(page)).toContainText('M3 loops on ⟨M3⟩');
+  await expect(stage(page)).toHaveAttribute('aria-label', /Panel: M3 on ⟨M3⟩/);
 });
 
 test('a practice question is graded and shown on the drawing', async ({ page }) => {

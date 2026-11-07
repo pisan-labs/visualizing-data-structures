@@ -240,7 +240,7 @@ export const haltingProblem: VizDef<HaltState, HaltSettings, HaltExtra> = {
   ] as unknown as SavedExample[],
   preview: {
     example: 'whole-argument',
-    level: 1,
+    level: 2,
     hide: ['panel-', 'legend-', 'ln-', 'tape', 'status', 'proof-'],
   },
   opening: 'the-table',

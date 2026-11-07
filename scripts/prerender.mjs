@@ -1,6 +1,7 @@
 // After `vite build`: write dist/<id>/index.html for every visualization, so each page has its
-// own title, description and link preview, plus a sitemap and robots.txt. The app itself is the
-// same on every page; it reads the page's path to decide what to show.
+// own title, description and link preview, plus a sitemap, robots.txt and the catalog thumbnails
+// (previews.json). The app itself is the same on every page; it reads the page's path to decide
+// what to show.
 import fs from 'node:fs';
 import path from 'node:path';
 import { createServer } from 'vite';
@@ -44,6 +45,11 @@ try {
     fs.writeFileSync(path.join(dist, def.id, 'index.html'), html);
   }
 
+  // Catalog thumbnails: the steps of one example per page, stripped to bare shapes.
+  const { makePreviews } = await server.ssrLoadModule('/src/render/preview.ts');
+  const previews = makePreviews(vizzes);
+  fs.writeFileSync(path.join(dist, 'previews.json'), JSON.stringify(previews));
+
   const urls = [`${SITE_URL}/`, ...vizzes.map((d) => `${SITE_URL}/${d.id}/`)];
   fs.writeFileSync(
     path.join(dist, 'sitemap.xml'),
@@ -55,7 +61,9 @@ try {
     path.join(dist, 'robots.txt'),
     `User-agent: *\nAllow: /\nSitemap: ${SITE_URL}/sitemap.xml\n`,
   );
-  console.log(`prerendered ${vizzes.length} visualization pages`);
+  console.log(
+    `prerendered ${vizzes.length} visualization pages, ${Object.keys(previews).length} previews`,
+  );
 } finally {
   await server.close();
 }

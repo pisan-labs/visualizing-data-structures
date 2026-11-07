@@ -189,6 +189,7 @@ export const treap: VizDef<TreapState, TreapSettings, TreapExtra> = {
     typedPriorities,
     maxHeap,
   ] as unknown as SavedExample[],
+  preview: { example: 'sorted-keys' },
 };
 
 /**

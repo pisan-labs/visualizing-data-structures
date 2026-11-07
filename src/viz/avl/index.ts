@@ -266,6 +266,7 @@ export const avl: VizDef<AVLState, AVLSettings, AVLExtra> = {
     deleteLevelChild,
     deletePredecessor,
   ] as unknown as SavedExample[],
+  preview: { example: 'sorted-input', hide: ['arg-box'] },
 };
 
 /**

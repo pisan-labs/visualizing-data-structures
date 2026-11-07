@@ -121,6 +121,9 @@ everything on every push; Netlify builds and deploys `main` (`netlify.toml`).
 - Every visualization has its own page, `/<viz-id>/`, written by `scripts/prerender.mjs` after
   `vite build` (title, description, preview tags, canonical URL). The hash holds only state:
   `#ex=<code>&embed=1&lesson=<section>`. Old `/#/<viz-id>?...` links redirect.
+- Catalog thumbnails: `preview` in the `VizDef` names a curated example (and a step level, and
+  shape ids to hide); `src/render/preview.ts` strips it to bare shapes and `scripts/prerender.mjs`
+  writes `dist/previews.json`. Pilot: the Trees family (`src/render/preview.test.ts`).
 - The app loads each visualization on demand (`src/viz/registry.ts`); tests and prerender use
   `src/viz/all.ts`.
 - No analytics or tracking. No external fonts or CDNs.

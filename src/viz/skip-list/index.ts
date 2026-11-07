@@ -160,6 +160,7 @@ export const skipList: VizDef<SLState, SkipSettings, SkipExtra> = {
     quarter,
     flatList,
   ] as unknown as SavedExample[],
+  preview: { example: 'build', level: 2, hide: ['arg-box', 'cell-arg'] },
 };
 
 /**

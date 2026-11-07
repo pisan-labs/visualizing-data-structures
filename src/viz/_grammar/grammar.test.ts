@@ -332,3 +332,21 @@ describe('brute force', () => {
     expect(Object.fromEntries(m)).toEqual({ S: 2, A: 1, B: 1, C: Infinity });
   });
 });
+
+describe('the recorded stages', () => {
+  it('each stage is the one before, less what it removed, plus what it added', () => {
+    const key = (r: Rule) => `${r.lhs}>${r.rhs.join(' ')}`;
+    const check = (g: Grammar) => {
+      const { stages } = toCnf(g);
+      let before = new Set(g.rules.map(key));
+      for (const st of stages) {
+        for (const r of st.removed) before.delete(key(r));
+        for (const r of st.added) before.add(key(r));
+        expect([...before].sort(), st.kind).toEqual(st.grammar.rules.map(key).sort());
+        before = new Set(st.grammar.rules.map(key));
+      }
+    };
+    for (const t of [ANBN, PARENS, AMBIGUOUS, PRECEDENCE, SIPSER]) check(G(t));
+    fc.assert(fc.property(grammarArb, check), { numRuns: 200 });
+  });
+});

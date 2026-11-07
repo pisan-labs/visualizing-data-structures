@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "cyk",
+  "id": "classic",
+  "title": "A grammar already in Chomsky normal form",
+  "notes": "Every rule is already A → BC or A → a, so the conversion only adds S₀ and gives it S's rules. Then baaba fills a 5-row triangle, and S₀ lands in the top cell.",
+  "settings": { "conversion": "stages" },
+  "seed": 1,
+  "ops": [
+    ["load", "S -> AB | BC; A -> BA | a; B -> CC | b; C -> AB | a"],
+    ["parse", "baaba"]
+  ],
+  "at": { "op": 1, "step": 0 }
+}

@@ -156,8 +156,11 @@ export function parseRules(text: string): { start: Sym; rules: Production[] } | 
   return { start: rules[0]!.lhs.find(isVariable)!, rules };
 }
 
-/** Build a grammar from its rules: the variables and terminals in order of appearance. */
-export function makeGrammar(start: Sym, rules: Rule[]): Grammar {
+/**
+ * Build a grammar from its rules: the variables and terminals in order of appearance. The rule
+ * list is copied, so a caller that goes on changing its own list leaves the grammar alone.
+ */
+export function makeGrammar(start: Sym, rules: readonly Rule[]): Grammar {
   const variables = [start];
   const terminals: Sym[] = [];
   const add = (s: Sym) => {
@@ -167,7 +170,7 @@ export function makeGrammar(start: Sym, rules: Rule[]): Grammar {
   };
   for (const r of rules) add(r.lhs);
   for (const r of rules) r.rhs.forEach(add);
-  return { start, variables, terminals, rules };
+  return { start, variables, terminals, rules: [...rules] };
 }
 
 /** A context-free grammar: one variable on the left of every rule. */

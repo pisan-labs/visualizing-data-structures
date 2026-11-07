@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "cyk",
+  "id": "ambiguous",
+  "title": "An ambiguous grammar costs CYK nothing extra",
+  "notes": "a+a*a has two parse trees in this grammar. In the top cell, E arrives from two different splits, \"a\" + \"+a*a\" and \"a+a\" + \"*a\", but a cell holds E only once.",
+  "settings": { "conversion": "result" },
+  "seed": 1,
+  "ops": [
+    ["load", "E -> E+E | E*E | (E) | a"],
+    ["parse", "a+a*a"]
+  ],
+  "at": { "op": 1, "step": 0 }
+}

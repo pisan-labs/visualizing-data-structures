@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "dfa-to-regex",
+  "id": "even-as",
+  "title": "An even number of a's: the start accepts",
+  "notes": "q0 is both the start and the accept state, so the empty word is in the language. Fewest paths first gives (ab*a∪b)*; name order gives a longer expression for the same words.",
+  "settings": {
+    "order": "fewest",
+    "simplify": "identities"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q0; q0 a -> q1; q0 b -> q0; q1 a -> q0; q1 b -> q1"
+    ],
+    [
+      "convert"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

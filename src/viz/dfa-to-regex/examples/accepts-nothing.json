@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "dfa-to-regex",
+  "id": "accepts-nothing",
+  "title": "No accept state: the answer is ∅",
+  "notes": "With no accept state, no arrow ever enters f. Every rip still happens, but the arrow from s to f never appears, so the answer is ∅, the expression for the empty language.",
+  "settings": {
+    "order": "name",
+    "simplify": "identities"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; q0 a -> q1; q1 a,b -> q0"
+    ],
+    [
+      "convert"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "dfa-to-regex",
+  "id": "contains-b",
+  "title": "Contains a b: two states, two rips",
+  "notes": "The smallest real case. Ripping q1 turns its loop into a*, and ripping q2 turns its loop into (a∪b)*, which leaves a*b(a∪b)*.",
+  "settings": {
+    "order": "name",
+    "simplify": "identities"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q1; accept q2; q1 a -> q1; q1 b -> q2; q2 a,b -> q2"
+    ],
+    [
+      "convert"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

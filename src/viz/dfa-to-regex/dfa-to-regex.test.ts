@@ -5,7 +5,7 @@ import { Timeline } from '../../engine/timeline';
 import { accepts, makeAutomaton, type Automaton } from '../_automata/automaton';
 import { formatAutomaton, parseAutomaton } from '../_automata/parse';
 import { randomDfa } from '../_automata/random';
-import { MAX_REGEX, matches, parseRegex, type Regex } from '../_automata/regex';
+import { MAX_REGEX, matches, parseRegex, thompson, type Regex } from '../_automata/regex';
 import { dfaToRegex } from '.';
 import {
   EMPTY,
@@ -21,7 +21,7 @@ import {
   type Order,
   type Simplify,
 } from './gnfa';
-import { MAX_TEXT, dry, type DrRun, type DrSettings } from './model';
+import { MAX_TEXT, dry, loadCheck, type DrRun, type DrSettings } from './model';
 import { allWords } from './practice';
 import { countA, endsWith, startsWith } from './presets';
 
@@ -32,9 +32,10 @@ const SETTINGS: DrSettings[] = (['name', 'fewest'] as Order[]).flatMap((order) =
 function convert(dfa: Automaton, settings: DrSettings) {
   const t = new Timeline(dfaToRegex, settings, 1, [['load', formatAutomaton(dfa)], ['convert']]);
   const loaded = t.endState().dfa;
+  const refused = t.entries[0]!.steps[0]!.say.startsWith('Nothing loaded');
   const steps = t.entries.at(-1)!.steps;
   const runs = steps.map((s) => s.extra?.run).filter((r): r is DrRun => !!r);
-  return { loaded, steps, runs };
+  return { loaded, steps, runs, refused };
 }
 
 /**
@@ -143,7 +144,13 @@ describe('dfa-to-regex', () => {
       fc.property(fc.oneof(dfaArb, oddArb), (dfa) => {
         const words = allWords(dfa.alphabet, 6);
         for (const settings of SETTINGS) {
-          const { runs, loaded } = convert(dfa, settings);
+          const { runs, loaded, refused } = convert(dfa, settings);
+          if (refused) {
+            // Load refused it: its labels grow too long in every setting.
+            expect(loadCheck(dfa)).toMatch(/grow to \d+ characters/);
+            for (const s of SETTINGS) expect(dry(dfa, s).maxText).toBeGreaterThan(MAX_TEXT);
+            return;
+          }
           expect(loaded).toEqual(dfa);
           if (!runs.length) {
             // Refused: the labels would grow past what the page can show.
@@ -172,11 +179,36 @@ describe('dfa-to-regex', () => {
     );
   });
 
+  it('converts correctly however long the labels get (the pure function, no display limit)', () => {
+    const big = fc
+      .record({ seed: fc.integer(), n: fc.integer({ min: 4, max: 6 }), partial: fc.boolean() })
+      .map(({ seed, n, partial }) => randomDfa(makeRng(seed), n, { alphabet: AB, partial }));
+    fc.assert(
+      fc.property(big, fc.constantFrom(...SETTINGS), (dfa, settings) => {
+        // Thompson's NFA runs in polynomial time, whatever the expression's shape.
+        const { nfa } = thompson(toRegex(dfa, settings).regex);
+        for (const w of allWords(AB, 5)) expect(accepts(nfa, w), w).toBe(accepts(dfa, w));
+      }),
+      { numRuns: 60 },
+    );
+  });
+
+  it('refuses at Load a DFA whose labels grow too long in every setting', () => {
+    const dfa = parseAutomaton(
+      'start q0; accept q0 q1 q4; q0 a -> q1; q0 b -> q2; q1 a -> q2; q1 b -> q4; q2 a -> q3; q2 b -> q0; q3 a -> q1; q3 b -> q4; q4 a -> q0; q4 b -> q3',
+    ) as Automaton;
+    const { refused, loaded } = convert(dfa, dfaToRegex.defaults);
+    expect(refused).toBe(true);
+    expect(loaded).toEqual(dfaToRegex.init(dfaToRegex.defaults).dfa);
+    expect(loadCheck(dfa)).toMatch(/even in the best order with simplification on/);
+  });
+
   it('keeps the GNFA’s language and shape on every step', () => {
     fc.assert(
       fc.property(fc.oneof(dfaArb, oddArb), fc.constantFrom(...SETTINGS), (dfa, settings) => {
-        const { steps } = convert(dfa, settings);
-        const words = allWords(dfa.alphabet, 4);
+        // A DFA the Load refuses leaves the starting one in place: check whichever is loaded.
+        const { steps, loaded } = convert(dfa, settings);
+        const words = allWords(loaded.alphabet, 4);
         const simplify = settings.simplify === 'identities';
         const ripped: string[] = [];
         for (const st of steps) {
@@ -186,7 +218,7 @@ describe('dfa-to-regex', () => {
           // s first, f last, the DFA's states in between in name order, minus those ripped.
           expect(g.states[0]).toBe(g.start);
           expect(g.states.at(-1)).toBe(g.accept);
-          expect(g.states.slice(1, -1)).toEqual(dfa.states.filter((q) => !r.ripped.includes(q)));
+          expect(g.states.slice(1, -1)).toEqual(loaded.states.filter((q) => !r.ripped.includes(q)));
           // Nothing enters s and nothing leaves f; one arrow per pair once merged.
           for (const a of g.arrows) {
             expect(a.to).not.toBe(g.start);
@@ -206,7 +238,7 @@ describe('dfa-to-regex', () => {
           // Every step accepts the DFA's words: a new label only adds paths that went through
           // the state being ripped.
           for (const w of words)
-            expect(gnfaAccepts(g, w), `"${w}" at ${r.phase}`).toBe(accepts(dfa, w));
+            expect(gnfaAccepts(g, w), `"${w}" at ${r.phase}`).toBe(accepts(loaded, w));
           expect(st.vars!.left).toBe(g.states.length - 2);
           expect(st.vars!.arrows).toBe(g.arrows.length);
           expect(st.vars!.size).toBe(g.arrows.reduce((n, a) => n + size(a.r), 0));
@@ -220,7 +252,7 @@ describe('dfa-to-regex', () => {
             expect(r.ripped).toEqual(ripped);
           }
         }
-        expect(ripped.length === dfa.states.length || steps.length === 1).toBe(true);
+        expect(ripped.length === loaded.states.length || steps.length === 1).toBe(true);
       }),
       { numRuns: 120 },
     );

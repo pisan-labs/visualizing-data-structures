@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "pda",
+  "id": "left-recursion",
+  "title": "Left recursion: ε-moves that push forever",
+  "notes": "Built from S → Sa | b. S → Sa leaves S on top, so the ε-moves can push forever. On baa the search still finds the accepting computation, because breadth first never goes too deep down one branch. On ab there is none, the search never runs out of new configurations, and the cap of 200 stops it without an answer.",
+  "settings": {
+    "accept": "state",
+    "search": "all"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q2; q0 eps, eps -> q1 S$; q1 eps, S -> q1 Sa; q1 eps, S -> q1 b; q1 a, a -> q1 eps; q1 b, b -> q1 eps; q1 eps, $ -> q2 eps"
+    ],
+    ["run", "baa"],
+    ["run", "ab"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

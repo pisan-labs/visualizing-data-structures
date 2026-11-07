@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "pda",
+  "id": "one-computation",
+  "title": "The accepting computation only",
+  "notes": "The same palindrome machine with the search hidden: the run says how many configurations the search explored, then shows only the computation that accepts, one move at a time. Switch Options to every branch to see the guesses that failed.",
+  "settings": {
+    "accept": "state",
+    "search": "path"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q0 q3; q0 eps, eps -> q1 $; q1 a, eps -> q1 a; q1 b, eps -> q1 b; q1 eps, eps -> q2 eps; q2 a, a -> q2 eps; q2 b, b -> q2 eps; q2 eps, $ -> q3 eps"
+    ],
+    ["run", "abaaba"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

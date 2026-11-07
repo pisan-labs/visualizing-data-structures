@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "pda",
+  "id": "even-palindromes",
+  "title": "Even palindromes: guess the middle",
+  "notes": "q1 pushes the first half; the ε-move to q2 guesses that the middle is here; q2 pops one matching symbol for each symbol it reads. The machine cannot know where the middle is, so the search tries every guess. Watch the wrong guesses die, then the accepting computation played back.",
+  "settings": {
+    "accept": "state",
+    "search": "all"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q0 q3; q0 eps, eps -> q1 $; q1 a, eps -> q1 a; q1 b, eps -> q1 b; q1 eps, eps -> q2 eps; q2 a, a -> q2 eps; q2 b, b -> q2 eps; q2 eps, $ -> q3 eps"
+    ],
+    ["run", "abba"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -5,9 +5,10 @@
  * - Thompson's construction comes from the kit (thompson() in src/viz/_automata/regex.ts): one
  *   start and one accept state per fragment, ε-moves around union and star. R+ is a star with
  *   no skip, and R? is built as R|ε, so it has an extra ε fragment that is not in the text.
- * - Sipser's construction (Introduction to the Theory of Computation, Theorem 1.54 with Lemmas
- *   1.45, 1.47 and 1.49) is built here. A symbol is two states; ε is one accepting state; ∅ is
- *   one state that does not accept. Union adds a new start with ε-moves to both starts;
+ * - Sipser's construction (Introduction to the Theory of Computation, Theorem 1.54 and Lemma
+ *   1.55, with the constructions of Theorems 1.45, 1.47 and 1.49) is built here. A symbol is
+ *   two states; ε is one accepting state; ∅ is one state that does not accept. Union adds a
+ *   new start with ε-moves to both starts;
  *   concatenation adds ε-moves from each accept of the first to the start of the second; star
  *   adds a new start that accepts, an ε-move from it to the old start, and ε-moves from the
  *   accepts back to the old start. Sipser has no R+ or R?; here R+ is the star without the new

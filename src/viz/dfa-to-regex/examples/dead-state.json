@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "dfa-to-regex",
+  "id": "dead-state",
+  "title": "Starts with ab: a dead state collects labels for nothing",
+  "notes": "q3 is a dead state: no arrow leaves it. In name order it goes last, so it picks up labels from s all the way, and then they all vanish, because no path from it reaches f. Fewest paths first would rip it at once.",
+  "settings": {
+    "order": "name",
+    "simplify": "identities"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q2; q0 a -> q1; q0 b -> q3; q1 a -> q3; q1 b -> q2; q2 a,b -> q2; q3 a,b -> q3"
+    ],
+    ["convert"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

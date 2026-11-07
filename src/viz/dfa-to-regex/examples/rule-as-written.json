@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "dfa-to-regex",
+  "id": "rule-as-written",
+  "title": "Contains a b, with no simplifying",
+  "notes": "The same DFA with simplification off. Every label is the rule exactly as written, so ε and ∅ pile up: (εa*b∪∅)(a∪b)*ε∪∅ means the same as a*b(a∪b)*, at almost twice the size.",
+  "settings": {
+    "order": "name",
+    "simplify": "none"
+  },
+  "seed": 1,
+  "ops": [["load", "start q1; accept q2; q1 a -> q1; q1 b -> q2; q2 a,b -> q2"], ["convert"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

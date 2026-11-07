@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "product-construction",
+  "id": "union",
+  "title": "Even a's or ends in b: a union",
+  "notes": "A counts a's (p0 when the count is even) and B remembers whether the last symbol was b (q1). All four pairs turn up, and three of them accept: for a union, a pair accepts when either half does. Only (p1, q0), an odd count that does not end in b, rejects.",
+  "settings": {
+    "op": "union"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start p0; accept p0; p0 a -> p1; p1 a -> p0; p0 b -> p0; p1 b -> p1 | start q0; accept q1; q0 a -> q0; q0 b -> q1; q1 a -> q0; q1 b -> q1"
+    ],
+    ["build"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

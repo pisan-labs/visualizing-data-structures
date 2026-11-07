@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "product-construction",
+  "id": "empty-intersection",
+  "title": "Even a's and odd a's: an empty intersection",
+  "notes": "No word has an even and an odd number of a's. The grid has four pairs, and (p0, q1) would accept, but the start pair (p0, q0) only ever reaches (p1, q1). Neither reachable pair accepts, so the intersection is empty. Emptiness is about the pairs you can reach.",
+  "settings": {
+    "op": "intersection"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start p0; accept p0; p0 a -> p1; p1 a -> p0; p0 b -> p0; p1 b -> p1 | start q0; accept q1; q0 a -> q1; q1 a -> q0; q0 b -> q0; q1 b -> q1"
+    ],
+    ["build"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

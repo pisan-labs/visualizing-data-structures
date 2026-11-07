@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "product-construction",
+  "id": "difference",
+  "title": "Contains aa but does not end in a: a difference",
+  "notes": "A accepts words containing aa; B accepts words ending in a. A − B keeps the pairs where A accepts and B does not: only (p2, q0), words that have seen aa and end in b. Four of the six pairs are reachable.",
+  "settings": {
+    "op": "difference"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start p0; accept p2; p0 a -> p1; p0 b -> p0; p1 a -> p2; p1 b -> p0; p2 a,b -> p2 | start q0; accept q1; q0 a -> q1; q0 b -> q0; q1 a -> q1; q1 b -> q0"
+    ],
+    ["build"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

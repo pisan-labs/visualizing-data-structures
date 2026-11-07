@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "product-construction",
+  "id": "complement-as-difference",
+  "title": "Complement B, then intersect: a difference again",
+  "notes": "A − B is A ∩ (not B). Complement B (ends in a becomes does not end in a), then build the intersection. The accepting pair is (p2, q0), the same one the difference example finds.",
+  "settings": {
+    "op": "intersection"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start p0; accept p2; p0 a -> p1; p0 b -> p0; p1 a -> p2; p1 b -> p0; p2 a,b -> p2 | start q0; accept q1; q0 a -> q1; q0 b -> q0; q1 a -> q1; q1 b -> q0"
+    ],
+    ["complementB"],
+    ["build"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

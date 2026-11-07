@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "product-construction",
+  "id": "dead-state",
+  "title": "Starts with a, or ends in b: why the dead state matters",
+  "notes": "A has no move from p0 on b, so Build first gives A a dead state. Read b first and A falls into it, but B keeps going: (dead, q1) accepts, because the word ends in b. Leave the dead state out and the union loses every word that starts and ends with b.",
+  "settings": {
+    "op": "union"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start p0; accept p1; p0 a -> p1; p1 a,b -> p1 | start q0; accept q1; q0 a -> q0; q0 b -> q1; q1 a -> q0; q1 b -> q1"
+    ],
+    ["build"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

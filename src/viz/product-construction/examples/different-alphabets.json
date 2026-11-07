@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "product-construction",
+  "id": "different-alphabets",
+  "title": "Different alphabets: a dead state for the missing symbol",
+  "notes": "A reads only a, B reads a and b. The product reads both, so A gets a dead state for b: a word with a b in it is never in A. B still decides those words, so (dead, q1) accepts.",
+  "settings": {
+    "op": "union"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start p0; accept p1; p0 a -> p1; p1 a -> p0 | start q0; accept q1; q0 a -> q0; q0 b -> q1; q1 a -> q0; q1 b -> q1"
+    ],
+    ["build"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

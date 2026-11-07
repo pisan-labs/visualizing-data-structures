@@ -313,4 +313,40 @@ describe('dfa-to-regex', () => {
     expect(t.entries[1]!.steps[0]!.say).toContain('Use at most 6 states here');
     expect(t.endState()).toEqual(before);
   });
+
+  it('asks practice questions whose answers check out against a reference', () => {
+    const kinds = dfaToRegex.practice!;
+    const kind = (id: string) => kinds.find((k) => k.id === id)!;
+    const dfaOf = (q: { setup: unknown[][] }) =>
+      parseAutomaton(String(q.setup[0]![1])) as Automaton;
+    for (let seed = 1; seed <= 40; seed++) {
+      // Which expression: exactly one option means the DFA's language.
+      const a = kind('answer').make(makeRng(seed));
+      const dfa = dfaOf(a);
+      const words = allWords(dfa.alphabet, 6);
+      if (a.answer.kind !== 'choice') throw new Error('choice expected');
+      const right = a.answer.options.map((o) =>
+        words.every((w) => matches(reparse(o), w) === accepts(dfa, w)),
+      );
+      expect(right.filter(Boolean).length).toBe(1);
+      expect(right[a.answer.correct]).toBe(true);
+
+      // The rip rule: exactly one option means what the correct one means.
+      const n = kind('new-label').make(makeRng(seed));
+      if (n.answer.kind !== 'choice') throw new Error('choice expected');
+      const nd = dfaOf(n);
+      const want = reparse(n.answer.options[n.answer.correct]!);
+      const same = n.answer.options.filter((o) =>
+        allWords(nd.alphabet, 6).every((w) => matches(reparse(o), w) === matches(want, w)),
+      );
+      expect(same).toHaveLength(1);
+
+      // Fewest paths first: the order the pure function finds.
+      const f = kind('fewest-order').make(makeRng(seed));
+      if (f.answer.kind !== 'sequence') throw new Error('sequence expected');
+      expect(f.answer.value).toEqual(
+        toRegex(dfaOf(f), { order: 'fewest', simplify: 'identities' }).order,
+      );
+    }
+  });
 });

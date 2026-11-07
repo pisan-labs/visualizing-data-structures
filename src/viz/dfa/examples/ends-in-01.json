@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "dfa",
+  "id": "ends-in-01",
+  "title": "Ends in 01: three states remember the last two symbols",
+  "notes": "q0 means no 0 lately, q1 means the last symbol was 0, q2 means the word so far ends in 01. 1101 ends in q2 and is accepted; 110 ends in q1 and is rejected.",
+  "settings": { "dead": "hide" },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q2; q0 0 -> q1; q0 1 -> q0; q1 0 -> q1; q1 1 -> q2; q2 0 -> q1; q2 1 -> q0"
+    ],
+    ["run", "1101"],
+    ["run", "110"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

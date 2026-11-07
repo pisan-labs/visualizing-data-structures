@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "dfa",
+  "id": "long-word",
+  "title": "Sixteen symbols, sixteen moves",
+  "notes": "Sixteen 1s is 65535 in binary, which is 3 times 21845. The run makes exactly one move per symbol, with no backing up and no searching, so its time grows in step with the length of the word.",
+  "settings": { "dead": "hide" },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start r0; accept r0; r0 0 -> r0; r0 1 -> r1; r1 0 -> r2; r1 1 -> r0; r2 0 -> r1; r2 1 -> r2"
+    ],
+    ["run", "1111111111111111"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "dfa",
+  "id": "even-even",
+  "title": "An even number of a's and an even number of b's",
+  "notes": "Each state name says whether the a's (first letter) and the b's (second letter) so far are even or odd. An a flips the first letter and a b the second. abba ends back in ee and is accepted; aba ends in eo.",
+  "settings": { "dead": "hide" },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start ee; accept ee; ee a -> oe; ee b -> eo; oe a -> ee; oe b -> oo; eo a -> oo; eo b -> ee; oo a -> eo; oo b -> oe"
+    ],
+    ["run", "abba"],
+    ["run", "aba"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

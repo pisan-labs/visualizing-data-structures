@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "dfa",
+  "id": "div-by-3",
+  "title": "Divisible by 3 in binary: the state is the remainder",
+  "notes": "Reading bit b turns remainder r into 2r + b, mod 3, so three states are enough for numbers of any size. 1001 is 9: r1, r2, r1, r0, accepted. The batch checks eight numbers at once.",
+  "settings": { "dead": "hide" },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start r0; accept r0; r0 0 -> r0; r0 1 -> r1; r1 0 -> r2; r1 1 -> r0; r2 0 -> r1; r2 1 -> r2"
+    ],
+    ["run", "1001"],
+    ["test", "+0 +11 +110 +1001 -1 -10 -100 -111"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

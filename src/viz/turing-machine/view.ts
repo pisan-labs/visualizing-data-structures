@@ -4,9 +4,10 @@
  * transition table goes beside them on a wide stage and under them on a tall one
  * (`placePanels`), with the rule just used lit.
  *
- * The tape shows a window of cells that moves in half-window steps (`tapeWindow`), so the
- * camera stays still while the head walks; 14 cells on a wide stage, 10 on a phone, 12 when
- * the view does not know the screen. Every part keeps its size through a run, so nothing jumps.
+ * The tape shows a window of 12 cells (10 on a phone). It stays put while everything the run
+ * has touched fits in it, and otherwise follows the head in half-window steps (`tapeWindow`),
+ * so the camera stays still while the head walks. Every part keeps its size through a run, so
+ * nothing jumps.
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { padBounds, placePanels, textWidth, unionBounds } from '../../layouts/graph';
@@ -42,7 +43,7 @@ const NUM_W = 30;
 /** Cells in the tape window: wide stages get more. */
 export function tapeWidth(stage?: StageSize): number {
   if (!stage) return 12;
-  return stage.w >= 1.4 * stage.h ? 14 : 10;
+  return stage.w >= 1.4 * stage.h ? 12 : 10;
 }
 
 const shown = (a: string) => (a === BLANK ? BLANK_SHOWN : a);
@@ -84,7 +85,7 @@ function status(
   extra: TmExtra,
 ): { text: string; role?: MarkRole; label?: boolean } {
   if (!c) return { text: 'No word on the tape yet.', label: true };
-  if (extra.capped) return { text: `still running after ${c.moves} moves`, role: 'compare' };
+  if (extra.capped) return { text: `still running after ${c.moves} moves`, role: 'active' };
   if (halting(c.state)) {
     const n = `after ${c.moves} move${c.moves === 1 ? '' : 's'}`;
     if (extra.stuck) return { text: `no rule: reject ${n}`, role: 'error' };
@@ -164,7 +165,7 @@ function drawRules(
   };
   const labelW = Math.max(20, ...m.states.map((q) => textWidth(q, 14, true))) + 12;
   const colW = m.symbols.map((a) =>
-    Math.max(32, ...m.states.map((q) => textWidth(text(q, a), CELL_SIZE, true) + 12)),
+    Math.max(32, ...m.states.map((q) => textWidth(text(q, a), CELL_SIZE, true) + 16)),
   );
   const title = 'δ(q, a): next state, write, move';
   out.push({

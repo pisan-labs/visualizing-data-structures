@@ -22,7 +22,7 @@ import { ZERO_ONE } from './machines';
 
 export interface TmSettings {
   [key: string]: Scalar;
-  /** Sipser's tape is infinite to the right only; Hopcroft–Ullman's both ways. */
+  /** Sipser's tape is infinite to the right only; Hopcroft, Motwani and Ullman's both ways. */
   tape: TapeKind;
   /** L and R (Sipser), or L, R and S (stay). */
   moves: 'LR' | 'LRS';
@@ -284,7 +284,7 @@ const run: Op = {
       if (c.moves >= CAP && move(cur.machine, c, settings.tape).kind === 'moved') {
         yield {
           state: cur,
-          marks: [mark('status', 'compare'), mark(newest(cur), 'compare')],
+          marks: [mark('status', 'active'), mark(newest(cur), 'active')],
           say: `Still running after ${CAP} moves: it may never halt, and no program can tell in general. That is the halting problem. Press Step to go on, one move at a time.`,
           lines: ['run.cap'],
           vars: vars(cur),

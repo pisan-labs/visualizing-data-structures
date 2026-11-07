@@ -6,7 +6,7 @@
  * `reject`; a missing rule rejects; the input starts at cell 0 with the head on its first
  * symbol; `_` is the blank. Two settings pick where textbooks differ:
  * - the tape is infinite to the right only (Sipser: a move left at cell 0 leaves the head
- *   where it is) or infinite both ways (Hopcroft–Ullman, Linz);
+ *   where it is) or infinite both ways (Hopcroft, Motwani and Ullman; Linz);
  * - the moves are L and R, or L, R and S (stay).
  *
  * Text: one line, items separated by `;` (or new lines).

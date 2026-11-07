@@ -3,14 +3,19 @@
  * is a tape it reads left to right (the symbols read so far are greyed); a Turing machine's
  * tape is read and written, and its head moves both ways.
  *
+ *   tapeWindow(head, width, { lo, hi, used }) -> { from, to }, the cells to show
  *   drawTape(shapes, options) -> bounds
  *     id        prefix for shape ids (default "tape")
- *     x, y      top left of the first cell shown
- *     cells     the symbols, from cell `from` on; a cell past the end shows the blank
+ *     x, y      top left of the room for the head; the cells sit under it
+ *     cells     the symbols; cells[0] is cell `first` (default 0). Cells outside them, on
+ *               either side, show the blank, so a two-way tape draws cells left of 0 too.
  *     from, to  the window of cells shown, [from, to); keep it fixed through an operation so
  *               the camera stays still while the head moves. `tapeWindow` picks one.
  *     head      the head's cell, or null for no head (a finished run)
  *     headLabel text over the head, such as the current state (default none)
+ *     headRoom  the room over the cells: 'label' for the head and its label, 'head' for the
+ *               head alone (the default without a label), or 'none'. The room stays when there
+ *               is no head, so the cells never jump as the head comes and goes.
  *     read      cells before this one are greyed (the input consumed so far)
  *     index     show cell numbers under the cells
  *     left      draw the left end as a wall (Sipser's one-way tape starts at cell 0)
@@ -36,44 +41,82 @@ export interface TapeOptions {
   x: number;
   y: number;
   cells: readonly string[];
+  first?: number;
   from?: number;
   to: number;
   head?: number | null;
   headLabel?: string;
+  headRoom?: 'label' | 'head' | 'none';
   read?: number;
   index?: boolean;
   left?: boolean;
-  roles?: Map<string, MarkRole>;
+  roles?: ReadonlyMap<string, MarkRole>;
   blank?: string;
+}
+
+export interface WindowOptions {
+  /** The leftmost cell that exists: 0 on a one-way tape. Default: none (a two-way tape). */
+  lo?: number;
+  /**
+   * The rightmost cell worth showing, such as the empty cell after an input word. The window
+   * stops there and keeps its width, so the tape never shrinks at the end of a long word; a
+   * tape shorter than the window shows just its cells.
+   */
+  hi?: number;
+  /**
+   * The leftmost and rightmost cells the run has touched so far. While they fit in the window
+   * for cell 0, with a spare cell on each side that goes on, the window stays there however
+   * the head moves.
+   */
+  used?: { lo: number; hi: number };
 }
 
 /**
  * A window of `width` cells that shows the head, moved in steps of half a window so the
- * camera seldom moves. `lo` is the leftmost cell that exists (0 on a one-way tape).
+ * camera seldom moves, and held still while everything touched so far fits (`used`).
  */
 export function tapeWindow(
   head: number,
   width: number,
-  lo = -Infinity,
+  o: WindowOptions = {},
 ): { from: number; to: number } {
-  const step = Math.max(1, Math.floor(width / 2));
-  let from = Math.floor(head / step) * step - Math.floor(step / 2);
-  if (from < lo) from = lo;
-  if (head >= from + width) from = head - width + 1;
-  return { from, to: from + width };
+  const lo = o.lo ?? -Infinity;
+  const hi = o.hi ?? Infinity;
+  const w = Math.max(1, Math.min(width, hi - lo + 1));
+  const step = Math.max(1, Math.floor(w / 2));
+  const at = (h: number) => {
+    let from = Math.floor(h / step) * step - Math.floor(step / 2);
+    if (from + w > hi + 1) from = hi + 1 - w;
+    if (from < lo) from = lo;
+    if (h >= from + w) from = h - w + 1;
+    if (h < from) from = h;
+    return { from, to: from + w };
+  };
+  if (o.used) {
+    const home = at(0);
+    const { lo: left, hi: right } = o.used;
+    const fits =
+      (home.from <= lo ? left >= home.from : left > home.from) &&
+      (home.to - 1 >= hi ? right <= home.to - 1 : right < home.to - 1);
+    if (fits) return home;
+  }
+  return at(head);
 }
 
 export function drawTape(shapes: Shape[], o: TapeOptions): Bounds {
   const id = o.id ?? 'tape';
   const from = o.from ?? 0;
+  const first = o.first ?? 0;
   const roles = o.roles ?? new Map<string, MarkRole>();
   const blank = o.blank ?? BLANK;
-  const headH = o.head == null ? 0 : o.headLabel ? 46 : 26;
+  const room = o.headRoom ?? (o.headLabel !== undefined ? 'label' : 'head');
+  const headH = room === 'label' ? 46 : room === 'head' ? 26 : 0;
   const top = o.y + headH;
   for (let i = from; i < o.to; i++) {
     const x = o.x + (i - from) * CELL_W;
     const cid = `${id}-${i}`;
-    const sym = i >= 0 && i < o.cells.length ? o.cells[i]! : '';
+    const k = i - first;
+    const sym = k >= 0 && k < o.cells.length ? o.cells[k]! : '';
     const shown = sym === '' || sym === '_' ? blank : sym;
     const done = o.read !== undefined && i < o.read;
     const role = roles.get(cid) ?? (o.head === i ? 'active' : undefined);

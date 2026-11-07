@@ -2,22 +2,23 @@
  * The expression as a row of cells on top (the part just built highlighted, parts not built yet
  * greyed), the NFA under it, and during a run the input word as a tape under the NFA.
  *
- * States are drawn by the shared drawAutomaton (circles, accept rings, the start arrow), with the
- * same ids as every automata page. Arrows are drawn here, along the routes the layout chose, so
- * the picture reads like the textbook figure: a star's repeat arrow above its body and its skip
- * arrow below. Ids: stateId(q) "s-q0", moveId(p, q) "m-q0-q1" (and "-t" for its label, "-a" and
- * "-b" for the first two pieces of an arrow between wrapped rows), "rx-<i>" an expression cell,
- * "tape-<i>" a tape cell, "box-<k>" the frame around a piece, "result" the accept/reject badge.
+ * The NFA is drawn by the shared drawAutomaton, with the same ids as every automata page, along
+ * the routes and label places the layout chose, so the picture reads like the textbook figure:
+ * a star's repeat arrow above its body and its skip arrow below. It draws only the states and
+ * arrows built so far, each where it is in the finished picture. Ids: stateId(q) "s-q0",
+ * moveId(p, q) "m-q0-q1" (and "-t" for its label, "-a" and "-b" for the first two pieces of an
+ * arrow between wrapped rows), "rx-<i>" an expression cell, "tape-<i>" a tape cell, "box-<k>"
+ * the frame around a piece, "result" the accept/reject badge.
  *
  * During a build, each piece built and not yet used by a parent sits in a dashed frame; the
  * piece just built is tinted, and its start gets the start arrow.
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
-import { drawAutomaton, fixedLayout, moveId, type StateLook } from '../../layouts/automaton';
+import { drawAutomaton, fixedLayout, type StateLook } from '../../layouts/automaton';
 import { fitScore, padBounds, unionBounds } from '../../layouts/graph';
 import { CELL_H, CELL_W, drawTape } from '../../layouts/tape';
 import type { Bounds, Scene, Shape } from '../../render/scene';
-import { EPS, type Move } from '../_automata/automaton';
+import { EPS } from '../_automata/automaton';
 import { pending } from './construct';
 import { boxAround, pairKey, pictures, type Picture } from './layout';
 import { describe, drawn, type RxExtra, type RxSettings, type RxState } from './model';
@@ -72,21 +73,6 @@ function choose(s: RxState, stage?: StageSize): Frame {
   return frames.reduce((best, f) => (score(f) > score(best) * 1.08 ? f : best));
 }
 
-/** The moves drawn, one entry per pair of states, with their symbols. */
-function pairs(moves: readonly Move[]): { p: string; q: string; on: string[] }[] {
-  const out = new Map<string, { p: string; q: string; on: string[] }>();
-  for (const m of moves) {
-    const k = pairKey(m.from, m.to);
-    const e = out.get(k) ?? { p: m.from, q: m.to, on: [] };
-    if (!e.on.includes(m.on)) e.on.push(m.on);
-    out.set(k, e);
-  }
-  return [...out.values()];
-}
-
-const symbolList = (on: string[]) =>
-  [...on].sort((x, y) => (x === EPS ? -1 : y === EPS ? 1 : x < y ? -1 : 1)).join(',');
-
 export function view(
   step: Step<RxState, RxExtra>,
   _settings: RxSettings,
@@ -105,7 +91,7 @@ export function view(
   // The expression, as cells; parts built so far are live, the rest grey.
   const builtCells = new Set<number>();
   for (const f of s.frags.slice(0, s.built))
-    if (f.span) for (let i = f.span[0]; i < f.span[1]; i++) builtCells.add(i);
+    for (let i = f.span[0]; i < f.span[1]; i++) builtCells.add(i);
   const { rowBox, per } = frame;
   shapes.push({
     kind: 'text',
@@ -169,7 +155,7 @@ export function view(
       }
     }
 
-  // States, from the shared drawing.
+  // The NFA so far, from the shared drawing, along the layout's routes.
   if (states.length) {
     const current = s.frags[s.built - 1]!;
     const accept = building
@@ -177,53 +163,32 @@ export function view(
       : s.nfa.accept;
     const active = new Set(s.run?.set ?? []);
     const look = (q: string): StateLook | undefined => (active.has(q) ? 'current' : undefined);
-    const drawnStates = drawAutomaton(
+    const used = new Set((extra.used ?? []).map((m) => pairKey(m.from, m.to)));
+    const shownStates = new Set(states);
+    const shownMoves = new Set(moves.map((m) => `${m.from} ${m.on} ${m.to}`));
+    const d = drawAutomaton(
       {
-        states,
+        states: s.nfa.states,
         alphabet: [],
         start: building ? current.start : s.nfa.start,
         accept,
-        moves: [],
+        moves: s.nfa.moves,
       },
       fixedLayout(pic.pos, pic.across),
-      { roles, look },
+      {
+        roles,
+        look,
+        edge: (p, q) => (used.has(pairKey(p, q)) ? 'used' : undefined),
+        // A piece's start gets no arrow while building: it would read as a move into it.
+        startArrow: !building,
+        show: {
+          state: (q) => shownStates.has(q),
+          move: (m) => shownMoves.has(`${m.from} ${m.on} ${m.to}`),
+        },
+        route: (p, q) => pic.paths[pairKey(p, q)],
+      },
     );
-    // A piece's start gets no arrow while building: it would read as a move into it.
-    shapes.push(...drawnStates.shapes.filter((x) => !building || x.id !== 'start'));
-  }
-
-  // Arrows, along the routes the layout chose.
-  const used = new Set((extra.used ?? []).map((m) => pairKey(m.from, m.to)));
-  for (const e of pairs(moves)) {
-    const id = moveId(e.p, e.q);
-    const path = pic.paths[pairKey(e.p, e.q)]!;
-    const role = roles.get(id) ?? (used.has(pairKey(e.p, e.q)) ? 'active' : undefined);
-    path.segs.forEach((seg, i) => {
-      const last = i === path.segs.length - 1;
-      shapes.push({
-        kind: 'arrow',
-        id: last ? id : `${id}-${'ab'[i]}`,
-        x1: seg.a.x,
-        y1: seg.a.y,
-        x2: seg.b.x,
-        y2: seg.b.y,
-        ...(seg.via ? { via: seg.via } : {}),
-        ...(last ? {} : { head: 'none' as const }),
-        role,
-      });
-    });
-    shapes.push({
-      kind: 'text',
-      id: `${id}-t`,
-      x: path.label.x,
-      y: path.label.y + LABEL_SIZE * 0.35,
-      text: symbolList(e.on),
-      size: LABEL_SIZE,
-      anchor: 'middle',
-      mono: true,
-      cls: 'label',
-      role: roles.get(`${id}-t`) ?? role,
-    });
+    shapes.push(...d.shapes);
   }
 
   // The word, as a tape, during a run.
@@ -251,6 +216,7 @@ export function view(
         y,
         cells: [...r.word],
         to: n,
+        // Past the last symbol the head goes, and its room stays, so the cells hold still.
         head: r.read < n ? r.read : null,
         read: r.read,
         roles,

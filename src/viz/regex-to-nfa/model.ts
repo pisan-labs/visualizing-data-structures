@@ -4,13 +4,15 @@ import {
   closure,
   EPS,
   setName,
+  setText,
   sortStates,
   SYMBOL,
   type Automaton,
   type Move,
 } from '../_automata/automaton';
+import { plural, words } from '../_automata/page';
+import { readRegex, regexSize, type UnionSign } from '../_automata/regex';
 import { construct, type Construction, type Frag } from './construct';
-import { parse, size, type UnionSign } from './syntax';
 
 export interface RxSettings {
   [key: string]: Scalar;
@@ -65,26 +67,15 @@ export const DEFAULT_TEXT: Record<UnionSign, string> = { '|': '(a|b)*abb', '+': 
 
 const mark = (id: string, role: MarkRole): Mark => ({ id, role });
 
-/** A set as Sipser writes it, with thin spaces inside the braces: { q0, q1 }. */
-export const braces = (xs: readonly string[]) => (xs.length ? `{ ${xs.join(', ')} }` : '∅');
-
-/** "q1", "q1 and q2", "q1, q2 and q3". */
-export function words(xs: readonly string[]): string {
-  if (xs.length <= 1) return xs.join('');
-  return `${xs.slice(0, -1).join(', ')} and ${xs.at(-1)}`;
-}
-
-const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
-
 export function buildState(text: string, settings: RxSettings): S | Error {
-  const p = parse(text, settings.union);
+  const p = readRegex(text, { union: settings.union });
   if (p instanceof Error) return p;
   const { nfa, frags } = construct(p, settings.construction);
   return {
     text: p.text,
     sign: settings.union,
     how: settings.construction,
-    m: size(p.tree.r),
+    m: regexSize(p.tree.r),
     nfa,
     frags,
     built: frags.length,
@@ -147,9 +138,7 @@ function partSay(s: S, k: number): string {
       case 'sym':
         return `${t}: two new states, ${q} and ${r}, and an arrow ${q} → ${r} labeled ${t}. This piece accepts the word ${t} and nothing else.`;
       case 'eps':
-        return f.span
-          ? `ε: two new states, ${q} and ${r}, joined by an ε-arrow. This piece accepts only the empty word.`
-          : `The ε branch for the ? that comes next: two new states, ${q} and ${r}, joined by an ε-arrow.`;
+        return `ε: two new states, ${q} and ${r}, joined by an ε-arrow. This piece accepts only the empty word.`;
       case 'empty':
         return `∅: two new states, ${q} and ${r}, and no arrow between them. Nothing reaches ${r}, so this piece accepts nothing.`;
       case 'concat':
@@ -157,7 +146,7 @@ function partSay(s: S, k: number): string {
       case 'union':
         return `${t}: a new start ${f.start} with ε-arrows into both branches, and a new accept state ${fin} that both branches reach. Either branch will do.`;
       case 'opt':
-        return `${t}: built as ${a!.text}${s.sign}ε. A new start ${f.start} goes into ${a!.text} or into the ε branch, and both reach the new accept state ${fin}.`;
+        return `${t}: new states ${f.start} and ${fin}. From ${f.start}, ε-arrows go into ${a!.text} or skip it, and one leaves the end of ${a!.text} to ${fin}. No arrow goes back, so ${a!.text} is read once or not at all.`;
       case 'star':
         return `${t}: new states ${f.start} and ${fin}. From ${f.start}, ε-arrows go into ${a!.text} or skip it. From the end of ${a!.text}, one goes back to repeat it and one leaves to ${fin}.`;
       case 'plus':
@@ -227,13 +216,12 @@ const build: Op = {
     for (let k = 0; k < n; k++) {
       const f = next.frags[k]!;
       const st: S = { ...next, built: k + 1 };
-      const span = f.span ?? next.frags[k + 1]?.span ?? null;
       yield {
         state: st,
         marks: [
           ...f.fresh.map((q) => mark(stateId(q), 'new')),
           ...f.added.map((x) => mark(moveId(x.from, x.to), 'new')),
-          ...cells(f.span ? span : span && [span[1] - 1, span[1]], 'active'),
+          ...cells(f.span, 'active'),
         ],
         say: partSay(st, k),
         lines: [lineFor(f)],
@@ -244,9 +232,7 @@ const build: Op = {
     const fin = next.nfa.accept;
     const twoM =
       next.how === 'thompson'
-        ? next.nfa.states.length === 2 * next.m
-          ? ` That is exactly 2m: 2 states for each symbol and operator.`
-          : ` That is 2m plus 2 for each ?, which Thompson builds as a union with ε.`
+        ? ` That is exactly 2m: 2 states for each symbol and operator.`
         : ` That is at most 2m: at most 2 states for each symbol and operator.`;
     yield {
       state: next,
@@ -280,10 +266,10 @@ const epsFrom = (a: Automaton, set: readonly string[]) =>
 
 function closureSay(before: string[], after: string[], first: boolean): string {
   const added = after.filter((q) => !before.includes(q));
-  if (!added.length) return `No ε-arrow leads anywhere new, so S stays ${braces(after)}.`;
+  if (!added.length) return `No ε-arrow leads anywhere new, so S stays ${setText(after)}.`;
   const lead = first
-    ? `Follow ε-arrows from ${words(before)}: S = ε-closure(S) = ${braces(after)}. Before reading anything, the NFA can be in any of these ${after.length} states.`
-    : `Follow ε-arrows: ${words(added)} join, so S = ${braces(after)}.`;
+    ? `Follow ε-arrows from ${words(before)}: S = ε-closure(S) = ${setText(after)}. Before reading anything, the NFA can be in any of these ${after.length} states.`
+    : `Follow ε-arrows: ${words(added)} join, so S = ${setText(after)}.`;
   return lead;
 }
 
@@ -314,7 +300,7 @@ const run: Op = {
     yield {
       state: st,
       marks: [mark(stateId(a.start), 'active')],
-      say: `run(${shown}): start with S = ${braces([a.start])}, the start state.${w ? '' : ' The word is empty, so there is nothing to read.'}`,
+      say: `run(${shown}): start with S = ${setText([a.start])}, the start state.${w ? '' : ' The word is empty, so there is nothing to read.'}`,
       lines: ['run.sig', 'run.start'],
       vars: runVars(st),
       level: 2,
@@ -343,7 +329,7 @@ const run: Op = {
           ...set.filter((q) => !moved.includes(q)).map((q) => mark(stateId(q), 'visit')),
         ],
         say: moved.length
-          ? `Read ${c}, ${where}: the ${c}-arrows out of S lead to ${braces(moved)}.`
+          ? `Read ${c}, ${where}: the ${c}-arrows out of S lead to ${setText(moved)}.`
           : `Read ${c}, ${where}: no state in S has a ${c}-arrow, so S is empty.`,
         lines: ['run.loop', 'run.move'],
         vars: { ...runVars(st), c },
@@ -384,7 +370,7 @@ const run: Op = {
         : [mark('result', 'error')],
       say: good.length
         ? `${w ? `All of ${shown} is read` : 'Nothing to read'}. S contains ${words(good)}, ${good.length === 1 ? 'an accept state' : 'accept states'}, so the NFA accepts ${shown}.`
-        : `${w ? `All of ${shown} is read` : 'Nothing to read'}. No state of S = ${braces(set)} is an accept state, so the NFA rejects ${shown}.`,
+        : `${w ? `All of ${shown} is read` : 'Nothing to read'}. No state of S = ${setText(set)} is an accept state, so the NFA rejects ${shown}.`,
       lines: [good.length ? 'run.accept' : 'run.reject'],
       vars: runVars(st),
       level: 1,

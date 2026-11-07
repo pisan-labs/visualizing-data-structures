@@ -2,7 +2,8 @@ import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
 import { EPS, type Automaton } from '../_automata/automaton';
-import { loadCall, randomNfa, randomWord, setText } from '../dfa/kit';
+import { loadCall, setText } from '../_automata/page';
+import { randomNfa, randomWord } from '../_automata/random';
 import { defaults, type NfaExtra, type NfaRun, type NfaSettings, type NfaState } from './model';
 
 type Def = VizDef<NfaState, NfaSettings, NfaExtra>;

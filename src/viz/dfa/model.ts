@@ -23,22 +23,18 @@ import {
 } from '../_automata/automaton';
 import { parseAutomaton, parseWord } from '../_automata/parse';
 import {
-  faLoadOp,
+  loadOp,
   parseBatch,
   plural,
-  rowOk,
-  testRowId,
-  verdictId,
   whyNotDfa,
   wordProblem,
   wordText,
-  type FaState,
-  type FaTest,
-  type TestRow,
+  type MachineState,
   type Verdict,
-} from './kit';
+} from '../_automata/page';
+import { rowOk, testRowId, verdictId, type TestRow, type TestTable } from '../_automata/panels';
 
-export type DfaState = FaState;
+export type DfaState = MachineState;
 
 export interface DfaSettings {
   [key: string]: Scalar;
@@ -63,7 +59,7 @@ export interface DfaRun {
 
 export interface DfaExtra {
   run?: DfaRun;
-  test?: FaTest;
+  test?: TestTable;
   /** The longest word of this run or batch, so the tape keeps its size. */
   room?: number;
 }
@@ -241,7 +237,7 @@ const run: Op = {
   },
 };
 
-function testVars(t: FaTest, r: DfaRun | undefined): Record<string, Scalar> {
+function testVars(t: TestTable, r: DfaRun | undefined): Record<string, Scalar> {
   const done = t.rows.filter((x) => x.got !== undefined);
   return {
     ...runVars(r ?? null),
@@ -286,7 +282,7 @@ const test: Op = {
     const dead = deadState(s.machine, settings);
     const rows: TestRow[] = items.map((it) => ({ word: it.word, expect: it.expect }));
     const room = Math.max(...rows.map((r) => r.word.length));
-    const table = (at: number): FaTest => ({ rows: rows.map((r) => ({ ...r })), at });
+    const table = (at: number): TestTable => ({ rows: rows.map((r) => ({ ...r })), at });
     yield {
       state: s,
       marks: [],
@@ -361,7 +357,9 @@ const test: Op = {
   },
 };
 
-const load = faLoadOp<DfaSettings, X>({
+const load = loadOp<S, DfaSettings, X>({
+  make: (a) => ({ machine: a }),
+  words: true,
   check: (a) => {
     const why = whyNotDfa(a);
     return why ? `This is not a DFA: ${why}. The NFA page runs machines like this one.` : null;

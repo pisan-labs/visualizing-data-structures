@@ -2,7 +2,8 @@ import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
 import type { Automaton } from '../_automata/automaton';
-import { loadCall, randomDfa, randomWord, wordText } from './kit';
+import { loadCall, wordText } from '../_automata/page';
+import { randomDfa, randomWord } from '../_automata/random';
 import { defaults, type DfaExtra, type DfaRun, type DfaSettings, type DfaState } from './model';
 
 type Def = VizDef<DfaState, DfaSettings, DfaExtra>;

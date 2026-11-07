@@ -256,6 +256,9 @@
     fill: var(--c-error);
     font-weight: 700;
   }
+  .text.role-compare {
+    fill: var(--c-compare);
+  }
   .text.role-stale {
     fill: var(--c-stale);
     font-style: italic;

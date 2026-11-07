@@ -4,7 +4,7 @@
  *
  * - Thompson's construction comes from the kit (thompson() in src/viz/_automata/regex.ts): one
  *   start and one accept state per fragment, ε-moves around union and star. R+ is a star with
- *   no skip, and R? is built as R|ε, so it has an extra ε fragment that is not in the text.
+ *   no skip, and R? a star with no repeat, so every fragment is a part of the text.
  * - Sipser's construction (Introduction to the Theory of Computation, Theorem 1.54 and Lemma
  *   1.55, with the constructions of Theorems 1.45, 1.47 and 1.49) is built here. A symbol is
  *   two states; ε is one accepting state; ∅ is one state that does not accept. Union adds a
@@ -15,15 +15,14 @@
  *   start, and R? is a new accepting start with an ε-move to R's start.
  */
 import { EPS, makeAutomaton, sortStates, type Automaton, type Move } from '../_automata/automaton';
-import { thompson } from '../_automata/regex';
-import type { Parsed, Tree } from './syntax';
+import { thompson, type ParsedRegex, type RegexTree } from '../_automata/regex';
 
 export type Construction = 'thompson' | 'sipser';
 
 export interface Frag {
-  kind: Tree['r']['kind'];
-  /** Where the part sits in the shown text, or null for the ε branch Thompson adds for R?. */
-  span: [number, number] | null;
+  kind: RegexTree['r']['kind'];
+  /** Where the part sits in the shown text. */
+  span: [number, number];
   /** The part as written, such as "(a|b)*". */
   text: string;
   start: string;
@@ -46,27 +45,24 @@ export interface Built {
   frags: Frag[];
 }
 
-const SYNTHETIC: Tree = { r: { kind: 'eps' }, span: [0, 0], kids: [] };
-
-export function construct(p: Parsed, how: Construction): Built {
+export function construct(p: ParsedRegex, how: Construction): Built {
   return how === 'sipser' ? sipser(p) : thompsonFrags(p);
 }
 
-function thompsonFrags(p: Parsed): Built {
+function thompsonFrags(p: ParsedRegex): Built {
   const { nfa, parts } = thompson(p.tree.r);
   const frags: Frag[] = [];
-  // The kit builds in post order; for R? it builds R, then an ε fragment, then R?.
-  const walk = (t: Tree, synthetic = false): number => {
+  // The kit builds in post order: children before parents, left to right.
+  const walk = (t: RegexTree): number => {
     const kids = t.kids.map((k) => walk(k));
-    if (t.r.kind === 'opt') kids.push(walk(SYNTHETIC, true));
     const k = frags.length;
     const part = parts[k]!;
     if (part.kind !== t.r.kind) throw new Error(`Build order differs at part ${k}`);
     const inner = new Set(kids.flatMap((j) => frags[j]!.states));
     frags.push({
       kind: part.kind,
-      span: synthetic ? null : t.span,
-      text: synthetic ? EPS : p.text.slice(t.span[0], t.span[1]),
+      span: t.span,
+      text: p.text.slice(t.span[0], t.span[1]),
       start: part.start,
       accepts: [part.accept],
       states: sortStates(part.states),
@@ -82,12 +78,12 @@ function thompsonFrags(p: Parsed): Built {
   return { nfa, frags };
 }
 
-function sipser(p: Parsed): Built {
+function sipser(p: ParsedRegex): Built {
   let n = 0;
   const fresh = () => `q${n++}`;
   const frags: Frag[] = [];
   const eps = (from: string, to: string): Move => ({ from, on: EPS, to });
-  const build = (t: Tree): number => {
+  const build = (t: RegexTree): number => {
     const r = t.r;
     let start: string;
     let accepts: string[];

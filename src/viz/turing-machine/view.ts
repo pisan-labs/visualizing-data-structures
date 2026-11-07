@@ -7,26 +7,20 @@
  * The tape shows a window of 12 cells (10 on a phone). It stays put while everything the run
  * has touched fits in it, and otherwise follows the head in half-window steps (`tapeWindow`),
  * so the camera stays still while the head walks. Every part keeps its size through a run, so
- * nothing jumps.
+ * nothing jumps. The trace is the shared configuration trace (src/layouts/trace.ts).
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
-import { STATE_R, drawAutomaton, layoutStates, type Pt } from '../../layouts/automaton';
+import { drawAutomaton, layoutStates } from '../../layouts/automaton';
 import { padBounds, placePanels, textWidth, translate, unionBounds } from '../../layouts/graph';
 import { CELL_H, CELL_W, drawTape, tapeWindow } from '../../layouts/tape';
-import {
-  shapesBounds,
-  type Bounds,
-  type Scene,
-  type Shape,
-  type TextShape,
-} from '../../render/scene';
+import { drawTrace } from '../../layouts/trace';
+import type { Bounds, Scene, Shape } from '../../render/scene';
 import type { Automaton } from '../_automata/automaton';
 import {
   ACCEPT,
   BLANK,
   BLANK_SHOWN,
   REJECT,
-  cellAt,
   halting,
   ruleFor,
   ruleText,
@@ -43,15 +37,11 @@ import {
   type TmExtra,
   type TmSettings,
   type TmState,
-  type TraceLine,
 } from './model';
 
 const HEAD_H = 46;
 const TAPE_H = HEAD_H + CELL_H + 20;
 const STATUS = 14;
-const LINE = 20;
-const TRACE_SIZE = 14;
-const NUM_W = 30;
 
 /** Cells in the tape window: wide stages get more. */
 export function tapeWidth(stage?: StageSize): number {
@@ -59,38 +49,6 @@ export function tapeWidth(stage?: StageSize): number {
 }
 
 const shown = (a: string) => (a === BLANK ? BLANK_SHOWN : a);
-
-/**
- * The cells to show. While everything the run has touched (the input, what was written, the
- * cells visited) fits in the first window with a spare cell beside it, the window stays put
- * for the whole run, however often the head sweeps back and forth. Past that, it follows the
- * head in half-window steps (`tapeWindow`).
- */
-export function windowFor(
-  c: Config | null,
-  width: number,
-  oneWay: boolean,
-): { from: number; to: number } {
-  const lo = oneWay ? 0 : -Infinity;
-  const base = tapeWindow(0, width, lo);
-  if (!c) return base;
-  const left = Math.min(c.lo, c.cells.length ? c.first : c.lo);
-  const right = Math.max(c.hi, c.cells.length ? c.first + c.cells.length - 1 : c.hi);
-  const fits = (oneWay ? left >= base.from : left > base.from) && right < base.to - 1;
-  return fits ? base : tapeWindow(c.head, width, lo);
-}
-
-/** A trace line cut to `max` characters around the state, with … where symbols are left out. */
-export function fitLine(l: Pick<TraceLine, 'u' | 'q' | 'v'>, max: number): string {
-  const join = (u: string, v: string) => (u ? `${u} ${l.q} ${v}` : `${l.q} ${v}`);
-  if (join(l.u, l.v).length <= max) return join(l.u, l.v);
-  const room = Math.max(2, max - l.q.length - 2);
-  const vKeep = Math.max(1, Math.ceil(room / 2));
-  const uKeep = Math.max(1, room - vKeep);
-  const u = l.u.length > uKeep ? `…${l.u.slice(l.u.length - uKeep + 1)}` : l.u;
-  const v = l.v.length > vKeep ? `${l.v.slice(0, vKeep - 1)}…` : l.v;
-  return join(u, v);
-}
 
 function status(
   c: Config | null,
@@ -108,55 +66,6 @@ function status(
   if (extra.rule)
     return { text: `${ruleText(extra.rule)}${extra.bumped ? ': stays on cell 0' : ''}` };
   return { text: `move ${c.moves}, in ${c.state}`, label: true };
-}
-
-function drawTrace(
-  out: Shape[],
-  trace: TraceLine[],
-  x: number,
-  y: number,
-  w: number,
-  roles: ReadonlyMap<string, MarkRole>,
-): Bounds {
-  out.push({
-    kind: 'text',
-    id: 'trace-title',
-    x,
-    y: y + 13,
-    text: 'Configurations (u q v)',
-    size: 13,
-    cls: 'label',
-    role: roles.get('trace-title'),
-  });
-  const max = Math.floor((w - NUM_W) / (TRACE_SIZE * 0.6));
-  trace.forEach((l, k) => {
-    const id = `cfg-${l.n}`;
-    const role = roles.get(id);
-    const ly = y + 22 + 15 + k * LINE;
-    out.push({
-      kind: 'text',
-      id: `${id}-n`,
-      x: x + NUM_W - 8,
-      y: ly,
-      text: String(l.moves),
-      size: 12,
-      anchor: 'end',
-      mono: true,
-      cls: 'index',
-    });
-    out.push({
-      kind: 'text',
-      id,
-      x: x + NUM_W,
-      y: ly,
-      text: fitLine(l, max),
-      size: TRACE_SIZE,
-      mono: true,
-      role,
-      opacity: role || k === trace.length - 1 ? undefined : 0.75,
-    });
-  });
-  return { x, y, w, h: 22 + TRACE_KEEP * LINE };
 }
 
 const CELL_SIZE = 13;
@@ -306,69 +215,6 @@ export function diagramOf(m: Machine): Automaton {
   };
 }
 
-const LABEL = 15;
-
-/**
- * The shared state-diagram layout centres each label a little off its arrow, which suits
- * labels like "a,b". A Turing machine's labels ("1→y,L") are longer, so here a label beside
- * a steep arrow starts just clear of the line, a loop's label sits clear of the loop, and a
- * label that still overlaps a state or an earlier label moves further from its arrow.
- */
-export function tidyLabels(shapes: Shape[], pos: Record<string, Pt>): void {
-  type Box = { x1: number; y1: number; x2: number; y2: number };
-  const boxOf = (t: TextShape): Box => {
-    const w = t.text.length * LABEL * 0.6;
-    const x1 = t.anchor === 'start' ? t.x : t.anchor === 'end' ? t.x - w : t.x - w / 2;
-    return { x1: x1 - 2, y1: t.y - LABEL * 0.8, x2: x1 + w + 2, y2: t.y + LABEL * 0.25 };
-  };
-  const hit = (a: Box, b: Box) => a.x1 < b.x2 && b.x1 < a.x2 && a.y1 < b.y2 && b.y1 < a.y2;
-  const placed: Box[] = Object.values(pos).map((p) => ({
-    x1: p.x - STATE_R,
-    y1: p.y - STATE_R,
-    x2: p.x + STATE_R,
-    y2: p.y + STATE_R,
-  }));
-  const arrows = new Map(shapes.filter((x) => x.kind === 'arrow').map((x) => [x.id, x]));
-  for (const t of shapes) {
-    const m = /^m-(\w+)-(\w+)-t$/.exec(t.id);
-    const arrow = m && arrows.get(t.id.slice(0, -2));
-    if (!m || t.kind !== 'text' || !arrow || arrow.kind !== 'arrow') continue;
-    const loop = m[1] === m[2];
-    const from: Pt = loop
-      ? pos[m[1]!]!
-      : arrow.via
-        ? {
-            x: (arrow.x1 + arrow.x2) / 4 + arrow.via.x / 2,
-            y: (arrow.y1 + arrow.y2) / 4 + arrow.via.y / 2,
-          }
-        : { x: (arrow.x1 + arrow.x2) / 2, y: (arrow.y1 + arrow.y2) / 2 };
-    const dx = t.x - from.x;
-    const dy = t.y - LABEL * 0.35 - from.y;
-    const len = Math.hypot(dx, dy) || 1;
-    const away = { x: dx / len, y: dy / len };
-    if (Math.abs(away.x) > 0.7) {
-      t.anchor = away.x > 0 ? 'start' : 'end';
-      t.x = from.x + Math.sign(away.x) * (loop ? STATE_R * 2.2 + 4 : 6);
-    }
-    // Try further out, then slid along the arrow either way, and keep the first spot that is free.
-    const along = { x: -away.y, y: away.x };
-    const home = { x: t.x, y: t.y };
-    const tries = [0, 1, 2, 3, 4, 5].flatMap((k) =>
-      [
-        [k, 0],
-        [k, 1],
-        [k, -1],
-      ].map(([out, side]) => ({
-        x: home.x + away.x * 8 * out! + along.x * 10 * (k + 1) * side!,
-        y: home.y + away.y * 8 * out! + along.y * 10 * (k + 1) * side!,
-      })),
-    );
-    const free = tries.find((p) => !placed.some((b) => hit(b, boxOf({ ...t, ...p }))));
-    if (free) Object.assign(t, free);
-    placed.push(boxOf(t));
-  }
-}
-
 /** The state diagram, the current state blue; layers run across on a wide stage, down on a phone. */
 function drawDiagram(
   out: Shape[],
@@ -395,8 +241,7 @@ function drawDiagram(
     roles,
     look: (q) => (q === current ? 'current' : undefined),
   });
-  tidyLabels(d.shapes, layoutStates(a, across).pos);
-  const b = shapesBounds(d.shapes, 2)!;
+  const b = d.bounds;
   out.push(...translate(d.shapes, x - b.x, y + 30 - b.y));
   return { x, y, w: Math.max(b.w, textWidth(title, 13)), h: 30 + b.h };
 }
@@ -408,32 +253,28 @@ export function view(step: Step<TmState, TmExtra>, settings: TmSettings, stage?:
   const c = state.config;
   const oneWay = settings.tape === 'one-way';
   const width = tapeWidth(stage);
-  const win = windowFor(c, width, oneWay);
-  const cells = c ? Array.from({ length: Math.max(0, win.to) }, (_, i) => cellAt(c, i)) : [];
+  // Everything the run has touched: the cells visited and the input and what was written.
+  const used = c
+    ? {
+        lo: Math.min(c.lo, c.cells.length ? c.first : c.lo),
+        hi: Math.max(c.hi, c.cells.length ? c.first + c.cells.length - 1 : c.hi),
+      }
+    : { lo: 0, hi: 0 };
+  const win = tapeWindow(c?.head ?? 0, width, { lo: oneWay ? 0 : undefined, used });
   drawTape(shapes, {
     x: 0,
-    // Without a head, the cells sit where they will be once the head is drawn over them.
-    y: c ? 0 : HEAD_H,
-    cells,
+    y: 0,
+    cells: c?.cells ?? [],
+    first: c?.first,
     from: win.from,
     to: win.to,
     head: c ? c.head : null,
     headLabel: c?.state,
+    headRoom: 'label',
     index: true,
     left: oneWay,
     roles,
   });
-  // drawTape shows cells left of 0 as blanks; a two-way tape can have symbols there.
-  if (c && win.from < 0)
-    for (const s of shapes) {
-      const m = /^tape-(-\d+)-t$/.exec(s.id);
-      if (!m || s.kind !== 'text') continue;
-      const a = cellAt(c, Number(m[1]));
-      if (a !== BLANK) {
-        s.text = a;
-        s.opacity = undefined;
-      }
-    }
   const tapeW = width * CELL_W;
   const main: Bounds = { x: oneWay ? -6 : 0, y: 0, w: tapeW + (oneWay ? 6 : 0), h: TAPE_H };
 
@@ -451,7 +292,15 @@ export function view(step: Step<TmState, TmExtra>, settings: TmSettings, stage?:
     cls: st.label ? 'label' : undefined,
     role: roles.get('status') ?? st.role,
   });
-  const trace = drawTrace(shapes, state.trace, 0, sy + 14, tapeW, roles);
+  const trace = drawTrace(shapes, {
+    x: 0,
+    y: sy + 14,
+    w: tapeW,
+    title: 'Configurations (u q v)',
+    lines: state.trace.map((l) => ({ n: l.n, index: l.moves, parts: [l.u, l.q, l.v], focus: 1 })),
+    keep: TRACE_KEEP,
+    roles,
+  });
   const left = unionBounds(main, trace);
   const wide = !stage || stage.w >= 1.4 * stage.h;
   const table = placePanels(shapes, left, stage, (out, x, y) =>

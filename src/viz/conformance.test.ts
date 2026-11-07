@@ -2,6 +2,9 @@
  * Checks every visualization in the registry must pass. New visualizations get these for free.
  */
 import fc from 'fast-check';
+import fs from 'node:fs';
+import path from 'node:path';
+import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 import { validateExample } from '../engine/example';
 import { practiceSet } from '../engine/practice';
@@ -39,6 +42,15 @@ function callArb(def: AnyVizDef): fc.Arbitrary<OpCall> {
   );
 }
 
+/**
+ * Template leftovers in what learners read: a word in braces that cannot be set notation (longer
+ * than a state name, which is 1 to 6 letters, digits or _, or with a dot in it), as a missing $
+ * leaves behind ({CAPACITY}, {r.word}); and undefined, NaN or [object Object]. Sets such as {q0}
+ * and {a} pass. A missing $ before a short name ({w}) is caught in the source instead, by the
+ * "template strings" check at the end of this file.
+ */
+const LEFTOVER = /\{(?![A-Za-z0-9_]{1,6}\})[\w.]+\}|\bundefined\b|\bNaN\b|\[object Object\]/;
+
 /** A 1366 x 768 laptop's stage and a phone's, in pixels, as views receive them. */
 const STAGES: (StageSize | undefined)[] = [undefined, { w: 880, h: 384 }, { w: 360, h: 536 }];
 
@@ -51,9 +63,7 @@ function checkTimeline(
   for (let i = 0; i < t.length; i++) {
     const { step } = t.at(i);
     expect(step.say.trim().length, `step ${i} has narration`).toBeGreaterThan(0);
-    expect(step.say, `step ${i} narration has no template leftovers`).not.toMatch(
-      /\{[\w.]+\}|\bundefined\b|\bNaN\b|\[object Object\]/,
-    );
+    expect(step.say, `step ${i} narration has no template leftovers`).not.toMatch(LEFTOVER);
     expect([1, 2, 3]).toContain(step.level);
     for (const id of step.lines)
       expect(lineIds.has(id), `pseudocode line "${id}" exists`).toBe(true);
@@ -168,7 +178,8 @@ describe.each(vizzes.filter((v) => v.practice?.length).map((v) => [v.id, v] as c
           const where = `${kind.id} (seed ${seed})`;
           for (const text of [q.prompt, q.explain]) {
             expect(text.trim(), where).not.toBe('');
-            expect(text, where).not.toMatch(/\{[\w.]+\}|\bundefined\b|\bNaN\b|TODO/);
+            expect(text, where).not.toMatch(LEFTOVER);
+            expect(text, where).not.toMatch(/TODO/);
           }
           const settings = { ...def.defaults, ...q.settings };
           checkTimeline(def, new Timeline(def, settings, 1, [...q.setup, ...(q.watch ?? [])]));
@@ -201,3 +212,47 @@ function settingsSamples(def: AnyVizDef): Settings[] {
   }
   return out;
 }
+
+/** Every .ts and .svelte file under src, tests left out. */
+function sources(dir: string): string[] {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+    const p = path.join(dir, e.name);
+    if (e.isDirectory()) return sources(p);
+    return /\.(ts|svelte)$/.test(e.name) && !/\.test\.ts$/.test(e.name) ? [p] : [];
+  });
+}
+
+/** The literal text of every template string in a file, with where it starts. */
+function templateTexts(file: string): { text: string; line: number }[] {
+  const code = fs.readFileSync(file, 'utf8');
+  // A .svelte file's scripts are TypeScript; its markup has no template strings worth checking.
+  const script = file.endsWith('.svelte')
+    ? [...code.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)].map((m) => m[1]).join('\n')
+    : code;
+  const src = ts.createSourceFile(file, script, ts.ScriptTarget.Latest, true);
+  const out: { text: string; line: number }[] = [];
+  const visit = (n: ts.Node) => {
+    if (
+      ts.isNoSubstitutionTemplateLiteral(n) ||
+      ts.isTemplateHead(n) ||
+      ts.isTemplateMiddle(n) ||
+      ts.isTemplateTail(n)
+    )
+      out.push({ text: n.text, line: src.getLineAndCharacterOfPosition(n.getStart()).line + 1 });
+    ts.forEachChild(n, visit);
+  };
+  visit(src);
+  return out;
+}
+
+describe('template strings', () => {
+  it('have a $ before every {name} they fill in', () => {
+    const misses: string[] = [];
+    for (const file of sources(path.resolve('src')))
+      for (const { text, line } of templateTexts(file)) {
+        const m = /\{[A-Za-z_][\w.]*\}/.exec(text);
+        if (m) misses.push(`${path.relative(process.cwd(), file)}:${line} ${m[0]}`);
+      }
+    expect(misses, 'a {name} in a template string is missing its $').toEqual([]);
+  });
+});

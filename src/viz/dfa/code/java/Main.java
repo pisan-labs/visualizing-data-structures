@@ -16,11 +16,12 @@ public class Main {
     while ((line = in.readLine()) != null) {
       String[] p = line.trim().split("\\s+");
       switch (p[0]) {
-        case "machine" -> {
-          start = p[1];
+        case "dfa" -> {
+          start = null;
           accept = new ArrayList<>();
           moves = new ArrayList<>();
         }
+        case "start" -> start = p[1];
         case "accept" -> accept = List.of(p).subList(1, p.length);
         case "move" -> moves.add(p);
         case "run" -> {

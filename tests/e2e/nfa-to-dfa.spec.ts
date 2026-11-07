@@ -84,10 +84,10 @@ test('a step shows M, then the ε-closure, at the finest detail', async ({ page 
   await loadExample(page, "a's, then b's, then c's");
   // The example opens on its Load step; then the start set, A from the queue, and M on a.
   for (let i = 0; i < 3; i++) await page.getByRole('button', { name: 'Step forward' }).click();
-  await expect(narration(page)).toContainText('On a: q0 goes to q0. So M = { q0 }.');
+  await expect(narration(page)).toContainText('On a: q0 goes to q0. So M = {q0}.');
   await page.getByRole('button', { name: 'Step forward' }).click();
   await expect(narration(page)).toContainText(
-    'Follow ε-moves from M: they reach q1 and q2. E(M) = { q0, q1, q2 }.',
+    'Follow ε-moves from M: they reach q1 and q2. E(M) = {q0, q1, q2}.',
   );
 });
 

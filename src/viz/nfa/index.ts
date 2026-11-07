@@ -3,7 +3,9 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall, Preset, SavedExample, Settings, VizDef } from '../../engine/types';
 import type { Automaton } from '../_automata/automaton';
 import { parseAutomaton } from '../_automata/parse';
-import { faInput, loadCall, machineLines, randomNfa, randomWord, setShort } from '../dfa/kit';
+import { setName } from '../_automata/automaton';
+import { automatonLines, loadCall, machineOrWordsInput } from '../_automata/page';
+import { randomNfa, randomWord } from '../_automata/random';
 import cppSource from './code/cpp/nfa.hpp?raw';
 import javaSource from './code/java/Nfa.java?raw';
 import pythonSource from './code/python/nfa.py?raw';
@@ -73,7 +75,7 @@ export const nfa: VizDef<NfaState, NfaSettings, NfaExtra> = {
   view,
   describe,
   controls: {
-    input: faInput('0101'),
+    input: machineOrWordsInput('0101'),
     buttons: [
       { op: 'run', label: 'Run', usesInput: true, primary: true },
       { op: 'test', label: 'Test', usesInput: true },
@@ -176,22 +178,22 @@ export const nfa: VizDef<NfaState, NfaSettings, NfaExtra> = {
 };
 
 /**
- * Driver protocol for the code tabs: the machine's lines (see machineLines), then "run <word>"
+ * Driver protocol for the code tabs: the machine's lines (see automatonLines), then "run <word>"
  * per word run or tested, with no word for ε. Each run prints "accept {q0,q2}" or "reject
  * {...}" with the final set in name order, and "{}" when every branch died.
  */
 function codeScript(calls: OpCall[], settings: NfaSettings) {
   const t = new Timeline(nfa, settings, 1, calls);
-  const input = machineLines(t.initial.state.machine);
+  const input = automatonLines('nfa', t.initial.state.machine);
   const expected: string[] = [];
   let before = t.initial.state.machine;
   const result = (word: string, verdict: string, set: string[]) => {
     input.push(`run ${word}`.trimEnd());
-    expected.push(`${verdict} ${set.length ? setShort(set) : '{}'}`);
+    expected.push(`${verdict} ${set.length ? setName(set) : '{}'}`);
   };
   for (const e of t.entries) {
     const a = e.end.machine;
-    if (a !== before) input.push(...machineLines(a));
+    if (a !== before) input.push(...automatonLines('nfa', a));
     before = a;
     const last = e.steps.at(-1)!.extra;
     const r = last?.run;

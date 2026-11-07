@@ -1,7 +1,7 @@
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, SavedExample, Settings, VizDef } from '../../engine/types';
 import { formatAutomaton } from '../_automata/parse';
-import { automatonInput, automatonLines } from '../nfa-to-dfa/kit';
+import { automatonInput, automatonLines } from '../_automata/page';
 import cppSource from './code/cpp/minimize.hpp?raw';
 import javaSource from './code/java/Minimize.java?raw';
 import pythonSource from './code/python/minimize.py?raw';

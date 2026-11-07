@@ -24,7 +24,7 @@ public class ThompsonNfa {
 
     /** Throws IllegalArgumentException if the expression is not well formed. */
     public ThompsonNfa(String regex) {
-        text = regex.replace("eps", "ε").replaceAll("\\s+", "");
+        text = regex.replaceAll("\\beps\\b", "ε").replaceAll("\\s+", ""); // eps on its own is ε
         whole = union();
         if (pos < text.length()) throw new IllegalArgumentException("unexpected " + peek());
     }
@@ -116,15 +116,11 @@ public class ThompsonNfa {
         Piece p = atom();
         while (peek() == '*' || peek() == '+' || peek() == '?') {
             char op = text.charAt(pos++);
-            if (op == '?') { // R? is R|ε
-                p = either(p, piece(EPS));
-                continue;
-            }
             Piece loop = new Piece(newState(), newState());
             add(loop.start(), EPS, p.start());
-            add(p.accept(), EPS, p.start()); // repeat
+            if (op != '?') add(p.accept(), EPS, p.start()); // repeat
             add(p.accept(), EPS, loop.accept());
-            if (op == '*') add(loop.start(), EPS, loop.accept()); // skip
+            if (op != '+') add(loop.start(), EPS, loop.accept()); // skip
             p = loop;
         }
         return p;

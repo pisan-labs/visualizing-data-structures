@@ -33,7 +33,7 @@ import {
   type Minimized,
 } from '../_automata/automaton';
 import { parseAutomaton } from '../_automata/parse';
-import { loadAutomatonOp, words } from '../nfa-to-dfa/kit';
+import { loadOp, words } from '../_automata/page';
 
 export interface MinState {
   dfa: Automaton;
@@ -110,8 +110,6 @@ export const delta = (a: Automaton, q: string, c: string): string =>
   a.moves.find((m) => m.from === q && m.on === c)!.to;
 
 /** A set in narration, spaced as elsewhere on the site: { q0, q3 }. */
-export const setText = (set: readonly string[]) => `{ ${set.join(', ')} }`;
-
 /** The minimal DFA from a partition: each block is a state named after its first state. */
 export function merge(work: Automaton, blockOf: Record<string, number>): Minimized {
   const members = new Map<number, string[]>();
@@ -460,9 +458,8 @@ const minimizeOp: Op = {
   },
 };
 
-const load = loadAutomatonOp<S, MinSettings, X>({
+const load = loadOp<S, MinSettings, X>({
   what: 'DFA',
-  get: (s) => s.dfa,
   make: (dfa) => ({ dfa }),
   check: notDfa,
   ready: (a) =>

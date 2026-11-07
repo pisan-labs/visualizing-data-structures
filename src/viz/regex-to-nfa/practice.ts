@@ -2,8 +2,9 @@ import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
 import { randomRegex, randomWord } from './gen';
-import { braces, defaults, type RxExtra, type RxSettings, type RxState } from './model';
-import { parse, show } from './syntax';
+import { defaults, type RxExtra, type RxSettings, type RxState } from './model';
+import { setText } from '../_automata/automaton';
+import { readRegex, showRegex } from '../_automata/regex';
 
 type Def = VizDef<RxState, RxSettings, RxExtra>;
 
@@ -12,8 +13,8 @@ const pick = <T>(rng: Rng, xs: readonly T[]): T => xs[rng.int(0, xs.length - 1)]
 
 /** The text with only the parentheses it needs. */
 const tidy = (text: string) => {
-  const p = parse(text, '|');
-  return p instanceof Error ? text : show(p.tree.r);
+  const p = readRegex(text);
+  return p instanceof Error ? text : showRegex(p.tree.r);
 };
 
 /**
@@ -24,7 +25,7 @@ export function rxPractice(def: () => Def): PracticeKind[] {
   const run = (cs: OpCall[], settings: RxSettings = defaults) =>
     new Timeline(def(), settings, 1, cs).endState();
   /** A small expression with some structure, 2 to `most` symbols. */
-  const small = (rng: Rng, most = 3) => show(randomRegex(rng, rng.int(2, most)));
+  const small = (rng: Rng, most = 3) => showRegex(randomRegex(rng, rng.int(2, most)));
 
   return [
     {
@@ -50,7 +51,7 @@ export function rxPractice(def: () => Def): PracticeKind[] {
             union:
               'The symbol a is 2 states, and the union adds a new start and a new accept state.',
             concat: 'The symbol b is 2 states; concatenation only adds an ε-arrow.',
-            opt: 'R? is built as R|ε: 2 states for the ε branch and 2 for the union.',
+            opt: 'R? adds a new start and a new accept state, with an ε-arrow that skips R.',
           },
           sipser: {
             star: 'The star adds one state, a new start that accepts.',
@@ -73,7 +74,7 @@ export function rxPractice(def: () => Def): PracticeKind[] {
       id: 'accept-or-reject',
       title: 'Accept or reject?',
       make(rng) {
-        const text = show(randomRegex(rng, rng.int(2, 4)));
+        const text = showRegex(randomRegex(rng, rng.int(2, 4)));
         const setup: OpCall[] = [['build', text]];
         const want = rng.int(0, 1) ? 'accept' : 'reject';
         let w = randomWord(rng, rng.int(1, 4));
@@ -90,7 +91,7 @@ export function rxPractice(def: () => Def): PracticeKind[] {
           explain: ok
             ? `After reading ${w}, the active states include ${fin.join(' and ')}, an accept state.`
             : end.set.length
-              ? `After reading ${w}, the active states are ${braces(end.set)}, and none of them accepts.`
+              ? `After reading ${w}, the active states are ${setText(end.set)}, and none of them accepts.`
               : `Partway through ${w}, no state has a move on the next symbol, so every path dies.`,
           watch: [['run', w]],
         };
@@ -129,7 +130,7 @@ export function rxPractice(def: () => Def): PracticeKind[] {
           setup,
           answer: { kind: 'sequence', value: end.set },
           explain: end.set.length
-            ? `Start from the ε-closure of q0, follow the arrows for each symbol, and take the ε-closure after each one: ${braces(end.set)}.`
+            ? `Start from the ε-closure of q0, follow the arrows for each symbol, and take the ε-closure after each one: ${setText(end.set)}.`
             : `At some symbol no active state has a move on it, so nothing is active at the end.`,
           watch: [['run', w]],
         };

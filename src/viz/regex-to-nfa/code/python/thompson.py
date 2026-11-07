@@ -4,6 +4,8 @@ Expressions use letters and digits, ε (or eps), ∅, | (union), * (zero or more
 + (one or more), ? (optional) and parentheses.
 """
 
+import re
+
 EPS = "ε"
 
 
@@ -40,7 +42,7 @@ class NFA:
 
 def build(regex):
     """The NFA for regex. Raises ValueError if the expression is not well formed."""
-    text = regex.replace("eps", EPS).replace(" ", "")
+    text = re.sub(r"\beps\b", EPS, regex).replace(" ", "")  # eps on its own is ε
     nfa = NFA()
     pos = 0
 
@@ -86,14 +88,12 @@ def build(regex):
         while peek() in ("*", "+", "?"):
             op = peek()
             pos += 1
-            if op == "?":  # R? is R|ε
-                frag = either(frag, piece(EPS))
-                continue
             s, f = nfa.new_state(), nfa.new_state()
             nfa.add(s, EPS, frag[0])
-            nfa.add(frag[1], EPS, frag[0])  # repeat
+            if op != "?":
+                nfa.add(frag[1], EPS, frag[0])  # repeat
             nfa.add(frag[1], EPS, f)
-            if op == "*":
+            if op != "+":
                 nfa.add(s, EPS, f)  # skip
             frag = (s, f)
         return frag

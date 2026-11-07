@@ -8,15 +8,9 @@ import { accepts, complete, isDeterministic, type Automaton } from '../_automata
 import { formatAutomaton, parseAutomaton } from '../_automata/parse';
 import { dfa } from '.';
 import type { Shape } from '../../render/scene';
-import {
-  TAPE_CELLS,
-  drawInputTape,
-  loadCall,
-  parseBatch,
-  parseFaInput,
-  randomDfa,
-  wordText,
-} from './kit';
+import { loadCall, parseBatch, parseMachineOrWords, wordText } from '../_automata/page';
+import { TAPE_CELLS, drawInputTape } from '../_automata/panels';
+import { randomDfa } from '../_automata/random';
 import { MACHINES } from './machines';
 import type { DfaSettings } from './model';
 
@@ -177,7 +171,7 @@ describe('DFA', () => {
       ['test', '+'],
     ]);
     const says = t.entries.map((e) => e.steps.at(-1)!.say);
-    expect(says[0]).toContain('"a" is not in the alphabet { 0, 1 }');
+    expect(says[0]).toContain('"a" is not in the alphabet {0, 1}');
     expect(says[1]).toContain('Press Test');
     expect(says[2]).toContain('press Load');
     expect(says[3]).toContain('has no word after the sign');
@@ -195,12 +189,12 @@ describe('DFA', () => {
   });
 
   it('reads the input field and batches', () => {
-    expect(parseFaInput('0101')).toBe('0101');
-    expect(parseFaInput('+01 -10 -eps')).toBe('+01 -10 -eps');
-    expect(parseFaInput('q0 a -> q1')).toBe('q0 a -> q1');
-    expect(parseFaInput('q0 a -> ')).toBeInstanceOf(Error);
-    expect(parseFaInput('a#b')).toBeInstanceOf(Error);
-    expect(parseFaInput('  ')).toBeInstanceOf(Error);
+    expect(parseMachineOrWords('0101')).toBe('0101');
+    expect(parseMachineOrWords('+01 -10 -eps')).toBe('+01 -10 -eps');
+    expect(parseMachineOrWords('q0 a -> q1')).toBe('q0 a -> q1');
+    expect(parseMachineOrWords('q0 a -> ')).toBeInstanceOf(Error);
+    expect(parseMachineOrWords('a#b')).toBeInstanceOf(Error);
+    expect(parseMachineOrWords('  ')).toBeInstanceOf(Error);
     const a = machine(MACHINES.endsAb);
     expect(parseBatch('+ab, -ba ε', a)).toEqual([
       { word: 'ab', expect: 'accept' },

@@ -13,19 +13,17 @@
  * finished DFA and table, so it holds through a run.
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
-import { drawAutomaton, layoutStates, type StateLayout } from '../../layouts/automaton';
+import {
+  drawAutomaton,
+  layoutFromLayers,
+  layoutStates,
+  type StateLayout,
+} from '../../layouts/automaton';
 import { below, beside, padBounds, placePanels, translate, unionBounds } from '../../layouts/graph';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { setName, stateLetter, type Automaton } from '../_automata/automaton';
-import {
-  automatonKey,
-  clearOfButtons,
-  drawGrid,
-  gridWidths,
-  keepShapes,
-  pickBest,
-  placeLayers,
-} from './kit';
+import { automatonKey } from '../_automata/page';
+import { drawGrid, gridWidths, pickBest } from '../_automata/panels';
 import {
   DFA_PREFIX,
   MAX_ALL,
@@ -48,7 +46,7 @@ function dfaLayout(nfa: Automaton, dfa: Automaton, mode: SubsetMode, across: boo
   // The DFA's states are A, B, C, ... in the order allSubsets lists the subsets.
   const bySize: string[][] = [];
   allSubsets(nfa.states).forEach((s, i) => (bySize[s.length] ??= []).push(stateLetter(i)));
-  return placeLayers(
+  return layoutFromLayers(
     bySize.filter((l) => l.length),
     across,
   );
@@ -99,7 +97,7 @@ function arrange(nfa: Automaton, mode: SubsetMode, stage?: StageSize): Frame {
       const dx = under ? nb.x - db.x : beside(nb, 40) - db.x;
       const dy = under ? below(nb, 24) - db.y : nb.y - db.y;
       const diagrams = unionBounds(nb, { ...db, x: db.x + dx, y: db.y + dy });
-      const placed = placePanels([], diagrams, stage, (out, x, y) =>
+      const table = placePanels([], diagrams, stage, (out, x, y) =>
         drawGrid(out, {
           id: 'tbl',
           x,
@@ -111,7 +109,6 @@ function arrange(nfa: Automaton, mode: SubsetMode, stage?: StageSize): Frame {
           reserve: dfa.states.length,
         }),
       );
-      const table = clearOfButtons(placed, diagrams, stage);
       candidates.push({
         across,
         dx,
@@ -194,7 +191,10 @@ export function view(
   };
 }
 
-/** The DFA so far: the finished DFA's drawing, keeping only the states and moves found. */
+/**
+ * The DFA so far: the finished DFA, drawing only the states and moves found, each where it is
+ * in the finished drawing.
+ */
 function drawDfa(
   nfa: Automaton,
   r: ConvRun,
@@ -203,32 +203,16 @@ function drawDfa(
 ): Shape[] {
   const { dfa, sets } = finalDfa(nfa, r.mode);
   const known = new Set(r.rows.map((row) => row.name));
-  const on = new Map<string, string[]>();
-  for (const m of r.moves) {
-    const k = `${m.from}-${m.to}`;
-    on.set(k, [...(on.get(k) ?? []), m.on].sort());
-  }
-  const drawn = drawAutomaton({ ...dfa, accept: r.accept }, dfaLayout(nfa, dfa, r.mode, across), {
+  const found = new Set(r.moves.map((m) => `${m.from} ${m.on} ${m.to}`));
+  return drawAutomaton({ ...dfa, accept: r.accept }, dfaLayout(nfa, dfa, r.mode, across), {
     prefix: DFA_PREFIX,
     roles,
     look: (q) => (sets[q]?.length === 0 ? 'dead' : r.unreachable?.includes(q) ? 'dim' : undefined),
     edge: (p) => (r.unreachable?.includes(p) ? 'dim' : undefined),
-  });
-  const state = new RegExp(`^${DFA_PREFIX}s-([^-]+)`);
-  const move = new RegExp(`^${DFA_PREFIX}m-([^-]+)-([^-]+)`);
-  return keepShapes(
-    drawn.shapes,
-    (id) => {
-      if (id === `${DFA_PREFIX}start`) return r.start !== undefined;
-      const s = state.exec(id);
-      if (s) return known.has(s[1]!);
-      const m = move.exec(id);
-      if (m) return on.has(`${m[1]}-${m[2]}`);
-      return true;
+    show: {
+      state: (q) => known.has(q),
+      move: (m) => found.has(`${m.from} ${m.on} ${m.to}`),
+      start: r.start !== undefined,
     },
-    (id) => {
-      const m = move.exec(id);
-      return m && id.endsWith('-t') ? on.get(`${m[1]}-${m[2]}`)!.join(',') : undefined;
-    },
-  );
+  }).shapes;
 }

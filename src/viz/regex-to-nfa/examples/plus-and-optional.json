@@ -3,7 +3,7 @@
   "viz": "regex-to-nfa",
   "id": "plus-and-optional",
   "title": "One or more, and optional",
-  "notes": "(ab)+c? uses the two shorthands. R+ is a star without the skip arrow, so ab must be read at least once. R? is built as R|ε, which costs an extra ε piece.",
+  "notes": "(ab)+c? uses the two shorthands. R+ is a star without the skip arrow, so ab must be read at least once. R? is a star without the arrow back, so c is read once or not at all.",
   "settings": {
     "construction": "thompson",
     "union": "|"

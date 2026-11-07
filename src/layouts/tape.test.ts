@@ -5,7 +5,7 @@ import { BLANK, drawTape, tapeWindow } from './tape';
 describe('the tape layout', () => {
   it('keeps the head inside the window, which moves in half-window steps', () => {
     for (let head = 0; head < 40; head++) {
-      const w = tapeWindow(head, 10, 0);
+      const w = tapeWindow(head, 10, { lo: 0 });
       expect(head).toBeGreaterThanOrEqual(w.from);
       expect(head).toBeLessThan(w.to);
       expect(w.from).toBeGreaterThanOrEqual(0);
@@ -13,7 +13,7 @@ describe('the tape layout', () => {
     // Moving one cell seldom moves the window.
     const moves = Array.from(
       { length: 39 },
-      (_, h) => tapeWindow(h, 10, 0).from !== tapeWindow(h + 1, 10, 0).from,
+      (_, h) => tapeWindow(h, 10, { lo: 0 }).from !== tapeWindow(h + 1, 10, { lo: 0 }).from,
     );
     expect(moves.filter(Boolean).length).toBeLessThan(10);
   });
@@ -37,5 +37,46 @@ describe('the tape layout', () => {
     expect(shapes.find((s) => s.id === 'tape-1')!.role).toBe('active');
     expect(new Set(shapes.map((s) => s.id)).size).toBe(shapes.length);
     expect(b.w).toBe(4 * 34);
+  });
+
+  it('stays still while the cells used fit, and keeps its width at the end of a word', () => {
+    // A two-way tape: the first window has a spare cell on each side of what was used.
+    const home = tapeWindow(0, 12, {});
+    for (const head of [-2, 0, 5, 7])
+      expect(tapeWindow(head, 12, { used: { lo: -2, hi: 7 } })).toEqual(home);
+    expect(tapeWindow(9, 12, { used: { lo: 0, hi: 9 } })).not.toEqual(home);
+    // A one-way tape may use cell 0, its first cell.
+    expect(tapeWindow(4, 12, { lo: 0, used: { lo: 0, hi: 10 } })).toEqual({ from: 0, to: 12 });
+    // A word of 5 symbols and the empty cell after it: just those 6 cells.
+    expect(tapeWindow(3, 12, { lo: 0, hi: 5 })).toEqual({ from: 0, to: 6 });
+    // A word of 16: the window ends at cell 16 and stays 12 cells wide.
+    for (const head of [12, 14, 16])
+      expect(tapeWindow(head, 12, { lo: 0, hi: 16 })).toEqual({ from: 5, to: 17 });
+  });
+
+  it('draws cells left of 0, and keeps the room for the head without one', () => {
+    const shapes: Shape[] = [];
+    const b = drawTape(shapes, {
+      x: 0,
+      y: 0,
+      cells: ['1', '_', '0'],
+      first: -2,
+      from: -3,
+      to: 2,
+      head: null,
+    });
+    const text = (id: string) => (shapes.find((s) => s.id === id) as { text: string }).text;
+    expect([-3, -2, -1, 0, 1].map((i) => text(`tape-${i}-t`))).toEqual([
+      BLANK,
+      '1',
+      BLANK,
+      '0',
+      BLANK,
+    ]);
+    const top = (shapes.find((s) => s.id === 'tape-0') as { y: number }).y;
+    const withHead: Shape[] = [];
+    drawTape(withHead, { x: 0, y: 0, cells: ['0'], to: 2, head: 0 });
+    expect((withHead.find((s) => s.id === 'tape-0') as { y: number }).y).toBe(top);
+    expect(b.h).toBe(26 + 36);
   });
 });

@@ -2,7 +2,7 @@ import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, Step, VizDef } from '../../engine/types';
 import { formatAutomaton } from '../_automata/parse';
-import { words } from '../nfa-to-dfa/kit';
+import { words } from '../_automata/page';
 import {
   defaults,
   pairKey,

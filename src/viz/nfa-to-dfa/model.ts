@@ -20,6 +20,7 @@ import {
   closure,
   makeAutomaton,
   setName,
+  setText,
   sortStates,
   stateLetter,
   subsetConstruction,
@@ -29,7 +30,7 @@ import {
   type Subsets,
 } from '../_automata/automaton';
 import { parseAutomaton } from '../_automata/parse';
-import { loadAutomatonOp, summarize, words } from './kit';
+import { describeMachine, loadOp, words } from '../_automata/page';
 
 export interface NfaState {
   nfa: Automaton;
@@ -127,9 +128,6 @@ const symbolMoves = (a: Automaton, set: string[], c: string) =>
   pairs(a.moves.filter((m) => m.on === c && set.includes(m.from)));
 
 const holdsAccept = (a: Automaton, set: string[]) => set.filter((q) => a.accept.includes(q));
-
-/** A set in narration, spaced as elsewhere on the site: { q0, q1 }, or ∅. */
-export const setText = (set: readonly string[]) => (set.length ? `{ ${set.join(', ')} }` : '∅');
 
 /** Every subset of the NFA's states: by size, then in name order. */
 export function allSubsets(states: string[]): string[][] {
@@ -392,7 +390,7 @@ const convert: Op = {
       );
       r.start = nameOfSet(r, startSet)!;
       yield step(
-        `The start state is E({ ${nfa.start} }): ${startHow}. That is ${setText(startSet)}, state ${r.start}.`,
+        `The start state is E(${setText([nfa.start])}): ${startHow}. That is ${setText(startSet)}, state ${r.start}.`,
         ['start'],
         2,
         [
@@ -451,7 +449,7 @@ const convert: Op = {
     const startAcc = holdsAccept(nfa, startSet);
     if (startAcc.length) r.accept.push(A);
     yield step(
-      `The DFA starts in E({ ${nfa.start} }): ${startHow}. That set, ${setText(startSet)}, is DFA state ${A}. Put it in the queue.${startAcc.length ? ` It holds ${words(startAcc)}, an accept state of the NFA, so ${A} accepts: this NFA accepts the empty word.` : ''}`,
+      `The DFA starts in E(${setText([nfa.start])}): ${startHow}. That set, ${setText(startSet)}, is DFA state ${A}. Put it in the queue.${startAcc.length ? ` It holds ${words(startAcc)}, an accept state of the NFA, so ${A} accepts: this NFA accepts the empty word.` : ''}`,
       ['start', 'start.add', ...(startAcc.length ? ['acc'] : [])],
       2,
       [
@@ -535,9 +533,8 @@ export function loadCheck(a: Automaton): string | null {
     : null;
 }
 
-const load = loadAutomatonOp<S, NdSettings, X>({
+const load = loadOp<S, NdSettings, X>({
   what: 'NFA',
-  get: (s) => s.nfa,
   make: (nfa) => ({ nfa }),
   check: loadCheck,
   ready: (a) =>
@@ -610,7 +607,7 @@ export function describeMoves(a: Automaton): string {
 }
 
 export function describe(s: S): string {
-  return `The NFA: ${summarize(s.nfa)} ${describeMoves(s.nfa)}`;
+  return `The NFA: ${describeMachine(s.nfa)} ${describeMoves(s.nfa)}`;
 }
 
 /** The scene label: the NFA, then the DFA so far. */

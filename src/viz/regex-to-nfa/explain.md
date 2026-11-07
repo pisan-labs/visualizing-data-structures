@@ -24,9 +24,9 @@ Every piece has one start state and one accept state. Nothing comes into the sta
 - **Union R|S:** a new start with ε-arrows into both pieces, and a new accept state that both pieces reach.
 - **Star R\*:** a new start and a new accept state. One ε-arrow skips R (that is the empty word), and one goes from the end of R back to its start (that is "again").
 
-Count the states. Every symbol and every operator adds exactly 2 (`?` adds 4, see below), and concatenation adds none. `(a|b)*abb` has m = 7 (five symbols, `|` and `*`), so its NFA has 14 states. No state has more than 2 arrows leaving it, so there are at most twice as many arrows as states. Linear in the length of the expression, always. [The NFA grows in step with the expression](#example:linear-size)
+Count the states. Every symbol and every operator adds exactly 2, and concatenation adds none. `(a|b)*abb` has m = 7 (five symbols, `|` and `*`), so its NFA has 14 states. No state has more than 2 arrows leaving it, so there are at most twice as many arrows as states. Linear in the length of the expression, always. [The NFA grows in step with the expression](#example:linear-size)
 
-The shorthands are built from the same parts. `R+` (one or more) is a star with no skip arrow. `R?` is built as `R|ε`, which costs an extra ε piece. [Show me](#play:plus-and-optional)
+The shorthands are built from the same parts. `R+` (one or more) is a star with no skip arrow. `R?` is a star with no arrow back: skip R, or read it once. [Show me](#play:plus-and-optional)
 
 The drawing keeps the textbook picture: concatenation left to right, the two branches of a union stacked, the repeat arrow of a star above it and the skip arrow below. A piece built early stays where it is while the rest of the NFA grows around it. On a phone the pieces wrap onto rows, or turn to read top to bottom.
 

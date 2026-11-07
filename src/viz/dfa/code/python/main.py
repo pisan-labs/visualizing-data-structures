@@ -1,7 +1,8 @@
 # Test driver: reads one operation per line, prints one result per line.
-# "machine <start> <states>" starts a machine, "accept <states>" and
-# "move <from> <symbol> <to>" fill it in, and "run <word>" (no word for the
-# empty word) prints "accept <end state>", "reject <end state>" or "reject none".
+# "dfa <states>" starts a machine, "start <state>", "accept <states>" and
+# "move <from> <symbol> <to>" fill it in ("alphabet" is not needed), and
+# "run <word>" (no word for the empty word) prints "accept <end state>",
+# "reject <end state>" or "reject none".
 import sys
 
 from dfa import DFA
@@ -14,8 +15,10 @@ def main():
         if not parts:
             continue
         op, args = parts[0], parts[1:]
-        if op == "machine":
-            start, accept, delta = args[0], [], {}
+        if op == "dfa":
+            start, accept, delta = None, [], {}
+        elif op == "start":
+            start = args[0]
         elif op == "accept":
             accept = args
         elif op == "move":

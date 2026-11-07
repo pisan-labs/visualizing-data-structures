@@ -11,7 +11,9 @@
  *   star            the part on the main line, the arrow that repeats it curving above, and
  *                   (Thompson) the arrow that skips it curving below
  * An arrow is straight unless a state or a label is in its way, or it repeats a part; then it
- * curves just far enough to clear them (a quadratic curve through `via`).
+ * curves just far enough to clear them (a quadratic curve through `via`): the shared router in
+ * src/layouts/route.ts. Each label sits beside the middle of its arrow, clear of it
+ * (labelBeside in src/layouts/automaton.ts), and later arrows keep clear of it.
  *
  * Three shapes of picture come out of it, and the view picks the one that fits the stage:
  *   rows 1      the whole NFA left to right
@@ -19,7 +21,25 @@
  *               one row runs back under it to the start of the next
  *   down        the one-row picture turned to read top to bottom (x and y swapped)
  */
-import { STATE_R, type Pt } from '../../layouts/automaton';
+import { STATE_R, labelBeside, labelSize } from '../../layouts/automaton';
+import {
+  add,
+  clipArrow,
+  curveLength,
+  curvePoint,
+  curveSamples,
+  dist,
+  isClear,
+  loopRoute,
+  mul,
+  routeArrow,
+  sub,
+  unit,
+  type Hint,
+  type Obstacle,
+  type Pt,
+  type Seg,
+} from '../../layouts/route';
 import type { Bounds } from '../../render/scene';
 import type { Move } from '../_automata/automaton';
 import type { Construction, Frag } from './construct';
@@ -36,16 +56,17 @@ const LABEL_R = 12;
 /** The start arrow's length outside the state. */
 const START_TAIL = STATE_R + 38;
 
-export interface Seg {
-  a: Pt;
-  b: Pt;
-  via?: Pt;
-}
+export type { Seg };
 
 /** One arrow: one segment (or three, for the arrow between wrapped rows), and its label. */
 export interface Path {
   segs: Seg[];
+  /** The middle of the label. */
   label: Pt;
+  /** The label's text, which sets how much room it needs. */
+  text: string;
+  /** Where along the arrow the label sits (0.5, the middle, unless that spot was taken). */
+  t?: number;
 }
 
 export interface Picture {
@@ -77,170 +98,52 @@ interface Local {
   box: Box;
 }
 
-interface Obstacle {
-  x: number;
-  y: number;
-  r: number;
-}
-
-const add = (a: Pt, b: Pt): Pt => ({ x: a.x + b.x, y: a.y + b.y });
-const sub = (a: Pt, b: Pt): Pt => ({ x: a.x - b.x, y: a.y - b.y });
-const mul = (a: Pt, k: number): Pt => ({ x: a.x * k, y: a.y * k });
-const dist = (a: Pt, b: Pt) => Math.hypot(a.x - b.x, a.y - b.y);
-const unit = (v: Pt): Pt => {
-  const l = Math.hypot(v.x, v.y) || 1;
-  return { x: v.x / l, y: v.y / l };
-};
 const mid = (a: Pt, b: Pt): Pt => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
 
-/** A point of the quadratic curve from a through via to b (or the straight line). */
-function along(s: Seg, t: number): Pt {
-  if (!s.via) return add(s.a, mul(sub(s.b, s.a), t));
-  const u = 1 - t;
-  return {
-    x: u * u * s.a.x + 2 * u * t * s.via.x + t * t * s.b.x,
-    y: u * u * s.a.y + 2 * u * t * s.via.y + t * t * s.b.y,
-  };
+/** Does a label of this text, centered at c, keep clear of these points and states? */
+function labelClear(c: Pt, text: string, points: Pt[], states: Pt[]): boolean {
+  const { w, h } = labelSize(text);
+  const near = (p: Pt, d: number) =>
+    Math.hypot(Math.max(Math.abs(p.x - c.x) - w / 2, 0), Math.max(Math.abs(p.y - c.y) - h / 2, 0)) <
+    d;
+  return !points.some((p) => near(p, 3)) && !states.some((p) => near(p, STATE_R + 2));
 }
-
-const SAMPLES = 24;
-
-function samples(s: Seg, n = SAMPLES): Pt[] {
-  return Array.from({ length: n + 1 }, (_, i) => along(s, i / n));
-}
-
-/** Enough points along a segment that none is more than about 8 units from the next. */
-const density = (s: Seg) =>
-  Math.min(
-    240,
-    Math.max(16, Math.ceil((s.via ? dist(s.a, s.via) + dist(s.via, s.b) : dist(s.a, s.b)) / 8)),
-  );
 
 /**
- * How much room the segment between two state centers leaves the obstacles: the least distance
- * past an obstacle's radius (negative when it cuts into one). Stops early below `enough`.
+ * Where a label goes: beside the middle of the arrow, outside a curve, or for a straight arrow
+ * on the side away from the main line (at y = axis), above it when it is on the line, and left
+ * of a vertical one. When an arrow or a state already drawn is in the way, it slides along the
+ * arrow, then tries the other side.
  */
-function room(s: Seg, obstacles: Obstacle[], enough = -Infinity): number {
-  const n = density(s);
-  let least = Infinity;
-  for (let i = 1; i < n; i++) {
-    const p = along(s, i / n);
-    if (dist(p, s.a) < STATE_R + 2 || dist(p, s.b) < STATE_R + 2) continue;
-    for (const o of obstacles) {
-      if (Math.abs(p.x - o.x) >= o.r + 40 || Math.abs(p.y - o.y) >= o.r + 40) continue;
-      least = Math.min(least, dist(p, o) - o.r);
-      if (least < enough) return least;
-    }
-  }
-  return least;
-}
-
-/** Does the segment between two state centers keep clear of the obstacles? */
-const clear = (s: Seg, obstacles: Obstacle[]) => room(s, obstacles, 0) >= 0;
-
-type Hint = 'up' | 'down' | 'auto';
-
-/**
- * The via point for an arrow from P to Q, or none for a straight one. `force` curves it even
- * when the straight line is clear (an arrow that repeats a part, or skips it).
- */
-function route(
+function labelFor(
+  local: Local,
+  seg: Seg,
+  text: string,
   P: Pt,
   Q: Pt,
-  obstacles: Obstacle[],
-  curves: Obstacle[],
-  hint: Hint,
-  force: boolean,
-): Pt | undefined {
-  const others = obstacles.filter((o) => dist(o, P) > 1 && dist(o, Q) > 1);
-  if (!force && clear({ a: P, b: Q }, others)) return undefined;
-  const d = dist(P, Q);
-  const n0 = unit({ x: -(Q.y - P.y), y: Q.x - P.x });
+  via?: Pt,
+  axis = 0,
+): { label: Pt; t: number } {
   const m = mid(P, Q);
-  const upSide = n0.y < 0 || (n0.y === 0 && n0.x < 0) ? 1 : -1;
-  const sides = hint === 'auto' ? [-upSide, upSide] : [hint === 'up' ? upSide : -upSide];
-  const c0 = force ? Math.max(30, 0.3 * d) : 0.2 * d;
-  const cmax = 2.5 * d + 260;
-  const find = (side: number, obs: Obstacle[]) => {
-    const n = mul(n0, side);
-    for (let c = c0; c <= cmax; c += 6) {
-      const via = add(m, mul(n, c));
-      if (clear({ a: P, b: Q, via }, obs)) return { via, c };
-    }
-    return null;
-  };
-  for (const obs of [[...others, ...curves], others]) {
-    const found = sides.map((s) => find(s, obs)).filter((f) => f !== null);
-    if (found.length) return found.reduce((b, f) => (f.c < b.c - 18 ? f : b)).via;
-  }
-  // Nothing is fully clear: take the curve with the most room, also trying lopsided ones that
-  // come down onto a state from above.
-  let best = { via: add(m, mul(n0, sides[0]! * Math.max(c0, 0.45 * d))), room: -Infinity };
-  for (const side of sides)
-    for (const t of [0.5, 0.3, 0.7, 0.15, 0.85])
-      for (let c = c0; c <= cmax; c += 12) {
-        const via = add(add(P, mul(sub(Q, P), t)), mul(n0, side * c));
-        const r = room({ a: P, b: Q, via }, others, best.room);
-        if (r > best.room + 0.5) best = { via, room: r };
-      }
-  return best.via;
-}
-
-/** Clip a segment between two state centers to the circles' edges. */
-function clip(P: Pt, Q: Pt, via?: Pt): Seg {
-  const a = add(P, mul(unit(sub(via ?? Q, P)), STATE_R));
-  const b = add(Q, mul(unit(sub(via ?? P, Q)), STATE_R + 1));
-  return via ? { a, b, via } : { a, b };
-}
-
-/**
- * Where a label goes: beside the middle of the arrow, on the side away from the main line (at
- * y = axis), or above an arrow along it.
- */
-function labelFor(P: Pt, Q: Pt, via?: Pt, axis = 0): Pt {
-  const m = mid(P, Q);
-  if (via) {
-    const top = add(mul(m, 0.5), mul(via, 0.5));
-    return add(top, mul(unit(sub(via, m)), 13));
-  }
   const n = unit({ x: -(Q.y - P.y), y: Q.x - P.x });
   const outward = Math.abs(m.y - axis) < 1 ? -1 : Math.sign(m.y - axis);
-  const flip = n.y === 0 ? (n.x < 0 ? 1 : -1) : Math.sign(n.y) === outward ? 1 : -1;
-  return add(m, mul(n, 15 * flip));
+  const toward = via ? sub(via, m) : n.y === 0 ? { x: -1, y: 0 } : { x: 0, y: outward };
+  const points = Object.values(local.paths).flatMap((p) =>
+    p.segs.flatMap((s) => curveSamples(s, Math.ceil(curveLength(s) / 4))),
+  );
+  const states = Object.values(local.pos);
+  for (const side of [toward, mul(toward, -1)])
+    for (const t of [0.5, 0.4, 0.6, 0.3, 0.7]) {
+      const label = labelBeside(seg, text, side, t);
+      if (labelClear(label, text, points, states)) return { label, t };
+    }
+  return { label: labelBeside(seg, text, toward), t: 0.5 };
 }
 
-const DIRS: Pt[] = [
-  { x: 0, y: -1 },
-  { x: 0, y: 1 },
-  { x: -1, y: 0 },
-  { x: 1, y: 0 },
-];
-
-/** A loop on a state, on the side with the most room (as in drawAutomaton). */
-function loopFor(P: Pt, obstacles: Obstacle[]): Path {
-  const at = (d: Pt): Path => {
-    const n = { x: -d.y, y: d.x };
-    const s = add(add(P, mul(d, STATE_R * 0.8)), mul(n, -STATE_R * 0.6));
-    const e = add(add(P, mul(d, STATE_R * 0.8)), mul(n, STATE_R * 0.6));
-    return {
-      segs: [
-        {
-          a: add(P, mul(unit(sub(s, P)), STATE_R)),
-          b: add(P, mul(unit(sub(e, P)), STATE_R + 1)),
-          via: add(P, mul(d, STATE_R * 3.3)),
-        },
-      ],
-      label: add(P, mul(d, STATE_R * 2.2 + 12)),
-    };
-  };
-  const room = (p: Path) =>
-    Math.min(
-      400,
-      ...[...samples(p.segs[0]!, 8), p.label].flatMap((q) =>
-        obstacles.filter((o) => dist(o, P) > 1).map((o) => dist(q, o) - o.r),
-      ),
-    );
-  return DIRS.map(at).reduce((best, p) => (room(p) > room(best) + 4 ? p : best));
+/** A loop on a state, on the side with the most room, its label just past it. */
+function loopFor(P: Pt, obstacles: Obstacle[], text: string): Path {
+  const { seg, dir } = loopRoute(P, obstacles, STATE_R);
+  return { segs: [seg], label: add(P, mul(dir, STATE_R * 2.2 + 12)), text };
 }
 
 function boxOf(pos: Record<string, Pt>, paths: Record<string, Path>, labels = true): Box {
@@ -253,21 +156,23 @@ function boxOf(pos: Record<string, Pt>, paths: Record<string, Path>, labels = tr
   };
   for (const p of Object.values(pos)) grow(p, STATE_R + 3);
   for (const path of Object.values(paths)) {
-    for (const s of path.segs) for (const p of samples(s, 12)) grow(p, 3);
+    for (const s of path.segs) for (const p of curveSamples(s, 12)) grow(p, 3);
     if (labels) grow(path.label, 8, 11);
   }
   return b;
 }
 
+/** What a new arrow keeps clear of: states, labels (when it can), and curves (when it can). */
 function obstaclesOf(local: { pos: Record<string, Pt>; paths: Record<string, Path> }) {
-  const obstacles: Obstacle[] = Object.values(local.pos).map((p) => ({ ...p, r: CLEAR }));
+  const states: Obstacle[] = Object.values(local.pos).map((p) => ({ ...p, r: CLEAR }));
+  const labels: Obstacle[] = [];
   const curves: Obstacle[] = [];
   for (const path of Object.values(local.paths)) {
-    obstacles.push({ ...path.label, r: LABEL_R });
+    labels.push({ ...path.label, r: LABEL_R });
     for (const s of path.segs)
-      if (s.via) for (const p of samples(s, 8).slice(1, -1)) curves.push({ ...p, r: 8 });
+      if (s.via) for (const p of curveSamples(s, 8).slice(1, -1)) curves.push({ ...p, r: 8 });
   }
-  return { obstacles, curves };
+  return { states, labels, curves };
 }
 
 function shiftPath(p: Path, d: Pt): Path {
@@ -278,6 +183,8 @@ function shiftPath(p: Path, d: Pt): Path {
       ...(s.via ? { via: add(s.via, d) } : {}),
     })),
     label: add(p.label, d),
+    text: p.text,
+    t: p.t,
   };
 }
 
@@ -298,15 +205,27 @@ function routeAll(local: Local, moves: Routing[], axis = 0): void {
   for (const { move, hint = 'auto', force = false } of moves) {
     const key = pairKey(move.from, move.to);
     if (local.paths[key]) continue;
-    const { obstacles, curves } = obstaclesOf(local);
+    const { states, labels, curves } = obstaclesOf(local);
     const P = local.pos[move.from]!;
     if (move.from === move.to) {
-      local.paths[key] = loopFor(P, [...obstacles, ...curves]);
+      local.paths[key] = loopFor(P, [...states, ...labels, ...curves], move.on);
       continue;
     }
     const Q = local.pos[move.to]!;
-    const via = route(P, Q, obstacles, curves, hint, force);
-    local.paths[key] = { segs: [clip(P, Q, via)], label: labelFor(P, Q, via, axis) };
+    const via = routeArrow(P, Q, {
+      obstacles: states,
+      soft: labels,
+      curves,
+      hint,
+      force,
+      r: STATE_R,
+    });
+    const seg = clipArrow(P, Q, via, STATE_R);
+    local.paths[key] = {
+      segs: [seg],
+      ...labelFor(local, seg, move.on, P, Q, via, axis),
+      text: move.on,
+    };
   }
 }
 
@@ -342,29 +261,29 @@ function layoutOne(f: Frag, kids: Local[], kidFrags: Frag[], how: Construction):
       put(local, a!, { x: 0, y: 0 });
       put(local, b!, { x: nextX(a!, b!), y: 0 });
       break;
-    case 'union':
-    case 'opt':
+    case 'union': {
       at(f.start, 0);
-      if (how === 'thompson' || f.kind === 'union') {
-        const [ya, yb] = ys(a!, b ?? a!);
-        if (how === 'thompson') {
-          const wa = a!.pos[accept(fa!)]!.x;
-          const wb = b!.pos[accept(fb!)]!.x;
-          const w = Math.max(wa, wb);
-          const xa = after(a!, GAP + (w - wa) / 2);
-          const xb = after(b!, GAP + (w - wb) / 2);
-          put(local, a!, { x: xa, y: ya });
-          put(local, b!, { x: xb, y: yb });
-          const right = Math.max(xa + a!.box.x2, xb + b!.box.x2);
-          at(accept(f), Math.max(GAP + w + GAP, right + STATE_R + 16));
-        } else {
-          put(local, a!, { x: after(a!, GAP), y: ya });
-          put(local, b!, { x: after(b!, GAP), y: yb });
-        }
-      } else put(local, a!, { x: after(a!, GAP), y: 0 }); // Sipser's R?
+      const [ya, yb] = ys(a!, b!);
+      if (how === 'thompson') {
+        const wa = a!.pos[accept(fa!)]!.x;
+        const wb = b!.pos[accept(fb!)]!.x;
+        const w = Math.max(wa, wb);
+        const xa = after(a!, GAP + (w - wa) / 2);
+        const xb = after(b!, GAP + (w - wb) / 2);
+        put(local, a!, { x: xa, y: ya });
+        put(local, b!, { x: xb, y: yb });
+        const right = Math.max(xa + a!.box.x2, xb + b!.box.x2);
+        at(accept(f), Math.max(GAP + w + GAP, right + STATE_R + 16));
+      } else {
+        put(local, a!, { x: after(a!, GAP), y: ya });
+        put(local, b!, { x: after(b!, GAP), y: yb });
+      }
       break;
+    }
     case 'star':
-    case 'plus': {
+    case 'plus':
+    case 'opt': {
+      // Thompson's R? is a star without the arrow that repeats it.
       if (how === 'thompson') {
         at(f.start, 0);
         const xa = after(a!, GAP);
@@ -377,6 +296,10 @@ function layoutOne(f: Frag, kids: Local[], kidFrags: Frag[], how: Construction):
             return { move, hint: 'down', force: true };
           return { move };
         });
+      } else if (f.kind === 'opt') {
+        // Sipser's R?: a new accepting start, then R.
+        at(f.start, 0);
+        put(local, a!, { x: after(a!, GAP), y: 0 });
       } else {
         if (f.kind === 'star') at(f.start, 0);
         put(local, a!, { x: f.kind === 'star' ? after(a!, GAP) : 0, y: 0 });
@@ -449,7 +372,16 @@ function transpose(local: Local): Local {
         ...(s.via ? { via: swap(s.via) } : {}),
       })),
       label: swap(p.label),
+      text: p.text,
+      t: p.t,
     };
+  // A label beside an arrow keeps its side but not its room: text does not turn with the
+  // picture, so place it again beside the turned arrow.
+  for (const p of Object.values(paths)) {
+    const s = p.segs[0]!;
+    if (p.segs.length === 1 && dist(s.a, s.b) > 1)
+      p.label = labelBeside(s, p.text, sub(p.label, curvePoint(s, p.t ?? 0.5)), p.t ?? 0.5);
+  }
   return { pos, paths, box: boxOf(pos, paths) };
 }
 
@@ -548,10 +480,15 @@ function wrapped(
       const Q = out.pos[move.to]!;
       const J = { x: right, y: gapY };
       const K = { x: left, y: gapY };
-      const { obstacles } = obstaclesOf(out);
-      const others = obstacles.filter((o) => dist(o, P) > 1);
+      const { states, labels } = obstaclesOf(out);
+      const away = (o: Obstacle) => dist(o, P) > 1;
       let via: Pt | undefined = { x: J.x, y: P.y };
-      if (!clear({ a: P, b: J, via }, others)) via = route(P, J, others, [], 'auto', false);
+      if (!isClear({ a: P, b: J, via }, [...states, ...labels].filter(away), STATE_R))
+        via = routeArrow(P, J, {
+          obstacles: states.filter(away),
+          soft: labels.filter(away),
+          r: STATE_R,
+        });
       const lead = via
         ? { a: add(P, mul(unit(sub(via, P)), STATE_R)), b: J, via }
         : { a: add(P, mul(unit(sub(J, P)), STATE_R)), b: J };
@@ -562,6 +499,7 @@ function wrapped(
           { a: K, b: { x: Q.x - STATE_R - 1, y: Q.y }, via: { x: K.x, y: Q.y } },
         ],
         label: { x: J.x + 13, y: (P.y + gapY) / 2 },
+        text: move.on,
       };
     }
   });

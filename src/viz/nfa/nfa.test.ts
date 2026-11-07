@@ -6,7 +6,9 @@ import type { OpCall } from '../../engine/types';
 import { stateId } from '../../layouts/automaton';
 import { accepts, closure, stepSet, type Automaton } from '../_automata/automaton';
 import { formatAutomaton, parseAutomaton } from '../_automata/parse';
-import { loadCall, randomNfa, setShort, setText, wordText } from '../dfa/kit';
+import { setName } from '../_automata/automaton';
+import { loadCall, setText, wordText } from '../_automata/page';
+import { randomNfa } from '../_automata/random';
 import { nfa } from '.';
 import { MACHINES } from './machines';
 import type { NfaRun, NfaSettings } from './model';
@@ -101,7 +103,7 @@ describe('NFA', () => {
               const run = step.extra!.run!;
               for (const q of run.set) expect(a.states).toContain(q);
               expect(step.vars?.active).toBe(run.set.length);
-              expect(step.vars?.set).toBe(setShort(run.set));
+              expect(step.vars?.set).toBe(setName(run.set));
               // Once a symbol's ε-moves have been followed, the set is the reference's.
               const closed =
                 step.lines.includes('run.close') ||
@@ -135,7 +137,7 @@ describe('NFA', () => {
     expect(dead.say).toBe(
       `Read b: no state in ${S('q2', 'q5')} has a move on b, so every branch dies. The set is empty, so the machine rejects abab, without reading the other 2 symbols.`,
     );
-    expect(dead.extra!.run!.rows.map(setShort)).toEqual(['{q0,q1,q3}', '{q2,q5}', '∅']);
+    expect(dead.extra!.run!.rows.map(setName)).toEqual(['{q0,q1,q3}', '{q2,q5}', '∅']);
   });
 
   it('shows the ε-closure as its own step, or folds it in', () => {
@@ -168,7 +170,7 @@ describe('NFA', () => {
       ['load', MACHINES.epsLoop],
       ['run', 'aba'],
     ]);
-    expect(lastRun(t, 1).rows.map(setShort)).toEqual([
+    expect(lastRun(t, 1).rows.map(setName)).toEqual([
       '{q0,q1}',
       '{q0,q1,q2}',
       '{q0,q1}',

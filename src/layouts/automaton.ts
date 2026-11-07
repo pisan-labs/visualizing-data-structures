@@ -9,18 +9,35 @@
  * diagram reads from the start onward. Layers run left to right when `across` (a wide stage)
  * and top to bottom otherwise (a phone). States no move reaches go in a last layer.
  *
- *   layoutStates(a, across)        -> { pos, bounds } (cached per automaton and direction)
- *   fixedLayout(pos, across)       -> the same from positions a page chooses itself
- *   drawAutomaton(a, layout, opts) -> { shapes, bounds }
- *     opts.roles      marks by shape id (a mark beats a look)
- *     opts.look(q)    'current' (blue, thick), 'dim' (faded), 'dead' (dashed outline)
- *     opts.edge(p, q) 'used' (the arrow just followed, blue), 'dim', or nothing
- *     opts.note(q)    a small badge under the state, such as the NFA states a DFA state holds
- *     opts.prefix     put before every id, so two diagrams can share a scene
+ *   layoutStates(a, across)            -> { pos, bounds } (cached per automaton and direction)
+ *   layoutFromLayers(layers, across)   -> the same from layers a page chooses itself
+ *   fixedLayout(pos, across)           -> the same from positions a page chooses itself
+ *   drawAutomaton(a, layout, opts)     -> { shapes, bounds }
+ *     opts.roles       marks by shape id (a mark beats a look)
+ *     opts.look(q)     'current' (blue, thick), 'dim' (faded), 'dead' (dashed outline)
+ *     opts.edge(p, q)  'used' (the arrow just followed, blue), 'dim', or nothing
+ *     opts.note(q)     a small badge beside the state, such as the block it is in
+ *     opts.prefix      put before every id, so two diagrams can share a scene
+ *     opts.startArrow  false leaves out the arrow into the start state
+ *     opts.show        draw only some states and moves, each where it is in the whole diagram
+ *                      (a diagram that grows: nothing moves as the rest arrives)
+ *     opts.route(p, q) the page's own route for an arrow, and optionally its label's place
+ *     opts.around      'avoid' routes an arrow blocked by a state around everything in its way
+ *                      (src/layouts/route.ts) instead of a fixed bend
+ *   labelBeside(seg, text, toward)     where a label goes beside an arrow, clear of it
+ *
+ * Labels. Each move label sits beside the middle of its arrow, as close as it can be without
+ * touching it, on the outside of a curve and above a level arrow. When that spot covers a
+ * state, another label, or another arrow (a loop included), it slides along the arrow, moves
+ * to the other side or further out, whichever costs least. A loop's label sits just past the
+ * loop. Labels are placed for the whole diagram, before `show` picks what is drawn, so they
+ * stay put while a diagram grows. Notes go on the side of their state that is freest of
+ * arrows and labels.
  *
  * Shape ids (use them as mark ids): stateId(q) "s-q0" the circle, "s-q0-t" its name,
- * "s-q0-acc" the accept ring, "s-q0-n" the badge, "start" the start arrow, moveId(p, q)
- * "m-q0-q1" the arrow and "m-q0-q1-t" its label.
+ * "s-q0-acc" the accept ring, "s-q0-n" the note, "start" the start arrow, moveId(p, q)
+ * "m-q0-q1" the arrow (with "-a", "-b", ... for the pieces before the last of a routed arrow)
+ * and "m-q0-q1-t" its label.
  *
  * Sizes are in scene units: states have radius 22, layers sit 130 apart and states within a
  * layer 96 apart, so a 6-state diagram is about 760 x 250 across and stays readable on a phone
@@ -28,17 +45,34 @@
  */
 import type { MarkRole } from '../engine/types';
 import type { Bounds, Shape } from '../render/scene';
-import { EPS, type Automaton } from '../viz/_automata/automaton';
+import { EPS, type Automaton, type Move } from '../viz/_automata/automaton';
+import {
+  add,
+  clipArrow,
+  curveLength,
+  curvePoint,
+  curveSamples,
+  curveTangent,
+  dist,
+  loopArrow,
+  mul,
+  routeArrow,
+  sub,
+  unit,
+  type Obstacle,
+  type Pt,
+  type Seg,
+} from './route';
+
+export type { Pt, Seg } from './route';
 
 export const STATE_R = 22;
-const LAYER_GAP = 130;
-const ROW_GAP = 96;
-const LABEL_SIZE = 15;
-
-export interface Pt {
-  x: number;
-  y: number;
-}
+export const LAYER_GAP = 130;
+export const ROW_GAP = 96;
+export const LABEL_SIZE = 15;
+const NOTE_SIZE = 13;
+/** The room left between a label and its arrow. */
+const GAP = 5;
 
 export interface StateLayout {
   pos: Record<string, Pt>;
@@ -70,24 +104,28 @@ export function layers(a: Automaton): string[][] {
   return out;
 }
 
-export function layoutStates(a: Automaton, across = true): StateLayout {
-  const key = `${across}|${a.start}|${a.states.join(',')}|${a.moves.map((m) => `${m.from}>${m.to}`).join(',')}`;
-  const hit = cache.get(key);
-  if (hit) return hit;
-  const ls = layers(a);
-  const widest = Math.max(...ls.map((l) => l.length));
+/**
+ * A layout from layers a page chooses: layers LAYER_GAP apart, states in a layer ROW_GAP apart,
+ * each layer centered on the widest. Across, layers run left to right; down, top to bottom.
+ */
+export function layoutFromLayers(ls: readonly (readonly string[])[], across = true): StateLayout {
+  const widest = Math.max(1, ...ls.map((l) => l.length));
   const pos: Record<string, Pt> = {};
   ls.forEach((layer, i) =>
     layer.forEach((q, j) => {
       const along = i * LAYER_GAP;
-      // Center each layer on the widest; nudge a lone state of an odd layer off the middle line
-      // when the layer before has one there too, so a straight run of arrows stays clear of
-      // loops and labels.
       const off = (j - (layer.length - 1) / 2) * ROW_GAP + ((widest - 1) / 2) * ROW_GAP;
       pos[q] = across ? { x: along, y: off } : { x: off, y: along };
     }),
   );
-  const out = fixedLayout(pos, across);
+  return fixedLayout(pos, across);
+}
+
+export function layoutStates(a: Automaton, across = true): StateLayout {
+  const key = `${across}|${a.start}|${a.states.join(',')}|${a.moves.map((m) => `${m.from}>${m.to}`).join(',')}`;
+  const hit = cache.get(key);
+  if (hit) return hit;
+  const out = layoutFromLayers(layers(a), across);
   if (cache.size > 200) cache.clear();
   cache.set(key, out);
   return out;
@@ -112,86 +150,168 @@ export function fixedLayout(pos: Record<string, Pt>, across = true): StateLayout
 export type StateLook = 'current' | 'dim' | 'dead';
 export type MoveLook = 'used' | 'dim';
 
+/** An arrow a page routes itself. */
+export interface ArrowRoute {
+  /** Its pieces, in order; only the last has a head. */
+  segs: Seg[];
+  /** The middle of its label (see labelBeside); left out, the label is placed here. */
+  label?: Pt;
+}
+
 export interface DrawOptions {
-  roles?: Map<string, MarkRole>;
+  roles?: ReadonlyMap<string, MarkRole>;
   look?: (q: string) => StateLook | undefined;
   edge?: (p: string, q: string) => MoveLook | undefined;
   note?: (q: string) => string | undefined;
   prefix?: string;
+  /** Draw the arrow into the start state (the default). */
+  startArrow?: boolean;
+  /**
+   * Draw only the states and moves these pass; everything keeps the place it has in the whole
+   * diagram. An arrow's label lists the symbols of its moves drawn so far. The start arrow
+   * comes with the start state, unless `start` is false (not known yet).
+   */
+  show?: { state?: (q: string) => boolean; move?: (m: Move) => boolean; start?: boolean };
+  /** The page's route for the arrow from p to q, or undefined to route it here. */
+  route?: (p: string, q: string) => ArrowRoute | undefined;
+  /** How an arrow blocked by a state gets past it: a fixed bend, or the least curve that clears. */
+  around?: 'bend' | 'avoid';
 }
 
-const sub = (a: Pt, b: Pt) => ({ x: a.x - b.x, y: a.y - b.y });
-const len = (v: Pt) => Math.hypot(v.x, v.y) || 1;
-const unit = (v: Pt) => ({ x: v.x / len(v), y: v.y / len(v) });
-const along = (p: Pt, v: Pt, d: number) => ({ x: p.x + v.x * d, y: p.y + v.y * d });
+// ---------------------------------------------------------------------------------------------
+// Geometry
 
 /** Distance from c to the segment a-b. */
 function segDist(a: Pt, b: Pt, c: Pt): number {
   const ab = sub(b, a);
-  const t = Math.max(0, Math.min(1, ((c.x - a.x) * ab.x + (c.y - a.y) * ab.y) / len(ab) ** 2));
+  const l2 = ab.x * ab.x + ab.y * ab.y || 1;
+  const t = Math.max(0, Math.min(1, ((c.x - a.x) * ab.x + (c.y - a.y) * ab.y) / l2));
   return Math.hypot(a.x + ab.x * t - c.x, a.y + ab.y * t - c.y);
+}
+
+interface Box {
+  l: number;
+  r: number;
+  t: number;
+  b: number;
+}
+
+const boxAt = (c: Pt, w: number, h: number): Box => ({
+  l: c.x - w / 2,
+  r: c.x + w / 2,
+  t: c.y - h / 2,
+  b: c.y + h / 2,
+});
+const overlaps = (a: Box, b: Box, pad = 0) =>
+  a.l < b.r + pad && b.l < a.r + pad && a.t < b.b + pad && b.t < a.b + pad;
+const boxDist = (b: Box, p: Pt) =>
+  Math.hypot(Math.max(b.l - p.x, 0, p.x - b.r), Math.max(b.t - p.y, 0, p.y - b.b));
+/** How far a w x h box reaches from its middle in direction d. */
+const reachOf = (d: Pt, w: number, h: number) => (Math.abs(d.x) * w) / 2 + (Math.abs(d.y) * h) / 2;
+
+/** The box a label of this text takes, in mono type of this size. */
+export const labelSize = (text: string, size = LABEL_SIZE): { w: number; h: number } => ({
+  w: text.length * size * 0.6,
+  h: size,
+});
+
+/** The text's baseline for a label whose box has its middle at y. */
+const baseline = (y: number, size: number) => y + size * 0.3;
+
+/**
+ * The middle of a label beside an arrow piece, at t along it, on the side of the arrow that
+ * `toward` points to, GAP clear of the arrow there.
+ */
+export function labelBeside(seg: Seg, text: string, toward: Pt, t = 0.5): Pt {
+  const T = curveTangent(seg, t);
+  const n = { x: -T.y, y: T.x };
+  const d = n.x * toward.x + n.y * toward.y < 0 ? mul(n, -1) : n;
+  const { w, h } = labelSize(text);
+  return add(curvePoint(seg, t), mul(d, GAP + reachOf(d, w, h)));
 }
 
 const symbolList = (on: string[]) =>
   [...on].sort((x, y) => (x === EPS ? -1 : y === EPS ? 1 : x < y ? -1 : 1)).join(',');
 
-export function drawAutomaton(
-  a: Automaton,
-  layout: StateLayout,
-  o: DrawOptions = {},
-): { shapes: Shape[]; bounds: Bounds } {
-  const pre = o.prefix ?? '';
-  const roles = o.roles ?? new Map<string, MarkRole>();
-  const shapes: Shape[] = [];
+interface Arrow {
+  key: string;
+  p: string;
+  q: string;
+  /** Every move along it. */
+  moves: Move[];
+  segs: Seg[];
+  /** For a loop, the side it is on. */
+  loop?: Pt;
+  /** A label place the page chose. */
+  label?: Pt;
+  /** The label for all its moves. */
+  text: string;
+  pts: Pt[];
+  box: Box;
+}
+
+function sampled(segs: Seg[]): { pts: Pt[]; box: Box } {
+  const pts = segs.flatMap((s) => curveSamples(s, Math.max(12, Math.ceil(curveLength(s) / 5))));
+  const xs = pts.map((p) => p.x);
+  const ys = pts.map((p) => p.y);
+  return {
+    pts,
+    box: { l: Math.min(...xs), r: Math.max(...xs), t: Math.min(...ys), b: Math.max(...ys) },
+  };
+}
+
+/** Every arrow's route: the page's, a loop, a straight line, or a curve. */
+function arrowsOf(a: Automaton, layout: StateLayout, o: DrawOptions): Arrow[] {
   const { pos } = layout;
-  const pairs = new Map<string, { p: string; q: string; on: string[] }>();
+  const byPair = new Map<string, Move[]>();
   for (const m of a.moves) {
     const k = `${m.from}\u0000${m.to}`;
-    const e = pairs.get(k) ?? { p: m.from, q: m.to, on: [] };
-    e.on.push(m.on);
-    pairs.set(k, e);
+    byPair.set(k, [...(byPair.get(k) ?? []), m]);
+  }
+  const keyOf = (p: string, q: string) => `${p}\u0000${q}`;
+  const given = new Map<string, ArrowRoute>();
+  for (const k of byPair.keys()) {
+    const [p, q] = k.split('\u0000') as [string, string];
+    const r = o.route?.(p, q);
+    if (r) given.set(k, r);
   }
   // Arrows between two states first, so loops can keep clear of the curved ones.
-  interface Route {
-    start: Pt;
-    end: Pt;
-    via?: Pt;
-    labelAt: Pt;
-    /** The middle of a curve, which bulges away from the line between its states. */
-    bulge?: Pt;
-  }
-  const routes = new Map<string, Route>();
-  for (const [k, e] of pairs) {
-    if (e.p === e.q) continue;
-    const P = pos[e.p]!;
-    const Q = pos[e.q]!;
+  const segsOf = new Map<string, Seg[]>();
+  const bulges: Pt[] = [];
+  const curves: Obstacle[] = [];
+  const states: Obstacle[] = a.states.map((q) => ({ ...pos[q]!, r: STATE_R + 9 }));
+  for (const [k, moves] of byPair) {
+    const { from: p, to: q } = moves[0]!;
+    const r = given.get(k);
+    if (r) {
+      segsOf.set(k, r.segs);
+      for (const seg of r.segs)
+        if (seg.via) bulges.push(mul(add(add(seg.a, seg.b), mul(seg.via, 2)), 0.25));
+      continue;
+    }
+    if (p === q) continue;
+    const P = pos[p]!;
+    const Q = pos[q]!;
     const v = unit(sub(Q, P));
     const n = { x: -v.y, y: v.x };
-    const back = pairs.has(`${e.q}\u0000${e.p}`);
+    const back = byPair.has(keyOf(q, p));
     const blocked = a.states.some(
-      (r) => r !== e.p && r !== e.q && segDist(P, Q, pos[r]!) < STATE_R + 10,
+      (s) => s !== p && s !== q && segDist(P, Q, pos[s]!) < STATE_R + 10,
     );
-    const d = len(sub(Q, P));
-    const bend = back ? d * 0.18 : blocked ? d * 0.32 : 0;
-    const mid = { x: (P.x + Q.x) / 2, y: (P.y + Q.y) / 2 };
-    if (bend) {
-      const via = along(mid, n, bend);
+    const d = dist(P, Q);
+    const mid = mul(add(P, Q), 0.5);
+    let via: Pt | undefined;
+    if (back) via = add(mid, mul(n, d * 0.18));
+    else if (blocked && o.around === 'avoid')
+      via = routeArrow(P, Q, { obstacles: states, curves, r: STATE_R });
+    else if (blocked) via = add(mid, mul(n, d * 0.32));
+    const seg = clipArrow(P, Q, via, STATE_R);
+    segsOf.set(k, [seg]);
+    if (via) {
       // The curve's middle is halfway from the chord to the control point.
-      const bulge = along(mid, n, bend / 2);
-      routes.set(k, {
-        start: along(P, unit(sub(via, P)), STATE_R),
-        end: along(Q, unit(sub(via, Q)), STATE_R + 1),
-        via,
-        labelAt: along(bulge, n, 13),
-        bulge,
-      });
-    } else
-      routes.set(k, {
-        start: along(P, v, STATE_R),
-        end: along(Q, v, -(STATE_R + 1)),
-        // Label above a level arrow and beside a steep one.
-        labelAt: along(mid, Math.abs(v.x) >= Math.abs(v.y) ? { x: 0, y: -1 } : n, 13),
-      });
+      bulges.push(mul(add(mid, via), 0.5));
+      for (const pt of curveSamples(seg, 8).slice(1, -1)) curves.push({ ...pt, r: 8 });
+    }
   }
 
   // Where each state's loop goes: the side (of up, down, left, right) furthest from its arrows
@@ -203,92 +323,309 @@ export function drawAutomaton(
       { x: -1, y: 0 },
       { x: 1, y: 0 },
     ];
-    const others = [...pairs.values()]
-      .filter((e) => (e.p === q) !== (e.q === q))
-      .map((e) => unit(sub(pos[e.p === q ? e.q : e.p]!, pos[q]!)));
-    if (q === a.start) others.push(layout.across ? { x: -1, y: 0 } : { x: 0, y: -1 });
-    for (const r of routes.values())
-      if (r.bulge && len(sub(r.bulge, pos[q]!)) < ROW_GAP * 1.6)
-        others.push(unit(sub(r.bulge, pos[q]!)));
-    const score = (d: Pt) => Math.min(2, ...others.map((v) => len(sub(v, d))));
+    const others = [...byPair.values()]
+      .map((ms) => ms[0]!)
+      .filter((m) => (m.from === q) !== (m.to === q))
+      .map((m) => unit(sub(pos[m.from === q ? m.to : m.from]!, pos[q]!)));
+    if (q === a.start && o.startArrow !== false)
+      others.push(layout.across ? { x: -1, y: 0 } : { x: 0, y: -1 });
+    for (const b of bulges)
+      if (dist(b, pos[q]!) < ROW_GAP * 1.6) others.push(unit(sub(b, pos[q]!)));
+    const score = (d: Pt) => Math.min(2, ...others.map((v) => dist(v, d)));
     return dirs.reduce((best, d) => (score(d) > score(best) + 1e-9 ? d : best), dirs[0]!);
   };
+
+  const out: Arrow[] = [];
+  for (const [k, moves] of byPair) {
+    const { from: p, to: q } = moves[0]!;
+    let segs = segsOf.get(k);
+    let loop: Pt | undefined;
+    if (!segs) {
+      loop = loopDir(p);
+      segs = [loopArrow(pos[p]!, loop, STATE_R)];
+    } else if (p === q && segs.at(-1)!.via) loop = unit(sub(segs.at(-1)!.via!, pos[p]!));
+    out.push({
+      key: k,
+      p,
+      q,
+      moves,
+      segs,
+      loop,
+      label: given.get(k)?.label,
+      text: symbolList(moves.map((m) => m.on)),
+      ...sampled(segs),
+    });
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Labels
+
+const STATE_HIT = 1000;
+const LABEL_HIT = 1000;
+const ARROW_HIT = 150;
+const OWN_HIT = 300;
+
+interface Candidate {
+  c: Pt;
+  cost: number;
+}
+
+/** Places along an arrow for its label, the most natural first. */
+function candidates(x: Arrow, pos: Record<string, Pt>): Candidate[] {
+  const { w, h } = labelSize(x.text);
+  const out: Candidate[] = [];
+  if (x.loop) {
+    const P = pos[x.p]!;
+    for (const deg of [0, 30, -30, 60, -60, 90, -90]) {
+      const th = (deg * Math.PI) / 180;
+      const u = {
+        x: x.loop.x * Math.cos(th) - x.loop.y * Math.sin(th),
+        y: x.loop.x * Math.sin(th) + x.loop.y * Math.cos(th),
+      };
+      const reach = Math.max(STATE_R, ...x.pts.map((p) => (p.x - P.x) * u.x + (p.y - P.y) * u.y));
+      for (const extra of [0, 4, 9])
+        out.push({
+          c: add(P, mul(u, reach + GAP + reachOf(u, w, h) + extra)),
+          cost: Math.abs(deg) * 0.2 + extra * 1.2,
+        });
+    }
+    return out.sort((m, n) => m.cost - n.cost);
+  }
+  const seg = x.segs.reduce((best, s) => (curveLength(s) > curveLength(best) ? s : best));
+  // The side to try first: outside a curve; above a level arrow; to the left of a steep one
+  // as it runs (so two arrows between the same states label opposite sides).
+  const chord = mul(add(seg.a, seg.b), 0.5);
+  for (const t of [0.5, 0.42, 0.58, 0.34, 0.66, 0.26, 0.74]) {
+    const T = curveTangent(seg, t);
+    const n = { x: -T.y, y: T.x };
+    const pref = seg.via
+      ? n.x * (seg.via.x - chord.x) + n.y * (seg.via.y - chord.y) < 0
+        ? -1
+        : 1
+      : Math.abs(T.x) >= Math.abs(T.y)
+        ? n.y > 0
+          ? -1
+          : 1
+        : 1;
+    const P = curvePoint(seg, t);
+    for (const side of [pref, -pref]) {
+      const d = mul(n, side);
+      for (const extra of [0, 4, 9, 15])
+        out.push({
+          c: add(P, mul(d, GAP + reachOf(d, w, h) + extra)),
+          cost: Math.abs(t - 0.5) * 40 + extra * 1.2 + (side === pref ? 0 : 7),
+        });
+    }
+  }
+  return out.sort((m, n) => m.cost - n.cost);
+}
+
+/** What covering this box costs: states, labels and arrows under it, its own arrow too close. */
+function conflicts(
+  b: Box,
+  own: Arrow | null,
+  arrows: readonly Arrow[],
+  states: readonly Pt[],
+  placed: readonly Box[],
+): number {
+  let cost = 0;
+  for (const s of states) if (boxDist(b, s) < STATE_R + 2) cost += STATE_HIT;
+  for (const o of placed) if (overlaps(b, o, 2)) cost += LABEL_HIT;
+  for (const x of arrows) {
+    if (!overlaps(b, x.box, GAP)) continue;
+    const near = x === own ? GAP - 1.5 : 2;
+    if (x.pts.some((p) => boxDist(b, p) < near)) cost += x === own ? OWN_HIT : ARROW_HIT;
+  }
+  return cost;
+}
+
+/** The cheapest place, stopping at the first one that covers nothing. */
+function cheapest(
+  cands: Candidate[],
+  w: number,
+  h: number,
+  cost: (b: Box) => number,
+): { c: Pt; box: Box } {
+  let best = { c: cands[0]!.c, box: boxAt(cands[0]!.c, w, h), total: Infinity };
+  for (const cand of cands) {
+    if (cand.cost >= best.total) break;
+    const box = boxAt(cand.c, w, h);
+    const total = cand.cost + cost(box);
+    if (total < best.total) best = { c: cand.c, box, total };
+  }
+  return best;
+}
+
+const labelCache = new Map<string, Map<string, Pt>>();
+
+/** The middle of every arrow's label, placed for the whole diagram (cached by its geometry). */
+function placeLabels(
+  arrows: Arrow[],
+  pos: Record<string, Pt>,
+  start: Arrow | null,
+): Map<string, Pt> {
+  const f = (v: number) => v.toFixed(1);
+  const pt = (p: Pt) => `${f(p.x)},${f(p.y)}`;
+  const key = [
+    Object.entries(pos)
+      .map(([q, p]) => `${q}@${pt(p)}`)
+      .join(' '),
+    start ? start.segs.map((s) => `${pt(s.a)}>${pt(s.b)}`).join('') : '-',
+    ...arrows.map(
+      (x) =>
+        `${x.key}:${x.text}:${x.segs.map((s) => `${pt(s.a)}${s.via ? `~${pt(s.via)}` : ''}>${pt(s.b)}`).join('|')}${x.label ? `@${pt(x.label)}` : ''}`,
+    ),
+  ].join(';');
+  const hit = labelCache.get(key);
+  if (hit) return hit;
+  const states = Object.values(pos);
+  const obstacles = start ? [...arrows, start] : arrows;
+  const out = new Map<string, Pt>();
+  const placed: Box[] = [];
+  for (const x of arrows)
+    if (x.label) {
+      out.set(x.key, x.label);
+      placed.push(boxAt(x.label, labelSize(x.text).w, labelSize(x.text).h));
+    }
+  // Long labels first: they have fewer places that fit.
+  const order = arrows
+    .filter((x) => !x.label)
+    .map((x, i) => ({ x, i }))
+    .sort((m, n) => n.x.text.length - m.x.text.length || m.i - n.i)
+    .map(({ x }) => x);
+  for (const x of order) {
+    const { w, h } = labelSize(x.text);
+    const best = cheapest(candidates(x, pos), w, h, (b) =>
+      conflicts(b, x, obstacles, states, placed),
+    );
+    out.set(x.key, best.c);
+    placed.push(best.box);
+  }
+  if (labelCache.size > 300) labelCache.clear();
+  labelCache.set(key, out);
+  return out;
+}
+
+const NOTE_SIDES: Pt[] = [
+  { x: 0, y: 1 },
+  { x: 0.71, y: 0.71 },
+  { x: -0.71, y: 0.71 },
+  { x: 0.71, y: -0.71 },
+  { x: -0.71, y: -0.71 },
+  { x: 0, y: -1 },
+  { x: 1, y: 0 },
+  { x: -1, y: 0 },
+];
+
+// ---------------------------------------------------------------------------------------------
+// Drawing
+
+export function drawAutomaton(
+  a: Automaton,
+  layout: StateLayout,
+  o: DrawOptions = {},
+): { shapes: Shape[]; bounds: Bounds } {
+  const pre = o.prefix ?? '';
+  const roles = o.roles ?? new Map<string, MarkRole>();
+  const shapes: Shape[] = [];
+  const { pos } = layout;
+  const showState = (q: string) => o.show?.state?.(q) ?? true;
+  const showMove = (m: Move) => o.show?.move?.(m) ?? true;
+
+  const arrows = arrowsOf(a, layout, o);
+  const S = pos[a.start]!;
+  const inDir = layout.across ? { x: -1, y: 0 } : { x: 0, y: -1 };
+  const startSeg: Seg = { a: add(S, mul(inDir, STATE_R + 34)), b: add(S, mul(inDir, STATE_R + 1)) };
+  const start: Arrow | null =
+    o.startArrow === false
+      ? null
+      : {
+          key: 'start',
+          p: a.start,
+          q: a.start,
+          moves: [],
+          segs: [startSeg],
+          text: '',
+          ...sampled([startSeg]),
+        };
+  const labels = placeLabels(arrows, pos, start);
+
   const xs: number[] = [];
   const ys: number[] = [];
-  const grow = (p: Pt, r = 0) => {
-    xs.push(p.x - r, p.x + r);
-    ys.push(p.y - r, p.y + r);
+  const grow = (p: Pt, rx = 0, ry = rx) => {
+    xs.push(p.x - rx, p.x + rx);
+    ys.push(p.y - ry, p.y + ry);
   };
   const edgeRole = (id: string, look: MoveLook | undefined): MarkRole | undefined =>
     roles.get(id) ?? (look === 'used' ? 'active' : undefined);
 
-  for (const e of pairs.values()) {
-    const id = moveId(e.p, e.q, pre);
-    const look = o.edge?.(e.p, e.q);
+  for (const x of arrows) {
+    const moves = x.moves.filter(showMove);
+    if (!moves.length) continue;
+    const id = moveId(x.p, x.q, pre);
+    const look = o.edge?.(x.p, x.q);
     const opacity = look === 'dim' ? 0.35 : undefined;
-    const text = symbolList(e.on);
-    const P = pos[e.p]!;
-    let start: Pt;
-    let end: Pt;
-    let via: Pt | undefined;
-    let labelAt: Pt;
-    if (e.p === e.q) {
-      const d = loopDir(e.p);
-      const n = { x: -d.y, y: d.x };
-      start = along(along(P, d, STATE_R * 0.8), n, -STATE_R * 0.6);
-      end = along(along(P, d, STATE_R * 0.8), n, STATE_R * 0.6);
-      via = along(P, d, STATE_R * 3.3);
-      start = along(P, unit(sub(start, P)), STATE_R);
-      end = along(P, unit(sub(end, P)), STATE_R + 1);
-      const top = along(P, d, STATE_R * 2.2);
-      labelAt = along(top, d, 12);
-    } else {
-      ({ start, end, via, labelAt } = routes.get(`${e.p}\u0000${e.q}`)!);
-    }
-    shapes.push({
-      kind: 'arrow',
-      id,
-      x1: start.x,
-      y1: start.y,
-      x2: end.x,
-      y2: end.y,
-      ...(via ? { via } : {}),
-      role: edgeRole(id, look),
-      opacity,
+    const role = edgeRole(id, look);
+    x.segs.forEach((s, i) => {
+      const last = i === x.segs.length - 1;
+      shapes.push({
+        kind: 'arrow',
+        id: last ? id : `${id}-${String.fromCharCode(97 + i)}`,
+        x1: s.a.x,
+        y1: s.a.y,
+        x2: s.b.x,
+        y2: s.b.y,
+        ...(s.via ? { via: s.via } : {}),
+        ...(last ? {} : { head: 'none' as const }),
+        role,
+        opacity,
+      });
     });
+    for (const p of x.pts) grow(p, 2);
+    const text = symbolList(moves.map((m) => m.on));
+    const c = labels.get(x.key)!;
     shapes.push({
       kind: 'text',
       id: `${id}-t`,
-      x: labelAt.x,
-      y: labelAt.y + LABEL_SIZE * 0.35,
+      x: c.x,
+      y: baseline(c.y, LABEL_SIZE),
       text,
       size: LABEL_SIZE,
       anchor: 'middle',
       mono: true,
       cls: 'label',
-      role: roles.get(`${id}-t`) ?? edgeRole(id, look),
+      role: roles.get(`${id}-t`) ?? role,
       opacity,
     });
-    grow(labelAt, 14 + text.length * LABEL_SIZE * 0.3);
-    if (via) grow({ x: (start.x + end.x) / 4 + via.x / 2, y: (start.y + end.y) / 4 + via.y / 2 });
+    const { w, h } = labelSize(text);
+    grow(c, w / 2 + 2, h / 2 + 1);
   }
 
   // The start arrow, from the side the layers start on.
-  const S = pos[a.start]!;
-  const inDir = layout.across ? { x: -1, y: 0 } : { x: 0, y: -1 };
-  const tail = along(S, inDir, STATE_R + 34);
-  shapes.push({
-    kind: 'arrow',
-    id: `${pre}start`,
-    x1: tail.x,
-    y1: tail.y,
-    x2: along(S, inDir, STATE_R + 1).x,
-    y2: along(S, inDir, STATE_R + 1).y,
-    role: roles.get(`${pre}start`),
-  });
-  grow(tail, 4);
+  if (start && showState(a.start) && (o.show?.start ?? true)) {
+    shapes.push({
+      kind: 'arrow',
+      id: `${pre}start`,
+      x1: startSeg.a.x,
+      y1: startSeg.a.y,
+      x2: startSeg.b.x,
+      y2: startSeg.b.y,
+      role: roles.get(`${pre}start`),
+    });
+    grow(startSeg.a, 4);
+  }
 
+  // Notes, on the freest side of their state, clear of every label of the whole diagram.
+  const allLabels = arrows.map((x) =>
+    boxAt(labels.get(x.key)!, labelSize(x.text).w, labelSize(x.text).h),
+  );
+  const notes: Box[] = [];
+  const statePts = a.states.map((q) => pos[q]!);
+  const obstacles = start ? [...arrows, start] : arrows;
   for (const q of a.states) {
+    if (!showState(q)) continue;
     const p = pos[q]!;
     const id = stateId(q, pre);
     const look = o.look?.(q);
@@ -331,23 +668,32 @@ export function drawAutomaton(
     grow(p, STATE_R + 2);
     const note = o.note?.(q);
     if (note) {
-      const y = p.y + STATE_R + 18;
+      const { w, h } = labelSize(note, NOTE_SIZE);
+      const cands = NOTE_SIDES.map((d, i) => ({
+        c: add(p, mul(d, STATE_R + 5 + reachOf(d, w, h))),
+        cost: i * 2,
+      }));
+      const best = cheapest(cands, w, h, (b) =>
+        conflicts(b, null, obstacles, statePts, [...allLabels, ...notes]),
+      );
+      notes.push(best.box);
       shapes.push({
         kind: 'text',
         id: `${id}-n`,
-        x: p.x,
-        y,
+        x: best.c.x,
+        y: baseline(best.c.y, NOTE_SIZE),
         text: note,
-        size: 13,
+        size: NOTE_SIZE,
         anchor: 'middle',
         mono: true,
         cls: 'label',
         role: roles.get(`${id}-n`),
         opacity,
       });
-      grow({ x: p.x, y: y - 4 }, note.length * 4 + 4);
+      grow(best.c, w / 2 + 2, h / 2 + 1);
     }
   }
+  if (!xs.length) return { shapes, bounds: { x: layout.bounds.x, y: layout.bounds.y, w: 0, h: 0 } };
   const x = Math.min(...xs);
   const y = Math.min(...ys);
   return { shapes, bounds: { x, y, w: Math.max(...xs) - x, h: Math.max(...ys) - y } };

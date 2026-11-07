@@ -1,15 +1,8 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
-import type { Automaton } from '../_automata/automaton';
-import {
-  defaults,
-  setText,
-  type ConvRun,
-  type NdExtra,
-  type NdSettings,
-  type NfaState,
-} from './model';
+import { setText, type Automaton } from '../_automata/automaton';
+import { defaults, type ConvRun, type NdExtra, type NdSettings, type NfaState } from './model';
 import { loadCall, randomNfa } from './presets';
 
 type Def = VizDef<NfaState, NdSettings, NdExtra>;
@@ -46,7 +39,7 @@ export function nfaToDfaPractice(def: () => Def): PracticeKind[] {
             prompt: `${intro(nfa)} Which NFA states make up the DFA's start state? Type them in name order.`,
             setup: s,
             answer: { kind: 'sequence', value: start },
-            explain: `The start state is E({ ${nfa.start} }): ${nfa.start} and every state its ε-moves reach, directly or through other ε-moves. That is ${setText(start)}.`,
+            explain: `The start state is E(${setText([nfa.start])}): ${nfa.start} and every state its ε-moves reach, directly or through other ε-moves. That is ${setText(start)}.`,
             watch,
           };
         }

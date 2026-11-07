@@ -30,6 +30,23 @@ describe('automaton text', () => {
     expect((parseAutomaton('') as Error).message).toMatch(/Type moves/);
   });
 
+  it('keeps alphabet symbols no move uses', () => {
+    const a = parseAutomaton('alphabet a b c; q0 a -> q1') as Automaton;
+    expect(a.alphabet).toEqual(['a', 'b', 'c']);
+    expect(formatAutomaton(a)).toBe('start q0; alphabet a b c; q0 a -> q1');
+    expect(parseAutomaton(formatAutomaton(a))).toEqual(a);
+    expect(formatAutomaton(parseAutomaton('q0 a,b -> q1') as Automaton)).not.toContain('alphabet');
+    expect((parseAutomaton('alphabet ab; q0 a -> q1') as Error).message).toMatch(
+      /"ab" .* is not a symbol/,
+    );
+    expect((parseAutomaton('alphabet eps; q0 a -> q1') as Error).message).toMatch(
+      /ε is not a symbol/,
+    );
+    expect((parseWord('ac', parseAutomaton('q0 a,b -> q0') as Automaton) as Error).message).toMatch(
+      /not in the alphabet \{a, b\}/,
+    );
+  });
+
   it('reads words over the alphabet, and ε for the empty word', () => {
     const a = parseAutomaton('q0 a -> q1; q1 b -> q0') as Automaton;
     expect(parseWord('a b a', a)).toBe('aba');

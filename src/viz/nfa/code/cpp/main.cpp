@@ -18,12 +18,14 @@ int main() {
     std::istringstream words(line);
     std::string op;
     if (!(words >> op)) continue;
-    if (op == "machine") {
-      words >> start;
+    if (op == "nfa") {
+      start.clear();
       order.clear();
       for (std::string q; words >> q;) order.push_back(q);
       accept.clear();
       moves.clear();
+    } else if (op == "start") {
+      words >> start;
     } else if (op == "accept") {
       for (std::string q; words >> q;) accept.insert(q);
     } else if (op == "move") {

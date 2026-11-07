@@ -11,7 +11,7 @@ import epsChain from './examples/eps-chain.json';
 import fourthFromEnd from './examples/fourth-from-end.json';
 import thirdFromEnd from './examples/third-from-end.json';
 import explain from './explain.md?raw';
-import { automatonInput, automatonLines } from './kit';
+import { automatonInput, automatonLines } from '../_automata/page';
 import {
   MAX_ALL,
   defaults,

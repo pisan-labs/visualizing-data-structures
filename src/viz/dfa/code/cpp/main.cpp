@@ -17,10 +17,12 @@ int main() {
     std::istringstream words(line);
     std::string op;
     if (!(words >> op)) continue;
-    if (op == "machine") {
-      words >> start;
+    if (op == "dfa") {
+      start.clear();
       accept.clear();
       moves.clear();
+    } else if (op == "start") {
+      words >> start;
     } else if (op == "accept") {
       std::string q;
       while (words >> q) accept.insert(q);

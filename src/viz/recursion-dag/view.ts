@@ -1,4 +1,4 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
 import {
   callBoxSize,
   callNodeShapes,
@@ -14,6 +14,7 @@ import {
 } from '../../layouts/calls';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { ordinal } from '../_recursion/kit';
+import { pickLayout, translate } from '../_stage/arrange';
 import {
   describe,
   edgeKey,
@@ -36,7 +37,16 @@ const TITLE_H = 26;
 const shortLabel = (p: Problem, a: Args) => (p === 'fib' ? `f(${a[0]})` : `C(${a[0]},${a[1]})`);
 const tinyLabel = (p: Problem, a: Args) => (p === 'fib' ? `${a[0]}` : `${a[0]},${a[1]}`);
 
-export function view(step: Step<DagState, undefined>, settings: DagSettings): Scene {
+/**
+ * The DAG sits beside the tree, its rows level with the tree's levels. On a narrow stage it
+ * goes under the tree instead, when that draws larger. Both are laid out finished, so the
+ * choice holds for a whole run.
+ */
+export function view(
+  step: Step<DagState, undefined>,
+  settings: DagSettings,
+  stage?: StageSize,
+): Scene {
   const s = step.state;
   const p = s.run?.problem ?? settings.problem;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -92,6 +102,8 @@ export function view(step: Step<DagState, undefined>, settings: DagSettings): Sc
   if (s.tree.length) boxes.push(callTreeBounds(layout, dx, dy));
 
   // The DAG: one box per subproblem, its rows lined up with the levels of the tree.
+  const dag: Shape[] = [];
+  const dagBoxes: Bounds[] = [];
   const dagLabel = (d: DagNode) => shortLabel(p, d.args);
   const sizes = s.dag.map((d) =>
     callBoxSize({ label: dagLabel(d), value: `= ${d.returns}` }, size, opts.twoLines),
@@ -112,7 +124,7 @@ export function view(step: Step<DagState, undefined>, settings: DagSettings): Sc
   });
   const dagW = (maxCol - minCol) * unit + boxW;
   const dagTitle = 'DAG: subproblems';
-  shapes.push({
+  dag.push({
     kind: 'text',
     id: 'dag-title',
     x: dagLeft,
@@ -122,7 +134,7 @@ export function view(step: Step<DagState, undefined>, settings: DagSettings): Sc
     cls: 'label',
     mono: true,
   });
-  boxes.push({ x: dagLeft, y: 0, w: monoWidth(dagTitle, 13), h: TITLE_H });
+  dagBoxes.push({ x: dagLeft, y: 0, w: monoWidth(dagTitle, 13), h: TITLE_H });
   const byKey = new Map(s.dag.map((d) => [d.key, d]));
   const openKeys = new Set(s.stack.map((id) => s.tree[id - 1]!.key));
   const topKey = top === undefined ? undefined : s.tree[top - 1]!.key;
@@ -134,7 +146,7 @@ export function view(step: Step<DagState, undefined>, settings: DagSettings): Sc
     const b = at(byKey.get(to)!);
     const id = `dagedge-${edgeKey(from, to)}`;
     // Leave the bottom of the caller and reach the top of the callee.
-    shapes.push({
+    dag.push({
       kind: 'arrow',
       id,
       x1: a.x,
@@ -148,7 +160,7 @@ export function view(step: Step<DagState, undefined>, settings: DagSettings): Sc
     const seen = s.seen[d.key] ?? 0;
     if (seen === 0) continue;
     const state: CallState = d.key === topKey ? 'current' : openKeys.has(d.key) ? 'open' : 'done';
-    shapes.push(
+    dag.push(
       ...callNodeShapes(
         at(d),
         {
@@ -167,14 +179,14 @@ export function view(step: Step<DagState, undefined>, settings: DagSettings): Sc
   }
   if (s.dag.length) {
     const rows = Math.max(...s.dag.map((d) => d.row));
-    boxes.push({
+    dagBoxes.push({
       x: dagLeft,
       y: dy - boxH / 2 - 8,
       w: dagW + 14,
       h: rows * layout.levelGap + boxH + 8,
     });
   } else {
-    boxes.push({ x: dagLeft, y: 0, w: 200, h: TITLE_H });
+    dagBoxes.push({ x: dagLeft, y: 0, w: 200, h: TITLE_H });
     shapes.push({
       kind: 'text',
       id: 'empty',
@@ -186,5 +198,20 @@ export function view(step: Step<DagState, undefined>, settings: DagSettings): Sc
       mono: true,
     });
   }
-  return { shapes, bounds: padBounds(unionBounds(...boxes), 12), label: describe(s) };
+  const tree = unionBounds(...boxes);
+  const dagBox = unionBounds(...dagBoxes);
+  const besideIt = { dx: 0, dy: 0, bounds: padBounds(unionBounds(tree, dagBox), 12) };
+  const underDx = -dagLeft;
+  const underDy = tree.y + tree.h + 24;
+  const underIt = {
+    dx: underDx,
+    dy: underDy,
+    bounds: padBounds(
+      unionBounds(tree, { ...dagBox, x: dagBox.x + underDx, y: dagBox.y + underDy }),
+      12,
+    ),
+  };
+  const place = pickLayout(stage, [besideIt, underIt]);
+  shapes.push(...translate(dag, place.dx, place.dy));
+  return { shapes, bounds: place.bounds, label: describe(s) };
 }

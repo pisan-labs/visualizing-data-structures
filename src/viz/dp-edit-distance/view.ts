@@ -1,4 +1,4 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
 import type { Scene, Shape } from '../../render/scene';
 import {
   boxRow,
@@ -8,11 +8,15 @@ import {
   type TableFrame,
   type TableLink,
 } from '../../layouts/table';
+import { placeStrip } from '../_dp/strip';
 import { describe, type EditExtra, type EditSettings, type EditState } from './model';
 
 const BOX_H = 34;
 const GAP = 6;
 const ALIGN_H = 3 * BOX_H + 2 * GAP;
+
+/** Room for the row labels (from, edit, to) left of the alignment. */
+const LABEL_W = 52;
 
 const OP_NAME = { M: 'match', S: 'substitute', D: 'delete', I: 'insert' } as const;
 
@@ -21,22 +25,29 @@ const OP_NAME = { M: 'match', S: 'substitute', D: 'delete', I: 'insert' } as con
  * filling, a cell reads three neighbors (substitute or match, delete, insert); the walk back
  * is a path of arrows to D[0][0], and the alignment builds under the table from the right:
  * the source characters, the edit, and the target characters, with gaps for inserts and
- * deletes.
+ * deletes. On a wide, short stage the alignment goes right of the table when that draws larger.
  */
-export function view(step: Step<EditState, EditExtra>, _settings: EditSettings): Scene {
+export function view(
+  step: Step<EditState, EditExtra>,
+  _settings: EditSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const m = state.a.length;
   const n = state.b.length;
   const roles = new Map<string, MarkRole>(step.marks.map((mk) => [mk.id, mk.role]));
-  const frame: TableFrame = {
+  const width = extra.width ?? 0;
+  const full: TableFrame = {
     rows: m + 1,
     cols: n + 1,
     colHeads: 2,
     rowHeads: [30, 36],
     // The alignment only exists while tracing back, a separate operation; filling gets the room.
-    below: extra.width ? ALIGN_H + 4 : 0,
+    below: width ? ALIGN_H + 4 : 0,
   };
-  const g = tableGeometry(frame);
+  const pitch = Math.min(46, Math.floor((tableGeometry(full).width - 130) / Math.max(1, width)));
+  const place = placeStrip(full, width * pitch, LABEL_W, stage);
+  const { frame, g } = place;
   const links: TableLink[] = (extra.reads ?? []).map((r) => ({
     id: r.op === 'M' || r.op === 'S' ? 'diag' : r.op === 'D' ? 'up' : 'left',
     from: r.from,
@@ -56,11 +67,8 @@ export function view(step: Step<EditState, EditExtra>, _settings: EditSettings):
     roles,
   });
   const out: Shape[] = shapes;
-  const width = extra.width ?? 0;
   if (width) {
-    const pitch = Math.min(46, Math.floor((g.width - 130) / width));
-    const mid = (g.gridLeft + g.gridRight) / 2;
-    const x = (k: number) => mid + (k - (width - 1) / 2) * pitch;
+    const x = (k: number) => place.left + (k + 0.5) * pitch;
     const top: (RowBox | null)[] = Array(width).fill(null);
     const ops: (RowBox | null)[] = Array(width).fill(null);
     const bottom: (RowBox | null)[] = Array(width).fill(null);
@@ -81,12 +89,12 @@ export function view(step: Step<EditState, EditExtra>, _settings: EditSettings):
       labelX: x(0) - pitch / 2 - 8,
       size: Math.min(22, pitch - 14),
     });
-    const y = g.belowTop;
+    const y = place.top;
     out.push(...boxRow('al-a', y, top, opts('from')));
     out.push(...boxRow('al-op', y + BOX_H + GAP, ops, opts('edit')));
     out.push(...boxRow('al-b', y + 2 * (BOX_H + GAP), bottom, opts('to')));
   }
-  return { shapes: out, bounds, label: label(step) };
+  return { shapes: out, bounds: place.beside ? place.bounds : bounds, label: label(step) };
 }
 
 function label(step: Step<EditState, EditExtra>): string {

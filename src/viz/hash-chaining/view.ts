@@ -1,4 +1,4 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
 import {
   drawLink,
   drawNode,
@@ -9,6 +9,7 @@ import {
   type Pt,
 } from '../../layouts/linked';
 import type { Scene, Shape } from '../../render/scene';
+import { pickLayout } from '../_stage/arrange';
 import { ARG_BAND, argAndFormula } from '../hash-open/grid';
 import {
   describe,
@@ -67,14 +68,49 @@ export function grid(m: number): { rows: number; cols: number } {
   return { rows, cols: Math.ceil(m / rows) };
 }
 
-export function view(step: Step<ChainState, ChainExtra>, settings: ChainSettings): Scene {
+/** Chain length assumed when choosing rows for a stage: a fixed guess, so the choice holds. */
+const GUESS_LEN = 4;
+
+/**
+ * Rows of buckets for the stage: the usual (at most seven to a row), or on a wide, short stage
+ * all in one row, or on a narrow one fewer to a row, whichever draws largest with chains of
+ * GUESS_LEN nodes. It depends only on m and the stage, so it holds while chains grow.
+ */
+function gridFor(m: number, nh: number, stage?: StageSize): { rows: number; cols: number } {
+  const usual = grid(m);
+  if (!stage) return usual;
+  const options = [usual];
+  for (let rows = 1; rows <= m; rows++) {
+    const cols = Math.ceil(m / rows);
+    if (Math.ceil(m / cols) === rows && rows !== usual.rows) options.push({ rows, cols });
+  }
+  const band = LABEL + BUCKET_H + DROP + GUESS_LEN * (nh + GAP_Y) - GAP_Y + 8;
+  return pickLayout(
+    stage,
+    options.map((g) => ({
+      ...g,
+      bounds: {
+        x: 0,
+        y: 0,
+        w: Math.max(MIN_W, 2 * MARGIN + g.cols * PITCH - COL_GAP),
+        h: TOP + g.rows * (band + ROW_GAP) - ROW_GAP + 8,
+      },
+    })),
+  );
+}
+
+export function view(
+  step: Step<ChainState, ChainExtra>,
+  settings: ChainSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const pairs = settings.mode === 'pairs';
   // A little shorter than the linked layout's 40, so long chains fit on short screens.
   const NH = pairs ? 46 : 34;
   const m = state.m;
-  const { rows, cols } = grid(m);
+  const { rows, cols } = gridFor(m, NH, stage);
   const chains = Array.from({ length: m }, (_, b) => drawnChain(state, extra, b));
 
   const tableW = cols * PITCH - COL_GAP;

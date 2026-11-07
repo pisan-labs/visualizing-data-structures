@@ -1,4 +1,4 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { labelSize, padBounds, trimmedLine, unionBounds } from '../../layouts/binary-tree';
 import {
   drawForest,
@@ -28,9 +28,21 @@ const CELL = { w: 40, h: 30 };
 /** Wrap the root list onto a new row past this width, so long lists stay readable on phones. */
 const MAX_ROW = 420;
 
+/**
+ * Where the root list wraps on a stage: past what fills the stage's width at about 0.9 pixels
+ * per unit, and never sooner than MAX_ROW. A wide laptop stage keeps the roots on one row, so
+ * the drawing is not taller than it needs to be. It depends on the stage only, so it holds.
+ */
+const wrapFor = (stage?: StageSize) =>
+  stage ? Math.max(MAX_ROW, Math.round(stage.w / 0.9 / 10) * 10) : MAX_ROW;
+
 type Pt = { x: number; y: number };
 
-export function view(step: Step<FibState, FibExtra>, settings: FibSettings): Scene {
+export function view(
+  step: Step<FibState, FibExtra>,
+  settings: FibSettings,
+  stage?: StageSize,
+): Scene {
   const { state: s } = step;
   const extra = step.extra;
   const internal = settings.view === 'internal';
@@ -42,7 +54,7 @@ export function view(step: Step<FibState, FibExtra>, settings: FibSettings): Sce
     gap: internal ? 40 : 8,
     treeGap: internal ? 44 : 26,
     levelGap: internal ? 62 : 56,
-    maxWidth: MAX_ROW,
+    maxWidth: wrapFor(stage),
     rowGap: 64,
   };
   const listHead = internal ? 'both' : 'none';

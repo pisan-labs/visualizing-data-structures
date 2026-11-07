@@ -1,4 +1,4 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
 import {
   add,
   drawGrid,
@@ -14,6 +14,7 @@ import {
 } from '../../layouts/plane';
 import type { Mat3 } from '../../layouts/space';
 import type { Scene, Shape } from '../../render/scene';
+import { panelPlace, translate } from '../_stage/arrange';
 import {
   R,
   describe,
@@ -26,7 +27,11 @@ import {
   type RtState,
 } from './model';
 
-export function view(step: Step<RtState, RtExtra>, settings: RtSettings): Scene {
+/**
+ * The plane, with the matrices (and the legend of a comparison) under it, or beside it on a
+ * wide, short stage when that draws larger. Their room is reserved, so the choice holds.
+ */
+export function view(step: Step<RtState, RtExtra>, settings: RtSettings, stage?: StageSize): Scene {
   const { state: s, extra = {} } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const plane = makePlane({ xmin: -R, xmax: R, ymin: -R, ymax: R, unit: 19, x: 30, y: 14 });
@@ -122,10 +127,13 @@ export function view(step: Step<RtState, RtExtra>, settings: RtSettings): Scene 
   }
 
   const below = plane.rect.y + plane.rect.h;
+  // What goes under the plane: the comparison's legend, the matrices and the convention.
+  const panel: Shape[] = [];
+  let panelRight = plane.rect.x;
   if (extra.compare) {
     const { rt, tr } = extra.compare;
     drawPolygon(shapes, plane, { id: 'rt-e', pts: key(rt), role: 'active', dashed: true });
-    shapes.push(
+    panel.push(
       text('rt', { x: plane.rect.x, y: below + 16 }, 'dashed blue: rotate, then translate', {
         size: 12,
         bold: true,
@@ -134,7 +142,7 @@ export function view(step: Step<RtState, RtExtra>, settings: RtSettings): Scene 
     );
     if (tr.length) {
       drawPolygon(shapes, plane, { id: 'tr-e', pts: key(tr), role: 'error', dashed: true });
-      shapes.push(
+      panel.push(
         text('tr', { x: plane.rect.x, y: below + 32 }, 'dashed red: translate, then rotate', {
           size: 12,
           bold: true,
@@ -167,17 +175,17 @@ export function view(step: Step<RtState, RtExtra>, settings: RtSettings): Scene 
       x = plane.rect.x;
       y += rowH + 18;
     }
-    shapes.push(
+    panel.push(
       text(`${id}-name`, { x, y: y + rowH / 2 + 5 }, `${name} =`, {
         size: 15,
         mono: true,
         role: nameRole,
       }),
     );
-    const b = drawMatrix(shapes, { id, x: x + nameW, y, rows, role: mRole });
+    const b = drawMatrix(panel, { id, x: x + nameW, y, rows, role: mRole });
     let end = b.x + b.w;
     if (tail) {
-      shapes.push(
+      panel.push(
         text(`${id}-t`, { x: end + 8, y: y + rowH / 2 + 5 }, tail, {
           size: 14,
           mono: true,
@@ -187,6 +195,7 @@ export function view(step: Step<RtState, RtExtra>, settings: RtSettings): Scene 
       end += textW(tail, 14) + 12;
     }
     right = Math.max(right, end + 12);
+    panelRight = Math.max(panelRight, end);
     x = end + 22;
   };
   place('mt', 'M', s.m);
@@ -200,11 +209,14 @@ export function view(step: Step<RtState, RtExtra>, settings: RtSettings): Scene 
     : settings.convention === 'row'
       ? "row vectors: p' = p R + t"
       : "column vectors: p' = R p + t";
-  shapes.push(text('conv', { x: plane.rect.x, y: yb }, note, { size: 13 }));
+  panel.push(text('conv', { x: plane.rect.x, y: yb }, note, { size: 13 }));
+  for (const t of [note, 'dashed blue: rotate, then translate'])
+    panelRight = Math.max(panelRight, plane.rect.x + textW(t, 13));
 
-  return {
-    shapes,
-    bounds: { x: 0, y: 0, w: right, h: yb + 14 },
-    label: describe(s),
-  };
+  const usual = { x: 0, y: 0, w: right, h: yb + 14 };
+  const main = { x: 0, y: 0, w: plane.rect.x + plane.rect.w, h: below + 8 };
+  const box = { x: plane.rect.x, y: below, w: panelRight - plane.rect.x, h: yb + 4 - below };
+  const at = panelPlace(stage, usual, main, box);
+  shapes.push(...translate(panel, at.dx, at.dy));
+  return { shapes, bounds: at.bounds, label: describe(s) };
 }

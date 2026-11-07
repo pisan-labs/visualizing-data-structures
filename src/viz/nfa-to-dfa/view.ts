@@ -20,6 +20,7 @@ import { setName, stateLetter, type Automaton } from '../_automata/automaton';
 import { automatonKey, drawGrid, gridWidths, keepShapes, pickBest, placeLayers } from './kit';
 import {
   DFA_PREFIX,
+  MAX_ALL,
   allSubsets,
   describe,
   describeRun,
@@ -132,18 +133,10 @@ export function view(
   const r = step.extra?.run;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   if (!r) {
-    const best = pickBest(
-      [true, false].map((across) => {
-        const d = drawNfa(nfa, across, roles);
-        return { d, bounds: d.bounds };
-      }),
-      stage,
-    );
-    return {
-      shapes: best.d.shapes,
-      bounds: padBounds(best.bounds, 14),
-      label: describe(step.state),
-    };
+    // The NFA runs the way a run would draw it, so its states stay put when Convert starts.
+    const mode = settings.subsets === 'all' && nfa.states.length <= MAX_ALL ? 'all' : 'reachable';
+    const d = drawNfa(nfa, arrange(nfa, mode, stage).across, roles);
+    return { shapes: d.shapes, bounds: padBounds(d.bounds, 14), label: describe(step.state) };
   }
   const mode = r.mode;
   const f = arrange(nfa, mode, stage);

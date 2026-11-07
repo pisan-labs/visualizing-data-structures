@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "dfa-minimization",
+  "id": "table-filling",
+  "title": "The same DFA by table filling",
+  "notes": "Mark the pairs ε separates, then pairs whose moves lead to marked pairs. The pair q0, q3 is never marked, so they merge, as with partition refinement.",
+  "settings": {
+    "method": "table"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q2; q0 a -> q1; q0 b -> q3; q1 a -> q1; q1 b -> q2; q2 a -> q1; q2 b -> q3; q3 a -> q1; q3 b -> q0"
+    ],
+    ["minimize"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

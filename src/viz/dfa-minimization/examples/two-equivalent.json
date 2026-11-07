@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "dfa-minimization",
+  "id": "two-equivalent",
+  "title": "Ends in ab, with two states that do the same job",
+  "notes": "q3 behaves exactly like q0: both go to q1 on a and to a non-accepting state on b. One round splits off q1; the next splits nothing, so q0 and q3 merge.",
+  "settings": {
+    "method": "moore"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q2; q0 a -> q1; q0 b -> q3; q1 a -> q1; q1 b -> q2; q2 a -> q1; q2 b -> q3; q3 a -> q1; q3 b -> q0"
+    ],
+    ["minimize"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

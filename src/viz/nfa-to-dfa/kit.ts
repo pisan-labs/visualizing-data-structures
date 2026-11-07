@@ -20,13 +20,13 @@
  *                                  every arrow and loop is already where it ends up
  */
 import type { Controls, MarkRole, OpSpec, Scalar, StageSize, Step } from '../../engine/types';
-import { fixedLayout, type StateLayout } from '../../layouts/automaton';
+import { STATE_R, fixedLayout, stateId, type StateLayout } from '../../layouts/automaton';
 import { fitScore, padBounds, textWidth } from '../../layouts/graph';
 import type { Bounds, Shape } from '../../render/scene';
-import { isDeterministic, type Automaton } from '../_automata/automaton';
+import { EPS, isDeterministic, type Automaton } from '../_automata/automaton';
 import { parseAutomaton } from '../_automata/parse';
 
-export const MAX_TEXT = 400;
+export const MAX_TEXT = 600;
 
 export function automatonInput(
   sample: string,
@@ -106,6 +106,20 @@ export function summarize(a: Automaton): string {
 export const words = (xs: readonly string[]): string =>
   xs.length <= 1 ? (xs[0] ?? '') : `${xs.slice(0, -1).join(', ')} and ${xs.at(-1)}`;
 
+/**
+ * The code tabs' driver lines for an automaton: "nfa" or "dfa" and its states in name order,
+ * then the alphabet, the start, the accept states and one "move p c q" per move (eps for ε).
+ */
+export function automatonLines(kind: 'nfa' | 'dfa', a: Automaton): string[] {
+  return [
+    `${kind} ${a.states.join(' ')}`,
+    `alphabet ${a.alphabet.join(' ')}`.trimEnd(),
+    `start ${a.start}`,
+    `accept ${a.accept.join(' ')}`.trimEnd(),
+    ...a.moves.map((m) => `move ${m.from} ${m.on === EPS ? 'eps' : m.on} ${m.to}`),
+  ];
+}
+
 export const automatonKey = (a: Automaton): string =>
   `${a.start}|${a.states.join(',')}|${a.accept.join(',')}|${a.moves.map((m) => `${m.from}>${m.on}>${m.to}`).join(',')}`;
 
@@ -128,6 +142,83 @@ export function placeLayers(layers: string[][], across: boolean): StateLayout {
 }
 
 // ---------------------------------------------------------------------------------------------
+// Badges: a short label beside a state, clear of its arrows
+
+const BADGE = 13;
+
+/** The sides a badge may take, best first when several are equally free. */
+const SIDES = [
+  { x: 0, y: 1 },
+  { x: 0.71, y: 0.71 },
+  { x: -0.71, y: 0.71 },
+  { x: 0.71, y: -0.71 },
+  { x: -0.71, y: -0.71 },
+  { x: 0, y: -1 },
+  { x: 1, y: 0 },
+  { x: -1, y: 0 },
+];
+
+/**
+ * A badge for each state that has one (a block number, the states a merged state holds), on
+ * the side of the state farthest from the arrows that touch it, its loop and its start arrow.
+ * drawAutomaton's notes sit under a state, where an arrow down or a loop can cross them.
+ * `drawn` is the diagram's shapes; badge ids are `${stateId(q, prefix)}-b`.
+ */
+export function drawBadges(
+  drawn: readonly Shape[],
+  pos: Record<string, { x: number; y: number }>,
+  text: (q: string) => string | undefined,
+  prefix = '',
+  roles: ReadonlyMap<string, MarkRole> = new Map(),
+): { shapes: Shape[]; bounds: Bounds | null } {
+  const shapes: Shape[] = [];
+  const xs: number[] = [];
+  const ys: number[] = [];
+  for (const [q, P] of Object.entries(pos)) {
+    const t = text(q);
+    if (!t) continue;
+    const taken: { x: number; y: number }[] = [];
+    const toward = (x: number, y: number) => {
+      const d = Math.hypot(x - P.x, y - P.y) || 1;
+      taken.push({ x: (x - P.x) / d, y: (y - P.y) / d });
+    };
+    for (const s of drawn) {
+      if (s.kind !== 'arrow') continue;
+      const at1 = Math.hypot(s.x1 - P.x, s.y1 - P.y) < STATE_R + 6;
+      const at2 = Math.hypot(s.x2 - P.x, s.y2 - P.y) < STATE_R + 6;
+      if (at1) toward(s.x1, s.y1);
+      if (at2) toward(s.x2, s.y2);
+      if (at1 && at2 && s.via) toward(s.via.x, s.via.y);
+    }
+    const score = (d: { x: number; y: number }) =>
+      Math.min(4, ...taken.map((v) => Math.hypot(v.x - d.x, v.y - d.y)));
+    const side = SIDES.reduce((best, d) => (score(d) > score(best) + 0.05 ? d : best), SIDES[0]!);
+    const w = textWidth(t, BADGE, true);
+    const x = P.x + side.x * (STATE_R + 6 + w / 2);
+    const y = P.y + side.y * (STATE_R + 11) + BADGE * 0.35;
+    const id = `${stateId(q, prefix)}-b`;
+    shapes.push({
+      kind: 'text',
+      id,
+      x,
+      y,
+      text: t,
+      size: BADGE,
+      anchor: 'middle',
+      mono: true,
+      cls: 'label',
+      role: roles.get(id),
+    });
+    xs.push(x - w / 2, x + w / 2);
+    ys.push(y - BADGE, y + 4);
+  }
+  if (!xs.length) return { shapes, bounds: null };
+  const x = Math.min(...xs);
+  const y = Math.min(...ys);
+  return { shapes, bounds: { x, y, w: Math.max(...xs) - x, h: Math.max(...ys) - y } };
+}
+
+// ---------------------------------------------------------------------------------------------
 // A table, one row per state
 
 export interface GridCell {
@@ -142,7 +233,10 @@ export interface GridOptions {
   id: string;
   x: number;
   y: number;
-  /** One key per column, for ids: cell `${id}-${row}-${col}`, its text `-t`, header `${id}-h-${col}`. */
+  /**
+   * One key per column, for ids: cell `${id}-${row}-${col}`, its text `-t`, and the header
+   * `${id}--h-${col}` (a row key is never empty, so a header id never matches a cell's).
+   */
   cols: string[];
   head: string[];
   /** Column widths; see gridWidths. */
@@ -176,14 +270,14 @@ export function drawGrid(shapes: Shape[], o: GridOptions): Bounds {
   o.cols.forEach((c, k) => {
     shapes.push({
       kind: 'text',
-      id: `${o.id}-h-${c}`,
+      id: `${o.id}--h-${c}`,
       x: xs[k]! + o.widths[k]! / 2,
       y: o.y + HEAD_H - 7,
       text: o.head[k]!,
       size: 13,
       anchor: 'middle',
       cls: 'label',
-      role: roles.get(`${o.id}-h-${c}`),
+      role: roles.get(`${o.id}--h-${c}`),
     });
   });
   o.rows.forEach((row, r) => {

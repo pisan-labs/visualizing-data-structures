@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "dfa-minimization",
+  "id": "unreachable",
+  "title": "Starts with a: a dead state, and states nothing reaches",
+  "notes": "q0 has no move on b, so Minimize adds a dead state first. q2 and q3 can never be reached from q0, so they are dropped before any refining starts.",
+  "settings": {
+    "method": "moore"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "start q0; accept q1 q3; q0 a -> q1; q1 a,b -> q1; q2 a,b -> q3; q3 a -> q2"],
+    ["minimize"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

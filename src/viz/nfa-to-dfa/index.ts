@@ -1,6 +1,6 @@
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, SavedExample, Settings, VizDef } from '../../engine/types';
-import { EPS, setName, type Automaton } from '../_automata/automaton';
+import { setName } from '../_automata/automaton';
 import cppSource from './code/cpp/subsets.hpp?raw';
 import javaSource from './code/java/Subsets.java?raw';
 import pythonSource from './code/python/subsets.py?raw';
@@ -11,7 +11,7 @@ import epsChain from './examples/eps-chain.json';
 import fourthFromEnd from './examples/fourth-from-end.json';
 import thirdFromEnd from './examples/third-from-end.json';
 import explain from './explain.md?raw';
-import { automatonInput } from './kit';
+import { automatonInput, automatonLines } from './kit';
 import {
   MAX_ALL,
   defaults,
@@ -173,17 +173,6 @@ export const nfaToDfa: VizDef<NfaState, NdSettings, NdExtra> = {
   ] as unknown as SavedExample[],
   practice: nfaToDfaPractice(() => nfaToDfa),
 };
-
-/** The driver lines that describe an NFA: states in name order, alphabet, start, accept, moves. */
-export function automatonLines(kind: 'nfa' | 'dfa', a: Automaton): string[] {
-  return [
-    `${kind} ${a.states.join(' ')}`,
-    `alphabet ${a.alphabet.join(' ')}`.trimEnd(),
-    `start ${a.start}`,
-    `accept ${a.accept.join(' ')}`.trimEnd(),
-    ...a.moves.map((m) => `move ${m.from} ${m.on === EPS ? 'eps' : m.on} ${m.to}`),
-  ];
-}
 
 /**
  * Driver protocol for the code tabs. "nfa <states>" starts an NFA (the code numbers the states

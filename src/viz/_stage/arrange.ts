@@ -36,9 +36,6 @@ export function pickLayout<T extends { bounds: Bounds }>(
   return best;
 }
 
-/** Pixels per scene unit for these bounds on `stage`. */
-export const stageScale = (b: Bounds, stage: StageSize): number => fitScore(b, stage);
-
 /**
  * Shapes moved by (dx, dy). Unlike graph.ts's translate, where a shape slides in from moves too:
  * here the whole part moves, the place it slides in from included.

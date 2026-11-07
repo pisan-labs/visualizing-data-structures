@@ -1,7 +1,12 @@
 import type { Rng } from '../../engine/rng';
-import type { OpCall, SavedExample, VizDef } from '../../engine/types';
+import { Timeline } from '../../engine/timeline';
+import type { OpCall, SavedExample, Settings, VizDef } from '../../engine/types';
+import { EPS } from '../_automata/automaton';
 import { regexSize, showRegex } from '../_automata/regex';
 import { randomRegex, randomWord } from '../regex-to-nfa/gen';
+import cppSource from './code/cpp/regex_engines.hpp?raw';
+import javaSource from './code/java/RegexEngines.java?raw';
+import pythonSource from './code/python/regex_engines.py?raw';
 import earlyMatch from './examples/early-match.json';
 import emptyLoop from './examples/empty-loop.json';
 import emptyWord from './examples/empty-word.json';
@@ -20,6 +25,7 @@ import {
   init,
   initialSay,
   initialVars,
+  machineOf,
   MAX_M,
   MAX_WORD,
   ops,
@@ -186,6 +192,12 @@ export const regexEngines: VizDef<EngState, EngSettings, EngExtra> = {
       note: 'Recursive backtrackers keep the same choices on the call stack instead, and a long input can overflow it.',
     },
   ],
+  code: {
+    python: pythonSource,
+    java: javaSource,
+    cpp: cppSource,
+    script: (calls: OpCall[], settings: Settings) => codeScript(calls, settings as EngSettings),
+  },
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [
     exponentialGrowth,
@@ -207,5 +219,52 @@ export const regexEngines: VizDef<EngState, EngSettings, EngExtra> = {
   },
   opening: 'exponential-growth',
 };
+
+/**
+ * The NFA as driver lines: "nfa <states> <start> <accept>" (states numbered in name order), then
+ * "move <from> <symbol or eps> <to>" for every move, each state's in the order the backtracker
+ * tries them under these settings.
+ */
+function nfaLines(s: EngState, settings: EngSettings): string[] {
+  const m = machineOf(s, settings);
+  const a = m.nfa;
+  const k = (q: string) => a.states.indexOf(q);
+  return [
+    `nfa ${a.states.length} ${k(a.start)} ${k(a.accept[0]!)}`,
+    ...a.states.flatMap((q) =>
+      m.out[q]!.map((mv) => `move ${k(q)} ${mv.on === EPS ? 'eps' : mv.on} ${k(mv.to)}`),
+    ),
+  ];
+}
+
+const resultLine = (bt: string, btSteps: number, nfa: string, nfaSteps: number) =>
+  `${bt} ${btSteps} ${nfa} ${nfaSteps}`;
+
+/**
+ * Driver protocol for the code tabs: the NFA as lines (nfaLines), then "match <word>" (eps for
+ * the empty word), which prints "<backtracking answer> <steps> <simulation answer> <steps>", the
+ * answer being accept, reject or stopped. A Match sends one match line; a Grow one per word it
+ * tried; a Load, and anything the page refuses, sends nothing.
+ */
+function codeScript(calls: OpCall[], settings: EngSettings) {
+  const t = new Timeline(regexEngines, settings, 1, calls);
+  const input: string[] = [];
+  const expected: string[] = [];
+  for (const e of t.entries) {
+    const s = e.end;
+    const lines = e.steps.at(-1)!.lines;
+    if (lines.includes('match.compare') && s.bt && s.sim) {
+      input.push(...nfaLines(s, settings), `match ${s.word || 'eps'}`);
+      expected.push(resultLine(s.bt.result!, s.bt.steps, s.sim.result!, s.sim.steps));
+    } else if (lines.includes('grow.end') && s.growth) {
+      input.push(...nfaLines(s, settings));
+      for (const r of s.growth.rows) {
+        input.push(`match ${s.growth.unit.repeat(r.n)}`);
+        expected.push(resultLine(r.btResult, r.bt, r.nfaResult, r.nfa));
+      }
+    }
+  }
+  return { input, expected };
+}
 
 export default regexEngines;

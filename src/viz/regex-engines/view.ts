@@ -16,12 +16,12 @@
  *
  * Ids: "rx" the expression; the tape's "tape-<i>" cells ("tape-head" the head, "tape-label",
  * "tape-empty"); the diagram's "s-q0", "m-q0-q1", "start" (src/layouts/automaton.ts); "cnt-..." the
- * counters (drawGrid); "stk-<k>" the k-th choice from the bottom of the stack, "stk-h",
- * "stk-more", "stk-empty"; "ch-..." the chart: "ch-bt-<n>" and "ch-nfa-<n>" the bars.
+ * counters (drawGrid); "stk-<k>" the k-th choice from the bottom of the stack, "stk-base",
+ * "stk-h" and "stk-n" under it; "ch-..." the chart: "ch-bt-<n>" and "ch-nfa-<n>" the bars.
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { drawAutomaton, fixedLayout, type StateLook } from '../../layouts/automaton';
-import { padBounds, textWidth, unionBounds } from '../../layouts/graph';
+import { clearOfButtons, padBounds, textWidth, unionBounds } from '../../layouts/graph';
 import { CELL_W, drawTape } from '../../layouts/tape';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { drawGrid, gridWidths, GRID_ROW } from '../_automata/panels';
@@ -57,8 +57,9 @@ const CNT_BOX = { w: CNT_W.reduce((a, b) => a + b + 3, -3), h: 22 + 2 * (GRID_RO
 // The stack of choices.
 const STK_ROW = 28;
 const STK_W = 112;
-const STK_HEAD = 22;
-const STK_BOX = { w: STK_W, h: STK_HEAD + STACK_SHOWN * STK_ROW + 20 };
+/** Under the slots: the base line, the label and the count. */
+const STK_FOOT = 44;
+const STK_BOX = { w: STK_W + 30, h: STACK_SHOWN * STK_ROW + STK_FOOT };
 
 // The chart: steps on a log scale (one band per power of ten, up to the cap) against n.
 const DECADES = Math.round(Math.log10(CAP));
@@ -109,7 +110,18 @@ function partsOf(s: EngState): Part[] {
   return [];
 }
 
-function plan(s: EngState, pic: Picture, per: number, rows: number, side: Side, flow: Flow): Plan {
+/** Panels beside the NFA start this much lower when the view does not know the stage. */
+const DROP = 34;
+
+function plan(
+  s: EngState,
+  pic: Picture,
+  per: number,
+  rows: number,
+  side: Side,
+  flow: Flow,
+  stage?: StageSize,
+): Plan {
   const b = pic.bounds;
   const cells = tapeCells(s);
   const tape = tapeSize(cells, per, rows, s.word === '');
@@ -119,15 +131,29 @@ function plan(s: EngState, pic: Picture, per: number, rows: number, side: Side, 
   const rx = { x: b.x, y: top };
   const tapeAt = { x: b.x + LABEL_W, y: top + RX_H + 10 };
   const parts = partsOf(s);
-  const boxes: Bounds[] = [{ x: b.x, y: top, w: mainW, h: b.y + b.h - top }];
+  const main: Bounds = { x: b.x, y: top, w: mainW, h: b.y + b.h - top };
   const at: { x: number; y: number }[] = [];
-  let x = side === 'right' ? b.x + mainW + GAP : b.x;
-  let y = side === 'right' ? top : b.y + b.h + GAP;
+  const x0 = side === 'right' ? b.x + mainW + GAP : b.x;
+  const y0 = side === 'right' ? top : b.y + b.h + GAP;
+  let x = x0;
+  let y = y0;
+  let w = 0;
+  let h = 0;
   for (const p of parts) {
     at.push({ x, y });
-    boxes.push({ x, y, ...p });
+    w = Math.max(w, x + p.w - x0);
+    h = Math.max(h, y + p.h - y0);
     if (flow === 'col') y += p.h + 14;
     else x += p.w + GAP;
+  }
+  const boxes: Bounds[] = [main];
+  if (parts.length) {
+    // Keep the panels clear of the stage's zoom buttons in the top right corner.
+    let block: Bounds = { x: x0, y: y0, w, h };
+    if (stage) block = clearOfButtons(block, main, stage);
+    else if (side === 'right') block = { ...block, y: block.y + DROP };
+    for (const a of at) a.y += block.y - y0;
+    boxes.push(block);
   }
   return {
     pic,
@@ -159,7 +185,7 @@ function choose(s: EngState, stage?: StageSize): Plan {
   for (const pic of pics)
     for (const rows of tapes)
       for (const [side, flow] of sides)
-        options.push(plan(s, pic, Math.ceil(cells / rows), rows, side, flow));
+        options.push(plan(s, pic, Math.ceil(cells / rows), rows, side, flow, stage));
   return pickLayout(stage, options);
 }
 
@@ -320,7 +346,10 @@ function drawCounters(
   });
 }
 
-/** The stack of choices, newest on top; only the top STACK_SHOWN fit. */
+/**
+ * The stack of choices, newest on top, on a base line with its label under it. Only the top
+ * STACK_SHOWN fit; the count under the label says how many there are in all.
+ */
 function drawStack(
   shapes: Shape[],
   s: EngState,
@@ -331,16 +360,7 @@ function drawStack(
   const depth = bt?.depth ?? 0;
   const shown = bt?.stack ?? [];
   const lo = depth - shown.length;
-  shapes.push({
-    kind: 'text',
-    id: 'stk-h',
-    x: at.x,
-    y: at.y + 15,
-    text: 'stack (q, i)',
-    size: 14,
-    cls: 'label',
-  });
-  const bottom = at.y + STK_HEAD + STACK_SHOWN * STK_ROW;
+  const bottom = at.y + STACK_SHOWN * STK_ROW;
   shown.forEach((c, j) => {
     const id = `stk-${lo + j}`;
     const y = bottom - (j + 1) * STK_ROW;
@@ -366,31 +386,38 @@ function drawStack(
       size: 15,
       anchor: 'middle',
       mono: true,
-      role: role === 'remove' ? undefined : role === 'new' ? 'new' : undefined,
+      role: role === 'new' ? 'new' : undefined,
     });
   });
-  if (lo > 0)
-    shapes.push({
-      kind: 'text',
-      id: 'stk-more',
-      x: at.x + STK_W / 2,
-      y: bottom + 15,
-      text: `+${lo} below`,
-      size: 13,
-      anchor: 'middle',
-      cls: 'label',
-    });
-  if (!depth)
-    shapes.push({
-      kind: 'text',
-      id: 'stk-empty',
-      x: at.x + STK_W / 2,
-      y: bottom - STK_ROW / 2 + 5,
-      text: 'empty',
-      size: 14,
-      anchor: 'middle',
-      cls: 'label',
-    });
+  shapes.push({
+    kind: 'arrow',
+    id: 'stk-base',
+    x1: at.x - 6,
+    y1: bottom + 2,
+    x2: at.x + STK_W + 6,
+    y2: bottom + 2,
+    head: 'none',
+  });
+  shapes.push({
+    kind: 'text',
+    id: 'stk-h',
+    x: at.x,
+    y: bottom + 20,
+    text: 'stack (q, i)',
+    size: 14,
+    cls: 'label',
+  });
+  shapes.push({
+    kind: 'text',
+    id: 'stk-n',
+    x: at.x,
+    y: bottom + 38,
+    text: depth
+      ? `${depth} ${depth === 1 ? 'choice' : 'choices'}${lo > 0 ? `, top ${shown.length} shown` : ''}`
+      : 'empty',
+    size: 13,
+    cls: 'label',
+  });
 }
 
 /** Height of a bar for this many steps, on the log scale. */
@@ -428,15 +455,16 @@ function drawChart(
     const y = y0 - k * DECADE_H;
     if (k > 0)
       shapes.push({
-        kind: 'rect',
+        kind: 'arrow',
         id: `ch-grid-${k}`,
-        x: x0,
-        y,
-        w: right - x0,
-        h: 0,
-        cls: 'ghost',
+        x1: x0,
+        y1: y,
+        x2: right,
+        y2: y,
+        head: 'none',
+        dashed: true,
         role: k === DECADES ? 'error' : undefined,
-        opacity: k === DECADES ? undefined : 0.5,
+        opacity: k === DECADES ? undefined : 0.3,
         z: -2,
       });
     shapes.push({

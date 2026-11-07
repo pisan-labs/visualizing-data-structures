@@ -4,7 +4,7 @@
  * with src/layouts/graph.ts at fixed positions so nothing moves while a reduction runs, and
  * beside or under it a panel with the question, the clauses or the sets, and the certificate.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   VERTEX_R,
   below,
@@ -145,7 +145,11 @@ function layoutOf(g: UGraph): GraphLayout {
   return layout;
 }
 
-export function view(step: Step<NpState, NpExtra>, _settings?: NpSettings): Scene {
+export function view(
+  step: Step<NpState, NpExtra>,
+  _settings?: NpSettings,
+  stage?: StageSize,
+): Scene {
   const s = step.state;
   const extra = step.extra ?? {};
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -365,7 +369,7 @@ export function view(step: Step<NpState, NpExtra>, _settings?: NpSettings): Scen
     return unionBounds(...parts);
   };
 
-  if (g) boxes.push(placePanels(shapes, graphBox, panel));
+  if (g) boxes.push(placePanels(shapes, graphBox, stage, panel));
   else boxes.push(panel(shapes, 0, 0));
 
   return { shapes, bounds: padBounds(unionBounds(...boxes), 14), label: describe(s) };

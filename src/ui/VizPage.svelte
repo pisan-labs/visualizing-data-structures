@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onDestroy, onMount, untrack } from 'svelte';
   import { decodeExample, encodeExample, ExampleError, validateExample } from '../engine/example';
-  import type { AnyVizDef } from '../engine/types';
+  import type { AnyVizDef, StageSize } from '../engine/types';
   import { REPO_URL, SITE_NAME } from '../site';
   import CodePanel from './CodePanel.svelte';
   import CompareMenu from './CompareMenu.svelte';
@@ -64,6 +64,16 @@
 
   onDestroy(() => session.destroy());
 
+  // Wide screens put Options in the side column (see .side below); the breakpoint matches the CSS.
+  const wideQuery = typeof matchMedia === 'function' ? matchMedia('(min-width: 1024px)') : null;
+  let wide = $state(wideQuery?.matches ?? false);
+  $effect(() => {
+    if (!wideQuery) return;
+    const update = () => (wide = wideQuery.matches);
+    wideQuery.addEventListener('change', update);
+    return () => wideQuery.removeEventListener('change', update);
+  });
+
   // On wide screens, size the drawing so the playback bar fits on the first screen, whatever
   // height this page's controls need. Phones scroll instead.
   let vizEl: HTMLElement | undefined = $state();
@@ -94,7 +104,9 @@
     };
   });
 
-  const scene = $derived(def.view(session.current.step, session.settings));
+  // The stage reports the room it has, so views can lay out for this screen.
+  let room = $state<StageSize | undefined>();
+  const scene = $derived(def.view(session.current.step, session.settings, room));
   const duration = $derived(session.animate ? session.tweenMs : 0);
 
   // Keep the address bar pointing at the current work, so reload and bookmarks keep it. A page
@@ -207,10 +219,10 @@
 
 <div class="viz" class:embed bind:this={vizEl}>
   <header class="viz-head">
-    {#if !embed}
-      <a class="back" href="/">← All visualizations</a>
-    {/if}
     <div class="title-row">
+      {#if !embed}
+        <a class="back" href="/">← All visualizations</a>
+      {/if}
       <h1>{def.title}</h1>
       {#if !embed}
         <div class="actions">
@@ -241,13 +253,15 @@
   <!-- DOM order is the phone order; on wide screens the side column sits next to the stage. -->
   <div class="main">
     <OpControls {session} />
-    {#if !embed}<SettingsPanel {session} />{/if}
+    {#if !embed && !wide}<SettingsPanel {session} />{/if}
     <div id="stage-anchor"></div>
-    <Stage {scene} {duration} />
+    <Stage {scene} {duration} bind:room />
     <Transport {session} scrub={session} />
   </div>
 
   <div class="side">
+    <!-- On wide screens Options sits atop the side column, so the stage gets its height. -->
+    {#if !embed && wide}<SettingsPanel {session} />{/if}
     <Narration {session} />
     <CodePanel {session} />
     <VarsPanel {session} />
@@ -340,7 +354,9 @@
     gap: 8px;
   }
 
+  /* On a phone the back link has a line of its own above the title. */
   .back {
+    flex-basis: 100%;
     font-size: 0.92rem;
     text-decoration: none;
   }
@@ -420,6 +436,26 @@
 
     .viz-head {
       grid-column: 1 / -1;
+    }
+
+    /* Title on the left; the back link joins Compare and Present on the right, so the header
+       is one line shorter and the stage gets the height. */
+    .title-row {
+      justify-content: flex-start;
+      column-gap: 16px;
+    }
+
+    h1 {
+      margin-right: auto;
+    }
+
+    .back {
+      flex-basis: auto;
+      order: 1;
+    }
+
+    .actions {
+      order: 2;
     }
 
     .main {

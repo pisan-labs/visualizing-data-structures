@@ -5,7 +5,7 @@
  * and a cycle left at the end is red. Beside or under it: the queue of ready vertices, the
  * order L, and a table of in-degrees.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -34,7 +34,11 @@ function look(r: TopoRun, v: string): VertexLook | undefined {
   return undefined;
 }
 
-export function view(step: Step<TopoState, TopoExtra>, settings: TopoSettings): Scene {
+export function view(
+  step: Step<TopoState, TopoExtra>,
+  settings: TopoSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -63,7 +67,7 @@ export function view(step: Step<TopoState, TopoExtra>, settings: TopoSettings): 
   if (r) {
     const n = g.vertices.length;
     boxes.push(
-      placePanels(shapes, drawn.bounds, (out, x, y0) => {
+      placePanels(shapes, drawn.bounds, stage, (out, x, y0) => {
         const labelW = 44;
         const queue = drawRow(out, {
           id: 'q',

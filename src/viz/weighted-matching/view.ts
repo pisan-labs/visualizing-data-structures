@@ -9,7 +9,7 @@
  * shows every pair faintly. Rows in S and columns in T wear a dashed ring in the graph and are
  * colored in the matrix headers; the root is blue.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   VERTEX_R,
   drawGraph,
@@ -197,7 +197,11 @@ function drawMatrix(
   return unionBounds({ x, y, w, h: yEnd - y }, legend);
 }
 
-export function view(step: Step<HmState, HmExtra>, _settings: HmSettings): Scene {
+export function view(
+  step: Step<HmState, HmExtra>,
+  _settings: HmSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const r = extra.run;
   const n = state.cost.length;
@@ -280,7 +284,7 @@ export function view(step: Step<HmState, HmExtra>, _settings: HmSettings): Scene
     w: GAP_X + 2 * VERTEX_R + 40,
     h: 10,
   });
-  const panel = placePanels(shapes, graphBox, (out, x, y) =>
+  const panel = placePanels(shapes, graphBox, stage, (out, x, y) =>
     drawMatrix(out, state, r, roles, x, y),
   );
   const label = r ? `${describe(state)} ${describeRun(r)}` : describe(state);

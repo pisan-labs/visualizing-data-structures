@@ -10,7 +10,7 @@
  * dashed, and the rest are faint. At the end only the tree stays solid. Stale entries of the
  * lazy queue are faded. A plain state (no run) draws just the graph.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -55,7 +55,11 @@ function cellWidth(g: Graph): number {
   ]);
 }
 
-export function view(step: Step<PrimState, PrimExtra>, settings: PrimSettings): Scene {
+export function view(
+  step: Step<PrimState, PrimExtra>,
+  settings: PrimSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -89,7 +93,7 @@ export function view(step: Step<PrimState, PrimExtra>, settings: PrimSettings): 
   const boxes: Bounds[] = [drawn.bounds];
   if (r) {
     boxes.push(
-      placePanels(shapes, drawn.bounds, (out, x, y0) => {
+      placePanels(shapes, drawn.bounds, stage, (out, x, y0) => {
         const split = drawSplit(out, {
           id: 'pq',
           x,

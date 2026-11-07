@@ -7,7 +7,7 @@ import { validateExample } from '../engine/example';
 import { practiceSet } from '../engine/practice';
 import { makeRng } from '../engine/rng';
 import { Timeline } from '../engine/timeline';
-import type { AnyVizDef, OpCall, Settings, Value } from '../engine/types';
+import type { AnyVizDef, OpCall, Settings, StageSize, Value } from '../engine/types';
 import type { Shape } from '../render/scene';
 import { families } from './catalog';
 import { vizPaths, vizzes } from './all';
@@ -39,7 +39,14 @@ function callArb(def: AnyVizDef): fc.Arbitrary<OpCall> {
   );
 }
 
-function checkTimeline(def: AnyVizDef, t: Timeline<unknown, Settings, unknown>) {
+/** A 1366 x 768 laptop's stage and a phone's, in pixels, as views receive them. */
+const STAGES: (StageSize | undefined)[] = [undefined, { w: 880, h: 384 }, { w: 360, h: 536 }];
+
+function checkTimeline(
+  def: AnyVizDef,
+  t: Timeline<unknown, Settings, unknown>,
+  stages: (StageSize | undefined)[] = [undefined],
+) {
   const lineIds = new Set(def.pseudocode(t.settings).flatMap((b) => b.lines.map((l) => l.id)));
   for (let i = 0; i < t.length; i++) {
     const { step } = t.at(i);
@@ -50,11 +57,13 @@ function checkTimeline(def: AnyVizDef, t: Timeline<unknown, Settings, unknown>) 
     expect([1, 2, 3]).toContain(step.level);
     for (const id of step.lines)
       expect(lineIds.has(id), `pseudocode line "${id}" exists`).toBe(true);
-    const scene = def.view(step, t.settings);
-    const ids = scene.shapes.map((s: Shape) => s.id);
-    expect(new Set(ids).size, `step ${i} shape ids are unique`).toBe(ids.length);
-    for (const m of step.marks) expect(ids, `mark "${m.id}" points at a shape`).toContain(m.id);
-    expect(scene.label.length).toBeGreaterThan(0);
+    for (const stage of stages) {
+      const scene = def.view(step, t.settings, stage);
+      const ids = scene.shapes.map((s: Shape) => s.id);
+      expect(new Set(ids).size, `step ${i} shape ids are unique`).toBe(ids.length);
+      for (const m of step.marks) expect(ids, `mark "${m.id}" points at a shape`).toContain(m.id);
+      expect(scene.label.length).toBeGreaterThan(0);
+    }
   }
   for (const e of t.entries) {
     expect(e.steps.at(-1)!.level, 'last step of an operation is a milestone').toBe(1);
@@ -98,7 +107,7 @@ describe.each(vizzes.map((v) => [v.id, v] as const))('%s', (_id, def) => {
       expect(ex.id, 'curated examples have ids').toBeTruthy();
       expect(ex.title).toBeTruthy();
       ids.add(ex.id!);
-      checkTimeline(def, new Timeline(def, ex.settings, ex.seed, ex.ops));
+      checkTimeline(def, new Timeline(def, ex.settings, ex.seed, ex.ops), STAGES);
     }
     expect(ids.size).toBe(def.examples.length);
   });

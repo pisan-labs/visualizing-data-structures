@@ -10,7 +10,7 @@
  * At the end only the tree stays solid. A cycle that stops the sort is drawn in red. A plain
  * state draws just the graph.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -44,7 +44,11 @@ function look(r: DagRun, v: string): VertexLook | undefined {
   return r.phase === 'done' || at < r.k ? 'done' : 'visited';
 }
 
-export function view(step: Step<DagState, DagExtra>, settings: DagSettings): Scene {
+export function view(
+  step: Step<DagState, DagExtra>,
+  settings: DagSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -87,7 +91,7 @@ export function view(step: Step<DagState, DagExtra>, settings: DagSettings): Sce
     const n = g.vertices.length;
     const perRow = 10;
     boxes.push(
-      placePanels(shapes, drawn.bounds, (out, x, y0) => {
+      placePanels(shapes, drawn.bounds, stage, (out, x, y0) => {
         const list = drawRow(out, {
           id: 'L',
           label: 'L',

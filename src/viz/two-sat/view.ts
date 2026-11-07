@@ -7,7 +7,7 @@
  * built. Each component gets a color from a small palette and its number shows in the
  * components row, so color is never the only cue. A contradiction (x and ¬x together) is red.
  */
-import { groupRole, type MarkRole, type Step } from '../../engine/types';
+import { groupRole, type MarkRole, type StageSize, type Step } from '../../engine/types';
 import {
   VERTEX_R,
   below,
@@ -70,7 +70,11 @@ function layoutOf(s: SatState, settings: SatSettings): GraphLayout {
   };
 }
 
-export function view(step: Step<SatState, SatExtra>, settings: SatSettings): Scene {
+export function view(
+  step: Step<SatState, SatExtra>,
+  settings: SatSettings,
+  stage?: StageSize,
+): Scene {
   const { state: s, extra = {} } = step;
   const r = extra.run;
   const marks = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -139,7 +143,7 @@ export function view(step: Step<SatState, SatExtra>, settings: SatSettings): Sce
       if (m && index.has(m[2]!) && index.has(m[3]!)) sh.id = `${m[1]}-${m[3]}-${m[2]}${m[4] ?? ''}`;
     }
   const boxes: Bounds[] = [drawn.bounds];
-  const panel = placePanels(shapes, drawn.bounds, (out, x, y0) => {
+  const panel = placePanels(shapes, drawn.bounds, stage, (out, x, y0) => {
     const parts: Bounds[] = [];
     const texts = s.clauses.map((c) => clauseText(s, c));
     const cellW = Math.max(40, ...texts.map((t) => t.length * 8.6 + 14));

@@ -10,7 +10,7 @@
  * rest are faint. When the run is done, arcs between components are dashed. A plain state (no
  * run, as in practice pictures) draws just the graph.
  */
-import { groupRole, type MarkRole, type Step } from '../../engine/types';
+import { groupRole, type MarkRole, type StageSize, type Step } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -133,7 +133,11 @@ function drawCondensation(
   );
 }
 
-export function view(step: Step<SccState, SccExtra>, settings: SccSettings): Scene {
+export function view(
+  step: Step<SccState, SccExtra>,
+  settings: SccSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const r = extra.run;
@@ -174,7 +178,7 @@ export function view(step: Step<SccState, SccExtra>, settings: SccSettings): Sce
     const n = g.vertices.length;
     const final = extra.final ?? r.comps;
     boxes.push(
-      placePanels(shapes, drawn.bounds, (out, x, y0) => {
+      placePanels(shapes, drawn.bounds, stage, (out, x, y0) => {
         const labelW = 80;
         const perRow = 10;
         const rows = Math.max(1, Math.ceil(n / perRow));

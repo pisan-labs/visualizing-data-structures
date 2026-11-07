@@ -7,7 +7,7 @@
  * arc it uses backwards (taking flow back) is blue and dashed. At the end the s side of the
  * minimum cut is shaded and the arcs across the cut are red.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   below,
   drawRow,
@@ -132,7 +132,7 @@ function panels(
   return unionBounds(...parts);
 }
 
-export function view(step: Step<MfState, MfExtra>, settings: MfSettings): Scene {
+export function view(step: Step<MfState, MfExtra>, settings: MfSettings, stage?: StageSize): Scene {
   const { state, extra = {} } = step;
   const net = state.net;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -156,7 +156,7 @@ export function view(step: Step<MfState, MfExtra>, settings: MfSettings): Scene 
   const boxes: Bounds[] = [drawn.bounds];
   if (r)
     boxes.push(
-      placePanels(shapes, drawn.bounds, (out, x, y) =>
+      placePanels(shapes, drawn.bounds, stage, (out, x, y) =>
         panels(out, net, r, x, y, settings.method === 'dfs', roles),
       ),
     );

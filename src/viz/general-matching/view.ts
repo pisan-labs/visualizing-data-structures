@@ -6,7 +6,7 @@
  * vertices and a table of each vertex's label, base and mate. A plain state draws just the
  * graph.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   VERTEX_R,
   below,
@@ -63,7 +63,7 @@ function doubled(shapes: Shape[], id: string, role: MarkRole | undefined): Shape
   return out;
 }
 
-export function view(step: Step<BlState, BlExtra>, settings: BlSettings): Scene {
+export function view(step: Step<BlState, BlExtra>, settings: BlSettings, stage?: StageSize): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const r = extra.run;
@@ -137,7 +137,7 @@ export function view(step: Step<BlState, BlExtra>, settings: BlSettings): Scene 
     }
     const n = g.vertices.length;
     boxes.push(
-      placePanels(shapes, unionBounds(...boxes), (out, x, y0) => {
+      placePanels(shapes, unionBounds(...boxes), stage, (out, x, y0) => {
         const labelW = 64;
         const perRow = 10;
         const rows = Math.max(1, Math.ceil(n / perRow));

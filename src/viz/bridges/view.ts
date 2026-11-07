@@ -6,7 +6,7 @@
  * their own rows, so color is not the only cue. A plain state (no run, as in practice pictures)
  * draws just the graph.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -37,7 +37,11 @@ function look(r: BridgesRun, v: string): VertexLook | undefined {
   return r.color[v] === 'black' ? 'done' : undefined;
 }
 
-export function view(step: Step<BridgesState, BridgesExtra>, settings: BridgesSettings): Scene {
+export function view(
+  step: Step<BridgesState, BridgesExtra>,
+  settings: BridgesSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const r = extra.run;
@@ -69,7 +73,7 @@ export function view(step: Step<BridgesState, BridgesExtra>, settings: BridgesSe
   if (r) {
     const n = g.vertices.length;
     boxes.push(
-      placePanels(shapes, drawn.bounds, (out, x, y0) => {
+      placePanels(shapes, drawn.bounds, stage, (out, x, y0) => {
         const labelW = 72;
         const perRow = 10;
         const rows = Math.max(1, Math.ceil(n / perRow));

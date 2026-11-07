@@ -4,7 +4,7 @@
  * (BFS) or the open VISIT calls (DFS), and a table of cc per vertex. Union-find shows the
  * parent p and rank of every vertex instead of a queue, and colors the sets as they merge.
  */
-import { groupRole, type MarkRole, type Step } from '../../engine/types';
+import { groupRole, type MarkRole, type StageSize, type Step } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -56,7 +56,7 @@ function look(r: CcRun, v: string): VertexLook | undefined {
   return undefined;
 }
 
-export function view(step: Step<CcState, CcExtra>, settings: CcSettings): Scene {
+export function view(step: Step<CcState, CcExtra>, settings: CcSettings, stage?: StageSize): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const r = extra.run;
@@ -100,7 +100,7 @@ export function view(step: Step<CcState, CcExtra>, settings: CcSettings): Scene 
   if (r) {
     const n = g.vertices.length;
     boxes.push(
-      placePanels(shapes, drawn.bounds, (out, x, y0) => {
+      placePanels(shapes, drawn.bounds, stage, (out, x, y0) => {
         const cc = {
           key: 'cc',
           label: 'cc',

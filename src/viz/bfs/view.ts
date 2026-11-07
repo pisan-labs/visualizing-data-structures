@@ -6,7 +6,7 @@
  * become arrows from parent to child, edges passed over turn dashed, and edges not looked at
  * yet are faint. A plain state (no run, as in practice pictures) draws just the graph.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -38,7 +38,11 @@ function look(r: BfsRun, v: string): VertexLook | undefined {
   return r.color[v] === 'gray' ? 'visited' : undefined;
 }
 
-export function view(step: Step<BfsState, BfsExtra>, settings: BfsSettings): Scene {
+export function view(
+  step: Step<BfsState, BfsExtra>,
+  settings: BfsSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -67,7 +71,7 @@ export function view(step: Step<BfsState, BfsExtra>, settings: BfsSettings): Sce
     const n = g.vertices.length;
     const flags = settings.marking === 'visited';
     boxes.push(
-      placePanels(shapes, drawn.bounds, (out, x, y0) => {
+      placePanels(shapes, drawn.bounds, stage, (out, x, y0) => {
         const queue = drawRow(out, {
           id: 'q',
           label: 'Q',

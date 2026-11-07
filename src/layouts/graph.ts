@@ -64,7 +64,7 @@
  * graph of 10 vertices and 15 edges with its queue and table stays readable on a phone.
  */
 import { makeRng } from '../engine/rng';
-import type { MarkRole, SettingSpec } from '../engine/types';
+import type { MarkRole, SettingSpec, StageSize } from '../engine/types';
 import type { Bounds, Shape } from '../render/scene';
 
 export interface GraphLike {
@@ -1042,9 +1042,12 @@ const STAGES = [
   { w: 362, h: 585 },
 ];
 
-/** How large a scene of this size is drawn on the smaller of the two stages (pixels per unit). */
-export function fitScore(b: Bounds): number {
-  return Math.min(...STAGES.map((s) => Math.min(s.w / b.w, s.h / b.h)));
+/**
+ * How large a scene of this size is drawn, in pixels per unit: on `stage` when the view knows
+ * the screen it draws for, else on the smaller of the two typical stages.
+ */
+export function fitScore(b: Bounds, stage?: StageSize): number {
+  return Math.min(...(stage ? [stage] : STAGES).map((s) => Math.min(s.w / b.w, s.h / b.h)));
 }
 
 /** Move shapes by (dx, dy). Where they slide in from stays put: it is a place in the scene. */
@@ -1060,7 +1063,8 @@ export function translate(shapes: Shape[], dx: number, dy: number): Shape[] {
 
 /**
  * Put a block of panels under the graph or beside it, whichever keeps the whole picture larger
- * on both a laptop and a phone (`fitScore`). `draw(shapes, x, y)` draws the block with its top
+ * on `stage` (the screen the view draws for), or on both a laptop and a phone when there is no
+ * stage (`fitScore`). `draw(shapes, x, y)` draws the block with its top
  * left corner at (x, y) and returns its box; keep its size the same through a run (reserve
  * room for what grows), so the block does not jump between the two places. Beside the graph,
  * the block starts a little lower, clear of the stage's zoom buttons in the top right corner.
@@ -1068,6 +1072,7 @@ export function translate(shapes: Shape[], dx: number, dy: number): Shape[] {
 export function placePanels(
   shapes: Shape[],
   graph: Bounds,
+  stage: StageSize | undefined,
   draw: (shapes: Shape[], x: number, y: number) => Bounds,
 ): Bounds {
   const block: Shape[] = [];
@@ -1076,7 +1081,7 @@ export function placePanels(
   const side = { x: beside(graph, 30) - box.x, y: graph.y + 34 - box.y };
   const total = (p: Pt) =>
     padBounds(unionBounds(graph, { ...box, x: box.x + p.x, y: box.y + p.y }), 14);
-  const at = fitScore(total(side)) > fitScore(total(under)) * 1.05 ? side : under;
+  const at = fitScore(total(side), stage) > fitScore(total(under), stage) * 1.05 ? side : under;
   shapes.push(...translate(block, at.x, at.y));
   return { ...box, x: box.x + at.x, y: box.y + at.y };
 }

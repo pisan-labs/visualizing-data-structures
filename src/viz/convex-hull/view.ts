@@ -1,4 +1,4 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import { drawRow, placePanels, unionBounds, padBounds } from '../../layouts/graph';
 import {
   drawGrid,
@@ -22,7 +22,11 @@ import {
 
 const PANEL_W = 430;
 
-export function view(step: Step<HullState, HullExtra>, settings: HullSettings): Scene {
+export function view(
+  step: Step<HullState, HullExtra>,
+  settings: HullSettings,
+  stage?: StageSize,
+): Scene {
   const { state: s, extra = {} } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const plane = makePlane({ xmin: 0, xmax: MAX, ymin: 0, ymax: MAX, unit: 32, x: 34, y: 16 });
@@ -127,7 +131,7 @@ export function view(step: Step<HullState, HullExtra>, settings: HullSettings): 
     w: plane.rect.x + plane.rect.w + 14,
     h: plane.rect.y + plane.rect.h + 22,
   };
-  const panel = placePanels(shapes, graph, (out, x, y) => {
+  const panel = placePanels(shapes, graph, stage, (out, x, y) => {
     const rowLabel =
       s.hull !== null
         ? 'hull'

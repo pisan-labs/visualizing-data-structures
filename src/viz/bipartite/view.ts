@@ -4,7 +4,7 @@
  * the side, and, when the check fails, the odd cycle in red. Beside or under it: the queue
  * (BFS) or the open VISIT calls (DFS), and a table of side and π per vertex.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -36,7 +36,11 @@ function look(r: BipRun, v: string): VertexLook | undefined {
   return undefined;
 }
 
-export function view(step: Step<BipState, BipExtra>, settings: BipSettings): Scene {
+export function view(
+  step: Step<BipState, BipExtra>,
+  settings: BipSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const r = extra.run;
@@ -74,7 +78,7 @@ export function view(step: Step<BipState, BipExtra>, settings: BipSettings): Sce
     const n = g.vertices.length;
     const bfs = r.method === 'bfs';
     boxes.push(
-      placePanels(shapes, drawn.bounds, (out, x, y0) => {
+      placePanels(shapes, drawn.bounds, stage, (out, x, y0) => {
         const labelW = bfs ? 44 : 62;
         const row = drawRow(out, {
           id: 'q',

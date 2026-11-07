@@ -5,7 +5,7 @@
  * matching M (matching method), the uncovered degree of each vertex (greedy), the best cover so
  * far (exact methods), and the cover's size against the optimum.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -105,7 +105,7 @@ function panels(
   return unionBounds(...boxes);
 }
 
-export function view(step: Step<VcState, VcExtra>, settings: VcSettings): Scene {
+export function view(step: Step<VcState, VcExtra>, settings: VcSettings, stage?: StageSize): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -122,7 +122,7 @@ export function view(step: Step<VcState, VcExtra>, settings: VcSettings): Scene 
   const boxes: Bounds[] = [drawn.bounds];
   if (r) {
     boxes.push(
-      placePanels(shapes, drawn.bounds, (out, x, y) => {
+      placePanels(shapes, drawn.bounds, stage, (out, x, y) => {
         const box = panels(out, g, r, roles, x, y, false);
         return unionBounds(box, panels([], g, r, roles, x, y, true));
       }),

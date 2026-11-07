@@ -7,7 +7,7 @@
  * back, F forward, C cross), and edges not explored yet are faint. A plain state (no run, as
  * in practice pictures) draws just the graph.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -116,7 +116,11 @@ function drawParens(
   return { x, y, w: maxW, h: (lines - 1) * pitch + PAREN_SIZE + 6 };
 }
 
-export function view(step: Step<DfsState, DfsExtra>, settings: DfsSettings): Scene {
+export function view(
+  step: Step<DfsState, DfsExtra>,
+  settings: DfsSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -145,7 +149,7 @@ export function view(step: Step<DfsState, DfsExtra>, settings: DfsSettings): Sce
     const n = g.vertices.length;
     const recursive = settings.style === 'recursive';
     boxes.push(
-      placePanels(shapes, drawn.bounds, (out, x, y0) => {
+      placePanels(shapes, drawn.bounds, stage, (out, x, y0) => {
         const cells = recursive
           ? r.calls.map((v) => ({ key: v, text: v, from: layout.pos[v] }))
           : r.stack.map((e) => ({

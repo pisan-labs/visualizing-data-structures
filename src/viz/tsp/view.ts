@@ -5,7 +5,7 @@
  * edges 2-opt would swap in (dashed). Under or beside it: Held-Karp's table for a few cities,
  * the walk around the tree with the repeats faded, the tour, and its length against the optimum.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -190,7 +190,11 @@ function panels(
   return unionBounds(...boxes);
 }
 
-export function view(step: Step<TspState, TspExtra>, _settings?: TspSettings): Scene {
+export function view(
+  step: Step<TspState, TspExtra>,
+  _settings?: TspSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -231,7 +235,7 @@ export function view(step: Step<TspState, TspExtra>, _settings?: TspSettings): S
   const boxes: Bounds[] = [drawn.bounds];
   if (r) {
     boxes.push(
-      placePanels(shapes, drawn.bounds, (out, x, y) => {
+      placePanels(shapes, drawn.bounds, stage, (out, x, y) => {
         const box = panels(out, g, r, layout, roles, x, y, false);
         const room = panels([], g, r, layout, roles, x, y, true);
         return unionBounds(box, room);

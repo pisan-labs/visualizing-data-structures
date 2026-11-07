@@ -6,7 +6,7 @@
  * negative cycle. Reading a path marks the cells it reads and, at the end, the path's edges,
  * and lists the path under the matrices. A plain state draws just the graph.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   below,
   beside,
@@ -126,7 +126,7 @@ function matrixCellWidth(g: FwState['graph']): number {
   return Math.max(30, textWidth(`${neg}${most}`, 15, true) + 10);
 }
 
-export function view(step: Step<FwState, FwExtra>, settings: FwSettings): Scene {
+export function view(step: Step<FwState, FwExtra>, settings: FwSettings, stage?: StageSize): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const V = g.vertices;
@@ -212,8 +212,8 @@ export function view(step: Step<FwState, FwExtra>, settings: FwSettings): Scene 
     let best: { score: number; shapes: Shape[]; bounds: Bounds } | null = null;
     for (const stacked of [false, true]) {
       const out: Shape[] = [];
-      const bounds = placePanels(out, drawn.bounds, block(stacked));
-      const score = fitScore(padBounds(unionBounds(drawn.bounds, bounds), 14));
+      const bounds = placePanels(out, drawn.bounds, stage, block(stacked));
+      const score = fitScore(padBounds(unionBounds(drawn.bounds, bounds), 14), stage);
       if (!best || score > best.score * 1.05) best = { score, shapes: out, bounds };
     }
     shapes.push(...best!.shapes);

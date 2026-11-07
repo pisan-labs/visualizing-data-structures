@@ -10,7 +10,7 @@
  * are faint. At the end only the tree stays solid. Stale entries of the lazy queue are faded.
  * A plain state (no run, as in practice pictures) draws just the graph.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -55,7 +55,11 @@ function queueCellWidth(g: DijkstraState['graph']): number {
   ]);
 }
 
-export function view(step: Step<DijkstraState, DijkstraExtra>, settings: DijkstraSettings): Scene {
+export function view(
+  step: Step<DijkstraState, DijkstraExtra>,
+  settings: DijkstraSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -85,7 +89,7 @@ export function view(step: Step<DijkstraState, DijkstraExtra>, settings: Dijkstr
   const boxes: Bounds[] = [drawn.bounds];
   if (r) {
     boxes.push(
-      placePanels(shapes, drawn.bounds, (out, x, y0) => {
+      placePanels(shapes, drawn.bounds, stage, (out, x, y0) => {
         const split = drawSplit(out, {
           id: 'pq',
           x,

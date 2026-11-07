@@ -10,7 +10,7 @@
  * solid; when it finds a negative cycle, the cycle is drawn in red. A plain state draws just
  * the graph.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -41,7 +41,7 @@ function look(r: BfRun, v: string): VertexLook | undefined {
   return r.result === 'true' ? 'done' : 'visited';
 }
 
-export function view(step: Step<BfState, BfExtra>, settings: BfSettings): Scene {
+export function view(step: Step<BfState, BfExtra>, settings: BfSettings, stage?: StageSize): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -73,7 +73,7 @@ export function view(step: Step<BfState, BfExtra>, settings: BfSettings): Scene 
     const n = g.vertices.length;
     const list = arcs(g);
     boxes.push(
-      placePanels(shapes, drawn.bounds, (out, x, y0) => {
+      placePanels(shapes, drawn.bounds, stage, (out, x, y0) => {
         const order = drawRow(out, {
           id: 'ord',
           label: 'order',

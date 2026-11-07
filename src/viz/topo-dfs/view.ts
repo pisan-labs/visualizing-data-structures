@@ -5,7 +5,7 @@
  * carry d/f, tree edges become arrows, and edges not explored yet are faint. A cycle that stops
  * the sort is drawn in red. A plain state (no run, as in practice pictures) draws just the graph.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -35,7 +35,11 @@ function look(r: TopoRun, v: string): VertexLook | undefined {
   return r.color[v] === 'black' ? 'done' : undefined;
 }
 
-export function view(step: Step<TopoState, TopoExtra>, settings: TopoSettings): Scene {
+export function view(
+  step: Step<TopoState, TopoExtra>,
+  settings: TopoSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -67,7 +71,7 @@ export function view(step: Step<TopoState, TopoExtra>, settings: TopoSettings): 
   if (r) {
     const n = g.vertices.length;
     boxes.push(
-      placePanels(shapes, drawn.bounds, (out, x, y0) => {
+      placePanels(shapes, drawn.bounds, stage, (out, x, y0) => {
         const labelW = 62;
         const perRow = 10;
         const calls = drawRow(out, {

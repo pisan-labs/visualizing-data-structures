@@ -98,9 +98,14 @@ test('drawing the list down keeps a long list readable', async ({ page, isMobile
   await op(page, 'Insert', '15 82 47 3 66 29 91 54 8 73 38 60 21 95 12 44 77 33 58 86');
   await toEnd(page);
   await expect(stage(page)).toHaveAttribute('aria-label', /20 keys/);
-  // The drawing itself is taller than wide (the stage letterboxes it).
-  const [, , w, h] = ((await stage(page).getAttribute('viewBox')) ?? '').split(' ').map(Number);
-  expect(h!).toBeGreaterThan(w!);
+  // The drawing itself is taller than wide (the stage letterboxes it). Poll: the frame tweens
+  // to the final size after the last step.
+  await expect
+    .poll(async () => {
+      const [, , w, h] = ((await stage(page).getAttribute('viewBox')) ?? '').split(' ');
+      return Number(h) > Number(w);
+    })
+    .toBe(true);
   // The down layout is for phones. On a 1366x768 laptop the stage is about 305 px tall, so 20
   // stacked keys sit right at 9 px and the result depends on the font (CI's DejaVu Sans measured
   // 8.99994); laptops use the layout across instead.

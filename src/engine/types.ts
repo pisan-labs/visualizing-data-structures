@@ -217,6 +217,12 @@ export interface PracticeKind {
   make(rng: Rng): PracticeQuestion;
 }
 
+/** The room a drawing has on screen, in CSS pixels: the stage's width and its height limit. */
+export interface StageSize {
+  w: number;
+  h: number;
+}
+
 export interface VizDef<S, Set extends Settings, X = unknown> {
   id: string;
   title: string;
@@ -230,7 +236,12 @@ export interface VizDef<S, Set extends Settings, X = unknown> {
   initialVars?(state: S, settings: Set): Record<string, Scalar>;
   ops: Record<string, OpSpec<S, Set, X>>;
   pseudocode(settings: Set): PseudoBlock[];
-  view(step: Step<S, X>, settings: Set): Scene;
+  /**
+   * Draw a step. `stage` is the room the drawing has on screen, in pixels; a view may use it to
+   * put side panels beside the main picture on a wide stage and under it on a tall one. It is
+   * absent in tests, thumbnails and practice pictures: draw for any screen then.
+   */
+  view(step: Step<S, X>, settings: Set, stage?: StageSize): Scene;
   /** Plain-text summary of a state for screen readers. */
   describe(state: S, settings: Set): string;
   controls: Controls;

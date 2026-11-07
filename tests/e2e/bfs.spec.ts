@@ -75,16 +75,18 @@ test('ten vertices, fifteen edges, the queue and the table stay readable', async
   await op(page, 'Run BFS from', 'A');
   await toEnd(page);
   for (let i = 0; i < 8; i++) await page.getByRole('button', { name: 'Step back' }).click();
-  // Vertex names, queue cells and table cells: every one at least 9 CSS pixels tall.
-  const heights = await stage(page)
-    .locator('text.shape')
-    .evaluateAll((els) =>
-      els
-        .filter((e) => /^([A-J]|[0-9]|∞)$/.test(e.textContent ?? ''))
-        .map((e) => e.getBoundingClientRect().height),
-    );
-  expect(heights.length).toBeGreaterThan(40);
-  expect(Math.min(...heights)).toBeGreaterThanOrEqual(9);
+  // Vertex names, queue cells and table cells: every one at least 9 CSS pixels tall. Poll: the
+  // last step back is still animating (mid-tween, half the labels are faded copies).
+  const heights = () =>
+    stage(page)
+      .locator('text.shape')
+      .evaluateAll((els) =>
+        els
+          .filter((e) => /^([A-J]|[0-9]|∞)$/.test(e.textContent ?? ''))
+          .map((e) => e.getBoundingClientRect().height),
+      );
+  await expect.poll(async () => (await heights()).length).toBeGreaterThan(40);
+  expect(Math.min(...(await heights()))).toBeGreaterThanOrEqual(9);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );

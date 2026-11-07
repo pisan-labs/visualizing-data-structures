@@ -7,7 +7,7 @@
  * looked at yet are faint. In the forest every vertex points at its parent; roots carry their
  * rank. A plain state (no run) draws just the graph.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import { trimmedLine } from '../../layouts/binary-tree';
 import { layoutForest } from '../../layouts/forest';
 import {
@@ -126,7 +126,11 @@ function drawUnionFind(
   return { x, y, w: w + 16, h };
 }
 
-export function view(step: Step<KruskalState, KruskalExtra>, settings: KruskalSettings): Scene {
+export function view(
+  step: Step<KruskalState, KruskalExtra>,
+  settings: KruskalSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const marks = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -191,7 +195,7 @@ export function view(step: Step<KruskalState, KruskalExtra>, settings: KruskalSe
       const forest = drawUnionFind(out, g, r, x, below(list, 16), marks, width);
       return unionBounds(list, forest);
     };
-    boxes.push(placePanels(shapes, drawn.bounds, block));
+    boxes.push(placePanels(shapes, drawn.bounds, stage, block));
   }
   const label = r ? `${describe(state)} ${describeRun(r)}` : describe(state);
   return { shapes, bounds: padBounds(unionBounds(...boxes), 14), label };

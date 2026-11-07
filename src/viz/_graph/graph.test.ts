@@ -255,11 +255,23 @@ describe('layouts', () => {
       return { x, y, w, h };
     };
     const under: Shape[] = [];
-    const a = placePanels(under, graph, block(380, 150));
+    const a = placePanels(under, graph, undefined, block(380, 150));
     expect(a.y).toBeGreaterThan(graph.h);
     const side: Shape[] = [];
-    const b = placePanels(side, { x: 0, y: 0, w: 160, h: 120 }, block(140, 330));
+    const b = placePanels(side, { x: 0, y: 0, w: 160, h: 120 }, undefined, block(140, 330));
     expect(b.x).toBeGreaterThan(160);
     expect(fitScore({ x: 0, y: 0, w: 884, h: 305 })).toBeCloseTo(362 / 884);
+  });
+
+  it('puts panels where they fit the stage the view draws for', () => {
+    const graph = { x: 0, y: 0, w: 400, h: 260 };
+    const block = (out: Shape[], x: number, y: number) => {
+      out.push({ kind: 'rect', id: 'p', x, y, w: 300, h: 200 });
+      return { x, y, w: 300, h: 200 };
+    };
+    // A wide, short laptop stage puts the block beside the graph; a phone puts it under.
+    expect(placePanels([], graph, { w: 880, h: 384 }, block).x).toBeGreaterThan(graph.w);
+    expect(placePanels([], graph, { w: 360, h: 536 }, block).y).toBeGreaterThan(graph.h);
+    expect(fitScore({ x: 0, y: 0, w: 880, h: 384 }, { w: 880, h: 384 })).toBeCloseTo(1);
   });
 });

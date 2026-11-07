@@ -171,3 +171,5 @@
 2026-11-07 [decision] Handover at Yusuf's request (context about 50%, no agents running); the previous session starts the next one at once
 
 2026-11-07 [note] Session session_01JyJzMXcc2unSAwN88hsew5 took over at 08:00 and moved the three relay routines; Netlify auto-publishing is unlocked again (the live site still served a build from early 5 November)
+
+2026-11-07 [decision] Small drawings on laptops: Yusuf chose option 3 (a taller desktop stage first, then views that lay out for the stage); stage 305 to 387 px, Options in the side column, view(step, settings, stage) used by the 26 graph pages

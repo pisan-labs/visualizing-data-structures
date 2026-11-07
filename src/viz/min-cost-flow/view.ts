@@ -4,7 +4,7 @@
  * reverse arcs dashed with negative costs), each reached vertex's distance in a badge, and
  * beside or under it a table of d and π (and h with Dijkstra) and the paths pushed so far.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   below,
   drawRow,
@@ -115,7 +115,7 @@ function panels(
   return unionBounds(...parts);
 }
 
-export function view(step: Step<McState, McExtra>, settings: McSettings): Scene {
+export function view(step: Step<McState, McExtra>, settings: McSettings, stage?: StageSize): Scene {
   const { state, extra = {} } = step;
   const net = state.net;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -141,7 +141,9 @@ export function view(step: Step<McState, McExtra>, settings: McSettings): Scene 
   const shapes: Shape[] = [...drawn.shapes];
   const boxes: Bounds[] = [drawn.bounds];
   if (r)
-    boxes.push(placePanels(shapes, drawn.bounds, (out, x, y) => panels(out, net, r, x, y, roles)));
+    boxes.push(
+      placePanels(shapes, drawn.bounds, stage, (out, x, y) => panels(out, net, r, x, y, roles)),
+    );
   const label = r ? `${describe(state)} ${describeRun(net, r)}` : describe(state);
   return { shapes, bounds: padBounds(unionBounds(...boxes), 14), label };
 }

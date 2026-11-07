@@ -1,12 +1,17 @@
 <script lang="ts">
   import { untrack } from 'svelte';
   import { easeInOut, interpolate } from '../render/interpolate';
+  import type { StageSize } from '../engine/types';
   import type { Scene } from '../render/scene';
   import Icon from './Icon.svelte';
   import Shapes from './Shapes.svelte';
   import { reducedMotion } from './state.svelte';
 
-  let { scene, duration }: { scene: Scene; duration: number } = $props();
+  let {
+    scene,
+    duration,
+    room = $bindable(),
+  }: { scene: Scene; duration: number; room?: StageSize } = $props();
 
   // The scene currently on screen; during a tween it is a blend of two scenes.
   let shown = $state.raw<Scene>(untrack(() => interpolate(scene, scene, 1)));
@@ -100,6 +105,29 @@
   }
 
   const ratio = $derived(`${scene.bounds.w} / ${scene.bounds.h}`);
+
+  // The room the drawing has: the stage's width and the height it may grow to. Views use it to
+  // put panels beside or under the main picture. Rounded, so a small resize does not redraw.
+  function measure() {
+    if (!svg) return;
+    const w = svg.clientWidth;
+    const h = parseFloat(getComputedStyle(svg).maxHeight);
+    if (!(w > 0) || !(h > 0)) return;
+    const next = { w: Math.round(w / 8) * 8, h: Math.round(h / 8) * 8 };
+    if (next.w !== room?.w || next.h !== room?.h) room = next;
+  }
+  $effect(() => {
+    const el = svg;
+    if (!el) return;
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    addEventListener('resize', measure);
+    return () => {
+      observer.disconnect();
+      removeEventListener('resize', measure);
+    };
+  });
 </script>
 
 <div class="stage card" style:--tween="{duration}ms">

@@ -5,7 +5,7 @@
  * left vertex carries its layer in a badge during a phase. Beside or under the drawing: the
  * matching so far and, with Kuhn, the right vertices visited in the current search.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, Step, StageSize } from '../../engine/types';
 import {
   below,
   drawGraph,
@@ -74,7 +74,7 @@ function look(r: BmRun, v: string): VertexLook | undefined {
 /** The edges of a path, by key. */
 const pathKeys = (s: BmState, p: string[]) => p.slice(1).map((v, i) => edgeKey(s.graph, p[i]!, v));
 
-export function view(step: Step<BmState, BmExtra>, settings: BmSettings): Scene {
+export function view(step: Step<BmState, BmExtra>, settings: BmSettings, stage?: StageSize): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const r = extra.run;
@@ -117,7 +117,7 @@ export function view(step: Step<BmState, BmExtra>, settings: BmSettings): Scene 
   const boxes: Bounds[] = [drawn.bounds];
   if (r) {
     boxes.push(
-      placePanels(shapes, drawn.bounds, (out, x, y) => {
+      placePanels(shapes, drawn.bounds, stage, (out, x, y) => {
         const pairs = state.left.filter((u) => r.mate[u]);
         const row = drawRow(out, {
           id: 'm',

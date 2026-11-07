@@ -37,13 +37,7 @@ import {
   type MachineState,
   type Verdict,
 } from '../_automata/page';
-import {
-  rowOk,
-  testRowId,
-  verdictId,
-  type TestRow,
-  type TestTable as FaTest,
-} from '../_automata/panels';
+import { rowOk, testRowId, verdictId, type TestRow, type TestTable } from '../_automata/panels';
 
 export type NfaState = MachineState;
 
@@ -72,7 +66,7 @@ export interface NfaRun {
 
 export interface NfaExtra {
   run?: NfaRun;
-  test?: FaTest;
+  test?: TestTable;
   /** The longest word of this run or batch, so the tape keeps its size. */
   room?: number;
 }
@@ -346,7 +340,7 @@ const run: Op = {
   },
 };
 
-function testVars(t: FaTest, r: NfaRun | undefined): Record<string, Scalar> {
+function testVars(t: TestTable, r: NfaRun | undefined): Record<string, Scalar> {
   const done = t.rows.filter((x) => x.got !== undefined);
   return {
     ...runVars(r ?? null),
@@ -394,7 +388,7 @@ const test: Op = {
     }
     const rows: TestRow[] = items.map((it) => ({ word: it.word, expect: it.expect }));
     const room = Math.max(...rows.map((r) => r.word.length));
-    const table = (at: number): FaTest => ({ rows: rows.map((r) => ({ ...r })), at });
+    const table = (at: number): TestTable => ({ rows: rows.map((r) => ({ ...r })), at });
     yield {
       state: s,
       marks: [],

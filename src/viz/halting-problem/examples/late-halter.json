@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "halting-problem",
+  "id": "late-halter",
+  "title": "A late halter: a step cap gives up too soon",
+  "notes": "M6 walks to the end of M5's 12-symbol code, steps back and checks the last symbol. It accepts on step 40. A checker with a cap of 30 steps would have called this a loop.",
+  "settings": { "framing": "atm", "size": 6 },
+  "seed": 1,
+  "ops": [["run", 6, 5]],
+  "at": { "op": 0, "step": 0 }
+}

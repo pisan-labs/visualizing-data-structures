@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "halting-problem",
+  "id": "whole-argument",
+  "title": "The whole argument: table, diagonal, contradiction",
+  "notes": "Build the table, flip the diagonal into D's row, then ask what D does on its own description. Both answers contradict themselves, so the decider H that D was built from cannot exist.",
+  "settings": { "framing": "atm", "size": 4 },
+  "seed": 1,
+  "ops": [["build"], ["diagonalize"], ["contradict"]],
+  "at": { "op": 0, "step": 0 }
+}

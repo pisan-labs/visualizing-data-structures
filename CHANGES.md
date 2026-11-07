@@ -183,3 +183,7 @@
 2026-11-07 [decision] Yusuf confirmed the automata defaults (PLAN.md decisions 29 to 33)
 
 2026-11-07 [code] Merged wave 5A: dfa, nfa, nfa-to-dfa, dfa-minimization, regex-to-nfa, turing-machine (src/viz/_turing); the agents recommend moving their page kits (dfa/kit.ts, nfa-to-dfa/kit.ts) and label placement into the shared automata code
+
+2026-11-07 [code] Merged the grammar pages (cfg-derivation, cyk) and src/viz/_grammar (parser, CNF with stages, CYK, derivation search, Chomsky level of a grammar)
+
+2026-11-07 [code] Option 3 step 2: 15 more pages arrange their parts for the stage (src/viz/_stage/arrange.ts, src/viz/_dp/strip.ts); 27 others left as they read fine or their layout sets the scale

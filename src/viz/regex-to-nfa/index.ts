@@ -29,6 +29,7 @@ import {
   type RxState,
 } from './model';
 import { parse, show, type UnionSign } from './syntax';
+import { rxPractice } from './practice';
 import { view } from './view';
 
 /** The input box holds an expression for Build or a word for Run; each operation reads it. */
@@ -189,6 +190,7 @@ export const regexToNfa: VizDef<RxState, RxSettings, RxExtra> = {
       note: 'Simulating the set of states is what keeps this polynomial. Trying one path at a time, as backtracking matchers do, can take exponential time.',
     },
   ],
+  practice: rxPractice(() => regexToNfa),
   code: {
     python: pythonSource,
     java: javaSource,

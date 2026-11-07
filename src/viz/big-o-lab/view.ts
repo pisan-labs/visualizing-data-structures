@@ -1,5 +1,6 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
 import type { Scene, Shape } from '../../render/scene';
+import { pickLayout } from '../_stage/arrange';
 import {
   FN_LABEL,
   count,
@@ -17,8 +18,36 @@ const COL = 94;
 const BAR = 56;
 const TOP = 96;
 const BASE = 340;
+/** From one row of bars to the next, when a narrow stage wraps the chart. */
+const ROW_PITCH = BASE + 56 - (TOP - 44);
 
-export function view(step: Step<LabState, undefined>, settings: LabSettings): Scene {
+/**
+ * Draw a step: one row of bars, or on a narrow stage (a phone) the same bars wrapped into
+ * rows of fewer, when that draws larger. Every row has the same scale, its own axis and its own
+ * steps, time and growth captions. The number of curves only changes between operations, so
+ * the choice holds for a run.
+ */
+export function view(
+  step: Step<LabState, undefined>,
+  settings: LabSettings,
+  stage?: StageSize,
+): Scene {
+  const cols = Math.max(4, step.state.shown.length);
+  const options = [cols];
+  if (stage) for (let p = cols - 1; p >= 2; p--) options.push(p);
+  const perRow = pickLayout(
+    stage,
+    options.map((p) => ({ p, bounds: chartBounds(cols, p) })),
+  ).p;
+  return draw(step, settings, perRow);
+}
+
+function chartBounds(cols: number, perRow: number) {
+  const rows = Math.ceil(cols / perRow);
+  return { x: 0, y: 0, w: X0 + perRow * COL + 16, h: BASE + 60 + (rows - 1) * ROW_PITCH };
+}
+
+function draw(step: Step<LabState, undefined>, settings: LabSettings, perRow: number): Scene {
   const { state } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const shapes: Shape[] = [];
@@ -27,6 +56,9 @@ export function view(step: Step<LabState, undefined>, settings: LabSettings): Sc
   const log = settings.scale === 'log';
   // Room for the curves shown (at least four), so a few bars are not lost in a wide chart.
   const cols = Math.max(4, state.shown.length);
+  const rows = Math.ceil(cols / perRow);
+  // Ids of a wrapped row's own axis and captions: the first row keeps the usual ones.
+  const rowId = (id: string, r: number) => (r === 0 ? id : `${id}-${r}`);
   // Heights from logarithms, so 2ⁿ and n! never overflow.
   const lgMax = Math.max(-Infinity, ...counts.map((c) => c.lg));
   const lgPlus = (lg: number) => (lg === -Infinity ? 0 : lg < 12 ? Math.log10(10 ** lg + 1) : lg);
@@ -58,52 +90,56 @@ export function view(step: Step<LabState, undefined>, settings: LabSettings): Sc
     size: 12.5,
     cls: 'label',
   });
-  shapes.push({
-    kind: 'arrow',
-    id: 'axis',
-    x1: X0 - 14,
-    y1: BASE,
-    x2: X0 + cols * COL,
-    y2: BASE,
-    head: 'none',
-  });
-  shapes.push({
-    kind: 'text',
-    id: 'axis-steps',
-    x: X0 - 22,
-    y: BASE + 22,
-    text: 'steps',
-    size: 12,
-    anchor: 'end',
-    cls: 'label',
-  });
-  shapes.push({
-    kind: 'text',
-    id: 'axis-time',
-    x: X0 - 22,
-    y: BASE + 42,
-    text: 'time',
-    size: 12,
-    anchor: 'end',
-    cls: 'label',
-  });
-  if (state.prev !== null) {
+  for (let r = 0; r < rows; r++) {
+    const dy = r * ROW_PITCH;
+    const span = Math.min(perRow, cols - r * perRow);
+    shapes.push({
+      kind: 'arrow',
+      id: rowId('axis', r),
+      x1: X0 - 14,
+      y1: BASE + dy,
+      x2: X0 + (rows > 1 ? span : cols) * COL,
+      y2: BASE + dy,
+      head: 'none',
+    });
     shapes.push({
       kind: 'text',
-      id: 'axis-ratio',
+      id: rowId('axis-steps', r),
       x: X0 - 22,
-      y: TOP - 24,
-      text: 'growth',
+      y: BASE + dy + 22,
+      text: 'steps',
       size: 12,
       anchor: 'end',
       cls: 'label',
     });
+    shapes.push({
+      kind: 'text',
+      id: rowId('axis-time', r),
+      x: X0 - 22,
+      y: BASE + dy + 42,
+      text: 'time',
+      size: 12,
+      anchor: 'end',
+      cls: 'label',
+    });
+    if (state.prev !== null) {
+      shapes.push({
+        kind: 'text',
+        id: rowId('axis-ratio', r),
+        x: X0 - 22,
+        y: TOP + dy - 24,
+        text: 'growth',
+        size: 12,
+        anchor: 'end',
+        cls: 'label',
+      });
+    }
   }
   if (state.shown.length === 0) {
     shapes.push({
       kind: 'text',
       id: 'empty',
-      x: X0 + (cols * COL) / 2,
+      x: X0 + (Math.min(cols, perRow) * COL) / 2,
       y: (TOP + BASE) / 2,
       text: 'No curves shown: use More operations to show some.',
       size: 14,
@@ -114,26 +150,28 @@ export function view(step: Step<LabState, undefined>, settings: LabSettings): Sc
 
   state.shown.forEach((f, k) => {
     const c = counts[k]!;
-    const cx = X0 + k * COL + COL / 2;
+    const cx = X0 + (k % perRow) * COL + COL / 2;
+    const base = BASE + Math.floor(k / perRow) * ROW_PITCH;
+    const top = TOP + Math.floor(k / perRow) * ROW_PITCH;
     const h = height(c.lg);
     const id = `bar-${f}`;
     shapes.push({
       kind: 'rect',
       id,
       x: cx - BAR / 2,
-      y: BASE - h,
+      y: base - h,
       w: BAR,
       h,
       r: 3,
       cls: 'cell live',
       role: roles.get(id),
-      enterFrom: { x: cx, y: BASE },
+      enterFrom: { x: cx, y: base },
     });
     shapes.push({
       kind: 'text',
       id: `${id}-val`,
       x: cx,
-      y: Math.min(BASE - h - 8, BASE - 8),
+      y: Math.min(base - h - 8, base - 8),
       text: countShort(c),
       size: 12.5,
       anchor: 'middle',
@@ -144,7 +182,7 @@ export function view(step: Step<LabState, undefined>, settings: LabSettings): Sc
       kind: 'text',
       id: `${id}-label`,
       x: cx,
-      y: BASE + 22,
+      y: base + 22,
       text: FN_LABEL[f],
       size: 15,
       anchor: 'middle',
@@ -154,7 +192,7 @@ export function view(step: Step<LabState, undefined>, settings: LabSettings): Sc
       kind: 'text',
       id: `${id}-time`,
       x: cx,
-      y: BASE + 42,
+      y: base + 42,
       text: timeText(c, speed),
       size: 12,
       anchor: 'middle',
@@ -165,7 +203,7 @@ export function view(step: Step<LabState, undefined>, settings: LabSettings): Sc
         kind: 'text',
         id: `${id}-ratio`,
         x: cx,
-        y: TOP - 24,
+        y: top - 24,
         text: ratioText(f, state.prev, state.n),
         size: 14,
         anchor: 'middle',
@@ -176,9 +214,5 @@ export function view(step: Step<LabState, undefined>, settings: LabSettings): Sc
     }
   });
 
-  return {
-    shapes,
-    bounds: { x: 0, y: 0, w: X0 + cols * COL + 16, h: BASE + 60 },
-    label: describe(state, settings),
-  };
+  return { shapes, bounds: chartBounds(cols, perRow), label: describe(state, settings) };
 }

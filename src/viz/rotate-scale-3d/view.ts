@@ -1,4 +1,4 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { drawMatrix, text, textW } from '../../layouts/plane';
 import {
   column3,
@@ -12,17 +12,38 @@ import {
   type Vec3,
 } from '../../layouts/space';
 import type { Scene, Shape } from '../../render/scene';
+import { panelPlace, pickLayout, translate } from '../_stage/arrange';
 import { R, SHAPES, describe, type Rs3Extra, type Rs3Settings, type RsState } from './model';
 
 const O: Vec3 = { x: 0, y: 0, z: 0 };
 
-export function view(step: Step<RsState, Rs3Extra>, settings: Rs3Settings): Scene {
+/**
+ * The 3D drawing, with the matrices under it, or beside it on a wide, short stage when that
+ * draws larger. On a narrow stage the scene may be only as wide as the drawing, the matrices
+ * one under the other. The panel's rows are reserved, so the choice holds.
+ */
+export function view(
+  step: Step<RsState, Rs3Extra>,
+  settings: Rs3Settings,
+  stage?: StageSize,
+): Scene {
+  const usual = draw(step, settings, stage, false);
+  return stage ? pickLayout(stage, [usual, draw(step, settings, stage, true)]) : usual;
+}
+
+function draw(
+  step: Step<RsState, Rs3Extra>,
+  settings: Rs3Settings,
+  stage: StageSize | undefined,
+  narrow: boolean,
+): Scene {
   const { state: s, extra = {} } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const iso = settings.projection !== 'oblique';
   // The scene is at least 480 wide, so two 3×3 matrices fit side by side; centre the drawing.
+  // Narrow, it is as wide as the drawing, and the matrices go one under the other.
   const probe = makeSpace({ kind: settings.projection, reach: R + 0.3, unit: iso ? 34 : 38 });
-  const width = Math.max(probe.plane.rect.w + 40, 480);
+  const width = narrow ? probe.plane.rect.w + 40 : Math.max(probe.plane.rect.w + 40, 480);
   const space = makeSpace({
     kind: settings.projection,
     reach: R + 0.3,
@@ -100,8 +121,10 @@ export function view(step: Step<RsState, Rs3Extra>, settings: Rs3Settings): Scen
   );
 
   const below = pl.rect.y + pl.rect.h;
+  // What goes under the drawing: the comparison's legend, the matrices and the convention.
+  const panel: Shape[] = [];
   if (extra.compare) {
-    shapes.push(
+    panel.push(
       text('xy', { x: x0, y: below + 4 }, 'dashed blue: about x, then about y', {
         size: 12,
         bold: true,
@@ -109,7 +132,7 @@ export function view(step: Step<RsState, Rs3Extra>, settings: Rs3Settings): Scen
       }),
     );
     if (extra.compare.yx.length)
-      shapes.push(
+      panel.push(
         text('yx', { x: x0, y: below + 22 }, 'dashed red: about y, then about x', {
           size: 12,
           bold: true,
@@ -140,22 +163,22 @@ export function view(step: Step<RsState, Rs3Extra>, settings: Rs3Settings): Scen
       used++;
       y += rowH + 16;
     }
-    shapes.push(
+    panel.push(
       text(`${id}-name`, { x, y: y + rowH / 2 + 5 }, `${name} =`, {
         size: 15,
         mono: true,
         role: nameRole,
       }),
     );
-    const b = drawMatrix(shapes, { id, x: x + nameW, y, rows, role: mRole });
+    const b = drawMatrix(panel, { id, x: x + nameW, y, rows, role: mRole });
     right = Math.max(right, b.x + b.w + 12);
     x = b.x + b.w + 22;
   };
   place('mt', 'M', s.m);
   if (extra.op) place('op', extra.op.name, extra.op.m, 'active', 'active');
   // Room for the rows this setting usually needs, so the framing stays still.
-  const yb = y0 + Math.max(used, 1) * (rowH + 16) + 8;
-  shapes.push(
+  const yb = y0 + Math.max(used, narrow ? 2 : 1) * (rowH + 16) + 8;
+  panel.push(
     text(
       'conv',
       { x: x0, y: yb },
@@ -164,9 +187,10 @@ export function view(step: Step<RsState, Rs3Extra>, settings: Rs3Settings): Scen
     ),
   );
 
-  return {
-    shapes,
-    bounds: { x: 0, y: 0, w: right, h: yb + 14 },
-    label: describe(s),
-  };
+  const usual = { x: 0, y: 0, w: right, h: yb + 14 };
+  const main = { x: pl.rect.x, y: 0, w: pl.rect.w, h: below + 8 };
+  const panelBox = { x: x0, y: below - 10, w: right - 12 - x0, h: yb + 14 - below };
+  const at = panelPlace(narrow ? undefined : stage, usual, main, panelBox);
+  shapes.push(...translate(panel, at.dx, at.dy));
+  return { shapes, bounds: at.bounds, label: describe(s) };
 }

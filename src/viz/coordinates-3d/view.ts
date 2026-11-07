@@ -1,4 +1,4 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { drawMatrix, text, textW } from '../../layouts/plane';
 import {
   add3,
@@ -12,6 +12,7 @@ import {
   type Vec3,
 } from '../../layouts/space';
 import type { Scene, Shape } from '../../render/scene';
+import { panelPlace, pickLayout, translate } from '../_stage/arrange';
 import {
   VIEW,
   describe,
@@ -22,13 +23,33 @@ import {
   type Coord3State,
 } from './model';
 
-export function view(step: Step<Coord3State, Coord3Extra>, settings: Coord3Settings): Scene {
+/**
+ * The 3D drawing, with the matrices and the readout under it, or beside it on a wide, short
+ * stage when that draws larger. On a narrow stage the scene may be only as wide as the drawing,
+ * the matrices one under the other. The panel's rows are reserved, so the choice holds.
+ */
+export function view(
+  step: Step<Coord3State, Coord3Extra>,
+  settings: Coord3Settings,
+  stage?: StageSize,
+): Scene {
+  const usual = draw(step, settings, stage, false);
+  return stage ? pickLayout(stage, [usual, draw(step, settings, stage, true)]) : usual;
+}
+
+function draw(
+  step: Step<Coord3State, Coord3Extra>,
+  settings: Coord3Settings,
+  stage: StageSize | undefined,
+  narrow: boolean,
+): Scene {
   const { state: s, extra = {} } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const iso = settings.projection !== 'oblique';
   // The scene is at least 480 wide, so two 3×3 matrices fit side by side; centre the drawing.
+  // Narrow, it is as wide as the drawing, and the matrices go one under the other.
   const probe = makeSpace({ kind: settings.projection, reach: VIEW, unit: iso ? 32 : 37 });
-  const width = Math.max(probe.plane.rect.w + 40, 480);
+  const width = narrow ? probe.plane.rect.w + 40 : Math.max(probe.plane.rect.w + 40, 480);
   const space = makeSpace({
     kind: settings.projection,
     reach: VIEW,
@@ -167,6 +188,7 @@ export function view(step: Step<Coord3State, Coord3Extra>, settings: Coord3Setti
   }
 
   // The matrices under the drawing.
+  const panel: Shape[] = [];
   const homo = settings.form === 'homogeneous';
   const below = pl.rect.y + pl.rect.h;
   const y0 = below + 16;
@@ -188,7 +210,7 @@ export function view(step: Step<Coord3State, Coord3Extra>, settings: Coord3Setti
       used++;
       y += rowH + 16;
     }
-    shapes.push(
+    panel.push(
       text(
         id === 'm' ? 'm-name' : id === 'mi' ? 'inv' : `${id}-name`,
         { x, y: y + rowH / 2 + 5 },
@@ -200,7 +222,7 @@ export function view(step: Step<Coord3State, Coord3Extra>, settings: Coord3Setti
         },
       ),
     );
-    const b = drawMatrix(shapes, { id, x: x + nameW, y, rows, role });
+    const b = drawMatrix(panel, { id, x: x + nameW, y, rows, role });
     right = Math.max(right, b.x + b.w + 12);
     x = b.x + b.w + 22;
   };
@@ -208,19 +230,20 @@ export function view(step: Step<Coord3State, Coord3Extra>, settings: Coord3Setti
   if (extra.inverse)
     place('mi', homo ? 'T⁻¹' : 'M⁻¹', inverseMatrix(s, settings), roles.get('inv'));
   // Room for the rows this setting usually needs, so the framing stays still.
-  const yb = y0 + Math.max(used, homo ? 2 : 1) * (rowH + 16) + 8;
+  const yb = y0 + Math.max(used, homo || narrow ? 2 : 1) * (rowH + 16) + 8;
   const [line1, line2] =
     s.p && s.local
       ? [`p = ${fmtVec3(s.p)} in the world`, `   = ${fmtVec3(s.local)} in B`]
       : s.local
         ? [`(a, b, c) = ${fmtVec3(s.local)} in B`, '']
         : ['world axes: solid', 'frame B: u, v, w and its unit box, dashed'];
-  shapes.push(text('readout', { x: x0, y: yb }, line1, { size: 14, bold: !!s.p }));
-  shapes.push(text('readout2', { x: x0, y: yb + 19 }, line2, { size: 14, bold: !!s.p }));
+  panel.push(text('readout', { x: x0, y: yb }, line1, { size: 14, bold: !!s.p }));
+  panel.push(text('readout2', { x: x0, y: yb + 19 }, line2, { size: 14, bold: !!s.p }));
 
-  return {
-    shapes,
-    bounds: { x: 0, y: 0, w: right, h: yb + 32 },
-    label: describe(s),
-  };
+  const usual = { x: 0, y: 0, w: right, h: yb + 32 };
+  const main = { x: pl.rect.x, y: 0, w: pl.rect.w, h: below + 8 };
+  const panelBox = { x: x0, y: below, w: right - 12 - x0, h: yb + 24 - below };
+  const at = panelPlace(narrow ? undefined : stage, usual, main, panelBox);
+  shapes.push(...translate(panel, at.dx, at.dy));
+  return { shapes, bounds: at.bounds, label: describe(s) };
 }

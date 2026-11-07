@@ -1,4 +1,4 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
 import {
   add,
   drawGrid,
@@ -8,13 +8,21 @@ import {
   drawVector,
   makePlane,
   text,
+  textW,
   type Vec,
 } from '../../layouts/plane';
 import type { Scene, Shape } from '../../render/scene';
+import { panelPlace, translate } from '../_stage/arrange';
 import { R, describe, init, matRows, type RsExtra, type RsSettings, type RsState } from './model';
 
-export function view(step: Step<RsState, RsExtra>, settings: RsSettings): Scene {
+/**
+ * The plane, with the matrices (and the legend of a comparison) under it, or beside it on a
+ * wide, short stage when that draws larger. Their room is reserved, so the choice holds.
+ */
+export function view(step: Step<RsState, RsExtra>, settings: RsSettings, stage?: StageSize): Scene {
   const { state: s, extra = {} } = step;
+  // What goes under the plane: the comparison's legend, the matrices and the convention.
+  const panel: Shape[] = [];
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const plane = makePlane({ xmin: -R, xmax: R, ymin: -R, ymax: R, unit: 19, x: 30, y: 14 });
   const shapes: Shape[] = [];
@@ -99,7 +107,7 @@ export function view(step: Step<RsState, RsExtra>, settings: RsSettings): Scene 
   if (extra.compare) {
     const { rs, sr } = extra.compare;
     drawPolygon(shapes, plane, { id: 'rs-e', pts: key(rs), role: 'active', dashed: true });
-    shapes.push(
+    panel.push(
       text(
         'rs',
         { x: plane.rect.x, y: plane.rect.y + plane.rect.h + 112 },
@@ -113,7 +121,7 @@ export function view(step: Step<RsState, RsExtra>, settings: RsSettings): Scene 
     );
     if (sr.length) {
       drawPolygon(shapes, plane, { id: 'sr-e', pts: key(sr), role: 'error', dashed: true });
-      shapes.push(
+      panel.push(
         text(
           'sr',
           { x: plane.rect.x, y: plane.rect.y + plane.rect.h + 130 },
@@ -143,8 +151,8 @@ export function view(step: Step<RsState, RsExtra>, settings: RsSettings): Scene 
   const y0 = plane.rect.y + plane.rect.h + 24;
   let x = plane.rect.x;
   if (extra.op) {
-    shapes.push(text('op-name', { x, y: y0 + 28 }, `${extra.op.name} =`, { size: 15, mono: true }));
-    const b = drawMatrix(shapes, {
+    panel.push(text('op-name', { x, y: y0 + 28 }, `${extra.op.name} =`, { size: 15, mono: true }));
+    const b = drawMatrix(panel, {
       id: 'op',
       x: x + 34,
       y: y0,
@@ -153,13 +161,13 @@ export function view(step: Step<RsState, RsExtra>, settings: RsSettings): Scene 
     });
     x = b.x + b.w + 22;
   } else if (extra.compare) {
-    shapes.push(
+    panel.push(
       text('op-name', { x, y: y0 + 28 }, settings.convention === 'column' ? 'SR =' : 'RS =', {
         size: 15,
         mono: true,
       }),
     );
-    const b = drawMatrix(shapes, {
+    const b = drawMatrix(panel, {
       id: 'op',
       x: x + 44,
       y: y0,
@@ -168,18 +176,24 @@ export function view(step: Step<RsState, RsExtra>, settings: RsSettings): Scene 
     });
     x = b.x + b.w + 22;
   }
-  shapes.push(text('m-name', { x, y: y0 + 28 }, 'M =', { size: 15, mono: true }));
-  drawMatrix(shapes, { id: 'mt', x: x + 34, y: y0, rows: matRows(s.m, settings) });
+  panel.push(text('m-name', { x, y: y0 + 28 }, 'M =', { size: 15, mono: true }));
+  const mt = drawMatrix(panel, { id: 'mt', x: x + 34, y: y0, rows: matRows(s.m, settings) });
   const note = settings.convention === 'row' ? "row vectors: p' = p M" : "column vectors: p' = M p";
-  shapes.push(
+  panel.push(
     text('conv', { x: plane.rect.x, y: y0 + 74 }, `${note}${s.t.x || s.t.y ? ' + t' : ''}`, {
       size: 13,
     }),
   );
 
-  return {
-    shapes,
-    bounds: { x: 0, y: 0, w: plane.rect.x + plane.rect.w + 24, h: y0 + 114 },
-    label: describe(s),
-  };
+  const below = plane.rect.y + plane.rect.h;
+  const right = Math.max(
+    mt.x + mt.w,
+    ...[`${note} + t`, 'dashed blue: rotate, then scale'].map((t) => plane.rect.x + textW(t, 13)),
+  );
+  const usual = { x: 0, y: 0, w: plane.rect.x + plane.rect.w + 24, h: y0 + 114 };
+  const main = { x: 0, y: 0, w: plane.rect.x + plane.rect.w, h: below + 8 };
+  const box = { x: plane.rect.x, y: below, w: right - plane.rect.x, h: y0 + 104 - below };
+  const at = panelPlace(stage, usual, main, box);
+  shapes.push(...translate(panel, at.dx, at.dy));
+  return { shapes, bounds: at.bounds, label: describe(s) };
 }

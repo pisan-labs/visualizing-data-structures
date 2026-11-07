@@ -1,4 +1,4 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
 import type { Scene, Shape } from '../../render/scene';
 import {
   boxRow,
@@ -8,9 +8,12 @@ import {
   type TableFrame,
   type TableLink,
 } from '../../layouts/table';
+import { placeStrip } from '../_dp/strip';
 import { describe, type LcsExtra, type LcsSettings, type LcsState } from './model';
 
 const STRIP_H = 42;
+/** Room for the strip's label (LCS) left of its boxes. */
+const LABEL_W = 44;
 
 /** Which neighbor a read comes from, so each arrow keeps its id as the fill moves along. */
 function direction(from: Cell, to: Cell): string {
@@ -21,22 +24,30 @@ function direction(from: Cell, to: Cell): string {
 /**
  * The c table with X down the side and Y across the top, indices outside the characters. The
  * cell being filled reads its neighbors (arrows beside the values); the traceback is a path of
- * arrows back from the bottom-right corner, and the LCS collects under the table.
+ * arrows back from the bottom-right corner, and the LCS collects under the table (right of it
+ * on a wide, short stage, when that draws larger).
  */
-export function view(step: Step<LcsState, LcsExtra>, _settings: LcsSettings): Scene {
+export function view(
+  step: Step<LcsState, LcsExtra>,
+  _settings: LcsSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const m = state.x.length;
   const n = state.y.length;
   const roles = new Map<string, MarkRole>(step.marks.map((mk) => [mk.id, mk.role]));
-  const frame: TableFrame = {
+  const L = extra.length ?? 0;
+  const full: TableFrame = {
     rows: m + 1,
     cols: n + 1,
     colHeads: 2,
     rowHeads: [30, 36],
     // The LCS strip only exists while tracing back, a separate operation; filling gets the room.
-    below: extra.length ? STRIP_H + 4 : 0,
+    below: L ? STRIP_H + 4 : 0,
   };
-  const g = tableGeometry(frame);
+  const pitch = Math.min(tableGeometry(full).cellW, 50);
+  const place = placeStrip(full, L * pitch, LABEL_W, stage);
+  const { frame, g } = place;
   const links: TableLink[] = (extra.reads ?? []).map((r) => ({
     id: direction(r.from, r.to),
     from: r.from,
@@ -56,11 +67,8 @@ export function view(step: Step<LcsState, LcsExtra>, _settings: LcsSettings): Sc
     roles,
   });
   const out: Shape[] = shapes;
-  if (extra.length) {
-    const L = extra.length;
-    const pitch = Math.min(g.cellW, 50);
-    const mid = (g.gridLeft + g.gridRight) / 2;
-    const x = (k: number) => mid + (k - (L - 1) / 2) * pitch;
+  if (L) {
+    const x = (k: number) => place.left + (k + 0.5) * pitch;
     const boxes = Array.from(
       { length: L },
       () =>
@@ -69,7 +77,7 @@ export function view(step: Step<LcsState, LcsExtra>, _settings: LcsSettings): Sc
     for (const f of extra.found ?? [])
       boxes[f.k] = { text: f.ch, x: x(f.k), role: 'found', from: { x: g.headX(1), y: g.cy(f.i) } };
     out.push(
-      ...boxRow('lcs', g.belowTop, boxes, {
+      ...boxRow('lcs', place.top, boxes, {
         w: pitch - 6,
         h: STRIP_H,
         label: 'LCS',
@@ -77,7 +85,7 @@ export function view(step: Step<LcsState, LcsExtra>, _settings: LcsSettings): Sc
       }),
     );
   }
-  return { shapes: out, bounds, label: label(step) };
+  return { shapes: out, bounds: place.beside ? place.bounds : bounds, label: label(step) };
 }
 
 function label(step: Step<LcsState, LcsExtra>): string {

@@ -5,19 +5,23 @@
  * Ukkonen's build also shows suffix links as dashed arrows and the active point: the active
  * node is outlined and the active edge marked, with the length in the variables panel.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import { makeRng } from '../../engine/rng';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { padBounds, unionBounds } from '../../layouts/binary-tree';
 import { drawTrie, layoutTrie } from '../../layouts/trie';
 import type { Bounds, Scene, Shape } from '../../render/scene';
+import { pickLayout, translate } from '../_stage/arrange';
 import { argWidth, drawArg } from '../_trie/draw';
 import {
   describe,
   full,
   nodeId,
+  ops,
   textId,
   type StExtra,
   type StSettings,
   type StState,
+  type StTree,
 } from './model';
 
 const R = 11;
@@ -30,7 +34,53 @@ function levelGapFor(height: number): number {
   return height <= 4 ? 60 : Math.max(50, 60 - 3 * (height - 4));
 }
 
-export function view(step: Step<StState, StExtra>, _settings?: StSettings): Scene {
+function treeLayout(tr: StTree, src: string) {
+  const label = (u: number) => src.slice(tr.nodes[u]!.start, tr.nodes[u]!.end);
+  let height = 0;
+  const depth = (u: number, d: number): void => {
+    height = Math.max(height, d);
+    tr.nodes[u]!.kids.forEach((k) => depth(k, d + 1));
+  };
+  depth(tr.root, 0);
+  return layoutTrie(tr.root, (u) => tr.nodes[u]!.kids, {
+    label,
+    radius: R,
+    labelSize: 15,
+    gap: 8,
+    labelGap: 8,
+    levelGap: levelGapFor(height),
+  });
+}
+
+const finished = new Map<string, Bounds>();
+
+/** The box of the finished tree for a text, the same for both builds: the tree is unique. */
+function finishedBox(text: string): Bounds {
+  const hit = finished.get(text);
+  if (hit) return hit;
+  const gen = ops.build.run({ text, tree: null }, [], {
+    settings: { method: 'naive' },
+    rng: makeRng(1),
+  });
+  let r = gen.next();
+  while (!r.done) r = gen.next();
+  const tr = r.value.tree;
+  const box = tr ? treeLayout(tr, full(text)).bounds : { x: -R, y: -R, w: 2 * R, h: 2 * R };
+  if (finished.size > 50) finished.clear();
+  finished.set(text, box);
+  return box;
+}
+
+/**
+ * Draw a step. T$ and the pattern sit over the tree; on a wide, short stage they move to the
+ * tree's left when that draws larger. The choice is made for the finished tree of this text, so
+ * it holds while the tree grows and through the searches after.
+ */
+export function view(
+  step: Step<StState, StExtra>,
+  _settings?: StSettings,
+  stage?: StageSize,
+): Scene {
   const s = step.state;
   const extra = step.extra ?? {};
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -44,21 +94,7 @@ export function view(step: Step<StState, StExtra>, _settings?: StSettings): Scen
     root: 0,
     next: 1,
   };
-  const label = (u: number) => src.slice(tr.nodes[u]!.start, tr.nodes[u]!.end);
-  let height = 0;
-  const depth = (u: number, d: number): void => {
-    height = Math.max(height, d);
-    tr.nodes[u]!.kids.forEach((k) => depth(k, d + 1));
-  };
-  depth(tr.root, 0);
-  const layout = layoutTrie(tr.root, (u) => tr.nodes[u]!.kids, {
-    label,
-    radius: R,
-    labelSize: 15,
-    gap: 8,
-    labelGap: 8,
-    levelGap: levelGapFor(height),
-  });
+  const layout = treeLayout(tr, src);
   const path = new Set(extra.path ?? []);
   const counted = new Set(extra.counted ?? []);
   const active = extra.active;
@@ -147,11 +183,13 @@ export function view(step: Step<StState, StExtra>, _settings?: StSettings): Scen
   }
 
   // T$ with positions, centered over the root.
+  const block: Shape[] = [];
+  const blockBoxes: Bounds[] = [];
   const x0 = -(src.length * PITCH) / 2;
   const spot = new Map<number, MarkRole>();
   for (const sp of extra.spots ?? [])
     for (let j = sp.from; j < sp.from + sp.len; j++) if (!spot.has(j)) spot.set(j, sp.role);
-  shapes.push({
+  block.push({
     kind: 'text',
     id: 't-name',
     x: x0 - 10,
@@ -166,7 +204,7 @@ export function view(step: Step<StState, StExtra>, _settings?: StSettings): Scen
   for (let j = 0; j < src.length; j++) {
     const role = roles.get(textId(j)) ?? spot.get(j);
     const x = x0 + j * PITCH;
-    shapes.push({
+    block.push({
       kind: 'rect',
       id: textId(j),
       x,
@@ -177,7 +215,7 @@ export function view(step: Step<StState, StExtra>, _settings?: StSettings): Scen
       cls: 'live',
       role,
     });
-    shapes.push({
+    block.push({
       kind: 'text',
       id: `${textId(j)}-c`,
       x: x + PITCH / 2,
@@ -189,7 +227,7 @@ export function view(step: Step<StState, StExtra>, _settings?: StSettings): Scen
       mono: true,
       role: role === 'found' || role === 'active' ? role : undefined,
     });
-    shapes.push({
+    block.push({
       kind: 'text',
       id: `${textId(j)}-i`,
       x: x + PITCH / 2,
@@ -201,14 +239,14 @@ export function view(step: Step<StState, StExtra>, _settings?: StSettings): Scen
       mono: true,
     });
   }
-  boxes.push({ x: x0 - 34, y: TEXT_Y - 18, w: src.length * PITCH + 34, h: CELL_H + 18 });
+  blockBoxes.push({ x: x0 - 34, y: TEXT_Y - 18, w: src.length * PITCH + 34, h: CELL_H + 18 });
 
   // The pattern, or the suffix being inserted.
   if (step.extra !== undefined && extra.arg) {
     const w = argWidth(extra.arg);
     const a = drawArg(extra.arg, -w / 2, ARG_Y, roles);
-    shapes.push(...a.shapes);
-    boxes.push(a.bounds);
+    block.push(...a.shapes);
+    blockBoxes.push(a.bounds);
   }
 
   if (!s.tree) {
@@ -225,5 +263,20 @@ export function view(step: Step<StState, StExtra>, _settings?: StSettings): Scen
     boxes.push({ x: -60, y: R + 10, w: 120, h: 20 });
   }
 
+  // T$ (and the pattern) over the tree, or left of its top: decided for the finished tree.
+  const tree = unionBounds(...boxes);
+  const over = unionBounds(...blockBoxes, { x: 0, y: ARG_Y, w: 1, h: CELL_H });
+  const done = finishedBox(s.text);
+  const sideDx = Math.min(done.x, tree.x) - 30 - (over.x + over.w);
+  const sideDy = -R - 4 - over.y;
+  const atTop = { dx: 0, dy: 0, bounds: padBounds(unionBounds(done, over), 14) };
+  const atSide = {
+    dx: sideDx,
+    dy: sideDy,
+    bounds: padBounds(unionBounds(done, { ...over, x: over.x + sideDx, y: over.y + sideDy }), 14),
+  };
+  const place = pickLayout(stage, [atTop, atSide]);
+  shapes.push(...translate(block, place.dx, place.dy));
+  boxes.push(...blockBoxes.map((b) => ({ ...b, x: b.x + place.dx, y: b.y + place.dy })));
   return { shapes, bounds: padBounds(unionBounds(...boxes), 14), label: describe(s) };
 }

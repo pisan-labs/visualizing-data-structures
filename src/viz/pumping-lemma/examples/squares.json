@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "pumping-lemma",
+  "id": "squares",
+  "title": "a^(n²): the gaps between squares",
+  "notes": "With s = a^(p²), pumping adds between 1 and p symbols, and the next square is 2p + 1 further on. So xy²z lands in the gap.",
+  "settings": {
+    "lemma": "regular",
+    "role": "prove",
+    "p": 4
+  },
+  "seed": 1,
+  "ops": [
+    ["language", "squares"],
+    ["string", "aaaaaaaaaaaaaaaa"],
+    ["pump", 2]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

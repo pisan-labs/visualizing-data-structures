@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "pumping-lemma",
+  "id": "anbn-pumps-both-sides",
+  "title": "aⁿbⁿ pumps with the context-free lemma",
+  "notes": "With two pieces to pump, the adversary takes v = a and y = b from the middle of aᵖbᵖ and pumps them together. The counts stay equal for every i: aⁿbⁿ is context-free, so the context-free game cannot be won.",
+  "settings": {
+    "lemma": "cf",
+    "role": "prove",
+    "p": 3
+  },
+  "seed": 1,
+  "ops": [
+    ["language", "anbn"],
+    ["string", "aaabbb"],
+    ["pump", 3]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

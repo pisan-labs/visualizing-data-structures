@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "pumping-lemma",
+  "id": "abc-context-free",
+  "title": "aⁿbⁿcⁿ is not context-free",
+  "notes": "The context-free lemma pumps two pieces at once, v and y, but they lie within p symbols of each other, so they never reach both the a's and the c's. Pumping changes one or two of the counts and leaves the third behind.",
+  "settings": {
+    "lemma": "cf",
+    "role": "prove",
+    "p": 3
+  },
+  "seed": 1,
+  "ops": [
+    ["language", "anbncn"],
+    ["string", "aaabbbccc"],
+    ["pump", 2]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

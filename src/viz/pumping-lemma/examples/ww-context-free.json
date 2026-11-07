@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "pumping-lemma",
+  "id": "ww-context-free",
+  "title": "ww: aᵖbᵖaᵖbᵖ beats every split",
+  "notes": "Copying needs more than a stack. With s = aᵖbᵖaᵖbᵖ, pumping inside one half breaks the copy, and across the middle pumping down leaves too few b's or a's on one side.",
+  "settings": {
+    "lemma": "cf",
+    "role": "prove",
+    "p": 3
+  },
+  "seed": 1,
+  "ops": [
+    ["language", "ww"],
+    ["string", "aaabbbaaabbb"],
+    ["pump", 0]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

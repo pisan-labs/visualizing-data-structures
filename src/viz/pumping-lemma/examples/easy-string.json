@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "pumping-lemma",
+  "id": "easy-string",
+  "title": "A string the adversary can pump",
+  "notes": "()()()() is balanced, but y = () can be pumped any number of times and the parentheses still balance. The adversary finds that split and wins. (((()))) leaves it nothing: y is all open parentheses.",
+  "settings": {
+    "lemma": "regular",
+    "role": "prove",
+    "p": 4
+  },
+  "seed": 1,
+  "ops": [
+    ["language", "paren"],
+    ["string", "()()()()"],
+    ["pump", 2],
+    ["string", "(((())))"],
+    ["pump", 2]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

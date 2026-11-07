@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "pumping-lemma",
+  "id": "regular-pumps",
+  "title": "(ab)*: the adversary always survives",
+  "notes": "(ab)* is regular, so the adversary takes y = ab and every pumped string is still ab repeated. No i wins. That does not prove (ab)* is regular: the lemma only works one way. The DFA proves it.",
+  "settings": {
+    "lemma": "regular",
+    "role": "prove",
+    "p": 4
+  },
+  "seed": 1,
+  "ops": [
+    ["language", "(ab)*"],
+    ["string", "abababab"],
+    ["pump", 0],
+    ["pump", 2],
+    ["pump", 5]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

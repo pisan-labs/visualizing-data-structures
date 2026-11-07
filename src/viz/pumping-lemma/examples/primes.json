@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "pumping-lemma",
+  "id": "primes",
+  "title": "aⁿ, n prime: some i always lands on a composite",
+  "notes": "s = a⁷. The adversary's best split survives a couple of pumps, but the lengths go up by |y| each time, and one of them is not prime.",
+  "settings": {
+    "lemma": "regular",
+    "role": "prove",
+    "p": 4
+  },
+  "seed": 1,
+  "ops": [
+    ["language", "primes"],
+    ["string", "aaaaaaa"],
+    ["pump", 0],
+    ["pump", 2],
+    ["pump", 3]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

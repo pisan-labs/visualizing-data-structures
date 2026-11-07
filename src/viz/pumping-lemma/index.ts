@@ -278,7 +278,7 @@ export const pumpingLemma: VizDef<PumpState, PumpSettings, PumpExtra> = {
     squares,
     primes,
   ] as unknown as SavedExample[],
-  preview: { example: 'winning-string', level: 3 },
+  preview: { example: 'winning-string', level: 3, hide: ['try-', 'verdict', 'ghost-', 'ruler-'] },
 };
 
 /**

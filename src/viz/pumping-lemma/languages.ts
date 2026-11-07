@@ -46,21 +46,48 @@ export interface Language {
 const SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
 export const sup = (n: number): string => [...String(n)].map((d) => SUP[Number(d)]).join('');
 
+/** A zero-width space: lets a long string wrap in the narration on a narrow screen. */
+const BREAK = '\u200b';
+
 /**
- * A string as narration writes it: runs of three or more of a symbol as a power, so a⁴b⁴ rather
- * than aaaabbbb; ε for the empty string.
+ * A string as narration writes it: runs of three or more of a symbol as a power, a⁴b⁴ rather
+ * than aaaabbbb, and three or more copies of two letters too, (ab)⁴ rather than abababab; ε for
+ * the empty string. A long result gets a place to wrap every ten symbols.
  */
 export function show(w: string): string {
   if (w === '') return 'ε';
-  let out = '';
+  const parts: string[] = [];
   for (let i = 0; i < w.length;) {
     let j = i;
     while (j < w.length && w[j] === w[i]) j++;
-    const n = j - i;
-    out += n >= 3 ? `${w[i]}${sup(n)}` : w.slice(i, j);
-    i = j;
+    if (j - i >= 3) {
+      parts.push(`${w[i]}${sup(j - i)}`);
+      i = j;
+      continue;
+    }
+    const unit = w.slice(i, i + 2);
+    let k = 0;
+    while (/^[abc]{2}$/.test(unit) && unit[0] !== unit[1] && w.startsWith(unit, i + 2 * k)) k++;
+    if (k >= 3) {
+      parts.push(`(${unit})${sup(k)}`);
+      i += 2 * k;
+    } else {
+      parts.push(w.slice(i, j));
+      i = j;
+    }
   }
-  return out;
+  const out = parts.join('');
+  if ([...out].length <= 14) return out;
+  // Break between pieces, so a power never parts from its base.
+  let line = 0;
+  return parts
+    .map((piece) => {
+      const len = [...piece].length;
+      const cut = line > 0 && line + len > 10;
+      line = cut ? len : line + len;
+      return cut ? `${BREAK}${piece}` : piece;
+    })
+    .join('');
 }
 
 const count = (w: string, c: string) => [...w].filter((x) => x === c).length;

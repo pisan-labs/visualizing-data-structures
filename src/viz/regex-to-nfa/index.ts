@@ -1,4 +1,8 @@
-import type { OpCall, SavedExample, Value, VizDef } from '../../engine/types';
+import { Timeline } from '../../engine/timeline';
+import type { OpCall, SavedExample, Settings, Value, VizDef } from '../../engine/types';
+import cppSource from './code/cpp/thompson.hpp?raw';
+import javaSource from './code/java/ThompsonNfa.java?raw';
+import pythonSource from './code/python/thompson.py?raw';
 import endsInAbb from './examples/ends-in-abb.json';
 import epsAndEmpty from './examples/eps-and-empty.json';
 import linearSize from './examples/linear-size.json';
@@ -11,6 +15,7 @@ import starThenStar from './examples/star-then-star.json';
 import explain from './explain.md?raw';
 import { randomText, randomWord } from './gen';
 import {
+  DEFAULT_TEXT,
   defaults,
   describe,
   init,
@@ -18,11 +23,12 @@ import {
   initialVars,
   ops,
   pseudocode,
+  readWord,
   type RxExtra,
   type RxSettings,
   type RxState,
 } from './model';
-import type { UnionSign } from './syntax';
+import { parse, show, type UnionSign } from './syntax';
 import { view } from './view';
 
 /** The input box holds an expression for Build or a word for Run; each operation reads it. */
@@ -183,6 +189,12 @@ export const regexToNfa: VizDef<RxState, RxSettings, RxExtra> = {
       note: 'Simulating the set of states is what keeps this polynomial. Trying one path at a time, as backtracking matchers do, can take exponential time.',
     },
   ],
+  code: {
+    python: pythonSource,
+    java: javaSource,
+    cpp: cppSource,
+    script: (calls: OpCall[], settings: Settings) => codeScript(calls, settings as RxSettings),
+  },
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [
     endsInAbb,
@@ -196,5 +208,37 @@ export const regexToNfa: VizDef<RxState, RxSettings, RxExtra> = {
     plusAndOptional,
   ] as unknown as SavedExample[],
 };
+
+/**
+ * Driver protocol for the code tabs, which follow the defaults (Thompson's construction, | for
+ * union): "build <regex>" prints "<n> states, <m> moves" and "run <word>" prints accept or
+ * reject; anything the model refuses prints "error". The script starts with the page's own
+ * first build. An expression written with + for union is sent rewritten with |, and input the
+ * model refuses is sent as something the drivers refuse too, so both sides agree.
+ */
+function codeScript(calls: OpCall[], settings: RxSettings) {
+  const plain: RxSettings = { construction: 'thompson', union: '|' };
+  const sent: OpCall[] = [['build', DEFAULT_TEXT['|']]];
+  for (const [op, arg] of calls) {
+    const text = String(arg ?? '');
+    if (op === 'build') {
+      const p = parse(text, settings.union);
+      sent.push(['build', p instanceof Error ? ')' : show(p.tree.r, '|')]);
+    } else {
+      const w = readWord(text);
+      sent.push(['run', w instanceof Error ? '-' : w || 'ε']);
+    }
+  }
+  const t = new Timeline(regexToNfa, plain, 1, sent);
+  const expected = t.entries.map((e) => {
+    const last = e.steps.at(-1)!;
+    if (last.lines.includes('build.return'))
+      return `${e.end.nfa.states.length} states, ${e.end.nfa.moves.length} moves`;
+    if (last.lines.includes('run.accept')) return 'accept';
+    if (last.lines.includes('run.reject') || last.lines.includes('run.dead')) return 'reject';
+    return 'error';
+  });
+  return { input: sent.map(([op, arg]) => `${op} ${String(arg)}`), expected };
+}
 
 export default regexToNfa;

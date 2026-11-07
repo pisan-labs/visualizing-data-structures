@@ -11,18 +11,9 @@
   },
   "seed": 1,
   "ops": [
-    [
-      "language",
-      "anbn"
-    ],
-    [
-      "string",
-      "aaabbb"
-    ],
-    [
-      "pump",
-      3
-    ]
+    ["language", "anbn"],
+    ["string", "aaabbb"],
+    ["pump", 3]
   ],
   "at": {
     "op": 0,

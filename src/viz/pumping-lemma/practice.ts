@@ -2,7 +2,7 @@ import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
 import { MAX_I, PART_NAMES, illegal, pieces, pump } from './game';
-import { LANGUAGES, MAX_S, lang, show, type Language, type Lemma } from './languages';
+import { LANGUAGES, MAX_S, show, type Language, type Lemma } from './languages';
 import {
   COND,
   defaults,
@@ -58,15 +58,16 @@ export function pumpingPractice(def: () => Def): PracticeKind[] {
         let parts: number[];
         if (lemma === 'regular') {
           const y = want === 2 ? 0 : rng.int(1, p);
-          const x = want === 1 ? rng.int(Math.max(0, p + 1 - y), n - Math.max(y, 1)) : rng.int(0, p - Math.max(y, 1));
+          const x =
+            want === 1
+              ? rng.int(Math.max(0, p + 1 - y), n - Math.max(y, 1))
+              : rng.int(0, p - Math.max(y, 1));
           parts = [x, y, n - x - y];
         } else {
           const v = want === 2 ? 0 : rng.int(0, 1);
           const y = want === 2 ? 0 : rng.int(v ? 0 : 1, 2);
           const x =
-            want === 1
-              ? rng.int(p + 1 - v - y, Math.min(p + 1, n - v - y))
-              : rng.int(0, p - v - y);
+            want === 1 ? rng.int(p + 1 - v - y, Math.min(p + 1, n - v - y)) : rng.int(0, p - v - y);
           const u = rng.int(0, n - v - x - y);
           parts = [u, v, x, y, n - u - v - x - y];
         }
@@ -102,7 +103,9 @@ export function pumpingPractice(def: () => Def): PracticeKind[] {
             rng,
             LANGUAGES.filter((x) => x.level !== 'regular'),
           );
-          const s = rng.int(0, 1) ? l.prover(settings.p, 'regular') : stringIn(rng, l, settings.p, 10);
+          const s = rng.int(0, 1)
+            ? l.prover(settings.p, 'regular')
+            : stringIn(rng, l, settings.p, 10);
           const setup: OpCall[] = [
             ['language', l.key],
             ['string', s],
@@ -152,15 +155,13 @@ export function pumpingPractice(def: () => Def): PracticeKind[] {
       make(rng) {
         const settings: PumpSettings = { ...defaults, p: rng.int(2, 4) };
         const l = pick(rng, LANGUAGES);
-        const s = rng.int(0, 2) === 0 ? l.prover(settings.p, 'regular') : stringIn(rng, l, settings.p, 10);
+        const s =
+          rng.int(0, 2) === 0 ? l.prover(settings.p, 'regular') : stringIn(rng, l, settings.p, 10);
         const setup: OpCall[] = [['language', l.key]];
         const end = run([...setup, ['string', s]], settings).endState();
         const k = end.search?.survivors ?? 0;
         const n = end.search?.splits ?? 0;
-        const options = [
-          'Yes: every split dies for some i',
-          'No: some split survives every i',
-        ];
+        const options = ['Yes: every split dies for some i', 'No: some split survives every i'];
         const split = end.parts ? splitText(end.s!, end.parts, 'regular') : '';
         return {
           prompt: `L = ${l.set} and p = ${settings.p}. You pick s = ${show(s)}. Does s beat every legal split, so that some i from 0 to ${MAX_I} pumps it out of L whatever the adversary does?`,

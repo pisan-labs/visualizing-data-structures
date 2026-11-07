@@ -14,15 +14,7 @@ import type { Rng } from '../../engine/rng';
 import { plural } from '../_automata/page';
 
 export type LangId =
-  | 'anbn'
-  | 'paren'
-  | 'wwr'
-  | 'ww'
-  | 'anbncn'
-  | 'squares'
-  | 'primes'
-  | 'abstar'
-  | 'astarbstar';
+  'anbn' | 'paren' | 'wwr' | 'ww' | 'anbncn' | 'squares' | 'primes' | 'abstar' | 'astarbstar';
 
 export type Lemma = 'regular' | 'cf';
 export type Level = 'regular' | 'cf' | 'beyond';
@@ -61,7 +53,7 @@ export const sup = (n: number): string => [...String(n)].map((d) => SUP[Number(d
 export function show(w: string): string {
   if (w === '') return 'ε';
   let out = '';
-  for (let i = 0; i < w.length; ) {
+  for (let i = 0; i < w.length;) {
     let j = i;
     while (j < w.length && w[j] === w[i]) j++;
     const n = j - i;
@@ -212,7 +204,9 @@ export const LANGUAGES: Language[] = [
         if (w[i] !== w[j])
           return `it does not read the same backwards: symbol ${i + 1} is ${w[i]} and symbol ${j + 1} is ${w[j]}`;
       }
-      return w === '' ? 'it is ε, the empty mirror' : `it is ${show(w.slice(0, w.length / 2))} and its mirror image`;
+      return w === ''
+        ? 'it is ε, the empty mirror'
+        : `it is ${show(w.slice(0, w.length / 2))} and its mirror image`;
     },
     prover: (p) => `${rep('a', p)}bb${rep('a', p)}`,
     sample(rng, n) {
@@ -280,8 +274,7 @@ export const LANGUAGES: Language[] = [
       return rep('a', k) + rep('b', k) + rep('c', k);
     },
     argue: {
-      regular:
-        "With s = aᵖbᵖcᵖ, y is all a's, so xy²z has more a's than c's.",
+      regular: "With s = aᵖbᵖcᵖ, y is all a's, so xy²z has more a's than c's.",
       cf: 'With s = aᵖbᵖcᵖ, vxy is at most p long, so it cannot touch both the a’s and the c’s. Pumping changes at most two of the three counts.',
     },
   },

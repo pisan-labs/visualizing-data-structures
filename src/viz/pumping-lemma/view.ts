@@ -14,8 +14,8 @@ import { padBounds, unionBounds } from '../../layouts/graph';
 import { CELL_H, CELL_W, drawTape } from '../../layouts/tape';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { pickLayout } from '../_stage/arrange';
-import { MAX_I, PART_NAMES, PUMPED, pieces, type Parts } from './game';
-import { lang, show } from './languages';
+import { MAX_I, PART_NAMES, PUMPED, pieces, splits, type Parts } from './game';
+import { lang, show, type Lemma } from './languages';
 import {
   COND,
   SHAPE,
@@ -85,13 +85,35 @@ function flow(out: Shape[], items: Item[], x: number, y: number, width: number):
   return items.length ? row + 1 : 0;
 }
 
-/** Rows `flow` would use, without drawing. */
-const rowsOf = (items: Item[], width: number) => flow([], items, 0, 0, width);
+const legendCache = new Map<string, number>();
+
+/** The most rows the legend ("s  x = …  y = …  z = …") takes over every legal split of s. */
+function legendRoom(s: string, p: number, lemma: Lemma, width: number): number {
+  const key = `${s}|${p}|${lemma}|${width}`;
+  const hit = legendCache.get(key);
+  if (hit !== undefined) return hit;
+  const names = PART_NAMES[lemma];
+  let most = 1;
+  for (const parts of splits(s.length, p, lemma)) {
+    const items = pieces(s, parts).map((w, k) => ({
+      id: '',
+      text: `${names[k]} = ${show(w)}`,
+      size: 14,
+    }));
+    most = Math.max(
+      most,
+      flow([], [{ id: '', text: 's', size: 15, bold: true }, ...items], 0, 0, width),
+    );
+  }
+  if (legendCache.size > 500) legendCache.clear();
+  legendCache.set(key, most);
+  return most;
+}
 
 /** [from, to) cut into rows of W cells: one segment per row. */
 function segments(from: number, to: number, W: number): { row: number; a: number; b: number }[] {
   const out: { row: number; a: number; b: number }[] = [];
-  for (let k = from; k < to; ) {
+  for (let k = from; k < to;) {
     const row = Math.floor(k / W);
     const end = Math.min(to, (row + 1) * W);
     out.push({ row, a: k - row * W, b: end - row * W });
@@ -157,7 +179,11 @@ function drawBars(
 /** Where piece k starts in s. */
 const starts = (parts: Parts) => parts.map((_, k) => parts.slice(0, k).reduce((a, b) => a + b, 0));
 
-function layout(step: PStep, settings: PumpSettings, W: number): { shapes: Shape[]; bounds: Bounds } {
+function layout(
+  step: PStep,
+  settings: PumpSettings,
+  W: number,
+): { shapes: Shape[]; bounds: Bounds } {
   const st = step.state;
   const { lemma } = settings;
   const l = lang(st.lang);
@@ -197,12 +223,11 @@ function layout(step: PStep, settings: PumpSettings, W: number): { shapes: Shape
       size: 14,
       label: true,
     });
-  // Room for the longest legend this string allows, so the rows below never move.
-  const widest: Item[] = [
-    legend[0]!,
-    ...names.map((nm, k) => ({ id: `w${k}`, text: `${nm} = ${s ? show(s) : ''}`, size: 14 })),
-  ];
-  const legendRows = Math.max(rowsOf(widest, width), flow(out, legend, x0, y, width));
+  // Room for the longest legend any split of this string needs, so the rows below never move.
+  const legendRows = Math.max(
+    s === null ? 1 : legendRoom(s, st.p, lemma, width),
+    flow(out, legend, x0, y, width),
+  );
   y += legendRows * LINE + 4;
 
   const sTop = y;
@@ -283,16 +308,19 @@ function layout(step: PStep, settings: PumpSettings, W: number): { shapes: Shape
   }
   y = sTop + sRows * S_PITCH + GAP;
 
-  // The pumped string. Room for the longest one p allows: |s| + (MAX_I - 1)·p.
-  const room = n + (MAX_I - 1) * st.p;
+  // The pumped string, with room for the longest one this game can make.
+  const room = roomFor(step, lemma);
   const wRows = Math.ceil(room / W);
   const shownI = st.i;
+  const generic = lemma === 'regular' ? 'xyⁱz' : 'uvⁱxyⁱz';
   const pumpedLabel =
-    s === null || !st.parts
-      ? `${lemma === 'regular' ? 'xyⁱz' : 'uvⁱxyⁱz'}: ${settings.role === 'prove' ? 'you pick i' : 'the page picks i'}`
-      : shownI === null
-        ? `${lemma === 'regular' ? 'xyⁱz' : 'uvⁱxyⁱz'}: ${settings.role === 'prove' ? 'pick i' : 'the page picks i'}`
-        : `${pumpedName(shownI, lemma)} (i = ${shownI})`;
+    shownI !== null && st.parts
+      ? `${pumpedName(shownI, lemma)} (i = ${shownI})`
+      : settings.role === 'defend'
+        ? `${generic}: the page picks i`
+        : st.parts
+          ? `${generic}: your move, pick i`
+          : `${generic}: you pick i after the split`;
   out.push({
     kind: 'text',
     id: 'w-label',
@@ -351,7 +379,16 @@ function layout(step: PStep, settings: PumpSettings, W: number): { shapes: Shape
 
   // Results by i, and the adversary's count.
   const results = step.extra?.look?.results ?? st.tried;
-  out.push({ kind: 'text', id: 'try-label', x: x0, y: y + 14 + 20, text: 'i', size: 15, weight: 'bold', mono: true });
+  out.push({
+    kind: 'text',
+    id: 'try-label',
+    x: x0,
+    y: y + 14 + 20,
+    text: 'i',
+    size: 15,
+    weight: 'bold',
+    mono: true,
+  });
   for (let i = 0; i <= MAX_I; i++) {
     const tx = x0 + 18 + i * (TRY_W + 4);
     const r = results[i];
@@ -367,7 +404,17 @@ function layout(step: PStep, settings: PumpSettings, W: number): { shapes: Shape
       cls: 'label',
       mono: true,
     });
-    out.push({ kind: 'rect', id: tryId(i), x: tx, y: y + 16, w: TRY_W, h: TRY_H, r: 4, cls: 'live', role });
+    out.push({
+      kind: 'rect',
+      id: tryId(i),
+      x: tx,
+      y: y + 16,
+      w: TRY_W,
+      h: TRY_H,
+      r: 4,
+      cls: 'live',
+      role,
+    });
     if (r !== null && r !== undefined)
       out.push({
         kind: 'text',
@@ -404,7 +451,17 @@ function layout(step: PStep, settings: PumpSettings, W: number): { shapes: Shape
   if (st.winner && s !== null && st.parts && st.i !== null) {
     const inL = st.tried[st.i] === true;
     const role: MarkRole = inL ? 'found' : 'error';
-    out.push({ kind: 'rect', id: verdictId, x: x0, y, w: BADGE_W, h: BADGE_H, r: 15, cls: 'live', role });
+    out.push({
+      kind: 'rect',
+      id: verdictId,
+      x: x0,
+      y,
+      w: BADGE_W,
+      h: BADGE_H,
+      r: 15,
+      cls: 'live',
+      role,
+    });
     out.push({
       kind: 'text',
       id: `${verdictId}-t`,
@@ -440,10 +497,23 @@ function layout(step: PStep, settings: PumpSettings, W: number): { shapes: Shape
   return { shapes: out, bounds };
 }
 
+/**
+ * Cells to keep for the pumped string: its longest, at i = MAX_I, for the split in play or the
+ * one the adversary is about to pick; before there is a split, for the longest pumped piece p
+ * allows. It holds for a whole game, so the drawing does not move as i changes.
+ */
+function roomFor(step: PStep, lemma: Lemma): number {
+  const st = step.state;
+  const n = st.s?.length ?? st.p;
+  const parts = st.parts ?? step.extra?.pick;
+  const grow = parts ? PUMPED[lemma].reduce((sum, k) => sum + parts[k]!, 0) : st.p;
+  return n + (MAX_I - 1) * grow;
+}
+
 export function view(step: PStep, settings: PumpSettings, stage?: StageSize): Scene {
   const st = step.state;
   const n = st.s?.length ?? st.p;
-  const room = n + (MAX_I - 1) * st.p;
+  const room = roomFor(step, settings.lemma);
   const natural = Math.min(24, Math.max(10, n, Math.ceil(room / 2)));
   const widths = [natural, ...[10, 12, 16, 20, 24].filter((w) => w !== natural)];
   const best = pickLayout(

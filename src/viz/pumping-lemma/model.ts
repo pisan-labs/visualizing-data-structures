@@ -82,6 +82,8 @@ export interface PumpState {
 export interface PumpExtra {
   /** A split the adversary is trying, with what pumping does to it. */
   look?: Tried;
+  /** The split the adversary will pick, so the drawing keeps room for its pumped strings. */
+  pick?: Parts;
   /** Splits tried so far, out of how many, and how many of them survive every i. */
   count?: { done: number; total: number; survivors: number };
 }
@@ -170,9 +172,13 @@ function hint(t: string, role: Role): string {
     case 'language':
       return ' To play on that language, press Language.';
     case 'number':
-      return role === 'prove' ? ` To pump with i = ${t}, press Pump.` : ' In this role the page picks i.';
+      return role === 'prove'
+        ? ` To pump with i = ${t}, press Pump.`
+        : ' In this role the page picks i.';
     case 'split':
-      return role === 'defend' ? ' To split s, press Split.' : ' In this role the adversary splits s.';
+      return role === 'defend'
+        ? ' To split s, press Split.'
+        : ' In this role the adversary splits s.';
     case 'word':
       return role === 'prove'
         ? ' To play it as your string, press String.'
@@ -335,7 +341,18 @@ const string: Op = {
         ['string.check'],
       );
 
-    const base: S = { ...st, s: w, parts: null, search: null, tried: blankTried(false), i: null, winner: null };
+    const base: S = {
+      ...st,
+      s: w,
+      parts: null,
+      search: null,
+      tried: blankTried(false),
+      i: null,
+      winner: null,
+    };
+    const r = adversary(l, w, p, lemma);
+    const total = r.tried.length;
+    const pick = r.tried[r.pick]!;
     yield {
       state: base,
       marks: [],
@@ -343,10 +360,9 @@ const string: Op = {
       lines: ['string.check'],
       level: 2,
       vars: vars(base),
+      extra: { pick: pick.parts },
     } satisfies PStep;
 
-    const r = adversary(l, w, p, lemma);
-    const total = r.tried.length;
     yield {
       state: base,
       marks: [],
@@ -354,7 +370,7 @@ const string: Op = {
       lines: ['string.each', 'string.try'],
       level: 2,
       vars: vars(base, { count: { done: 0, total, survivors: 0 } }),
-      extra: { count: { done: 0, total, survivors: 0 } },
+      extra: { count: { done: 0, total, survivors: 0 }, pick: pick.parts },
     } satisfies PStep;
 
     const survivors = r.survivors;
@@ -370,7 +386,7 @@ const string: Op = {
           lines: ['string.each', 'string.try'],
           level: 3,
           vars: vars(base, { count }),
-          extra: { look: t, count },
+          extra: { look: t, count, pick: pick.parts },
         } satisfies PStep;
       }
     } else {
@@ -397,12 +413,11 @@ const string: Op = {
           lines: ['string.each', 'string.try'],
           level: 3,
           vars: vars(base, { count }),
-          extra: { look: best, count },
+          extra: { look: best, count, pick: pick.parts },
         } satisfies PStep;
       }
     }
 
-    const pick = r.tried[r.pick]!;
     const final: S = {
       ...base,
       parts: pick.parts,
@@ -522,14 +537,16 @@ const split: Op = {
     const t = text(arg);
     const parts = readSplit(t, s, lemma);
     if (typeof parts === 'string')
-      return yield* refuse(st, `That is not a split of s = ${show(s)}: ${parts}.${hint(t, settings.role).replace(' To split s, press Split.', '')}`, ['split.check']);
-    const bad = illegal(s.length, parts, st.p, lemma);
-    if (bad)
       return yield* refuse(
         st,
-        `${splitText(s, parts, lemma)} is not a legal split: ${bad}.`,
+        `That is not a split of s = ${show(s)}: ${parts}.${hint(t, settings.role).replace(' To split s, press Split.', '')}`,
         ['split.check'],
       );
+    const bad = illegal(s.length, parts, st.p, lemma);
+    if (bad)
+      return yield* refuse(st, `${splitText(s, parts, lemma)} is not a legal split: ${bad}.`, [
+        'split.check',
+      ]);
 
     const l = lang(st.lang);
     const base: S = { ...st, parts, search: null, tried: blankTried(true), i: null, winner: null };
@@ -625,7 +642,11 @@ export function pseudocode(settings: PumpSettings): PseudoBlock[] {
       {
         op: 'string',
         lines: [
-          L('string.check', 'require s ∈ L and |s| ≥ p', 'Your string must be in L and at least p symbols long.'),
+          L(
+            'string.check',
+            'require s ∈ L and |s| ≥ p',
+            'Your string must be in L and at least p symbols long.',
+          ),
           L(
             'string.each',
             `for each split s = ${shape} with ${cond}`,
@@ -650,7 +671,11 @@ export function pseudocode(settings: PumpSettings): PseudoBlock[] {
           L('pump.build', `w ← ${pumped}`, `Repeat ${pumpWhat} i times.`),
           L('pump.test', 'if w ∉ L', 'Is the pumped string outside L?'),
           L('pump.win', 'you win this game', 'Then you win this game.', 1),
-          L('pump.lose', 'else the adversary wins this game', 'If it is still in L, the adversary wins this one.'),
+          L(
+            'pump.lose',
+            'else the adversary wins this game',
+            'If it is still in L, the adversary wins this one.',
+          ),
         ],
       },
     ];
@@ -664,7 +689,11 @@ export function pseudocode(settings: PumpSettings): PseudoBlock[] {
           `you (the adversary): “L is ${claim}”, with p`,
           `You claim L is ${claim} and pick p (in Options).`,
         ),
-        L('lang.s', 'page picks s ∈ L with |s| ≥ p', 'The page picks a string in L at least p symbols long.'),
+        L(
+          'lang.s',
+          'page picks s ∈ L with |s| ≥ p',
+          'The page picks a string in L at least p symbols long.',
+        ),
       ],
     },
     {

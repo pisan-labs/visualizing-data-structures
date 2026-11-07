@@ -308,7 +308,10 @@ function codeScript(calls: OpCall[], settings: PumpSettings) {
       input.push(`pump ${lemma} ${st.lang} ${st.s} ${lengths} ${st.i}`);
       expected.push(`${w || 'eps'} ${st.tried[st.i] ? 'in' : 'out'}`);
     }
-    if (e.call[0] === 'split' && (last.lines.includes('split.win') || last.lines.includes('split.lose'))) {
+    if (
+      e.call[0] === 'split' &&
+      (last.lines.includes('split.win') || last.lines.includes('split.lose'))
+    ) {
       input.push(`prover ${lemma} ${st.lang} ${st.s} ${lengths}`);
       expected.push(st.winner === 'page' ? `i ${st.i}` : 'none');
     }

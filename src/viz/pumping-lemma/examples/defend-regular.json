@@ -11,18 +11,9 @@
   },
   "seed": 1,
   "ops": [
-    [
-      "language",
-      "(ab)*"
-    ],
-    [
-      "split",
-      "ε|a|bababab"
-    ],
-    [
-      "split",
-      "ε|ab|ababab"
-    ]
+    ["language", "(ab)*"],
+    ["split", "ε|a|bababab"],
+    ["split", "ε|ab|ababab"]
   ],
   "at": {
     "op": 0,

@@ -11,26 +11,11 @@
   },
   "seed": 1,
   "ops": [
-    [
-      "language",
-      "(ab)*"
-    ],
-    [
-      "string",
-      "abababab"
-    ],
-    [
-      "pump",
-      0
-    ],
-    [
-      "pump",
-      2
-    ],
-    [
-      "pump",
-      5
-    ]
+    ["language", "(ab)*"],
+    ["string", "abababab"],
+    ["pump", 0],
+    ["pump", 2],
+    ["pump", 5]
   ],
   "at": {
     "op": 0,

@@ -11,22 +11,10 @@
   },
   "seed": 1,
   "ops": [
-    [
-      "language",
-      "anbn"
-    ],
-    [
-      "string",
-      "aaaabbbb"
-    ],
-    [
-      "split",
-      "aaa|ab|bbb"
-    ],
-    [
-      "pump",
-      0
-    ]
+    ["language", "anbn"],
+    ["string", "aaaabbbb"],
+    ["split", "aaa|ab|bbb"],
+    ["pump", 0]
   ],
   "at": {
     "op": 0,

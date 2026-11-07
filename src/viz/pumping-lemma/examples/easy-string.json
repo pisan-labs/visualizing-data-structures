@@ -11,26 +11,11 @@
   },
   "seed": 1,
   "ops": [
-    [
-      "language",
-      "paren"
-    ],
-    [
-      "string",
-      "()()()()"
-    ],
-    [
-      "pump",
-      2
-    ],
-    [
-      "string",
-      "(((())))"
-    ],
-    [
-      "pump",
-      2
-    ]
+    ["language", "paren"],
+    ["string", "()()()()"],
+    ["pump", 2],
+    ["string", "(((())))"],
+    ["pump", 2]
   ],
   "at": {
     "op": 0,

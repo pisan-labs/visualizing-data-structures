@@ -11,18 +11,9 @@
   },
   "seed": 1,
   "ops": [
-    [
-      "language",
-      "squares"
-    ],
-    [
-      "string",
-      "aaaaaaaaaaaaaaaa"
-    ],
-    [
-      "pump",
-      2
-    ]
+    ["language", "squares"],
+    ["string", "aaaaaaaaaaaaaaaa"],
+    ["pump", 2]
   ],
   "at": {
     "op": 0,

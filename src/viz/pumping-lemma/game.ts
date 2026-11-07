@@ -71,19 +71,24 @@ export function pump(s: string, parts: Parts, i: number, lemma: Lemma): string {
 /** Why a split is not legal for s, or null when it is. */
 export function illegal(n: number, parts: Parts, p: number, lemma: Lemma): string | null {
   const names = PART_NAMES[lemma];
-  if (parts.length !== names.length) return `a split has ${names.length} pieces, ${names.join(', ')}`;
-  if (parts.some((k) => !Number.isInteger(k) || k < 0)) return 'the pieces need lengths of 0 or more';
+  if (parts.length !== names.length)
+    return `a split has ${names.length} pieces, ${names.join(', ')}`;
+  if (parts.some((k) => !Number.isInteger(k) || k < 0))
+    return 'the pieces need lengths of 0 or more';
   const total = parts.reduce((a, b) => a + b, 0);
   if (total !== n) return `the pieces are ${total} symbols long in all, and s is ${n}`;
   if (lemma === 'regular') {
     const [x, y] = parts as [number, number, number];
     if (y < 1) return 'y is empty: |y| must be at least 1, or pumping changes nothing';
-    if (x + y > p) return `|xy| = ${x + y} is more than p = ${p}: x and y must lie in the first p symbols`;
+    if (x + y > p)
+      return `|xy| = ${x + y} is more than p = ${p}: x and y must lie in the first p symbols`;
     return null;
   }
   const [, v, x, y] = parts as [number, number, number, number, number];
-  if (v + y < 1) return 'v and y are both empty: |vy| must be at least 1, or pumping changes nothing';
-  if (v + x + y > p) return `|vxy| = ${v + x + y} is more than p = ${p}: v, x and y must lie within p symbols`;
+  if (v + y < 1)
+    return 'v and y are both empty: |vy| must be at least 1, or pumping changes nothing';
+  if (v + x + y > p)
+    return `|vxy| = ${v + x + y} is more than p = ${p}: v, x and y must lie within p symbols`;
   return null;
 }
 

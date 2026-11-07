@@ -3,8 +3,9 @@
 The rolling handoff for the StepWise cloud sessions (the session-relay skill). Each handover
 rewrites this file; it never gets a dated copy. Times are Europe/Berlin.
 
-Last written: Saturday 7 November 2026, about 16:00, at the daily handover check (context about
-55%). The 16:52 session-start routine creates the next session from this file.
+Last written: Saturday 7 November 2026, about 16:05. No handover today: at the 15:56 check the
+context was about 18% (after a compaction), so the current session carries on. This file is
+kept current for the next handover.
 
 ## What is live
 
@@ -12,11 +13,12 @@ Last written: Saturday 7 November 2026, about 16:00, at the daily handover check
   It holds the 108 pages of 6 November, the taller desktop stage with graph pages laid out for
   the screen (`10f414b`, pushed 08:44), and animated catalog thumbnails (PR #1 from another
   session, `session_015Hhm4gYmBnZQozfDqkFdPy`, merged by Yusuf at 14:42).
-- `next` is at `9b9ee16` and holds all of `main` plus today's work below: 118 pages. The daily
-  deploy routine fast-forwards `main` to it at 17:27 if CI on `next` is green.
+- `next` holds all of `main` plus today's work below: 118 pages. Its last code change is
+  `9b9ee16`; only handoff commits follow. The daily deploy routine fast-forwards `main` to
+  `next` at 17:27 if CI on `next`'s head is green.
 - Checks on `next`:
-  - CI passed on every push to `next` up to `6540c9d` (runs 61 to 69). Runs 71 (`20e1b63`) and
-    72 (`9b9ee16`) were still running at 15:56.
+  - CI passed on every push to `next` up to `6540c9d` (runs 61 to 64, 66, 68 and 69). Runs 71
+    (`20e1b63`), 72 (`9b9ee16`) and 73 (`ec76939`) were still running at 16:00.
   - Full local e2e on `20e1b63`: 1862 passed, 4 skipped, desktop and phone with axe.
   - On `9b9ee16`: lint, svelte-check and 2708 unit tests passed. A full local e2e was still
     running at 15:56.
@@ -27,7 +29,7 @@ Last written: Saturday 7 November 2026, about 16:00, at the daily handover check
 - 08:44, `main`: a taller desktop stage (Options moved to the side column, the back link on the
   title row); views get the stage's size (`StageSize`, `view(step, settings, stage?)`), and
   graph pages choose their layout and side panels for it (`placePanels`, `fitScore` in
-  `src/layouts/graph.ts`).
+  `src/layouts/graph.ts`); the bfs and skip-list e2e specs poll.
 - 08:49, automata groundwork: `src/viz/_automata/` (model, ε-closure, subset construction,
   Moore minimization, regex parser, Thompson's construction, the one-line text format);
   `src/layouts/automaton.ts` (state diagrams), `src/layouts/tape.ts`; curved arrows
@@ -36,8 +38,7 @@ Last written: Saturday 7 November 2026, about 16:00, at the daily handover check
 - 09:39 to 09:56, wave 5A: dfa, nfa, nfa-to-dfa, dfa-minimization, regex-to-nfa,
   turing-machine (`src/viz/_turing/`).
 - 10:20, `settled()` in `tests/e2e/helpers.ts` also waits for the svg's viewBox; the
-  regex-to-nfa test compares scene coordinates, not screen pixels; the bfs and skip-list specs
-  poll.
+  regex-to-nfa test compares scene coordinates, not screen pixels.
 - 13:54, wave 5B grammar pages: cfg-derivation, cyk (`src/viz/_grammar/`: parser, CNF in
   stages, CYK, derivation search, the Chomsky level of a grammar).
 - 14:02, option 3 step 2: 15 more pages arrange their parts for the stage
@@ -64,9 +65,12 @@ None with unmerged content. `next` is ahead of `main`; `main` is an ancestor of 
    agents, as for 5A and 5B, on the shared code in `src/viz/_automata/`, `_turing/`,
    `_grammar/` and the layouts.
 2. Shared-code recommendations from the 5A and 5B agents, smallest first:
-   - the `STAGES` comment in `src/layouts/graph.ts` still says 884×305;
+   - `STAGES` in `src/layouts/graph.ts` (and its header comment) still holds the old 884×305
+     desktop stage, and `fitScore` falls back to it when a view gets no stage (thumbnails,
+     prerender, tests); the desktop stage is now 387 px tall. A code change: check framing;
    - a floor on the tag size in `calls.ts`;
-   - `classify()` reasons say "more than one symbol" where a plainer phrase would do;
+   - plainer wording for the reasons `classify()` gives in `src/viz/_grammar/grammar.ts`
+     (today "more than one variable on the left");
    - multi-line arrow labels in `drawAutomaton`;
    - the page kit's scene builder (`faScene`) taking a drawing function; TestRow gaining a
      "stopped" result; a general `parseBatch`; `drawRules` taking any rule;
@@ -164,16 +168,18 @@ None with unmerged content. `next` is ahead of `main`; `main` is an ancestor of 
 
 ### Scheduling
 
-- Previous session: `session_01JyJzMXcc2unSAwN88hsew5` (lineage depth 2, limit 8). It took over
-  on Saturday 7 November at 08:00 from `session_01JyJzMZHCY1tEoov2vYAuJv` and hands over on
-  Saturday 7 November at the 15:56 check (context about 55%). The next session is at depth 3.
-- Routines, to be moved to the next session when it takes over:
-  - `trig_01AEsnzySTfQAsgxsS9RCdAA`: StepWise hourly status report, `46 * * * *`.
-  - `trig_016mmp7qgknR6maFcPpcHyn6`: StepWise handoff check, `CRON_TZ=Europe/Berlin 56 15 * * *`.
-  - `trig_01Q4wsxyfeskA8277FXxTfcY`: StepWise daily handoff (session start),
-    `CRON_TZ=Europe/Berlin 52 16 * * *`.
-  - `trig_01PfFMZmwbM2JKpfyhtLRmvn`: StepWise daily deploy (fast-forward `main` to `next`
-    when CI on `next` is green), `CRON_TZ=Europe/Berlin 27 17 * * *`. It stops and asks Yusuf
-    if `main` is not an ancestor of `next`.
+- Current session: `session_01JyJzMXcc2unSAwN88hsew5` (lineage depth 2, limit 8). It took over
+  on Saturday 7 November at 08:00 from `session_01JyJzMZHCY1tEoov2vYAuJv`. The 15:56 check that
+  day found no handover due (context about 18%). The next session will be at depth 3.
+- Routines, owned by the current session; the next session moves them to itself at takeover,
+  keeping their names exactly:
+  - `trig_01AEsnzySTfQAsgxsS9RCdAA`: "StepWise hourly status report", `46 * * * *`.
+  - `trig_016mmp7qgknR6maFcPpcHyn6`: "StepWise handoff check: hand over only when due",
+    `CRON_TZ=Europe/Berlin 56 15 * * *`.
+  - `trig_01Q4wsxyfeskA8277FXxTfcY`: "StepWise daily handoff: start the next session
+    (create_session)", `CRON_TZ=Europe/Berlin 52 16 * * *`.
+  - `trig_01PfFMZmwbM2JKpfyhtLRmvn`: "StepWise daily deploy: fast-forward main to next",
+    `CRON_TZ=Europe/Berlin 27 17 * * *`. It deploys only when CI on `next`'s head is green, and
+    stops and asks Yusuf if `main` is not an ancestor of `next`.
 - The account's other routines (DSA, Chess TD, Chess Analyzer, Plabs, TPT, product ideas,
   reminders) belong to other projects: never move or change them.

@@ -29,7 +29,8 @@ everything on every push; Netlify builds and deploys `main` (`netlify.toml`).
   credits). `main` only moves by fast-forwarding to `next`: once a day at 17:27 Europe/Berlin
   (a scheduled task), or when Yusuf says "deploy". Never commit to `main` directly. Never start,
   publish or roll back a Netlify deploy by other means.
-- Agent worktrees branch from `next` and are merged back into `next` by the lead.
+- Agent worktrees start from the default branch (`main`), so each agent first runs
+  `git reset --hard next`; the lead merges them back into `next`.
 
 ## Architecture
 

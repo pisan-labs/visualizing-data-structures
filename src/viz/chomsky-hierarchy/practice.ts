@@ -52,8 +52,10 @@ const rule = (lhs: string, rhs: string) => `${lhs} -> ${rhs || 'eps'}`;
 export function randomGrammar(rng: Rng, level: Level, size: number): string {
   const n = Math.max(2, size);
   const rules: string[] = [];
+  // A rule such as A -> A says nothing, so it is left out along with repeats.
   const add = (r: string) => {
-    if (!rules.includes(r)) rules.push(r);
+    const [lhs, rhs] = r.split(' -> ');
+    if (!rules.includes(r) && lhs !== rhs) rules.push(r);
   };
   const extra: string[] = [];
   if (level !== 'regular') extra.push(rule(pick(rng, VARS), pick(rng, NOT_RIGHT_LINEAR)));
@@ -123,15 +125,6 @@ export function chomskyPractice(def: () => Def): PracticeKind[] {
     const options = shuffle(rng, [right, ...others]);
     return { options, correct: options.indexOf(right) };
   };
-  /** A few other languages already on the map, for context. */
-  const context = (rng: Rng, not: LangId): OpCall[] =>
-    shuffle(
-      rng,
-      LANGUAGES.filter((l) => l.id !== not),
-    )
-      .slice(0, rng.int(0, 2))
-      .map((l) => ['place', l.id]);
-
   return [
     {
       id: 'grammar-level',
@@ -200,12 +193,13 @@ export function chomskyPractice(def: () => Def): PracticeKind[] {
         const region = placedIn(lang.id);
         const right = REGION_LABEL[region];
         const { options, correct } = choices(rng, right, Object.values(REGION_LABEL));
-        const claims = lang.claims.map((c) => c.short).join('; ');
+        const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+        const claims = lang.claims.map((c) => `${cap(c.short)}.`).join(' ');
         return {
           prompt: `${lang.title}. Where does it go on the map? Pick the innermost region it belongs to.`,
-          setup: context(rng, lang.id),
+          setup: [],
           answer: { kind: 'choice', options, correct },
-          explain: `${lang.token}: ${claims}.`,
+          explain: `${right}. ${claims}`,
           watch: [['place', lang.id]],
         };
       },
@@ -232,7 +226,7 @@ export function chomskyPractice(def: () => Def): PracticeKind[] {
         const { options, correct } = choices(rng, right, pool);
         return {
           prompt: `${lang.title}. Which argument shows it is not ${NAME[out.region]}?`,
-          setup: context(rng, lang.id),
+          setup: [],
           answer: { kind: 'choice', options, correct },
           explain: `${out.short.charAt(0).toUpperCase()}${out.short.slice(1)}.`,
           watch: [['place', lang.id]],

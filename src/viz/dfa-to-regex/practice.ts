@@ -3,7 +3,7 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, Step, VizDef } from '../../engine/types';
 import { accepts, type Automaton } from '../_automata/automaton';
 import { words } from '../_automata/page';
-import type { Regex } from '../_automata/regex';
+import { matches, type Regex } from '../_automata/regex';
 import { concat, label, show, star, union, type Gnfa } from './gnfa';
 import { defaults, type DfaState, type DrExtra, type DrRun, type DrSettings } from './model';
 import { loadCall, randomFit } from './presets';
@@ -12,6 +12,9 @@ type Def = VizDef<DfaState, DrSettings, DrExtra>;
 type DrStep = Step<DfaState, DrExtra>;
 
 const code = (s: string) => `\`${s}\``;
+
+/** The longest expression a "which expression" option may be. */
+const MAX_OPTION = 30;
 
 /** Every word over the alphabet of length up to n. */
 export function allWords(alphabet: readonly string[], n: number): string[] {
@@ -62,14 +65,20 @@ export function dfaToRegexPractice(def: () => Def): PracticeKind[] {
           const R3 = R(rip, q);
           const R4 = R(p, q);
           const o = { simplify: true };
-          const answer = label(at.g, p, q)!.text;
+          const right = label(at.g, p, q)!;
+          const answer = right.text;
+          // A slip that happens to mean the same (a*a for aa*) would be marked wrong unfairly.
+          const words = allWords(dfa.alphabet, 6);
+          const differs = (x: Regex) => words.some((w) => matches(x, w) !== matches(right.r, w));
           const slips = [
             concat(concat(R1, star(R2, o), o), R3, o),
             union(concat(concat(R1, R2, o), R3, o), R4, o),
             union(concat(concat(R3, star(R2, o), o), R1, o), R4, o),
             union(star(concat(concat(R1, R2, o), R3, o), o), R4, o),
             union(concat(R1, R3, o), R4, o),
-          ].map(show);
+          ]
+            .filter(differs)
+            .map(show);
           const options = [...new Set([answer, ...slips])];
           if (options.length < 3) continue;
           const pickd = options.slice(1, 4);
@@ -135,22 +144,29 @@ export function dfaToRegexPractice(def: () => Def): PracticeKind[] {
         for (;;) {
           const { dfa, setup: s, runs, watch } = setup(rng, rng.int(2, 3));
           const answer = runs.at(-1)!.answer!;
-          // Other expressions from the same rips: the DFA with a different accept state, as
-          // long as that changes the language (two states may do the same job).
-          const differs = (x: string) =>
+          // Long expressions make a reading test, not a conversion test.
+          const short = (x: string) => x.length <= MAX_OPTION;
+          if (!short(answer)) continue;
+          // Other expressions from the same rips: the DFA with other accept states, as long
+          // as that changes the language (two states may do the same job).
+          const n = dfa.states.length;
+          const sets = Array.from({ length: 2 ** n - 1 }, (_, m) =>
+            dfa.states.filter((_, i) => (m + 1) & (1 << i)),
+          );
+          const differs = (accept: string[]) =>
             allWords(dfa.alphabet, 6).some(
-              (w) => accepts(dfa, w) !== accepts({ ...dfa, accept: [x] }, w),
+              (w) => accepts(dfa, w) !== accepts({ ...dfa, accept }, w),
             );
-          const others = dfa.states
+          const others = sets
             .filter(differs)
-            .map((x) => {
+            .map((accept) => {
               const t = new Timeline(def(), defaults, 1, [
-                loadCall({ ...dfa, accept: [x] }),
+                loadCall({ ...dfa, accept }),
                 ['convert'],
               ]);
               return t.entries.at(-1)!.steps.at(-1)!.extra?.run?.answer;
             })
-            .filter((x): x is string => !!x && x !== answer);
+            .filter((x): x is string => !!x && x !== answer && short(x));
           const options = [...new Set([answer, ...others])].slice(0, 4);
           if (options.length < 3) continue;
           for (let i = options.length - 1; i > 0; i--) {

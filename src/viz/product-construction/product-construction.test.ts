@@ -299,6 +299,42 @@ describe('product-construction', () => {
     }
   });
 
+  it('draws every step of random sessions on every stage, marks on real shapes', () => {
+    const stages = [undefined, { w: 880, h: 384 }, { w: 360, h: 536 }];
+    const callArb = fc.oneof(
+      fc.constant<OpCall>(['build']),
+      fc.constant<OpCall>(['complementA']),
+      fc.constant<OpCall>(['complementB']),
+      fc.constantFrom<OpCall>(['run', 'ab'], ['run', 'eps'], ['run', 'baab'], ['run', '0110']),
+    );
+    fc.assert(
+      fc.property(
+        pairArb,
+        fc.constantFrom(...SET_OPS),
+        fc.array(callArb, { maxLength: 5 }),
+        ([a, b], op, calls) => {
+          const t = play(a, b, op, calls);
+          fc.pre(t !== null);
+          for (let i = 0; i < t!.length; i++) {
+            const { step } = t!.at(i);
+            for (const stage of stages) {
+              const scene = def.view(step, t!.settings, stage);
+              const ids = scene.shapes.map((s) => s.id);
+              expect(new Set(ids).size, `step ${i}: unique ids`).toBe(ids.length);
+              for (const m of step.marks) expect(ids, `mark ${m.id}`).toContain(m.id);
+              expect(scene.label.length).toBeGreaterThan(0);
+              for (const s of scene.shapes)
+                if (s.kind !== 'arrow' && s.kind !== 'polygon') {
+                  expect(Number.isFinite(s.x) && Number.isFinite(s.y), s.id).toBe(true);
+                }
+            }
+          }
+        },
+      ),
+      { numRuns: 60 },
+    );
+  });
+
   it('reads two machines separated by |, and says what is wrong otherwise', () => {
     const ok = parseMachines('q0 a -> q1; accept q1 | r0 b -> r1; accept r1');
     expect(ok).not.toBeInstanceOf(Error);

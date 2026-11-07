@@ -374,6 +374,8 @@ function drawTable(
   const B = full(s.b);
   const pr = productOf(A, B, op);
   const r = b ?? (s.built ? finished(pr, op) : undefined);
+  // Before Build, the table's room is kept but nothing is drawn: not even its header.
+  if (!r) return;
   const mark = (yes: boolean): GridCell => ({ text: yes ? '✓' : '–' });
   drawGrid(shapes, {
     id: 'tbl',

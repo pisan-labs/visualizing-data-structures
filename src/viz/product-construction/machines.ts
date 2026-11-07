@@ -80,19 +80,24 @@ export interface PairOptions {
 }
 
 /**
- * Two random DFAs over {a, b}, A on p0, p1, ... and B on q0, q1, ..., each with 2 or 3 states
- * (2 when moves are left out, so the dead state still fits), whose product reaches between
- * minPairs and maxPairs pairs.
+ * Two random DFAs over {a, b}, A on p0, p1, ... and B on q0, q1, ..., each with at most 3
+ * states once completed (so 2 when moves are left out, leaving room for the dead state), whose
+ * product reaches between minPairs and maxPairs pairs. The grid of pairs is at most 3 × 3, which
+ * reads well on a phone.
  */
 export function randomPair(rng: Rng, o: PairOptions = {}): [Automaton, Automaton] {
   const lo = o.minPairs ?? 3;
   const hi = Math.min(o.maxPairs ?? 9, MAX_PAIRS);
+  const one = (name: string) => {
+    for (;;) {
+      const m = randomDfa(rng, o.partial ? 2 : rng.int(2, 3), { partial: o.partial });
+      if (full(m).states.length <= 3) return name === 'p' ? rename(m, 'p') : m;
+    }
+  };
   for (let tries = 0; ; tries++) {
-    const size = () => (o.partial ? rng.int(2, 3) : rng.int(2, 3));
-    const a = rename(randomDfa(rng, size(), { partial: o.partial }), 'p');
-    const b = randomDfa(rng, size(), { partial: o.partial });
-    const fits = full(a).states.length <= MAX_SIDE && full(b).states.length <= MAX_SIDE;
-    const k = fits ? pairCount(a, b) : Infinity;
-    if ((k >= lo && k <= hi) || (fits && tries > 200)) return [a, b];
+    const a = one('p');
+    const b = one('q');
+    const k = pairCount(a, b);
+    if ((k >= lo && k <= hi) || tries > 200) return [a, b];
   }
 }

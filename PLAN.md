@@ -496,6 +496,9 @@ What they get wrong, and we avoid:
 - **Machine with output (Mealy and Moore):** Mealy moves `q0 a -> q1 / 1` (or `q0 a/1,b/0 -> q1`);
   Moore outputs `q0 / 0` with plain moves. No accept states; every state needs a move on every
   symbol.
+- **Multi-tape Turing machine:** `q0 1,_ -> q1 1,1 R,R` (per tape, comma-separated: symbol read,
+  written, move L/R/S). `|` lists symbols read, `-` keeps one, writes may be left out; `#` is
+  reserved for the one-tape simulation. Input `101,011` is one word per tape.
 - **Regular expression:**
   - `(a|b)*abb`: letters and digits, `ε`, `∅`, `|`, `*`, `+`, `?` and parentheses;
   - nothing else;

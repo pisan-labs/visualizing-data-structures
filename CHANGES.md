@@ -221,3 +221,5 @@
 2026-11-07 [note] Deployed at 20:00 on Yusuf's "deploy": main fast-forwarded acb0ea6..381c171 after CI run 78 passed; live bundle matched the local build, all 122 pages return 200, chomsky-hierarchy opens on the whole map
 
 2026-11-07 [code] Merged halting-problem (wave 5C): diagonalization on a table of six toy programs (every cell a computed run with a cycle check), A_TM or HALT framing, D on its own description, runs and reductions; opens on the built table
+
+2026-11-07 [code] Merged multitape-tm (wave 5C): 2 or 3 tapes, Sipser's one-tape simulation with scans and shifts, both move counts side by side

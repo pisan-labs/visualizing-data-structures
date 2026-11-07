@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "multitape-tm",
+  "id": "unequal-lengths",
+  "title": "Numbers of different lengths",
+  "notes": "This adder needs both numbers to have the same number of bits. Tape 2 runs out first, the machine has no rule for that, and it rejects. Type 101,011 instead.",
+  "settings": {
+    "mark": "dot"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "mark 0|1,0|1,_ -> walk -,-,c R,R,R; walk 0|1,0|1,_ -> walk R,R,R; walk _,_,_ -> add L,L,S; add 0,0,_ -> add -,-,0 L,L,L; add 0,1,_ -> add -,-,1 L,L,L; add 1,0,_ -> add -,-,1 L,L,L; add 1,1,_ -> carry -,-,0 L,L,L; carry 0,0,_ -> add -,-,1 L,L,L; carry 0,1,_ -> carry -,-,0 L,L,L; carry 1,0,_ -> carry -,-,0 L,L,L; carry 1,1,_ -> carry -,-,1 L,L,L; add 0|1,0|1,c -> accept -,-,0 S,S,S; carry 0|1,0|1,c -> accept -,-,1 S,S,S"
+    ],
+    ["run", "101,11"]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

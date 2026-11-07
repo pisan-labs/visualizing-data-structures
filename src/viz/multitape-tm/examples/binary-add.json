@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "multitape-tm",
+  "id": "binary-add",
+  "title": "Binary addition with two input tapes",
+  "notes": "1011 is on tape 1 and 0110 on tape 2. The heads walk to the right end, then add right to left, carrying in the state. Tape 3 ends with 10001: 11 + 6 = 17.",
+  "settings": {
+    "mark": "dot"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "mark 0|1,0|1,_ -> walk -,-,c R,R,R; walk 0|1,0|1,_ -> walk R,R,R; walk _,_,_ -> add L,L,S; add 0,0,_ -> add -,-,0 L,L,L; add 0,1,_ -> add -,-,1 L,L,L; add 1,0,_ -> add -,-,1 L,L,L; add 1,1,_ -> carry -,-,0 L,L,L; carry 0,0,_ -> add -,-,1 L,L,L; carry 0,1,_ -> carry -,-,0 L,L,L; carry 1,0,_ -> carry -,-,0 L,L,L; carry 1,1,_ -> carry -,-,1 L,L,L; add 0|1,0|1,c -> accept -,-,0 S,S,S; carry 0|1,0|1,c -> accept -,-,1 S,S,S"
+    ],
+    ["run", "1011,0110"]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

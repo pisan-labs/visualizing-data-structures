@@ -1,0 +1,35 @@
+{
+  "format": 1,
+  "viz": "pumping-lemma",
+  "id": "defend-loses",
+  "title": "Defending aⁿbⁿ: every split loses",
+  "notes": "You are the adversary this time. The page picks aᵖbᵖ, and whatever split you try, y is in the a's, so the page pumps it out with i = 0.",
+  "settings": {
+    "lemma": "regular",
+    "role": "defend",
+    "p": 4
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "language",
+      "anbn"
+    ],
+    [
+      "split",
+      "ε|a|aaabbbb"
+    ],
+    [
+      "split",
+      "aa|aa|bbbb"
+    ],
+    [
+      "split",
+      "3 1"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "format": 1,
+  "viz": "pumping-lemma",
+  "id": "choose-the-split",
+  "title": "You don't get to choose the split",
+  "notes": "The most common mistake in pumping lemma proofs: picking a convenient split. The adversary picks it, and a proof has to beat all of them. Pressing Split in the prover's role explains why.",
+  "settings": {
+    "lemma": "regular",
+    "role": "prove",
+    "p": 4
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "language",
+      "anbn"
+    ],
+    [
+      "string",
+      "aaaabbbb"
+    ],
+    [
+      "split",
+      "aaa|ab|bbb"
+    ],
+    [
+      "pump",
+      0
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

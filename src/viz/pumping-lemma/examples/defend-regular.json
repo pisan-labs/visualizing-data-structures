@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "viz": "pumping-lemma",
+  "id": "defend-regular",
+  "title": "Defending (ab)*: y = ab survives",
+  "notes": "You are the adversary on a regular language. y = a dies at once, but y = ab survives every i: pumping whole copies of ab keeps the string in (ab)*.",
+  "settings": {
+    "lemma": "regular",
+    "role": "defend",
+    "p": 4
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "language",
+      "(ab)*"
+    ],
+    [
+      "split",
+      "ε|a|bababab"
+    ],
+    [
+      "split",
+      "ε|ab|ababab"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

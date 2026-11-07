@@ -1,0 +1,35 @@
+{
+  "format": 1,
+  "viz": "pumping-lemma",
+  "id": "too-short",
+  "title": "A string shorter than p",
+  "notes": "ab is in aⁿbⁿ, but it is shorter than p = 4, so the lemma promises nothing about it and the move is refused. aaaabbbb is long enough.",
+  "settings": {
+    "lemma": "regular",
+    "role": "prove",
+    "p": 4
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "language",
+      "anbn"
+    ],
+    [
+      "string",
+      "ab"
+    ],
+    [
+      "string",
+      "aaaabbbb"
+    ],
+    [
+      "pump",
+      0
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

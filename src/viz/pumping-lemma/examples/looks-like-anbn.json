@@ -1,0 +1,35 @@
+{
+  "format": 1,
+  "viz": "pumping-lemma",
+  "id": "looks-like-anbn",
+  "title": "a*b* looks like aⁿbⁿ, but pumps",
+  "notes": "The same string, aaaabbbb, and the same splits, but nothing in a*b* has to match. y = a pumps to any number of a's, still followed by b's.",
+  "settings": {
+    "lemma": "regular",
+    "role": "prove",
+    "p": 4
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "language",
+      "a*b*"
+    ],
+    [
+      "string",
+      "aaaabbbb"
+    ],
+    [
+      "pump",
+      0
+    ],
+    [
+      "pump",
+      3
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

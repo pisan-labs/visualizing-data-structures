@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "viz": "pumping-lemma",
+  "id": "winning-string",
+  "title": "aᵖbᵖ beats every split",
+  "notes": "The textbook move for aⁿbⁿ. With |xy| ≤ p, y has to sit inside the a's, so every one of the adversary's splits dies at i = 0 and at i = 2. The adversary still has to pick one, and you pump it out of the language.",
+  "settings": {
+    "lemma": "regular",
+    "role": "prove",
+    "p": 4
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "language",
+      "anbn"
+    ],
+    [
+      "string",
+      "aaaabbbb"
+    ],
+    [
+      "pump",
+      2
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

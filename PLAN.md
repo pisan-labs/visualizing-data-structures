@@ -491,6 +491,8 @@ What they get wrong, and we avoid:
 - **Word:** symbols with or without spaces, `ε` (or `eps`) for the empty word.
 - **Batch:** `+ab +aabb -ba -eps`, each word with the result it should get. The page runs them
   all and shows a table of expected against actual.
+- **Two machines (product construction):** `A | B`, two machines in the automaton format with a
+  `|` between them. Differing alphabets are completed with dead states.
 - **Regular expression:**
   - `(a|b)*abb`: letters and digits, `ε`, `∅`, `|`, `*`, `+`, `?` and parentheses;
   - nothing else;

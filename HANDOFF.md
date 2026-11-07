@@ -139,8 +139,7 @@ None with unmerged content. `next` is ahead of `main`; `main` is an ancestor of 
   Run fewer agents at once when usage is high.
 - Agent worktrees start from `main` (the default branch), not `next`: tell every agent to run
   `git reset --hard next` first (seen 7 November).
-- Agents: about four at a time, each in its own worktree with its own `E2E_PORT` (ports up to
-  4249 have been used; start new ones at 4250), told not to edit shared files, to name e2e
+- Agents: about four at a time, each in its own worktree with its own `E2E_PORT` (ports up to 4254 have been used; start new ones at 4255), told not to edit shared files, to name e2e
   specs after their pages, to use `showMe()` from `tests/e2e/helpers.ts` for "Show me" checks,
   to commit WIP before a limit stop, to add practice sets and a `preview`, to keep rows able to
   wrap for CI's wider font, to poll (`expect.poll`) when measuring the drawing, and not to

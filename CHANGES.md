@@ -199,3 +199,11 @@
 2026-11-07 [code] Merged wave 5B: pda (src/viz/_automata/pda.ts, nondeterminism by breadth-first search with a 200-configuration cap) and chomsky-hierarchy (classify a grammar level by level, place 11 languages with their reasons); wave 5B is done
 
 2026-11-07 [code] Merged main (catalog thumbnails, PR #1) into next; previews for the 10 automata and grammar pages; thumbnails drop arrowheads on curved arrows too
+
+2026-11-07 [note] No handover at the 15:56 check: context about 18% after a compaction (the 55% first given was from before it)
+
+2026-11-07 [note] The 17:27 daily deploy was blocked by the session's auto-mode permission check (production deploy); main stays at 92b03fe until Yusuf decides
+
+2026-11-07 [code] Merged dfa-to-regex (wave 5C): state elimination through a GNFA; settings rip order (name, fewest paths first) and simplification (empty-set and epsilon identities, none)
+
+2026-11-07 [code] Merged product-construction (wave 5C): union, intersection, difference, symmetric difference and complement of two DFAs, drawn as a grid of pairs; input A | B

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "chomsky-hierarchy",
+  "id": "four-levels",
+  "title": "One grammar for each type",
+  "notes": "With Chomsky’s numbering: a Type 3 grammar, a Type 2, a Type 1 and a Type 0. The last one is caught by its rule S → ε: an ε-rule is allowed in a context-sensitive grammar only for a start variable that never appears on a right side.",
+  "settings": { "decidable": false, "names": "types" },
+  "seed": 1,
+  "ops": [
+    ["classify", "S -> aS | b"],
+    ["classify", "S -> aSb | ab"],
+    ["classify", "S -> abc | aSBc; cB -> Bc; bB -> bb"],
+    ["classify", "S -> aSB | eps; aB -> Ba; B -> b"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

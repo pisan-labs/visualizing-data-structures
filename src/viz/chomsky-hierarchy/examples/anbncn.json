@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "chomsky-hierarchy",
+  "id": "anbncn",
+  "title": "aⁿbⁿcⁿ needs context",
+  "notes": "CB → BC has two symbols on its left, so the grammar is not context-free. No rule shrinks the string, and S → ε is allowed because S is on no right side, so it is context-sensitive. Place shows why no context-free grammar could do better.",
+  "settings": { "decidable": true, "names": "names" },
+  "seed": 1,
+  "ops": [
+    ["classify", "S -> T | eps; T -> aTBC | aBC; CB -> BC; aB -> ab; bB -> bb; bC -> bc; cC -> cc"],
+    ["place", "anbncn"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

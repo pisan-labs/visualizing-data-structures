@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "chomsky-hierarchy",
+  "id": "right-linear",
+  "title": "Right-linear rules: a regular grammar",
+  "notes": "Every rule is A → wB or A → w, so the first check passes and L(G) lands in the innermost box. The grammar is a two-state DFA in disguise: S means an even number of a’s so far, A an odd number.",
+  "settings": { "decidable": true, "names": "names" },
+  "seed": 1,
+  "ops": [["classify", "S -> aA | bS | eps; A -> aS | bA"]],
+  "at": { "op": 0, "step": 0 }
+}

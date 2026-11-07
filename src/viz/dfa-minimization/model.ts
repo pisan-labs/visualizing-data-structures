@@ -167,7 +167,7 @@ function runVars(r: MinRun): Record<string, Scalar> {
     if (Object.keys(r.block).length) out.blocks = count(r.block);
   } else {
     if (r.pass) out.pass = r.pass;
-    if (Object.keys(r.marked).length || r.pass) out.marked = Object.keys(r.marked).length;
+    if (r.refining) out.marked = Object.keys(r.marked).length;
     if (r.min) out.blocks = r.min.states.length;
   }
   return out;

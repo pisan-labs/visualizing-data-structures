@@ -15,7 +15,8 @@ import findTheBug from './examples/find-the-bug.json';
 import longWord from './examples/long-word.json';
 import missingMove from './examples/missing-move.json';
 import explain from './explain.md?raw';
-import { faInput, loadCall, machineLines, randomDfa, randomWord } from './kit';
+import { automatonLines, loadCall, machineOrWordsInput } from '../_automata/page';
+import { randomDfa, randomWord } from '../_automata/random';
 import { MACHINES } from './machines';
 import {
   defaults,
@@ -75,7 +76,7 @@ export const dfa: VizDef<DfaState, DfaSettings, DfaExtra> = {
   view,
   describe,
   controls: {
-    input: faInput('0101'),
+    input: machineOrWordsInput('0101'),
     buttons: [
       { op: 'run', label: 'Run', usesInput: true, primary: true },
       { op: 'test', label: 'Test', usesInput: true },
@@ -163,14 +164,14 @@ export const dfa: VizDef<DfaState, DfaSettings, DfaExtra> = {
 };
 
 /**
- * Driver protocol for the code tabs: the machine's lines (see machineLines), then "run <word>"
+ * Driver protocol for the code tabs: the machine's lines (see automatonLines), then "run <word>"
  * per word run or tested, with no word for ε. Each run prints "accept <state>", "reject
  * <state>", or "reject none" when a move is missing. The code leaves the dead state out, so a
  * run that ends in the drawn dead state prints "reject none".
  */
 function codeScript(calls: OpCall[], settings: DfaSettings) {
   const t = new Timeline(dfa, settings, 1, calls);
-  const input = machineLines(t.initial.state.machine);
+  const input = automatonLines('dfa', t.initial.state.machine);
   const expected: string[] = [];
   let before = t.initial.state.machine;
   const result = (a: Automaton, word: string, verdict: string, q: string, stuck: boolean) => {
@@ -179,7 +180,7 @@ function codeScript(calls: OpCall[], settings: DfaSettings) {
   };
   for (const e of t.entries) {
     const a = e.end.machine;
-    if (a !== before) input.push(...machineLines(a));
+    if (a !== before) input.push(...automatonLines('dfa', a));
     before = a;
     const last = e.steps.at(-1)!.extra;
     const r = last?.run;

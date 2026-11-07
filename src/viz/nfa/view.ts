@@ -10,16 +10,16 @@ import { stateId } from '../../layouts/automaton';
 import { textWidth } from '../../layouts/graph';
 import { CELL_W } from '../../layouts/tape';
 import type { Bounds, Scene, Shape } from '../../render/scene';
+import { setName } from '../_automata/automaton';
 import {
   describeTest,
   drawInputTape,
   drawTestTable,
   drawVerdict,
   faScene,
-  setShort,
   stack,
   tapeCells,
-} from '../dfa/kit';
+} from '../_automata/panels';
 import {
   describe,
   describeRun,
@@ -62,7 +62,7 @@ function drawTrace(
   const setW =
     Math.max(
       textWidth('{q0,q1}', TEXT, true),
-      ...r.rows.map((s) => textWidth(setShort(s), TEXT, true)),
+      ...r.rows.map((s) => textWidth(setName(s), TEXT, true)),
     ) + 14;
   const colW = labelW + setW + 14;
   out.push({
@@ -114,7 +114,7 @@ function drawTrace(
         id: `${id}-t`,
         x: cx + labelW + 7,
         y: cy + ROW_H / 2 + 5,
-        text: setShort(set),
+        text: setName(set),
         size: TEXT,
         mono: true,
         role: role === 'active' || role === 'error' ? role : undefined,

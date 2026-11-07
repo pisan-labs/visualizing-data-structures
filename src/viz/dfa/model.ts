@@ -23,22 +23,24 @@ import {
 } from '../_automata/automaton';
 import { parseAutomaton, parseWord } from '../_automata/parse';
 import {
-  faLoadOp,
+  loadOp,
   parseBatch,
   plural,
-  rowOk,
-  testRowId,
-  verdictId,
   whyNotDfa,
   wordProblem,
   wordText,
-  type FaState,
-  type FaTest,
-  type TestRow,
+  type MachineState,
   type Verdict,
-} from './kit';
+} from '../_automata/page';
+import {
+  rowOk,
+  testRowId,
+  verdictId,
+  type TestRow,
+  type TestTable as FaTest,
+} from '../_automata/panels';
 
-export type DfaState = FaState;
+export type DfaState = MachineState;
 
 export interface DfaSettings {
   [key: string]: Scalar;
@@ -361,7 +363,9 @@ const test: Op = {
   },
 };
 
-const load = faLoadOp<DfaSettings, X>({
+const load = loadOp<S, DfaSettings, X>({
+  make: (a) => ({ machine: a }),
+  words: true,
   check: (a) => {
     const why = whyNotDfa(a);
     return why ? `This is not a DFA: ${why}. The NFA page runs machines like this one.` : null;

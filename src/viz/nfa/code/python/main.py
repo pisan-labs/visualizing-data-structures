@@ -1,8 +1,9 @@
 # Test driver: reads one operation per line, prints one result per line.
-# "machine <start> <states>" starts a machine, "accept <states>" and
-# "move <from> <symbol> <to>" fill it in ("eps" for an epsilon-move), and
-# "run <word>" (no word for the empty word) prints "accept {q0,q2}" or
-# "reject {...}" with the final set in the order "machine" listed the states.
+# "nfa <states>" starts a machine, "start <state>", "accept <states>" and
+# "move <from> <symbol> <to>" fill it in ("eps" for an epsilon-move; "alphabet"
+# is not needed), and "run <word>" (no word for the empty word) prints
+# "accept {q0,q2}" or "reject {...}" with the final set in the order "nfa"
+# listed the states.
 import sys
 
 from nfa import EPS, NFA
@@ -15,8 +16,10 @@ def main():
         if not parts:
             continue
         op, args = parts[0], parts[1:]
-        if op == "machine":
-            start, order, accept, delta = args[0], args[1:], [], {}
+        if op == "nfa":
+            start, order, accept, delta = None, args, [], {}
+        elif op == "start":
+            start = args[0]
         elif op == "accept":
             accept = args
         elif op == "move":

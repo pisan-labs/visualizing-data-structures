@@ -17,7 +17,7 @@ import {
   faScene,
   stack,
   tapeCells,
-} from './kit';
+} from '../_automata/panels';
 import {
   deadState,
   describe,

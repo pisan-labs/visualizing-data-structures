@@ -24,6 +24,8 @@ export async function showMe(page: Page, trigger: Locator): Promise<void> {
 /**
  * Wait until the drawing stops moving: no CSS transitions running and the stage markup unchanged
  * for a few frames. Axe measures colors as drawn, so a shape caught mid-fade can fail contrast.
+ * The viewBox counts too: the camera tweens to a new framing, and it is an attribute of the svg
+ * element, outside its innerHTML.
  */
 export async function settled(page: Page): Promise<void> {
   await page.waitForFunction(
@@ -31,7 +33,7 @@ export async function settled(page: Page): Promise<void> {
       new Promise<boolean>((done) => {
         const snap = () =>
           Array.from(document.querySelectorAll('svg'))
-            .map((s) => s.innerHTML)
+            .map((s) => `${s.getAttribute('viewBox')}${s.innerHTML}`)
             .join('|');
         const before = snap();
         let frames = 0;

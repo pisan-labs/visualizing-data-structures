@@ -38,6 +38,10 @@ async function option(page: Page, label: string) {
 }
 
 /** Where a state's name is on screen. */
+/**
+ * Where a state's name sits in the drawing, in scene units. Not screen pixels: the stage gets
+ * narrower when the page grows a scrollbar, which moves every shape on screen.
+ */
 const circle = (page: Page, q: string) =>
   stage(page)
     .locator('text.shape')
@@ -45,10 +49,7 @@ const circle = (page: Page, q: string) =>
       (els, name) =>
         els
           .filter((e) => e.textContent === name)
-          .map((e) => {
-            const r = e.getBoundingClientRect();
-            return `${Math.round(r.x)},${Math.round(r.y)},${Math.round(r.width)}`;
-          })
+          .map((e) => `${e.getAttribute('x')},${e.getAttribute('y')}`)
           .join(' '),
       q,
     );

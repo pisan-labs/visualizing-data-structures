@@ -217,3 +217,5 @@
 2026-11-07 [code] Merged mealy-moore (wave 5C): Mealy and Moore runs with aligned output tapes, conversion both ways one move or split per step, Convert back for the round trip
 
 2026-11-07 [code] Merged pumping-lemma (wave 5C): regular and context-free pumping lemmas as a game, roles prove or defend, p from 2 to 5, nine languages; the adversary tries every split with i up to 5
+
+2026-11-07 [note] Deployed at 20:00 on Yusuf's "deploy": main fast-forwarded acb0ea6..381c171 after CI run 78 passed; live bundle matched the local build, all 122 pages return 200, chomsky-hierarchy opens on the whole map

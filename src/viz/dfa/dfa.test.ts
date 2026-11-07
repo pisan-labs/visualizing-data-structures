@@ -7,7 +7,16 @@ import { stateId } from '../../layouts/automaton';
 import { accepts, complete, isDeterministic, type Automaton } from '../_automata/automaton';
 import { formatAutomaton, parseAutomaton } from '../_automata/parse';
 import { dfa } from '.';
-import { loadCall, parseBatch, parseFaInput, randomDfa, wordText } from './kit';
+import type { Shape } from '../../render/scene';
+import {
+  TAPE_CELLS,
+  drawInputTape,
+  loadCall,
+  parseBatch,
+  parseFaInput,
+  randomDfa,
+  wordText,
+} from './kit';
 import { MACHINES } from './machines';
 import type { DfaSettings } from './model';
 
@@ -172,6 +181,17 @@ describe('DFA', () => {
     expect(says[1]).toContain('Press Test');
     expect(says[2]).toContain('press Load');
     expect(says[3]).toContain('has no word after the sign');
+  });
+
+  it('scrolls a long word under the head, twelve cells at a time', () => {
+    const word = '1111111111111111';
+    for (let head = 0; head <= word.length; head++) {
+      const shapes: Shape[] = [];
+      drawInputTape(shapes, 0, 0, { word, read: head, head, room: 16, roles: new Map() });
+      const cells = shapes.filter((s) => s.kind === 'rect' && /^tape-\d+$/.test(s.id));
+      expect(cells, `head ${head}`).toHaveLength(TAPE_CELLS);
+      expect(cells.map((c) => c.id)).toContain(`tape-${head}`);
+    }
   });
 
   it('reads the input field and batches', () => {

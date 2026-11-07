@@ -267,13 +267,17 @@ export const tapeCells = (n: number): number => Math.min(n + 1, TAPE_CELLS);
 export function drawInputTape(out: Shape[], x: number, y: number, t: TapeView): Bounds {
   const n = t.word.length;
   const width = tapeCells(n);
+  // A long word scrolls in half-tape steps; near its end the window stops at the empty cell
+  // after the word and keeps all its cells, so the tape never shrinks.
   const win = n + 1 <= TAPE_CELLS ? { from: 0, to: n + 1 } : tapeWindow(t.head ?? n, TAPE_CELLS, 0);
+  const to = Math.min(win.to, n + 1);
+  const from = Math.max(0, Math.min(win.from, to - TAPE_CELLS));
   const b = drawTape(out, {
     x,
     y,
     cells: [...t.word],
-    from: win.from,
-    to: Math.min(win.to, n + 1),
+    from,
+    to,
     head: t.head,
     headLabel: t.headLabel,
     read: t.read,

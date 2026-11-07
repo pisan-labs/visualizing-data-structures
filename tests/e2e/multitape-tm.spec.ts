@@ -67,7 +67,7 @@ test('the simulation scans right, shifts, and scans back', async ({ page }) => {
   await press(page, 'Simulate', '01=01');
   await toEnd(page);
   await expect(narration(page)).toContainText('S accepts after 266');
-  await backTo(page, 'landed on a #');
+  await backTo(page, 'right puts it on a #');
   await expect(narration(page)).toContainText('so that tape needs a new cell');
   await page.getByRole('combobox', { name: 'Detail' }).selectOption('3');
   await backTo(page, 'Scanning right');
@@ -184,7 +184,7 @@ for (const theme of ['light', 'dark', 'contrast']) {
     await fast(page);
     await press(page, 'Simulate', '01=01');
     await toEnd(page);
-    await backTo(page, 'landed on a #');
+    await backTo(page, 'right puts it on a #');
     await settled(page);
     const scan = async () =>
       (

@@ -342,6 +342,22 @@ function* simSteps(
       rule.write[i] === rule.read[i]
         ? `leaves ${shown(rule.write[i]!)}`
         : `writes ${shown(rule.write[i]!)}`;
+    const reach = `Scanning left, S reaches the ${markName(settings)} for ${tapeName(i)} and ${what} there.`;
+    const extra: MtExtra = { mode: 'sim', seen: scan.read, rule, bumped, cost: cost(e.sim) };
+    if (e.shifted) {
+      // One step: the write, and the shift it forces (the snapshot already has both).
+      const shiftCost = 2 * (e.sim.cells.length - 1 - d);
+      yield {
+        state,
+        marks: [mark(`sim-${at}`, 'new'), mark(`sim-${d}`, 'new')],
+        say: `${reach} Moving the ${markName(settings)} right puts it on a #, so that tape needs a new cell. S writes ␣ there and shifts everything from the # on one cell right, then walks back: ${moves(shiftCost)}.`,
+        lines: ['sim.write', 'sim.shift'],
+        vars: vars(state),
+        level: 2,
+        extra: { ...extra, phase: 'shift', tape: i },
+      };
+      continue;
+    }
     const where = e.bumped
       ? `The ${markName(settings)} is on the segment's first cell, so it stays: ${tapeName(i)}'s head is on cell 0.`
       : rule.move[i] === 'S'
@@ -353,41 +369,12 @@ function* simSteps(
         mark(`sim-${at}`, 'new'),
         ...(at !== e.sim.head ? [mark(`sim-${e.sim.head}`, 'active')] : []),
       ],
-      say: `Scanning left, S reaches the ${markName(settings)} for ${tapeName(i)} and ${what} there. ${where}`,
+      say: `${reach} ${where}`,
       lines: ['sim.write'],
       vars: vars(state),
       level: 3,
-      extra: {
-        mode: 'sim',
-        phase: 'write',
-        tape: i,
-        seen: scan.read,
-        rule,
-        bumped,
-        cost: cost(e.sim),
-      },
+      extra: { ...extra, phase: 'write', tape: i },
     };
-    if (e.shifted) {
-      const L = e.sim.cells.length;
-      const shiftCost = 2 * (L - 1 - d);
-      yield {
-        state,
-        marks: [mark(`sim-${d}`, 'new')],
-        say: `The ${markName(settings)} for ${tapeName(i)} landed on a #, so that tape needs a new cell. S writes ␣ there and shifts everything from the # on one cell right, then walks back: ${moves(shiftCost)}.`,
-        lines: ['sim.write', 'sim.shift'],
-        vars: vars(state),
-        level: 2,
-        extra: {
-          mode: 'sim',
-          phase: 'shift',
-          tape: i,
-          seen: scan.read,
-          rule,
-          bumped,
-          cost: cost(e.sim),
-        },
-      };
-    }
   }
   state = { ...state, sim: back.end };
   const done = halting(rule.to);

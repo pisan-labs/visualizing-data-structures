@@ -114,8 +114,10 @@ test('the diagram and the label table stay readable mid-run', async ({ page }) =
   await loadExample(page, 'Divisible by 3 in binary: name order');
   await toEnd(page);
   for (let i = 0; i < 4; i++) await page.getByRole('button', { name: 'Step back' }).click();
-  // State names, tags and table labels: each at least 8 CSS pixels tall. Poll: the last step
-  // back is still animating.
+  // State names, tags and table labels: each at least 8 CSS pixels tall. Wait for the last step
+  // back to finish animating: mid-tween the old step's labels are on screen too, so a count
+  // taken then is not this step's.
+  await settled(page);
   const heights = () =>
     stage(page)
       .locator('text.shape')
@@ -124,8 +126,9 @@ test('the diagram and the label table stay readable mid-run', async ({ page }) =
           .filter((e) => /^(s|f|q\d|R\d|[01*()∪]+)$/.test(e.textContent ?? ''))
           .map((e) => e.getBoundingClientRect().height),
       );
-  await expect.poll(async () => (await heights()).length).toBeGreaterThan(8);
-  await expect.poll(async () => Math.min(...(await heights()))).toBeGreaterThanOrEqual(8);
+  // At this step: s, q2 and f, and four labels in the table.
+  expect((await heights()).length).toBeGreaterThanOrEqual(7);
+  expect(Math.min(...(await heights()))).toBeGreaterThanOrEqual(8);
   // No horizontal scroll, with CI's wider default font too.
   const overflow = () =>
     page.evaluate(

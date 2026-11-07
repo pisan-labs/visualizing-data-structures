@@ -3,56 +3,44 @@
 The rolling handoff for the StepWise cloud sessions (the session-relay skill). Each handover
 rewrites this file; it never gets a dated copy. Times are Europe/Berlin.
 
-Last written: Saturday 7 November 2026, about 16:05. No handover today: at the 15:56 check the
+Last written: Saturday 7 November 2026, about 21:20. No handover today: at the 15:56 check the
 context was about 18% (after a compaction), so the current session carries on. This file is
 kept current for the next handover.
 
 ## What is live
 
-- `main` is at `92b03fe`, live on Netlify (site `stepwise-pisan-labs`, `stepwise.pisan.me`).
-  It holds the 108 pages of 6 November, the taller desktop stage with graph pages laid out for
-  the screen (`10f414b`, pushed 08:44), and animated catalog thumbnails (PR #1 from another
-  session, `session_015Hhm4gYmBnZQozfDqkFdPy`, merged by Yusuf at 14:42).
-- `next` holds all of `main` plus today's work below: 118 pages. Its last code change is
-  `9b9ee16`; only handoff commits follow. The daily deploy routine fast-forwards `main` to
-  `next` at 17:27 if CI on `next`'s head is green.
-- Checks on `next`:
-  - CI passed on every push to `next` up to `6540c9d` (runs 61 to 64, 66, 68 and 69). Runs 71
-    (`20e1b63`), 72 (`9b9ee16`) and 73 (`ec76939`) were still running at 16:00.
-  - Full local e2e on `20e1b63`: 1862 passed, 4 skipped, desktop and phone with axe.
-  - On `9b9ee16`: lint, svelte-check and 2708 unit tests passed. A full local e2e was still
-    running at 15:56.
+- `main` is at `381c171`, live on Netlify (site `stepwise-pisan-labs`, `stepwise.pisan.me`),
+  deployed at 20:00 on Yusuf's "deploy": 122 pages. The live bundle matched a local build of
+  `381c171` and every page returned 200.
+- `next` is ahead of `main` by: the halting-problem, multitape-tm and regex-engines pages, the
+  allow rule in `.claude/settings.json` (below), the conformance fix for `sizes: []`, and logs.
+  125 pages. The daily deploy routine fast-forwards `main` to `next` at 17:27 if CI on `next`'s
+  head is green.
+- Checks on `next`: lint, svelte-check and 2902 unit tests passed on `e18d7ed`; the full local
+  e2e on `a7fbdac` passed (2041, 5 skipped); a full e2e with regex-engines was running at 21:20.
 
 ## Merged today (Saturday 7 November), on `next` unless marked
 
-- 08:05, `main`: the push that put all 108 pages live after Yusuf unlocked Netlify builds.
-- 08:44, `main`: a taller desktop stage (Options moved to the side column, the back link on the
-  title row); views get the stage's size (`StageSize`, `view(step, settings, stage?)`), and
-  graph pages choose their layout and side panels for it (`placePanels`, `fitScore` in
-  `src/layouts/graph.ts`); the bfs and skip-list e2e specs poll.
-- 08:49, automata groundwork: `src/viz/_automata/` (model, ε-closure, subset construction,
-  Moore minimization, regex parser, Thompson's construction, the one-line text format);
-  `src/layouts/automaton.ts` (state diagrams), `src/layouts/tape.ts`; curved arrows
-  (`ArrowShape.via`).
-- 08:52, CI runs on `next` too. 09:00, the deploy rule (below; `PLAN.md` decision 34).
-- 09:39 to 09:56, wave 5A: dfa, nfa, nfa-to-dfa, dfa-minimization, regex-to-nfa,
-  turing-machine (`src/viz/_turing/`).
-- 10:20, `settled()` in `tests/e2e/helpers.ts` also waits for the svg's viewBox; the
-  regex-to-nfa test compares scene coordinates, not screen pixels.
-- 13:54, wave 5B grammar pages: cfg-derivation, cyk (`src/viz/_grammar/`: parser, CNF in
-  stages, CYK, derivation search, the Chomsky level of a grammar).
-- 14:02, option 3 step 2: 15 more pages arrange their parts for the stage
-  (`src/viz/_stage/arrange.ts`, `src/viz/_dp/strip.ts`); 27 left as they are, because they
-  already read fine or a shared layout or a setting sets their size (no list was kept).
-- 14:15, consolidated automata code: a shared page kit, panels and random input in
-  `src/viz/_automata/`; one label placement in `drawAutomaton` (label collisions on the six
-  pages fell from thousands to 51, all one crossing on the Turing machine's phone diagram);
-  `src/layouts/trace.ts` and `route.ts`; side panels clear the zoom buttons; the conformance
-  check accepts set notation such as `{q0}`.
-- 15:13 and 15:19, wave 5B: pda (`src/viz/_automata/pda.ts`; nondeterminism by breadth-first
-  search, capped at 200 configurations) and chomsky-hierarchy.
-- 15:51, `main` merged into `next` (the thumbnails). Previews for the ten new pages, and
-  thumbnails drop arrowheads on curved arrows as well as straight ones.
+- 08:05 and 08:44, `main`: all 108 pages live; a taller desktop stage, with views given the
+  stage's size (`StageSize`, `view(step, settings, stage?)`) and graph pages laying out for it.
+- 08:49, automata groundwork (`src/viz/_automata/`, `src/layouts/automaton.ts`, `tape.ts`, curved
+  arrows). 08:52, CI on `next`. 09:00, the deploy rule (`PLAN.md` decision 34).
+- 09:39 to 09:56, wave 5A: dfa, nfa, nfa-to-dfa, dfa-minimization, regex-to-nfa, turing-machine.
+- 13:54 to 15:19, wave 5B: cfg-derivation, cyk (`src/viz/_grammar/`), pda, chomsky-hierarchy;
+  14:02, 15 more pages arrange their parts for the stage; 14:15, consolidated automata code.
+- 14:42, `main`: Yusuf merged PR #1 (catalog thumbnails, from `session_015Hhm4gYmBnZQozfDqkFdPy`);
+  15:51, `main` merged into `next`, with previews for the new pages.
+- 17:27: the daily deploy was blocked by the session's auto-mode permission check (production
+  deploy). 18:45, `main`: deployed on Yusuf's "deploy" (120 pages).
+- 18:00 to 20:20, wave 5C: dfa-to-regex, product-construction, mealy-moore, pumping-lemma,
+  halting-problem, multitape-tm; 21:10, regex-engines. All 17 automata pages are on `next`.
+- 19:14: `VizDef.opening`, an example a page runs on arrival when the link has none; the
+  Chomsky hierarchy opens on the whole map (default taken at 19:03; Yusuf can undo it by saying
+  "empty map back"). The halting problem and regex engines pages use it too.
+- 19:24, Yusuf's yes: `.claude/settings.json` allows exactly `git push origin origin/next:main`,
+  so the daily deploy routine can push. Not yet tested by the routine.
+- 20:00, `main`: deployed on Yusuf's "deploy" (122 pages).
+- 20:50: the conformance check runs presets at size 5 for pages with `sizes: []`.
 
 ## Branches still unmerged
 
@@ -60,25 +48,30 @@ None with unmerged content. `next` is ahead of `main`; `main` is an ancestor of 
 
 ## Next, in order
 
-1. Wave 5C, the advanced automata pages (`PLAN.md` 13.5): dfa-to-regex, product-construction,
-   pumping-lemma, mealy-moore, multitape-tm, halting-problem, regex-engines. Build them with
-   agents, as for 5A and 5B, on the shared code in `src/viz/_automata/`, `_turing/`,
-   `_grammar/` and the layouts.
-2. Shared-code recommendations from the 5A and 5B agents, smallest first:
+1. Watch the 17:27 deploy on 8 November: the first test of the allow rule. If the permission
+   check still blocks it, tell Yusuf (he can say "deploy").
+2. Shared-code recommendations from the wave 5 agents, smallest first:
    - `STAGES` in `src/layouts/graph.ts` (and its header comment) still holds the old 884×305
      desktop stage, and `fitScore` falls back to it when a view gets no stage (thumbnails,
      prerender, tests); the desktop stage is now 387 px tall. A code change: check framing;
    - a floor on the tag size in `calls.ts`;
-   - plainer wording for the reasons `classify()` gives in `src/viz/_grammar/grammar.ts`
-     (today "more than one variable on the left");
-   - multi-line arrow labels in `drawAutomaton`;
-   - the page kit's scene builder (`faScene`) taking a drawing function; TestRow gaining a
-     "stopped" result; a general `parseBatch`; `drawRules` taking any rule;
-   - one chooser for layouts in `src/layouts` (today `pickLayout`, `bestPlacement` and the
-     chomsky-hierarchy chooser);
-   - `textWidth` factors for DejaVu (CI's font);
-   - Learn-panel tables that scroll sideways;
-   - moving `src/viz/_stage/arrange.ts` and `src/viz/_dp/strip.ts` into `src/layouts`;
+   - plainer wording for the reasons `classify()` gives in `src/viz/_grammar/grammar.ts`;
+   - move `construct`, `pictures`, `pairKey`, `randomRegex`, `randomWord` from
+     `src/viz/regex-to-nfa/` into `src/viz/_automata/` (regex-engines imports them); a shared
+     `readWord`;
+   - one word-wrap helper in `src/layouts` (dfa-to-regex, halting-problem and pumping-lemma each
+     have their own); `drawTape` with rows and identity-based cell ids; `tableScene` with a
+     separated extra row and column;
+   - `drawAutomaton`: multi-line and custom move labels, output inside a state (mealy-moore has
+     a local `draw.ts`), a diagonal start arrow, a layer-gap option for `layoutFromLayers`;
+   - `page.ts`: a `parse` option for `loadOp`; `wordProblem`'s hint mentions a Test button some
+     pages lack; a shared two-machine input parser;
+   - `matches` in `regex.ts` is exponential on deeply nested concatenations (memoize by node
+     and position); `parseRegex` stops at 40 characters;
+   - one chooser for layouts in `src/layouts` (today `pickLayout`, `bestPlacement`, the
+     chomsky-hierarchy chooser and per-page `placePanels`/`fitScore` column pickers);
+   - `textWidth` factors for DejaVu (CI's font); Learn-panel tables that scroll sideways;
+   - move `src/viz/_stage/arrange.ts` and `src/viz/_dp/strip.ts` into `src/layouts`;
    - wrap options for node-chain, align, bars and columns; an "auto" arrangement for
      graph-representations and stack-array.
 3. Pages still small (option 3): the Master theorem's smallest text is about 8 px on a laptop
@@ -93,16 +86,19 @@ None with unmerged content. `next` is ahead of `main`; `main` is an ancestor of 
 
 ## Waiting on Yusuf
 
-- Read the concept pages of the ten new pages for voice. Every agent invoked
+- Read the concept pages of the 17 automata pages for voice (not urgent). Every agent invoked
   `anthropic-skills:write-like-pisan` before its final `explain.md`; nobody has read them against
-  it. Start with chomsky-hierarchy, pda and turing-machine.
+  it. Start with chomsky-hierarchy, pda and turing-machine. Send page links only once live.
 
 ## Not verified
 
 - The zoom-button clearance moves side panels on about 25 graph pages. Their tests pass;
   nobody has looked at screenshots of them.
-- Thumbnails of the ten new pages were checked by eye once, on the desktop catalog; regex-to-nfa
-  is the busiest.
+- Thumbnails of the 17 automata pages were checked by eye once, on the desktop catalog;
+  regex-to-nfa is the busiest.
+- regex-engines: the backtracker skips an ε-move back to a state already passed at the same
+  position (so (a*)*b ends), and after 150 visits it shows only the steps where the count
+  doubles. Both are the agent's choices; no one else has reviewed them.
 
 ## Dated tasks
 
@@ -139,7 +135,7 @@ None with unmerged content. `next` is ahead of `main`; `main` is an ancestor of 
   Run fewer agents at once when usage is high.
 - Agent worktrees start from `main` (the default branch), not `next`: tell every agent to run
   `git reset --hard next` first (seen 7 November).
-- Agents: about four at a time, each in its own worktree with its own `E2E_PORT` (ports up to 4254 have been used; start new ones at 4255), told not to edit shared files, to name e2e
+- Agents: about four at a time, each in its own worktree with its own `E2E_PORT` (ports up to 4273 have been used; start new ones at 4274), told not to edit shared files, to name e2e
   specs after their pages, to use `showMe()` from `tests/e2e/helpers.ts` for "Show me" checks,
   to commit WIP before a limit stop, to add practice sets and a `preview`, to keep rows able to
   wrap for CI's wider font, to poll (`expect.poll`) when measuring the drawing, and not to

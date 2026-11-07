@@ -8,7 +8,6 @@
  *   loadCall(a)              the load operation for an automaton
  */
 import type { Rng } from '../../engine/rng';
-import type { OpCall } from '../../engine/types';
 import {
   EPS,
   makeAutomaton,
@@ -16,11 +15,11 @@ import {
   type Automaton,
   type Move,
 } from '../_automata/automaton';
-import { formatAutomaton } from '../_automata/parse';
+import { randomWord as wordOver } from '../_automata/random';
+
+export { loadCall } from '../_automata/page';
 
 const q = (i: number) => `q${i}`;
-
-export const loadCall = (a: Automaton): OpCall => ['load', formatAutomaton(a)];
 
 export function nthFromEnd(n: number): Automaton {
   const moves: Move[] = [
@@ -48,9 +47,8 @@ export function endsWith(word: string): Automaton {
   });
 }
 
-export function randomWord(rng: Rng, n: number): string {
-  return Array.from({ length: n }, () => (rng.int(0, 1) ? 'b' : 'a')).join('');
-}
+/** A word of length n over {a, b}. */
+export const randomWord = (rng: Rng, n: number): string => wordOver(rng, ['a', 'b'], n);
 
 export interface RandomOptions {
   /** Chance of an ε-move per state, from 0 to 1. Default 0.35. */

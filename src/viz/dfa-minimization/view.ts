@@ -20,7 +20,6 @@ import {
   layoutStates,
   stateId,
   type DrawOptions,
-  type Pt,
   type StateLayout,
 } from '../../layouts/automaton';
 import {
@@ -38,16 +37,11 @@ import {
   makeAutomaton,
   minimize,
   reachable,
+  setName,
   type Automaton,
 } from '../_automata/automaton';
-import {
-  automatonKey,
-  clearOfButtons,
-  drawBadges,
-  drawGrid,
-  gridWidths,
-  pickBest,
-} from '../nfa-to-dfa/kit';
+import { automatonKey } from '../_automata/page';
+import { drawGrid, gridWidths, pickBest } from '../_automata/panels';
 import {
   MIN_PREFIX,
   describe,
@@ -254,23 +248,13 @@ function trimmed(dfa: Automaton): Automaton {
   });
 }
 
-const only = (pos: Record<string, Pt>, states: string[]) =>
-  Object.fromEntries(states.map((q) => [q, pos[q]!]));
-
-/** A diagram with badges beside its states. */
-function withBadges(
+/** A diagram with a badge beside each state that has one. */
+const withBadges = (
   a: Automaton,
   layout: StateLayout,
   o: DrawOptions,
   badge: (q: string) => string | undefined,
-) {
-  const d = drawAutomaton(a, layout, o);
-  const b = drawBadges(d.shapes, only(layout.pos, a.states), badge, o.prefix, o.roles);
-  return {
-    shapes: [...d.shapes, ...b.shapes],
-    bounds: b.bounds ? unionBounds(d.bounds, b.bounds) : d.bounds,
-  };
-}
+) => drawAutomaton(a, layout, { ...o, note: badge });
 
 /**
  * The box the DFA takes once refining starts: its reachable states (still where the complete
@@ -289,7 +273,7 @@ function drawMin(
   roles?: Map<string, MarkRole>,
 ) {
   return withBadges(min, layoutStates(min, across), { prefix: MIN_PREFIX, roles }, (q) =>
-    blocks[q] && blocks[q]!.length > 1 ? `{${blocks[q]!.join(',')}}` : undefined,
+    blocks[q] && blocks[q]!.length > 1 ? setName(blocks[q]!) : undefined,
   );
 }
 
@@ -312,12 +296,11 @@ function arrange(dfa: Automaton, method: Method, stage?: StageSize): Frame {
       const mdx = side ? beside(t, 30) - mb.x : -mb.x;
       const mdy = side ? t.y - mb.y : below(t, 20) - mb.y;
       const room = unionBounds(t, { ...mb, x: mb.x + mdx, y: mb.y + mdy });
-      const placed = placePanels([], db, stage, (_out, x, y) => ({
+      const block = placePanels([], db, stage, (_out, x, y) => ({
         ...room,
         x: room.x + x,
         y: room.y + y,
       }));
-      const block = clearOfButtons(placed, db, stage);
       candidates.push({
         across,
         before: captioned(drawAutomaton(complete(dfa), layoutStates(complete(dfa), across)).bounds),

@@ -102,8 +102,16 @@ export function cykPractice(def: () => Def): PracticeKind[] {
       title: 'Accept or reject?',
       make(rng) {
         const [grammar, name, w] = pick(rng, [
-          [ANBN, 'aⁿbⁿ', pick(rng, ['aabb', 'aab', 'abab', 'ab', 'aaabbb', 'abb'])],
-          [CLASSIC, 'the grammar on the stage', word(rng, rng.int(2, 5), 'ab')],
+          [
+            ANBN,
+            'This grammar generates aⁿbⁿ.',
+            pick(rng, ['aabb', 'aab', 'abab', 'ab', 'aaabbb', 'abb']),
+          ],
+          [
+            CLASSIC,
+            'These rules are already in Chomsky normal form.',
+            word(rng, rng.int(2, 5), 'ab'),
+          ],
         ] as const);
         const e = parsed(grammar, w);
         const yes = !!e.end.accept;
@@ -111,7 +119,7 @@ export function cykPractice(def: () => Def): PracticeKind[] {
         const top = e.end.table![w.length - 1]![0]!;
         const options = ['Accept', 'Reject'];
         return {
-          prompt: `The grammar is for ${name}. Does CYK accept ${w}?`,
+          prompt: `${name} Does CYK accept ${w}?`,
           setup: [['load', grammar]],
           settings: { conversion: 'result' },
           answer: { kind: 'choice', options, correct: yes ? 0 : 1 },

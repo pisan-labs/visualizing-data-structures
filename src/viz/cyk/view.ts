@@ -11,7 +11,7 @@
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { padBounds, textWidth, translate, unionBounds } from '../../layouts/graph';
-import { tableScene, type TableFrame } from '../../layouts/table';
+import { tableGeometry, tableScene, type TableFrame } from '../../layouts/table';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import {
   BUTTONS_DROP,
@@ -88,12 +88,22 @@ function finalTable(g: Grammar, w: readonly Sym[]): Sym[][][] {
 const cellText = (vs: readonly Sym[] | null | undefined) =>
   vs === null || vs === undefined ? null : vs.length ? vs.join(',') : '∅';
 
+/** A cell's set on one line, or on two when it is long, so cells can stay narrow on a phone. */
+export function cellLines(vs: readonly Sym[]): string[] {
+  const one = cellText(vs)!;
+  if (vs.length <= 2 || one.length <= 5) return [one];
+  const k = Math.ceil(vs.length / 2);
+  return [`${vs.slice(0, k).join(',')},`, vs.slice(k).join(',')];
+}
+
+const LINE_SIZE = 18;
+
 function drawTable(out: Shape[], s: CykState, roles: ReadonlyMap<string, MarkRole>): Bounds {
   const w = s.word!;
   const n = w.length;
   const done = finalTable(s.cnf.cnf, w);
-  const longest = Math.max(1, ...done.flat().map((c) => (cellText(c) ?? '').length));
-  const cellW = Math.round(Math.max(52, Math.min(100, 12 + longest * 0.6 * 18)));
+  const longest = Math.max(1, ...done.flat().flatMap((c) => cellLines(c).map((l) => l.length)));
+  const cellW = Math.round(Math.max(52, Math.min(92, 14 + longest * 0.6 * LINE_SIZE)));
   const frame: TableFrame = {
     rows: n,
     cols: n,
@@ -123,7 +133,28 @@ function drawTable(out: Shape[], s: CykState, roles: ReadonlyMap<string, MarkRol
     const m = /^(?:cell|val)-(\d+)-(\d+)$/.exec(id);
     return !!m && Number(m[2]) + (n - Number(m[1])) > n;
   };
-  out.push(...shapes.filter((x) => !outside(x.id)));
+  // A long set goes on two lines: the value's text becomes the first, and a second text follows.
+  const g = tableGeometry(frame);
+  const kept: Shape[] = [];
+  for (const x of shapes) {
+    if (outside(x.id)) continue;
+    kept.push(x);
+    const m = /^val-(\d+)-(\d+)$/.exec(x.id);
+    if (!m || x.kind !== 'text') continue;
+    const [r, c] = [Number(m[1]), Number(m[2])];
+    const vs = s.table![n - r - 1]![c];
+    if (!vs) continue;
+    const lines = cellLines(vs);
+    if (lines.length < 2) continue;
+    const longestLine = Math.max(...lines.map((l) => l.length));
+    const size = Math.min(LINE_SIZE, Math.floor((cellW - 8) / (longestLine * 0.6)));
+    const cy = g.cy(r);
+    x.text = lines[0]!;
+    x.size = size;
+    x.y = cy - 0.2 * size;
+    kept.push({ ...x, id: `${x.id}-2`, text: lines[1]!, y: cy + 0.85 * size });
+  }
+  out.push(...kept);
   return bounds;
 }
 

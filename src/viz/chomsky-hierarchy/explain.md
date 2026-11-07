@@ -6,14 +6,16 @@ regular ⊂ context-free ⊂ context-sensitive ⊂ recursively enumerable
 
 Each level comes with a machine that recognizes its languages and a shape of grammar rule that generates them. Go out one level and you get a stronger machine, looser rules and a harder question about membership. Go past the last one and there is no machine at all.
 
-| Level | Machine | Grammar rules | Is w in L? (\|w\| = n) |
-|---|---|---|---|
-| Regular (Type 3) | finite automaton | A → wB or A → w | Θ(n), one move per symbol |
-| Context-free (Type 2) | pushdown automaton | A → γ | Θ(n³·\|G\|) with CYK |
-| Context-sensitive (Type 1) | linear-bounded automaton | α → β with \|α\| ≤ \|β\| | decidable, PSPACE-complete in general |
-| Recursively enumerable (Type 0) | Turing machine | α → β | undecidable |
+| Level | Machine | Grammar rules |
+|---|---|---|
+| Regular (Type 3) | finite automaton | A → wB or A → w |
+| Context-free (Type 2) | pushdown automaton | A → γ |
+| Context-sensitive (Type 1) | linear-bounded automaton | α → β with \|α\| ≤ \|β\| |
+| Recursively enumerable (Type 0) | Turing machine | α → β |
 
 In the rules, capitals are variables, w is a string of terminals, γ is any string, and α and β are strings with at least one variable in α.
+
+Is a word of length n in the language? A DFA answers in Θ(n), one move per symbol. CYK answers for any context-free grammar in Θ(n³·|G|). For context-sensitive languages the answer always comes, but in general the problem is PSPACE-complete. For recursively enumerable ones there may be no answer at all: the machine can run forever. The Big-O tab has the details.
 
 Noam Chomsky numbered these types in the late 1950s while looking for a theory of grammar for natural languages, so Type 0 is the most general and Type 3 the most restricted. Sipser names the classes of languages instead, and adds one more between the last two: the decidable languages. The **Show the decidable languages** option draws that band, and **Name the levels** switches between names and types.
 

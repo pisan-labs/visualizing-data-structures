@@ -26,7 +26,7 @@ The backtracker walks the NFA like a maze. It keeps a position in the word and a
 4. At a dead end (the arrow wants b and the next symbol is a, or the word ran out), pop the latest choice and go on from there. That is a **backtrack**.
 5. Reaching the accept state with the whole word read is a match. An empty stack means every path failed.
 
-Which way goes first? A star tries to go in before skipping (greedy, as in Perl), and `a|b` tries a first. The **Backtracker tries first** option flips stars to lazy, like `*?` in Perl. Lazy changes how soon a match is found, never whether one is. On `a?a?a?aaa` against aaa, lazy matches on its first path in 12 steps; greedy reads an a for each `a?`, runs out of a's for the `aaa` and needs 66. [Trying the short way first](#example:lazy-order)
+Which way goes first? A star tries to go in before skipping (greedy, as in Perl), and `a|b` tries a first. Under Options, **The backtracker tries first** flips stars to lazy, like `*?` in Perl. Lazy changes how soon a match is found, never whether one is. On `a?a?a?aaa` against aaa, lazy matches on its first path in 12 steps; greedy reads an a for each `a?`, runs out of a's for the `aaa` and needs 66. [Trying the short way first](#example:lazy-order)
 
 One more rule. In `(a*)*b`, the inner `a*` can match nothing, so the outer star could go round forever without reading anything. The backtracker refuses to follow an ε-arrow back to a state it has already passed at the same position. Real engines do something similar: an iteration that matches nothing ends the loop. [A loop that reads nothing](#example:empty-loop)
 

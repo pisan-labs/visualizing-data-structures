@@ -8,7 +8,8 @@ import { parseInput, turingMachine } from '.';
 import { ADD, COPY, FLIP, INCREMENT, PALINDROME, WALK, ZERO_ONE } from './machines';
 import { LOOPY } from './practice';
 import type { TmSettings } from './model';
-import { arrowLabel, diagramOf, fitLine, view } from './view';
+import { fitLine } from '../../layouts/trace';
+import { arrowLabel, diagramOf, view } from './view';
 
 const settings = (s: Partial<TmSettings> = {}): TmSettings =>
   ({ ...turingMachine.defaults, ...s }) as TmSettings;
@@ -322,7 +323,9 @@ describe('Turing machine page', () => {
   });
 
   it('cuts long configurations around the head', () => {
-    expect(fitLine({ u: '0000000000', q: 'q1', v: '1111111111' }, 14)).toBe('…0000 q1 1111…');
-    expect(fitLine({ u: '', q: 'q0', v: '01' }, 14)).toBe('q0 01');
+    expect(fitLine({ parts: ['0000000000', 'q1', '1111111111'] }, 14)).toBe('…0000 q1 1111…');
+    expect(fitLine({ parts: ['', 'q0', '01'] }, 14)).toBe('q0 01');
+    // With nothing left of the head, the right side gets all the room.
+    expect(fitLine({ parts: ['', 'q0', '0123456789abcdef'] }, 14)).toBe('q0 0123456789…');
   });
 });

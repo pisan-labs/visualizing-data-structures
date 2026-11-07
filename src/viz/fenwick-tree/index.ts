@@ -158,6 +158,7 @@ export const fenwickTree: VizDef<FenState, FenSettings, FenExtra> = {
     buildLinear,
     buildByAdds,
   ] as unknown as SavedExample[],
+  preview: { example: 'add-then-query', level: 2 },
 };
 
 /**

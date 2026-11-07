@@ -201,6 +201,7 @@ export const bigOLab: VizDef<LabState, LabSettings, undefined> = {
     factorial,
     logScale,
   ] as unknown as SavedExample[],
+  preview: { example: 'small-n-crossover', level: 2 },
 };
 
 /** Counts the drivers can reach by looping without taking long. */

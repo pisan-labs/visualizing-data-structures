@@ -114,6 +114,7 @@ export const quickselect: VizDef<ArrayState, SelectSettings, ArrayExtra> = {
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [median, smallest, lucky, sortedWorst, hoare, duplicates] as unknown as SavedExample[],
   practice: selectPractice(() => quickselect),
+  preview: { example: 'median', level: 2 },
 };
 
 export default quickselect;

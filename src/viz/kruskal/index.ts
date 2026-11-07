@@ -143,6 +143,7 @@ export const kruskal: VizDef<KruskalState, KruskalSettings, KruskalExtra> = {
     dense,
   ] as unknown as SavedExample[],
   practice: kruskalPractice(() => kruskal),
+  preview: { example: 'lightest-first', level: 2, hide: ['el-', 'uf-', 'ufp-'] },
 };
 
 const graphLines = (g: Graph) => [

@@ -229,7 +229,7 @@ export interface PreviewSpec {
   example?: string;
   /** Finest step level to include; default 1 (milestones only). */
   level?: Level;
-  /** Shape id prefixes to leave out, such as the box that holds an operation's argument. */
+  /** Shape id prefixes to leave out, besides the input and output boxes every preview drops. */
   hide?: string[];
 }
 

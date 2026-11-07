@@ -11,10 +11,18 @@ import { shapesBounds, type Bounds, type Shape } from './scene';
 export interface Preview {
   bounds: Bounds;
   frames: Shape[][];
+  /** The frame shown at rest: the fullest one (the latest of equals), not an emptied end state. */
+  poster: number;
 }
 
 /** The most frames a preview keeps; longer examples are sampled evenly, keeping the last. */
 export const MAX_FRAMES = 24;
+
+/**
+ * Shape ids every preview leaves out: the boxes that hold an operation's input and output. They
+ * carry text, so stripped they are empty frames.
+ */
+export const DEFAULT_HIDE = ['arg-box', 'in-box', 'out-box', 'key-box', 'result-box'];
 
 const round = (v: number) => Math.round(v * 10) / 10;
 
@@ -58,7 +66,7 @@ export function makePreview(def: AnyVizDef): Preview | null {
     if (step.level <= level) steps.push(step);
   }
   const frames = sample(steps, MAX_FRAMES)
-    .map((step) => strip(def.view(step, settings).shapes, spec.hide ?? []))
+    .map((step) => strip(def.view(step, settings).shapes, [...DEFAULT_HIDE, ...(spec.hide ?? [])]))
     // Keep the drawing on screen from the first frame: an empty start shows nothing.
     .filter((shapes, i, all) => shapes.length > 0 || i === all.length - 1);
   const boxes = frames.map((f) => shapesBounds(f, 0)).filter((b): b is Bounds => b !== null);
@@ -74,8 +82,26 @@ export function makePreview(def: AnyVizDef): Preview | null {
     w: round(x2 - x1 + 2 * pad),
     h: round(y2 - y1 + 2 * pad),
   };
-  return { bounds, frames };
+  let poster = 0;
+  frames.forEach((f, i) => {
+    if (f.length >= frames[poster]!.length) poster = i;
+  });
+  return { bounds, frames, poster };
 }
+
+/**
+ * What the catalog loads up front: each page's still picture. The frames come only when a
+ * thumbnail first plays (one file per page), so phones, which have no hover, never fetch them.
+ */
+export interface PreviewPoster {
+  bounds: Bounds;
+  shapes: Shape[];
+}
+
+export const posterOf = (p: Preview): PreviewPoster => ({
+  bounds: p.bounds,
+  shapes: p.frames[p.poster]!,
+});
 
 /** Previews of every page that asks for one, keyed by page id. */
 export function makePreviews(defs: AnyVizDef[]): Record<string, Preview> {
@@ -84,5 +110,12 @@ export function makePreviews(defs: AnyVizDef[]): Record<string, Preview> {
     const p = makePreview(def);
     if (p) out[def.id] = p;
   }
+  return out;
+}
+
+/** The still pictures of every page, keyed by page id: /previews.json. */
+export function makePosters(defs: AnyVizDef[]): Record<string, PreviewPoster> {
+  const out: Record<string, PreviewPoster> = {};
+  for (const [id, p] of Object.entries(makePreviews(defs))) out[id] = posterOf(p);
   return out;
 }

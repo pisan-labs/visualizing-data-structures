@@ -129,6 +129,7 @@ export const circularLinkedList: VizDef<CState, CSettings, CExtra> = {
   practice: circularPractice(() => circularLinkedList),
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [backIsFront, rotate, traverse, oneNode, search, queue] as unknown as SavedExample[],
+  preview: { example: 'rotate', level: 2 },
 };
 
 /** The driver's line for one operation, read off the model's last step. */

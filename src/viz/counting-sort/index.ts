@@ -112,6 +112,7 @@ export const countingSort: VizDef<ArrayState, CountSettings, CountExtra> = {
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [countAndPlace, stable, bigK, allEqual, reverse] as unknown as SavedExample[],
   practice: countingPractice(() => countingSort),
+  preview: { example: 'count-and-place', level: 2 },
 };
 
 export default countingSort;

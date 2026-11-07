@@ -254,6 +254,7 @@ export const convexHull: VizDef<HullState, HullSettings, HullExtra> = {
     fewCorners,
     monotoneChain,
   ] as unknown as SavedExample[],
+  preview: { example: 'small-set', level: 2, hide: ['stk-'] },
 };
 
 /**

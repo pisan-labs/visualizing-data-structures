@@ -278,7 +278,7 @@ export const bst: VizDef<BSTState, BSTSettings, BSTExtra> = {
     duplicates,
     keyValue,
   ] as unknown as SavedExample[],
-  preview: { example: 'balanced-order', level: 2, hide: ['arg-box'] },
+  preview: { example: 'balanced-order', level: 2 },
 };
 
 /**

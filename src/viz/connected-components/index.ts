@@ -165,6 +165,7 @@ export const connectedComponents: VizDef<CcState, CcSettings, CcExtra> = {
     directedWeak,
   ] as unknown as SavedExample[],
   practice: ccPractice(() => connectedComponents),
+  preview: { example: 'three-pieces', level: 2, hide: ['vn-', 'q-', 'tbl-'] },
 };
 
 const graphLines = (g: Graph) => [

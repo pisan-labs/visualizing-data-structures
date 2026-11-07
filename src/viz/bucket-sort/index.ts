@@ -180,6 +180,7 @@ export const bucketSort: VizDef<ArrayState, BucketSettings, BucketExtra> = {
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [spreadOut, oneBucket, even, integers, outlier] as unknown as SavedExample[],
   practice: bucketPractice(() => bucketSort),
+  preview: { example: 'spread-out', level: 2 },
 };
 
 /**

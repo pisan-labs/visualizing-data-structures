@@ -176,6 +176,7 @@ export const lruCache: VizDef<LruState, LruSettings, LruExtra> = {
     loopMisses,
     oneEntry,
   ] as unknown as SavedExample[],
+  preview: { example: 'evict-lru', level: 2 },
 };
 
 /**

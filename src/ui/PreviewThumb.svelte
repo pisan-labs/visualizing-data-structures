@@ -1,6 +1,6 @@
 <script lang="ts">
   import { easeInOut, interpolate } from '../render/interpolate';
-  import type { Preview } from '../render/preview';
+  import type { Preview, PreviewPoster } from '../render/preview';
   import type { Scene, Shape } from '../render/scene';
   import Shapes from './Shapes.svelte';
   import { reducedMotion } from './state.svelte';
@@ -10,39 +10,58 @@
   import.meta.glob('../viz/*/*.css', { eager: true });
 
   /**
-   * A catalog thumbnail. At rest it shows the example's final frame; while `playing` it loops
-   * through every frame. The title beside it says what it is, so it is hidden from screen readers.
+   * A catalog thumbnail. At rest it shows the page's still picture; the first time it plays it
+   * fetches the frames (/previews/<id>.json) and then loops through them while `playing`. The
+   * title beside it says what it is, so it is hidden from screen readers.
    */
-  let { preview, playing = false }: { preview: Preview; playing?: boolean } = $props();
+  let {
+    id,
+    poster,
+    playing = false,
+  }: { id: string; poster: PreviewPoster; playing?: boolean } = $props();
 
   const TWEEN = 280;
   const HOLD = 170;
   const REST = 1200;
 
-  const scenes = $derived<Scene[]>(
-    preview.frames.map((shapes) => ({ shapes, bounds: preview.bounds, label: '' })),
-  );
-  const poster = $derived(interpolate(scenes.at(-1)!, scenes.at(-1)!, 1).shapes);
+  const rest = $derived<Scene>({ shapes: poster.shapes, bounds: poster.bounds, label: '' });
+  const still = $derived(interpolate(rest, rest, 1).shapes);
+  let frames = $state.raw<Scene[] | null>(null);
+  let loading = false;
   let shown = $state.raw<Shape[] | null>(null);
 
   $effect(() => {
-    const all = scenes;
-    const n = all.length;
-    if (!playing || n < 2 || reducedMotion()) {
+    if (!playing || frames || loading || reducedMotion()) return;
+    loading = true;
+    fetch(`/previews/${id}.json`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((p: Preview | null) => {
+        if (p) frames = p.frames.map((shapes) => ({ shapes, bounds: p.bounds, label: '' }));
+      })
+      .catch(() => {})
+      .finally(() => (loading = false));
+  });
+
+  $effect(() => {
+    const all = frames;
+    const from0 = rest;
+    if (!playing || !all || all.length < 2 || reducedMotion()) {
       shown = null;
       return;
     }
-    // Transition k goes from frame k-1 to frame k; the first leaves the final frame on show at
+    const n = all.length;
+    // Transition k goes from frame k-1 to frame k. The very first one leaves the frame shown at
     // rest, so playback starts without a jump. The last frame is held longer before the loop.
     const slot = (k: number) => TWEEN + (k === n - 1 ? REST : HOLD);
     const cycle = n * (TWEEN + HOLD) + REST - HOLD;
     let raf = 0;
     const start = performance.now();
     const frame = (now: number) => {
+      const first = now - start < cycle;
       let t = (now - start) % cycle;
       let k = 0;
       while (t >= slot(k)) t -= slot(k++);
-      const from = all[(k - 1 + n) % n]!;
+      const from = k === 0 && first ? from0 : all[(k - 1 + n) % n]!;
       shown = interpolate(from, all[k]!, easeInOut(Math.min(1, t / TWEEN))).shapes;
       raf = requestAnimationFrame(frame);
     };
@@ -53,11 +72,11 @@
 
 <svg
   class="thumb"
-  viewBox="{preview.bounds.x} {preview.bounds.y} {preview.bounds.w} {preview.bounds.h}"
+  viewBox="{poster.bounds.x} {poster.bounds.y} {poster.bounds.w} {poster.bounds.h}"
   aria-hidden="true"
   focusable="false"
 >
-  <Shapes shapes={shown ?? poster} />
+  <Shapes shapes={shown ?? still} />
 </svg>
 
 <style>
@@ -80,5 +99,11 @@
 
   svg.thumb :global(.shape[class*='role-']) {
     stroke-width: 2px;
+  }
+
+  /* Arrowheads scale with the stroke, which no longer shrinks, so they would swamp the picture. */
+  svg.thumb :global(line) {
+    marker-start: none;
+    marker-end: none;
   }
 </style>

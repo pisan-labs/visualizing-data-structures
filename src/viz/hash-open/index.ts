@@ -170,6 +170,7 @@ export const hashOpen: VizDef<OpenState, OpenSettings, OpenExtra> = {
     fullTable,
     triangular,
   ] as unknown as SavedExample[],
+  preview: { example: 'primary-clustering', level: 2 },
 };
 
 /**

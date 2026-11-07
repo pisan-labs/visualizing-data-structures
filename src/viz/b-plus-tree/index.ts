@@ -185,7 +185,7 @@ export const bPlusTree: VizDef<BState, BPSettings, BPExtra> = {
     merge,
     mergeCascade,
   ] as unknown as SavedExample[],
-  preview: { example: 'push-up', level: 2, hide: ['arg-box'] },
+  preview: { example: 'push-up', level: 2 },
 };
 
 /**

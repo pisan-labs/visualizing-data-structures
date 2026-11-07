@@ -168,6 +168,7 @@ export const recursionDag: VizDef<DagState, DagSettings, undefined> = {
     binomSixThree,
     nothingShared,
   ] as unknown as SavedExample[],
+  preview: { example: 'fib-five', level: 2 },
 };
 
 /**

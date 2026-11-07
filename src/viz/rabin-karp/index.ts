@@ -163,6 +163,7 @@ export const rabinKarp: VizDef<MatchState<null>, RkSettings, MatchExtra> = {
     needsDigits,
   ] as unknown as SavedExample[],
   practice: rkPractice(() => rabinKarp),
+  preview: { example: 'digits', level: 2 },
 };
 
 export default rabinKarp;

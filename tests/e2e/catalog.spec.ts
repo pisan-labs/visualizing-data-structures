@@ -7,9 +7,12 @@ const thumb = (page: Page, title: string) =>
   trees(page).getByRole('link', { name: title, exact: true }).locator('svg.thumb');
 const drawing = (page: Page, title: string) => thumb(page, title).innerHTML();
 
-test('every tree page has a thumbnail, hidden from screen readers', async ({ page }) => {
+test('every page has a thumbnail, hidden from screen readers', async ({ page }) => {
   await page.goto('/');
   await expect(trees(page).locator('svg.thumb')).toHaveCount(10);
+  await expect(page.locator('li.live svg.thumb')).toHaveCount(
+    await page.locator('li.live').count(),
+  );
   await expect(thumb(page, 'Red-black tree')).toHaveAttribute('aria-hidden', 'true');
   // The thumbnail is drawn shapes only: no text.
   await expect(thumb(page, 'Binary search tree').locator('circle').first()).toBeVisible();
@@ -37,12 +40,18 @@ test('keyboard focus plays a thumbnail too', async ({ page }) => {
 
 test('thumbnails stay still when the reader asks for reduced motion', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
+  const frameFiles: string[] = [];
+  page.on('request', (r) => {
+    if (r.url().includes('/previews/')) frameFiles.push(r.url());
+  });
   await page.goto('/');
   await thumb(page, 'B-tree').waitFor();
   const rest = await drawing(page, 'B-tree');
   await trees(page).getByRole('link', { name: 'B-tree', exact: true }).focus();
   await page.waitForTimeout(1000);
   expect(await drawing(page, 'B-tree')).toBe(rest);
+  // The frames are fetched only to play, so they are never fetched here.
+  expect(frameFiles).toEqual([]);
 });
 
 test('the catalog with thumbnails has no axe violations', async ({ page }) => {

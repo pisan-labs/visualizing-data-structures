@@ -1,7 +1,7 @@
 // After `vite build`: write dist/<id>/index.html for every visualization, so each page has its
 // own title, description and link preview, plus a sitemap, robots.txt and the catalog thumbnails
-// (previews.json). The app itself is the same on every page; it reads the page's path to decide
-// what to show.
+// (previews.json, previews/<id>.json). The app itself is the same on every page; it reads the
+// page's path to decide what to show.
 import fs from 'node:fs';
 import path from 'node:path';
 import { createServer } from 'vite';
@@ -46,9 +46,16 @@ try {
   }
 
   // Catalog thumbnails: the steps of one example per page, stripped to bare shapes.
-  const { makePreviews } = await server.ssrLoadModule('/src/render/preview.ts');
+  // previews.json holds the still pictures; previews/<id>.json the frames, fetched on first play.
+  const { makePreviews, posterOf } = await server.ssrLoadModule('/src/render/preview.ts');
   const previews = makePreviews(vizzes);
-  fs.writeFileSync(path.join(dist, 'previews.json'), JSON.stringify(previews));
+  fs.mkdirSync(path.join(dist, 'previews'), { recursive: true });
+  const posters = {};
+  for (const [id, p] of Object.entries(previews)) {
+    posters[id] = posterOf(p);
+    fs.writeFileSync(path.join(dist, 'previews', `${id}.json`), JSON.stringify(p));
+  }
+  fs.writeFileSync(path.join(dist, 'previews.json'), JSON.stringify(posters));
 
   const urls = [`${SITE_URL}/`, ...vizzes.map((d) => `${SITE_URL}/${d.id}/`)];
   fs.writeFileSync(

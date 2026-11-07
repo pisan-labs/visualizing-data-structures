@@ -133,6 +133,7 @@ export const radixSort: VizDef<ArrayState, RadixSettings, RadixExtra> = {
     oneBucket,
   ] as unknown as SavedExample[],
   practice: radixPractice(() => radixSort),
+  preview: { example: 'three-digits', level: 2 },
 };
 
 export default radixSort;

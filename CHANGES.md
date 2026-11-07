@@ -177,3 +177,5 @@
 2026-11-07 [decision] Catalog thumbnails: Yusuf chose animated SVG drawn from data over GIF (all themes, about 1.5 KB a page), left of each title, play on hover or focus, text stripped; pilot family Trees
 
 2026-11-07 [code] Trees thumbnails: VizDef.preview names an example; src/render/preview.ts strips it to shapes in one frame; prerender writes dist/previews.json and the dev server makes it on request
+
+2026-11-07 [code] Thumbnails for all 108 pages; posters show the fullest frame; input and output boxes always hidden; no arrowheads in thumbnails; graph and geometry pages hide side tables and matrix brackets

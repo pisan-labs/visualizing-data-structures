@@ -187,6 +187,7 @@ export const maxFlow: VizDef<MfState, MfSettings, MfExtra> = {
     unitPaths,
   ] as unknown as SavedExample[],
   practice: maxFlowPractice(() => maxFlow),
+  preview: { example: 'three-paths', level: 2 },
 };
 
 const netLines = (net: Network) => [

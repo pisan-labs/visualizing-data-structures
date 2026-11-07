@@ -188,6 +188,7 @@ export const masterTheorem: VizDef<MtState, MtSettings, undefined> = {
     theGap,
     simpleForm,
   ] as unknown as SavedExample[],
+  preview: { example: 'simple-form', level: 2 },
 };
 
 /**

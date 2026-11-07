@@ -154,6 +154,7 @@ export const topoIndegree: VizDef<TopoState, TopoSettings, TopoExtra> = {
     wide,
   ] as unknown as SavedExample[],
   practice: topoPractice(() => topoIndegree),
+  preview: { example: 'paths-dag', level: 2, hide: ['vn-', 'q-', 'L-', 'tbl-'] },
 };
 
 const graphLines = (g: Graph) => [

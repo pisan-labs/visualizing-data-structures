@@ -162,6 +162,7 @@ export const aStar: VizDef<AStarState, AStarSettings, AStarExtra> = {
     noPath,
   ] as unknown as SavedExample[],
   practice: aStarPractice(() => aStar),
+  preview: { example: 'manhattan', level: 2, hide: ['pq-'] },
 };
 
 /**

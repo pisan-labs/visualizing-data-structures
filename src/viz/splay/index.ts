@@ -180,7 +180,7 @@ export const splayTree: VizDef<SplayState, SplaySettings, SplayExtra> = {
     deleteJoin,
     deleteBst,
   ] as unknown as SavedExample[],
-  preview: { example: 'repeated-access', hide: ['arg-box'] },
+  preview: { example: 'repeated-access' },
 };
 
 /**

@@ -227,6 +227,7 @@ export const polygon: VizDef<PolyState, PolySettings, PolyExtra> = {
     starEvenOdd,
     starWinding,
   ] as unknown as SavedExample[],
+  preview: { example: 'star-winding', level: 2 },
 };
 
 /**

@@ -217,6 +217,7 @@ export const binarySearch: VizDef<ArrayState, BinarySettings, ArrayExtra> = {
     recursive,
   ] as unknown as SavedExample[],
   practice: binaryPractice(() => binarySearch),
+  preview: { example: 'found', level: 3 },
 };
 
 export default binarySearch;

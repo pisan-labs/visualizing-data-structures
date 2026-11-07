@@ -161,6 +161,7 @@ export const heapSort: VizDef<ArrayState, HeapSortSettings, ArrayExtra> = {
     allEqual,
   ] as unknown as SavedExample[],
   practice: heapSortPractice(() => heapSort),
+  preview: { example: 'build-bottom-up' },
 };
 
 export default heapSort;

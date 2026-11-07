@@ -137,6 +137,7 @@ export const gridBfs: VizDef<BfsGridState, BfsGridSettings, BfsGridExtra> = {
     ties,
   ] as unknown as SavedExample[],
   practice: gridBfsPractice(() => gridBfs),
+  preview: { example: 'around-the-wall', level: 2, hide: ['q-'] },
 };
 
 /**

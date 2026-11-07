@@ -123,6 +123,7 @@ export const skewHeap: VizDef<MeldState, MeldSettings, MeldExtra> = {
     mergeTwoHeaps,
     deleteMinMerge,
   ] as unknown as SavedExample[],
+  preview: { example: 'merge-two-heaps', level: 2 },
 };
 
 export default skewHeap;

@@ -245,6 +245,7 @@ export const binaryHeap: VizDef<HeapState, HeapSettings, HeapExtra> = {
     deleteSiftsUp,
     minHeapZero,
   ] as unknown as SavedExample[],
+  preview: { example: 'build-by-inserts', level: 2 },
 };
 
 /** Does the model refuse this call before it looks at the heap (a key or index it cannot read)? */

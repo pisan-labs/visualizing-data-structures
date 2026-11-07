@@ -232,6 +232,7 @@ export const coordinates3d: VizDef<Coord3State, Coord3Settings, Coord3Extra> = {
     leftHanded,
     obliqueView,
   ] as unknown as SavedExample[],
+  preview: { example: 'moving-the-frame', level: 3, hide: ['m-', 'mi-'] },
 };
 
 /**

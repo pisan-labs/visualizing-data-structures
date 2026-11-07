@@ -193,6 +193,7 @@ export const dpKnapsack: VizDef<KnapState, KnapSettings, KnapExtra> = {
     largest,
   ] as unknown as SavedExample[],
   practice: knapPractice(() => dpKnapsack),
+  preview: { example: 'four-items', level: 2 },
 };
 
 /**

@@ -221,6 +221,7 @@ export const suffixTree: VizDef<StState, StSettings, StExtra> = {
     notThere,
   ] as unknown as SavedExample[],
   practice: suffixTreePractice(() => suffixTree),
+  preview: { example: 'banana', level: 2 },
 };
 
 /**

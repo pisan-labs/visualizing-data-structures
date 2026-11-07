@@ -11,9 +11,9 @@ A PDA has states, an input alphabet, a stack alphabet, a start state and accept 
 | Operation | What it does | Cost |
 |---|---|---|
 | **Load** | Read the moves into the diagram | O(moves) |
-| **Run** w, deterministic | One configuration, one move at a time | Θ(n) moves |
-| **Run** w, nondeterministic | A breadth-first search over configurations | up to 200 configurations |
-| **Test** | Run a batch such as `+aabb -aab` and compare | one run per word |
+| **Run** w, deterministic | One configuration, one move at a time | Θ(n) |
+| **Run** w, guessing | Breadth-first search over configurations | capped at 200 |
+| **Test** | Run a batch of words and compare | a run per word |
 
 Everything about the machine at one moment fits in a configuration: (state, input left, stack), with the top of the stack first. The machine on this page starts in (q0, aabb, ε): state q0, all of aabb to read, and an empty stack. Sipser's machines start with an empty stack and push a marker, $, as their first move, so they can tell when the stack is back to the bottom.
 

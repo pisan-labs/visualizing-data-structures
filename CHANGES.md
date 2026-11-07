@@ -169,3 +169,5 @@
 2026-11-06 [code] A polygon shape kind (filled area, tinted by role, drawn behind lines; corners interpolate when their count matches); drawPolygon takes fill; the polygon page tints the polygon and each shoelace triangle
 
 2026-11-07 [decision] Handover at Yusuf's request (context about 50%, no agents running); the previous session starts the next one at once
+
+2026-11-07 [note] Session session_01JyJzMXcc2unSAwN88hsew5 took over at 08:00 and moved the three relay routines; Netlify auto-publishing is unlocked again (the live site still served a build from early 5 November)

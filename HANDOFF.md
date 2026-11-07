@@ -130,10 +130,12 @@ auto mode refused it as persistence. Lint and tests were run by hand before ever
   at depth 2.
 - The session-start routine looks only for a marker commit made since 15:30 that day, so this
   morning's handover cannot start a second session at 16:52.
-- Routines aimed at the previous session, to move at takeover:
-  - `trig_01WrodgXYXHnQCWP71RxfbU2`: StepWise hourly status report, `46 * * * *`.
-  - `trig_01Tg9X7MLii8DWA6vMVaY1VP`: StepWise handoff check, `CRON_TZ=Europe/Berlin 56 15 * * *`.
-  - `trig_01EZxsysCxTEvpueRRchrmfk`: StepWise daily handoff (session start),
+- Current session: `session_01JyJzMXcc2unSAwN88hsew5` (lineage depth 2, limit 8), created by
+  the previous session on Saturday 7 November at 07:59; it took over at 08:00.
+- Routines, moved to the current session at takeover (the old ids are deleted):
+  - `trig_01AEsnzySTfQAsgxsS9RCdAA`: StepWise hourly status report, `46 * * * *`.
+  - `trig_016mmp7qgknR6maFcPpcHyn6`: StepWise handoff check, `CRON_TZ=Europe/Berlin 56 15 * * *`.
+  - `trig_01Q4wsxyfeskA8277FXxTfcY`: StepWise daily handoff (session start),
     `CRON_TZ=Europe/Berlin 52 16 * * *`.
 - The account's other routines (DSA, Chess TD, Chess Analyzer, Plabs, TPT, product ideas,
   reminders) belong to other projects: never move or change them.

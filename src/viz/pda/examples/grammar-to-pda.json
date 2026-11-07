@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "pda",
+  "id": "grammar-to-pda",
+  "title": "From a grammar: S → aSb | ε",
+  "notes": "Sipser's construction turns a grammar into a PDA: push S$, then in q1 either replace the variable on top by one of its right-hand sides (an ε-move) or match the terminal on top with the next input symbol. The stack holds what is still to be matched, and the accepting computation follows a leftmost derivation of the word.",
+  "settings": {
+    "accept": "state",
+    "search": "all"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q2; q0 eps, eps -> q1 S$; q1 eps, S -> q1 aSb; q1 eps, S -> q1 eps; q1 a, a -> q1 eps; q1 b, b -> q1 eps; q1 eps, $ -> q2 eps"
+    ],
+    ["run", "aabb"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

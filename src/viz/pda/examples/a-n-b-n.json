@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "pda",
+  "id": "a-n-b-n",
+  "title": "aⁿbⁿ: push an a, pop one for each b",
+  "notes": "The machine pushes $ to mark the bottom, pushes an a for every a, and pops an a for every b. When $ is back on top, every a has been matched, and an ε-move pops it on the way to the accept state q3. On aab one a is still on the stack when the input runs out.",
+  "settings": {
+    "accept": "state",
+    "search": "all"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q0 q3; q0 eps, eps -> q1 $; q1 a, eps -> q1 a; q1 b, a -> q2 eps; q2 b, a -> q2 eps; q2 eps, $ -> q3 eps"
+    ],
+    ["run", "aabb"],
+    ["run", "aab"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

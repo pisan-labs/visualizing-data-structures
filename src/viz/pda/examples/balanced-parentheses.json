@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "pda",
+  "id": "balanced-parentheses",
+  "title": "Balanced parentheses: one ( on the stack per open one",
+  "notes": "q1 means nothing is open. The first ( goes on top of $ and moves to q2; every ( pushes one more, every ) pops one, and when $ is back on top an ε-move returns to q1, which accepts. Every move pops what it expects, so the machine is deterministic. On ()) the last ) finds $ on top and has no move.",
+  "settings": {
+    "accept": "state",
+    "search": "all"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q1; q0 eps, eps -> q1 $; q1 (, $ -> q2 ($; q2 (, ( -> q2 ((; q2 ), ( -> q2 eps; q2 eps, $ -> q1 $"
+    ],
+    ["run", "(()())"],
+    ["run", "())"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

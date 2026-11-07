@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "pda",
+  "id": "every-branch-dies",
+  "title": "A word that is rejected: every guess fails",
+  "notes": "abab is not a palindrome. Every guess of the middle dies: a symbol does not match the top of the stack, or q2 reaches $ with input still to read. When the queue is empty no branch is left, and the machine rejects.",
+  "settings": {
+    "accept": "state",
+    "search": "all"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q0 q3; q0 eps, eps -> q1 $; q1 a, eps -> q1 a; q1 b, eps -> q1 b; q1 eps, eps -> q2 eps; q2 a, a -> q2 eps; q2 b, b -> q2 eps; q2 eps, $ -> q3 eps"
+    ],
+    ["run", "abab"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

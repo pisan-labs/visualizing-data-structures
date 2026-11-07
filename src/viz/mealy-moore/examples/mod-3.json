@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "mealy-moore",
+  "id": "mod-3",
+  "title": "Remainder mod 3 of a binary number",
+  "notes": "Read a binary number from the left. Each bit b takes remainder r to 2r + b mod 3, and each state writes its remainder. 1101 is 13, and the outputs 0, 1, 0, 0, 1 are the remainders of ε, 1, 11, 110 and 1101.",
+  "settings": {
+    "first": "write"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start r0; r0 / 0; r1 / 1; r2 / 2; r0 0 -> r0; r0 1 -> r1; r1 0 -> r2; r1 1 -> r0; r2 0 -> r1; r2 1 -> r2"
+    ],
+    ["run", "1101"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

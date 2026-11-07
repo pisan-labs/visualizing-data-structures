@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "mealy-moore",
+  "id": "change-detector",
+  "title": "Did the input change? Every state splits",
+  "notes": "q0 means the last bit was 0, q1 that it was 1; a move writes 1 when the new bit differs. Both states are entered with 0 and with 1, so each splits in two: 2·2 = 4 Moore states, the most |Q|·|Δ| allows.",
+  "settings": {
+    "first": "write"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "start q0; q0 0 -> q0 / 0; q0 1 -> q1 / 1; q1 0 -> q0 / 1; q1 1 -> q1 / 0"],
+    ["convert"],
+    ["run", "0110"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

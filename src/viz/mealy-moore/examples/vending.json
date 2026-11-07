@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "mealy-moore",
+  "id": "vending",
+  "title": "A vending machine that sells at 15 cents",
+  "notes": "n is a nickel (5 cents) and d a dime (10). The state is the credit so far, and a move writes 1 when it sells. dnnd sells twice. Convert it and look at the Moore machine's start state: c0 is only ever entered by a sale, so its one copy writes 1, and the Moore machine writes 1 before any coin goes in.",
+  "settings": {
+    "first": "write"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start c0; c0 n -> c5 / 0; c0 d -> c10 / 0; c5 n -> c10 / 0; c5 d -> c0 / 1; c10 n -> c0 / 1; c10 d -> c5 / 1"
+    ],
+    ["run", "dnnd"],
+    ["convert"],
+    ["run", "dnnd"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

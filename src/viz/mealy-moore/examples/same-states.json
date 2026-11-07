@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "mealy-moore",
+  "id": "same-states",
+  "title": "Moore to Mealy keeps the states",
+  "notes": "A parity bit: e writes 0 while the number of 1s read is even, o writes 1 when it is odd. Each move into o now writes 1 and each move into e writes 0. Same two states, and the Mealy machine writes one symbol fewer.",
+  "settings": {
+    "first": "write"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "start e; e / 0; o / 1; e 0 -> e; e 1 -> o; o 0 -> o; o 1 -> e"],
+    ["convert"],
+    ["run", "1011"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

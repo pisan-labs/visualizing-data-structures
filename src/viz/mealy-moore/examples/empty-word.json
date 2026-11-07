@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "mealy-moore",
+  "id": "empty-word",
+  "title": "The empty word",
+  "notes": "Run ε after converting the 101 detector. The Mealy machine reads nothing and writes nothing. The Moore machine reads nothing too, but it writes 0, its start state's output.",
+  "settings": {
+    "first": "write"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; q0 0 -> q0 / 0; q0 1 -> q1 / 0; q1 0 -> q2 / 0; q1 1 -> q1 / 0; q2 0 -> q0 / 0; q2 1 -> q1 / 1"
+    ],
+    ["convert"],
+    ["run", "eps"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

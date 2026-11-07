@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { settled } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -72,6 +73,7 @@ test('the forest and the parent array stay readable', async ({ page }) => {
           .filter((e) => /^\d{1,2}$/.test(e.textContent ?? ''))
           .map((e) => e.getBoundingClientRect().height),
       );
+  await settled(page);
   await expect.poll(async () => (await heights()).length).toBeGreaterThan(40);
   await expect.poll(async () => Math.min(...(await heights()))).toBeGreaterThanOrEqual(9);
 });

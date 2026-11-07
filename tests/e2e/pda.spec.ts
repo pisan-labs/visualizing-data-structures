@@ -161,6 +161,7 @@ test('the panels sit beside the diagram on a laptop and under it on a phone', as
           .filter((e) => /→|^q\d$|^[ab$]$/.test(e.textContent ?? ''))
           .map((e) => e.getBoundingClientRect().height),
       );
+  await settled(page);
   await expect.poll(async () => (await heights()).length).toBeGreaterThan(10);
   await expect.poll(async () => Math.min(...(await heights()))).toBeGreaterThanOrEqual(9);
   const overflow = await page.evaluate(

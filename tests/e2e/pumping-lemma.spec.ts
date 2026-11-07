@@ -137,6 +137,7 @@ test('a 20-symbol string pumped five times stays readable and fits', async ({ pa
           .filter((e) => /^[ab]$/.test(e.textContent ?? ''))
           .map((e) => e.getBoundingClientRect().height),
       );
+  await settled(page);
   await expect.poll(async () => (await heights()).length).toBeGreaterThanOrEqual(40);
   await expect.poll(async () => Math.min(...(await heights()))).toBeGreaterThanOrEqual(8);
   expect(await overflow(page)).toBeLessThanOrEqual(0);

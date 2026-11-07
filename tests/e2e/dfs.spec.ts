@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { showMe } from './helpers';
+import { showMe, settled } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -100,6 +100,7 @@ test('ten vertices with the call stack, table and nesting stay readable', async 
           .filter((e) => /^([A-J]|\d+|\d+\/\d*|\(?[A-J]\)?)$/.test(e.textContent ?? ''))
           .map((e) => e.getBoundingClientRect().height),
       );
+  await settled(page);
   await expect.poll(async () => (await heights()).length).toBeGreaterThan(40);
   await expect.poll(async () => Math.min(...(await heights()))).toBeGreaterThanOrEqual(9);
   const overflow = await page.evaluate(

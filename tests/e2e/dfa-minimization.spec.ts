@@ -93,6 +93,7 @@ test('eight states shrink to three, and the drawing stays readable', async ({ pa
           .filter((e) => /^([A-H]|\d|#\d)$/.test(e.textContent ?? ''))
           .map((e) => e.getBoundingClientRect().height),
       );
+  await settled(page);
   await expect.poll(async () => (await heights()).length).toBeGreaterThan(12);
   await expect.poll(async () => Math.min(...(await heights()))).toBeGreaterThanOrEqual(8);
   const overflow = await page.evaluate(

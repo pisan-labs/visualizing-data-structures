@@ -135,6 +135,7 @@ test('both machines and three tapes stay readable', async ({ page }) => {
           .filter((e) => /^(q\d'*|[01])$/.test(e.textContent ?? ''))
           .map((e) => e.getBoundingClientRect().height),
       );
+  await settled(page);
   await expect.poll(async () => (await heights()).length).toBeGreaterThan(25);
   await expect.poll(async () => Math.min(...(await heights()))).toBeGreaterThanOrEqual(8);
   const overflow = () =>

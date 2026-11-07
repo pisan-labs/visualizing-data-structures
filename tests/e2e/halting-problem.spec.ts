@@ -136,6 +136,7 @@ test('six programs and a 40-step run stay readable and fit', async ({ page }) =>
           .filter((e) => /^(acc|rej|∞)$/.test(e.textContent ?? ''))
           .map((e) => e.getBoundingClientRect().height),
       );
+  await settled(page);
   await expect.poll(async () => (await heights()).length).toBeGreaterThanOrEqual(36);
   await expect.poll(async () => Math.min(...(await heights()))).toBeGreaterThanOrEqual(9);
   expect(await overflow(page)).toBeLessThanOrEqual(0);

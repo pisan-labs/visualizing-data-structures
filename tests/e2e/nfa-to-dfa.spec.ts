@@ -70,6 +70,7 @@ test('the third symbol from the end: 4 NFA states become 8, readable', async ({ 
           .filter((e) => /^(q\d|[A-H]|\*?[A-H]|\{[q\d,]+\})$/.test(e.textContent ?? ''))
           .map((e) => e.getBoundingClientRect().height),
       );
+  await settled(page);
   await expect.poll(async () => (await heights()).length).toBeGreaterThan(30);
   await expect.poll(async () => Math.min(...(await heights()))).toBeGreaterThanOrEqual(8);
   const overflow = await page.evaluate(

@@ -147,6 +147,7 @@ test('every pair of a 3 × 2 grid stays readable', async ({ page }) => {
           .filter((e) => /^(→?p\d,q\d|p\d|q\d|✓|–)$/.test(e.textContent ?? ''))
           .map((e) => e.getBoundingClientRect().height),
       );
+  await settled(page);
   await expect.poll(async () => (await heights()).length).toBeGreaterThan(40);
   await expect.poll(async () => Math.min(...(await heights()))).toBeGreaterThanOrEqual(8);
   const overflow = () =>

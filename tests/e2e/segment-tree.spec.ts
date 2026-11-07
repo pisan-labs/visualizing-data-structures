@@ -116,6 +116,7 @@ test('sixteen values and their tree stay readable', async ({ page }) => {
           .filter((e) => /^-?\d+$/.test(e.textContent ?? ''))
           .map((e) => e.getBoundingClientRect().height),
       );
+  await settled(page);
   await expect.poll(async () => (await heights()).length).toBeGreaterThanOrEqual(47);
   await expect.poll(async () => Math.min(...(await heights()))).toBeGreaterThanOrEqual(9);
   const overflow = await page.evaluate(

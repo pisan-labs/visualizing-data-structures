@@ -229,3 +229,5 @@
 2026-11-07 [code] Merged regex-engines (wave 5C): backtracking (choice stack, dead ends, 100,000-step cap) against Thompson NFA simulation on one NFA; Grow charts both on a log scale; wave 5C and the 17 automata pages are done
 
 2026-11-07 [code] dfa-to-regex e2e: the readability check waits for the drawing to settle; its count only passed when the poll caught a mid-animation frame (failed 1 in 15 on phone)
+
+2026-11-07 [code] The 25 e2e specs that count drawn labels now wait for settled() first; all 422 tests in them pass that way, so none relied on a mid-animation frame

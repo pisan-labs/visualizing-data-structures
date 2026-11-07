@@ -181,3 +181,5 @@
 2026-11-07 [decision] Deploys: work goes to next; main (which Netlify publishes, 15 credits each) fast-forwards to next daily at 17:27 Europe/Berlin or when Yusuf says "deploy"
 
 2026-11-07 [decision] Yusuf confirmed the automata defaults (PLAN.md decisions 29 to 33)
+
+2026-11-07 [code] Merged wave 5A: dfa, nfa, nfa-to-dfa, dfa-minimization, regex-to-nfa, turing-machine (src/viz/_turing); the agents recommend moving their page kits (dfa/kit.ts, nfa-to-dfa/kit.ts) and label placement into the shared automata code

@@ -6,7 +6,8 @@
   "notes": "The same machine on a tape that starts at cell 0. The carry out of 111 needs a cell to the left of the number, and there is none: the head stays put and the machine writes 100, which is wrong.",
   "settings": {
     "tape": "one-way",
-    "moves": "LR"
+    "moves": "LR",
+    "rules": "table"
   },
   "seed": 1,
   "ops": [

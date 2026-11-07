@@ -3,10 +3,11 @@
   "viz": "turing-machine",
   "id": "unary-add",
   "title": "Unary addition",
-  "notes": "2 + 3 in unary: 11+111 becomes 11111. Turn the + into a 1, walk to the end, erase the last 1. One pass: O(n) moves.",
+  "notes": "2 + 3 in unary: 11+111 becomes 11111. Turn the + into a 1, walk to the end, erase the last 1. One pass: O(n) moves. Drawn as a state diagram: 1→R reads a 1, leaves it and moves right.",
   "settings": {
     "tape": "one-way",
-    "moves": "LR"
+    "moves": "LR",
+    "rules": "diagram"
   },
   "seed": 1,
   "ops": [

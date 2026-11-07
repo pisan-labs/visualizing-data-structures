@@ -95,6 +95,16 @@ export const turingMachine: VizDef<TmState, TmSettings, TmExtra> = {
       ],
       help: 'S adds no power: a move right and then a move left does the same in two moves.',
     },
+    {
+      kind: 'choice',
+      key: 'rules',
+      label: 'Show the rules as',
+      options: [
+        { value: 'table', label: 'A transition table' },
+        { value: 'diagram', label: 'A state diagram' },
+      ],
+      help: 'Only the picture changes. The diagram labels an arrow 1→y,L for "read 1, write y, move left" and 0→R for "read 0, leave it, move right". Machines with more than 5 states keep the table.',
+    },
   ],
   defaults,
   init,

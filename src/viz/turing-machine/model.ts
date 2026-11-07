@@ -18,6 +18,7 @@ import {
   type Rule,
   type TapeKind,
 } from '../_turing/machine';
+import { moveId, stateId } from '../../layouts/automaton';
 import { ZERO_ONE } from './machines';
 
 export interface TmSettings {
@@ -26,6 +27,8 @@ export interface TmSettings {
   tape: TapeKind;
   /** L and R (Sipser), or L, R and S (stay). */
   moves: 'LR' | 'LRS';
+  /** How the stage shows the rules: a transition table, or a state diagram. */
+  rules: 'table' | 'diagram';
 }
 
 /** One configuration in the trace: Sipser's u q v, and a number that names its shapes. */
@@ -61,7 +64,7 @@ type X = TmExtra;
 type Op = OpSpec<S, TmSettings, X>;
 type TmStep = Step<S, X>;
 
-export const defaults: TmSettings = { tape: 'one-way', moves: 'LR' };
+export const defaults: TmSettings = { tape: 'one-way', moves: 'LR', rules: 'table' };
 
 /** Configurations kept in the trace, and the symbols kept on each side of the head in each. */
 export const TRACE_KEEP = 6;
@@ -96,14 +99,29 @@ function withConfig(s: S, c: Config, settings: TmSettings, fresh = false): S {
 
 const newest = (s: S) => `cfg-${s.trace.at(-1)!.n}`;
 
-/** Marks for the end of a run: the head, the status and the last configuration. */
-function verdictMarks(s: S): Mark[] {
-  const role = s.config!.state === ACCEPT ? 'found' : 'error';
+/** The state diagram draws every state with rules, the start, and each state a rule goes to. */
+export const inDiagram = (m: Machine, q: string) =>
+  m.states.includes(q) || q === m.start || m.rules.some((r) => r.to === q);
+
+/** The most states (besides accept and reject) a state diagram is drawn for; past it, a table. */
+export const DIAGRAM_MAX = 5;
+
+/** Whether the stage draws a state diagram: when asked, for a machine small enough to read. */
+export const showsDiagram = (m: Machine, settings: TmSettings) =>
+  settings.rules === 'diagram' && m.states.length <= DIAGRAM_MAX;
+
+/** Marks for the end of a run: the head, the status, the last configuration (and the state). */
+function verdictMarks(s: S, settings: TmSettings): Mark[] {
+  const q = s.config!.state;
+  const role = q === ACCEPT ? 'found' : 'error';
   return [
     mark('tape-head', role),
     mark('tape-head-t', role),
     mark('status', role),
     mark(newest(s), role),
+    ...(showsDiagram(s.machine, settings) && inDiagram(s.machine, q)
+      ? [mark(stateId(q), role)]
+      : []),
   ];
 }
 
@@ -159,13 +177,17 @@ function advance(
   if (r.kind === 'stuck') {
     const state = withConfig(s, r.config, settings);
     const a = cellAt(c, c.head);
-    const cell = s.machine.symbols.includes(a) ? `rule-${c.state}-${a}` : `rule-r-${c.state}`;
+    const cell = showsDiagram(s.machine, settings)
+      ? stateId(c.state)
+      : s.machine.symbols.includes(a)
+        ? `rule-${c.state}-${a}`
+        : `rule-r-${c.state}`;
     return {
       state,
       done: true,
       step: {
         state,
-        marks: [mark(cell, 'error'), ...verdictMarks(state)],
+        marks: [mark(cell, 'error'), ...verdictMarks(state, settings)],
         say: `${c.state} reads ${reads(a)}, and no rule covers that. A missing rule means reject, so the machine rejects ${w} after ${moves(c.moves)}.`,
         lines: ['move.read', 'move.none', ...(op === 'run' ? ['run.halt'] : [])],
         vars: vars(state),
@@ -192,9 +214,14 @@ function advance(
     step: {
       state,
       marks: [
-        mark(`rule-${rule.from}-${rule.read}`, 'active'),
+        mark(
+          showsDiagram(s.machine, settings)
+            ? moveId(rule.from, rule.to)
+            : `rule-${rule.from}-${rule.read}`,
+          'active',
+        ),
         ...(changed ? [mark(`tape-${c.head}`, 'new')] : []),
-        ...(done ? verdictMarks(state) : [mark(newest(state), 'active')]),
+        ...(done ? verdictMarks(state, settings) : [mark(newest(state), 'active')]),
       ],
       say,
       lines: [
@@ -270,7 +297,7 @@ const run: Op = {
       const verb = cur.config!.state === ACCEPT ? 'accepts' : 'rejects';
       yield {
         state: cur,
-        marks: verdictMarks(cur),
+        marks: verdictMarks(cur, settings),
         say: `The start state is ${cur.config!.state}, so the machine ${verb} ${showWord(w)} without a move.`,
         lines: ['run.loop', 'run.halt'],
         vars: vars(cur),
@@ -319,7 +346,7 @@ const stepOp: Op = {
     if (halting(c.state)) {
       yield {
         state: s,
-        marks: verdictMarks(s),
+        marks: verdictMarks(s, settings),
         say: `The machine has already halted in ${c.state}, after ${moves(c.moves)}. Start or run a word to go again.`,
         lines: ['step.halted'],
         vars: vars(s),

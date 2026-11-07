@@ -6,7 +6,8 @@
   "notes": "One rule: move right, whatever you read. The run stops at the 500-move cap, still running. The configuration never repeats, so watching for a repeat would not catch this loop.",
   "settings": {
     "tape": "one-way",
-    "moves": "LR"
+    "moves": "LR",
+    "rules": "table"
   },
   "seed": 1,
   "ops": [

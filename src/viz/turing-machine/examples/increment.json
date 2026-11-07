@@ -6,7 +6,8 @@
   "notes": "Walk to the right end, then turn 1s into 0s until a 0 or a blank takes the carry. On a tape that goes on both ways, 111 becomes 1000.",
   "settings": {
     "tape": "two-way",
-    "moves": "LR"
+    "moves": "LR",
+    "rules": "table"
   },
   "seed": 1,
   "ops": [

@@ -3,11 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import type { Shape } from '../../render/scene';
-import { BLANK, CAP, formatConfig } from '../_turing/machine';
+import { BLANK, CAP, formatConfig, parseMachine, type Machine } from '../_turing/machine';
 import { parseInput, turingMachine } from '.';
-import { COPY, FLIP, INCREMENT, PALINDROME, ZERO_ONE } from './machines';
+import { ADD, COPY, FLIP, INCREMENT, PALINDROME, WALK, ZERO_ONE } from './machines';
+import { LOOPY } from './practice';
 import type { TmSettings } from './model';
-import { fitLine, view } from './view';
+import { arrowLabel, diagramOf, fitLine, view } from './view';
 
 const settings = (s: Partial<TmSettings> = {}): TmSettings =>
   ({ ...turingMachine.defaults, ...s }) as TmSettings;
@@ -279,6 +280,45 @@ describe('Turing machine page', () => {
     };
     expect(at({ w: 880, h: 384 })).toEqual({ beside: true, under: false });
     expect(at({ w: 360, h: 536 })).toEqual({ beside: false, under: true });
+  });
+
+  it("labels the diagram's arrows as Sipser does", () => {
+    const a = diagramOf(parseMachine(ZERO_ONE) as Machine);
+    const label = (p: string, q: string) => a.moves.find((m) => m.from === p && m.to === q)!.on;
+    expect(label('q1', 'q1')).toBe('0,y→R');
+    expect(label('q1', 'q2')).toBe('1→y,L');
+    expect(label('q0', 'accept')).toBe('␣→R');
+    expect(a.states).toEqual(['q0', 'q1', 'q2', 'q3', 'accept']);
+    expect(arrowLabel((parseMachine(COPY) as Machine).rules.filter((r) => r.to === 'accept'))).toBe(
+      '#→R ␣→#,R',
+    );
+  });
+
+  it('marks drawn shapes in either picture of the rules, on any stage', () => {
+    const words: [string, string, Partial<TmSettings>][] = [
+      [ZERO_ONE, '0010', {}],
+      [PALINDROME, '0110', {}],
+      [COPY, '01', {}],
+      [ADD, '1+1', {}],
+      [INCREMENT, '111', { tape: 'two-way' }],
+      [LOOPY, '0101', {}],
+      [WALK, '0', {}],
+      [FLIP, '0', { moves: 'LRS' }],
+    ];
+    for (const rules of ['table', 'diagram'] as const)
+      for (const [machine, word, more] of words) {
+        const st = settings({ ...more, rules });
+        const t = new Timeline(turingMachine, st, 1, [
+          ['load', machine],
+          ['run', word],
+        ]);
+        for (let i = 0; i < t.length; i += 7)
+          for (const stage of [undefined, { w: 880, h: 384 }, { w: 360, h: 536 }]) {
+            const { step } = t.at(i);
+            const ids = new Set(view(step, st, stage).shapes.map((s) => s.id));
+            for (const m of step.marks) expect(ids, `${rules} ${word}: ${m.id}`).toContain(m.id);
+          }
+      }
   });
 
   it('cuts long configurations around the head', () => {

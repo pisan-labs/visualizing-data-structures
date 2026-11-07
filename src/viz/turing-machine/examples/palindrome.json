@@ -6,7 +6,8 @@
   "notes": "Erase the first symbol and remember it in the state, check the last one against it, erase that too, and walk back. 0110 is accepted; 0100 fails on the second round.",
   "settings": {
     "tape": "one-way",
-    "moves": "LR"
+    "moves": "LR",
+    "rules": "table"
   },
   "seed": 1,
   "ops": [

@@ -10,23 +10,36 @@
  * nothing jumps.
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
-import { padBounds, placePanels, textWidth, unionBounds } from '../../layouts/graph';
+import { STATE_R, drawAutomaton, layoutStates, type Pt } from '../../layouts/automaton';
+import { padBounds, placePanels, textWidth, translate, unionBounds } from '../../layouts/graph';
 import { CELL_H, CELL_W, drawTape, tapeWindow } from '../../layouts/tape';
-import type { Bounds, Scene, Shape } from '../../render/scene';
+import {
+  shapesBounds,
+  type Bounds,
+  type Scene,
+  type Shape,
+  type TextShape,
+} from '../../render/scene';
+import type { Automaton } from '../_automata/automaton';
 import {
   ACCEPT,
   BLANK,
   BLANK_SHOWN,
+  REJECT,
   cellAt,
   halting,
   ruleFor,
   ruleText,
   type Config,
   type Machine,
+  type Rule,
 } from '../_turing/machine';
 import {
   TRACE_KEEP,
   describe,
+  DIAGRAM_MAX,
+  inDiagram,
+  showsDiagram,
   type TmExtra,
   type TmSettings,
   type TmState,
@@ -42,8 +55,7 @@ const NUM_W = 30;
 
 /** Cells in the tape window: wide stages get more. */
 export function tapeWidth(stage?: StageSize): number {
-  if (!stage) return 12;
-  return stage.w >= 1.4 * stage.h ? 12 : 10;
+  return !stage || stage.w >= 1.4 * stage.h ? 12 : 10;
 }
 
 const shown = (a: string) => (a === BLANK ? BLANK_SHOWN : a);
@@ -158,6 +170,7 @@ function drawRules(
   x: number,
   y: number,
   roles: ReadonlyMap<string, MarkRole>,
+  tooBig = false,
 ): Bounds {
   const text = (q: string, a: string) => {
     const r = ruleFor(m, q, a);
@@ -242,12 +255,150 @@ function drawRules(
     });
   });
   const tableW = labelW + colW.reduce((s, w) => s + w, 0) - GAP;
+  const h = 46 + m.states.length * (ROW_H + GAP) - GAP;
+  const note = `More than ${DIAGRAM_MAX} states: a table reads better.`;
+  if (tooBig)
+    out.push({
+      kind: 'text',
+      id: 'rule-note',
+      x,
+      y: y + h + 18,
+      text: note,
+      size: 13,
+      cls: 'label',
+    });
   return {
     x,
     y,
-    w: Math.max(tableW, textWidth(title, 13)),
-    h: 22 + m.states.length * (ROW_H + GAP) + 22,
+    w: Math.max(tableW, textWidth(title, 13), tooBig ? textWidth(note, 13) : 0),
+    h: h + (tooBig ? 24 : 0),
   };
+}
+
+/** Sipser's arrow labels for the rules from p to q: "0,y→R" keeps the symbol, "1→y,L" writes y. */
+export function arrowLabel(rules: Rule[]): string {
+  const groups = new Map<string, string[]>();
+  for (const r of rules) {
+    const k = r.write === r.read ? `→${r.move}` : `→${shown(r.write)},${r.move}`;
+    groups.set(k, [...(groups.get(k) ?? []), shown(r.read)]);
+  }
+  return [...groups].map(([k, reads]) => `${reads.join(',')}${k}`).join(' ');
+}
+
+/** The machine as an automaton for `drawAutomaton`: one arrow per pair of states. */
+export function diagramOf(m: Machine): Automaton {
+  const pairs = new Map<string, Rule[]>();
+  for (const r of m.rules) {
+    const k = `${r.from} ${r.to}`;
+    pairs.set(k, [...(pairs.get(k) ?? []), r]);
+  }
+  const states = [...m.states, ...[ACCEPT, REJECT].filter((q) => inDiagram(m, q))];
+  return {
+    states,
+    alphabet: [],
+    start: m.start,
+    accept: states.includes(ACCEPT) ? [ACCEPT] : [],
+    moves: [...pairs.values()].map((rs) => ({
+      from: rs[0]!.from,
+      to: rs[0]!.to,
+      on: arrowLabel(rs),
+    })),
+  };
+}
+
+const LABEL = 15;
+
+/**
+ * The shared state-diagram layout centres each label a little off its arrow, which suits
+ * labels like "a,b". A Turing machine's labels ("1→y,L") are longer, so here a label beside
+ * a steep arrow starts just clear of the line, a loop's label sits clear of the loop, and a
+ * label that still overlaps a state or an earlier label moves further from its arrow.
+ */
+export function tidyLabels(shapes: Shape[], pos: Record<string, Pt>): void {
+  type Box = { x1: number; y1: number; x2: number; y2: number };
+  const boxOf = (t: TextShape): Box => {
+    const w = t.text.length * LABEL * 0.6;
+    const x1 = t.anchor === 'start' ? t.x : t.anchor === 'end' ? t.x - w : t.x - w / 2;
+    return { x1: x1 - 2, y1: t.y - LABEL * 0.8, x2: x1 + w + 2, y2: t.y + LABEL * 0.25 };
+  };
+  const hit = (a: Box, b: Box) => a.x1 < b.x2 && b.x1 < a.x2 && a.y1 < b.y2 && b.y1 < a.y2;
+  const placed: Box[] = Object.values(pos).map((p) => ({
+    x1: p.x - STATE_R,
+    y1: p.y - STATE_R,
+    x2: p.x + STATE_R,
+    y2: p.y + STATE_R,
+  }));
+  const arrows = new Map(shapes.filter((x) => x.kind === 'arrow').map((x) => [x.id, x]));
+  for (const t of shapes) {
+    const m = /^m-(\w+)-(\w+)-t$/.exec(t.id);
+    const arrow = m && arrows.get(t.id.slice(0, -2));
+    if (!m || t.kind !== 'text' || !arrow || arrow.kind !== 'arrow') continue;
+    const loop = m[1] === m[2];
+    const from: Pt = loop
+      ? pos[m[1]!]!
+      : arrow.via
+        ? {
+            x: (arrow.x1 + arrow.x2) / 4 + arrow.via.x / 2,
+            y: (arrow.y1 + arrow.y2) / 4 + arrow.via.y / 2,
+          }
+        : { x: (arrow.x1 + arrow.x2) / 2, y: (arrow.y1 + arrow.y2) / 2 };
+    const dx = t.x - from.x;
+    const dy = t.y - LABEL * 0.35 - from.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const away = { x: dx / len, y: dy / len };
+    if (Math.abs(away.x) > 0.7) {
+      t.anchor = away.x > 0 ? 'start' : 'end';
+      t.x = from.x + Math.sign(away.x) * (loop ? STATE_R * 2.2 + 4 : 6);
+    }
+    // Try further out, then slid along the arrow either way, and keep the first spot that is free.
+    const along = { x: -away.y, y: away.x };
+    const home = { x: t.x, y: t.y };
+    const tries = [0, 1, 2, 3, 4, 5].flatMap((k) =>
+      [
+        [k, 0],
+        [k, 1],
+        [k, -1],
+      ].map(([out, side]) => ({
+        x: home.x + away.x * 8 * out! + along.x * 10 * (k + 1) * side!,
+        y: home.y + away.y * 8 * out! + along.y * 10 * (k + 1) * side!,
+      })),
+    );
+    const free = tries.find((p) => !placed.some((b) => hit(b, boxOf({ ...t, ...p }))));
+    if (free) Object.assign(t, free);
+    placed.push(boxOf(t));
+  }
+}
+
+/** The state diagram, the current state blue; layers run across on a wide stage, down on a phone. */
+function drawDiagram(
+  out: Shape[],
+  m: Machine,
+  x: number,
+  y: number,
+  roles: Map<string, MarkRole>,
+  current: string | undefined,
+  across: boolean,
+): Bounds {
+  const title = 'a→b,D: read a, write b, move D';
+  out.push({
+    kind: 'text',
+    id: 'rule-title',
+    x,
+    y: y + 13,
+    text: title,
+    size: 13,
+    cls: 'label',
+    role: roles.get('rule-title'),
+  });
+  const a = diagramOf(m);
+  const d = drawAutomaton(a, layoutStates(a, across), {
+    roles,
+    look: (q) => (q === current ? 'current' : undefined),
+  });
+  tidyLabels(d.shapes, layoutStates(a, across).pos);
+  const b = shapesBounds(d.shapes, 2)!;
+  out.push(...translate(d.shapes, x - b.x, y + 30 - b.y));
+  return { x, y, w: Math.max(b.w, textWidth(title, 13)), h: 30 + b.h };
 }
 
 export function view(step: Step<TmState, TmExtra>, settings: TmSettings, stage?: StageSize): Scene {
@@ -302,8 +453,11 @@ export function view(step: Step<TmState, TmExtra>, settings: TmSettings, stage?:
   });
   const trace = drawTrace(shapes, state.trace, 0, sy + 14, tapeW, roles);
   const left = unionBounds(main, trace);
+  const wide = !stage || stage.w >= 1.4 * stage.h;
   const table = placePanels(shapes, left, stage, (out, x, y) =>
-    drawRules(out, state.machine, x, y, roles),
+    showsDiagram(state.machine, settings)
+      ? drawDiagram(out, state.machine, x, y, roles, c?.state, wide)
+      : drawRules(out, state.machine, x, y, roles, settings.rules === 'diagram'),
   );
   const label = `${describe(state)}${c ? ` Status: ${st.text}.` : ''}`;
   return { shapes, bounds: padBounds(unionBounds(left, table), 14), label };

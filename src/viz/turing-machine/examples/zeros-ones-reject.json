@@ -6,7 +6,8 @@
   "notes": "0010 runs out of rules in q1 on the blank past the end, so the machine rejects. Then 10 rejects before its first move: q0 has no rule for 1.",
   "settings": {
     "tape": "one-way",
-    "moves": "LR"
+    "moves": "LR",
+    "rules": "table"
   },
   "seed": 1,
   "ops": [

@@ -6,7 +6,8 @@
   "notes": "With L/R/S moves on, this machine stays on cell 0 and flips it between 0 and 1. The same two configurations come round again and again: a loop you could spot, unlike the one in \"A machine that never halts\".",
   "settings": {
     "tape": "one-way",
-    "moves": "LRS"
+    "moves": "LRS",
+    "rules": "diagram"
   },
   "seed": 1,
   "ops": [

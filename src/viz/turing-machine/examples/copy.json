@@ -6,7 +6,8 @@
   "notes": "Turns 011 into 011#011. Each symbol is marked (x or y), carried past the # to the end of the copy, and put back. Every carry crosses the tape, so copying is O(n²).",
   "settings": {
     "tape": "one-way",
-    "moves": "LR"
+    "moves": "LR",
+    "rules": "table"
   },
   "seed": 1,
   "ops": [

@@ -31,6 +31,8 @@ Type the rules in one line, separated by `;`.
 
 The table on the stage has a row for each state and a column for each symbol. An empty cell is a missing rule, so reading that symbol in that state rejects. When the machine moves, the rule it used lights up.
 
+The **Show the rules as** option draws the same rules as a state diagram, the way Sipser does: an arrow labelled 1→y,L means read 1, write y, move left, and 0→R means read 0, leave it, move right. It only does this for machines with up to five states. Past that, the diagram turns into spaghetti and the table is easier to read. [Unary addition](#example:unary-add) starts with the diagram.
+
 ## Configurations
 
 Everything about a machine at one moment fits in one line. Sipser writes it as u q v: the tape holds uv, the machine is in state q, and the head is on the first symbol of v. So `xx q1 0y11` means the tape is xx0y11, the state is q1, and the head is on the 0.

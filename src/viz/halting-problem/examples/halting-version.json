@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "halting-problem",
+  "id": "halting-version",
+  "title": "The halting version: D loops where Mi halts",
+  "notes": "The same argument on HALT. Accept and reject both count as halting, so a cell is halt or ∞. D loops forever on ⟨Mi⟩ when Mi halts on it, and halts when Mi loops.",
+  "settings": { "framing": "halt", "size": 5 },
+  "seed": 1,
+  "ops": [["build"], ["diagonalize"], ["contradict"]],
+  "at": { "op": 0, "step": 0 }
+}

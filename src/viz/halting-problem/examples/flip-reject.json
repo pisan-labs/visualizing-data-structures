@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "halting-problem",
+  "id": "flip-reject",
+  "title": "Turn reject into accept: acceptance would decide halting",
+  "notes": "The other direction. M′ is M with every reject changed to accept, so M′ accepts exactly where M halts. A decider for acceptance, asked about M′, answers the halting question about M.",
+  "settings": { "framing": "halt", "size": 4 },
+  "seed": 1,
+  "ops": [["build"], ["reduce"]],
+  "at": { "op": 0, "step": 0 }
+}

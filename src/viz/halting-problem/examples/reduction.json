@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "halting-problem",
+  "id": "reduction",
+  "title": "A decider for halting would decide acceptance",
+  "notes": "Sipser's route from A_TM to HALT. Suppose R decides HALT. S asks R about each cell: a loop gets rejected without being run, anything else gets run to the end. S answers every cell correctly and always halts, which is impossible, so R cannot exist.",
+  "settings": { "framing": "atm", "size": 4 },
+  "seed": 1,
+  "ops": [["build"], ["reduce"]],
+  "at": { "op": 0, "step": 0 }
+}

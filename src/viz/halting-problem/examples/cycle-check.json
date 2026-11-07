@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "halting-problem",
+  "id": "cycle-check",
+  "title": "A loop caught by a repeated configuration",
+  "notes": "M3 reads its own code, which has an odd length. It walks two cells at a time, lands on the end cell at line 3, and line 3 jumps to itself. The configuration repeats, so it loops forever, and the run can say so after 23 steps instead of waiting for a cap.",
+  "settings": { "framing": "atm", "size": 4 },
+  "seed": 1,
+  "ops": [["run", 3, 3]],
+  "at": { "op": 0, "step": 0 }
+}

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "halting-problem",
+  "id": "the-table",
+  "title": "Every program on every description",
+  "notes": "Sixteen runs, one per cell. Each program reads another program's code. A run ends when the program accepts, rejects, or comes back to a line and head position it has been in before, which means it loops forever.",
+  "settings": { "framing": "atm", "size": 4 },
+  "seed": 1,
+  "ops": [["build"]],
+  "at": { "op": 0, "step": 0 }
+}

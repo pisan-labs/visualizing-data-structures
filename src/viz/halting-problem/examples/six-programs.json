@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "halting-problem",
+  "id": "six-programs",
+  "title": "Six programs, and D is still none of them",
+  "notes": "All six toy programs, 36 runs. More rows do not help: D differs from every new row on the diagonal too. The real table of all Turing machines never ends, and D differs from every row of it.",
+  "settings": { "framing": "atm", "size": 6 },
+  "seed": 1,
+  "ops": [["build"], ["diagonalize"], ["contradict"]],
+  "at": { "op": 0, "step": 0 }
+}

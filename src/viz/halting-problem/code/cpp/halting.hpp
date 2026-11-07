@@ -102,7 +102,8 @@ inline std::vector<std::string> dRow(const std::vector<std::string>& codes,
   return row;
 }
 
-// M': the same program with every reject line turned into accept.
+// M': every reject turned into accept, and an accept after the last line (running past it
+// rejects too).
 inline std::string acceptOnHalt(const std::string& code) {
   std::string out;
   for (const Line& ins : parse(code)) {
@@ -110,7 +111,7 @@ inline std::string acceptOnHalt(const std::string& code) {
     if (ins.op == '?') out += ins.sym;
     if (ins.to > 0) out += std::to_string(ins.to);
   }
-  return out;
+  return out + "A";
 }
 
 // S from a halting decider: a loop is rejected unrun; anything else is run.

@@ -105,7 +105,7 @@ public final class Halting {
     return row;
   }
 
-  /** M': the same program with every reject line turned into accept. */
+  /** M': every reject turned into accept, and an accept after the last line (running past it rejects too). */
   public static String acceptOnHalt(String code) {
     StringBuilder out = new StringBuilder();
     for (Line ins : parse(code)) {
@@ -113,7 +113,7 @@ public final class Halting {
       if (ins.op() == '?') out.append(ins.sym());
       if (ins.to() > 0) out.append(ins.to());
     }
-    return out.toString();
+    return out.append('A').toString();
   }
 
   /** S from a halting decider: a loop is rejected unrun; anything else is run. */

@@ -83,12 +83,13 @@ def d_row(codes, problem="atm"):
 
 
 def accept_on_halt(code):
-    """M': the same program with every reject line turned into accept."""
+    """M': every reject turned into accept, and an accept after the last line
+    (running past it rejects too)."""
     out = []
     for op, sym, to in parse(code):
         op = "A" if op == "R" else op
         out.append(op + (sym or "") + (str(to) if to else ""))
-    return "".join(out)
+    return "".join(out) + "A"
 
 
 def s_decides_atm(code, word):

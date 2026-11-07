@@ -10,7 +10,8 @@
  *   if end goto k  Ek    jump to line k if the head is on the end cell, past the input
  *   if c goto k    ?ck   jump to line k if the head is on the symbol c
  *
- * Any other line goes on to the next one, and running past the last line rejects. A program's
+ * Any other line goes on to the next one, and running past the last line rejects. Jumps go to
+ * lines that exist (at most 9). A program's
  * description ⟨M⟩ is its code, the right-hand column above run together ("E6>E3>G1A"), and that
  * is what the other programs read.
  *
@@ -63,6 +64,8 @@ export function parseCode(code: string): Instr[] | Error {
       k += 3;
     } else return new Error(`"${c}" at ${k} is not an instruction.`);
   }
+  const far = out.find((i) => 'to' in i && i.to > out.length);
+  if (far && 'to' in far) return new Error(`There is no line ${far.to} to jump to.`);
   return out;
 }
 
@@ -111,9 +114,14 @@ export function instrText(i: Instr): string {
 export const listing = (prog: readonly Instr[]): string =>
   prog.map((ins, k) => `${k + 1} ${instrText(ins)}`).join('; ');
 
-/** The same program with every reject turned into accept: it accepts exactly when M halts. */
-export const acceptOnHalt = (prog: readonly Instr[]): Instr[] =>
-  prog.map((i) => (i.op === 'reject' ? { op: 'accept' } : i));
+/**
+ * M′: the same program with every reject turned into accept, the silent one included (running
+ * past the last line rejects, so M′ gets an accept line there). M′ accepts exactly when M halts.
+ */
+export const acceptOnHalt = (prog: readonly Instr[]): Instr[] => [
+  ...prog.map((i): Instr => (i.op === 'reject' ? { op: 'accept' } : i)),
+  { op: 'accept' },
+];
 
 export interface Config {
   /** 1-based line about to run (L + 1 means past the last line). */

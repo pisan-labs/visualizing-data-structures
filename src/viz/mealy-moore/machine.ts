@@ -117,10 +117,12 @@ export function parseMachine(raw: string): Machine | Error {
   if (!items.length) return new Error(`Type a machine. ${HINT}`);
   /** Items for parseAutomaton: start, states, alphabet and the moves without their outputs. */
   const fa: string[] = [];
-  const moveOut = new Map<string, { o: string; item: string }>();
-  const stateOut = new Map<string, { o: string; item: string }>();
+  const moveOut = new Map<string, { o: string }>();
+  const stateOut = new Map<string, { o: string }>();
   /** Moves typed without an output, for the error if the machine turns out to be Mealy. */
   const bare: string[] = [];
+  /** A move given two outputs; reported once the moves are known to be deterministic. */
+  let clash: string | undefined;
   for (const item of items) {
     const head = item.split(/\s+/)[0]!.toLowerCase();
     if (head === 'accept' || head === 'final')
@@ -170,14 +172,12 @@ export function parseMachine(raw: string): Machine | Error {
         const o = outs[i]!;
         const had = moveOut.get(moveKey(from, c));
         if (o && had && had.o !== o)
-          return new Error(
-            `${from} on ${c} writes both ${had.o} and ${o}. A move writes one output.`,
-          );
+          clash ??= `${from} on ${c} writes both ${had.o} and ${o}. A move writes one output.`;
       }
       symbols.forEach((c, i) => {
         const o = outs[i]!;
         if (!o) bare.push(item);
-        else moveOut.set(moveKey(from, c), { o, item });
+        else moveOut.set(moveKey(from, c), { o });
       });
       continue;
     }
@@ -192,7 +192,7 @@ export function parseMachine(raw: string): Machine | Error {
       const had = stateOut.get(q);
       if (had && had.o !== o)
         return new Error(`${q} is given two outputs, ${had.o} and ${o}. A Moore state writes one.`);
-      stateOut.set(q, { o, item });
+      stateOut.set(q, { o });
       fa.push(`states ${q}`);
       continue;
     }
@@ -224,6 +224,7 @@ export function parseMachine(raw: string): Machine | Error {
         return new Error(
           `${q} has no move on ${c}. A machine with output needs a move for every state and input symbol, so it always has something to write.`,
         );
+  if (clash) return new Error(clash);
   const kind: Kind = moveOut.size ? 'mealy' : 'moore';
   const out: Record<string, string> = {};
   if (kind === 'mealy') {

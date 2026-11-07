@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "nfa-to-dfa",
+  "id": "fourth-from-end",
+  "title": "Fourth symbol from the end is 1: 5 states become 16",
+  "notes": "One more state in the NFA doubles the DFA: 16 states, one for each possible last four symbols. Each new state of this NFA doubles its DFA.",
+  "settings": {
+    "subsets": "reachable"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q4; q0 0,1 -> q0; q0 1 -> q1; q1 0,1 -> q2; q2 0,1 -> q3; q3 0,1 -> q4"
+    ],
+    ["convert"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

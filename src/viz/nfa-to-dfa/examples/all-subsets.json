@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "nfa-to-dfa",
+  "id": "all-subsets",
+  "title": "All 8 subsets, of which 3 are reachable",
+  "notes": "With Subsets set to all, every subset of the 3 NFA states becomes a DFA state, as in the proof. Only 3 of the 8 can be reached from the start; the rest are dead weight.",
+  "settings": {
+    "subsets": "all"
+  },
+  "seed": 1,
+  "ops": [["load", "start q0; accept q2; q0 a,b -> q0; q0 a -> q1; q1 b -> q2"], ["convert"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

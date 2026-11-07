@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "dfa-minimization",
+  "id": "subsets-shrink",
+  "title": "The subset construction's 8 states shrink to 3",
+  "notes": "This is the DFA the subset construction builds from all 8 subsets for an NFA of contains ab. Four subsets are unreachable, and two of the rest are equivalent: 8 states become 3.",
+  "settings": {
+    "method": "moore"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start B; accept D F G H; A a,b -> A; B a -> E; B b -> B; C a -> A; C b -> D; D a,b -> D; E a -> E; E b -> F; F a -> H; F b -> F; G a,b -> D; H a -> H; H b -> F"
+    ],
+    ["minimize"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

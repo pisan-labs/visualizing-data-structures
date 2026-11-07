@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "dfa-minimization",
+  "id": "slow-split",
+  "title": "At least four symbols: one split per round",
+  "notes": "Each round can only tell apart states one symbol further from the accept state, so this chain takes four rounds to split into five blocks: the most rounds five states can need.",
+  "settings": {
+    "method": "moore"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "start q0; accept q4; q0 a -> q1; q1 a -> q2; q2 a -> q3; q3 a -> q4; q4 a -> q4"],
+    ["minimize"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

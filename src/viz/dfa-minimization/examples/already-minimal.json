@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "dfa-minimization",
+  "id": "already-minimal",
+  "title": "Even a's and even b's: already minimal",
+  "notes": "Each state remembers whether the a's and the b's so far are even. Round 1 tells all four apart, round 2 changes nothing, and all four states stay.",
+  "settings": {
+    "method": "moore"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q0; q0 a -> q1; q0 b -> q2; q1 a -> q0; q1 b -> q3; q2 a -> q3; q2 b -> q0; q3 a -> q2; q3 b -> q1"
+    ],
+    ["minimize"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

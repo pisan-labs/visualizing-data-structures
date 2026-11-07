@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "nfa-to-dfa",
+  "id": "third-from-end",
+  "title": "Third symbol from the end is 1: 4 states become 8",
+  "notes": "The NFA guesses which 1 is third from the end. The DFA cannot guess, so it must remember the last three symbols: all 2^3 = 8 sets that hold q0 turn up.",
+  "settings": {
+    "subsets": "reachable"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "start q0; accept q3; q0 0,1 -> q0; q0 1 -> q1; q1 0,1 -> q2; q2 0,1 -> q3"],
+    ["convert"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

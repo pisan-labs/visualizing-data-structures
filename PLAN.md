@@ -499,6 +499,9 @@ What they get wrong, and we avoid:
 - **Multi-tape Turing machine:** `q0 1,_ -> q1 1,1 R,R` (per tape, comma-separated: symbol read,
   written, move L/R/S). `|` lists symbols read, `-` keeps one, writes may be left out; `#` is
   reserved for the one-tape simulation. Input `101,011` is one word per tape.
+- **Regex engines:** `(a|a)*b ; aaaa`: an expression, `;`, then the word (ε or eps for empty); a
+  word alone keeps the expression. Grow repeats the word: `(a|a)*b ; a` runs a, aa, ... up to 16
+  symbols.
 - **Regular expression:**
   - `(a|b)*abb`: letters and digits, `ε`, `∅`, `|`, `*`, `+`, `?` and parentheses;
   - nothing else;

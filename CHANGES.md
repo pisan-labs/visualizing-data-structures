@@ -225,3 +225,5 @@
 2026-11-07 [code] Merged multitape-tm (wave 5C): 2 or 3 tapes, Sipser's one-tape simulation with scans and shifts, both move counts side by side
 
 2026-11-07 [code] Conformance check runs presets at size 5 when a page sets sizes: [] (as the page does); it skipped them before
+
+2026-11-07 [code] Merged regex-engines (wave 5C): backtracking (choice stack, dead ends, 100,000-step cap) against Thompson NFA simulation on one NFA; Grow charts both on a log scale; wave 5C and the 17 automata pages are done

@@ -120,8 +120,10 @@ export const SEPARATOR = '|';
 export interface Loaded {
   a: Automaton;
   b: Automaton;
-  /** The alphabets as typed, when they differ. */
-  differ?: { a: string[]; b: string[] };
+  /** The machines as typed, before their alphabets were joined. */
+  typed: [Automaton, Automaton];
+  /** The alphabets differ. */
+  differ: boolean;
 }
 
 const EXAMPLE = '"p0 a -> p1; accept p1 | q0 b -> q1; accept q1"';
@@ -171,8 +173,7 @@ export function parseMachines(raw: string): Loaded | Error {
     return new Error(
       `Their product reaches ${k} pairs, too many to draw. Use machines whose product reaches at most ${MAX_PAIRS}.`,
     );
-  const differ = a0.alphabet.join() !== b0.alphabet.join();
-  return differ ? { a, b, differ: { a: a0.alphabet, b: b0.alphabet } } : { a, b };
+  return { a, b, typed: [a0, b0], differ: a0.alphabet.join() !== b0.alphabet.join() };
 }
 
 export const looksLikeMachines = (t: string): boolean =>
@@ -226,9 +227,6 @@ function runVars(r: WordRun | null): Record<string, Scalar> {
   if (!r) return { A: NONE, B: NONE, pair: NONE, read: 0 };
   return { A: r.p, B: r.q, pair: pairText(r.p, r.q), read: r.read };
 }
-
-const accepting = (a: Automaton) =>
-  a.accept.length ? `accept ${words(a.accept)}` : 'no accept states';
 
 export function describe(s: S, settings?: ProdSettings): string {
   const moves = (m: Automaton) => m.moves.map((x) => `${x.from} on ${x.on} to ${x.to}`).join('; ');
@@ -290,12 +288,12 @@ const load: Op = {
     }
     const next: S = { a: r.a, b: r.b, built: false };
     const differ = r.differ
-      ? ` Their alphabets differ, ${setText(r.differ.a)} and ${setText(r.differ.b)}, so both now read ${setText(r.a.alphabet)}. A symbol a machine never used has no moves there yet: completing the machine sends it to a dead state.`
+      ? ` Their alphabets differ, so both now read ${setText(r.a.alphabet)}. A symbol a machine never used has no moves yet: completing the machine sends it to a dead state.`
       : '';
     yield {
       state: next,
       marks: [],
-      say: `Loaded A, ${describeMachine(r.a)} And B, ${describeMachine(r.b)}${differ} Press Build.`,
+      say: `Loaded A, ${describeMachine(r.typed[0])} And B, ${describeMachine(r.typed[1])}${differ} Press Build.`,
       lines: [],
       level: 1,
       vars: baseVars(next),
@@ -563,7 +561,8 @@ const run: Op = {
       const from = pairName(r.p, r.q);
       r.lastA = { from: r.p, on: c, to: p2 };
       r.lastB = { from: r.q, on: c, to: q2 };
-      const said = `Read ${c}: A goes ${r.p} → ${p2} and B goes ${r.q} → ${q2}, so the product goes ${pairText(r.p, r.q)} → ${pairText(p2, q2)}.`;
+      const goes = (x: string, y: string) => (x === y ? `stays in ${x}` : `goes from ${x} to ${y}`);
+      const said = `Read ${c}: A ${goes(r.p, p2)} and B ${goes(r.q, q2)}, so the product ${goes(pairText(r.p, r.q), pairText(p2, q2))}.`;
       r.p = p2;
       r.q = q2;
       r.read = i + 1;

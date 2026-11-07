@@ -120,7 +120,9 @@ export function mtPractice(def: () => Def): PracticeKind[] {
         const grew = segmentLengths(begin.cells)
           .map((n, i) => [i + 1, n, segmentLengths(end.cells)[i]!] as const)
           .filter(([, a, b]) => b > a)
-          .map(([i, a, b]) => `tape ${i}'s segment grows from ${a} to ${b} cells`);
+          .map(
+            ([i, a, b], j) => `${j ? 'tape' : 'Tape'} ${i}'s segment grows from ${a} to ${b} cells`,
+          );
         return {
           prompt: `The single tape starts as shown, for \`${w}\`. Simulate the run: how many times does S shift part of its tape right to make room for a head?`,
           setup: setupFor(machine, w),

@@ -4,7 +4,6 @@ import {
   ACCEPT,
   BLANK,
   CAP,
-  REJECT,
   SIM_CAP,
   formatTape,
   halting,

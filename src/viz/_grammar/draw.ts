@@ -82,7 +82,9 @@ export function drawRules(
     right = Math.max(right, opts.x + textWidth(opts.title, 13));
     y += 22;
   }
-  const headW = Math.max(...rows.map((r) => r.lhs.length + 2), 3) * charW + 4;
+  // Variables, then the arrows lined up, then the right sides.
+  const arrowX = opts.x + (Math.max(...rows.map((r) => r.lhs.length), 1) + 0.6) * charW;
+  const headW = arrowX - opts.x + 2 * charW;
   for (const row of rows) {
     const base = y + size;
     const rowId = ruleRowId(opts.prefix, row.lhs);
@@ -91,11 +93,21 @@ export function drawRules(
       id: rowId,
       x: opts.x,
       y: base,
-      text: `${row.lhs} →`,
+      text: row.lhs,
       size,
       mono: true,
       weight: 'bold',
       role: roles.get(rowId),
+    });
+    out.push({
+      kind: 'text',
+      id: `${rowId}-arrow`,
+      x: arrowX,
+      y: base,
+      text: '→',
+      size,
+      mono: true,
+      cls: 'label',
     });
     let x = opts.x + headW;
     let lineY = base;
@@ -320,16 +332,26 @@ export function bestPlacement(
   return best;
 }
 
-/** Two blocks: b beside a (top aligned) or b under a (left aligned). */
+/**
+ * The stage's zoom buttons sit over the top right corner, so a block put beside another at the
+ * top starts this much lower (as placePanels does in src/layouts/graph.ts).
+ */
+export const BUTTONS_DROP = 34;
+
+/**
+ * Two blocks: b beside a, or b under a (left aligned). Beside, b starts `drop` lower: pass
+ * BUTTONS_DROP when b ends up in the top right corner of the stage.
+ */
 export function besideOrUnder(
   a: { w: number; h: number },
-  b: { w: number; h: number },
+  _b: { w: number; h: number },
   gap: number,
+  drop = 0,
 ): Placement[] {
   return [
     [
       { x: 0, y: 0 },
-      { x: a.w + gap, y: 0 },
+      { x: a.w + gap, y: drop },
     ],
     [
       { x: 0, y: 0 },

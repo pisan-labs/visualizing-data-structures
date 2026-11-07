@@ -14,6 +14,7 @@ import { padBounds, textWidth, translate, unionBounds } from '../../layouts/grap
 import { tableScene, type TableFrame } from '../../layouts/table';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import {
+  BUTTONS_DROP,
   besideOrUnder,
   bestPlacement,
   drawRules,
@@ -49,7 +50,7 @@ const STAGE_NAME: Record<CnfStage['kind'], string> = {
 export function rulesTitle(s: CykState): string {
   const n = s.cnf.stages.length;
   if (s.shown < 0) return 'The grammar as typed';
-  if (s.shown === n - 1) return `Rules in Chomsky normal form (start ${s.cnf.cnf.start})`;
+  if (s.shown === n - 1) return `Rules in CNF (start ${s.cnf.cnf.start})`;
   return `Stage ${s.shown + 1} of ${n}: ${STAGE_NAME[s.cnf.stages[s.shown]!.kind]}`;
 }
 
@@ -132,6 +133,7 @@ function drawRulesBlock(
   diff: boolean,
   maxW: number,
   roles: ReadonlyMap<string, MarkRole>,
+  size?: number,
 ): Bounds {
   return drawRules(out, rowsFor(s, diff), {
     prefix: RULES,
@@ -140,12 +142,13 @@ function drawRulesBlock(
     maxW,
     roles,
     title: rulesTitle(s),
+    size,
   });
 }
 
 function drawTreeBlock(out: Shape[], s: CykState, roles: ReadonlyMap<string, MarkRole>): Bounds {
   const layout = layoutTree(s.tree!);
-  const caption = 'A parse tree, read back from the table';
+  const caption = 'Parse tree';
   out.push({
     kind: 'text',
     id: 'tree-caption',
@@ -164,30 +167,34 @@ function drawTreeBlock(out: Shape[], s: CykState, roles: ReadonlyMap<string, Mar
   };
 }
 
-/** Three blocks: the table, the rules and the tree, in a few sensible arrangements. */
-function threeWays(a: Bounds, b: Bounds, c: Bounds, gap: number): Placement[] {
+/**
+ * Three blocks: the table, the rules and the tree, in a few sensible arrangements. A block right
+ * of the table at the top starts lower, clear of the zoom buttons.
+ */
+function threeWays(a: Bounds, b: Bounds, gap: number): Placement[] {
   const right = a.w + gap;
   const down = a.h + gap;
+  const top = BUTTONS_DROP;
   return [
     [
       { x: 0, y: 0 },
-      { x: right, y: 0 },
-      { x: right + b.w + gap, y: 0 },
+      { x: right, y: top },
+      { x: right + b.w + gap, y: top },
     ],
     [
       { x: 0, y: 0 },
-      { x: right, y: 0 },
-      { x: right, y: b.h + gap },
+      { x: right, y: top },
+      { x: right, y: top + b.h + gap },
     ],
     [
       { x: 0, y: 0 },
-      { x: right, y: 0 },
+      { x: right, y: top },
       { x: 0, y: down },
     ],
     [
       { x: 0, y: 0 },
       { x: 0, y: down },
-      { x: right, y: 0 },
+      { x: right, y: top },
     ],
     [
       { x: 0, y: 0 },
@@ -239,7 +246,7 @@ export function view(step: CykStep, _settings: CykSettings, stage?: StageSize): 
   const table: Shape[] = [];
   const t = drawTable(table, state, roles);
   const rules: Shape[] = [];
-  const r = drawRulesBlock(rules, state, false, 300, roles);
+  const r = drawRulesBlock(rules, state, false, 300, roles, 17);
   const blocks: { shapes: Shape[]; box: Bounds }[] = [
     { shapes: table, box: t },
     { shapes: rules, box: r },
@@ -249,19 +256,16 @@ export function view(step: CykStep, _settings: CykSettings, stage?: StageSize): 
     const tree: Shape[] = [];
     const p = drawTreeBlock(tree, state, roles);
     blocks.push({ shapes: tree, box: p });
-    places = bestPlacement([t, r, p], threeWays(t, r, p, 30), stage);
+    places = bestPlacement([t, r, p], threeWays(t, r, 30), stage);
   } else {
-    places = bestPlacement([t, r], besideOrUnder(t, r, 30), stage);
+    places = bestPlacement([t, r], besideOrUnder(t, r, 30, BUTTONS_DROP), stage);
   }
   const shapes: Shape[] = [];
   const boxes: Bounds[] = [];
   blocks.forEach((b, k) => {
     const at = places[k]!;
-    // The rules start a little lower beside the table, clear of the zoom buttons.
-    const dy = k > 0 && at.y === 0 ? 34 : 0;
-    const dx = at.x - b.box.x;
-    shapes.push(...translate(b.shapes, dx, at.y - b.box.y + dy));
-    boxes.push({ ...b.box, x: at.x, y: at.y + dy });
+    shapes.push(...translate(b.shapes, at.x - b.box.x, at.y - b.box.y));
+    boxes.push({ ...b.box, x: at.x, y: at.y });
   });
   return { shapes, bounds: padBounds(unionBounds(...boxes), 10), label };
 }

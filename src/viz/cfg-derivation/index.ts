@@ -140,7 +140,7 @@ export const cfgDerivation: VizDef<CfgState, CfgSettings, CfgExtra> = {
     },
     buttons: [
       { op: 'derive', label: 'Derive', usesInput: true, primary: true },
-      { op: 'ambiguity', label: 'Two trees?', usesInput: true },
+      { op: 'ambiguity', label: 'Ambiguity', usesInput: true },
       { op: 'load', label: 'Load', usesInput: true },
     ],
     presets: [

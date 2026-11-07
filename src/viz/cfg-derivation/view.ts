@@ -13,6 +13,7 @@ import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { padBounds, textWidth, unionBounds } from '../../layouts/graph';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import {
+  BUTTONS_DROP,
   besideOrUnder,
   bestPlacement,
   drawRules,
@@ -324,7 +325,11 @@ export function view(step: CfgStep, _settings: CfgSettings, stage?: StageSize): 
     pair = bestPlacement([one, two], besideOrUnder(one, two, 36));
     treeBox = unionBounds(one, { ...two, ...pair[1]! });
   }
-  const place = bestPlacement([mainBox, treeBox], besideOrUnder(mainBox, treeBox, 40), stage);
+  const place = bestPlacement(
+    [mainBox, treeBox],
+    besideOrUnder(mainBox, treeBox, 40, BUTTONS_DROP),
+    stage,
+  );
   const ox = place[1]!.x;
   const oy = place[1]!.y;
   const shapes = [...main];

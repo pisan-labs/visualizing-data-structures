@@ -207,3 +207,5 @@
 2026-11-07 [code] Merged dfa-to-regex (wave 5C): state elimination through a GNFA; settings rip order (name, fewest paths first) and simplification (empty-set and epsilon identities, none)
 
 2026-11-07 [code] Merged product-construction (wave 5C): union, intersection, difference, symmetric difference and complement of two DFAs, drawn as a grid of pairs; input A | B
+
+2026-11-07 [note] Deployed at 18:45 on Yusuf's "deploy": main fast-forwarded 92b03fe..acb0ea6 after CI run 75 passed; live bundle matched the local build and all 120 pages return 200

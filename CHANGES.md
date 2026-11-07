@@ -189,3 +189,5 @@
 2026-11-07 [code] Option 3 step 2: 15 more pages arrange their parts for the stage (src/viz/_stage/arrange.ts, src/viz/_dp/strip.ts); 27 others left as they read fine or their layout sets the scale
 
 2026-11-07 [code] Merged the consolidated automata code: shared page kit, panels, one label placement in drawAutomaton (label collisions on the six pages from thousands to 51), tape and trace layouts, regex and Thompson fixes, set notation allowed by the conformance check
+
+2026-11-07 [code] Merged wave 5B: pda (src/viz/_automata/pda.ts, nondeterminism by breadth-first search with a 200-configuration cap) and chomsky-hierarchy (classify a grammar level by level, place 11 languages with their reasons); wave 5B is done

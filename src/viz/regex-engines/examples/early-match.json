@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "regex-engines",
+  "id": "early-match",
+  "title": "A match on the first path",
+  "notes": "The same (a|a)*b against aaaab, which it matches. The first path the backtracker tries is a good one, so it accepts in 23 steps with 2 backtracks, while the NFA simulation carries up to 8 states along and takes 39. When a match exists and comes early, backtracking is quick.",
+  "settings": {
+    "engine": "both",
+    "order": "greedy"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "match",
+      "(a|a)*b ; aaaab"
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

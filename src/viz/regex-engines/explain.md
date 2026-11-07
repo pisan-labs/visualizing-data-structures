@@ -63,7 +63,7 @@ The pattern is an expression that can match the same text in more than one way, 
 - **Overlapping alternatives:** `(a|aa)*c`. The cuts into ones and twos follow the Fibonacci numbers, so the steps grow by about 1.6 per a. Slower than doubling. Still exponential. [Choices that overlap](#example:overlapping-choices)
 - **Adjacent repeats:** `a*a*b`. Only n² splits, so this is polynomial, not exponential. That sounds fine until n is 20,000. [Two stars in a row](#example:two-stars)
 
-Compare `a*b`: one way to read each a, one backtrack per a, and the same count as the simulation. [One way to match](#example:no-blowup)
+Compare `a*b`: one way to read each a, about one backtrack per a, and the same count as the simulation. [One way to match](#example:no-blowup)
 
 Russ Cox's 2007 article "Regular Expression Matching Can Be Simple And Fast" has the classic chart, for `a?ⁿaⁿ` against aⁿ: Perl took over a minute at n = 29, and Thompson's method a tiny fraction of a second. Our `a?a?a?aaa` is n = 3 of the same family.
 

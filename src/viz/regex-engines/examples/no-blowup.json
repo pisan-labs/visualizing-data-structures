@@ -3,7 +3,7 @@
   "viz": "regex-engines",
   "id": "no-blowup",
   "title": "One way to match",
-  "notes": "a*b against a, aa, aaa, and so on. Each a can be read only one way, so a failed match backs up just once per a. Both engines take the same number of steps, 4 more for each a: no blowup.",
+  "notes": "a*b against a, aa, aaa, and so on. Each a can be read only one way, so a failed match backs up about once per a. Both engines take the same number of steps, 4 more for each a: no blowup.",
   "settings": {
     "engine": "both",
     "order": "greedy"

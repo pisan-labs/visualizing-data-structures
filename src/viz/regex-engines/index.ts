@@ -217,7 +217,7 @@ export const regexEngines: VizDef<EngState, EngSettings, EngExtra> = {
   preview: {
     example: 'exponential-growth',
     level: 2,
-    hide: ['rx', 'tape', 's-', 'm-', 'start', 'cnt-', 'stk-'],
+    hide: ['rx', 'tape', 's-', 'm-', 'start', 'cnt-', 'stk-', 'ch-key'],
   },
   opening: 'exponential-growth',
 };

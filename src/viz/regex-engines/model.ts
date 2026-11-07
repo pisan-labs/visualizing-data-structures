@@ -526,8 +526,8 @@ function* simulateSteps(st: S, m: Machine): Generator<EngStep, SimView, void> {
         state,
         marks: [mark(`tape-${row.read - 1}`, 'active')],
         say: row.set.length
-          ? `Read ${c}, ${where}: every live state with a ${c}-arrow moves at once, then the ε-arrows are followed. S = ${setText(row.set)}: ${plural(row.set.length, 'state')}, ${plural(row.steps, 'step')} so far.`
-          : `Read ${c}, ${where}: no live state has a ${c}-arrow, so S is empty. Every path has died; the simulation stops here, ${plural(row.steps, 'step')} in all.`,
+          ? `Read ${c}, ${where}: every live state with an arrow labeled ${c} moves at once, then the ε-arrows are followed. S = ${setText(row.set)}: ${plural(row.set.length, 'state')}, ${plural(row.steps, 'step')} so far.`
+          : `Read ${c}, ${where}: no live state has an arrow labeled ${c}, so S is empty. Every path has died; the simulation stops here, ${plural(row.steps, 'step')} in all.`,
         lines: row.set.length ? ['nfa.loop', 'nfa.step'] : ['nfa.loop', 'nfa.step', 'nfa.dead'],
         vars: stateVars(state),
         level: 2,
@@ -619,10 +619,14 @@ export function growthShape(counts: readonly number[]): Shape | null {
   const [a, b, c] = counts.slice(-3) as [number, number, number];
   const d0 = b - a;
   const d1 = c - b;
-  if (d1 === d0) return 'linear';
+  if (d1 === d0) return d0 > 0 ? 'linear' : null;
   if (d0 < 0 || d1 < d0) return null;
   return d0 > 0 && d1 / d0 >= 1.3 ? 'exponential' : 'polynomial';
 }
+
+/** The last three counts are the same. */
+const flat = (xs: readonly number[]) =>
+  xs.length >= 3 && xs.at(-1) === xs.at(-2) && xs.at(-2) === xs.at(-3);
 
 function growSummary(g: Growth, s: S): string {
   const rows = g.rows;
@@ -631,9 +635,11 @@ function growSummary(g: Growth, s: S): string {
   const stopped = last.btResult === 'stopped';
   const done = stopped ? rows.slice(0, -1) : rows;
   const shape = growthShape(done.map((r) => r.bt));
-  const nfaShape = growthShape(rows.map((r) => r.nfa));
-  const how =
-    shape === 'exponential'
+  const nfaCounts = rows.map((r) => r.nfa);
+  const nfaShape = growthShape(nfaCounts);
+  const how = flat(done.map((r) => r.bt))
+    ? 'then stayed there: every longer word fails at the same place, so it costs no more'
+    : shape === 'exponential'
       ? `multiplying by about ${(done.at(-1)!.bt / done.at(-2)!.bt).toFixed(1)} with each extra ${g.unit}: exponential`
       : shape === 'linear'
         ? `adding ${fmt(done.at(-1)!.bt - done.at(-2)!.bt)} with each extra ${g.unit}: linear`
@@ -646,7 +652,10 @@ function growSummary(g: Growth, s: S): string {
   const cap = stopped
     ? ` At n = ${last.n} it passed ${fmt(CAP)} steps and the page stopped it.`
     : '';
-  const nfa = ` The NFA simulation went from ${fmt(first.nfa)} to ${fmt(last.nfa)} steps${nfaShape === 'linear' ? `, adding ${fmt(last.nfa - rows.at(-2)!.nfa)} each time` : ''}: never more than ${s.nfa.states.length} per position, one for each state.`;
+  const nfaHow = flat(nfaCounts)
+    ? `stayed at ${fmt(last.nfa)} steps`
+    : `went from ${fmt(first.nfa)} to ${fmt(last.nfa)} steps${nfaShape === 'linear' ? `, adding ${fmt(last.nfa - rows.at(-2)!.nfa)} each time` : ''}`;
+  const nfa = ` The NFA simulation ${nfaHow}: never more than ${s.nfa.states.length} per position, one for each state.`;
   return `${lead}${cap}${nfa}`.trim();
 }
 

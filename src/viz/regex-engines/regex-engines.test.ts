@@ -145,6 +145,7 @@ describe('regex engines', () => {
 
   it('tells growth shapes apart', () => {
     expect(growthShape([1, 2])).toBeNull();
+    expect(growthShape([5, 5, 5])).toBeNull();
     expect(growthShape([4, 8, 12])).toBe('linear');
     expect(growthShape([100, 121, 144])).toBe('polynomial');
     expect(growthShape([4, 8, 16])).toBe('exponential');

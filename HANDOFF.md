@@ -3,8 +3,9 @@
 The rolling handoff for the StepWise cloud sessions (the session-relay skill). Each handover
 rewrites this file; it never gets a dated copy. Times are Europe/Berlin.
 
-Last written: Friday 6 November 2026, 12:20. Not a handover: the current session stays the
-relay session.
+Last written: Saturday 7 November 2026, about 08:00, for the handover Yusuf asked for at 07:55.
+The previous session starts the next one at once, so the 16:52 session-start run (which looks
+only for a marker made since 15:30) finds nothing to do.
 
 ## What is live
 
@@ -12,8 +13,9 @@ relay session.
   `stepwise.pisan.me`); sessions never start, publish or roll back a deploy.
 - `main` holds all 108 catalog pages, each with a concept page, curated examples, a Big-O
   self-test, presets, Python/Java/C++ code tabs, a practice set and tests.
-- CI: runs up to 50 passed; the pushes of 6 November after `0693bdb` were not yet checked when
-  this was written.
+- CI: every push of 6 November passed (runs 48 to 57); the last on `53991fb`.
+- Last full checks on main (6 November, 18:20): lint, svelte-check, 2270 unit tests, and the
+  full e2e suite (1636 passed, 4 skipped) on desktop and phone with axe.
 
 ## Merged since the last handover (5 and 6 November)
 
@@ -26,14 +28,20 @@ relay session.
   - 08:50, the skip-list reference test gets a 180 s budget (it timed out under load: 2000
     more random cases found no counterexample);
   - 11:48, suffix-tree (naive or Ukkonen), np-reductions;
-  - 11:52, tsp, vertex-cover, steiner-tree (`src/viz/_approx/kit.ts`); the DFS
+  - 11:52, tsp, vertex-cover, steiner-tree (`src/viz/_approx/kit.ts`); 12:04, the DFS
     readability e2e check polls its heights;
-  - 12:13, rotate-translate-2d, rotate-scale-3d, coordinates-3d (`src/layouts/space.ts`).
+  - 12:13, rotate-translate-2d, rotate-scale-3d, coordinates-3d (`src/layouts/space.ts`);
+  - 12:47 (pushed 13:07), arrow lines take their role's colour; the preset select stays on screen;
+    `sizes: []` hides the size select;
+  - 13:52, group roles `g1` to `g8` (`groupRole(k)` in `src/engine/types.ts`) for components,
+    SCC and 2-SAT; 14:27 (both pushed then), axe scans call `settled()` from `tests/e2e/helpers.ts` first;
+  - 17:51 (pushed 18:20), a `polygon` shape kind (filled, tinted by role) and `drawPolygon({ fill })`; the
+    polygon page shades the polygon and each shoelace triangle.
 
 ## Branches still unmerged
 
-None. Every wave 4 branch is merged. Their `worktree-agent-*` copies on origin are backups of
-merged work.
+None with unmerged content. Seven `worktree-agent-*` WIP copies on origin are unmerged by git
+but superseded: their content is on main. Leave them; they are not an owner action.
 
 ## Next, in order
 
@@ -86,7 +94,7 @@ auto mode refused it as persistence. Lint and tests were run by hand before ever
   session.
 - Concept pages are written in Yusuf's voice: invoke `anthropic-skills:write-like-pisan` first.
 - Agents: about four at a time, each in its own worktree with its own `E2E_PORT` (ports up to
-  4215 have been used; start new ones at 4216), told not to edit shared files, to name e2e specs after their pages, to use
+  4227 have been used; start new ones at 4228), told not to edit shared files, to name e2e specs after their pages, to use
   `showMe()` from `tests/e2e/helpers.ts` for "Show me" checks, to commit WIP before a limit stop, to add practice
   sets, to keep rows able to wrap for CI's wider font, to poll (`expect.poll`) when measuring
   the drawing, and not to push. The lead checks the branch for files outside the agent's
@@ -116,15 +124,16 @@ auto mode refused it as persistence. Lint and tests were run by hand before ever
 
 ### Scheduling
 
-- Current session: `session_01JyJzMZHCY1tEoov2vYAuJv` (lineage depth 1, limit 8). It took over on
-  Thursday 5 November at 06:49 from `session_01JyJzMV9R79kmMm2TxMzCD9`, which started the relay
-  on Wednesday 4 November. Context was at 24% at 15:41.
-- The session-start routine looks only for a marker commit made since 15:30 that day, so an
-  early handover cannot start a second session at 16:52.
-- Routines aimed at the current session, to move at the next takeover:
+- Previous session: `session_01JyJzMZHCY1tEoov2vYAuJv` (lineage depth 1, limit 8). It took over
+  on Thursday 5 November at 06:49 from `session_01JyJzMV9R79kmMm2TxMzCD9` and handed over on
+  Saturday 7 November at about 08:00 at Yusuf's request (context about 50%). The next session is
+  at depth 2.
+- The session-start routine looks only for a marker commit made since 15:30 that day, so this
+  morning's handover cannot start a second session at 16:52.
+- Routines aimed at the previous session, to move at takeover:
   - `trig_01WrodgXYXHnQCWP71RxfbU2`: StepWise hourly status report, `46 * * * *`.
   - `trig_01Tg9X7MLii8DWA6vMVaY1VP`: StepWise handoff check, `CRON_TZ=Europe/Berlin 56 15 * * *`.
   - `trig_01EZxsysCxTEvpueRRchrmfk`: StepWise daily handoff (session start),
     `CRON_TZ=Europe/Berlin 52 16 * * *`.
-- The account's other routines (DSA, Chess TD, TPT, product ideas, reminders) belong to other
-  projects: never move or change them.
+- The account's other routines (DSA, Chess TD, Chess Analyzer, Plabs, TPT, product ideas,
+  reminders) belong to other projects: never move or change them.

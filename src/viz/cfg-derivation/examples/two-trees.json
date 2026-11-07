@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "cfg-derivation",
+  "id": "two-trees",
+  "title": "Without precedence, a+a*a has two trees",
+  "notes": "E → E+E and E → E*E treat + and * alike, so a+a*a can be read as a+(a*a) or as (a+a)*a. Derive finds one tree; Ambiguity finds both, side by side.",
+  "settings": { "order": "leftmost" },
+  "seed": 1,
+  "ops": [
+    ["load", "E -> E+E | E*E | (E) | a"],
+    ["derive", "a+a*a"],
+    ["ambiguity", "a+a*a"]
+  ],
+  "at": { "op": 2, "step": 0 }
+}

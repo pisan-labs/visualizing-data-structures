@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "cfg-derivation",
+  "id": "gives-up",
+  "title": "When the search gives up",
+  "notes": "(((())))( is not balanced, but S → SS keeps making longer forms of S's that might still fit it. The search stops at its cap of 10,000 forms. CYK, on the Chomsky normal form, gives the answer for sure.",
+  "settings": { "order": "leftmost" },
+  "seed": 1,
+  "ops": [
+    ["load", "S -> SS | (S) | eps"],
+    ["derive", "(((())))("]
+  ],
+  "at": { "op": 1, "step": 0 }
+}

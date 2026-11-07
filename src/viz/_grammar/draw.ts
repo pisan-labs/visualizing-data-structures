@@ -189,8 +189,8 @@ export function drawTree(
     roles?: ReadonlyMap<string, MarkRole>;
     shown?: (id: number) => boolean;
     role?: (id: number) => MarkRole | undefined;
-    /** Where a node slides in from the first time it appears. */
-    enterFrom?: (id: number) => { x: number; y: number } | undefined;
+    /** Nodes made this step: they slide out of their parent the first time they appear. */
+    fresh?: (id: number) => boolean;
   },
 ): Bounds {
   const roles = opts.roles ?? new Map<string, MarkRole>();
@@ -207,7 +207,7 @@ export function drawTree(
     const nid = treeNodeId(opts.prefix, node.id);
     const tid = treeTextId(opts.prefix, node.id);
     const role = roles.get(nid) ?? opts.role?.(node.id);
-    const from = opts.enterFrom?.(node.id);
+    const from = opts.fresh?.(node.id) && node.parent >= 0 ? pos(node.parent) : undefined;
     if (node.parent >= 0) {
       const q = pos(node.parent);
       const eid = treeEdgeId(opts.prefix, node.id);

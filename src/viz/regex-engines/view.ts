@@ -294,8 +294,7 @@ function drawWord(shapes: Shape[], s: EngState, p: Plan, roles: Map<string, Mark
 const answerRole = (v: string | null | undefined): MarkRole | undefined =>
   v === 'accept' ? 'found' : v === 'reject' ? 'error' : v === 'stopped' ? 'compare' : undefined;
 
-const answerText = (v: string | null | undefined) =>
-  v === 'stopped' ? 'gave up' : (v ?? '');
+const answerText = (v: string | null | undefined) => (v === 'stopped' ? 'gave up' : (v ?? ''));
 
 function drawCounters(
   shapes: Shape[],

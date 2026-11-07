@@ -9,10 +9,5 @@
     "order": "greedy"
   },
   "seed": 1,
-  "ops": [
-    [
-      "grow",
-      "a*b ; a"
-    ]
-  ]
+  "ops": [["grow", "a*b ; a"]]
 }

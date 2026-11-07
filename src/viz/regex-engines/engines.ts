@@ -141,7 +141,10 @@ export class Backtracker {
       } else if (at < word.length && word[at] === mv.on) {
         ways.push({ q: mv.to, at: at + 1, from: q, seen: new Set() });
       } else {
-        why = at < word.length ? { kind: 'mismatch', want: mv.on, got: word[at]! } : { kind: 'end', want: mv.on };
+        why =
+          at < word.length
+            ? { kind: 'mismatch', want: mv.on, got: word[at]! }
+            : { kind: 'end', want: mv.on };
       }
     }
     if (ways.length) {
@@ -150,7 +153,9 @@ export class Backtracker {
       this.deepest = Math.max(this.deepest, this.stack.length);
       this.go(first!);
       if (rest.length) return { kind: 'choice', to: first!.q, later: rest[0]!.q };
-      return first!.at > at ? { kind: 'read', c: word[at]!, to: first!.q } : { kind: 'eps', to: first!.q };
+      return first!.at > at
+        ? { kind: 'read', c: word[at]!, to: first!.q }
+        : { kind: 'eps', to: first!.q };
     }
     if (looped.length) why = { kind: 'loop', to: looped };
     else if (a.accept.includes(q)) why = { kind: 'early' };

@@ -383,7 +383,13 @@ function start(s: S, call: Call): S | Error {
 function visitMarks(q: string, i: number, v: Visit, w: string): Mark[] {
   const out: Mark[] = [];
   const role: MarkRole =
-    v.kind === 'dead' ? 'error' : v.kind === 'accept' ? 'found' : v.kind === 'stopped' ? 'compare' : 'active';
+    v.kind === 'dead'
+      ? 'error'
+      : v.kind === 'accept'
+        ? 'found'
+        : v.kind === 'stopped'
+          ? 'compare'
+          : 'active';
   out.push(mark(stateId(q), role));
   if (v.kind === 'read' || v.kind === 'eps' || v.kind === 'choice')
     out.push(mark(moveId(q, v.to), 'active'));
@@ -677,7 +683,13 @@ const grow: Op = {
       const w = u.repeat(n);
       const b = backtrack(m, w);
       const r = simulate(m, w);
-      const row: GrowRow = { n, bt: b.steps, btResult: b.result, nfa: r.steps, nfaResult: r.result };
+      const row: GrowRow = {
+        n,
+        bt: b.steps,
+        btResult: b.result,
+        nfa: r.steps,
+        nfaResult: r.result,
+      };
       const prev = g.rows.at(-1);
       g = { ...g, rows: [...g.rows, row] };
       state = { ...state, word: w, growth: g };
@@ -687,9 +699,15 @@ const grow: Op = {
           : `the backtracker ${verdictWord(b.result)} in ${plural(b.steps, 'step')}${prev ? ` (${(b.steps / prev.bt).toFixed(1)} times as many as for n = ${prev.n})` : ''}`;
       yield {
         state,
-        marks: [mark(`ch-bt-${n}`, b.result === 'stopped' ? 'error' : 'new'), mark(`ch-nfa-${n}`, 'new')],
+        marks: [
+          mark(`ch-bt-${n}`, b.result === 'stopped' ? 'error' : 'new'),
+          mark(`ch-nfa-${n}`, 'new'),
+        ],
         say: `n = ${n}, w = ${w}: ${btPart}; the NFA simulation ${verdictWord(r.result)} in ${plural(r.steps, 'step')}${prev ? ` (${r.steps - prev.nfa >= 0 ? '+' : ''}${r.steps - prev.nfa})` : ''}.`,
-        lines: b.result === 'stopped' ? ['grow.run', 'grow.row', 'grow.cap'] : ['grow.loop', 'grow.run', 'grow.row'],
+        lines:
+          b.result === 'stopped'
+            ? ['grow.run', 'grow.row', 'grow.cap']
+            : ['grow.loop', 'grow.run', 'grow.row'],
         vars: stateVars(state),
         level: 2,
       };

@@ -35,6 +35,7 @@ import {
   type EngSettings,
   type EngState,
 } from './model';
+import { enginesPractice } from './practice';
 import { view } from './view';
 
 /** A random expression over a and b with at most MAX_M symbols and operators. */
@@ -192,6 +193,7 @@ export const regexEngines: VizDef<EngState, EngSettings, EngExtra> = {
       note: 'Recursive backtrackers keep the same choices on the call stack instead, and a long input can overflow it.',
     },
   ],
+  practice: enginesPractice(() => regexEngines),
   code: {
     python: pythonSource,
     java: javaSource,

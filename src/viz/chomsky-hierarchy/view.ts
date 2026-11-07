@@ -77,7 +77,7 @@ const PANEL_MAX = 460;
 const tw = (text: string, size: number, bold = false) => text.length * size * (bold ? 0.66 : 0.61);
 
 /** Words wrapped into lines no wider than maxW. */
-export function wrap(text: string, maxW: number, size: number, bold = false): string[] {
+function wrap(text: string, maxW: number, size: number, bold = false): string[] {
   const lines: string[] = [];
   let line = '';
   for (const word of text.split(' ')) {
@@ -124,7 +124,7 @@ interface MapGeom {
 }
 
 const tokenW = (label: string) => Math.max(36, tw(label, TOKEN_SIZE, true) + 14);
-export const GRAMMAR_LABEL = 'L(G)';
+const GRAMMAR_LABEL = 'L(G)';
 /** Each grammar level's region has a slot for L(G); the token itself has one id. */
 const grammarSlot = (r: RegionId) => `${GRAMMAR_TOKEN}@${r}`;
 

@@ -3,7 +3,6 @@ import { ruleShapeId } from '../_grammar/draw';
 import { isVariable, parseRules, type Level, type Production, type Sym } from '../_grammar/grammar';
 import {
   LANGUAGE,
-  LANGUAGES,
   LANGUAGE_KEYS,
   findLanguage,
   type Claim,
@@ -439,6 +438,3 @@ export function describe(state: S, settings: ChSettings): string {
   }
   return parts.join(' ');
 }
-
-/** For tests and practice: every language the page can place. */
-export const LANGUAGE_LIST = LANGUAGES;

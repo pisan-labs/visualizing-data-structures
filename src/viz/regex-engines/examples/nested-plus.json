@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "regex-engines",
+  "id": "nested-plus",
+  "title": "Nested repetition",
+  "notes": "(a+)+b, the shape behind many real outages: a repeat inside a repeat. Against a's with no b, the backtracker tries every way to cut the a's into groups, and its steps double with each a until the cap stops it at n = 14.",
+  "settings": {
+    "engine": "both",
+    "order": "greedy"
+  },
+  "seed": 1,
+  "ops": [["grow", "(a+)+b ; a"]]
+}

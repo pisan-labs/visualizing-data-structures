@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "regex-engines",
+  "id": "two-stars",
+  "title": "Two stars in a row",
+  "notes": "a*a*b against a's: each split between the first star and the second is a path, so a failed match tries about n²/2 of them. The backtracker's steps grow a little faster each time, polynomial rather than exponential, while the simulation's grow by 8 per a.",
+  "settings": {
+    "engine": "both",
+    "order": "greedy"
+  },
+  "seed": 1,
+  "ops": [["grow", "a*a*b ; a"]]
+}

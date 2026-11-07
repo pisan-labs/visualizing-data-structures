@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "regex-engines",
+  "id": "empty-word",
+  "title": "The empty word",
+  "notes": "(a|a)*b against ε. Nothing can be read, so both engines check only the states the ε-arrows reach from the start: 6 steps each, and both reject.",
+  "settings": {
+    "engine": "both",
+    "order": "greedy"
+  },
+  "seed": 1,
+  "ops": [["match", "(a|a)*b ; eps"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

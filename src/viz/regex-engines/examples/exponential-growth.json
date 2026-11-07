@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "regex-engines",
+  "id": "exponential-growth",
+  "title": "Doubling with every a",
+  "notes": "(a|a)*b against a, aa, aaa, and so on. There is no b, so every word fails, and the backtracker tries every way to split the a's between the two branches before it gives up: its steps double with each a, and at n = 13 it passes the 100,000-step cap. The NFA simulation adds 8 steps per a.",
+  "settings": {
+    "engine": "both",
+    "order": "greedy"
+  },
+  "seed": 1,
+  "ops": [["grow", "(a|a)*b ; a"]]
+}

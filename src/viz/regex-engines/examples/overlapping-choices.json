@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "regex-engines",
+  "id": "overlapping-choices",
+  "title": "Choices that overlap",
+  "notes": "(a|aa)*c against a's. Each run of a's can be cut into ones and twos in a Fibonacci number of ways, so the backtracker's steps grow by about 1.6 times per a: exponential, but slower than doubling. It stays under the cap up to 16 a's.",
+  "settings": {
+    "engine": "both",
+    "order": "greedy"
+  },
+  "seed": 1,
+  "ops": [["grow", "(a|aa)*c ; a"]]
+}

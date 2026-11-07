@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "regex-engines",
+  "id": "live-set",
+  "title": "The live set",
+  "notes": "(a|b)*abb against aababb, with only the NFA simulation shown. The set grows to 9 states but never past the NFA's 14, and each symbol is read once.",
+  "settings": {
+    "engine": "nfa",
+    "order": "greedy"
+  },
+  "seed": 1,
+  "ops": [["match", "(a|b)*abb ; aababb"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

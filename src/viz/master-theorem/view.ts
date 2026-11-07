@@ -71,6 +71,8 @@ const ARRANGEMENTS: Arrangement[] = [
   { notes: 'right', table: 'beside-summary' },
   { notes: 'right', table: 'beside-tree' },
   { notes: 'under', table: 'under' },
+  { notes: 'under', table: 'beside-summary' },
+  { notes: 'under', table: 'beside-tree' },
 ];
 
 /**

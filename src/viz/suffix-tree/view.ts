@@ -13,6 +13,7 @@ import type { Bounds, Scene, Shape } from '../../render/scene';
 import { pickLayout, translate } from '../_stage/arrange';
 import { argWidth, drawArg } from '../_trie/draw';
 import {
+  MAX_TEXT,
   describe,
   full,
   nodeId,
@@ -263,11 +264,21 @@ export function view(
     boxes.push({ x: -60, y: R + 10, w: 120, h: 20 });
   }
 
-  // T$ (and the pattern) over the tree, or left of its top: decided for the finished tree.
-  const tree = unionBounds(...boxes);
-  const over = unionBounds(...blockBoxes, { x: 0, y: ARG_Y, w: 1, h: CELL_H });
+  // T$ (and the pattern) over the tree, or left of its top: decided for the finished tree and
+  // the widest argument this text can have, so it holds while the tree grows.
+  const argRoom = Math.max(
+    argWidth({ name: `suffix ${src.length - 1}`, text: src, at: 0 }),
+    argWidth({ name: 'P', text: 'x'.repeat(MAX_TEXT), at: 0 }),
+    argWidth({ name: 'P', text: 'x'.repeat(16), at: 0, bad: true }),
+  );
+  const over = unionBounds(blockBoxes[0]!, {
+    x: -argRoom / 2,
+    y: ARG_Y - CELL_H / 2,
+    w: argRoom,
+    h: CELL_H,
+  });
   const done = finishedBox(s.text);
-  const sideDx = Math.min(done.x, tree.x) - 30 - (over.x + over.w);
+  const sideDx = done.x - 30 - (over.x + over.w);
   const sideDy = -R - 4 - over.y;
   const atTop = { dx: 0, dy: 0, bounds: padBounds(unionBounds(done, over), 14) };
   const atSide = {

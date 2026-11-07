@@ -60,6 +60,15 @@
       text-anchor={s.anchor ?? 'start'}
       opacity={s.opacity ?? 1}>{s.text}</text
     >
+  {:else if s.kind === 'arrow' && s.via}
+    <path
+      class="shape arrow curve {s.cls ?? ''} {roleClass(s.role)}"
+      d="M{s.x1} {s.y1}Q{s.via.x} {s.via.y} {s.x2} {s.y2}"
+      stroke-dasharray={s.dashed ? '5 4' : undefined}
+      marker-end={s.head === 'none' ? undefined : markerFor(s.role)}
+      marker-start={s.head === 'both' ? markerFor(s.role) : undefined}
+      opacity={s.opacity ?? 1}
+    />
   {:else if s.kind === 'arrow'}
     <line
       class="shape arrow {s.cls ?? ''} {roleClass(s.role)}"
@@ -109,6 +118,20 @@
     stroke: var(--text-2);
   }
 
+  /* Automata: an accept state's inner ring, a dead state, and the left end of a tape. */
+  .shape.circle.ring {
+    fill: none;
+  }
+
+  .circle.dead-state {
+    stroke-dasharray: 4 3;
+  }
+
+  .shape.rect.wall {
+    fill: var(--text-2);
+    stroke: none;
+  }
+
   .rect.ghost,
   .circle.ghost {
     fill: none;
@@ -133,6 +156,10 @@
   .arrow {
     stroke: var(--text-2);
     stroke-width: 2;
+  }
+
+  .arrow.curve {
+    fill: none;
   }
 
   .arrowhead {

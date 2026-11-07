@@ -376,6 +376,12 @@ The About page credits Galles and Lucet as inspiration.
 | 25 | Time zone | UTC+1 assumed for reports (12.11) |
 | 26 | Deploys | Work goes to `dev` (CI runs there); `main` is what Netlify publishes and moves only when Yusuf says "deploy" (`git push origin dev:main`). Each production deploy costs 15 Netlify credits. Replaced by 27 |
 | 27 | Branches (later on 2026-11-04) | All work goes to `main`, as in Yusuf's other projects; `dev` is retired. Yusuf deploys to Netlify by hand for now |
+| 28 | Small drawings on laptops (2026-11-07) | Option 3: a taller desktop stage first (Options in the side column, back link on the title row), then views that lay out for the stage's size |
+| 29 | Automata pathway (2026-11-07, default taken) | A third course pathway, "Theory of computation" (13.8 question 1) |
+| 30 | Automata conventions (2026-11-07, default taken) | Sipser by default, with toggles where books differ (13.2) |
+| 31 | Defining machines (2026-11-07, default taken) | A typed one-line format (13.3); mouse drawing maybe later |
+| 32 | Regex syntax (2026-11-07, default taken) | Formal regular expressions only; a regex-engine comparison page in wave 5C |
+| 33 | Automata scope (2026-11-07, default taken) | Waves 5A, 5B and 5C as in 13.5; agents start 5A after the stage work is committed |
 
 ## 12. Questions asked 2026-11-04
 
@@ -410,6 +416,266 @@ No answers arrived within 15 minutes, so every recommendation below went ahead a
     correct.*
 
 ---
+
+## 13. Wave 5: automata and computability (planned 2026-11-07)
+
+Yusuf asked on 7 November for finite state machines, regular expressions, Turing machines,
+the Chomsky hierarchy and related topics. The questions sent with this plan are in 13.8;
+answers and defaults taken go in section 11.
+
+### 13.1 What other tools taught us (surveyed 2026-11-07)
+
+We surveyed 12 tools. Their names are listed only as a record of what we looked at; we copy no
+design, names, examples or code from any of them.
+
+| Tool | What it models |
+|---|---|
+| flat-pro | regex to NFA to DFA to minimal DFA |
+| noam FSM simulator | DFA, NFA and ε-NFA, with regex conversions |
+| explain.software | regex to ε-NFA |
+| lotusfa | DFA |
+| madebyevan | drawing only |
+| Silicon Ladder, binaryvisual | Moore and Mealy machines |
+| turingmachine.io, compscitutoring, morphett | Turing machines |
+| JFLAP | everything, desktop Java |
+| RegExr | practical regular expressions |
+
+What they get right:
+- **Typed definitions:** one transition per line (morphett, noam).
+- **Runs** that highlight the active state set and the input read so far, and can step back
+  (noam, morphett).
+- **Batch tests:** strings with the expected accept or reject (JFLAP, RegExr).
+- **Guided conversions:**
+  - JFLAP lets the learner build the DFA from an NFA and checks it;
+  - it also has pumping-lemma games;
+  - it shows one card per configuration, with dead branches red and accepting ones green.
+- **Many worked examples** with commentary (turingmachine.io, morphett).
+
+What they get wrong, and we avoid:
+- conversions that show only the result;
+- a "Run" that jumps to the end;
+- canvas-only drawings with no text alternative;
+- mouse-only editing and `alert()` errors;
+- syntax that needs Unicode to type;
+- unexplained step caps;
+- CDNs, fonts and analytics;
+- practical-regex features (backreferences) that are not regular.
+
+### 13.2 Conventions
+
+- **Sipser** is the default text:
+  - notation: δ, q0, F, ε;
+  - his constructions;
+  - a Turing machine with accept and reject states;
+  - a tape that is infinite to the right only, the head staying put at the left end.
+- Where textbooks differ, a setting picks:
+  - the Turing machine tape: one-way (Sipser) or two-way infinite (Hopcroft–Ullman, Linz);
+  - moves L/R, or L/R/S;
+  - a pushdown automaton accepting by final state or by empty stack;
+  - regex union written `|` or `+`;
+  - the regex to NFA construction: Thompson, or Sipser's union/concatenation/star;
+  - DFA minimization by partition refinement or by table filling.
+- **Missing moves:** a DFA may leave moves out, and a missing move rejects (Sipser draws such
+  DFAs without the dead state). A setting draws the dead state.
+
+### 13.3 Input formats (one line in the input box; `;` separates items)
+
+- **Finite automaton:**
+  - Form: `start q0; accept q2 q3; q0 a -> q1; q1 a,b -> q2; q2 eps -> q0`.
+  - `->` or `→`; `eps` or `ε`.
+  - Without `start`, the start is the first move's state.
+  - `states q4` adds a state with no moves.
+  - The alphabet is every symbol used.
+- **Word:** symbols with or without spaces, `ε` (or `eps`) for the empty word.
+- **Batch:** `+ab +aabb -ba -eps`, each word with the result it should get. The page runs them
+  all and shows a table of expected against actual.
+- **Regular expression:**
+  - `(a|b)*abb`: letters and digits, `ε`, `∅`, `|`, `*`, `+`, `?` and parentheses;
+  - nothing else;
+  - with the `+`-is-union setting, `?` stays and `+` means union.
+- **Pushdown automaton:** `q0 a, Z -> q1 AZ` (read a, pop Z, push AZ). `eps` may stand for
+  any of the three.
+- **Grammar:** `S -> aSb | eps; T -> ...`; the first variable is the start. Capitals are
+  variables; anything else is a terminal.
+- **Turing machine:** `q0 1 -> q1 0 R` (in state q0 reading 1: write 0, move right, go to q1).
+  `_` is the blank. The states `accept` and `reject` halt.
+
+Errors name the item and say what is wrong ("q0 ab -> q1": "ab" is not a symbol). The parser
+for finite automata is built (`src/viz/_automata/parse.ts`).
+
+### 13.4 Shared pieces
+
+Built on 7 November:
+- `src/viz/_automata/automaton.ts`:
+  - the model;
+  - ε-closure, runs, the subset construction;
+  - minimization, a dead state, reachability;
+  - property tests against direct definitions.
+- `src/viz/_automata/regex.ts`:
+  - the regex parser and printer;
+  - Thompson's construction, with fragments in build order;
+  - a direct matcher used as the test oracle.
+- `src/viz/_automata/parse.ts`: the automaton text format.
+- `src/layouts/automaton.ts`: state diagrams.
+  - Breadth-first layers from the start: across on a wide stage, down on a phone.
+  - Accept rings, the start arrow, combined labels.
+  - Loops on the freest side; curved pairs; curves around states in the way.
+  - Fixed positions for pages that place states themselves.
+- Curved arrows in the renderer (`ArrowShape.via`, a quadratic curve that tweens).
+- Views receive the stage's size (`view(step, settings, stage)`), so a diagram can run across
+  a laptop and down a phone.
+
+Still to build, each by the first page that needs it:
+- **A tape layout:**
+  - a row of cells, the head as a pointer;
+  - the window follows the head and keeps its cells in place;
+  - the input word for finite automata uses it too, with symbols read so far greyed.
+- **A configuration trace:**
+  - Sipser's `u q v` lines for a Turing machine;
+  - (state, rest of input, stack) for a pushdown automaton.
+- **A computation tree** for nondeterminism: the NFA's branches, dead ones in red.
+- **Grammar views:**
+  - derivation lines;
+  - a parse tree (reusing `src/layouts/multiway.ts` or the forest layout);
+  - the CYK triangle (reusing `src/layouts/table.ts`).
+
+### 13.5 Pages
+
+Every page meets the definition of done in `CLAUDE.md`:
+- operations as generators;
+- marks with stable ids;
+- pseudocode in formal and plain English;
+- Big-O rows;
+- presets and at least three examples;
+- a concept page with checks, in Yusuf's voice;
+- code tabs in Python, Java and C++, with drivers;
+- practice;
+- property tests;
+- e2e.
+
+**Wave 5A, regular languages and Turing machines**
+
+1. **`dfa` DFA run.**
+   - **Operations:** Load (the machine), Run (a word), Test (a batch).
+   - **Stage:** the diagram, with the current state blue and the arrow just taken highlighted; the input tape under it, with the head and the symbols read greyed; a final accept or reject badge.
+   - **Readouts:** δ(q, c) and steps read.
+   - **Settings:** draw the dead state; complete or partial DFA.
+   - **Examples:**
+     - ends in ab;
+     - divisible by 3 in binary;
+     - even number of a's and b's;
+     - a missing move;
+     - the empty word.
+   - **Big-O:** a run is Θ(n) in the word's length, whatever the word; the table is O(|Q||Σ|).
+2. **`nfa` NFA run** (with ε-moves).
+   - **Stage:** the active set highlighted, an explicit ε-closure step, and a computation tree (or a table of sets) under the diagram.
+   - **Setting:** show the tree, or the set of states only.
+   - **Examples:**
+     - third symbol from the end is 1;
+     - a|b with ε-moves;
+     - a branch that dies;
+     - ε-loops.
+   - **Big-O:** O(n·|Q|²) per word by simulating the sets.
+3. **`nfa-to-dfa` subset construction.**
+   - **Stage:** one new subset per step: the NFA on one side, the DFA growing on the other, and a table of subsets.
+   - **Setting:** reachable subsets only (default) or all 2^|Q|.
+   - **Examples:**
+     - the 2^n blow-up (n-th symbol from the end);
+     - no blow-up;
+     - ε-closures.
+4. **`dfa-minimization`.**
+   - **Settings:** partition refinement (Moore, default) or table filling (Myhill–Nerode pairs). The minimal DFA is drawn at the end.
+   - **Stage:** the blocks, colored with the group colors g1 to g8.
+   - **Examples:**
+     - already minimal;
+     - two equivalent states;
+     - unreachable states;
+     - the blow-up from page 3 shrinking back.
+5. **`regex-to-nfa`.**
+   - **Settings:** Thompson (default) or Sipser's construction.
+   - **Stage:** one fragment per step, children before parents, placed inside their parent (fixed positions). Then a Run on a word.
+   - **Examples:**
+     - (a|b)*abb;
+     - a*b*;
+     - nested stars;
+     - ε and ∅.
+6. **`turing-machine`.**
+   - **Operations:** Load, Run, Step.
+   - **Stage:** tape, head, state diagram (small) or transition table, and the configuration trace.
+   - **Settings:** tape one-way or two-way; moves L/R or L/R/S.
+   - **Step cap:** a run stops after 500 steps and says so: "still running: it may never halt. That is the halting problem."
+   - **Examples:**
+     - 0ⁿ1ⁿ;
+     - binary increment;
+     - palindromes;
+     - copy a string;
+     - a machine that loops forever.
+
+**Wave 5B, context-free languages and the hierarchy**
+
+7. **`pda` pushdown automaton run.**
+   - **Stage:** the stack (`drawColumn`) and the configuration trace.
+   - **Behaviour:** nondeterminism by search, with a cap.
+   - **Setting:** accept by final state or by empty stack.
+   - **Examples:**
+     - aⁿbⁿ;
+     - even palindromes;
+     - balanced parentheses.
+8. **`cfg-derivation`.**
+   - **Operations:** leftmost and rightmost derivations, the parse tree growing with each step.
+   - **Ambiguity:** two trees for one string.
+   - **Examples:**
+     - arithmetic expressions with and without precedence;
+     - the dangling else.
+9. **`cyk`:**
+   - convert to Chomsky normal form (shown);
+   - then fill the triangle cell by cell (level 3 for each split).
+   - **Big-O:** Θ(n³·|G|).
+10. **`chomsky-hierarchy`.**
+    - **Stage:** four nested regions (regular ⊂ context-free ⊂ context-sensitive ⊂ recursively enumerable); each level has its machine and grammar form.
+    - **Operations:**
+      - Classify a grammar: the most restrictive level its rules fit;
+      - Place a language from a preset list (aⁿbⁿ, aⁿbⁿcⁿ, the halting language), with the reason.
+    - The concept page is the main content.
+
+**Wave 5C, conversions and limits**
+
+11. **`dfa-to-regex`:** state elimination through a GNFA (Sipser 1.64), one state removed per step.
+12. **`product-construction`:** union, intersection, difference and complement of two DFAs.
+13. **`pumping-lemma`:** the regular and context-free games. The learner picks the split or the string; the page plays the other side.
+14. **`mealy-moore`:** machines with output, such as sequence detectors. These are digital-logic style and convert both ways.
+15. **`multitape-tm`:** two or three tapes; then the simulation on one tape.
+16. **`halting-problem`:** diagonalization as a table of machines against inputs, and the contradiction.
+17. **`regex-engines`:** backtracking against NFA simulation on (a|a)*b, and why one is exponential.
+
+### 13.6 Catalog
+
+- A new family, "Automata and computability".
+- A third course pathway, "Theory of computation" (if 13.8 question 1 is yes).
+- The family lists every page above. Wave 5C items are marked advanced.
+- The site shows planned items as planned until they merge.
+
+### 13.7 Order of work
+
+1. The shared kit and the state-diagram layout (done).
+2. Wave 5A with four agents:
+   - `dfa` with `nfa`;
+   - `nfa-to-dfa` with `dfa-minimization`;
+   - `regex-to-nfa`;
+   - `turing-machine` with the tape layout.
+3. The lead builds the tape layout's first form for the `dfa` agent to reuse, then reviews and merges.
+4. Wave 5B, then 5C, the same way.
+5. In parallel, the lead keeps fitting the remaining small pages to the stage (option 3 of the 7 November decision).
+
+### 13.8 Questions asked 2026-11-07
+
+1. A third course pathway, "Theory of computation"? Recommend yes.
+2. Sipser as the default, with toggles where books differ? Recommend yes.
+3. A typed machine format (13.3), with mouse drawing later if wanted? Recommend typed now.
+4. Formal regular expressions only, with a regex-engine comparison page in 5C? Recommend yes.
+5. Waves 5A, 5B and 5C as listed? Recommend yes.
+6. Commit the stage work, then start 5A with agents, and keep fitting pages to the stage
+   between merges? Recommend yes.
 
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 

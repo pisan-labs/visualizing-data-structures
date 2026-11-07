@@ -47,6 +47,11 @@ export interface ArrowShape extends ShapeBase {
   dashed?: boolean;
   /** Which ends get an arrowhead. Default 'end'; 'none' draws a plain line (undirected edge). */
   head?: 'end' | 'none' | 'both';
+  /**
+   * Curve through this control point (a quadratic Bézier from (x1, y1) to (x2, y2)) instead of
+   * a straight line: a self-loop on a state, or one of two opposite transitions side by side.
+   */
+  via?: { x: number; y: number };
 }
 
 export interface CircleShape extends ShapeBase {
@@ -103,8 +108,16 @@ export function shapesBounds(shapes: Shape[], pad = 10): Bounds | null {
     if ((s.opacity ?? 1) <= 0) continue;
     if (s.kind === 'rect') add(s.x, s.y, s.x + s.w, s.y + s.h);
     else if (s.kind === 'circle') add(s.x - s.r, s.y - s.r, s.x + s.r, s.y + s.r);
-    else if (s.kind === 'arrow') add(s.x1, s.y1, s.x2, s.y2);
-    else if (s.kind === 'polygon') for (const q of s.points) add(q.x, q.y, q.x, q.y);
+    else if (s.kind === 'arrow') {
+      add(s.x1, s.y1, s.x2, s.y2);
+      // The curve stays inside the triangle of its ends and control point, and reaches
+      // halfway from the chord's middle to the control point.
+      if (s.via) {
+        const mx = (s.x1 + s.x2) / 4 + s.via.x / 2;
+        const my = (s.y1 + s.y2) / 4 + s.via.y / 2;
+        add(mx, my, mx, my);
+      }
+    } else if (s.kind === 'polygon') for (const q of s.points) add(q.x, q.y, q.x, q.y);
     else {
       const size = s.size ?? 16;
       const w = s.text.length * size * 0.6;

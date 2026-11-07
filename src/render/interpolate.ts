@@ -16,6 +16,9 @@ function mix(a: Shape, b: Shape, t: number): Shape {
   out.opacity = lerp(a.opacity ?? 1, b.opacity ?? 1, t);
   if (a.kind === 'text' && b.kind === 'text' && a.text !== b.text)
     out.text = t < 0.5 ? a.text : b.text;
+  // A curve bends smoothly when both ends of the tween are curves.
+  if (a.kind === 'arrow' && b.kind === 'arrow' && a.via && b.via)
+    out.via = { x: lerp(a.via.x, b.via.x, t), y: lerp(a.via.y, b.via.y, t) };
   // Polygons with the same number of corners move corner by corner; otherwise they snap.
   if (a.kind === 'polygon' && b.kind === 'polygon' && a.points.length === b.points.length)
     out.points = b.points.map((q, i) => ({

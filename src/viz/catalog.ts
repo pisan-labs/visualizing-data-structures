@@ -13,7 +13,7 @@ export interface CatalogItem {
   advanced?: boolean;
 }
 
-export type Pathway = 'structures' | 'algorithms';
+export type Pathway = 'structures' | 'algorithms' | 'computation';
 
 export interface Family {
   name: string;
@@ -25,6 +25,7 @@ export interface Family {
 export const pathways: { id: Pathway; label: string }[] = [
   { id: 'structures', label: 'Data structures' },
   { id: 'algorithms', label: 'Algorithms' },
+  { id: 'computation', label: 'Theory of computation' },
 ];
 
 export const families: Family[] = [
@@ -239,6 +240,40 @@ export const families: Family[] = [
       },
       { id: 'vertex-cover', title: 'Minimum vertex cover', added: true, advanced: true },
       { id: 'steiner-tree', title: 'Steiner tree', added: true, advanced: true },
+    ],
+  },
+  {
+    // PLAN.md section 13: wave 5A, then 5B; 5C is advanced.
+    name: 'Automata and computability',
+    pathways: ['computation'],
+    items: [
+      { id: 'dfa', title: 'Deterministic finite automaton (DFA)', added: true },
+      { id: 'nfa', title: 'Nondeterministic finite automaton (NFA)', added: true },
+      { id: 'nfa-to-dfa', title: 'NFA to DFA (subset construction)', added: true },
+      { id: 'dfa-minimization', title: 'DFA minimization', added: true },
+      { id: 'regex-to-nfa', title: 'Regular expression to NFA', added: true },
+      { id: 'turing-machine', title: 'Turing machine', added: true },
+      { id: 'pda', title: 'Pushdown automaton', added: true },
+      { id: 'cfg-derivation', title: 'Grammars, derivations and parse trees', added: true },
+      { id: 'cyk', title: 'CYK parsing', added: true },
+      { id: 'chomsky-hierarchy', title: 'The Chomsky hierarchy', added: true },
+      { id: 'dfa-to-regex', title: 'DFA to regular expression', added: true, advanced: true },
+      {
+        id: 'product-construction',
+        title: 'Union and intersection of DFAs',
+        added: true,
+        advanced: true,
+      },
+      { id: 'pumping-lemma', title: 'The pumping lemma game', added: true, advanced: true },
+      { id: 'mealy-moore', title: 'Mealy and Moore machines', added: true, advanced: true },
+      { id: 'multitape-tm', title: 'Multi-tape Turing machine', added: true, advanced: true },
+      { id: 'halting-problem', title: 'The halting problem', added: true, advanced: true },
+      {
+        id: 'regex-engines',
+        title: 'Regex engines: backtracking vs NFA',
+        added: true,
+        advanced: true,
+      },
     ],
   },
 ];

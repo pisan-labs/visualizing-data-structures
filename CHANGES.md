@@ -173,3 +173,7 @@
 2026-11-07 [note] Session session_01JyJzMXcc2unSAwN88hsew5 took over at 08:00 and moved the three relay routines; Netlify auto-publishing is unlocked again (the live site still served a build from early 5 November)
 
 2026-11-07 [decision] Small drawings on laptops: Yusuf chose option 3 (a taller desktop stage first, then views that lay out for the stage); stage 305 to 387 px, Options in the side column, view(step, settings, stage) used by the 26 graph pages
+
+2026-11-07 [plan] Wave 5, automata and computability (PLAN.md section 13): 17 pages in three waves, Sipser conventions, a typed machine format; defaults taken at 08:45 with no answer
+
+2026-11-07 [code] Automata groundwork: src/viz/_automata (model, subset construction, minimization, regex and Thompson, text format), state diagrams (src/layouts/automaton.ts), a tape layout, curved arrows (ArrowShape.via)

@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "nfa",
+  "id": "ends-in-01",
+  "title": "Ends in 01: guess where the 01 starts",
+  "notes": "q0 reads anything and stays put. On each 0 the machine also guesses that the final 01 starts here and moves to q1 as well. A wrong guess dies at the next symbol. 1101 ends with q2 in the set and is accepted; on 0110 the last guess dies on the final 0.",
+  "settings": { "closure": "separate" },
+  "seed": 1,
+  "ops": [
+    ["load", "start q0; accept q2; q0 0,1 -> q0; q0 0 -> q1; q1 1 -> q2"],
+    ["run", "1101"],
+    ["run", "0110"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

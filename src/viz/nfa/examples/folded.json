@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "nfa",
+  "id": "folded",
+  "title": "The same run with the ε-closure folded in",
+  "notes": "With ε-closure set to fold it into each symbol, one step reads the symbol and follows the ε-moves after it. The sets are the same as in the a|b example; there are just fewer steps. The pseudocode becomes S = E(move(S, c)).",
+  "settings": { "closure": "folded" },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q5; q0 eps -> q1; q0 eps -> q3; q1 a -> q2; q3 b -> q4; q2 eps -> q5; q4 eps -> q5"
+    ],
+    ["run", "b"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

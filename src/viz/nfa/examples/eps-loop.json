@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "nfa",
+  "id": "eps-loop",
+  "title": "An ε-loop: the closure still stops",
+  "notes": "q0 and q1 have ε-moves to each other, and q2 has one back to q0. Following ε-moves could go round forever, but the closure only adds states it has not seen, so it stops once q0 and q1 are both in. The machine accepts the words that end in a.",
+  "settings": { "closure": "separate" },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q2; q0 eps -> q1; q1 eps -> q0; q0 b -> q0; q1 a -> q2; q2 eps -> q0"
+    ],
+    ["run", "aba"],
+    ["run", "ab"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

@@ -40,14 +40,7 @@ import {
 import { CELL_W, drawTape, tapeWindow } from '../../layouts/tape';
 import type { Bounds, Shape } from '../../render/scene';
 import { listWords } from '../_graph/graph';
-import {
-  EPS,
-  describeAutomaton,
-  makeAutomaton,
-  targets,
-  type Automaton,
-  type Move,
-} from '../_automata/automaton';
+import { EPS, makeAutomaton, targets, type Automaton, type Move } from '../_automata/automaton';
 import { MAX_WORD, formatAutomaton, parseAutomaton, parseWord } from '../_automata/parse';
 
 export interface FaState {
@@ -63,9 +56,26 @@ export const MAX_INPUT = 300;
 export const TAPE_CELLS = 12;
 
 export const wordText = (w: string): string => (w === '' ? 'ε' : w);
-/** "{q0, q1}" for narration, "∅" for the empty set. */
+/** A thin space: set braces in narration keep one inside, as in { q0 }. */
+const THIN = ' ';
+/**
+ * "{ q0, q1 }" for narration, "∅" for the empty set. The thin spaces inside the braces keep
+ * a one-state set such as { q0 } apart from a template leftover such as {name}, which the
+ * conformance test looks for in everything learners read.
+ */
 export const setText = (set: readonly string[]): string =>
-  set.length ? `{${set.join(', ')}}` : '∅';
+  set.length ? `{${THIN}${set.join(', ')}${THIN}}` : '∅';
+/** Rewrite "{a, b}" in a message from the shared parser in the narration's set style. */
+const narrated = (message: string): string =>
+  message.replace(/\{([^{}]*)\}/g, (_, inner: string) =>
+    setText(inner.split(/,\s*/).filter(Boolean)),
+  );
+/** "a DFA with 3 states over { 0, 1 }: start q0, accept q2, and 6 moves." */
+export function machineSummary(a: Automaton): string {
+  const kind = whyNotDfa(a) ? 'an NFA' : 'a DFA';
+  const acc = a.accept.length ? `accept ${listWords(a.accept)}` : 'no accept states';
+  return `${kind} with ${plural(a.states.length, 'state')} over ${setText(a.alphabet)}: start ${a.start}, ${acc}, and ${plural(a.moves.length, 'move')}.`;
+}
 /** "{q0,q1}" for panels. */
 export const setShort = (set: readonly string[]): string =>
   set.length ? `{${set.join(',')}}` : '∅';
@@ -117,7 +127,7 @@ export function wordProblem(raw: string, a: Automaton): string | null {
   if (/^[+-]/.test(t))
     return `"${t}" has a + or - in front, which marks a word to test. Press Test to check it against what it should give, or type just the word to run it.`;
   const w = parseWord(t, a);
-  return w instanceof Error ? w.message : null;
+  return w instanceof Error ? narrated(w.message) : null;
 }
 
 export interface BatchItem {
@@ -142,7 +152,7 @@ export function parseBatch(raw: string, a: Automaton): BatchItem[] | Error {
     if (!body)
       return new Error(`"${tok}" has no word after the sign. Write -eps for the empty word.`);
     const w = parseWord(body, a);
-    if (w instanceof Error) return new Error(`In "${tok}": ${w.message}`);
+    if (w instanceof Error) return new Error(`In "${tok}": ${narrated(w.message)}`);
     out.push({ word: w, expect: sign === '+' ? 'accept' : sign === '-' ? 'reject' : null });
   }
   return out;
@@ -183,7 +193,7 @@ export function faLoadOp<Set extends Settings, X>(o: FaLoadOptions): OpSpec<FaSt
       const problem =
         a instanceof Error
           ? looksLikeMachine(text) || !text
-            ? a.message
+            ? narrated(a.message)
             : `"${text}" is not a machine. Type moves such as "q0 a -> q1; accept q1"; to run a word, press Run.`
           : o.check?.(a);
       if (problem || a instanceof Error) {
@@ -201,7 +211,7 @@ export function faLoadOp<Set extends Settings, X>(o: FaLoadOptions): OpSpec<FaSt
       yield {
         state: next,
         marks: [],
-        say: `Loaded: ${describeAutomaton(a)} ${o.ready(a)}`,
+        say: `Loaded ${machineSummary(a)} ${o.ready(a)}`,
         lines: [],
         level: 1,
         vars: o.vars(a),
@@ -538,6 +548,10 @@ export function randomNfa(
       on: eps && rng.int(0, 5) === 0 ? EPS : sym(),
       to: qs[rng.int(0, n - 1)]!,
     });
+  // Every symbol on some move: the machine's text names its alphabet only through its moves.
+  for (const c of alphabet)
+    if (!moves.some((m) => m.on === c))
+      moves.push({ from: qs[rng.int(0, n - 1)]!, on: c, to: qs[rng.int(0, n - 1)]! });
   return makeAutomaton({
     states: qs,
     alphabet,

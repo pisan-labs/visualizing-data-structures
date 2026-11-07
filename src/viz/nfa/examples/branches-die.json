@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "nfa",
+  "id": "branches-die",
+  "title": "Branches split and die on 010110",
+  "notes": "This machine accepts the words that contain 11 or 101. Each 1 starts a new guess at q2. A guess dies when the next symbol does not fit: q2 has no move on 1, and q3 has no move on 0. One guess survives to q4, and q4 keeps it alive to the end.",
+  "settings": { "closure": "separate" },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q1; accept q4; q1 0,1 -> q1; q1 1 -> q2; q2 0,eps -> q3; q3 1 -> q4; q4 0,1 -> q4"
+    ],
+    ["run", "010110"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

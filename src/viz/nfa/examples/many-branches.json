@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "nfa",
+  "id": "many-branches",
+  "title": "Sixteen branches, two states",
+  "notes": "Every a sends each branch to both q0 and q1, so after four a's there are 16 branches. Most of them are in the same place, and the set only ever holds q0 and q1. That is why simulating with sets is fast and following each branch on its own is not.",
+  "settings": { "closure": "separate" },
+  "seed": 1,
+  "ops": [
+    ["load", "start q0; accept q1; q0 a -> q0; q0 a -> q1; q1 a -> q0; q1 a -> q1"],
+    ["run", "aaaa"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

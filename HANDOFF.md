@@ -80,7 +80,9 @@ auto mode refused it as persistence. Lint and tests were run by hand before ever
 
 - Read `CLAUDE.md` (definition of done, commands, branches), `BRIEFING.md` and the end of
   `CHANGES.md` (append-only, one line per entry: `YYYY-MM-DD [type] description`).
-- Work on `main` and push `main`; no pull requests. Before a commit or push, `git fetch` first.
+- Work on `next` and push `next`; no pull requests. Before a commit or push, `git fetch` first.
+  `main` is what Netlify publishes (15 credits a deploy): it only fast-forwards to `next`, once
+  a day at 17:27 (the daily deploy routine) or when Yusuf says "deploy" (his choice, 7 November).
   Before committing run `npm run lint && npm run check && npm test`, and `npm run e2e` when
   `src/ui`, `src/render` or a view changed.
 - Reports and every time in them use Europe/Berlin. Lead with the answer, keep it short, say
@@ -118,8 +120,8 @@ auto mode refused it as persistence. Lint and tests were run by hand before ever
 | Report time zone | Europe/Berlin |
 | Handover check | 15:56 |
 | Session start | 16:52 |
-| Handoff marker | a commit on `main` with exactly the subject `docs: the handoff of <D Month>` (no pull requests) |
-| Merge rule | `npm run lint && npm run check && npm test` pass (and `npm run e2e` when `src/ui`, `src/render` or a view changed), then push `main`; CI runs on the push |
+| Handoff marker | a commit on `next` with exactly the subject `docs: the handoff of <D Month>` (no pull requests) |
+| Merge rule | `npm run lint && npm run check && npm test` pass (and `npm run e2e` when `src/ui`, `src/render` or a view changed), then push `next`; CI runs on the push. `main` fast-forwards to `next` at 17:27 or when Yusuf says "deploy" |
 | Project rule | never hand over while subagents are running |
 
 ### Scheduling
@@ -137,5 +139,9 @@ auto mode refused it as persistence. Lint and tests were run by hand before ever
   - `trig_016mmp7qgknR6maFcPpcHyn6`: StepWise handoff check, `CRON_TZ=Europe/Berlin 56 15 * * *`.
   - `trig_01Q4wsxyfeskA8277FXxTfcY`: StepWise daily handoff (session start),
     `CRON_TZ=Europe/Berlin 52 16 * * *`.
+  - `trig_01PfFMZmwbM2JKpfyhtLRmvn`: StepWise daily deploy (fast-forward `main` to `next`
+    when CI on `next` is green), `CRON_TZ=Europe/Berlin 27 17 * * *`. Created 7 November.
+- The relay routines' prompts were updated on 7 November for the `next` branch: the handoff
+  marker goes on `next`, and the session start checks out `next`.
 - The account's other routines (DSA, Chess TD, Chess Analyzer, Plabs, TPT, product ideas,
   reminders) belong to other projects: never move or change them.

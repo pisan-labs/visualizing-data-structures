@@ -177,3 +177,7 @@
 2026-11-07 [plan] Wave 5, automata and computability (PLAN.md section 13): 17 pages in three waves, Sipser conventions, a typed machine format; defaults taken at 08:45 with no answer
 
 2026-11-07 [code] Automata groundwork: src/viz/_automata (model, subset construction, minimization, regex and Thompson, text format), state diagrams (src/layouts/automaton.ts), a tape layout, curved arrows (ArrowShape.via)
+
+2026-11-07 [decision] Deploys: work goes to next; main (which Netlify publishes, 15 credits each) fast-forwards to next daily at 17:27 Europe/Berlin or when Yusuf says "deploy"
+
+2026-11-07 [decision] Yusuf confirmed the automata defaults (PLAN.md decisions 29 to 33)

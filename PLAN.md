@@ -377,11 +377,12 @@ The About page credits Galles and Lucet as inspiration.
 | 26 | Deploys | Work goes to `dev` (CI runs there); `main` is what Netlify publishes and moves only when Yusuf says "deploy" (`git push origin dev:main`). Each production deploy costs 15 Netlify credits. Replaced by 27 |
 | 27 | Branches (later on 2026-11-04) | All work goes to `main`, as in Yusuf's other projects; `dev` is retired. Yusuf deploys to Netlify by hand for now |
 | 28 | Small drawings on laptops (2026-11-07) | Option 3: a taller desktop stage first (Options in the side column, back link on the title row), then views that lay out for the stage's size |
-| 29 | Automata pathway (2026-11-07, default taken) | A third course pathway, "Theory of computation" (13.8 question 1) |
-| 30 | Automata conventions (2026-11-07, default taken) | Sipser by default, with toggles where books differ (13.2) |
-| 31 | Defining machines (2026-11-07, default taken) | A typed one-line format (13.3); mouse drawing maybe later |
-| 32 | Regex syntax (2026-11-07, default taken) | Formal regular expressions only; a regex-engine comparison page in wave 5C |
-| 33 | Automata scope (2026-11-07, default taken) | Waves 5A, 5B and 5C as in 13.5; agents start 5A after the stage work is committed |
+| 29 | Automata pathway (2026-11-07, default taken, confirmed by Yusuf) | A third course pathway, "Theory of computation" (13.8 question 1) |
+| 30 | Automata conventions (2026-11-07, default taken, confirmed by Yusuf) | Sipser by default, with toggles where books differ (13.2) |
+| 31 | Defining machines (2026-11-07, default taken, confirmed by Yusuf) | A typed one-line format (13.3); mouse drawing maybe later |
+| 32 | Regex syntax (2026-11-07, default taken, confirmed by Yusuf) | Formal regular expressions only; a regex-engine comparison page in wave 5C |
+| 33 | Automata scope (2026-11-07, default taken, confirmed by Yusuf) | Waves 5A, 5B and 5C as in 13.5; agents start 5A after the stage work is committed |
+| 34 | Deploys (2026-11-07, replaces 27) | Work goes to `next` (CI runs there). Every push to `main` publishes (15 Netlify credits), so `main` only fast-forwards to `next`: daily at 17:27 Europe/Berlin, or when Yusuf says "deploy" |
 
 ## 12. Questions asked 2026-11-04
 

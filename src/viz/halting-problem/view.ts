@@ -139,13 +139,13 @@ function reduceItems(s: HaltState, all = false): { text: string; bold?: boolean 
   const halt = s.framing === 'halt';
   const items = halt
     ? [
-        { text: 'If S decided A_TM, R would decide HALT.' },
+        { text: 'Then R would decide HALT.' },
         { text: 'R on ⟨M, w⟩: make M′, which is M with every reject changed to accept.' },
         { text: 'Ask S whether M′ accepts w. It does exactly when M halts on w.' },
         { text: 'Impossible, so S does not exist.', bold: true },
       ]
     : [
-        { text: 'If R decided HALT, S would decide A_TM.' },
+        { text: 'Then S would decide A_TM.' },
         { text: 'S on ⟨M, w⟩: ask R whether M halts on w.' },
         { text: 'If not, reject. If it does, run M on w and answer as M does.' },
         { text: 'Impossible, so R does not exist.', bold: true },
@@ -259,7 +259,7 @@ function drawPanel(
 ): number {
   if (s.run) return drawRun(out, s.run, x, y, roles);
   if (s.reduced.some((row) => row.some(Boolean))) {
-    const title = s.framing === 'halt' ? 'From A_TM to HALT' : 'From HALT to A_TM';
+    const title = s.framing === 'halt' ? 'If S decided A_TM' : 'If R decided HALT';
     out.push(text('panel-title', x, y + TITLE, title, TITLE, { weight: 'bold' }));
     return paragraphs(out, x, y + TITLE + 12, width, reduceItems(s));
   }

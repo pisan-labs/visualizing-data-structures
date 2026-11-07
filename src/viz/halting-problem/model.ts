@@ -540,14 +540,13 @@ const runOp: Op = {
       const next = r.trace[k + 1]!;
       const ins = prog[c.line - 1]!;
       s = { ...s, run: { i, j, line: c.line, head: next.head, step: k + 1, done: null } };
-      const moves = ins.op === 'right' || ins.op === 'left';
       yield {
         state: s,
         marks: [mark(`ln-${c.line - 1}`, 'active'), mark(`tape-${next.head}`, 'active')],
         say: `Step ${k + 1}: line ${c.line}, ${instrText(ins)}: ${effect(i, j, c.line, c.head, next.head)}.`,
         lines: ['run.check', 'run.add', 'run.exec'],
         vars: runVars(k + 1),
-        level: moves ? 2 : 3,
+        level: 2,
       } satisfies HStep;
     }
     s = { ...reveal(s, i, j), run: endOf(i, j) };
@@ -568,9 +567,12 @@ const runOp: Op = {
       say = `Step ${r.steps}: line ${end.line}, ${instrText(ins)}. ${M(i)} ${r.outcome}s ${desc(j)} after ${stepsText(r)}.`;
       lines = ['run.halt'];
     }
+    const marks = [mark(cellId(i, j), 'found')];
+    if (end.line <= prog.length)
+      marks.push(mark(`ln-${end.line - 1}`, r.outcome === 'accept' ? 'found' : 'error'));
     yield {
       state: s,
-      marks: [mark(cellId(i, j), 'found'), mark(`ln-${end.line - 1}`, 'active')],
+      marks,
       say,
       lines,
       vars: runVars(r.trace.length - 1),
@@ -603,7 +605,7 @@ const reduce: Op = {
     const intro =
       s.framing === 'halt'
         ? 'The other way round: suppose S decides A_TM. Then R decides HALT: on ⟨M, w⟩, make M′, which is M with every reject changed to accept, and ask S whether M′ accepts w. M′ accepts exactly when M halts.'
-        : 'Sipser gets HALT from A_TM. Suppose R decides HALT. Then S decides A_TM: on ⟨M, w⟩, ask R whether M halts on w. If not, reject. If it does, run M on w, which is now safe, and answer as M does.';
+        : 'Sipser proves HALT undecidable from A_TM. Suppose R decides HALT. Then S decides A_TM: on ⟨M, w⟩, ask R whether M halts on w. If not, reject. If it does, run M on w, which is now safe, and answer as M does.';
     yield {
       state: s,
       marks: [],

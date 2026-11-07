@@ -209,7 +209,7 @@ const toy = (code: string, what: string): Toy => {
 export const PROGRAMS: readonly Toy[] = [
   toy('A', 'accepts at once'),
   toy('G1', 'loops at once'),
-  toy('E6>E3>G1A', 'accepts an even length, loops on an odd one'),
+  toy('E6>E3>G1A', 'accepts even lengths, loops on odd ones'),
   toy('?A5?G4RG4A', 'accepts if it starts with A, loops on G, else rejects'),
   toy('?R7E5>G1<G1A', 'accepts if it finds an R, else bounces at the end'),
   toy('E4>G1<?A7RA', 'walks to the end, accepts if the last symbol is A'),

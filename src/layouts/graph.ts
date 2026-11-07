@@ -1063,13 +1063,36 @@ export function translate(shapes: Shape[], dx: number, dy: number): Shape[] {
   });
 }
 
+/** The stage's zoom buttons, in pixels from its top right corner (src/ui/Stage.svelte), and a margin. */
+const ZOOM_BUTTONS = { w: 118, h: 42 };
+
+/**
+ * The block moved down until it clears the stage's zoom buttons, if it reaches under them. The
+ * picture (`rest` and the block, padded by 14 as views pad it) is drawn on `stage` at the scale
+ * that fits it, centered across when the height limits it, so how far the block must move in
+ * scene units depends on that scale.
+ */
+export function clearOfButtons(block: Bounds, rest: Bounds, stage: StageSize): Bounds {
+  for (let i = 0; i < 4; i++) {
+    const total = padBounds(unionBounds(rest, block), 14);
+    const s = fitScore(total, stage);
+    const margin = Math.max(0, (stage.w - total.w * s) / 2);
+    const right = margin + (block.x + block.w - total.x) * s;
+    const top = (block.y - total.y) * s;
+    if (right <= stage.w - ZOOM_BUTTONS.w || top >= ZOOM_BUTTONS.h - 0.5) return block;
+    block = { ...block, y: total.y + ZOOM_BUTTONS.h / s };
+  }
+  return block;
+}
+
 /**
  * Put a block of panels under the graph or beside it, whichever keeps the whole picture larger
  * on `stage` (the screen the view draws for), or on both a laptop and a phone when there is no
  * stage (`fitScore`). `draw(shapes, x, y)` draws the block with its top
  * left corner at (x, y) and returns its box; keep its size the same through a run (reserve
- * room for what grows), so the block does not jump between the two places. Beside the graph,
- * the block starts a little lower, clear of the stage's zoom buttons in the top right corner.
+ * room for what grows), so the block does not jump between the two places. A block that would
+ * reach under the stage's zoom buttons in the top right corner moves down, clear of them at the
+ * scale the picture is drawn at; with no stage, a block beside the graph starts 34 units lower.
  */
 export function placePanels(
   shapes: Shape[],
@@ -1079,13 +1102,16 @@ export function placePanels(
 ): Bounds {
   const block: Shape[] = [];
   const box = draw(block, 0, 0);
-  const under = { x: graph.x - box.x, y: below(graph, 22) - box.y };
-  const side = { x: beside(graph, 30) - box.x, y: graph.y + 34 - box.y };
-  const total = (p: Pt) =>
-    padBounds(unionBounds(graph, { ...box, x: box.x + p.x, y: box.y + p.y }), 14);
+  let under: Bounds = { ...box, x: graph.x, y: below(graph, 22) };
+  let side: Bounds = { ...box, x: beside(graph, 30), y: graph.y + (stage ? 0 : 34) };
+  if (stage) {
+    under = clearOfButtons(under, graph, stage);
+    side = clearOfButtons(side, graph, stage);
+  }
+  const total = (b: Bounds) => padBounds(unionBounds(graph, b), 14);
   const at = fitScore(total(side), stage) > fitScore(total(under), stage) * 1.05 ? side : under;
-  shapes.push(...translate(block, at.x, at.y));
-  return { ...box, x: box.x + at.x, y: box.y + at.y };
+  shapes.push(...translate(block, at.x - box.x, at.y - box.y));
+  return at;
 }
 
 // ---------------------------------------------------------------------------------------------

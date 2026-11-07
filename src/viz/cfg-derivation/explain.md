@@ -97,6 +97,8 @@ Two warnings. First, the Ambiguity button checks one word. Finding one tree for 
 
 Every programming language has one. The syntax in a language reference is a grammar, usually written in BNF (`<expr> ::= <expr> + <term>`), which is the same thing with more angle brackets. Parser generators like yacc, bison and ANTLR take a grammar and give you a parser. JSON, SQL and HTML have grammars too.
 
+When should you not reach for one? If a regular expression describes the strings (an identifier, a phone number, a date), use the regular expression. It is shorter, and matching it is linear. And some languages are out of reach for context-free grammars altogether: aⁿbⁿcⁿ needs to match three counts at once, and no context-free grammar can do it. Checking that a variable was declared before it is used is the same kind of problem, which is why compilers check it after parsing, not in the grammar.
+
 Grammars also mark the line between regular and context-free languages. A grammar whose rules all look like A → wB or A → w (terminals, then at most one variable at the end) is right-linear, and its language is regular. The page tells you when you load one. Anything that needs matching pairs, such as parentheses, aⁿbⁿ or palindromes, needs more than that. A pushdown automaton recognizes exactly the context-free languages, by keeping the unmatched half on a stack.
 
 ## Common mistakes

@@ -8,7 +8,7 @@ import pythonSource from './code/python/cyk.py?raw';
 import ambiguous from './examples/ambiguous.json';
 import anbn from './examples/anbn.json';
 import balanced from './examples/balanced.json';
-import classic from './examples/classic.json';
+import alreadyCnf from './examples/already-cnf.json';
 import conversion from './examples/conversion.json';
 import emptyWord from './examples/empty-word.json';
 import nullable from './examples/nullable-blowup.json';
@@ -145,7 +145,7 @@ export const cykParsing: VizDef<CykState, CykSettings, CykExtra> = {
       average: {
         cost: 'Θ(n³·|G|)',
         why: 'n(n+1)/2 cells, up to n − 1 splits each, and every rule A → BC checked at each split.',
-        example: 'classic',
+        example: 'already-cnf',
       },
       worst: {
         cost: 'Θ(n³·|G|)',
@@ -159,7 +159,7 @@ export const cykParsing: VizDef<CykState, CykSettings, CykExtra> = {
       best: {
         cost: 'O(|G|)',
         why: 'A grammar already in CNF only gains S₀ and S₀’s copy of S’s rules.',
-        example: 'classic',
+        example: 'already-cnf',
       },
       average: {
         cost: 'O(|G|²)',
@@ -197,7 +197,7 @@ export const cykParsing: VizDef<CykState, CykSettings, CykExtra> = {
   },
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [
-    classic,
+    alreadyCnf,
     anbn,
     conversion,
     emptyWord,

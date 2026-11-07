@@ -87,7 +87,7 @@ It is not what compilers use. Programming languages are designed so that a parse
 
 ## Try this
 
-- [A grammar already in Chomsky normal form](#example:classic). Before each cell is filled, predict its set from the two cells below. Turn on every step to check the splits.
+- [A grammar already in Chomsky normal form](#example:already-cnf). Before each cell is filled, predict its set from the two cells below. Turn on every step to check the splits.
 - [aⁿbⁿ: aabb in, aab out](#example:anbn). Both fill the whole table. Where does aab go wrong?
 - [Every stage of the conversion](#example:conversion). Which stage adds the most rules?
 - [Expressions with precedence, conversion skipped](#example:result-only). Then switch Options to show each stage and load the same grammar. All 19 stages.

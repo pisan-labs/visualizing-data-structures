@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "dfa",
+  "id": "dead-state",
+  "title": "The same machine with its dead state drawn",
+  "notes": "With Missing moves set to draw the dead state, every missing move goes to dead, and dead loops on every symbol. aab walks into dead on its second symbol and stays there to the end. The answers are the same as with the moves left out; only the drawing and the run's length change.",
+  "settings": { "dead": "draw" },
+  "seed": 1,
+  "ops": [
+    ["load", "start q0; accept q2; q0 a -> q1; q1 b -> q2; q2 a,b -> q2"],
+    ["run", "aab"],
+    ["run", "ab"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

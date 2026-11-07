@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "dfa",
+  "id": "empty-word",
+  "title": "The empty word: the start state decides",
+  "notes": "On ε the machine reads nothing, so it accepts exactly when the start state is an accept state. Zero a's and zero b's are both even, so ee accepts ε. The machine for words that end in ab starts in q0, which does not accept, so it rejects ε.",
+  "settings": { "dead": "hide" },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start ee; accept ee; ee a -> oe; ee b -> eo; oe a -> ee; oe b -> oo; eo a -> oo; eo b -> ee; oo a -> eo; oo b -> oe"
+    ],
+    ["run", "eps"],
+    [
+      "load",
+      "start q0; accept q2; q0 a -> q1; q0 b -> q0; q1 a -> q1; q1 b -> q2; q2 a -> q1; q2 b -> q0"
+    ],
+    ["run", "eps"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

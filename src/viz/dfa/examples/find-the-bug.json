@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "dfa",
+  "id": "find-the-bug",
+  "title": "A test batch finds a bug",
+  "notes": "This machine is meant to accept the words that end in ab, but q1 goes back to q0 on a. The batch catches it: aab should be accepted and is not. The fix is q1 a -> q1 (after an a, another a still leaves us one b away), and the same batch then passes.",
+  "settings": { "dead": "hide" },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q2; q0 a -> q1; q0 b -> q0; q1 a -> q0; q1 b -> q2; q2 a -> q1; q2 b -> q0"
+    ],
+    ["test", "+ab +aab -ba -eps +bab -abb"],
+    [
+      "load",
+      "start q0; accept q2; q0 a -> q1; q0 b -> q0; q1 a -> q1; q1 b -> q2; q2 a -> q1; q2 b -> q0"
+    ],
+    ["test", "+ab +aab -ba -eps +bab -abb"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

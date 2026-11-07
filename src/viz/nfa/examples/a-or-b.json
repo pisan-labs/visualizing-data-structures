@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "nfa",
+  "id": "a-or-b",
+  "title": "a|b with ε-moves: two ways in, one way out",
+  "notes": "This is how Thompson's construction builds a|b. ε-moves from q0 enter the a part (q1) and the b part (q3) at once, and ε-moves join them again at q5. On b, the a-branch dies and the b-branch reaches q5 through an ε-move. On ab every branch is dead after the second symbol.",
+  "settings": { "closure": "separate" },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; accept q5; q0 eps -> q1; q0 eps -> q3; q1 a -> q2; q3 b -> q4; q2 eps -> q5; q4 eps -> q5"
+    ],
+    ["run", "b"],
+    ["run", "ab"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

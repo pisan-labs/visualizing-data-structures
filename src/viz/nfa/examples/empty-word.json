@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "nfa",
+  "id": "empty-word",
+  "title": "The empty word, accepted through an ε-move",
+  "notes": "The start state q0 does not accept, but its ε-moves reach q1 and q2, which do. On ε the machine reads nothing, so the answer is E({q0}) alone: it holds an accept state, so ε is accepted. On ab the a-branch dies at b, and the b-branch already died at a.",
+  "settings": { "closure": "separate" },
+  "seed": 1,
+  "ops": [
+    ["load", "start q0; accept q1 q2; q0 eps -> q1; q0 eps -> q2; q1 a -> q1; q2 b -> q2"],
+    ["run", "eps"],
+    ["run", "ab"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

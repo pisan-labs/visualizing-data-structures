@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "nfa",
+  "id": "third-from-end",
+  "title": "The third symbol from the end is 1",
+  "notes": "Four states and a guess: on a 1, branch off to q1 and count two more symbols. The set can hold all four states at once. A DFA for the same language has to remember the last three symbols, which takes 8 states.",
+  "settings": { "closure": "separate" },
+  "seed": 1,
+  "ops": [
+    ["load", "start q0; accept q3; q0 0,1 -> q0; q0 1 -> q1; q1 0,1 -> q2; q2 0,1 -> q3"],
+    ["run", "0100"],
+    ["test", "+100 +0110 -0011 -11 +111"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

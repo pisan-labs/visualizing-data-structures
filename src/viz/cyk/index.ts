@@ -120,7 +120,7 @@ export const cykParsing: VizDef<CykState, CykSettings, CykExtra> = {
         return 'a'.repeat(k) + 'b'.repeat(k);
       }),
       preset('aⁿbⁿ: random a’s and b’s', GRAMMARS.anbn, (rng, n) => letters(rng, n, 'ab')),
-      preset('A grammar already in CNF: random a’s and b’s', GRAMMARS.classic, (rng, n) =>
+      preset('Already in CNF: random a’s and b’s', GRAMMARS.classic, (rng, n) =>
         letters(rng, n, 'ab'),
       ),
       preset('Balanced parentheses', GRAMMARS.parens, balancedOf),

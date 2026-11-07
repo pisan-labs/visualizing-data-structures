@@ -152,12 +152,7 @@ export const cfgDerivation: VizDef<CfgState, CfgSettings, CfgExtra> = {
       preset('Balanced parentheses', GRAMMARS.parens, balancedOf),
       preset('Palindromes', GRAMMARS.palindromes, palindromeOf),
       preset('Expressions with precedence', GRAMMARS.precedence, expressionOf),
-      preset(
-        'Expressions without precedence: two trees?',
-        GRAMMARS.ambiguous,
-        expressionOf,
-        'ambiguity',
-      ),
+      preset('No precedence: two trees?', GRAMMARS.ambiguous, expressionOf, 'ambiguity'),
     ],
     sizes: [4, 6, 8],
   },

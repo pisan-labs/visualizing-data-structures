@@ -305,7 +305,7 @@ const place: Op = {
           : [mark(tok, 'active'), mark(regionId(shownOut(c.region, settings)), 'error')];
       yield {
         state,
-        marks: [...marks, mark(claimId(k), 'active')],
+        marks,
         say: claimSay(c, settings),
         lines: [c.kind === 'in' ? 'place.in' : 'place.out'],
         vars: vars(k + 1),

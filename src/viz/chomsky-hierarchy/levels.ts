@@ -76,6 +76,16 @@ export const MACHINE: Record<RegionId, string> = {
   all: 'most have no machine at all',
 };
 
+/** The machines by their usual abbreviations, for a narrow map. */
+export const SHORT_MACHINE: Record<RegionId, string> = {
+  reg: 'DFA or NFA',
+  cf: 'PDA',
+  cs: 'LBA',
+  dec: 'TM that always halts',
+  re: 'TM',
+  all: 'most have no TM',
+};
+
 /** The grammar form of each level, as the map shows it. */
 export const FORM: Record<RegionId, string> = {
   reg: 'A → wB | w',

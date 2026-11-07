@@ -398,6 +398,7 @@ describe('chomsky-hierarchy: the map', () => {
               expect(contains(b!, box, 2), s.id).toBe(true);
               const inner = regions[regions.findIndex((x) => x.r === r) - 1];
               if (inner) expect(overlaps(inner.b!, box), s.id).toBe(false);
+              for (const tok of tokens) expect(overlaps(tok, box), `${tok.id} ${s.id}`).toBe(false);
             }
           }
           // The panel (rules, checks, claims) is beside or under the map, not on it.

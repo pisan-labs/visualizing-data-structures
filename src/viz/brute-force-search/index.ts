@@ -149,6 +149,7 @@ export const bruteForce: VizDef<MatchState<null>, BruteSettings, MatchExtra> = {
     tooLong,
   ] as unknown as SavedExample[],
   practice: brutePractice(() => bruteForce),
+  preview: { example: 'two-matches', level: 2 },
 };
 
 export default bruteForce;

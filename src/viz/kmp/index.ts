@@ -170,6 +170,7 @@ export const kmp: VizDef<MatchState<KmpPre>, KmpSettings, MatchExtra> = {
     buildTable,
   ] as unknown as SavedExample[],
   practice: kmpPractice(() => kmp),
+  preview: { example: 'keeps-three', level: 2 },
 };
 
 export default kmp;

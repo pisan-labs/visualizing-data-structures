@@ -161,6 +161,7 @@ export const weightedMatching: VizDef<HmState, HmSettings, HmExtra> = {
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [cheapest, maximize, products, zeros, allEqual, oneWorker] as unknown as SavedExample[],
   practice: hungarianPractice(() => weightedMatching),
+  preview: { example: 'cheapest-four', level: 2 },
 };
 
 /**

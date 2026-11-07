@@ -184,6 +184,12 @@
 
 2026-11-07 [code] Merged wave 5A: dfa, nfa, nfa-to-dfa, dfa-minimization, regex-to-nfa, turing-machine (src/viz/_turing); the agents recommend moving their page kits (dfa/kit.ts, nfa-to-dfa/kit.ts) and label placement into the shared automata code
 
+2026-11-07 [decision] Catalog thumbnails: Yusuf chose animated SVG drawn from data over GIF (all themes, about 1.5 KB a page), left of each title, play on hover or focus, text stripped; pilot family Trees
+
+2026-11-07 [code] Trees thumbnails: VizDef.preview names an example; src/render/preview.ts strips it to shapes in one frame; prerender writes dist/previews.json and the dev server makes it on request
+
+2026-11-07 [code] Thumbnails for all 108 pages; posters show the fullest frame; input and output boxes always hidden; no arrowheads in thumbnails; graph and geometry pages hide side tables and matrix brackets
+
 2026-11-07 [code] Merged the grammar pages (cfg-derivation, cyk) and src/viz/_grammar (parser, CNF with stages, CYK, derivation search, Chomsky level of a grammar)
 
 2026-11-07 [code] Option 3 step 2: 15 more pages arrange their parts for the stage (src/viz/_stage/arrange.ts, src/viz/_dp/strip.ts); 27 others left as they read fine or their layout sets the scale
@@ -191,3 +197,5 @@
 2026-11-07 [code] Merged the consolidated automata code: shared page kit, panels, one label placement in drawAutomaton (label collisions on the six pages from thousands to 51), tape and trace layouts, regex and Thompson fixes, set notation allowed by the conformance check
 
 2026-11-07 [code] Merged wave 5B: pda (src/viz/_automata/pda.ts, nondeterminism by breadth-first search with a 200-configuration cap) and chomsky-hierarchy (classify a grammar level by level, place 11 languages with their reasons); wave 5B is done
+
+2026-11-07 [code] Merged main (catalog thumbnails, PR #1) into next; previews for the 10 automata and grammar pages; thumbnails drop arrowheads on curved arrows too

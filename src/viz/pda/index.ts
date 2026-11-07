@@ -206,6 +206,7 @@ export const pda: VizDef<PdaState, PdaSettings, PdaExtra> = {
     },
   ],
   practice: pdaPractice(() => pda),
+  preview: { example: 'a-n-b-n', level: 2, hide: ['verdict'] },
   code: {
     python: pythonSource,
     java: javaSource,

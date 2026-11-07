@@ -178,6 +178,7 @@ export const boyerMoore: VizDef<MatchState<BmPre>, BmSettings, MatchExtra> = {
     everyShift,
   ] as unknown as SavedExample[],
   practice: bmPractice(() => boyerMoore),
+  preview: { example: 'both-rules', level: 2 },
 };
 
 export default boyerMoore;

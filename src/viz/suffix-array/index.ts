@@ -204,6 +204,7 @@ export const suffixArray: VizDef<SuffixState, SuffixSettings, SuffixExtra> = {
     notThere,
   ] as unknown as SavedExample[],
   practice: suffixPractice(() => suffixArray),
+  preview: { example: 'banana', level: 2 },
 };
 
 function word(rng: { int(lo: number, hi: number): number }, n: number, letters: string): string {

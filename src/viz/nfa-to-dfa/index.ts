@@ -172,6 +172,7 @@ export const nfaToDfa: VizDef<NfaState, NdSettings, NdExtra> = {
     allSubsets,
   ] as unknown as SavedExample[],
   practice: nfaToDfaPractice(() => nfaToDfa),
+  preview: { example: 'ends-in-ab', level: 2, hide: ['tbl-'] },
 };
 
 /**

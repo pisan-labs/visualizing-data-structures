@@ -177,6 +177,7 @@ export const twoSat: VizDef<SatState, SatSettings, SatExtra> = {
     forced,
   ] as unknown as SavedExample[],
   practice: satPractice(() => twoSat),
+  preview: { example: 'three-clauses', level: 2, hide: ['vn-', 'cl-', 'F-', 'as-'] },
 };
 
 const formulaLines = (s: SatState) => [

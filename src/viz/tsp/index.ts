@@ -194,6 +194,7 @@ export const tsp: VizDef<TspState, TspSettings, TspExtra> = {
     onACircle,
   ] as unknown as SavedExample[],
   practice: tspPractice(() => tsp),
+  preview: { example: 'two-opt-fix', level: 2, hide: ['tour-'] },
 };
 
 const graphLines = (g: Graph) => [

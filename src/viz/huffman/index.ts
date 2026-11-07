@@ -211,6 +211,7 @@ export const huffman: VizDef<HuffState, HuffSettings, HuffExtra> = {
     sentence,
     decodeWalk,
   ] as unknown as SavedExample[],
+  preview: { example: 'abracadabra', level: 2 },
 };
 
 /** A symbol in the driver protocol: a space is written as _. */

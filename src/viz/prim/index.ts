@@ -164,6 +164,7 @@ export const prim: VizDef<PrimState, PrimSettings, PrimExtra> = {
     dense,
   ] as unknown as SavedExample[],
   practice: primPractice(() => prim),
+  preview: { example: 'key-drops', level: 2, hide: ['vn-', 'pq-', 'tbl-'] },
 };
 
 const graphLines = (g: Graph) => [

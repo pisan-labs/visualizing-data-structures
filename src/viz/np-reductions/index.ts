@@ -233,6 +233,7 @@ export const npReductions: VizDef<NpState, NpSettings, NpExtra> = {
     bruteForce,
   ] as unknown as SavedExample[],
   practice: npPractice(() => npReductions),
+  preview: { example: 'chain', level: 2 },
 };
 
 // ----- Driver protocol for the code tabs -----

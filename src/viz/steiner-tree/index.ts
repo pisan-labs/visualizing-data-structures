@@ -131,6 +131,7 @@ export const steinerTree: VizDef<StState, StSettings, StExtra> = {
     approxSpanning,
   ] as unknown as SavedExample[],
   practice: stPractice(() => steinerTree),
+  preview: { example: 'hidden-hub', level: 2, hide: ['cl-', 'cm-'] },
 };
 
 const graphLines = (g: Graph) => [

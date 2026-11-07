@@ -189,6 +189,7 @@ export const cykParsing: VizDef<CykState, CykSettings, CykExtra> = {
     },
   ],
   practice: cykPractice(() => cykParsing),
+  preview: { example: 'balanced', level: 2 },
   code: {
     python: pythonSource,
     java: javaSource,

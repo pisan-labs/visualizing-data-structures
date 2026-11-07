@@ -191,6 +191,7 @@ export const regexToNfa: VizDef<RxState, RxSettings, RxExtra> = {
     },
   ],
   practice: rxPractice(() => regexToNfa),
+  preview: { example: 'ends-in-abb', level: 2, hide: ['rx-'] },
   code: {
     python: pythonSource,
     java: javaSource,

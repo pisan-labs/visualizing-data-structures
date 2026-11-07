@@ -154,6 +154,7 @@ export const hashBuckets: VizDef<BucketState, BucketSettings, BucketExtra> = {
     evenSpread,
     oneBucket,
   ] as unknown as SavedExample[],
+  preview: { example: 'overflow-area', level: 2 },
 };
 
 /**

@@ -187,6 +187,7 @@ export const doublyLinkedList: VizDef<DState, DSettings, DExtra> = {
     nearerEnd,
     reverse,
   ] as unknown as SavedExample[],
+  preview: { example: 'reverse', level: 2 },
 };
 
 export default doublyLinkedList;

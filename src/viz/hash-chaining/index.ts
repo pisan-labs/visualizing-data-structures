@@ -178,6 +178,7 @@ export const hashChaining: VizDef<ChainState, ChainSettings, ChainExtra> = {
     keyValue,
     tailInsert,
   ] as unknown as SavedExample[],
+  preview: { example: 'collisions', level: 2 },
 };
 
 /**

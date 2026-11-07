@@ -128,6 +128,7 @@ export const shellSort: VizDef<ArrayState, ShellSettings, ArrayExtra> = {
     notStable,
   ] as unknown as SavedExample[],
   practice: shellPractice(() => shellSort),
+  preview: { example: 'halving', level: 2 },
 };
 
 export default shellSort;

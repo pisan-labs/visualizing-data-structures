@@ -170,6 +170,7 @@ export const dfaMinimization: VizDef<MinState, MinSettings, MinExtra> = {
     slowSplit,
   ] as unknown as SavedExample[],
   practice: minimizationPractice(() => dfaMinimization),
+  preview: { example: 'slow-split', level: 2, hide: ['sig-'] },
 };
 
 /**

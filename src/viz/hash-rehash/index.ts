@@ -154,6 +154,7 @@ export const hashRehash: VizDef<RehashState, RehashSettings, RehashExtra> = {
   },
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [growPrime, amortized, doubling, thresholdOne, halfFull] as unknown as SavedExample[],
+  preview: { example: 'grow-prime', level: 2 },
 };
 
 /**

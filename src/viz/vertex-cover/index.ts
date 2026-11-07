@@ -169,6 +169,7 @@ export const vertexCover: VizDef<VcState, VcSettings, VcExtra> = {
     noEdges,
   ] as unknown as SavedExample[],
   practice: vcPractice(() => vertexCover),
+  preview: { example: 'greedy-trap', level: 2, hide: ['deg-', 'cover-'] },
 };
 
 const graphLines = (g: Graph) => [

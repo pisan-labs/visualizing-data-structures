@@ -172,6 +172,7 @@ export const dpEditDistance: VizDef<EditState, EditSettings, EditExtra> = {
     insertsOnly,
   ] as unknown as SavedExample[],
   practice: editPractice(() => dpEditDistance),
+  preview: { example: 'kitten', level: 2 },
 };
 
 /**

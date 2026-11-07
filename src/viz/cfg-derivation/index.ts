@@ -207,6 +207,7 @@ export const cfgDerivation: VizDef<CfgState, CfgSettings, CfgExtra> = {
     },
   ],
   practice: cfgPractice(() => cfgDerivation),
+  preview: { example: 'two-trees', level: 2, hide: ['f-'] },
   code: {
     python: pythonSource,
     java: javaSource,

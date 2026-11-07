@@ -123,6 +123,7 @@ export const cocktailSort: VizDef<ArrayState, CocktailSettings, ArrayExtra> = {
     duplicates,
   ] as unknown as SavedExample[],
   practice: cocktailPractice(() => cocktailSort),
+  preview: { example: 'shaker', level: 2 },
 };
 
 export default cocktailSort;

@@ -204,6 +204,7 @@ export const coordinates2d: VizDef<CoordState, CoordSettings, CoordExtra> = {
     homogeneous,
     movingTheFrame,
   ] as unknown as SavedExample[],
+  preview: { example: 'moving-the-frame', level: 3, hide: ['m-', 'mi-'] },
 };
 
 /**

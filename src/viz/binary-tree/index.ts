@@ -183,6 +183,7 @@ export const binaryTree: VizDef<BTState, BTSettings, BTExtra> = {
     skewedDepth,
     widestLevel,
   ] as unknown as SavedExample[],
+  preview: { example: 'four-orders' },
 };
 
 /**

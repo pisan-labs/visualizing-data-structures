@@ -188,6 +188,7 @@ export const trie: VizDef<TrieState, TrieSettings, TrieExtra> = {
     noSharedPrefixes,
     lazyDelete,
   ] as unknown as SavedExample[],
+  preview: { example: 'shared-prefixes', level: 2 },
 };
 
 /**

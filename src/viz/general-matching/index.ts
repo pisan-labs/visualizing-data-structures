@@ -151,6 +151,7 @@ export const generalMatching: VizDef<BlState, BlSettings, BlExtra> = {
   // JSON imports lose the tuple types; the conformance test validates every example.
   examples: [twoBlossoms, throughBlossom, oddCycle, bipartite, star] as unknown as SavedExample[],
   practice: blossomPractice(() => generalMatching),
+  preview: { example: 'two-blossoms', level: 2, hide: ['vn-', 'q-', 'tbl-'] },
 };
 
 const graphLines = (g: Graph) => [

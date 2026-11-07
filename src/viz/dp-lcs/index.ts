@@ -195,6 +195,7 @@ export const dpLcs: VizDef<LcsState, LcsSettings, LcsExtra> = {
     dna,
   ] as unknown as SavedExample[],
   practice: lcsPractice(() => dpLcs),
+  preview: { example: 'length-four', level: 2 },
 };
 
 /**

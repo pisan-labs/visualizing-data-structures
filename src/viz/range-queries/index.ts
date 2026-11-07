@@ -177,6 +177,7 @@ export const rangeQueries: VizDef<RQState, RQSettings, RQExtra> = {
     minPowerOfTwo,
     sparseUpdate,
   ] as unknown as SavedExample[],
+  preview: { example: 'update-then-query', level: 2 },
 };
 
 /**

@@ -184,6 +184,7 @@ export const dijkstra: VizDef<DijkstraState, DijkstraSettings, DijkstraExtra> = 
     fewestEdges,
   ] as unknown as SavedExample[],
   practice: dijkstraPractice(() => dijkstra),
+  preview: { example: 'closest-first', level: 2, hide: ['vn-', 'pq-', 'tbl-'] },
 };
 
 const graphLines = (g: Graph) => [

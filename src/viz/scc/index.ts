@@ -165,6 +165,7 @@ export const scc: VizDef<SccState, SccSettings, SccExtra> = {
     undirected,
   ] as unknown as SavedExample[],
   practice: sccPractice(() => scc),
+  preview: { example: 'four-components', level: 2, hide: ['vn-', 'cs-', 'F-', 'tbl-'] },
 };
 
 const graphLines = (g: Graph) => [

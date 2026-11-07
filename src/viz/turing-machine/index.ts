@@ -219,6 +219,7 @@ export const turingMachine: VizDef<TmState, TmSettings, TmExtra> = {
     },
   ],
   practice: tmPractice(() => turingMachine),
+  preview: { example: 'zeros-ones', level: 2, hide: ['rule-'] },
   code: {
     python: pythonSource,
     java: javaSource,

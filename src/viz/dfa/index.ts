@@ -144,6 +144,7 @@ export const dfa: VizDef<DfaState, DfaSettings, DfaExtra> = {
     },
   ],
   practice: dfaPractice(() => dfa),
+  preview: { example: 'even-even', level: 2, hide: ['verdict'] },
   code: {
     python: pythonSource,
     java: javaSource,

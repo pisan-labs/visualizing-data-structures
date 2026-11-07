@@ -208,6 +208,7 @@ export const memoryModel: VizDef<MemState, MemSettings, undefined> = {
     cppReference,
     cppPass,
   ] as unknown as SavedExample[],
+  preview: { example: 'reassign-vs-mutate', level: 3 },
 };
 
 /**

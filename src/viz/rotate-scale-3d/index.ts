@@ -220,6 +220,7 @@ export const rotateScale3d: VizDef<RsState, Rs3Settings, Rs3Extra> = {
     rowVectors,
     tumblingWedge,
   ] as unknown as SavedExample[],
+  preview: { example: 'tumbling-wedge', level: 3, hide: ['op-', 'mt-'] },
 };
 
 const show = (pts: Vec3[]) =>

@@ -134,6 +134,7 @@ export const leftistHeap: VizDef<MeldState, LeftistSettings, MeldExtra> = {
     descendingChain,
     rankConvention,
   ] as unknown as SavedExample[],
+  preview: { example: 'merge-two-heaps', level: 2 },
 };
 
 export default leftistHeap;

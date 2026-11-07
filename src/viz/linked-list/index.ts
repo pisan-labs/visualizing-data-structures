@@ -207,6 +207,7 @@ export const linkedList: VizDef<ListState, ListSettings, ListExtra> = {
     middle,
     boundaries,
   ] as unknown as SavedExample[],
+  preview: { example: 'reverse', level: 2 },
 };
 
 export default linkedList;

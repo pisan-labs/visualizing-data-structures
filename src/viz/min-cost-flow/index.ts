@@ -210,6 +210,7 @@ export const minCostFlow: VizDef<McState, McSettings, McExtra> = {
     noRoute,
   ] as unknown as SavedExample[],
   practice: minCostPractice(() => minCostFlow),
+  preview: { example: 'cheapest-first', level: 2, hide: ['vn-', 'tbl-'] },
 };
 
 const netLines = (net: Network) => [

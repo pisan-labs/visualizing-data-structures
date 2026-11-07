@@ -203,6 +203,7 @@ export const rotateScale2d: VizDef<RsState, RsSettings, RsExtra> = {
     rowVectors,
     tooBig,
   ] as unknown as SavedExample[],
+  preview: { example: 'about-a-point', level: 3, hide: ['op-', 'mt-'] },
 };
 
 const show = (pts: { x: number; y: number }[]) =>

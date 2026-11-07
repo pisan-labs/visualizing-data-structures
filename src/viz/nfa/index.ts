@@ -158,6 +158,7 @@ export const nfa: VizDef<NfaState, NfaSettings, NfaExtra> = {
     },
   ],
   practice: nfaPractice(() => nfa),
+  preview: { example: 'third-from-end', level: 2, hide: ['trace-', 'test-', 'verdict'] },
   code: {
     python: pythonSource,
     java: javaSource,

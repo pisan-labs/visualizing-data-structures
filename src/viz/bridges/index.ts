@@ -154,6 +154,7 @@ export const bridges: VizDef<BridgesState, BridgesSettings, BridgesExtra> = {
     twoPieces,
   ] as unknown as SavedExample[],
   practice: bridgesPractice(() => bridges),
+  preview: { example: 'two-triangles', level: 2, hide: ['vn-', 'cs-', 'tbl-'] },
 };
 
 const graphLines = (g: Graph) => [

@@ -158,6 +158,7 @@ export const factorial: VizDef<FactState, FactSettings, undefined> = {
     negative,
     tooDeep,
   ] as unknown as SavedExample[],
+  preview: { example: 'down-and-back', level: 2 },
 };
 
 /**

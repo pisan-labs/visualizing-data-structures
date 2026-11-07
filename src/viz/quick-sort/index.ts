@@ -115,6 +115,7 @@ export const quickSort: VizDef<ArrayState, QuickSettings, ArrayExtra> = {
     allEqual,
   ] as unknown as SavedExample[],
   practice: quickPractice(() => quickSort),
+  preview: { example: 'lomuto', level: 2 },
 };
 
 export default quickSort;

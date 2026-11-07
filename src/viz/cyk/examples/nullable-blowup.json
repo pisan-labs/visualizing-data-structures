@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "cyk",
+  "id": "nullable-blowup",
+  "title": "Nullable variables multiply rules",
+  "notes": "S → ABCD, where each of A, B, C and D can vanish. Removing their ε-rules one at a time gives S every way of leaving some out: 15 right sides from one. Then the long ones are split into chains.",
+  "settings": { "conversion": "stages" },
+  "seed": 1,
+  "ops": [
+    ["load", "S -> ABCD; A -> a | eps; B -> b | eps; C -> c | eps; D -> d | eps"],
+    ["parse", "bd"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

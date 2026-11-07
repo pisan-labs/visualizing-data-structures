@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "cyk",
+  "id": "conversion",
+  "title": "Every stage of the conversion",
+  "notes": "This grammar has a bit of everything: an ε-rule (B → ε), unit rules (A → B, A → S), a long rule (S → ASA) and a terminal next to a variable (S → aB). Eleven stages fix them one at a time.",
+  "settings": { "conversion": "stages" },
+  "seed": 1,
+  "ops": [
+    ["load", "S -> ASA | aB; A -> B | S; B -> b | eps"],
+    ["parse", "aab"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

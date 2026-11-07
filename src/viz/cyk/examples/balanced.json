@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "cyk",
+  "id": "balanced",
+  "title": "Balanced parentheses, where a search can get lost",
+  "notes": "S → SS makes a breadth-first search of derivations wander. CYK does not care: 21 cells and 35 splits for (()()), the same for any word of 6 symbols.",
+  "settings": { "conversion": "result" },
+  "seed": 1,
+  "ops": [
+    ["load", "S -> SS | (S) | eps"],
+    ["parse", "(()())"]
+  ],
+  "at": { "op": 1, "step": 0 }
+}

@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "cyk",
+  "id": "anbn",
+  "title": "aⁿbⁿ: aabb in, aab out",
+  "notes": "The conversion turns S → aSb | ε into rules with U₁ for a, U₂ for b and S₁ for \"S then b\". aabb puts S₀ in the top cell; aab fills the whole table too, and the top cell comes out empty.",
+  "settings": { "conversion": "stages" },
+  "seed": 1,
+  "ops": [
+    ["load", "S -> aSb | eps"],
+    ["parse", "aabb"],
+    ["parse", "aab"]
+  ],
+  "at": { "op": 1, "step": 0 }
+}

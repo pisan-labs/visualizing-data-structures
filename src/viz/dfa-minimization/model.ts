@@ -543,7 +543,9 @@ export function describe(s: S): string {
 }
 
 export function describeRun(r: MinRun): string {
-  const parts: string[] = [];
+  const parts = [
+    `Minimizing by ${r.method === 'moore' ? 'partition refinement' : 'table filling'}.`,
+  ];
   if (r.method === 'moore' && Object.keys(r.block).length) {
     const blocks = new Map<number, string[]>();
     for (const q of r.work.states) blocks.set(r.block[q]!, [...(blocks.get(r.block[q]!) ?? []), q]);

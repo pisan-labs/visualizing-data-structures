@@ -215,7 +215,7 @@ export const mealyMoore: VizDef<MmState, MmSettings, MmExtra> = {
     },
   ],
   practice: mealyMoorePractice(() => mealyMoore),
-  preview: { example: 'split', level: 2 },
+  preview: { example: 'change-detector', level: 2 },
   code: {
     python: pythonSource,
     java: javaSource,

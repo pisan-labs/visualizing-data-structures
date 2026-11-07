@@ -112,5 +112,5 @@ Q: A Mealy machine writes 0110 on a word. The Moore machine built from it starts
 - [Detect 101 as you read](#example:detect-101): before each step, say what the machine writes. Then type `10101` and press Run. How many 1s?
 - [Mealy to Moore: a state splits](#example:split): before q1's step, look at the arrows into q1. Will it split?
 - [Remainder mod 3](#example:mod-3): press Convert and look at the Mealy machine's labels. Why does every move into r1 write 1?
-- [Did the input change?](#example:change-detector): set **Moore output** to one symbol per input symbol and run `0110` again. What changes on the tapes?
+- [Did the input change?](#example:change-detector): run `0110`. Then set **Moore output** to one symbol per input symbol and run it again. What changes on the tapes?
 - Load `start q0; q0 0 -> q1 / 0; q0 1 -> q1 / 1; q1 0 -> q0 / 1; q1 1 -> q0 / 0` and guess how many Moore states it needs before you press Convert.

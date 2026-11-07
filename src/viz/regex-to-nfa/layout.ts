@@ -109,15 +109,34 @@ function samples(s: Seg, n = SAMPLES): Pt[] {
   return Array.from({ length: n + 1 }, (_, i) => along(s, i / n));
 }
 
-/** Does the segment between two state centers keep clear of the obstacles? */
-function clear(s: Seg, obstacles: Obstacle[]): boolean {
-  for (let i = 1; i < SAMPLES; i++) {
-    const p = along(s, i / SAMPLES);
+/** Enough points along a segment that none is more than about 8 units from the next. */
+const density = (s: Seg) =>
+  Math.min(
+    240,
+    Math.max(16, Math.ceil((s.via ? dist(s.a, s.via) + dist(s.via, s.b) : dist(s.a, s.b)) / 8)),
+  );
+
+/**
+ * How much room the segment between two state centers leaves the obstacles: the least distance
+ * past an obstacle's radius (negative when it cuts into one). Stops early below `enough`.
+ */
+function room(s: Seg, obstacles: Obstacle[], enough = -Infinity): number {
+  const n = density(s);
+  let least = Infinity;
+  for (let i = 1; i < n; i++) {
+    const p = along(s, i / n);
     if (dist(p, s.a) < STATE_R + 2 || dist(p, s.b) < STATE_R + 2) continue;
-    for (const o of obstacles) if (Math.abs(p.x - o.x) < o.r && dist(p, o) < o.r) return false;
+    for (const o of obstacles) {
+      if (Math.abs(p.x - o.x) >= o.r + 40 || Math.abs(p.y - o.y) >= o.r + 40) continue;
+      least = Math.min(least, dist(p, o) - o.r);
+      if (least < enough) return least;
+    }
   }
-  return true;
+  return least;
 }
+
+/** Does the segment between two state centers keep clear of the obstacles? */
+const clear = (s: Seg, obstacles: Obstacle[]) => room(s, obstacles, 0) >= 0;
 
 type Hint = 'up' | 'down' | 'auto';
 
@@ -154,7 +173,17 @@ function route(
     const found = sides.map((s) => find(s, obs)).filter((f) => f !== null);
     if (found.length) return found.reduce((b, f) => (f.c < b.c - 18 ? f : b)).via;
   }
-  return add(m, mul(n0, sides[0]! * Math.max(c0, 0.45 * d)));
+  // Nothing is fully clear: take the curve with the most room, also trying lopsided ones that
+  // come down onto a state from above.
+  let best = { via: add(m, mul(n0, sides[0]! * Math.max(c0, 0.45 * d))), room: -Infinity };
+  for (const side of sides)
+    for (const t of [0.5, 0.3, 0.7, 0.15, 0.85])
+      for (let c = c0; c <= cmax; c += 12) {
+        const via = add(add(P, mul(sub(Q, P), t)), mul(n0, side * c));
+        const r = room({ a: P, b: Q, via }, others, best.room);
+        if (r > best.room + 0.5) best = { via, room: r };
+      }
+  return best.via;
 }
 
 /** Clip a segment between two state centers to the circles' edges. */

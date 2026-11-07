@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "turing-machine",
+  "id": "zeros-ones",
+  "title": "0ⁿ1ⁿ by crossing off",
+  "notes": "Cross off a 0 (x) and its matching 1 (y), walk back, repeat. Each 0 costs a trip across the word and back, so 000111 takes 25 moves: O(n²).",
+  "settings": {
+    "tape": "one-way",
+    "moves": "LR"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "q0 0 -> q1 x R; q0 y -> q3 R; q0 _ -> accept R; q1 0,y -> q1 R; q1 1 -> q2 y L; q2 0,y -> q2 L; q2 x -> q0 R; q3 y -> q3 R; q3 _ -> accept R"
+    ],
+    ["run", "000111"]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

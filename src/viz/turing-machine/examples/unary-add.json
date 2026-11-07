@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "turing-machine",
+  "id": "unary-add",
+  "title": "Unary addition",
+  "notes": "2 + 3 in unary: 11+111 becomes 11111. Turn the + into a 1, walk to the end, erase the last 1. One pass: O(n) moves.",
+  "settings": {
+    "tape": "one-way",
+    "moves": "LR"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "q0 1 -> q0 R; q0 + -> q1 1 R; q1 1 -> q1 R; q1 _ -> q2 L; q2 1 -> accept _ L"],
+    ["run", "11+111"]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

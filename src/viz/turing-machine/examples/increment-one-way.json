@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "turing-machine",
+  "id": "increment-one-way",
+  "title": "The carry falls off a one-way tape",
+  "notes": "The same machine on a tape that starts at cell 0. The carry out of 111 needs a cell to the left of the number, and there is none: the head stays put and the machine writes 100, which is wrong.",
+  "settings": {
+    "tape": "one-way",
+    "moves": "LR"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "q0 0,1 -> q0 R; q0 _ -> q1 L; q1 1 -> q1 0 L; q1 0,_ -> accept 1 R"],
+    ["run", "111"]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

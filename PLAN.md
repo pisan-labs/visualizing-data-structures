@@ -486,14 +486,16 @@ What they get wrong, and we avoid:
   - `->` or `→`; `eps` or `ε`.
   - Without `start`, the start is the first move's state.
   - `states q4` adds a state with no moves.
-  - The alphabet is every symbol used.
+  - The alphabet is every symbol used in a move, plus any an `alphabet a b` item names (written
+    only when needed).
 - **Word:** symbols with or without spaces, `ε` (or `eps`) for the empty word.
 - **Batch:** `+ab +aabb -ba -eps`, each word with the result it should get. The page runs them
   all and shows a table of expected against actual.
 - **Regular expression:**
   - `(a|b)*abb`: letters and digits, `ε`, `∅`, `|`, `*`, `+`, `?` and parentheses;
   - nothing else;
-  - with the `+`-is-union setting, `?` stays and `+` means union.
+  - with the `+`-is-union setting, `?` stays and `+` means union;
+  - `eps` is ε only as a word of its own.
 - **Pushdown automaton:** `q0 a, Z -> q1 AZ` (read a, pop Z, push AZ). `eps` may stand for
   any of the three.
 - **Grammar:** `S -> aSb | eps; T -> ...`; the first variable is the start. Capitals are
@@ -526,19 +528,32 @@ Built on 7 November:
 - Views receive the stage's size (`view(step, settings, stage)`), so a diagram can run across
   a laptop and down a phone.
 
-Still to build, each by the first page that needs it:
-- **A tape layout:**
-  - a row of cells, the head as a pointer;
-  - the window follows the head and keeps its cells in place;
-  - the input word for finite automata uses it too, with symbols read so far greyed.
-- **A configuration trace:**
-  - Sipser's `u q v` lines for a Turing machine;
-  - (state, rest of input, stack) for a pushdown automaton.
+Built later on 7 November, when the wave 5A pages were consolidated:
+- `src/viz/_automata/page.ts`: the input boxes, batches, one Load operation, the summary
+  sentence, one driver protocol for the code tabs (`automatonLines`).
+- `src/viz/_automata/panels.ts`: the input tape, the verdict badge, the test table, grids;
+  `src/viz/_automata/random.ts`: random machines and words.
+- `setText` writes sets as `{q0, q1}`; the conformance check accepts set notation and still
+  catches template leftovers.
+- `drawAutomaton`: one label placement for every page, badges on the freest side, and options
+  `startArrow`, `show` (a growing diagram keeps its final layout), `route` and `around`;
+  `layoutFromLayers`. `src/layouts/route.ts` routes arrows around states.
+- `src/layouts/tape.ts`: a window that holds still while the touched cells fit, cells left of 0
+  for a two-way tape. `src/layouts/trace.ts`: configuration traces (`u q v`, and the pushdown
+  automaton's state, input and stack).
+- Thompson's construction builds exactly 2m states (R? with two states).
+- `src/viz/_turing/`: the Turing machine model. `src/viz/_grammar/`: grammars, Chomsky normal
+  form with each stage, CYK, derivation search and the Chomsky level of a grammar.
+- `src/viz/_stage/arrange.ts`: picks the arrangement of a page's parts that draws largest on
+  the stage (option 3 step 2).
+
+Still to build:
 - **A computation tree** for nondeterminism: the NFA's branches, dead ones in red.
-- **Grammar views:**
-  - derivation lines;
-  - a parse tree (reusing `src/layouts/multiway.ts` or the forest layout);
-  - the CYK triangle (reusing `src/layouts/table.ts`).
+- Shared moves recommended by the agents: `_stage/arrange.ts` and the grammar pages'
+  `bestPlacement` into `src/layouts`, `_dp/strip.ts` into `src/layouts/table.ts` (with cells
+  left out and two-line values), the parse-tree drawer into a layout, wrap options for
+  `node-chain`, `align`, `bars` and `columns`, a floor on the `calls.ts` tag size, an "auto"
+  arrangement for graph-representations and stack-array.
 
 ### 13.5 Pages
 

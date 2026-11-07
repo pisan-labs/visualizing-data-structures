@@ -338,7 +338,7 @@ export function describeMove(m: PdaMove): string {
     m.pop !== EPS ? `pop ${m.pop}` : '',
     m.push ? `push ${m.push}` : '',
   ].filter(Boolean);
-  if (!acts.length) return 'move without reading, popping or pushing';
+  if (!acts.length) return 'take an ε-move that leaves the stack alone';
   const said = acts.length === 1 ? acts[0]! : `${acts.slice(0, -1).join(', ')} and ${acts.at(-1)}`;
   return m.read === EPS ? `${said} without reading` : said;
 }

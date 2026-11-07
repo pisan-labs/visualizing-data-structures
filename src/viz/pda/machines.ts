@@ -41,7 +41,7 @@ export const MACHINES = {
     'start q0; accept q2; q0 eps, eps -> q1 S$; q1 eps, S -> q1 Sa; q1 eps, S -> q1 b; q1 a, a -> q1 eps; q1 b, b -> q1 eps; q1 eps, $ -> q2 eps',
   /** Equal numbers of a's and b's, in any order: the stack holds the surplus. Deterministic. */
   equal:
-    'start q0; accept q1; q0 eps, eps -> q1 $; q1 a, $ -> q2 a$; q1 b, $ -> q3 b$; q2 a, a -> q2 aa; q2 b, a -> q2 eps; q2 eps, $ -> q1 $; q3 b, b -> q3 bb; q3 a, b -> q3 eps; q3 eps, $ -> q1 $',
+    'start q0; accept q1; q0 eps, eps -> q1 $; q1 a, $ -> q2 a$; q1 b, $ -> q2 b$; q2 a, a -> q2 aa; q2 b, b -> q2 bb; q2 a, b -> q2 eps; q2 b, a -> q2 eps; q2 eps, $ -> q1 $',
 } as const;
 
 export type MachineName = keyof typeof MACHINES;

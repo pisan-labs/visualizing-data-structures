@@ -160,7 +160,6 @@ export function drawDiagram(
         mono: true,
         cls: 'label',
         role: roles.get(lid) ?? (arrowRole && ids.length === 1 ? arrowRole : undefined),
-        weight: roles.get(lid) ? 'bold' : undefined,
       });
       const w = textWidth(text, LABEL_SIZE, true);
       boxes.push({ x: c.x - w / 2 - 2, y: y - LABEL_SIZE / 2 - 1, w: w + 4, h: LABEL_SIZE + 2 });
@@ -184,13 +183,11 @@ function drawStack(
   const st = r?.focus.stack ?? '';
   const n = st.length;
   // Bottom first; a cell is named by its height from the bottom, so a symbol keeps its cell.
-  const cells: PanelCell[] = [...st]
-    .reverse()
-    .map((c, i) => ({
-      key: String(i),
-      text: c,
-      role: i >= n - (r?.pushed ?? 0) ? 'new' : undefined,
-    }));
+  const cells: PanelCell[] = [...st].reverse().map((c, i) => ({
+    key: String(i),
+    text: c,
+    role: i >= n - (r?.pushed ?? 0) ? 'new' : undefined,
+  }));
   const shown =
     n > rows
       ? [{ key: 'more', text: `+${n - rows + 1}`, dim: true }, ...cells.slice(n - rows + 1)]

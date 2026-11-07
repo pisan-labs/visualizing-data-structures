@@ -112,8 +112,11 @@ type PdaStep = Step<S, X>;
 export const KEEP = 7;
 /** Stack cells drawn at most; a deeper stack shows "+k" for the cells below. */
 export const STACK_ROWS = 8;
-/** In "every branch", moves shown one by one before the rest of a long search is summed up. */
-export const MAX_LEVELS = 30;
+/**
+ * In "every branch", the moves shown one by one before the rest of a long search is summed up:
+ * a few when the search ends at the cap (it repeats itself), more when it ends by itself.
+ */
+export const MAX_LEVELS = { stopped: 8, other: 40 };
 /** Moves of a computation played back at normal detail; the rest are fine detail. */
 export const PLAY_MAX = 24;
 const MAX_CHARS = 40;
@@ -227,11 +230,18 @@ function dyingSay(p: Pda, word: string, dying: SearchNode[], by: AcceptBy): stri
   if (!dying.length) return '';
   const told = dying
     .slice(0, 2)
-    .map((n) => `${configText(n.config, word)}: ${stuckWhy(p, word, n.config, by)}`);
+    .map((n) => `${shortConfig(n.config, word)}: ${stuckWhy(p, word, n.config, by)}`);
   const rest = dying.length - told.length;
   const tail = rest ? `, and ${plural(rest, 'other')} with no move` : '';
   return ` ${dying.length === 1 ? 'A branch dies' : `${dying.length} branches die`}: ${told.join('; ')}${tail}.`;
 }
+
+/** A configuration for narration, with a very deep stack cut: "(q1, ab, Saaaaaaaa…$)". */
+export const shortConfig = (c: Config, word: string): string =>
+  configText(
+    c.stack.length > 12 ? { ...c, stack: `${c.stack.slice(0, 9)}…${c.stack.at(-1)}` } : c,
+    word,
+  );
 
 const acceptWhy = (c: Config, by: AcceptBy) =>
   by === 'state' ? `and ${c.state} is an accept state` : 'with an empty stack';
@@ -306,7 +316,7 @@ function* runSteps(
   const fr = frame ?? frameOf([sr]);
   const nodes = sr.nodes;
   const w = wordText(word);
-  const cfg = (n: SearchNode) => configText(n.config, word);
+  const cfg = (n: SearchNode) => shortConfig(n.config, word);
   const many = branched(sr);
   const all = settings.search === 'all';
   const end = sr.found ?? (sr.outcome === 'stopped' ? nodes.length - 1 : furthest(sr));
@@ -355,7 +365,9 @@ function* runSteps(
   // The start.
   const intro = `Run the machine on ${w}.${word ? '' : ' The word is empty: there is nothing to read.'}`;
   const startSay = `It starts in ${cfg(start)}: state ${p.start}, ${word ? 'all of the word to read' : 'nothing to read'}, and ${stackWords(p.initial)}.`;
-  let summary = '';
+  let summary = many
+    ? ' The machine has choices, so a breadth-first search follows every branch, one move at a time.'
+    : '';
   if (!all) {
     const k = sr.found === null ? 0 : nodes[sr.found]!.depth;
     const choices = many
@@ -383,7 +395,8 @@ function* runSteps(
   if (all) {
     const last = ls.length - 1;
     for (let d = 1; d <= last; d++) {
-      if (d === MAX_LEVELS && last > MAX_LEVELS + 1) {
+      const most = sr.outcome === 'stopped' ? MAX_LEVELS.stopped : MAX_LEVELS.other;
+      if (d === most && last > most + 1) {
         // A long search (usually ε-moves that push forever) is summed up.
         const skipped = ls.slice(d, last).flat().length;
         const kids = ls[last - 1]!.map((id) => nodes[id]!);
@@ -418,7 +431,8 @@ function* runSteps(
         const k = kids[0]!;
         say = `Move ${d}: ${moveSay(p.moves[k.move!]!)}. Now ${cfg(k)}.`;
       } else {
-        say = `Move ${d}: ${plural(parents.length, 'configuration')} ${parents.length === 1 ? 'makes' : 'make'} ${plural(kids.length, 'new one')}.`;
+        const listed = kids.length <= 3 ? `: ${words(kids.map(cfg))}` : '';
+        say = `Move ${d}: ${plural(parents.length, 'configuration')} ${parents.length === 1 ? 'makes' : 'make'} ${plural(kids.length, 'new one')}${listed}.`;
         if (forks.length)
           say += ` ${words(forks.slice(0, 2).map(cfg))}${forks.length > 2 ? ` and ${forks.length - 2} more` : ''} ${forks.length === 1 ? 'has' : 'have'} a choice of moves, so the computation branches.`;
         say += dyingSay(p, word, dying, by);
@@ -429,7 +443,11 @@ function* runSteps(
         say += ` ${cfg(found)} has read the whole word ${acceptWhy(found.config, by)}: the search stops.`;
       if (capped)
         say += ` That makes ${CAP} configurations, the cap: the search stops without an answer.`;
-      const { lines, more } = levelLines(dying, kids, focus);
+      // One branch: the panel shows its computation so far; several: the branches alive now.
+      const single = kids.length === 1 && !dying.length && !stale.length;
+      const { lines, more } = single
+        ? { lines: pathLines(sr, pathTo(sr, focus), d), more: 0 }
+        : levelLines(dying, kids, focus);
       const shownIds = new Set(lines.map((l) => l.n));
       const live = [...new Set(kids.map((n) => n.config.state))];
       yield step(
@@ -498,13 +516,13 @@ function* runSteps(
   };
   if (sr.outcome === 'accept') {
     const moves = e.depth;
-    const read = word ? `The machine has read all of ${w}` : 'There is nothing to read';
+    const now = word ? `The machine has read all of ${w}` : 'There is nothing to read';
     const how =
       moves === 0
         ? `The word is empty and the start configuration ${cfg(e)} already accepts (${by === 'state' ? `${e.config.state} is an accept state` : 'the stack is empty'}), so the machine accepts ε without a move.`
         : by === 'state'
-          ? `${read} and is in ${e.config.state}, an accept state, so it accepts ${w}.`
-          : `${read} and its stack is empty, so it accepts ${w}.`;
+          ? `${now}, and it is in ${e.config.state}, an accept state, so it accepts ${w}.`
+          : `${now}, and its stack is empty, so it accepts ${w}.`;
     const count = moves
       ? ` The accepting computation takes ${plural(moves, 'move')}${many ? `; the search explored ${plural(nodes.length, 'configuration')} to find it` : ''}.`
       : '';

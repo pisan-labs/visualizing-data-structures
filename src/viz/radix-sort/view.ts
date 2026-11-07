@@ -1,7 +1,8 @@
-import type { MarkRole } from '../../engine/types';
+import type { MarkRole, StageSize } from '../../engine/types';
 import { barsScene, type BarsFrame } from '../../layouts/bars';
 import type { Scene, Shape } from '../../render/scene';
 import type { Item } from '../_sorting/kit';
+import { pickLayout } from '../_stage/arrange';
 import { describeArray } from '../_sorting/view';
 import { digitOf, digitText, type RadixSettings, type RadixStep } from './model';
 
@@ -13,6 +14,8 @@ const GAP = 4;
 const PAD = 6;
 /** The narrowest a bucket column gets, so three digits fit. */
 const MIN_COL = 50;
+/** Between rows of buckets, when a narrow stage wraps them. */
+const ROW_GAP = 8;
 
 /** Move a shape right by dx. */
 function shift(s: Shape, dx: number): Shape {
@@ -24,9 +27,10 @@ function shift(s: Shape, dx: number): Shape {
 /**
  * A on top, drawn like the other sorting pages. During a pass the digit that pass sorts by
  * sits under each value. Below are the buckets, one column per digit value; a value leaves A
- * for the back of its bucket, and the buckets empty back into A in order.
+ * for the back of its bucket, and the buckets empty back into A in order. On a narrow stage
+ * the buckets may wrap into two or four rows, when that draws larger.
  */
-export function view(step: RadixStep, settings: RadixSettings): Scene {
+export function view(step: RadixStep, settings: RadixSettings, stage?: StageSize): Scene {
   const { state, extra = {} } = step;
   const n = state.a.length;
   const base = settings.base;
@@ -60,25 +64,38 @@ export function view(step: RadixStep, settings: RadixSettings): Scene {
     regions: extra.regions,
     roles,
   });
+  // Rows of buckets: one, or on a narrow stage two or four. The deepest bucket of the whole
+  // sort is known from its first step, so the choice holds through it.
+  const depth = Math.max(1, extra.depth ?? 1);
+  const cellH = depth > 4 ? 30 : CELL_H;
+  const gap = depth > 4 ? 3 : GAP;
+  const colH = depth * (cellH + gap) - gap + 2 * PAD;
+  const rowOptions = stage ? [1, 2, 4].filter((r) => r === 1 || base >= 2 * r) : [1];
+  const { perRow, rows } = pickLayout(
+    stage,
+    rowOptions.map((r) => {
+      const perRow = Math.ceil(base / r);
+      const rows = Math.ceil(base / perRow);
+      const w = Math.max(bounds.w, perRow * MIN_COL + 20);
+      const h = bounds.h + 4 + rows * (HEAD + colH) + (rows - 1) * ROW_GAP + 12;
+      return { perRow, rows, bounds: { x: 0, y: 0, w, h } };
+    }),
+  );
   // Many buckets need more room than A does: widen the frame and keep A in the middle.
-  const width = Math.max(bounds.w, base * MIN_COL + 20);
+  const width = Math.max(bounds.w, perRow * MIN_COL + 20);
   const dx = (width - bounds.w) / 2;
   const out: Shape[] = dx ? shapes.map((s) => shift(s, dx)) : shapes;
   let height = bounds.h;
 
   if (extra.buckets) {
-    const depth = Math.max(1, extra.depth ?? 1);
     // Deep buckets get shorter cells, so the drawing stays readable on a short laptop screen.
-    const cellH = depth > 4 ? 30 : CELL_H;
-    const gap = depth > 4 ? 3 : GAP;
-    const top = bounds.h + 4;
-    const bp = Math.min(64, Math.floor((width - 20) / base));
-    const left = (width - base * bp) / 2;
-    const colH = depth * (cellH + gap) - gap + 2 * PAD;
+    const bp = Math.min(64, Math.floor((width - 20) / perRow));
+    const left = (width - perRow * bp) / 2;
     // Three digits must fit the cell inside a column.
     const size = Math.min(24, Math.floor((bp - 10) / 1.8));
     for (let d = 0; d < base; d++) {
-      const x = left + d * bp;
+      const x = left + (d % perRow) * bp;
+      const top = bounds.h + 4 + Math.floor(d / perRow) * (HEAD + colH + ROW_GAP);
       out.push({
         kind: 'text',
         id: `bucket-${d}-label`,
@@ -129,7 +146,7 @@ export function view(step: RadixStep, settings: RadixSettings): Scene {
         });
       });
     }
-    height = top + HEAD + colH + 12;
+    height = bounds.h + 4 + rows * (HEAD + colH) + (rows - 1) * ROW_GAP + 12;
   }
   return { shapes: out, bounds: { ...bounds, w: width, h: height }, label: label(step, base) };
 }

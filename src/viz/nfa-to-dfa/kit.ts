@@ -21,7 +21,7 @@
  */
 import type { Controls, MarkRole, OpSpec, Scalar, StageSize, Step } from '../../engine/types';
 import { STATE_R, fixedLayout, stateId, type StateLayout } from '../../layouts/automaton';
-import { fitScore, padBounds, textWidth } from '../../layouts/graph';
+import { fitScore, padBounds, textWidth, unionBounds } from '../../layouts/graph';
 import type { Bounds, Shape } from '../../render/scene';
 import { EPS, isDeterministic, type Automaton } from '../_automata/automaton';
 import { parseAutomaton } from '../_automata/parse';
@@ -339,6 +339,23 @@ export function pickBest<T extends { bounds: Bounds }>(candidates: T[], stage?: 
     }
   }
   return best;
+}
+
+/**
+ * Move a block of panels down, clear of the stage's zoom buttons, when it reaches into the
+ * scene's top right corner. The buttons cover about 140 x 52 pixels there, so how far that is
+ * in scene units depends on the scale the whole picture is drawn at.
+ */
+export function clearOfButtons(block: Bounds, rest: Bounds, stage?: StageSize): Bounds {
+  for (let i = 0; i < 3; i++) {
+    const total = unionBounds(rest, block);
+    const s = onStage(total, stage);
+    const top = total.y - 14 + 52 / s;
+    const right = total.x + total.w + 14 - 140 / s;
+    if (block.x + block.w <= right || block.y >= top - 0.5) return block;
+    block = { ...block, y: top };
+  }
+  return block;
 }
 
 /** The shapes whose ids pass `keep`, with new text for the ones `relabel` names. */

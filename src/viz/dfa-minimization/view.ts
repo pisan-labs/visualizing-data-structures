@@ -40,7 +40,14 @@ import {
   reachable,
   type Automaton,
 } from '../_automata/automaton';
-import { automatonKey, drawBadges, drawGrid, gridWidths, pickBest } from '../nfa-to-dfa/kit';
+import {
+  automatonKey,
+  clearOfButtons,
+  drawBadges,
+  drawGrid,
+  gridWidths,
+  pickBest,
+} from '../nfa-to-dfa/kit';
 import {
   MIN_PREFIX,
   describe,
@@ -305,11 +312,12 @@ function arrange(dfa: Automaton, method: Method, stage?: StageSize): Frame {
       const mdx = side ? beside(t, 30) - mb.x : -mb.x;
       const mdy = side ? t.y - mb.y : below(t, 20) - mb.y;
       const room = unionBounds(t, { ...mb, x: mb.x + mdx, y: mb.y + mdy });
-      const block = placePanels([], db, stage, (_out, x, y) => ({
+      const placed = placePanels([], db, stage, (_out, x, y) => ({
         ...room,
         x: room.x + x,
         y: room.y + y,
       }));
+      const block = clearOfButtons(placed, db, stage);
       candidates.push({
         across,
         before: captioned(drawAutomaton(complete(dfa), layoutStates(complete(dfa), across)).bounds),

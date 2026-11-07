@@ -17,7 +17,15 @@ import { drawAutomaton, layoutStates, type StateLayout } from '../../layouts/aut
 import { below, beside, padBounds, placePanels, translate, unionBounds } from '../../layouts/graph';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { setName, stateLetter, type Automaton } from '../_automata/automaton';
-import { automatonKey, drawGrid, gridWidths, keepShapes, pickBest, placeLayers } from './kit';
+import {
+  automatonKey,
+  clearOfButtons,
+  drawGrid,
+  gridWidths,
+  keepShapes,
+  pickBest,
+  placeLayers,
+} from './kit';
 import {
   DFA_PREFIX,
   MAX_ALL,
@@ -91,7 +99,7 @@ function arrange(nfa: Automaton, mode: SubsetMode, stage?: StageSize): Frame {
       const dx = under ? nb.x - db.x : beside(nb, 40) - db.x;
       const dy = under ? below(nb, 24) - db.y : nb.y - db.y;
       const diagrams = unionBounds(nb, { ...db, x: db.x + dx, y: db.y + dy });
-      const table = placePanels([], diagrams, stage, (out, x, y) =>
+      const placed = placePanels([], diagrams, stage, (out, x, y) =>
         drawGrid(out, {
           id: 'tbl',
           x,
@@ -103,6 +111,7 @@ function arrange(nfa: Automaton, mode: SubsetMode, stage?: StageSize): Frame {
           reserve: dfa.states.length,
         }),
       );
+      const table = clearOfButtons(placed, diagrams, stage);
       candidates.push({
         across,
         dx,

@@ -12,7 +12,15 @@ import {
   subsetConstruction,
   type Automaton,
 } from './automaton';
-import { matches, parseRegex, showRegex, thompson, type Regex } from './regex';
+import {
+  matches,
+  parseRegex,
+  readRegex,
+  regexSize,
+  showRegex,
+  thompson,
+  type Regex,
+} from './regex';
 
 const STATES = ['q0', 'q1', 'q2', 'q3', 'q4'];
 
@@ -135,10 +143,37 @@ describe('regular expressions', () => {
       fc.property(regex, (r) => {
         const { nfa, parts } = thompson(r);
         expect(parts.at(-1)!.start).toBe(nfa.start);
+        // Two states per symbol and operator, ? included.
+        expect(nfa.states).toHaveLength(2 * regexSize(r));
         for (const w of allWords(5)) expect(accepts(nfa, w)).toBe(matches(r, w));
       }),
       { numRuns: 150 },
     );
+  });
+
+  it('reads + as union when asked, gives each node its span, and eps only as a word', () => {
+    expect(showRegex(parseRegex('(a+b)*a?', { union: '+' }) as Regex)).toBe('(a|b)*a?');
+    expect((parseRegex('a|b', { union: '+' }) as Error).message).toMatch(/\+ stands for union/);
+    expect(showRegex(parseRegex('steps') as Regex)).toBe('steps');
+    expect(showRegex(parseRegex('a eps|(eps)') as Regex)).toBe('aε|ε');
+    const p = readRegex('(ab)* c') as Exclude<ReturnType<typeof readRegex>, Error>;
+    expect(p.text).toBe('(ab)*c');
+    const spans: string[] = [];
+    const walk = (t: typeof p.tree) => {
+      t.kids.forEach(walk);
+      spans.push(p.text.slice(...t.span));
+    };
+    walk(p.tree);
+    // In build order, children before parents: the same order thompson() builds its parts.
+    expect(spans).toEqual(['a', 'b', '(ab)', '(ab)*', 'c', '(ab)*c']);
+    expect(thompson(p.tree.r).parts.map((f) => f.kind)).toEqual([
+      'sym',
+      'sym',
+      'concat',
+      'star',
+      'sym',
+      'concat',
+    ]);
   });
 
   it('says where an expression goes wrong', () => {

@@ -25,6 +25,7 @@
  *   accepts(a, word)                  does the NFA (or DFA) accept the word
  *   subsetConstruction(a)             an equivalent DFA, with each state's set of NFA states
  *   minimize(dfa)                     the minimal complete DFA, with the blocks merged
+ *   setText(set), setName(set)        "{q0, q1}" for sentences, "{q0,q1}" for cells; "∅"
  *   describeAutomaton(a)              a sentence for screen readers
  */
 import { compareNames } from '../_graph/graph';
@@ -137,7 +138,14 @@ export function accepts(a: Automaton, word: string): boolean {
   return set.some((q) => a.accept.includes(q));
 }
 
-/** Name a set of states for a DFA built from it: "{q0,q1}", or "∅" for the empty set. */
+/**
+ * A set of states or symbols as Sipser writes it: "{q0, q1}", "{a}", or "∅" for the empty set.
+ * Every page writes sets with this, in narration and on the stage alike.
+ */
+export const setText = (set: readonly string[]): string =>
+  set.length ? `{${set.join(', ')}}` : '∅';
+
+/** The same without spaces, "{q0,q1}", for table cells and for a DFA state named by its set. */
 export const setName = (set: readonly string[]): string =>
   set.length ? `{${set.join(',')}}` : '∅';
 
@@ -279,5 +287,5 @@ export function minimize(a: Automaton): Minimized {
 export function describeAutomaton(a: Automaton): string {
   const kind = isDeterministic(a) ? 'A DFA' : 'An NFA';
   const acc = a.accept.length ? `accept ${a.accept.join(', ')}` : 'no accept states';
-  return `${kind} with ${a.states.length} states (start ${a.start}, ${acc}) over {${a.alphabet.join(', ')}} and ${a.moves.length} moves.`;
+  return `${kind} with ${a.states.length} states (start ${a.start}, ${acc}) over ${setText(a.alphabet)} and ${a.moves.length} moves.`;
 }

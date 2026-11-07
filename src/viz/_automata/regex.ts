@@ -2,21 +2,32 @@
  * Formal regular expressions and Thompson's construction, shared by the regex pages.
  *
  * Syntax (Sipser 1.52), loosest binding first:
- *   R|S     union (only |: + means "one or more" here, not union as in some books)
+ *   R|S     union
  *   RS      concatenation
- *   R*      star; R+ one or more (RR*); R? optional (R|ε)
+ *   R*      star; R+ one or more (RR*); R? optional (R or ε)
  *   (R)     grouping
  *   a       a symbol: one letter or digit
- *   ε       the empty string (also typed as "eps"); ∅ the empty language
+ *   ε       the empty string (also typed as the word "eps"); ∅ the empty language
  * Spaces are ignored. Nothing else is allowed: no character classes, no escapes, no
  * backreferences, so every expression here describes a regular language.
  *
+ * Union sign: `|` by default, where + means "one or more". With `{ union: '+' }` (Hopcroft and
+ * Ullman), + is union and there is no one-or-more; * and ? stay.
+ *
+ * "eps" stands for ε only as a word of its own: not next to another letter or digit, so
+ * "steps" is five symbols and "a eps" is a followed by ε.
+ *
  * API
- *   parseRegex(text) -> Regex or an Error whose message says where the problem is
- *   showRegex(r)     -> text with only the parentheses it needs
- *   thompson(r)      -> { nfa, parts }: the NFA (states q0, q1, ... in the order they are made)
- *                       and the fragment each node of the expression built, in build order
- *                       (children before parents), for a page that animates the build.
+ *   parseRegex(text, { union }) -> Regex, or an Error whose message says where the problem is
+ *   readRegex(text, { union })  -> { text, tree }: the expression as shown (ε for eps, no
+ *                                  spaces) and its tree, each node with its span in that text
+ *   showRegex(r, union)         -> text with only the parentheses it needs
+ *   regexSize(r)                -> m, its symbols and operators; regexSymbols(r) its alphabet
+ *   thompson(r)                 -> { nfa, parts }: the NFA (states q0, q1, ... in the order they
+ *                                  are made) and the fragment each node built, in build order
+ *                                  (children before parents, as a post-order walk of the tree),
+ *                                  for a page that animates the build. Exactly 2m states.
+ *   matches(r, w)               -> a direct matcher, the tests' oracle
  */
 import { EPS, makeAutomaton, type Automaton, type Move } from './automaton';
 
@@ -30,81 +41,139 @@ export type Regex =
   | { kind: 'plus'; a: Regex }
   | { kind: 'opt'; a: Regex };
 
+export type UnionSign = '|' | '+';
+
+export interface RegexOptions {
+  /** The union sign: `|` (default; + is one or more) or `+` (no one-or-more). */
+  union?: UnionSign;
+}
+
+/** A node of the expression with where it sits in the shown text. */
+export interface RegexTree {
+  r: Regex;
+  /** [from, to) in the shown text, the parentheses that wrap exactly this part included. */
+  span: [number, number];
+  /** Its parts, in the order Thompson's construction builds them. */
+  kids: RegexTree[];
+}
+
+export interface ParsedRegex {
+  /** The expression as shown: "eps" read as ε, spaces removed. */
+  text: string;
+  tree: RegexTree;
+}
+
 export const MAX_REGEX = 40;
 
-export function parseRegex(raw: string): Regex | Error {
-  const text = raw.replace(/eps/g, EPS).replace(/\s+/g, '');
-  if (!text) return new Error('Type a regular expression, such as (a|b)*abb.');
+/** The text as shown: the word "eps" becomes ε and spaces go. */
+export const regexText = (raw: string): string =>
+  raw.replace(/(?<![A-Za-z0-9])eps(?![A-Za-z0-9])/g, EPS).replace(/\s+/g, '');
+
+const POSTFIX: Record<UnionSign, string> = { '|': '*+?', '+': '*?' };
+
+export function readRegex(raw: string, o: RegexOptions = {}): ParsedRegex | Error {
+  const sign = o.union ?? '|';
+  const text = regexText(raw);
+  if (!text) return new Error(`Type a regular expression, such as (a${sign}b)*abb.`);
   if (text.length > MAX_REGEX)
     return new Error(`Keep the expression to ${MAX_REGEX} characters or fewer.`);
   let i = 0;
   const peek = () => text[i];
   const fail = (msg: string) => new Error(`${msg} (at character ${i + 1} of "${text}").`);
+  const postfix = POSTFIX[sign];
+  const other = sign === '|' ? '+' : '|';
+  const node = (r: Regex, span: [number, number], kids: RegexTree[]): RegexTree => ({
+    r,
+    span,
+    kids,
+  });
 
-  function union(): Regex | Error {
+  function union(): RegexTree | Error {
     let left = concat();
-    while (!(left instanceof Error) && peek() === '|') {
+    while (!(left instanceof Error) && peek() === sign) {
       i++;
       const right = concat();
       if (right instanceof Error) return right;
-      left = { kind: 'union', a: left, b: right };
+      left = node(
+        { kind: 'union', a: left.r, b: right.r },
+        [left.span[0], right.span[1]],
+        [left, right],
+      );
     }
     return left;
   }
-  function concat(): Regex | Error {
-    let left: Regex | null = null;
-    while (i < text.length && peek() !== '|' && peek() !== ')') {
-      const right = postfix();
+  function concat(): RegexTree | Error {
+    let left: RegexTree | null = null;
+    while (i < text.length && peek() !== sign && peek() !== ')') {
+      const right = post();
       if (right instanceof Error) return right;
-      left = left ? { kind: 'concat', a: left, b: right } : right;
+      left = left
+        ? node(
+            { kind: 'concat', a: left.r, b: right.r },
+            [left.span[0], right.span[1]],
+            [left, right],
+          )
+        : right;
     }
-    return left ?? fail('Something is missing on one side of | or inside ( )');
+    return left ?? fail(`Something is missing on one side of ${sign} or inside ( )`);
   }
-  function postfix(): Regex | Error {
-    let r = atom();
-    while (!(r instanceof Error) && (peek() === '*' || peek() === '+' || peek() === '?')) {
+  function post(): RegexTree | Error {
+    let t = atom();
+    while (!(t instanceof Error) && postfix.includes(peek() ?? '\u0000')) {
       const op = text[i++];
-      r = { kind: op === '*' ? 'star' : op === '+' ? 'plus' : 'opt', a: r };
+      const kind = op === '*' ? 'star' : op === '+' ? 'plus' : 'opt';
+      t = node({ kind, a: t.r }, [t.span[0], i], [t]);
     }
-    return r;
+    return t;
   }
-  function atom(): Regex | Error {
+  function atom(): RegexTree | Error {
     const c = peek();
+    const at = i;
     if (c === '(') {
       i++;
-      const r = union();
-      if (r instanceof Error) return r;
+      const t = union();
+      if (t instanceof Error) return t;
       if (peek() !== ')') return fail('A ( is never closed');
       i++;
-      return r;
+      return { ...t, span: [at, i] };
     }
-    if (c === EPS) {
+    if (c === EPS || c === '∅') {
       i++;
-      return { kind: 'eps' };
-    }
-    if (c === '∅') {
-      i++;
-      return { kind: 'empty' };
+      return node({ kind: c === EPS ? 'eps' : 'empty' }, [at, i], []);
     }
     if (c && /^[A-Za-z0-9]$/.test(c)) {
       i++;
-      return { kind: 'sym', c };
+      return node({ kind: 'sym', c }, [at, i], []);
     }
-    if (c === '*' || c === '+' || c === '?') return fail(`${c} needs something before it`);
+    if (c && postfix.includes(c)) return fail(`${c} needs something before it`);
     if (c === ')') return fail('A ) has no matching (');
-    return fail(`"${c}" is not allowed: use letters, digits, ε, |, *, +, ?, ( and )`);
+    if (c === other)
+      return fail(
+        sign === '+'
+          ? '| is not used with this setting: + stands for union'
+          : '+ needs something before it',
+      );
+    const ops = sign === '|' ? '|, *, +, ?' : '+, *, ?';
+    return fail(`"${c}" is not allowed: use letters, digits, ε, ∅, ${ops}, ( and )`);
   }
 
-  const r = union();
-  if (r instanceof Error) return r;
+  const t = union();
+  if (t instanceof Error) return t;
   if (i < text.length) return fail(peek() === ')' ? 'A ) has no matching (' : 'Unexpected text');
-  return r;
+  return { text, tree: t };
+}
+
+export function parseRegex(raw: string, o: RegexOptions = {}): Regex | Error {
+  const p = readRegex(raw, o);
+  return p instanceof Error ? p : p.tree.r;
 }
 
 const PREC = { union: 0, concat: 1, star: 2, plus: 2, opt: 2, sym: 3, eps: 3, empty: 3 };
 
-export function showRegex(r: Regex): string {
-  const wrap = (s: Regex, min: number) => (PREC[s.kind] < min ? `(${showRegex(s)})` : showRegex(s));
+/** The expression with only the parentheses it needs, union written with `union`. */
+export function showRegex(r: Regex, union: UnionSign = '|'): string {
+  const wrap = (s: Regex, min: number) =>
+    PREC[s.kind] < min ? `(${showRegex(s, union)})` : showRegex(s, union);
   switch (r.kind) {
     case 'sym':
       return r.c;
@@ -113,16 +182,50 @@ export function showRegex(r: Regex): string {
     case 'empty':
       return '∅';
     case 'union':
-      return `${wrap(r.a, 0)}|${wrap(r.b, 1)}`;
+      return `${wrap(r.a, 0)}${union}${wrap(r.b, 1)}`;
     case 'concat':
       return `${wrap(r.a, 1)}${wrap(r.b, 2)}`;
     case 'star':
       return `${wrap(r.a, 3)}*`;
     case 'plus':
-      return `${wrap(r.a, 3)}+`;
+      // With + for union there is no one-or-more; write R+ as RR*.
+      return union === '+' ? `${wrap(r.a, 3)}${wrap(r.a, 3)}*` : `${wrap(r.a, 3)}+`;
     case 'opt':
       return `${wrap(r.a, 3)}?`;
   }
+}
+
+/**
+ * m, the length of the expression: its symbols (ε and ∅ included) and its operators, without
+ * parentheses or the concatenations no one writes. Thompson's NFA has exactly 2m states.
+ */
+export function regexSize(r: Regex): number {
+  switch (r.kind) {
+    case 'sym':
+    case 'eps':
+    case 'empty':
+      return 1;
+    case 'concat':
+      return regexSize(r.a) + regexSize(r.b);
+    case 'union':
+      return regexSize(r.a) + regexSize(r.b) + 1;
+    case 'star':
+    case 'plus':
+    case 'opt':
+      return regexSize(r.a) + 1;
+  }
+}
+
+/** The symbols the expression uses, sorted. */
+export function regexSymbols(r: Regex): string[] {
+  const out = new Set<string>();
+  const walk = (x: Regex) => {
+    if (x.kind === 'sym') out.add(x.c);
+    if ('a' in x) walk(x.a);
+    if ('b' in x) walk(x.b);
+  };
+  walk(r);
+  return [...out].sort();
 }
 
 /** The fragment one node of the expression built: its start and accept states and moves. */
@@ -140,10 +243,11 @@ export interface Fragment {
 }
 
 /**
- * Thompson's construction: each node becomes a fragment with one start and one accept state
- * (Sipser 1.54 builds the same languages; this is the textbook form with ε-moves around
- * union and star). `plus` is built as R R* and `opt` as R | ε, so every fragment still has
- * one start and one accept state.
+ * Thompson's construction: each node becomes a fragment with one start and one accept state,
+ * so the NFA has exactly 2 states per symbol and operator (Sipser 1.54 builds the same
+ * languages; this is the textbook form with ε-moves around union and star). R* adds a new start
+ * and accept with ε-moves into R, back from its end to repeat it, out, and around it to skip
+ * it; R+ is the same without the skip, and R? the same without the repeat.
  */
 export function thompson(r: Regex): { nfa: Automaton; parts: Fragment[] } {
   let n = 0;
@@ -176,11 +280,10 @@ export function thompson(r: Regex): { nfa: Automaton; parts: Fragment[] } {
         added = [{ from: a.accept, on: EPS, to: b.start }];
         break;
       }
-      case 'union':
-      case 'opt': {
+      case 'union': {
         start = fresh();
         const a = sub(r.a);
-        const b = r.kind === 'union' ? sub(r.b) : sub({ kind: 'eps' });
+        const b = sub(r.b);
         accept = fresh();
         added = [
           { from: start, on: EPS, to: a.start },
@@ -191,17 +294,17 @@ export function thompson(r: Regex): { nfa: Automaton; parts: Fragment[] } {
         break;
       }
       case 'star':
-      case 'plus': {
+      case 'plus':
+      case 'opt': {
         start = fresh();
         const a = sub(r.a);
         accept = fresh();
-        added = [
-          { from: start, on: EPS, to: a.start },
-          { from: a.accept, on: EPS, to: a.start },
-          { from: a.accept, on: EPS, to: accept },
-        ];
-        // R* may skip R; R+ must read it at least once.
-        if (r.kind === 'star') added.push({ from: start, on: EPS, to: accept });
+        added = [{ from: start, on: EPS, to: a.start }];
+        // R* and R+ may repeat R; R? may not.
+        if (r.kind !== 'opt') added.push({ from: a.accept, on: EPS, to: a.start });
+        added.push({ from: a.accept, on: EPS, to: accept });
+        // R* and R? may skip R; R+ must read it at least once.
+        if (r.kind !== 'plus') added.push({ from: start, on: EPS, to: accept });
         break;
       }
     }

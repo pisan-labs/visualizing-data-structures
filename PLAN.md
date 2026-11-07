@@ -493,6 +493,9 @@ What they get wrong, and we avoid:
   all and shows a table of expected against actual.
 - **Two machines (product construction):** `A | B`, two machines in the automaton format with a
   `|` between them. Differing alphabets are completed with dead states.
+- **Machine with output (Mealy and Moore):** Mealy moves `q0 a -> q1 / 1` (or `q0 a/1,b/0 -> q1`);
+  Moore outputs `q0 / 0` with plain moves. No accept states; every state needs a move on every
+  symbol.
 - **Regular expression:**
   - `(a|b)*abb`: letters and digits, `ε`, `∅`, `|`, `*`, `+`, `?` and parentheses;
   - nothing else;

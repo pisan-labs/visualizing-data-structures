@@ -213,3 +213,7 @@
 2026-11-07 [decision] Chomsky hierarchy opens on the whole map (all 11 languages placed); default taken at 19:03 with no answer, undo by saying "empty map back"
 
 2026-11-07 [code] VizDef.opening: an example a page runs on arrival when the link has none (src/ui/VizPage.svelte); the conformance check replays it with default settings
+
+2026-11-07 [code] Merged mealy-moore (wave 5C): Mealy and Moore runs with aligned output tapes, conversion both ways one move or split per step, Convert back for the round trip
+
+2026-11-07 [code] Merged pumping-lemma (wave 5C): regular and context-free pumping lemmas as a game, roles prove or defend, p from 2 to 5, nine languages; the adversary tries every split with i up to 5

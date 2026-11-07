@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "regex-to-nfa",
+  "id": "ends-in-abb",
+  "title": "Words that end in abb",
+  "notes": "The classic first example. Build (a|b)*abb one piece at a time, then run aabb, which ends in abb, and abab, which does not.",
+  "settings": {
+    "construction": "thompson",
+    "union": "|"
+  },
+  "seed": 1,
+  "ops": [
+    ["build", "(a|b)*abb"],
+    ["run", "aabb"],
+    ["run", "abab"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

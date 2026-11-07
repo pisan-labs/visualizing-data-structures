@@ -1,0 +1,288 @@
+/**
+ * The expression as a row of cells on top (the part just built highlighted, parts not built yet
+ * greyed), the NFA under it, and during a run the input word as a tape under the NFA.
+ *
+ * States are drawn by the shared drawAutomaton (circles, accept rings, the start arrow), with the
+ * same ids as every automata page. Arrows are drawn here, along the routes the layout chose, so
+ * the picture reads like the textbook figure: a star's repeat arrow above its body and its skip
+ * arrow below. Ids: stateId(q) "s-q0", moveId(p, q) "m-q0-q1" (and "-t" for its label, "-a" and
+ * "-b" for the first two pieces of an arrow between wrapped rows), "rx-<i>" an expression cell,
+ * "tape-<i>" a tape cell, "box-<k>" the frame around a piece, "result" the accept/reject badge.
+ *
+ * During a build, each piece built and not yet used by a parent sits in a dashed frame; the
+ * piece just built is tinted, and its start gets the start arrow.
+ */
+import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { drawAutomaton, fixedLayout, moveId, type StateLook } from '../../layouts/automaton';
+import { fitScore, padBounds, unionBounds } from '../../layouts/graph';
+import { CELL_H, CELL_W, drawTape } from '../../layouts/tape';
+import type { Bounds, Scene, Shape } from '../../render/scene';
+import { EPS, type Move } from '../_automata/automaton';
+import { pending } from './construct';
+import { boxAround, pairKey, pictures, type Picture } from './layout';
+import { describe, drawn, type RxExtra, type RxSettings, type RxState } from './model';
+
+const RX_W = 26;
+const RX_H = 32;
+/** Room for the "R =" and "w =" labels left of the rows of cells. */
+const LABEL_W = 40;
+const LABEL_SIZE = 15;
+/** The tape the layout choice reserves room for, whatever the word. */
+const TAPE_RESERVE = 8;
+const RESULT_W = 96;
+
+interface Frame {
+  pic: Picture;
+  /** Expression cells per line. */
+  per: number;
+  rowBox: Bounds;
+  tapeAt: { x: number; y: number };
+}
+
+function frameFor(pic: Picture, text: string): Frame {
+  const b = pic.bounds;
+  const per = Math.max(10, Math.floor((b.w - LABEL_W) / RX_W));
+  const lines = Math.ceil(text.length / per);
+  const rowH = lines * RX_H + (lines - 1) * 6;
+  const rowBox = {
+    x: b.x,
+    y: b.y - 20 - rowH,
+    w: LABEL_W + Math.min(per, text.length) * RX_W,
+    h: rowH,
+  };
+  return { pic, per, rowBox, tapeAt: { x: b.x + LABEL_W, y: b.y + b.h + 16 } };
+}
+
+/** The empty word is written out instead of drawn as a tape. */
+const EMPTY_W = 190;
+
+const tapeBox = (f: Frame, cells: number): Bounds => ({
+  x: f.tapeAt.x - LABEL_W,
+  y: f.tapeAt.y,
+  w: LABEL_W + (cells ? cells * CELL_W : EMPTY_W) + RESULT_W,
+  h: 26 + CELL_H + 4,
+});
+
+/** The picture that draws largest on this stage (or on both a laptop and a phone). */
+function choose(s: RxState, stage?: StageSize): Frame {
+  const frames = pictures(s.frags, s.how, `${s.sign}|${s.text}`).map((p) => frameFor(p, s.text));
+  const score = (f: Frame) =>
+    fitScore(padBounds(unionBounds(f.pic.bounds, f.rowBox, tapeBox(f, TAPE_RESERVE)), 12), stage);
+  // Prefer fewer rows unless more rows draw clearly larger.
+  return frames.reduce((best, f) => (score(f) > score(best) * 1.08 ? f : best));
+}
+
+/** The moves drawn, one entry per pair of states, with their symbols. */
+function pairs(moves: readonly Move[]): { p: string; q: string; on: string[] }[] {
+  const out = new Map<string, { p: string; q: string; on: string[] }>();
+  for (const m of moves) {
+    const k = pairKey(m.from, m.to);
+    const e = out.get(k) ?? { p: m.from, q: m.to, on: [] };
+    if (!e.on.includes(m.on)) e.on.push(m.on);
+    out.set(k, e);
+  }
+  return [...out.values()];
+}
+
+const symbolList = (on: string[]) =>
+  [...on].sort((x, y) => (x === EPS ? -1 : y === EPS ? 1 : x < y ? -1 : 1)).join(',');
+
+export function view(
+  step: Step<RxState, RxExtra>,
+  _settings: RxSettings,
+  stage?: StageSize,
+): Scene {
+  const s = step.state;
+  const extra = step.extra ?? {};
+  const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
+  const frame = choose(s, stage);
+  const { pic } = frame;
+  const shapes: Shape[] = [];
+  const boxes: Bounds[] = [pic.bounds, frame.rowBox];
+  const building = s.built < s.frags.length;
+  const { states, moves } = drawn(s);
+
+  // The expression, as cells; parts built so far are live, the rest grey.
+  const builtCells = new Set<number>();
+  for (const f of s.frags.slice(0, s.built))
+    if (f.span) for (let i = f.span[0]; i < f.span[1]; i++) builtCells.add(i);
+  const { rowBox, per } = frame;
+  shapes.push({
+    kind: 'text',
+    id: 'rx-label',
+    x: rowBox.x + LABEL_W - 10,
+    y: rowBox.y + RX_H / 2 + 6,
+    text: 'R =',
+    size: LABEL_SIZE,
+    anchor: 'end',
+    mono: true,
+    cls: 'label',
+  });
+  [...s.text].forEach((c, i) => {
+    const x = rowBox.x + LABEL_W + (i % per) * RX_W;
+    const y = rowBox.y + Math.floor(i / per) * (RX_H + 6);
+    const live = !building || builtCells.has(i);
+    shapes.push({
+      kind: 'rect',
+      id: `rx-${i}`,
+      x,
+      y,
+      w: RX_W,
+      h: RX_H,
+      role: roles.get(`rx-${i}`),
+      cls: live ? 'cell live' : 'cell',
+    });
+    shapes.push({
+      kind: 'text',
+      id: `rx-${i}-t`,
+      x: x + RX_W / 2,
+      y: y + RX_H / 2 + 6,
+      text: c,
+      size: 18,
+      anchor: 'middle',
+      mono: true,
+      weight: 'bold',
+      role: roles.get(`rx-${i}`) === 'active' ? 'active' : undefined,
+      opacity: live ? undefined : 0.6,
+    });
+  });
+
+  // Frames around the pieces built and not yet used, one per row a piece spans.
+  if (building && s.built > 0)
+    for (const k of pending(s.frags, s.built)) {
+      const f = s.frags[k]!;
+      let first = true;
+      for (const band of pic.bands) {
+        const inside = f.states.filter((q) => pic.pos[q]!.y >= band.y1 && pic.pos[q]!.y <= band.y2);
+        if (!inside.length) continue;
+        const moves = f.moves.filter((m) => inside.includes(m.from) && inside.includes(m.to));
+        shapes.push({
+          kind: 'rect',
+          id: first ? `box-${k}` : `box-${k}-${pic.bands.indexOf(band)}`,
+          ...padBounds(boxAround(pic, inside, moves), 7),
+          r: 10,
+          cls: 'ghost',
+          role: k === s.built - 1 ? 'new' : undefined,
+          z: -2,
+        });
+        first = false;
+      }
+    }
+
+  // States, from the shared drawing.
+  if (states.length) {
+    const current = s.frags[s.built - 1]!;
+    const accept = building
+      ? pending(s.frags, s.built).flatMap((k) => s.frags[k]!.accepts)
+      : s.nfa.accept;
+    const active = new Set(s.run?.set ?? []);
+    const look = (q: string): StateLook | undefined => (active.has(q) ? 'current' : undefined);
+    const drawnStates = drawAutomaton(
+      {
+        states,
+        alphabet: [],
+        start: building ? current.start : s.nfa.start,
+        accept,
+        moves: [],
+      },
+      fixedLayout(pic.pos, pic.across),
+      { roles, look },
+    );
+    // A piece's start gets no arrow while building: it would read as a move into it.
+    shapes.push(...drawnStates.shapes.filter((x) => !building || x.id !== 'start'));
+  }
+
+  // Arrows, along the routes the layout chose.
+  const used = new Set((extra.used ?? []).map((m) => pairKey(m.from, m.to)));
+  for (const e of pairs(moves)) {
+    const id = moveId(e.p, e.q);
+    const path = pic.paths[pairKey(e.p, e.q)]!;
+    const role = roles.get(id) ?? (used.has(pairKey(e.p, e.q)) ? 'active' : undefined);
+    path.segs.forEach((seg, i) => {
+      const last = i === path.segs.length - 1;
+      shapes.push({
+        kind: 'arrow',
+        id: last ? id : `${id}-${'ab'[i]}`,
+        x1: seg.a.x,
+        y1: seg.a.y,
+        x2: seg.b.x,
+        y2: seg.b.y,
+        ...(seg.via ? { via: seg.via } : {}),
+        ...(last ? {} : { head: 'none' as const }),
+        role,
+      });
+    });
+    shapes.push({
+      kind: 'text',
+      id: `${id}-t`,
+      x: path.label.x,
+      y: path.label.y + LABEL_SIZE * 0.35,
+      text: symbolList(e.on),
+      size: LABEL_SIZE,
+      anchor: 'middle',
+      mono: true,
+      cls: 'label',
+      role: roles.get(`${id}-t`) ?? role,
+    });
+  }
+
+  // The word, as a tape, during a run.
+  const r = s.run;
+  if (r) {
+    const { x, y } = frame.tapeAt;
+    const n = r.word.length;
+    boxes.push(tapeBox(frame, n));
+    shapes.push({
+      kind: 'text',
+      id: 'tape-label',
+      x: x - 10,
+      y: y + 26 + CELL_H / 2 + 6,
+      text: 'w =',
+      size: LABEL_SIZE,
+      anchor: 'end',
+      mono: true,
+      cls: 'label',
+    });
+    let right: number;
+    if (n) {
+      const b = drawTape(shapes, {
+        id: 'tape',
+        x,
+        y,
+        cells: [...r.word],
+        to: n,
+        head: r.read < n ? r.read : null,
+        read: r.read,
+        roles,
+      });
+      right = b.x + b.w;
+    } else {
+      shapes.push({
+        kind: 'text',
+        id: 'tape-empty',
+        x,
+        y: y + 26 + CELL_H / 2 + 7,
+        text: `${EPS} (the empty word)`,
+        size: 18,
+        mono: true,
+      });
+      right = x + EMPTY_W;
+    }
+    if (r.result) {
+      const ok = r.result === 'accept';
+      shapes.push({
+        kind: 'text',
+        id: 'result',
+        x: right + 16,
+        y: y + 26 + CELL_H / 2 + 6,
+        text: ok ? 'accept' : 'reject',
+        size: 17,
+        weight: 'bold',
+        role: roles.get('result') ?? (ok ? 'found' : 'error'),
+      });
+    }
+  }
+
+  const bounds = padBounds(unionBounds(...boxes), 12);
+  return { shapes, bounds, label: describe(s) };
+}

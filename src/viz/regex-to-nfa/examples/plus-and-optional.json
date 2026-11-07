@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "regex-to-nfa",
+  "id": "plus-and-optional",
+  "title": "One or more, and optional",
+  "notes": "(ab)+c? uses the two shorthands. R+ is a star without the skip arrow, so ab must be read at least once. R? is built as R|ε, which costs an extra ε piece.",
+  "settings": {
+    "construction": "thompson",
+    "union": "|"
+  },
+  "seed": 1,
+  "ops": [
+    ["build", "(ab)+c?"],
+    ["run", "ababc"],
+    ["run", "c"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

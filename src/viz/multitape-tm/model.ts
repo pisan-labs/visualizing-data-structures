@@ -295,7 +295,7 @@ function* simSteps(
     const state: S = { ...s, sim: at };
     yield {
       state,
-      marks: [mark(`sim-${at.head}`, 'compare')],
+      marks: [],
       say: `Scanning right, S passes the ${markName(settings)} for ${tapeName(i)}: that head reads ${reads(scan.read[i]!)}.`,
       lines: ['sim.read'],
       vars: vars(state),
@@ -579,7 +579,9 @@ export function pseudocode(settings: MtSettings): PseudoBlock[] {
     L(
       id,
       indent,
-      dot ? 'tape = # ẇ1 w2 … wn # ␣̇ # … # ␣̇ #' : 'tape = # w̲1 w2 … wn # ␣̲ # … # ␣̲ #',
+      dot
+        ? 'tape = # ẇ1 w2 … wn # ␣ # … # ␣ #, first cells dotted'
+        : 'tape = # w̲1 w2 … wn # ␣ # … # ␣ #, first cells underlined',
       dot
         ? 'Write the k tapes on one, with a # at each end and between them, and put a dot on the first cell of each: that is where its head is.'
         : 'Write the k tapes on one, with a # at each end and between them, and underline the first cell of each: that is where its head is.',

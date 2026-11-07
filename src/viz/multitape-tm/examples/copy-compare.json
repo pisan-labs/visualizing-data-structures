@@ -3,7 +3,7 @@
   "viz": "multitape-tm",
   "id": "copy-compare",
   "title": "Copy, then compare: w=w",
-  "notes": "Tape 2 gets a $ in its first cell and then a copy of 0110. The head on tape 2 rewinds to the $, and the two heads compare the copy with the word after the = in one pass. 31 moves for 9 symbols: linear. One tape needs about n² moves for the same language.",
+  "notes": "Tape 2 gets a $ in its first cell and then a copy of 0110. The head on tape 2 rewinds to the $, and the two heads compare the copy with the word after the = in one pass. 16 moves for 9 symbols: linear. One tape needs about n² moves for the same language.",
   "settings": {
     "mark": "dot"
   },

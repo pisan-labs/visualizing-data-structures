@@ -127,8 +127,8 @@ export function ruleLine(line: string): string {
   return [w[0], sym(w[1]!), '→', rest[0], ...rest.slice(1, -1).map(sym), rest.at(-1)].join(' ');
 }
 
-const RULE_SIZE = 13;
-const RULE_H = 21;
+const RULE_SIZE = 12;
+const RULE_H = 20;
 const RULE_GAP = 3;
 
 /** The rules as written, in `cols` columns (down the first, then the next), the one in use lit. */

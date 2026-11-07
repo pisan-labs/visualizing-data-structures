@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, StageSize } from '../../engine/types';
 import type { Shape } from '../../render/scene';
+import { parseMachine as parseOne, run as runOne } from '../_turing/machine';
+import { PALINDROME as ONE_PALINDROME } from '../turing-machine/machines';
 import { multitapeTm, parseInput, simText } from '.';
 import {
   BLANK,
@@ -297,6 +299,28 @@ describe('the classic machines', () => {
     const ratio = cost(16) / cost(8);
     expect(ratio).toBeGreaterThan(3);
     expect(ratio).toBeLessThan(4.5);
+  });
+
+  it('gives the numbers the concept page quotes', () => {
+    const both = (text: string, w: string) => {
+      const m = machine(text);
+      const words = parseWords(w) as string[];
+      return [run(m, words).config.moves, simulate(m, words).sim.moves];
+    };
+    expect(both(COPY_COMPARE, '01=01')).toEqual([10, 266]);
+    expect(both(COPY_COMPARE, '0110=0110')[0]).toBe(16);
+    const f = formatTape(machine(COPY_COMPARE), ['01=01']);
+    expect([f.cells.length, f.moves]).toEqual([9, 16]);
+    expect(both(PALINDROME, '0110')).toEqual([16, 444]);
+    expect(both(PALINDROME, '01100110')).toEqual([28, 1184]);
+    expect(both(PALINDROME, '0110011001100110')).toEqual([52, 3720]);
+    expect(both(PALINDROME, '011100')[0]).toBe(16);
+    expect(both(ADD, '1011,0110')[0]).toBe(10);
+    expect(both(MULTIPLY, '11*111')[0]).toBe(13);
+    expect(simulate(machine(WALK), ['0']).sim.moves).toBe(31908);
+    const one = parseOne(ONE_PALINDROME);
+    if (one instanceof Error) throw one;
+    expect(runOne(one, '0110011001100110', 'one-way').config.moves).toBe(153);
   });
 });
 

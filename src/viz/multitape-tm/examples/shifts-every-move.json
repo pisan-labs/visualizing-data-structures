@@ -3,7 +3,7 @@
   "viz": "multitape-tm",
   "id": "shifts-every-move",
   "title": "Every move shifts the tape",
-  "notes": "The worst case for one tape: both heads move onto new cells on every move, so the single tape shifts twice a move and grows by two cells. After 100 moves of M, S has made over 40,000.",
+  "notes": "The worst case for one tape: both heads move onto new cells on every move, so the single tape shifts twice a move and grows by two cells. After 100 moves of M, S has made 31,908.",
   "settings": {
     "mark": "dot"
   },

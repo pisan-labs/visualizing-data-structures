@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "mealy-moore",
+  "id": "detect-101-once",
+  "title": "Detect 101 without overlap",
+  "notes": "One arrow differs from the overlapping detector: after a 101 the machine goes back to q0 instead of q1, so the last 1 cannot start a new 101. On 110101 it writes 000100, one 1 where the overlapping machine writes two.",
+  "settings": {
+    "first": "write"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; q0 0 -> q0 / 0; q0 1 -> q1 / 0; q1 0 -> q2 / 0; q1 1 -> q1 / 0; q2 0 -> q0 / 0; q2 1 -> q0 / 1"
+    ],
+    ["run", "110101"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

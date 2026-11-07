@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "mealy-moore",
+  "id": "detect-101",
+  "title": "Detect 101 as you read (Mealy)",
+  "notes": "The Mealy machine writes 1 on the move that completes a 101. q1 means the input so far ends in 1, q2 that it ends in 10. In 110101 the middle 1 finishes one 101 and starts the next, so the output 000101 has two 1s.",
+  "settings": {
+    "first": "write"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; q0 0 -> q0 / 0; q0 1 -> q1 / 0; q1 0 -> q2 / 0; q1 1 -> q1 / 0; q2 0 -> q0 / 0; q2 1 -> q1 / 1"
+    ],
+    ["run", "110101"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

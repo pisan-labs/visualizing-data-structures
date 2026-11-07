@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "mealy-moore",
+  "id": "split",
+  "title": "Mealy to Moore: a state splits",
+  "notes": "In the 101 detector, the moves into q1 write 0 from q0 and q1, but 1 from q2. A Moore state writes one output, so q1 becomes two states: q1 writes 0 and q1' writes 1. Three Mealy states make four Moore states. Then both run on 110101.",
+  "settings": {
+    "first": "write"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "start q0; q0 0 -> q0 / 0; q0 1 -> q1 / 0; q1 0 -> q2 / 0; q1 1 -> q1 / 0; q2 0 -> q0 / 0; q2 1 -> q1 / 1"
+    ],
+    ["convert"],
+    ["run", "110101"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

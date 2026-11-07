@@ -72,7 +72,7 @@ export const ROW_GAP = 96;
 export const LABEL_SIZE = 15;
 const NOTE_SIZE = 13;
 /** The room left between a label and its arrow. */
-const GAP = 4;
+const GAP = 5;
 
 export interface StateLayout {
   pos: Record<string, Pt>;

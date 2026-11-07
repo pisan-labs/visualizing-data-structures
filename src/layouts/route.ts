@@ -71,16 +71,16 @@ export function curveSamples(s: Seg, n = 24): Pt[] {
 const density = (s: Seg) => Math.min(240, Math.max(16, Math.ceil(curveLength(s) / 8)));
 
 /**
- * How much room the arrow between two circles' centers leaves the obstacles: the least distance
- * past an obstacle's radius (negative when it cuts into one). Points within the end circles
- * (radius r) are skipped. Stops early below `enough`.
+ * How much room an arrow leaves the obstacles: the least distance past an obstacle's radius
+ * (negative when it cuts into one). Points within `skip` of either end are left out. Stops
+ * early below `enough`.
  */
-function room(s: Seg, obstacles: Obstacle[], r: number, enough = -Infinity): number {
+function room(s: Seg, obstacles: Obstacle[], skip: number, enough = -Infinity): number {
   const n = density(s);
   let least = Infinity;
   for (let i = 1; i < n; i++) {
     const p = curvePoint(s, i / n);
-    if (dist(p, s.a) < r + 2 || dist(p, s.b) < r + 2) continue;
+    if (dist(p, s.a) < skip || dist(p, s.b) < skip) continue;
     for (const o of obstacles) {
       if (Math.abs(p.x - o.x) >= o.r + 40 || Math.abs(p.y - o.y) >= o.r + 40) continue;
       least = Math.min(least, dist(p, o) - o.r);
@@ -92,11 +92,13 @@ function room(s: Seg, obstacles: Obstacle[], r: number, enough = -Infinity): num
 
 /** Does the arrow between two circles' centers keep clear of the obstacles? */
 export const isClear = (s: Seg, obstacles: Obstacle[], r = 22): boolean =>
-  room(s, obstacles, r, 0) >= 0;
+  room(s, obstacles, r + 2, 0) >= 0;
 
 export interface RouteOptions {
-  /** States, labels and anything else the arrow must not cross. */
+  /** States and anything else the arrow must not cross. */
   obstacles: Obstacle[];
+  /** Labels and the like: kept clear when a curve can clear them too, crossed when not. */
+  soft?: Obstacle[];
   /** Points on curves already drawn: avoided when possible, crossed when not. */
   curves?: Obstacle[];
   /** Which side to bulge to: above or below the line from P to Q (as drawn), or either. */
@@ -110,15 +112,22 @@ export interface RouteOptions {
 /**
  * The control point for an arrow from P to Q (circles' centers), or none for a straight one:
  * the least bulge that clears the obstacles, on the hinted side or the side that needs less.
- * Obstacles at P or Q are ignored. When nothing is fully clear, the curve with the most room,
- * also trying lopsided ones that come down onto a circle from one side.
+ * Obstacles at P or Q are ignored. It tries to clear everything, then the obstacles and the
+ * soft ones (bulging the other way too, if need be), then the obstacles alone. When
+ * nothing clears the obstacles, the curve with the most room from them, also trying lopsided
+ * ones that come down onto a circle from one side.
  */
 export function routeArrow(P: Pt, Q: Pt, o: RouteOptions): Pt | undefined {
   const r = o.r ?? 22;
   const hint = o.hint ?? 'auto';
   const force = o.force ?? false;
-  const others = o.obstacles.filter((x) => dist(x, P) > 1 && dist(x, Q) > 1);
-  if (!force && isClear({ a: P, b: Q }, others, r)) return undefined;
+  const away = (x: Obstacle) => dist(x, P) > 1 && dist(x, Q) > 1;
+  const hard = o.obstacles.filter(away);
+  const others = [...hard, ...(o.soft ?? []).filter(away)];
+  // Judge the arrow as drawn: cut at the circles' edges, which bends a curve a little.
+  const fits = (via: Pt | undefined, obs: Obstacle[]) =>
+    room(clipArrow(P, Q, via, r), obs, 0, 0) >= 0;
+  if (!force && fits(undefined, others)) return undefined;
   const d = dist(P, Q);
   const n0 = unit({ x: -(Q.y - P.y), y: Q.x - P.x });
   const m = mid(P, Q);
@@ -130,20 +139,29 @@ export function routeArrow(P: Pt, Q: Pt, o: RouteOptions): Pt | undefined {
     const n = mul(n0, side);
     for (let c = c0; c <= cmax; c += 6) {
       const via = add(m, mul(n, c));
-      if (isClear({ a: P, b: Q, via }, obs, r)) return { via, c };
+      if (fits(via, obs)) return { via, c };
     }
     return null;
   };
-  for (const obs of [[...others, ...(o.curves ?? [])], others]) {
-    const found = sides.map((s) => find(s, obs)).filter((f) => f !== null);
+  // Clearing the obstacles comes before the hint: the last pass may bulge the other way.
+  const both = [sides[0]!, -sides[0]!];
+  const passes: [Obstacle[], number[]][] = [
+    [[...others, ...(o.curves ?? [])], sides],
+    [others, sides],
+    [others, both],
+    [hard, sides],
+    [hard, both],
+  ];
+  for (const [obs, ss] of passes) {
+    const found = ss.map((s) => find(s, obs)).filter((f) => f !== null);
     if (found.length) return found.reduce((b, f) => (f.c < b.c - 18 ? f : b)).via;
   }
   let best = { via: add(m, mul(n0, sides[0]! * Math.max(c0, 0.45 * d))), room: -Infinity };
-  for (const side of sides)
+  for (const side of both)
     for (const t of [0.5, 0.3, 0.7, 0.15, 0.85])
       for (let c = c0; c <= cmax; c += 12) {
         const via = add(add(P, mul(sub(Q, P), t)), mul(n0, side * c));
-        const rm = room({ a: P, b: Q, via }, others, r, best.room);
+        const rm = room(clipArrow(P, Q, via, r), hard, 0, best.room);
         if (rm > best.room + 0.5) best = { via, room: rm };
       }
   return best.via;

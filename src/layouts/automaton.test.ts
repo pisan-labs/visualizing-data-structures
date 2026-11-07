@@ -148,7 +148,7 @@ describe('state diagrams', () => {
     ];
     const d = drawAutomaton(a, layout, {
       startArrow: false,
-      route: (p, q) => (p === 'q' ? { segs, label: { x: 150, y: 120 } } : undefined),
+      route: (p) => (p === 'q' ? { segs, label: { x: 150, y: 120 } } : undefined),
     });
     const ids = d.shapes.map((s) => s.id);
     expect(ids).not.toContain('start');

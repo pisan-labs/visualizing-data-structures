@@ -22,7 +22,15 @@ import {
   type Machine,
 } from './machine';
 import { MACHINES, machine, type MachineName } from './machines';
-import { DST, SRC, outputId, type MmExtra, type MmSettings, type MmState } from './model';
+import {
+  DST,
+  SRC,
+  outputId,
+  type MmExtra,
+  type MmSettings,
+  type MmState,
+  type Track,
+} from './model';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: runs written from the definitions, apart from the model.
@@ -296,7 +304,7 @@ function checkRun(steps: Step<MmState, MmExtra>[], s: MmState, word: string, fir
   expect(last.done).toBe(true);
   expect(last.read).toBe(word.length);
   if (last.tracks.length === 2) {
-    const [mealy, moore] = last.tracks as [{ out: string }, { out: string }];
+    const [mealy, moore] = last.tracks as [Track, Track];
     expect(first === 'write' ? moore.out.slice(1) : moore.out).toBe(mealy.out);
   }
 }

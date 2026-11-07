@@ -418,7 +418,7 @@ function* convertSteps(
     }
     const gone =
       first === 'write'
-        ? `${start}'s own output, ${writes(m, start)}, is gone: a Mealy machine writes only when it moves, so on every word it writes one symbol fewer than the Moore machine, the first.`
+        ? `${start}'s own output, ${writes(m, start)}, is gone: a Mealy machine writes only when it moves, so on every word it writes one symbol fewer than the Moore machine: it leaves out that first one.`
         : `With this setting the Moore machine never writes ${start}'s output before a move either, so the two write the same symbols on every word.`;
     const tail = end(result);
     yield step(
@@ -448,7 +448,7 @@ function* convertSteps(
     if (!ins.length)
       say = `No move enters ${q}, so nothing says what it should write. It still needs a Moore state: ${q}, writing ${split.machine.out[q]}, the first output symbol.`;
     else if (ins.length === 1)
-      say = `Every move into ${q} writes ${ins[0]} (${fromList(into)}). So ${q} needs one Moore state: ${q}, writing ${ins[0]}.`;
+      say = `${into.length === 1 ? 'The only move' : 'Every move'} into ${q} writes ${ins[0]} (${fromList(into)}). So ${q} needs one Moore state: ${q}, writing ${ins[0]}.`;
     else {
       const by = ins.map((o) => `${o} (${fromList(into.filter((mv) => outOf(mv) === o))})`);
       const named = copies.map((p, i) => `${p} writes ${ins[i]}`);

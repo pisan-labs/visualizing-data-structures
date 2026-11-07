@@ -2,6 +2,7 @@ import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
 import {
+  EPS,
   configText,
   furthest,
   moveLabel,
@@ -100,7 +101,7 @@ export function pdaPractice(def: () => Def): PracticeKind[] {
           const at = run.find((n) => n.config.pos === k)!;
           if (!at.config.stack) continue;
           return {
-            prompt: `Run this PDA on ${code(w)}. What is on the stack right after it reads the ${k === 1 ? 'first symbol' : `first ${k} symbols`}, before any ε-move? Type the symbols top first.`,
+            prompt: `Run this PDA on ${code(w)}. What is on the stack right after it reads ${k === w.length ? 'the whole word' : k === 1 ? 'the first symbol' : `the first ${k} symbols`}, before any ε-move? Type the symbols top first.`,
             setup: setup(name),
             answer: { kind: 'sequence', value: [...at.config.stack] },
             explain: `After ${code(w.slice(0, k))} the configuration is ${configText(at.config, w)}: the stack holds ${at.config.stack}, with ${at.config.stack[0]} on top.`,
@@ -120,11 +121,22 @@ export function pdaPractice(def: () => Def): PracticeKind[] {
           const s = search(p, w, defaults.accept);
           if (s.outcome !== 'accept') continue;
           const k = s.nodes[s.found!]!.depth;
+          // The ε-moves of the computation, each with how often it is used.
+          const used = new Map<string, number>();
+          for (const n of computation(s).slice(1)) {
+            const m = p.moves[n.move!]!;
+            if (m.read === EPS) used.set(moveLabel(m), (used.get(moveLabel(m)) ?? 0) + 1);
+          }
+          const times = (c: number) => (c === 1 ? 'once' : c === 2 ? 'twice' : `${c} times`);
+          const eps = [...used].map(([label, c]) => `${label} ${times(c)}`);
+          const listed = eps.length
+            ? `: ${eps.length === 1 ? eps[0] : `${eps.slice(0, -1).join(', ')} and ${eps.at(-1)}`}`
+            : '';
           return {
             prompt: `This PDA accepts ${code(w)}. How many moves does the shortest accepting computation make, ε-moves included?`,
             setup: setup(name),
             answer: { kind: 'number', value: k },
-            explain: `${w.length} of the moves read a symbol of ${code(w)}, one each, and the other ${k - w.length} are ε-moves${k - w.length ? ', such as pushing $ at the start and popping it at the end' : ''}: ${k} in all.`,
+            explain: `${w.length} of the moves read a symbol of ${code(w)}, one each, and the other ${k - w.length} are ε-moves${listed}. That is ${k} in all.`,
             watch: watch(w),
           };
         }

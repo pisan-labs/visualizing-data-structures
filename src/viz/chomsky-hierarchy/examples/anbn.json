@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "chomsky-hierarchy",
+  "id": "anbn",
+  "title": "aⁿbⁿ: context-free, not regular",
+  "notes": "S → aSb puts a terminal after the variable, so the grammar is not right-linear, and L(G) moves out one ring. Then Place gives the other half of the story: the pumping lemma shows no grammar or machine could put aⁿbⁿ any lower.",
+  "settings": { "decidable": true, "names": "names" },
+  "seed": 1,
+  "ops": [
+    ["classify", "S -> aSb | eps"],
+    ["place", "anbn"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

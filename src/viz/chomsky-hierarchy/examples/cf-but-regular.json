@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "chomsky-hierarchy",
+  "id": "cf-but-regular",
+  "title": "A context-free grammar for a regular language",
+  "notes": "S → SS has two variables on the right, so the grammar is context-free and not right-linear. Its language is (ab)*, which is regular. The form of a grammar is an upper bound on its language, nothing more.",
+  "settings": { "decidable": true, "names": "names" },
+  "seed": 1,
+  "ops": [
+    ["classify", "S -> SS | ab | eps"],
+    ["place", "(ab)*"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

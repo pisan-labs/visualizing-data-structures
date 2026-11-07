@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "chomsky-hierarchy",
+  "id": "unrestricted",
+  "title": "An unrestricted grammar for a context-sensitive language",
+  "notes": "A and B mark the ends; C walks right doubling every a, D walks back, and E erases the markers. CB → E shrinks the string, so the grammar is unrestricted. It generates aᵏ for k a power of 2, and that language is context-sensitive: a linear-bounded automaton decides it by halving.",
+  "settings": { "decidable": true, "names": "names" },
+  "seed": 1,
+  "ops": [
+    ["classify", "S -> ACaB | a; Ca -> aaC; CB -> DB | E; aD -> Da; AD -> AC; aE -> Ea; AE -> eps"],
+    ["place", "pow2"]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

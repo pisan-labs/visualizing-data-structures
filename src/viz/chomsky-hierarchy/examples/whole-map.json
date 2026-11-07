@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "chomsky-hierarchy",
+  "id": "whole-map",
+  "title": "The whole map",
+  "notes": "Every language on the page, each in the innermost region it belongs to. Step back through it to see the claims behind each token.",
+  "settings": { "decidable": true, "names": "names" },
+  "seed": 1,
+  "ops": [
+    ["place", "an"],
+    ["place", "abstar"],
+    ["place", "aibj"],
+    ["place", "anbn"],
+    ["place", "pal"],
+    ["place", "anbncn"],
+    ["place", "ww"],
+    ["place", "pow2"],
+    ["place", "diag"],
+    ["place", "halt"],
+    ["place", "cohalt"]
+  ]
+}

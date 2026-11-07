@@ -249,7 +249,8 @@ function draw(step: Step<MtState, undefined>, settings: MtSettings, arr: Arrange
     });
   }
 
-  // The numeric check, as a small table: under the result, or beside the summary or the tree.
+  // The numeric check, as a small table: under the result, or beside the summary or the tree
+  // (a little lower there, clear of the stage's zoom buttons in the top right corner).
   const tableX =
     arr.table === 'beside-summary'
       ? 20 + summaryW + 48
@@ -260,7 +261,7 @@ function draw(step: Step<MtState, undefined>, settings: MtSettings, arr: Arrange
     arr.table === 'beside-summary'
       ? summaryTop + 10
       : arr.table === 'beside-tree'
-        ? treeBox.y + 4
+        ? treeBox.y + 34
         : resultY + 64;
   const cols = [0, 130, 310].map((cx) => tableX + cx);
   const tableBottom = tableY + (CHECK_ROWS + 1) * ROW;

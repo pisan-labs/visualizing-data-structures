@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "multitape-tm",
+  "id": "copy-compare",
+  "title": "Copy, then compare: w=w",
+  "notes": "Tape 2 gets a $ in its first cell and then a copy of 0110. The head on tape 2 rewinds to the $, and the two heads compare the copy with the word after the = in one pass. 31 moves for 9 symbols: linear. One tape needs about n² moves for the same language.",
+  "settings": {
+    "mark": "dot"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "mark 0|1|=,_ -> copy -,$ S,R; copy 0,_ -> copy 0,0 R,R; copy 1,_ -> copy 1,1 R,R; copy =,_ -> back S,L; back =,0|1 -> back S,L; back =,$ -> check R,R; check 0,0 -> check R,R; check 1,1 -> check R,R; check _,_ -> accept S,S"
+    ],
+    ["run", "0110=0110"]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

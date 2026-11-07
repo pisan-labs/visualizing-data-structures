@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "multitape-tm",
+  "id": "copy-compare-one-tape",
+  "title": "The same work on one tape",
+  "notes": "Sipser's simulation of the w=w machine. Every move of the two-tape machine becomes a scan right to read the marked symbols and a scan back to update them, and tape 2 grows by shifting. Compare the two counts at the top.",
+  "settings": {
+    "mark": "dot"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "mark 0|1|=,_ -> copy -,$ S,R; copy 0,_ -> copy 0,0 R,R; copy 1,_ -> copy 1,1 R,R; copy =,_ -> back S,L; back =,0|1 -> back S,L; back =,$ -> check R,R; check 0,0 -> check R,R; check 1,1 -> check R,R; check _,_ -> accept S,S"
+    ],
+    ["simulate", "01=01"]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

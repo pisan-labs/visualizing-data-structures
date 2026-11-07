@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "multitape-tm",
+  "id": "unary-multiply",
+  "title": "Unary multiplication",
+  "notes": "2 times 3 in unary. The first number is copied to tape 2; for each of its 1s, the head on tape 1 sweeps across 111 and writes a 1 on tape 3 for each 1 it passes. Tape 3 ends with 111111.",
+  "settings": {
+    "mark": "dot"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "mark 1|*,_,_ -> copy -,$,- S,R,S; copy 1,_,_ -> copy 1,1,_ R,R,S; copy *,_,_ -> right R,L,S; right 1,1,_ -> right -,-,1 R,S,R; right _,1,_ -> left L,L,S; left 1,1,_ -> left -,-,1 L,S,R; left *,1,_ -> right R,L,S; right 1|_,$,_ -> accept S,S,S; left 1|*,$,_ -> accept S,S,S"
+    ],
+    ["run", "11*111"]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

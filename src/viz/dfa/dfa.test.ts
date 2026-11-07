@@ -168,7 +168,7 @@ describe('DFA', () => {
       ['test', '+'],
     ]);
     const says = t.entries.map((e) => e.steps.at(-1)!.say);
-    expect(says[0]).toContain('"a" is not in the alphabet { 0, 1 }');
+    expect(says[0]).toContain('"a" is not in the alphabet { 0, 1 }');
     expect(says[1]).toContain('Press Test');
     expect(says[2]).toContain('press Load');
     expect(says[3]).toContain('has no word after the sign');

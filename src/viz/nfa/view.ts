@@ -32,12 +32,15 @@ import {
 const TAPE_H = 26 + 36;
 const ROW_H = 22;
 const ROW_GAP = 3;
-/** Rows of the trace per column; a longer run wraps into more columns. */
-const PER_COL = 6;
+/** Rows of the trace per column at most; a longer run wraps into columns of equal length. */
+const PER_COL = 8;
 const TEXT = 14;
 
-/** The block the direction of the diagram is chosen for: a tape, the badge and a trace. */
-const NOMINAL = { w: 9 * CELL_W, h: TAPE_H + 14 + 30 + 14 + 20 + PER_COL * (ROW_H + ROW_GAP) };
+/** The block the direction of the diagram is chosen for: a tape, a trace of 7 rows, the badge. */
+const NOMINAL = { w: 9 * CELL_W, h: TAPE_H + 14 + 20 + 7 * (ROW_H + ROW_GAP) + 14 + 30 };
+
+/** Rows per column for a trace of n rows: at most PER_COL, and the columns about even. */
+const perCol = (n: number) => Math.ceil(n / Math.ceil(n / PER_COL));
 
 export const traceId = (k: number): string => `trace-${k}`;
 
@@ -53,7 +56,8 @@ function drawTrace(
   roles: ReadonlyMap<string, MarkRole>,
 ): Bounds {
   const n = r.word.length + 1;
-  const cols = Math.ceil(n / PER_COL);
+  const per = perCol(n);
+  const cols = Math.ceil(n / per);
   const labelW = textWidth('start', 13) + 10;
   const setW =
     Math.max(
@@ -72,8 +76,8 @@ function drawTrace(
   });
   const top = y + 20;
   for (let k = 0; k < n; k++) {
-    const cx = x + Math.floor(k / PER_COL) * colW;
-    const cy = top + (k % PER_COL) * (ROW_H + ROW_GAP);
+    const cx = x + Math.floor(k / per) * colW;
+    const cy = top + (k % per) * (ROW_H + ROW_GAP);
     const shown = k <= r.read;
     // The current row shows the set as it is now (in the middle of a symbol, before its
     // ε-closure); earlier rows show the set each symbol ended with.
@@ -116,8 +120,7 @@ function drawTrace(
         role: role === 'active' || role === 'error' ? role : undefined,
       });
   }
-  const rows = Math.min(n, PER_COL);
-  return { x, y, w: cols * colW - 14, h: 20 + rows * (ROW_H + ROW_GAP) - ROW_GAP };
+  return { x, y, w: cols * colW - 14, h: 20 + per * (ROW_H + ROW_GAP) - ROW_GAP };
 }
 
 export function view(
@@ -150,8 +153,9 @@ export function view(
   }
   if (t) parts.push((out, x, y) => drawTestTable(out, x, y, t, roles));
   else if (r) {
-    parts.push((out, x, y) => drawVerdict(out, x, y, r.verdict, roles));
+    // The badge goes last: its room, kept until the verdict, stays out of the way at the end.
     parts.push((out, x, y) => drawTrace(out, x, y, r, roles));
+    parts.push((out, x, y) => drawVerdict(out, x, y, r.verdict, roles));
   }
 
   const drawn = faScene(

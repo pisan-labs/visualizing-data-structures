@@ -38,7 +38,7 @@ import {
   unionBounds,
 } from '../../layouts/graph';
 import { CELL_W, drawTape, tapeWindow } from '../../layouts/tape';
-import type { Bounds, Shape } from '../../render/scene';
+import type { ArrowShape, Bounds, Shape } from '../../render/scene';
 import { listWords } from '../_graph/graph';
 import { EPS, makeAutomaton, targets, type Automaton, type Move } from '../_automata/automaton';
 import { MAX_WORD, formatAutomaton, parseAutomaton, parseWord } from '../_automata/parse';
@@ -56,12 +56,12 @@ export const MAX_INPUT = 300;
 export const TAPE_CELLS = 12;
 
 export const wordText = (w: string): string => (w === '' ? 'ε' : w);
-/** A thin space: set braces in narration keep one inside, as in { q0 }. */
-const THIN = ' ';
+/** A narrow no-break space: set braces in narration keep one inside, as in { q0 }. */
+const THIN = ' ';
 /**
- * "{ q0, q1 }" for narration, "∅" for the empty set. The thin spaces inside the braces keep
+ * "{ q0, q1 }" for narration, "∅" for the empty set. The narrow spaces inside the braces keep
  * a one-state set such as { q0 } apart from a template leftover such as {name}, which the
- * conformance test looks for in everything learners read.
+ * conformance test looks for in everything learners read; they never break a line.
  */
 export const setText = (set: readonly string[]): string =>
   set.length ? `{${THIN}${set.join(', ')}${THIN}}` : '∅';
@@ -429,11 +429,86 @@ export function faScene(
   block?: (out: Shape[], x: number, y: number) => Bounds,
 ): { shapes: Shape[]; bounds: Bounds } {
   const across = !stage || acrossFits(a, stage, nominal);
-  const d = drawAutomaton(a, layoutStates(a, across), opts);
+  const d = diagram(a, across, opts);
   const shapes = [...d.shapes];
   const boxes = [d.bounds];
   if (block) boxes.push(placePanels(shapes, d.bounds, stage, block));
   return { shapes, bounds: padBounds(unionBounds(...boxes), 14) };
+}
+
+/** The state diagram, with its move labels clear of their own arrows. */
+function diagram(a: Automaton, across: boolean, opts: DrawOptions = {}) {
+  const d = drawAutomaton(a, layoutStates(a, across), opts);
+  const moved = clearLabels(d.shapes);
+  return { shapes: d.shapes, bounds: unionBounds(d.bounds, ...moved) };
+}
+
+const LABEL_CLEARANCE = 4;
+
+/** Points along an arrow: its line, or its quadratic curve through `via`. */
+function arrowPoints(s: ArrowShape, n = 24): { x: number; y: number }[] {
+  return Array.from({ length: n + 1 }, (_, i) => {
+    const t = i / n;
+    if (!s.via) return { x: s.x1 + (s.x2 - s.x1) * t, y: s.y1 + (s.y2 - s.y1) * t };
+    const u = 1 - t;
+    return {
+      x: u * u * s.x1 + 2 * u * t * s.via.x + t * t * s.x2,
+      y: u * u * s.y1 + 2 * u * t * s.via.y + t * t * s.y2,
+    };
+  });
+}
+
+/**
+ * Move each move label (`m-p-q-t`) straight away from its arrow until the text clears the
+ * line. drawAutomaton puts a label a fixed distance from the middle of its arrow, so a label of
+ * several symbols beside a steep arrow, or beside a loop on the left or right, overlaps the
+ * line. Positions depend only on the geometry, so a label stays put from step to step.
+ * Returns the moved labels' boxes.
+ */
+function clearLabels(shapes: Shape[]): Bounds[] {
+  const arrows = new Map<string, ArrowShape>();
+  for (const s of shapes) if (s.kind === 'arrow') arrows.set(s.id, s);
+  const boxes: Bounds[] = [];
+  shapes.forEach((s, i) => {
+    if (s.kind !== 'text' || !/^m-.*-t$/.test(s.id)) return;
+    const arrow = arrows.get(s.id.slice(0, -2));
+    if (!arrow) return;
+    const pts = arrowPoints(arrow);
+    const size = s.size ?? 15;
+    const w = textWidth(s.text, size, s.mono);
+    const box = (x: number, y: number) => ({
+      l: x - w / 2,
+      r: x + w / 2,
+      t: y - size * 0.75,
+      b: y + size * 0.25,
+    });
+    const gap = (x: number, y: number) => {
+      const b = box(x, y);
+      return Math.min(
+        ...pts.map((p) =>
+          Math.hypot(Math.max(b.l - p.x, 0, p.x - b.r), Math.max(b.t - p.y, 0, p.y - b.b)),
+        ),
+      );
+    };
+    if (gap(s.x, s.y) >= LABEL_CLEARANCE) return;
+    const cy = s.y - size * 0.25;
+    const near = pts.reduce((best, p) =>
+      Math.hypot(p.x - s.x, p.y - cy) < Math.hypot(best.x - s.x, best.y - cy) ? p : best,
+    );
+    const len = Math.hypot(s.x - near.x, cy - near.y);
+    const dir = len > 0.5 ? { x: (s.x - near.x) / len, y: (cy - near.y) / len } : { x: 1, y: 0 };
+    for (let k = 1; k <= 20; k++) {
+      const x = s.x + dir.x * 2 * k;
+      const y = s.y + dir.y * 2 * k;
+      if (gap(x, y) >= LABEL_CLEARANCE || k === 20) {
+        shapes[i] = { ...s, x, y };
+        const b = box(x, y);
+        boxes.push({ x: b.l, y: b.t, w: b.r - b.l, h: b.b - b.t });
+        return;
+      }
+    }
+  });
+  return boxes;
 }
 
 const acrossCache = new Map<string, boolean>();
@@ -443,7 +518,7 @@ function acrossFits(a: Automaton, stage: StageSize, nominal: { w: number; h: num
   const hit = acrossCache.get(key);
   if (hit !== undefined) return hit;
   const score = (across: boolean) => {
-    const d = drawAutomaton(a, layoutStates(a, across));
+    const d = diagram(a, across);
     const b = placePanels([], d.bounds, stage, (_out, x, y) => ({ x, y, ...nominal }));
     return fitScore(padBounds(unionBounds(d.bounds, b), 14), stage);
   };

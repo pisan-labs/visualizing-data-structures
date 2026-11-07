@@ -161,8 +161,10 @@ describe.each(vizzes.map((v) => [v.id, v] as const))('%s', (_id, def) => {
   });
 
   it('offers presets that run cleanly', () => {
+    // With `sizes: []` the page hides the size select and makes presets at size 5 (OpControls).
+    const sizes = def.controls.sizes ?? [5, 8, 12];
     for (const p of def.controls.presets ?? []) {
-      for (const size of def.controls.sizes ?? [5, 8, 12]) {
+      for (const size of sizes.length ? sizes : [5]) {
         const calls = p.make(makeRng(3), size, def.defaults);
         expect(calls.length, p.label).toBeGreaterThan(0);
         checkTimeline(def, new Timeline(def, { ...def.defaults }, 3, calls));

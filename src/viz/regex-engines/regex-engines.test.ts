@@ -293,10 +293,10 @@ describe('regex engines page', () => {
 });
 
 describe('drawn text size', () => {
-  // The chart's axis labels were 11 units (8.4 px on a laptop, 5.6 on a phone); now 14.
-  // On a phone the NFA of (a|aa)*c is what keeps the scale down.
+  // The chart's axis labels were 11 units (8.4 px on a laptop, 5.6 on a phone); now 15, as are
+  // the counters and the stack's captions. A long expression's NFA may be drawn tighter.
   it('stays readable on a laptop and on a phone', () => {
-    expect(smallestText(def, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(10.5);
-    expect(smallestText(def, PHONE_STAGE).px).toBeGreaterThanOrEqual(7);
+    expect(smallestText(def, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(def, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

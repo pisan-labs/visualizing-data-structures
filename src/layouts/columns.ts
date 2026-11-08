@@ -121,6 +121,8 @@ export interface CellRowOptions {
   nameX?: number;
   /** Font size of the values. Default FONT.value. */
   valueSize?: number;
+  /** Room kept free beside a value, both sides together. Default 9. */
+  valuePad?: number;
   opacity?(i: number): number | undefined;
 }
 
@@ -148,7 +150,7 @@ export function cellRow(cols: Cols, o: CellRowOptions): { shapes: Shape[]; botto
     });
     const text = o.text(i);
     if (text !== null && text !== undefined && text !== '') {
-      const size = fitSize(text, cols.pitch - 9, o.valueSize ?? FONT.value, 11);
+      const size = fitSize(text, cols.pitch - (o.valuePad ?? 9), o.valueSize ?? FONT.value, 11);
       shapes.push({
         kind: 'text',
         id: `${id}-v`,
@@ -225,7 +227,7 @@ export interface SpanBoxOptions {
 }
 
 /** Font size of a label that spanBox draws left of the value. */
-const SIDE_LABEL = 17;
+const SIDE_LABEL = 20;
 
 export function spanBox(cols: Cols, o: SpanBoxOptions): Shape[] {
   const inset = o.inset ?? 3;

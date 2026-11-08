@@ -283,9 +283,11 @@ describe('binomial queue practice', () => {
 });
 
 describe('drawn text size', () => {
-  // The degree under each node (pointers view) was 11 units: now 13.
+  // The degree under each node (pointers view) was 11 units: now 13. Two heaps one under the
+  // other left 10.2 px on a laptop, and five trees in a row 8.6 on a phone; side by side on a
+  // laptop and closer on a phone, 15.1 and 9.6.
   it('stays readable on a laptop and on a phone', () => {
-    expect(smallestText(binomialQueue, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(10);
-    expect(smallestText(binomialQueue, PHONE_STAGE).px).toBeGreaterThanOrEqual(8.5);
+    expect(smallestText(binomialQueue, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(binomialQueue, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

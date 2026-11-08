@@ -1,12 +1,15 @@
 /**
- * A*: the grid, and under it the open set as a priority queue, least f first.
+ * A*: the grid, and under it the open set as a priority queue, least f first. On a stage, the
+ * open set may wrap shorter lines under the grid (a phone) or stand beside it two to a line (a
+ * laptop), whichever is drawn largest; it holds 14 entries in every arrangement.
  * Each cell found shows f in the middle, g at its top left and h at its top right. The cell
  * being expanded is blue, open cells are teal, closed cells are green, and once T comes out of
  * the open set the path is purple, with arrows from S on. A plain state (no run, as in
  * practice pictures) draws just the grid.
  */
-import type { MarkRole, Step } from '../../engine/types';
-import { drawRow, type PanelCell } from '../../layouts/graph';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
+import { clearOfButtons, drawRow, type PanelCell } from '../../layouts/graph';
 import { gridScene, type GridArrow, type GridCellLook } from '../../layouts/grid';
 import type { Scene, Shape } from '../../render/scene';
 import { cellName, colsOf, rc, rowsOf, startOf, targetOf, type Grid } from '../_grid/grid';
@@ -23,8 +26,23 @@ import {
 const CELL = 46;
 const Q_CELL = 66;
 const Q_LABEL = 56;
-const PER_ROW = 7;
-const LINES = 2;
+/** Entries the open set shows (the last box says how many more there are). */
+const MAX = 14;
+
+/** Where the open set goes: under the grid (`perRow` boxes a line) or beside it. */
+interface Arrangement {
+  perRow: number;
+  beside: boolean;
+  /** Cell size: a little smaller to fit a phone's width. */
+  cell: number;
+}
+
+const UNDER: Arrangement = { perRow: 7, beside: false, cell: CELL };
+const ARRANGEMENTS: Arrangement[] = [
+  UNDER,
+  { perRow: 5, beside: false, cell: 42 },
+  { perRow: 2, beside: true, cell: CELL },
+];
 
 export const openId = (k: number) => `pq-${k}`;
 
@@ -62,19 +80,39 @@ function pathArrows(g: Grid, r: AStarRun): GridArrow[] {
   return out;
 }
 
-export function view(step: Step<AStarState, AStarExtra>, settings: AStarSettings): Scene {
+export function view(
+  step: Step<AStarState, AStarExtra>,
+  settings: AStarSettings,
+  stage?: StageSize,
+): Scene {
+  if (!stage) return draw(step, settings, UNDER);
+  return pickLayout(
+    stage,
+    ARRANGEMENTS.map((a) => draw(step, settings, a, stage)),
+  );
+}
+
+function draw(
+  step: Step<AStarState, AStarExtra>,
+  settings: AStarSettings,
+  { perRow, beside, cell }: Arrangement,
+  stage?: StageSize,
+): Scene {
   const g = step.state.grid;
   const r = step.extra?.run;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const cols = colsOf(g);
   const eight = settings.moves === '8';
+  const lines = Math.ceil(MAX / perRow);
+  const panelW = Q_LABEL + perRow * (Q_CELL + 4) + 20;
   const drawn = gridScene(
     {
       rows: rowsOf(g),
       cols,
-      cell: CELL,
-      below: LINES * 46,
-      minWidth: Q_LABEL + PER_ROW * (Q_CELL + 4) + 20,
+      cell,
+      corner: 13,
+      below: beside ? 0 : lines * 46,
+      minWidth: beside ? 0 : panelW,
     },
     {
       wall: (row, c) => g.lines[row]![c] === '#',
@@ -83,11 +121,19 @@ export function view(step: Step<AStarState, AStarExtra>, settings: AStarSettings
       roles,
     },
   );
+  const geo = drawn.geometry;
   const shapes: Shape[] = drawn.shapes;
+  // Beside the grid, the open set starts at the grid's top, or lower to clear the zoom buttons.
+  const block = beside
+    ? clearOfButtons(
+        { x: geo.width, y: geo.gridTop, w: panelW - 14, h: lines * 46 },
+        // The grid, less the 14 units clearOfButtons pads a scene by: this one is not padded.
+        { x: 14, y: 14, w: geo.width - 28, h: geo.height - 28 },
+        stage ?? { w: 0, h: 0, strip: true },
+      )
+    : { x: 10, y: geo.belowTop, w: 0, h: 0 };
   if (r) {
-    const geo = drawn.geometry;
-    const max = PER_ROW * LINES;
-    const shown = r.open.length > max ? r.open.slice(0, max - 1) : r.open;
+    const shown = r.open.length > MAX ? r.open.slice(0, MAX - 1) : r.open;
     const cells: PanelCell[] = shown.map((e) => ({
       key: String(e.k),
       text: `${cellName(g, e.k)}:${fmt(e.f)}`,
@@ -101,14 +147,18 @@ export function view(step: Step<AStarState, AStarExtra>, settings: AStarSettings
       label: 'OPEN',
       labelW: Q_LABEL,
       cells,
-      x: 10,
-      y: geo.belowTop,
+      x: beside ? geo.width + 10 : 10,
+      y: block.y,
       roles,
-      perRow: PER_ROW,
+      perRow,
       cellW: Q_CELL,
       ends: ['least f', 'most f'],
     });
   }
+  // Beside, the room for the open set is kept with or without a run, so the grid stays put.
+  const bounds = beside
+    ? { x: 0, y: 0, w: geo.width + panelW, h: Math.max(geo.height, block.y + block.h + 14) }
+    : drawn.bounds;
   const label = r ? `${describe(step.state)} ${describeRun(g, r)}` : describe(step.state);
-  return { shapes, bounds: drawn.bounds, label };
+  return { shapes, bounds, label };
 }

@@ -816,10 +816,11 @@ languages, practice, preview, property test), lays out for the stage (smallest t
 
 ### 16.2 Order
 
-Four agents at a time (the machine slows past that), after the small-text agents of 8 November
-finish: 7A, 7E, 7G, 7H; then 7B, 7F, 7I, 7J; then 7C, 7D. The lead merges each family with
-`--no-ff`, runs conformance 10 times on its pages, the full suites, and pushes `next`; the daily
-deploy publishes.
+Yusuf (8 November, about 16:50): everything gets implemented. Running since 16:45: 7A, 7E, 7G,
+7H (beside the four small-text agents). Queue, each started as soon as any agent finishes:
+7B, 7F, 7I, 7J, 7C, 7D. The lead merges each family with `--no-ff`, runs conformance 10 times
+on its pages, the full suites, and pushes `next`; the daily deploy publishes. A family not
+finished at a handover is restarted by the next session from its committed WIP, never dropped.
 
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 

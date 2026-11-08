@@ -161,9 +161,10 @@ describe('fibonacci-calls practice', () => {
 });
 
 describe('drawn text size', () => {
-  // fib(8) draws its badges at 3.9 px on a phone growing down; growing right, at 7.3.
+  // fib(8) draws its badges at 3.9 px on a phone growing down, and at 7.3 growing right; with
+  // lower rows packed closer and badges at the box font, at 9.
   it('stays readable on a laptop and on a phone', () => {
     expect(smallestText(fibonacciCalls, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
-    expect(smallestText(fibonacciCalls, PHONE_STAGE).px).toBeGreaterThanOrEqual(7);
+    expect(smallestText(fibonacciCalls, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

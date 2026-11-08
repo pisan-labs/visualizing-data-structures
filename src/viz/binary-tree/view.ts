@@ -174,7 +174,7 @@ export function view(step: Step<BTState, BTExtra>, settings: BTSettings): Scene 
       x: spot.x + (side === 'left' ? -size / 2 - 3 : size / 2 + 3),
       y: spot.y + 4,
       text: 'nil',
-      size: 12,
+      size: 13,
       anchor: side === 'left' ? 'end' : 'start',
       mono: true,
       cls: 'label',
@@ -300,7 +300,7 @@ export function view(step: Step<BTState, BTExtra>, settings: BTSettings): Scene 
         x: left + LABEL_W + CELL.w / 2,
         y: b.y + CELL.h + 16,
         text: 'front',
-        size: 12,
+        size: 13,
         anchor: 'middle',
         cls: 'label',
       });

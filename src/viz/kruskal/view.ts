@@ -16,12 +16,15 @@ import {
   drawRow,
   edgeId,
   layoutGraph,
+  layoutsFor,
   padBounds,
   placePanels,
   textWidth,
   unionBounds,
   weightId,
+  type GraphLayout,
 } from '../../layouts/graph';
+import { pickLayout } from '../../layouts/arrange';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { keyOf, type Graph } from '../_graph/graph';
 import {
@@ -131,11 +134,29 @@ export function view(
   settings: KruskalSettings,
   stage?: StageSize,
 ): Scene {
+  const layout = layoutGraph(step.state.graph, settings.layout);
+  return pickLayout(
+    stage,
+    // On a stage the edge list may also wrap shorter lines: a phone has height to spare.
+    layoutsFor(layout, settings.layout, stage).flatMap((l) =>
+      (stage && step.extra?.run ? [PER_ROW, 3] : [PER_ROW]).map((perRow) =>
+        draw(step, settings, l, perRow, stage),
+      ),
+    ),
+  );
+}
+
+function draw(
+  step: Step<KruskalState, KruskalExtra>,
+  settings: KruskalSettings,
+  layout: GraphLayout,
+  perRow: number,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const marks = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const r = extra.run;
-  const layout = layoutGraph(g, settings.layout);
   // Rejected edges stay red and tree weights green; the step's marks come on top.
   const roles = new Map<string, MarkRole>();
   if (r)
@@ -188,7 +209,7 @@ export function view(
         x,
         y: y0,
         roles: marks,
-        perRow: PER_ROW,
+        perRow,
         cellW,
         empty: '(no edges)',
       });

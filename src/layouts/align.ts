@@ -58,11 +58,14 @@
  * - `hv-<s>` a value-lane cell, `hv-<s>-t` its value, `hv-name` the lane's name.
  *
  * Sizes are in scene units. The pitch shrinks with the column count, from 48 down to 30 units,
- * so a text of 24 characters is about 800 units wide and its letters stay near 11 px on a
- * phone in portrait (about 362 px of drawing), and bigger on a 1366x768 laptop. A wide, short
- * frame keeps a band at the top empty, clear of the stage's zoom buttons.
+ * so a text of 24 characters is about 800 units wide. On a stage, `fitOn` narrows it further
+ * when that draws the smallest text larger (a phone in portrait, where 16 cells at 45 units
+ * drew the labels at 7 px): down to 22 units, with indices on every other column under 26 and
+ * the value lane staggered over two lanes when its values no longer fit one cell. Views pass
+ * `fitOn`'s result into the frame. A wide, short frame keeps a band at the top empty, clear of
+ * the stage's zoom buttons.
  */
-import type { MarkRole } from '../engine/types';
+import type { MarkRole, StageSize } from '../engine/types';
 import type { Bounds, Shape } from '../render/scene';
 
 export type Cmp = 'match' | 'mismatch' | 'known';
@@ -75,6 +78,16 @@ export interface AlignFrame {
   values?: boolean;
   above?: number;
   aboveWidth?: number;
+  /** Column pitch; default pitchFor(cols). `fitOn` picks one for a stage. */
+  pitch?: number;
+  /** 2 draws the text's indices on even columns only, for cells too narrow for each. */
+  indexEvery?: 1 | 2;
+  /** Value lanes: 2 staggers the values, even shifts in the first, so each is two cells wide. */
+  valueLanes?: 1 | 2;
+  /** For fitOn: the widest value in the value lane, in characters (default 3). */
+  valueChars?: number;
+  /** For fitOn: font sizes of what the view adds at this pitch (a table's headers). */
+  fonts?: readonly number[];
 }
 
 export interface AlignRow {
@@ -144,13 +157,75 @@ const FOUND_LANE = 7;
 const VALUE_H = 36;
 const GAP = 14;
 
+/** Height of the value lanes under the text, with their gaps. */
+const valuesH = (frame: AlignFrame) => (frame.valueLanes ?? 1) * (VALUE_H + 4);
+
 /** Column pitch for this many columns: 48 units down to 30. */
 export function pitchFor(cols: number): number {
   return Math.max(30, Math.min(48, Math.floor(720 / Math.max(1, cols))));
 }
 
+/** Below this pitch the text's indices go on every other column, so they can stay 18 units. */
+const DENSE_PITCH = 26;
+/** The smallest a letter may be drawn, in CSS pixels, when `fitOn` narrows the cells. */
+const LETTER_PX = 11;
+/** The narrowest pitch `fitOn` tries: its letters are still 18 units. */
+const MIN_PITCH = 22;
+
+export interface AlignFit {
+  pitch: number;
+  valueLanes: 1 | 2;
+  indexEvery: 1 | 2;
+}
+
+/**
+ * The pitch (and value lanes) that draw this frame's smallest text largest on `stage`: on a
+ * tall phone stage a long text is narrower than the stage is tall, so narrower cells make the
+ * whole drawing, and its fixed-size labels, larger, as long as the letters stay 11 px or more.
+ * Under 26 units the text's indices go on every other column (they would be too small to read
+ * on every one), and values too wide for one cell go in two staggered lanes, each two cells
+ * wide. Decided from the frame alone
+ * (`frameOf(pitch)`), never from a step, so the camera holds still. With no stage:
+ * pitchFor(cols), one value lane and every index, as before.
+ */
+export function fitOn(
+  stage: StageSize | undefined,
+  frameOf: (pitch: number) => AlignFrame,
+): AlignFit {
+  const usual = pitchFor(frameOf(48).cols);
+  let best: AlignFit = { pitch: usual, valueLanes: 1, indexEvery: 1 };
+  if (!stage) return best;
+  let score = -Infinity;
+  for (let p = usual; p >= MIN_PITCH; p--) {
+    const frame = frameOf(p);
+    const indexEvery = p < DENSE_PITCH ? 2 : 1;
+    for (const valueLanes of frame.values ? ([1, 2] as const) : ([1] as const)) {
+      const fit: AlignFit = { pitch: p, valueLanes, indexEvery };
+      const g = alignGeometry({ ...frame, ...fit });
+      const scale = Math.min(stage.w / g.width, stage.h / g.height);
+      // The letters are what the page is about: narrower cells never draw them under 11 px.
+      if (p < usual && charSize(p) * scale < LETTER_PX) continue;
+      const value = '0'.repeat(frame.valueChars ?? 3);
+      const fonts = [
+        16,
+        charSize(p),
+        indexSize(p, indexEvery),
+        ...(frame.values ? [valueSize(value, p * valueLanes)] : []),
+        ...(frame.fonts ?? []),
+      ];
+      const s = scale * Math.min(...fonts);
+      // Narrower cells or a second lane must be clearly larger: near ties keep the roomier one.
+      if (s > score * 1.01) {
+        best = fit;
+        score = s;
+      }
+    }
+  }
+  return best;
+}
+
 export function alignGeometry(frame: AlignFrame): AlignGeometry {
-  const pitch = pitchFor(frame.cols);
+  const pitch = frame.pitch ?? pitchFor(frame.cols);
   const cellH = pitch <= 36 ? 38 : Math.min(44, pitch);
   const slots = Math.max(1, frame.rows ?? 4);
   const lanes = frame.foundLanes ?? 2;
@@ -169,7 +244,7 @@ export function alignGeometry(frame: AlignFrame): AlignGeometry {
     lanes * FOUND_LANE +
     4 +
     cellH +
-    (frame.values ? VALUE_H + 4 : 0) +
+    (frame.values ? valuesH(frame) : 0) +
     GAP +
     slots * (cellH + GAP) -
     GAP +
@@ -182,7 +257,7 @@ export function alignGeometry(frame: AlignFrame): AlignGeometry {
   y += INDEX_H + lanes * FOUND_LANE + 4;
   const textTop = y;
   const textBottom = textTop + cellH;
-  y = textBottom + (frame.values ? VALUE_H + 4 : 0) + GAP;
+  y = textBottom + (frame.values ? valuesH(frame) : 0) + GAP;
   const rowsTop = y;
   const slotH = cellH + GAP;
   const height = rowsTop + slots * slotH - GAP + PAD;
@@ -205,6 +280,9 @@ export function alignGeometry(frame: AlignFrame): AlignGeometry {
 
 /** Font size for one character in a cell of this pitch. */
 const charSize = (pitch: number) => Math.round(Math.min(28, pitch * 0.84));
+
+/** Font size for a column index over the text. */
+const indexSize = (pitch: number, every = 1) => Math.min(18, Math.round(pitch * every * 0.6));
 
 /** Font size for a value in the value lane: smaller for longer values. */
 const valueSize = (text: string, pitch: number) =>
@@ -254,21 +332,23 @@ export function alignScene(
     cls: 'label',
   });
   const indexY = g.textTop - lanes * FOUND_LANE - 8;
+  const every = frame.indexEvery ?? 1;
   [...content.text].forEach((ch, i) => {
     const id = `${tid}-${i}`;
     const role = roles.get(id);
-    shapes.push({
-      kind: 'text',
-      id: `${tid}i-${i}`,
-      x: g.cx(i),
-      y: indexY,
-      text: String(i),
-      size: Math.min(18, Math.round(pitch * 0.6)),
-      anchor: 'middle',
-      mono: true,
-      cls: 'index',
-      role: roles.get(`${tid}i-${i}`),
-    });
+    if (i % every === 0)
+      shapes.push({
+        kind: 'text',
+        id: `${tid}i-${i}`,
+        x: g.cx(i),
+        y: indexY,
+        text: String(i),
+        size: indexSize(pitch, every),
+        anchor: 'middle',
+        mono: true,
+        cls: 'index',
+        role: roles.get(`${tid}i-${i}`),
+      });
     shapes.push({
       kind: 'rect',
       id,
@@ -340,16 +420,18 @@ export function alignScene(
     });
   }
 
-  // The value lane, one value per shift.
+  // The value lane, one value per shift. With two lanes, shift s goes in lane s % 2 and its
+  // box spans two columns from the window's first character.
   if (frame.values && content.values) {
-    const y = g.textBottom + 4;
+    const y0 = g.textBottom + 4;
+    const lanes = frame.valueLanes ?? 1;
     shapes.push({
       kind: 'text',
       id: 'hv-name',
       x: nameX,
-      y: y + VALUE_H / 2 + 6,
+      y: y0 + (lanes * (VALUE_H + 4) - 4) / 2 + 6,
       text: content.values.name,
-      size: 16,
+      size: lanes > 1 ? 20 : 16,
       anchor: 'end',
       mono: true,
       cls: 'label',
@@ -358,13 +440,15 @@ export function alignScene(
       if (v === null || v === undefined || v === '') return;
       const id = `hv-${s}`;
       const role = roles.get(id) ?? content.values!.tones?.[s];
-      const size = valueSize(v, pitch);
+      const w = pitch * lanes;
+      const size = valueSize(v, w);
+      const y = y0 + (s % lanes) * (VALUE_H + 4);
       shapes.push({
         kind: 'rect',
         id,
         x: g.left(s) + 2,
         y,
-        w: pitch - 4,
+        w: w - 4,
         h: VALUE_H - 4,
         r: 6,
         cls: content.values!.dashed?.[s] ? 'cell live ghost' : 'cell live',
@@ -373,7 +457,7 @@ export function alignScene(
       shapes.push({
         kind: 'text',
         id: `${id}-t`,
-        x: g.cx(s),
+        x: g.left(s) + w / 2,
         y: y + (VALUE_H - 4) / 2 + size * 0.36,
         text: v,
         size,

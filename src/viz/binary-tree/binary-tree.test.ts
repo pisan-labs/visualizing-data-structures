@@ -12,6 +12,9 @@ import {
   type BTState,
   type Order,
 } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import textSizeDef from './index';
 
 // A plain reference tree, independent of the model's representation.
 interface Ref {
@@ -344,5 +347,13 @@ describe('binary tree practice', () => {
         ...q.watch!.map((c) => c[0]),
       ]);
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // The queue's front caption and nil were 12 (10.7 px on a laptop for a skewed tree); now 13.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(textSizeDef, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(textSizeDef, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

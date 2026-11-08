@@ -123,9 +123,10 @@ describe('kruskal', () => {
 });
 
 describe('drawn text size', () => {
-  // The ranks beside the union-find roots were 11 units (7.6 px on a phone): now 13.
+  // The ranks beside the union-find roots were 11 units (7.6 px on a phone): now 13. The edge
+  // list in rows of 5 was 524 units wide (8.9 px on a phone); a phone wraps it in rows of 3.
   it('stays readable on a laptop and on a phone', () => {
     expect(smallestText(kruskal, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(13);
-    expect(smallestText(kruskal, PHONE_STAGE).px).toBeGreaterThanOrEqual(8.9);
+    expect(smallestText(kruskal, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

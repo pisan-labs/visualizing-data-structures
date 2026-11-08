@@ -5,6 +5,8 @@ import { Timeline } from '../../engine/timeline';
 import type { PracticeQuestion } from '../../engine/types';
 import { dpFibonacci, parseN } from '.';
 import { MAX_N, type FibSettings } from './model';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 const settings = (style: FibSettings['style'] = 'bottomup'): FibSettings => ({ style });
 
@@ -169,5 +171,13 @@ describe('Fibonacci practice', () => {
       const want = q.prompt.includes('already in the memo') ? hits : calls;
       expect(q.answer).toEqual({ kind: 'number', value: want });
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // The memo row drew at 8.4 px on a phone; with the narrowest cells, at 11.5.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(dpFibonacci, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(dpFibonacci, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

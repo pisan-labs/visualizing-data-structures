@@ -4,6 +4,8 @@ import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { factorial } from '.';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 import { LOOP_CAP, type Base, type FactSettings, type Style } from './model';
 
 const settings = (s: Partial<FactSettings> = {}): FactSettings =>
@@ -223,5 +225,14 @@ describe('factorial practice', () => {
         }
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // The stack beside the tree drew at 7.8 px on a phone; the tree now has the stack's font, and
+  // a phone gets a narrower stack (under the tree, or with each line on a second row).
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(factorial, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(factorial, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

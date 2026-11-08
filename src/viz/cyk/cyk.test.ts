@@ -13,6 +13,8 @@ import {
 } from '../_grammar/grammar';
 import { cykParsing, driverGrammar, parseInput } from '.';
 import { defaults, type CykSettings } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 const run = (calls: OpCall[], settings: CykSettings = defaults) =>
   new Timeline(cykParsing, settings, 1, calls);
@@ -167,5 +169,13 @@ describe('cyk', () => {
     expect(input.slice(1)).toEqual(['parse aabb', 'parse aab', 'parse eps']);
     expect(expected).toEqual(['yes S0 S', 'no', 'yes']);
     expect(driverGrammar(run([]).initial.state.cnf.cnf)).toBe(input[0]!.slice(5));
+  });
+});
+
+describe('drawn text size', () => {
+  // The smallest text is the rules' title and the tree caption, at 15.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(cykParsing, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(cykParsing, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

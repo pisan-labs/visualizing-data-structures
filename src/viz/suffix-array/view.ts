@@ -23,9 +23,9 @@ const ROW_H = 30;
 const TEXT_TOP = 52;
 const HEAD_Y = TEXT_TOP + 30 + 30;
 const ROW0 = HEAD_Y + 10;
-const X_LO = 4;
+const X_LO = 2;
 const X_MID = 24;
-const X_HI = 52;
+const X_HI = 56;
 const X_I = 88;
 const X_SA = 120;
 const X_LCP = 156;
@@ -81,7 +81,7 @@ export function view(step: Step<SuffixState, SuffixExtra>, settings?: SuffixSett
     });
     text(`ti-${j}`, charX(j), TEXT_TOP - 7, String(j), {
       anchor: 'middle',
-      size: 14,
+      size: 16,
       cls: 'index',
     });
   }
@@ -89,7 +89,7 @@ export function view(step: Step<SuffixState, SuffixExtra>, settings?: SuffixSett
   // Column heads.
   const doubling = extra.rank !== undefined;
   const head = (id: string, x: number, value: string, anchor: 'middle' | 'start' = 'middle') =>
-    text(id, x, HEAD_Y, value, { anchor, size: 14, cls: 'label' });
+    text(id, x, HEAD_Y, value, { anchor, size: 16, cls: 'label' });
   head('hd-i', X_I, 'i');
   head('hd-sa', X_SA, 'SA');
   head('hd-lcp', X_LCP, 'LCP');
@@ -105,7 +105,7 @@ export function view(step: Step<SuffixState, SuffixExtra>, settings?: SuffixSett
     const len = n - p;
     const id = rowId(p);
     const role = roles.get(id);
-    text(`ri-${i}`, X_I, y + 20, String(i), { anchor: 'middle', size: 14, cls: 'index' });
+    text(`ri-${i}`, X_I, y + 20, String(i), { anchor: 'middle', size: 16, cls: 'index' });
     shapes.push({
       kind: 'rect',
       id,
@@ -146,7 +146,7 @@ export function view(step: Step<SuffixState, SuffixExtra>, settings?: SuffixSett
     if (doubling) {
       const key = extra.keys?.[p];
       if (key)
-        text(`${id}-key`, xKey, y + 21, `(${key[0]}, ${key[1]})`, { anchor: 'middle', size: 15 });
+        text(`${id}-key`, xKey, y + 21, `(${key[0]}, ${key[1]})`, { anchor: 'middle', size: 16 });
       text(`${id}-rk`, xRank, y + 21, String(extra.rank![p]), { anchor: 'middle', weight: 'bold' });
     }
   });
@@ -181,7 +181,7 @@ export function view(step: Step<SuffixState, SuffixExtra>, settings?: SuffixSett
   if (sr) {
     const ptr = (name: string, x: number, row: number | undefined, role?: MarkRole) => {
       if (row === undefined) return;
-      text(`ptr-${name}`, x, rowY(row) + 20, name, { size: 14, role, weight: 'bold' });
+      text(`ptr-${name}`, x, rowY(row) + 20, name, { size: 16, role, weight: 'bold' });
     };
     ptr('lo', X_LO, sr.found ? undefined : sr.lo);
     ptr('mid', X_MID, sr.mid, 'active');

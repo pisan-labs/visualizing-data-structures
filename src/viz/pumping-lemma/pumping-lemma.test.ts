@@ -9,6 +9,8 @@ import { MAX_I, PROVER_TRIES, readSplit, splits } from './game';
 import { LANGUAGES, MAX_S, findLanguage, inClass, type LangId, type Lemma } from './languages';
 import { defaults, type PumpExtra, type PumpSettings, type PumpState } from './model';
 import { TYPICAL_STAGES } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: membership, splits and pumping written from the definitions, apart from the model.
@@ -383,5 +385,13 @@ describe('pumping-lemma game', () => {
       const settings = { ...defaults, ...ex.settings } as PumpSettings;
       checkSteps(new Timeline(def, settings, ex.seed, ex.ops));
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // The smallest text is the ruler's caption and the i numbers, at 13.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(def, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(def, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

@@ -250,20 +250,28 @@ export function* conversion(g: Grammar, order: Order): Generator<Event, S, void>
       const r = rules[i]!;
       const at = r.rhs.flatMap((x, k) => (nullable.includes(x) ? [k] : []));
       const added: Rule[] = [];
+      let self: Rule | null = null;
       for (let mask = 1; mask < 1 << at.length; mask++) {
         const drop = new Set(at.filter((_, j) => mask & (1 << j)));
         const rhs = r.rhs.filter((_, k) => !drop.has(k));
         const v: Rule = { lhs: r.lhs, rhs };
-        if (!rhs.length || (rhs.length === 1 && rhs[0] === r.lhs)) continue;
+        if (!rhs.length) continue;
+        if (rhs.length === 1 && rhs[0] === r.lhs) {
+          self = v;
+          continue;
+        }
         if (rules.some((x) => same(x, v))) continue;
         rules.splice(i + 1 + added.length, 0, v);
         added.push(v);
       }
-      if (!added.length) continue;
+      if (!added.length && !self) continue;
       const which = list([...new Set(at.map((k) => r.rhs[k]!))]);
+      const selfNote = self
+        ? ` ${added.length ? 'One choice gives' : 'The only new rule would be'} ${ruleText(self)}, a unit rule A → A that says nothing, so it is dropped.`
+        : '';
       yield step(
         { rules: [...rules] },
-        `${ruleText(r)} has nullable ${which}. Leave out each choice of them: add ${list(added.map(ruleText))}.`,
+        `${ruleText(r)} has nullable ${which}.${added.length ? ` Leave out each choice of them: add ${list(added.map(ruleText))}.` : ''}${selfNote}`,
         ['conv.del'],
         2,
         [mark(rid(r), 'active'), ...added.map((x) => mark(rid(x), 'new'))],
@@ -681,7 +689,7 @@ export function pseudocode(settings: CnfSettings = defaults): PseudoBlock[] {
         L(
           'conv.del',
           1,
-          'for each A → α: add each α with some nullable symbols left out (never ε)',
+          'for each A → α: add each α with some nullable symbols left out (never ε or A → A)',
           'Copy every rule with nullable variables left out, in every combination.',
         ),
         L(

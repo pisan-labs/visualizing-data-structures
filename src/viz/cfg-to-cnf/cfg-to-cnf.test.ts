@@ -46,6 +46,15 @@ describe('cfg-to-cnf', () => {
     expect(steps.some((s) => s.extra?.struck?.length)).toBe(true);
   });
 
+  it('says so when leaving out nullables gives A → A and drops it', () => {
+    const steps = run([['load', 'S -> ASA | aB; A -> B | S; B -> b | eps']]).entries[0]!.steps;
+    const asa = steps.find((s) => s.state.phase === 'del' && s.say.startsWith('S → ASA has'))!;
+    expect(asa.say).toMatch(/One choice gives S → S, a unit rule A → A that says nothing/);
+    expect(asa.state.rules).not.toContainEqual({ lhs: 'S', rhs: ['S'] });
+    const only = run([['load', 'S -> SA | a; A -> eps']]).entries[0]!.steps;
+    expect(only.some((s) => /The only new rule would be S → S/.test(s.say))).toBe(true);
+  });
+
   it('keeps S₀ → ε when the language has ε, and derives in 2n − 1 steps', () => {
     const t = run([
       ['load', 'S -> aSb | eps'],

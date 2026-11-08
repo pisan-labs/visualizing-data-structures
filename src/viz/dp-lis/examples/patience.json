@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "dp-lis",
+  "id": "patience",
+  "title": "Binary search over tails",
+  "notes": "The same sequence with the n log n method. Each value replaces the first tail that is not smaller, or goes at the end. The last tail is 7, so this walk finds 2, 3, 6, 7: another LIS of length 4.",
+  "settings": {
+    "method": "tails"
+  },
+  "seed": 1,
+  "ops": [["values", "5 2 8 6 3 6 9 7"], ["fill"], ["trace"]],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

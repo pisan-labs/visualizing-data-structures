@@ -31,6 +31,7 @@ import type { MtSettings, MtState } from './model';
 import { LOOPY } from './practice';
 import { ruleLine, view } from './view';
 import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 const settings = (s: Partial<MtSettings> = {}): MtSettings =>
   ({ ...multitapeTm.defaults, ...s }) as MtSettings;
@@ -512,5 +513,13 @@ describe('the drawing', () => {
     const s = simulate(machine(COPY_COMPARE), ['01=01']);
     expect(simText(s.sim)).toBe('#01=01[_]#$01[_]#');
     expect(s.sim.cells.filter((a) => a === SEP)).toHaveLength(3);
+  });
+});
+
+describe('drawn text size', () => {
+  // On a phone, 3 tapes, the single tape and 13 rules one under another reach 8.75 px.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(multitapeTm, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(multitapeTm, PHONE_STAGE).px).toBeGreaterThanOrEqual(8.7);
   });
 });

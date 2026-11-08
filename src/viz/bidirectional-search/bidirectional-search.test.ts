@@ -109,7 +109,7 @@ describe('bidirectional search', () => {
 
   it('saves work on a bushy graph and none on a path', () => {
     const bushy = parseGraph(
-      'A-B, A-C, A-D, B-E, B-F, C-G, C-H, D-I, E-J, F-J, G-K, I-L, J-M, K-M, L-M, H-N, N-O',
+      'A-B, A-C, A-D, B-E, B-F, C-G, C-H, D-I, E-J, F-J, G-K, I-L, J-M, K-M, L-M, H-N',
     ) as Graph;
     const b = runOf(bushy, 'A', 'M', 'alternate').r;
     expect(b.expanded).toBeLessThan(b.plain);

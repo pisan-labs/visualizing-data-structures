@@ -10,7 +10,7 @@
   },
   "seed": 1,
   "ops": [
-    ["load", "A-B, A-C, A-D, B-E, B-F, C-G, C-H, D-I, E-J, F-J, G-K, I-L, J-M, K-M, L-M, H-N, N-O"],
+    ["load", "A-B, A-C, A-D, B-E, B-F, C-G, C-H, D-I, E-J, F-J, G-K, I-L, J-M, K-M, L-M, H-N"],
     ["run", "A", "M"]
   ],
   "at": {

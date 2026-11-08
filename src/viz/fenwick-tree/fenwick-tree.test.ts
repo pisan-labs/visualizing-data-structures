@@ -1,5 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
@@ -253,5 +255,13 @@ describe('fenwick tree practice', () => {
         }
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // The T[i] labels were 17 units (8.2 px on a phone): now 20.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(fenwickTree, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(fenwickTree, PHONE_STAGE).px).toBeGreaterThanOrEqual(9.5);
   });
 });

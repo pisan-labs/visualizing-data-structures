@@ -23,8 +23,8 @@ import {
 const PAD = 10;
 const TOP = 10;
 /** A node's box, and the gap under it for the edges down to its children and its tag. */
-const BOX_H = 44;
-const GAP = 26;
+const BOX_H = 48;
+const GAP = 30;
 const ROW_H = 40;
 
 /**
@@ -77,7 +77,7 @@ export function view(step: Step<SegState, SegExtra>, settings: SegSettings): Sce
         top,
         h: BOX_H,
         label: lo < hi ? `${lo}–${hi}` : undefined,
-        labelSize: 17,
+        labelSize: 20,
         value: value === null || value === undefined ? null : String(value),
         valueSize: 22,
         role: roles.get(`node-${v}`),
@@ -109,7 +109,7 @@ export function view(step: Step<SegState, SegExtra>, settings: SegSettings): Sce
           x: center(nd),
           y: tagY(nd),
           text: tagText(tag),
-          size: 16,
+          size: 19,
           role: 'compare',
           enterFrom: parent && { x: center(parent), y: tagY(parent) },
         }),

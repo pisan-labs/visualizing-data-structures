@@ -18,7 +18,7 @@ import { HEAP_REGION, type HeapSortSettings } from './model';
 const R = 26;
 const GAP = 10;
 const LEVEL_GAP = 66;
-const INDEX_SIZE = 16;
+const INDEX_SIZE = 19;
 /** The tree's bottom index labels end here, above the bars' region labels. */
 const JOIN = 40;
 /** Shorter bars than the other sorting pages: the tree takes the rest of the height. */

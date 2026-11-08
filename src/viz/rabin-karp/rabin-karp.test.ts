@@ -1,5 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { practiceSet } from '../../engine/practice';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeQuestion } from '../../engine/types';
@@ -154,5 +156,13 @@ describe('Rabin-Karp practice', () => {
       }
       expect(q.answer).toEqual({ kind: 'number', value: count });
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // Labels were 7.2 px on a phone; narrower cells and two staggered hash lanes: 11.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(rabinKarp, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(rabinKarp, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

@@ -1,5 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { practiceSet } from '../../engine/practice';
 import { Timeline } from '../../engine/timeline';
 import type { AnyVizDef, PracticeQuestion } from '../../engine/types';
@@ -245,5 +247,13 @@ describe('heap sort practice', () => {
       if (q.answer.kind !== 'choice') throw new Error('not a choice');
       expect(q.answer.options[q.answer.correct]).toContain(`started in A[${kept ? i : j}]`);
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // The tree's indices were 16 units (8 px on a phone next to 15 bars): now 19.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(heapSort, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(heapSort, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

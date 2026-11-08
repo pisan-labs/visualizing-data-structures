@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "ternary-search",
+  "id": "peak",
+  "title": "The peak of values that rise, then fall",
+  "notes": "No x to compare with, so binary search has nothing to go on. Ternary search compares A[m1] with A[m2]: the lower side cannot hold the peak, so that third goes.",
+  "settings": {
+    "goal": "max",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "5 12 26 38 51 67 80 93 84 70 55 41 28 15"], ["max"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

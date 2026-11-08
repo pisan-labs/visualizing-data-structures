@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "d-ary-heap",
+  "id": "four-children",
+  "title": "Four children: a flatter tree",
+  "notes": "The same twelve keys as in the 3-ary examples, in a 4-ary heap indexed from 0. The tree is flatter, so inserts are cheaper, but every sift-down level now looks at four children.",
+  "settings": {
+    "d": 4,
+    "order": "max",
+    "index": "zero"
+  },
+  "seed": 1,
+  "ops": [["build", "42 17 88 23 61 9 74 35 50 12 66 29"], ["insert", 95], ["extract"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

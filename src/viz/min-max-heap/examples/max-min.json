@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "min-max-heap",
+  "id": "max-min",
+  "title": "The mirror image: a max-min heap",
+  "notes": "The same fifteen keys with the root on a max level. Now the largest key is the root and the smallest is one of its children.",
+  "settings": {
+    "root": "max",
+    "index": "one"
+  },
+  "seed": 1,
+  "ops": [["build", "41 17 88 6 63 29 95 52 12 74 35 80 3 58 22"], ["extractMax"], ["extractMin"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

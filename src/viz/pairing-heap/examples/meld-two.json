@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "pairing-heap",
+  "id": "meld-two",
+  "title": "Meld two heaps with one comparison",
+  "notes": "Build a heap of six keys, then meld it with a second heap of five. Whatever their sizes, the two roots are compared once and the loser becomes the winner's first child.",
+  "settings": {
+    "pass": "two-pass",
+    "draw": "tree"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 40],
+    ["insert", 22],
+    ["insert", 65],
+    ["insert", 31],
+    ["insert", 58],
+    ["insert", 47],
+    ["meld", "35 12 50 27 61"],
+    ["deleteMin"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

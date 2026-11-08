@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "d-ary-heap",
+  "id": "extract-costs-d",
+  "title": "Extract pays d comparisons a level",
+  "notes": "Build a 3-ary heap of twelve keys, then extract three times. Each sift-down compares the moving key with up to three children on every level. Watch the comparisons counter: extract costs more than insert.",
+  "settings": {
+    "d": 3,
+    "order": "max",
+    "index": "one"
+  },
+  "seed": 1,
+  "ops": [["build", "42 17 88 23 61 9 74 35 50 12 66 29"], ["extract"], ["extract"], ["extract"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "rope",
+  "id": "total-lengths",
+  "title": "Storing lengths instead of weights",
+  "notes": "The same rope with each node holding the length of its own subtree. Index now compares i with the left child's length; the walk is the same.",
+  "settings": {
+    "leaf": 4,
+    "weight": "total"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "the quick brown fox"],
+    ["index", 10]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

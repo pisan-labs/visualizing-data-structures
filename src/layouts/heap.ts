@@ -24,7 +24,8 @@
  *       treeIndexId(p)       the array index (p + base) under the node, when `base` is given;
  *                            leave treeIndexRoom(indexSize) free under the tree for the bottom
  *                            row (TREE_INDEX_ROOM for the default size, 12)
- *     `opacity(p)` fades a position (heap sort fades the sorted part).
+ *     `opacity(p)` fades a position (heap sort fades the sorted part). `parent(p)` draws the
+ *     edges of a tree that is not binary (a d-ary heap); `layout` needs only n, at and radius.
  *
  *   drawHeapArray(items, options) -> { shapes, bounds, cell(p) }
  *     The array: cells cellId(p), the value in each cellValueId(id), and the index p + base under
@@ -118,11 +119,13 @@ export interface DrawHeapTreeOptions {
   opacity?(p: number): number | undefined;
   /** Role for a position's circle when no mark names its value. */
   baseRole?(p: number): MarkRole | undefined;
+  /** The parent of position p, for a tree that is not binary (a d-ary heap). Default parentPos. */
+  parent?(p: number): number;
 }
 
 /** The tree part. See the comment at the top of this file. */
 export function drawHeapTree(
-  layout: HeapTreeLayout,
+  layout: Pick<HeapTreeLayout, 'n' | 'at' | 'radius'>,
   items: HeapValue[],
   opts: DrawHeapTreeOptions = {},
 ): Shape[] {
@@ -135,7 +138,7 @@ export function drawHeapTree(
     const c = layout.at(p);
     const opacity = opts.opacity?.(p);
     if (p > 0) {
-      const q = layout.at(parentPos(p));
+      const q = layout.at((opts.parent ?? parentPos)(p));
       shapes.push({
         kind: 'arrow',
         id: heapEdgeId(p),

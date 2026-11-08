@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "merkle-tree",
+  "id": "build-eight",
+  "title": "Hash eight blocks up to a root",
+  "notes": "Each block is hashed into a leaf, then each pair of hashes into their parent, level by level, until one hash is left: the root.",
+  "settings": {
+    "odd": "promote"
+  },
+  "seed": 1,
+  "ops": [["build", "tx1 tx2 tx3 tx4 tx5 tx6 tx7 tx8"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

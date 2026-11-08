@@ -1,0 +1,32 @@
+{
+  "format": 1,
+  "viz": "pairing-heap",
+  "id": "two-pass-delete",
+  "title": "deleteMin in two passes",
+  "notes": "Twelve inserts, each one link with the root. Then deleteMin removes the root and pairs up its children: left to right in pairs, then right to left into one tree. Watch the links counter.",
+  "settings": {
+    "pass": "two-pass",
+    "draw": "tree"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 30],
+    ["insert", 52],
+    ["insert", 18],
+    ["insert", 44],
+    ["insert", 61],
+    ["insert", 25],
+    ["insert", 9],
+    ["insert", 70],
+    ["insert", 38],
+    ["insert", 14],
+    ["insert", 57],
+    ["insert", 22],
+    ["deleteMin"],
+    ["deleteMin"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

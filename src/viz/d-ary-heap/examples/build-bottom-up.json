@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "d-ary-heap",
+  "id": "build-bottom-up",
+  "title": "Build a heap bottom-up",
+  "notes": "Copy the keys into the array, then sift down from the parent of the last slot back to the root. With d = 3 only four of the twelve keys have children, so only four sift-downs run.",
+  "settings": {
+    "d": 3,
+    "order": "max",
+    "index": "one"
+  },
+  "seed": 1,
+  "ops": [["build", "12 35 9 50 23 61 17 74 42 29 66 88"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

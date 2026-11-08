@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "rope",
+  "id": "delete-range",
+  "title": "Delete a range with two splits",
+  "notes": "Cut before the range, cut after it, and join the outer parts. The middle part simply drops out of the tree.",
+  "settings": {
+    "leaf": 4,
+    "weight": "left"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "keep this not this part"],
+    ["delete", 10, 9]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

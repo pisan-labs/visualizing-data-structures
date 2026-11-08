@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "viz": "pairing-heap",
+  "id": "multipass",
+  "title": "Multipass pairing",
+  "notes": "The same twelve inserts and deleteMin as the two-pass example, but the pairing melds the first two trees and puts the result at the back, over and over. Compare the shape it leaves.",
+  "settings": {
+    "pass": "multipass",
+    "draw": "tree"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 30],
+    ["insert", 52],
+    ["insert", 18],
+    ["insert", 44],
+    ["insert", 61],
+    ["insert", 25],
+    ["insert", 9],
+    ["insert", 70],
+    ["insert", 38],
+    ["insert", 14],
+    ["insert", 57],
+    ["insert", 22],
+    ["deleteMin"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

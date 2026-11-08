@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "min-max-heap",
+  "id": "trickle-fix",
+  "title": "Trickle down with a fix on the way",
+  "notes": "Extract the minimum, then the maximum. In the extract-max, the moved key jumps to a grandchild and lands under a parent that is out of order with it, so the two swap before the trickle goes on. That fix is the one step a binary heap never needs.",
+  "settings": {
+    "root": "min",
+    "index": "one"
+  },
+  "seed": 1,
+  "ops": [["build", "80 65 14 63 58 32 78 61 1 93 34 35 87"], ["extractMin"], ["extractMax"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

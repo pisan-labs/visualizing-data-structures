@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "rope",
+  "id": "split-two",
+  "title": "Split one rope into two",
+  "notes": "Split walks down to the cut, cuts at most one leaf in two, and hands every subtree right of the path to the second rope. Then join puts them back with a single new node.",
+  "settings": {
+    "leaf": 4,
+    "weight": "left"
+  },
+  "seed": 1,
+  "ops": [["load", "split and concat"], ["split", 7], ["join"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

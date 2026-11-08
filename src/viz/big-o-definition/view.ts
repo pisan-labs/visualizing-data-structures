@@ -142,16 +142,21 @@ function makeAxis(vs: Rat[], scale: DefSettings['scale'], spread: number): Axis 
 }
 
 /** A tick label: "120,000", "2.5", "1.3e30", "10¹⁰". */
-function tickText(v: number): string {
-  const a = Math.abs(v);
-  if (a === 0) return '0';
-  if (a >= 1e6) {
-    const e = Math.floor(Math.log10(a));
-    const m = a / 10 ** e;
-    return `${v < 0 ? '−' : ''}${Number(m.toFixed(1))}e${e}`;
+function tickText(v: Rat): string {
+  const neg = v.n < 0n ? '−' : '';
+  const lg = lgR(v);
+  if (lg === -Infinity) return '0';
+  if (lg >= 6) {
+    let e = Math.floor(lg);
+    let m = Number((10 ** (lg - e)).toFixed(1));
+    if (m >= 10) {
+      m /= 10;
+      e += 1;
+    }
+    return `${neg}${m}e${e}`;
   }
-  const s = Number(a.toFixed(a < 1 ? 3 : a < 100 ? 1 : 0)).toLocaleString('en-US');
-  return `${v < 0 ? '−' : ''}${s}`;
+  const a = Math.abs(approx(v));
+  return `${neg}${Number(a.toFixed(a < 1 ? 3 : a < 100 ? 1 : 0)).toLocaleString('en-US')}`;
 }
 
 const powerText = (k: number) => (k === 0 ? '1' : k === 1 ? '10' : `10${sup(k)}`);
@@ -280,12 +285,12 @@ function frame(shapes: Shape[], pre: string, axis: Axis, N: number, plot: Plot) 
     for (let k = axis.lhi; k >= axis.llo; k -= step)
       ys.push({ p: (k - axis.llo) / span, text: powerText(k) });
   } else {
-    const lo = approx(axis.lo);
-    const hi = approx(axis.hi);
-    const at = (v: number) => (v - lo) / (hi - lo);
-    ys.push({ p: 1, text: tickText(hi) }, { p: at(0), text: '0' });
-    if (1 - at(0) >= 0.4) ys.push({ p: at(hi / 2), text: tickText(hi / 2) });
-    if (lo < 0 && at(0) >= 0.12) ys.push({ p: 0, text: tickText(lo) });
+    // Exact positions: the top can be far past what a double holds (n! at n = 200).
+    const zero = place(axis, rat(0n));
+    const half = mulR(axis.hi, rat(1n, 2n));
+    ys.push({ p: 1, text: tickText(axis.hi) }, { p: zero, text: '0' });
+    if (1 - zero >= 0.4) ys.push({ p: place(axis, half), text: tickText(half) });
+    if (axis.lo.n < 0n && zero >= 0.12) ys.push({ p: 0, text: tickText(axis.lo) });
   }
   ys.forEach((t, i) => {
     const y = yOf(t.p, plot);

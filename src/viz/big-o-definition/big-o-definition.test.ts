@@ -380,6 +380,27 @@ describe('big-o definition', () => {
         ['compare', 'n ; n - 100'],
       ),
     );
+    const inFrame = (scene: ReturnType<typeof bigODefinition.view>) => {
+      const b = scene.bounds;
+      for (const sh of scene.shapes) {
+        const pts =
+          sh.kind === 'arrow'
+            ? [
+                [sh.x1, sh.y1],
+                [sh.x2, sh.y2],
+              ]
+            : sh.kind === 'polygon'
+              ? sh.points.map((p) => [p.x, p.y])
+              : [[sh.x, sh.y]];
+        for (const [x, y] of pts) {
+          expect(Number.isFinite(x) && Number.isFinite(y), sh.id).toBe(true);
+          expect(
+            x! >= b.x - 1 && x! <= b.x + b.w + 1 && y! >= b.y - 1 && y! <= b.y + b.h + 1,
+            sh.id,
+          ).toBe(true);
+        }
+      }
+    };
     fc.assert(
       fc.property(
         relArb,
@@ -400,31 +421,26 @@ describe('big-o definition', () => {
             if (relation === 'Omega') expect(v.c).toBe(st.lo ?? '—');
             if (relation === 'Theta')
               expect([v['c₁'], v['c₂']]).toEqual([st.lo ?? '—', st.hi ?? '—']);
-            const scene = bigODefinition.view(step, s, { w: 360, h: 536 });
-            const b = scene.bounds;
-            for (const sh of scene.shapes) {
-              const pts =
-                sh.kind === 'arrow'
-                  ? [
-                      [sh.x1, sh.y1],
-                      [sh.x2, sh.y2],
-                    ]
-                  : sh.kind === 'polygon'
-                    ? sh.points.map((p) => [p.x, p.y])
-                    : [[sh.x, sh.y]];
-              for (const [x, y] of pts) {
-                expect(Number.isFinite(x) && Number.isFinite(y), sh.id).toBe(true);
-                expect(
-                  x! >= b.x - 1 && x! <= b.x + b.w + 1 && y! >= b.y - 1 && y! <= b.y + b.h + 1,
-                  sh.id,
-                ).toBe(true);
-              }
-            }
+            inFrame(bigODefinition.view(step, s, { w: 360, h: 536 }));
           }
         },
       ),
       { numRuns: 120 },
     );
+    // Every menu pair, range and scale, at the end of a check and the limit test: the extremes
+    // (n! and 2ⁿ at n = 200 on a linear axis) are where a double would overflow.
+    for (const p of PAIRS)
+      for (const range of RANGES)
+        for (const scale of ['auto', 'linear', 'log'] as const) {
+          const s = settings({ range, scale });
+          const t = new Timeline(bigODefinition, s, 1, [
+            compareCall(p.id),
+            ['check', '1 1'],
+            ['limit'],
+          ]);
+          for (const stage of [undefined, { w: 880, h: 384 }, { w: 360, h: 536 }])
+            inFrame(bigODefinition.view(t.at(t.length - 1).step, s, stage));
+        }
   });
 
   it('samples every n for short ranges and at most 61 points for long ones', () => {

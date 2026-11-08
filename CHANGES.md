@@ -315,3 +315,7 @@
 2026-11-08 [note] Daily deploy at 18:47 (late: CI on 8109abe finished green at 17:58 inside the 30-minute window, the watch read it a moment early, then a worker restart): main 18e1bb5..8109abe, live bundle matches, 129 pages 200
 
 2026-11-08 [note] All eight wave 7 agents stopped at the 5-hour usage limit around 17:30 and were resumed at 18:50
+
+2026-11-08 [code] Merged wave 7E: bloom-filter, count-min-sketch, hyperloglog, cuckoo-hashing, robin-hood-hashing, consistent-hashing (new _hashing/family.ts)
+
+2026-11-08 [code] Merged wave 7B: cartesian-tree, scapegoat-tree, aa-tree, interval-tree, persistent-bst (no kit changes)

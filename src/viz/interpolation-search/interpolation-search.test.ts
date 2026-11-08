@@ -7,6 +7,7 @@ import { ascending, valuesArb } from '../_sorting/check';
 import type { ArrayStep } from '../_sorting/kit';
 import { interpolationSearch } from '.';
 import type { InterpolationExtra, InterpolationSettings } from './model';
+import { why } from './practice';
 
 const settings = (s: Partial<InterpolationSettings> = {}): InterpolationSettings =>
   ({ ...interpolationSearch.defaults, ...s }) as InterpolationSettings;
@@ -115,6 +116,22 @@ describe('interpolation search', { timeout: 60_000 }, () => {
 });
 
 describe('drawn text size', () => {
+  it('explains a tie in the versus question as a tie', () => {
+    expect(why(3, 3, false)).toMatch(/^A tie/);
+    expect(why(3, 3, true)).toMatch(/^A tie/);
+    expect(why(1, 4, false)).toMatch(/Evenly spread values make the guess land close/);
+    expect(why(6, 3, true)).toMatch(/Skewed values throw off/);
+    for (const [m, b] of [
+      [3, 3],
+      [6, 3],
+      [1, 4],
+    ] as const)
+      for (const sk of [false, true]) {
+        if (m >= b) expect(why(m, b, sk)).not.toMatch(/land close/);
+        if (m <= b) expect(why(m, b, sk)).not.toMatch(/throw off/);
+      }
+  });
+
   it('stays readable on a laptop and on a phone', () => {
     expect(smallestText(interpolationSearch, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
     expect(smallestText(interpolationSearch, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);

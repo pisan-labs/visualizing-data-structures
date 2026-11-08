@@ -114,10 +114,23 @@ export function interpolationPractice(def: () => ArrayDef): PracticeKind[] {
           prompt: `Which takes fewer probes to run \`search(${x})\` on this array?`,
           setup,
           answer: ordered(options, right),
-          explain: `Interpolation search takes ${mine} and binary search takes ${binary}. ${skewed ? 'Skewed values throw off the straight-line guess.' : 'Evenly spread values make the guess land close.'}`,
+          explain: `Interpolation search takes ${mine} and binary search takes ${binary}. ${why(mine, binary, skewed)}`,
           watch: [['search', x]],
         };
       },
     },
   ];
+}
+
+/** Why one search won the "versus" question, or why they tie. */
+export function why(mine: number, binary: number, skewed: boolean): string {
+  if (mine === binary)
+    return 'A tie: on this array the straight-line guess does no better than halving.';
+  if (mine < binary)
+    return skewed
+      ? 'Even on skewed values, the guess happens to land close for this x.'
+      : 'Evenly spread values make the guess land close.';
+  return skewed
+    ? 'Skewed values throw off the straight-line guess.'
+    : 'The values are spread fairly evenly, but not evenly enough here for the guess to beat halving.';
 }

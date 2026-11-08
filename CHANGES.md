@@ -257,3 +257,5 @@
 2026-11-08 [code] One source for the zoom buttons' room (src/render/stage.ts, StageSize.strip); three phone copies counted the buttons twice (about 30 px of empty band) and are gone
 
 2026-11-08 [code] halting-problem, chomsky-hierarchy, pumping-lemma and big-o-definition use textWidth and wrapText from src/layouts/text.ts instead of their own factors
+
+2026-11-08 [note] Full e2e after the zoom and text-width cleanups: 2166 passed, 1 failed (factorial axe dark, one color-contrast node), 5 skipped; the failing test then passed 32 of 32 alone; logged as register item 11

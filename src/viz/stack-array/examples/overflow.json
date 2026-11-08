@@ -4,7 +4,7 @@
   "id": "overflow",
   "title": "Overflow at capacity",
   "notes": "A stack of capacity 4 gets a fifth push. Watch the check that stops it.",
-  "settings": { "capacity": 4, "top": "count", "layout": "vertical" },
+  "settings": { "capacity": 4, "top": "count", "layout": "fit" },
   "seed": 1,
   "ops": [
     ["push", 1],

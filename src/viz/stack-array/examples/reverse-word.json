@@ -4,7 +4,7 @@
   "id": "reverse-word",
   "title": "Reverse a word",
   "notes": "Push the letters of STACK, then pop them all. They come out as KCATS.",
-  "settings": { "capacity": 8, "top": "count", "layout": "horizontal" },
+  "settings": { "capacity": 8, "top": "count", "layout": "fit" },
   "seed": 1,
   "ops": [
     ["push", "S"],

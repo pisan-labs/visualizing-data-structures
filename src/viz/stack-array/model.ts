@@ -20,7 +20,7 @@ export interface StackSettings {
   capacity: number;
   /** count: top = number of items (next free slot). index: top = index of top item, -1 if empty. */
   top: 'count' | 'index';
-  layout: 'vertical' | 'horizontal';
+  layout: 'fit' | 'vertical' | 'horizontal';
 }
 
 export interface StackExtra {
@@ -39,7 +39,7 @@ type X = StackExtra;
 type Op = OpSpec<S, StackSettings, X>;
 type StackStep = Step<S, X>;
 
-export const defaults: StackSettings = { capacity: 8, top: 'count', layout: 'vertical' };
+export const defaults: StackSettings = { capacity: 8, top: 'count', layout: 'fit' };
 
 export function init(settings: StackSettings): S {
   return {

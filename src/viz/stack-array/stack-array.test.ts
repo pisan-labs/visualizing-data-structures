@@ -4,6 +4,8 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall, Value } from '../../engine/types';
 import { parseStackValue, stackArray } from '.';
 import { topOf, type StackSettings } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 const settings = (s: Partial<StackSettings> = {}): StackSettings =>
   ({ ...stackArray.defaults, ...s }) as StackSettings;
@@ -103,5 +105,13 @@ describe('stack (array)', () => {
     expect(parseStackValue('cat')).toBe('cat');
     expect(parseStackValue('  ')).toBeInstanceOf(Error);
     expect(parseStackValue('toolongvalue')).toBeInstanceOf(Error);
+  });
+});
+
+describe('drawn text size', () => {
+  // Fit the screen (the default) draws the array across a laptop and up a phone: an upright\narray of 8 drew its indices at 9.8 px on a laptop, a row of 8 at 6.9 px on a phone.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(stackArray, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(14);
+    expect(smallestText(stackArray, PHONE_STAGE).px).toBeGreaterThanOrEqual(10);
   });
 });

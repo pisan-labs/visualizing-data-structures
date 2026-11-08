@@ -4,7 +4,7 @@
   "id": "lifo",
   "title": "Last in, first out",
   "notes": "Push three values, pop one, push another, then peek. The last value in is always the first one out.",
-  "settings": { "capacity": 8, "top": "count", "layout": "vertical" },
+  "settings": { "capacity": 8, "top": "count", "layout": "fit" },
   "seed": 1,
   "ops": [["push", 10], ["push", 20], ["push", 30], ["pop"], ["push", 40], ["peek"]],
   "at": { "op": -1, "step": 0 }

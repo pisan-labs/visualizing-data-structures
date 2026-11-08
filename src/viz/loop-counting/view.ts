@@ -3,6 +3,7 @@ import { prefixIds } from '../../layouts/align';
 import { fitScore } from '../../layouts/graph';
 import { gridScene } from '../../layouts/grid';
 import type { Bounds, Scene, Shape } from '../../render/scene';
+import { zoomCorner } from '../../render/stage';
 import { pickLayout, translate } from '../_stage/arrange';
 import {
   bigO,
@@ -336,9 +337,6 @@ function chartBlock(g: GrowState, roles: ReadonlyMap<string, MarkRole>): Block {
 
 type Arrangement = 'right' | 'under' | 'left';
 
-/** The stage's zoom buttons, in pixels from its top right corner (src/ui/Stage.svelte). */
-const ZOOM = { w: 118, h: 42 };
-
 interface Placed {
   shapes: Shape[];
   bounds: Bounds;
@@ -348,7 +346,8 @@ interface Placed {
  * The card, the main picture and the panel placed for one arrangement. `right`: the panel right
  * of the picture, both under the card. `under`: all three in a column (a phone). `left`: the
  * card and the panel in a column left of the picture (a wide, short stage). On a stage, the
- * whole drawing moves down when something would sit under the zoom buttons.
+ * whole drawing moves down when something would sit under the zoom buttons (not on a phone,
+ * where they have a strip of their own).
  */
 function arrange(
   card: Block,
@@ -379,16 +378,17 @@ function arrange(
   });
   // Move everything down until nothing near the top reaches under the zoom buttons.
   let dy = 0;
-  if (stage) {
+  const corner = stage && zoomCorner(stage);
+  if (stage && corner) {
     for (let k = 0; k < 4; k++) {
       const b = size(dy);
       const s = fitScore(b, stage);
       const margin = Math.max(0, (stage.w - b.w * s) / 2);
       const under = boxes.some(
-        (p) => margin + (p.x + p.b.w) * s > stage.w - ZOOM.w && (p.y + dy) * s < ZOOM.h,
+        (p) => margin + (p.x + p.b.w) * s > stage.w - corner.w && (p.y + dy) * s < corner.h,
       );
       if (!under) break;
-      const need = Math.max(...boxes.map((p) => ZOOM.h / s - p.y));
+      const need = Math.max(...boxes.map((p) => corner.h / s - p.y));
       dy = Math.max(dy + 4, need);
     }
   }

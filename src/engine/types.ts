@@ -221,6 +221,11 @@ export interface PracticeKind {
 export interface StageSize {
   w: number;
   h: number;
+  /**
+   * The stage's zoom buttons sit in a strip of their own above the drawing (on a phone), so they
+   * cover none of it. Otherwise they cover its top right corner (src/render/stage.ts).
+   */
+  strip?: boolean;
 }
 
 /** The catalog thumbnail: one curated example played as bare shapes (no text). */

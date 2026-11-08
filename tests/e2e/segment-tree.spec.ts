@@ -97,7 +97,7 @@ test('bad input is refused with a reason', async ({ page }) => {
   await op(page, 'Range add', '0 7 99');
   await expect(narration(page)).toContainText('A[0] would become 104');
   await op(page, 'Range add', '1 2');
-  await expect(page.getByRole('alert')).toContainText('Range add needs l and r and an amount');
+  await expect(page.getByRole('alert')).toContainText('Range add needs l, r and an amount');
 });
 
 test('sixteen values and their tree stay readable', async ({ page }) => {

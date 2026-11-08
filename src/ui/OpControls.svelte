@@ -16,6 +16,11 @@
 
   const MAX_BULK = 50;
 
+  /** "a", "a and b", "a, b and c". */
+  function andList(xs: readonly string[]): string {
+    return xs.length <= 1 ? (xs[0] ?? '') : `${xs.slice(0, -1).join(', ')} and ${xs.at(-1)}`;
+  }
+
   const sizes = $derived(controls.sizes ?? [5, 8, 12]);
   let presetIndex = $state(0);
   let presetSize = $state<number | null>(null);
@@ -37,7 +42,7 @@
     const several = (b.args?.length ?? 1) > 1;
     const tokens = b.bulk || several ? text.split(/[\s,]+/).filter(Boolean) : [text.trim()];
     if (several && tokens.length !== b.args!.length) {
-      error = `${b.label} needs ${b.args!.join(' and ')}, separated by a space.`;
+      error = `${b.label} needs ${andList(b.args!)}, separated by a space.`;
       input?.focus();
       return;
     }

@@ -18,8 +18,9 @@
  * "steps" is five symbols and "a eps" is a followed by ε.
  *
  * API
- *   parseRegex(text, { union }) -> Regex, or an Error whose message says where the problem is
- *   readRegex(text, { union })  -> { text, tree }: the expression as shown (ε for eps, no
+ *   parseRegex(text, { union, max }) -> Regex, or an Error whose message says where the problem
+ *                                  is; `max` caps the characters typed (MAX_REGEX by default)
+ *   readRegex(text, { union, max }) -> { text, tree }: the expression as shown (ε for eps, no
  *                                  spaces) and its tree, each node with its span in that text
  *   showRegex(r, union)         -> text with only the parentheses it needs
  *   regexSize(r)                -> m, its symbols and operators; regexSymbols(r) its alphabet
@@ -46,6 +47,11 @@ export type UnionSign = '|' | '+';
 export interface RegexOptions {
   /** The union sign: `|` (default; + is one or more) or `+` (no one-or-more). */
   union?: UnionSign;
+  /**
+   * The most characters the expression may have, as shown (MAX_REGEX by default, what a page's
+   * input box takes); Infinity reads an expression of any length, such as one a page built.
+   */
+  max?: number;
 }
 
 /** A node of the expression with where it sits in the shown text. */
@@ -75,8 +81,8 @@ export function readRegex(raw: string, o: RegexOptions = {}): ParsedRegex | Erro
   const sign = o.union ?? '|';
   const text = regexText(raw);
   if (!text) return new Error(`Type a regular expression, such as (a${sign}b)*abb.`);
-  if (text.length > MAX_REGEX)
-    return new Error(`Keep the expression to ${MAX_REGEX} characters or fewer.`);
+  const max = o.max ?? MAX_REGEX;
+  if (text.length > max) return new Error(`Keep the expression to ${max} characters or fewer.`);
   let i = 0;
   const peek = () => text[i];
   const fail = (msg: string) => new Error(`${msg} (at character ${i + 1} of "${text}").`);

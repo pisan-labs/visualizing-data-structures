@@ -5,7 +5,7 @@ import { Timeline } from '../../engine/timeline';
 import { accepts, makeAutomaton, type Automaton } from '../_automata/automaton';
 import { formatAutomaton, parseAutomaton } from '../_automata/parse';
 import { randomDfa } from '../_automata/random';
-import { MAX_REGEX, matches, parseRegex, thompson, type Regex } from '../_automata/regex';
+import { matches, parseRegex, thompson, type Regex } from '../_automata/regex';
 import { dfaToRegex } from '.';
 import {
   EMPTY,
@@ -38,53 +38,10 @@ function convert(dfa: Automaton, settings: DrSettings) {
   return { loaded, steps, runs, refused };
 }
 
-/**
- * A regex read back from a label's text, to check the printing: by the shared parser (∪ read as
- * |) when the text is short enough for it, and by a small parser of its own past that.
- */
+/** A regex read back from a label's text, to check the printing (∪ read as |, any length). */
 const reparse = (text: string): Regex => {
-  if (text.length <= MAX_REGEX) {
-    const r = parseRegex(text.replace(/∪/g, '|'));
-    if (r instanceof Error) throw r;
-    return r;
-  }
-  let i = 0;
-  const unionP = (): Regex => {
-    let r = concatP();
-    while (text[i] === '∪') {
-      i++;
-      r = { kind: 'union', a: r, b: concatP() };
-    }
-    return r;
-  };
-  const concatP = (): Regex => {
-    let r = starP();
-    while (i < text.length && text[i] !== '∪' && text[i] !== ')')
-      r = { kind: 'concat', a: r, b: starP() };
-    return r;
-  };
-  const starP = (): Regex => {
-    let r = atomP();
-    while (text[i] === '*') {
-      i++;
-      r = { kind: 'star', a: r };
-    }
-    return r;
-  };
-  const atomP = (): Regex => {
-    const c = text[i++]!;
-    if (c === '(') {
-      const r = unionP();
-      expect(text[i++]).toBe(')');
-      return r;
-    }
-    if (c === 'ε') return { kind: 'eps' };
-    if (c === '∅') return { kind: 'empty' };
-    expect(c).toMatch(/^[a-z0-9]$/);
-    return { kind: 'sym', c };
-  };
-  const r = unionP();
-  expect(i).toBe(text.length);
+  const r = parseRegex(text.replace(/∪/g, '|'), { max: Infinity });
+  if (r instanceof Error) throw r;
   return r;
 };
 

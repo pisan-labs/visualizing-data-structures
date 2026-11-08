@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "sieve",
+  "id": "primes-to-100",
+  "title": "The primes up to 100",
+  "notes": "2, 3, 5 and 7 cross out their multiples, each starting from its square. 11² = 121 is past 100, so the sieve stops there: the 25 numbers left are the primes.",
+  "settings": {
+    "start": "square",
+    "stop": "sqrt"
+  },
+  "seed": 1,
+  "ops": [["sieve", 100]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

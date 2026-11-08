@@ -81,7 +81,7 @@ export function view(step: Step<SuffixState, SuffixExtra>, settings?: SuffixSett
     });
     text(`ti-${j}`, charX(j), TEXT_TOP - 7, String(j), {
       anchor: 'middle',
-      size: 12,
+      size: 14,
       cls: 'index',
     });
   }
@@ -89,7 +89,7 @@ export function view(step: Step<SuffixState, SuffixExtra>, settings?: SuffixSett
   // Column heads.
   const doubling = extra.rank !== undefined;
   const head = (id: string, x: number, value: string, anchor: 'middle' | 'start' = 'middle') =>
-    text(id, x, HEAD_Y, value, { anchor, size: 13, cls: 'label' });
+    text(id, x, HEAD_Y, value, { anchor, size: 14, cls: 'label' });
   head('hd-i', X_I, 'i');
   head('hd-sa', X_SA, 'SA');
   head('hd-lcp', X_LCP, 'LCP');
@@ -105,7 +105,7 @@ export function view(step: Step<SuffixState, SuffixExtra>, settings?: SuffixSett
     const len = n - p;
     const id = rowId(p);
     const role = roles.get(id);
-    text(`ri-${i}`, X_I, y + 20, String(i), { anchor: 'middle', size: 13, cls: 'index' });
+    text(`ri-${i}`, X_I, y + 20, String(i), { anchor: 'middle', size: 14, cls: 'index' });
     shapes.push({
       kind: 'rect',
       id,

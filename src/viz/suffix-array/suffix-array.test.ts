@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { Timeline } from '../../engine/timeline';
 import { suffixArray } from '.';
 import { parseText, type SuffixSettings } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 const settings = (method: SuffixSettings['method'] = 'doubling'): SuffixSettings => ({ method });
 
@@ -112,5 +114,13 @@ describe('suffix array', () => {
     const t = new Timeline(suffixArray, settings(), 1, [['search', 'NA']]);
     expect(t.endState().sa).toEqual([5, 3, 1, 0, 4, 2]);
     expect(t.entries[0]!.steps.at(-1)!.vars!.found).toBe('2 4');
+  });
+});
+
+describe('drawn text size', () => {
+  // Position and row numbers were 12 and 13 units, column heads 13: now 14.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(suffixArray, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(10.5);
+    expect(smallestText(suffixArray, PHONE_STAGE).px).toBeGreaterThanOrEqual(8.4);
   });
 });

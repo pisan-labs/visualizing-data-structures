@@ -4,6 +4,8 @@ import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import { backtracking, parseValues } from '.';
 import type { BtSettings, Problem } from './model';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 const settings = (problem: Problem, target = 0): BtSettings =>
   ({ ...backtracking.defaults, problem, target }) as BtSettings;
@@ -193,5 +195,13 @@ describe('backtracking practice', () => {
         }
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // The 65 calls of four permutations drew at 4 px on a phone growing down; growing right, at 7.3.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(backtracking, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(10);
+    expect(smallestText(backtracking, PHONE_STAGE).px).toBeGreaterThanOrEqual(7);
   });
 });

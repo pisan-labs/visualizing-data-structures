@@ -91,7 +91,7 @@ export function view(step: Step<PolyState, PolyExtra>, settings: PolySettings): 
         label: settings.inside === 'winding' ? (h.up ? '+1' : '−1') : undefined,
         dx: -4,
         dy: -9,
-        size: 12,
+        size: 14,
       });
     }
     drawPoint(shapes, plane, {
@@ -155,7 +155,7 @@ export function view(step: Step<PolyState, PolyExtra>, settings: PolySettings): 
       'info',
       { x: plane.rect.x, y: y0 + 22 },
       `${n} vertices${s.simple ? '' : ', edges cross (not simple)'} · ${s.tests} ${s.tests === 1 ? 'test' : 'tests'}`,
-      { size: 13 },
+      { size: 14 },
     ),
   );
 

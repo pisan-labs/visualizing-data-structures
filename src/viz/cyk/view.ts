@@ -184,17 +184,17 @@ function drawTreeBlock(out: Shape[], s: CykState, roles: ReadonlyMap<string, Mar
     kind: 'text',
     id: 'tree-caption',
     x: 0,
-    y: 13,
+    y: 14,
     text: caption,
-    size: 13,
+    size: 15,
     cls: 'label',
   });
-  drawTree(out, s.tree!, layout, { prefix: TREE, x: 0, y: 24, roles });
+  drawTree(out, s.tree!, layout, { prefix: TREE, x: 0, y: 26, roles });
   return {
     x: 0,
     y: 0,
-    w: Math.max(layout.bounds.w, textWidth(caption, 13)),
-    h: 24 + layout.bounds.h,
+    w: Math.max(layout.bounds.w, textWidth(caption, 15)),
+    h: 26 + layout.bounds.h,
   };
 }
 

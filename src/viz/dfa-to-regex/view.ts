@@ -140,7 +140,7 @@ interface Row {
   ghost: boolean;
 }
 
-function tableRows(r: DrRun): Row[] {
+function tableRows(r: DrRun, width = WRAP): Row[] {
   const at = (x: string) => r.g.states.indexOf(x);
   // Before merging, a pair can have an arrow per symbol: one row, "a,b" as the DFA writes it.
   const texts = new Map<string, string[]>();
@@ -150,7 +150,7 @@ function tableRows(r: DrRun): Row[] {
   }
   const rows: Row[] = [...texts].map(([k, ts]) => {
     const [p, q] = k.split('>') as [string, string];
-    return { p, q, tag: r.tags[k], lines: wrap(ts.join(',')), ghost: false };
+    return { p, q, tag: r.tags[k], lines: wrap(ts.join(','), width), ghost: false };
   });
   for (const [p, q] of r.ghosts)
     rows.push({ p, q, tag: r.tags[arrowKey(p, q)], lines: ['∅'], ghost: true });
@@ -165,16 +165,19 @@ interface Cols {
   tag: number;
   arrow: number;
   label: number;
+  /** Characters per line of a label. */
+  wrap: number;
 }
 
-function columns(dfa: Automaton): Cols {
+function columns(dfa: Automaton, wrap = WRAP): Cols {
   const { s, f } = endNames(dfa);
   const names = [s, f, ...dfa.states];
   const longest = Math.max(...names.map((n) => n.length));
   return {
     tag: textWidth('R4', SIZE, true) + 12,
     arrow: textWidth('→'.padStart(2 * longest + 1, 'x'), SIZE, true) + 14,
-    label: textWidth('x'.repeat(WRAP), SIZE, true) + 14,
+    label: textWidth('x'.repeat(wrap), SIZE, true) + 14,
+    wrap,
   };
 }
 
@@ -190,7 +193,7 @@ function drawTable(
 ): void {
   const xs = [x, x + c.tag + GAP, x + c.tag + c.arrow + 2 * GAP];
   const head = (id: string, text: string, at: number) =>
-    shapes.push({ kind: 'text', id, x: at + 6, y: y + HEAD - 7, text, size: 13, cls: 'label' });
+    shapes.push({ kind: 'text', id, x: at + 6, y: y + HEAD - 7, text, size: SIZE, cls: 'label' });
   head('lab-h-a', 'arrow', xs[1]!);
   head('lab-h-l', 'label', xs[2]!);
   let at = y + HEAD;
@@ -248,10 +251,12 @@ function arrange(dfa: Automaton, settings: DrSettings, stage?: StageSize): Frame
   const hit = frames.get(key);
   if (hit) return hit;
   const runs = allRuns(dfa, settings);
-  const cols = columns(dfa);
-  const height = runs.length ? Math.max(...runs.map((r) => tableH(tableRows(r)))) : 0;
   const candidates: Frame[] = [];
-  for (const across of [true, false]) {
+  // A narrow stage may wrap the labels shorter, for a narrower table beside the diagram.
+  const wraps = stage && stage.w < stage.h ? [WRAP, 18, 14] : [WRAP];
+  for (const [across, w] of [true, false].flatMap((a) => wraps.map((n) => [a, n] as const))) {
+    const cols = columns(dfa, w);
+    const height = runs.length ? Math.max(...runs.map((r) => tableH(tableRows(r, w)))) : 0;
     const layout = gnfaLayout(dfa, across);
     const diagram = unionBounds(
       drawAutomaton(dfa, layout, { around: 'avoid' }).bounds,
@@ -301,7 +306,7 @@ export function view(
   }
   const shapes: Shape[] = [];
   shapes.push(...drawAutomaton(asAutomaton(r.g), layout, { roles, around: 'avoid' }).shapes);
-  drawTable(shapes, f.tx, f.ty, f.cols, tableRows(r), roles);
+  drawTable(shapes, f.tx, f.ty, f.cols, tableRows(r, f.cols.wrap), roles);
   return {
     shapes,
     bounds: padBounds(f.bounds, 14),

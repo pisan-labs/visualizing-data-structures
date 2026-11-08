@@ -1,5 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { disjointSets, parseElement } from '.';
@@ -146,5 +148,13 @@ describe('disjoint sets', () => {
     expect(parseElement('7')).toBe(7);
     expect(parseElement('100')).toBeInstanceOf(Error);
     expect(parseElement('a')).toBeInstanceOf(Error);
+  });
+});
+
+describe('drawn text size', () => {
+  // A long chain drew the arrays at 9.6 px on a laptop: now they sit beside a flatter forest there. Badges were 12 units (8.1 px on a phone): now 14.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(disjointSets, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(disjointSets, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

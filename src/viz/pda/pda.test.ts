@@ -18,6 +18,8 @@ import { pda } from '.';
 import { MACHINES } from './machines';
 import type { PdaExtra, PdaSettings, PdaShow } from './model';
 import { TYPICAL_STAGES } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 const settings = (s: Partial<PdaSettings> = {}): PdaSettings =>
   ({ ...pda.defaults, ...s }) as PdaSettings;
@@ -281,5 +283,13 @@ describe('PDA page', () => {
       });
       for (const list of ys.values()) expect(new Set(list).size).toBe(list.length);
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // The smallest text is the trace's move numbers, at 13.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(pda, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(pda, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

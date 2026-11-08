@@ -104,7 +104,7 @@ function coinShapes(state: AmState, extra: AmExtra, place: Place, roles: Roles, 
         x: t.x,
         y: t.y - 8 - COIN_ROWS * COIN_PITCH,
         text: `+${pile.length - most}`,
-        size: 11,
+        size: 12,
         anchor: 'middle',
         cls: 'label',
         mono: true,
@@ -399,7 +399,7 @@ function chartBlock(state: AmState, settings: AmSettings, roles: Roles): Block {
       x: colX(j),
       y: bottom + 16,
       text: String(j),
-      size: 11,
+      size: 12,
       anchor: 'middle',
       cls: 'index',
       mono: true,
@@ -412,7 +412,7 @@ const label = (id: string, x: number, y: number, text: string) => tickLabel(id, 
 
 /** A value on a lane's scale, in the gutter left of the chart. */
 const scale = (id: string, y: number, text: string) =>
-  tickLabel(id, GUTTER - 6, y, text, 11, 'end', { cls: 'index', mono: true });
+  tickLabel(id, GUTTER - 6, y, text, 12, 'end', { cls: 'index', mono: true });
 
 /** A line across the chart: a lane's zero line, or a dashed reference. */
 const line = (id: string, y: number, dashed: boolean) =>

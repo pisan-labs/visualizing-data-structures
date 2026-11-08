@@ -20,10 +20,14 @@ const HY = -(R + 30);
 const CELL = { w: 34, h: 26, pitch: 37 };
 const LABEL_W = 62;
 
-/** Deep trees get closer levels so they still fit a short screen. */
+/**
+ * Deep trees get closer levels so they still fit a short screen. A label under each node needs
+ * more room, but 46 still clears it of the edges and nodes below: a child sits a node and a
+ * gap to the side.
+ */
 function levelGapFor(height: number, annotated: boolean): number {
-  const gap = height <= 4 ? 56 : Math.max(38, 56 - 3 * (height - 4));
-  return annotated ? Math.max(gap, 56) : gap;
+  const gap = height <= 4 ? 56 : Math.max(38, 56 - 4 * (height - 4));
+  return annotated ? Math.max(gap, 46) : gap;
 }
 
 export function view(step: Step<BSTState, BSTExtra>, settings: BSTSettings): Scene {
@@ -264,7 +268,7 @@ export function view(step: Step<BSTState, BSTExtra>, settings: BSTSettings): Sce
         x: spot.x + (side === 'left' ? -size / 2 - 3 : size / 2 + 3),
         y: spot.y + 4,
         text: 'nil',
-        size: 12,
+        size: 13,
         anchor: side === 'left' ? 'end' : 'start',
         mono: true,
         cls: 'label',

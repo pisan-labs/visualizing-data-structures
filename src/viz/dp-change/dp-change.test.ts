@@ -1,5 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { practiceSet } from '../../engine/practice';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeQuestion } from '../../engine/types';
@@ -201,5 +203,13 @@ describe('making change practice', () => {
   it('counts the ways like the reference', () => {
     for (const q of questions('ways'))
       expect(q.answer).toEqual({ kind: 'number', value: refWays(coinsOf(q), amountOf(q)) });
+  });
+});
+
+describe('drawn text size', () => {
+  // 16 cells at 44 units drew the arc labels at 7.3 px on a phone; narrower cells there: 11.3.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(dpChange, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(dpChange, PHONE_STAGE).px).toBeGreaterThanOrEqual(11);
   });
 });

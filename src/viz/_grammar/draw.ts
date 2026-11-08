@@ -74,14 +74,14 @@ export function drawRules(
       kind: 'text',
       id: `${opts.prefix}-title`,
       x: opts.x,
-      y: y + 13,
+      y: y + 14,
       text: opts.title,
-      size: 13,
+      size: 15,
       cls: 'label',
       role: roles.get(`${opts.prefix}-title`),
     });
-    right = Math.max(right, opts.x + textWidth(opts.title, 13));
-    y += 22;
+    right = Math.max(right, opts.x + textWidth(opts.title, 15));
+    y += 24;
   }
   // Variables, then the arrows lined up, then the right sides.
   const arrowX = opts.x + (Math.max(...rows.map((r) => r.lhs.length), 1) + 0.6) * charW;

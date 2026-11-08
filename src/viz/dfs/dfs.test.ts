@@ -252,9 +252,10 @@ describe('DFS practice', () => {
 });
 
 describe('drawn text size', () => {
-  // A path's spring layout runs across: 7.2 px on a phone, until it could turn to run down.
+  // A path's spring layout runs across: 7.2 px on a phone, until it could turn to run down
+  // (8.7), and come shorter along its length (9.1).
   it('stays readable on a laptop and on a phone', () => {
     expect(smallestText(dfs, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
-    expect(smallestText(dfs, PHONE_STAGE).px).toBeGreaterThanOrEqual(8.5);
+    expect(smallestText(dfs, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

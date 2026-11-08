@@ -4,7 +4,9 @@ import {
   callTreeObstacles,
   drawCallTree,
   layoutCallTree,
+  monoWidth,
   padBounds,
+  riseUnderTitle,
   unionBounds,
   type CallState,
   type CallTreeLayout,
@@ -20,7 +22,19 @@ import { describe, isRepeat, type FibCall, type FibSettings, type FibState } fro
 /** Up to 15 calls get full boxes with values; bigger trees get compact boxes holding just n. */
 export const FULL_LIMIT = 15;
 const FULL: CallTreeOptions = { size: 12.5, gap: 6, levelGap: 46, twoLines: true };
-const COMPACT: CallTreeOptions = { size: 11, gap: 3, levelGap: 34, twoLines: false, minW: 18 };
+const COMPACT: CallTreeOptions = {
+  size: 11,
+  gap: 3,
+  levelGap: 34,
+  twoLines: false,
+  minW: 18,
+  tagMin: 11,
+};
+/**
+ * Growing right (a phone), a big tree is as tall as its rows: fib(8) has 27 of them. Lower boxes
+ * packed closer keep it readable.
+ */
+const COMPACT_RIGHT: CallTreeOptions = { ...COMPACT, gap: 2, boxH: 1.5 };
 const CELL = { w: 28, h: 22 };
 const LABEL_W = 50;
 /** Column widths of the table turned to run down: n, and the counts and the memo. */
@@ -104,14 +118,18 @@ export function view(
   const across = { w: LABEL_W + (n + 1) * CELL.w, h: s.run ? rows.length * CELL.h : 0 };
   const colW = rows.map((r) => (r.id === 'k' ? COL_K : COL_W));
   const down = { w: colW.reduce((a, b) => a + b, 0), h: (n + 2) * CELL.h };
-  const titleBox: Bounds = { x: 0, y: 0, w: 200, h: TITLE_H };
+  const title = compact ? 'call tree: each box k is a call fib(k)' : 'call tree';
+  const titleBox: Bounds = { x: 0, y: 0, w: Math.max(200, monoWidth(title, 13)), h: TITLE_H };
 
   const arrangements = (direction: TreeDirection): Arrangement[] => {
-    const layout = layoutCallTree(finished, { ...(compact ? COMPACT : FULL), direction });
+    const opts = compact ? (direction === 'right' ? COMPACT_RIGHT : COMPACT) : FULL;
+    const layout = layoutCallTree(finished, { ...opts, direction });
     const lb = layout.bounds;
     const treeW = Math.max(lb.w, across.w, 200);
     const dx = -lb.x + (treeW - lb.w) / 2;
-    const dy = TITLE_H + 6 - lb.y;
+    let dy = TITLE_H + 6 - lb.y;
+    // Growing right, the tree rises into the empty corner beside its title.
+    if (direction === 'right') dy -= riseUnderTitle(layout, dx, dy, titleBox);
     const treeBox: Bounds = s.calls.length
       ? { x: lb.x + dx, y: lb.y + dy, w: lb.w, h: lb.h }
       : { x: 0, y: TITLE_H, w: treeW, h: 30 };
@@ -153,7 +171,7 @@ export function view(
     id: 'tree-title',
     x: 0,
     y: 16,
-    text: compact ? 'call tree: each box k is a call fib(k)' : 'call tree',
+    text: title,
     size: 13,
     cls: 'label',
     mono: true,

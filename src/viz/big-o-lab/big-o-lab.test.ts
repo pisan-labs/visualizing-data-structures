@@ -14,6 +14,8 @@ import {
   type Fn,
   type LabSettings,
 } from './model';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 const settings = (s: Partial<LabSettings> = {}): LabSettings =>
   ({ ...bigOLab.defaults, ...s }) as LabSettings;
@@ -132,5 +134,13 @@ describe('big-o lab', () => {
     expect(parseN('1,000,000')).toBe(1_000_000);
     expect(parseN('0')).toBeInstanceOf(Error);
     expect(parseN('n')).toBeInstanceOf(Error);
+  });
+});
+
+describe('drawn text size', () => {
+  // The axis names drew at 8.7 px on a phone; at 13, with closer wrapped rows, at 9.1.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(bigOLab, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(bigOLab, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

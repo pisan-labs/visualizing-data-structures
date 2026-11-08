@@ -1,8 +1,10 @@
 /**
  * A Turing machine: the tape with the head and the state over it, a status line (the rule just
  * used, or how the run ended), and the last few configurations in Sipser's u q v notation. The
- * transition table goes beside them on a wide stage and under them on a tall one
- * (`placePanels`), with the rule just used lit.
+ * transition table (or the state diagram) goes beside them on a wide stage and under them on a
+ * tall one (`placePanels`), with the rule just used lit. The diagram's layers run across on a
+ * wide stage and down on a tall one, unless the other way (or, on a phone, across and a little
+ * tighter) draws the whole picture clearly larger.
  *
  * The tape shows a window of 12 cells (10 on a phone). It stays put while everything the run
  * has touched fits in it, and otherwise follows the head in half-window steps (`tapeWindow`),
@@ -10,6 +12,7 @@
  * nothing jumps. The trace is the shared configuration trace (src/layouts/trace.ts).
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import { drawAutomaton, layoutStates } from '../../layouts/automaton';
 import { padBounds, placePanels, textWidth, translate, unionBounds } from '../../layouts/graph';
 import { CELL_H, CELL_W, drawTape, tapeWindow } from '../../layouts/tape';
@@ -94,9 +97,9 @@ function drawRules(
     kind: 'text',
     id: 'rule-title',
     x,
-    y: y + 13,
+    y: y + 14,
     text: title,
-    size: 13,
+    size: 14,
     cls: 'label',
     role: roles.get('rule-title'),
   });
@@ -179,7 +182,7 @@ function drawRules(
   return {
     x,
     y,
-    w: Math.max(tableW, textWidth(title, 13), tooBig ? textWidth(note, 13) : 0),
+    w: Math.max(tableW, textWidth(title, 14), tooBig ? textWidth(note, 13) : 0),
     h: h + (tooBig ? 24 : 0),
   };
 }
@@ -224,26 +227,27 @@ function drawDiagram(
   roles: Map<string, MarkRole>,
   current: string | undefined,
   across: boolean,
+  tight = 1,
 ): Bounds {
   const title = 'a→b,D: read a, write b, move D';
   out.push({
     kind: 'text',
     id: 'rule-title',
     x,
-    y: y + 13,
+    y: y + 14,
     text: title,
-    size: 13,
+    size: 14,
     cls: 'label',
     role: roles.get('rule-title'),
   });
   const a = diagramOf(m);
-  const d = drawAutomaton(a, layoutStates(a, across), {
+  const d = drawAutomaton(a, layoutStates(a, across, tight), {
     roles,
     look: (q) => (q === current ? 'current' : undefined),
   });
   const b = d.bounds;
   out.push(...translate(d.shapes, x - b.x, y + 30 - b.y));
-  return { x, y, w: Math.max(b.w, textWidth(title, 13)), h: 30 + b.h };
+  return { x, y, w: Math.max(b.w, textWidth(title, 14)), h: 30 + b.h };
 }
 
 export function view(step: Step<TmState, TmExtra>, settings: TmSettings, stage?: StageSize): Scene {
@@ -303,11 +307,23 @@ export function view(step: Step<TmState, TmExtra>, settings: TmSettings, stage?:
   });
   const left = unionBounds(main, trace);
   const wide = !stage || stage.w >= 1.4 * stage.h;
-  const table = placePanels(shapes, left, stage, (out, x, y) =>
-    showsDiagram(state.machine, settings)
-      ? drawDiagram(out, state.machine, x, y, roles, c?.state, wide)
-      : drawRules(out, state.machine, x, y, roles, settings.rules === 'diagram'),
-  );
+  const diagram = showsDiagram(state.machine, settings);
+  // A long chain of states on a phone reads larger across, a little tighter.
+  const arrange = (across: boolean, tight = 1) => {
+    const out = [...shapes];
+    const table = placePanels(out, left, stage, (o, x, y) =>
+      diagram
+        ? drawDiagram(o, state.machine, x, y, roles, c?.state, across, tight)
+        : drawRules(o, state.machine, x, y, roles, settings.rules === 'diagram'),
+    );
+    return { shapes: out, bounds: padBounds(unionBounds(left, table), 14) };
+  };
+  const ways = !diagram
+    ? [arrange(wide)]
+    : wide
+      ? [arrange(true), arrange(false)]
+      : [arrange(false), arrange(true), arrange(true, 0.8)];
+  const best = pickLayout(stage, ways);
   const label = `${describe(state)}${c ? ` Status: ${st.text}.` : ''}`;
-  return { shapes, bounds: padBounds(unionBounds(left, table), 14), label };
+  return { ...best, label };
 }

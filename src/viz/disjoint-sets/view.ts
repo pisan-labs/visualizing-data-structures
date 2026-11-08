@@ -7,11 +7,13 @@
  * by side in order of their roots, children in increasing order, so the same forest always
  * gets the same picture and a node that is relinked slides to its new place.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { translate } from '../../layouts/arrange';
 import { trimmedLine } from '../../layouts/binary-tree';
 import { layoutForest } from '../../layouts/forest';
 import { below, drawTable, padBounds, unionBounds } from '../../layouts/graph';
 import type { Bounds, Scene, Shape } from '../../render/scene';
+import { ZOOM_DROP } from '../../render/stage';
 import {
   describe,
   keyId,
@@ -26,7 +28,7 @@ import {
 const R = 17;
 const MAX_ROW = 430;
 
-export function view(step: Step<DSState, DSExtra>, settings: DSSettings): Scene {
+export function view(step: Step<DSState, DSExtra>, settings: DSSettings, stage?: StageSize): Scene {
   const s = step.state;
   const extra = step.extra ?? {};
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -48,13 +50,15 @@ export function view(step: Step<DSState, DSExtra>, settings: DSSettings): Scene 
       label: describe(s, settings),
     };
   }
+  // A wide, short stage (a laptop) gets flatter trees: a long chain is what fills its height.
+  const wide = stage !== undefined && stage.w > 1.6 * stage.h;
   const kids = new Map<number, number[]>(s.elems.map((x) => [x, []]));
   for (const x of s.elems) if (s.p[x] !== x) kids.get(s.p[x]!)!.push(x);
   const layout = layoutForest(roots(s), (x) => kids.get(x) ?? [], {
     radius: R,
     gap: 14,
     treeGap: 22,
-    levelGap: 56,
+    levelGap: wide ? 46 : 56,
     maxWidth: MAX_ROW,
     rowGap: 46,
   });
@@ -90,7 +94,7 @@ export function view(step: Step<DSState, DSExtra>, settings: DSSettings): Scene 
         x: n.x + R + 2,
         y: n.y - R + 2,
         text: `${badge === 'rank' ? 'r' : 's'}${value}`,
-        size: 12,
+        size: 14,
         mono: true,
         cls: 'label',
       });
@@ -138,18 +142,24 @@ export function view(step: Step<DSState, DSExtra>, settings: DSSettings): Scene 
         role: undefined,
       })),
     });
-  boxes.push(
-    drawTable(shapes, {
-      id: 'arr',
-      x: layout.bounds.x,
-      y: below(forest, 22),
-      columns: s.elems.map(String),
-      head: 'x',
-      rows,
-      roles,
-      perRow: 8,
-    }),
-  );
+  // The arrays go under the forest; on a wide, short stage beside it, where a tall forest
+  // leaves room, its top clear of the zoom buttons.
+  const table: Shape[] = [];
+  const tb = drawTable(table, {
+    id: 'arr',
+    x: layout.bounds.x,
+    y: below(forest, 22),
+    columns: s.elems.map(String),
+    head: 'x',
+    rows,
+    roles,
+    perRow: 8,
+  });
+  const beside = wide && forest.h > tb.h + 60;
+  const dx = beside ? forest.x + forest.w + 16 - tb.x : 0;
+  const dy = beside ? forest.y + ZOOM_DROP + 8 - tb.y : 0;
+  shapes.push(...translate(table, dx, dy));
+  boxes.push({ ...tb, x: tb.x + dx, y: tb.y + dy });
   // Room above for the stage's zoom buttons, and a minimum size so a few nodes are not huge.
   const all = unionBounds(...boxes);
   const room = {

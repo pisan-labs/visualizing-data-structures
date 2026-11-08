@@ -132,9 +132,9 @@ describe('polygon algorithms', () => {
 });
 
 describe('drawn text size', () => {
-  // Axis numbers were 11 units (8.8 px on a laptop): now 13.
+  // Axis numbers were 11 units (8.8 px on a laptop), then 13; winding labels 12: now all 14.
   it('stays readable on a laptop and on a phone', () => {
-    expect(smallestText(polygon, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(9.5);
-    expect(smallestText(polygon, PHONE_STAGE).px).toBeGreaterThanOrEqual(9.5);
+    expect(smallestText(polygon, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(polygon, PHONE_STAGE).px).toBeGreaterThanOrEqual(11);
   });
 });

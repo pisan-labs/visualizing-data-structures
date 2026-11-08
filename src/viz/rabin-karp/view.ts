@@ -1,4 +1,4 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
 import type { Scene } from '../../render/scene';
 import { andList, q, type MatchExtra, type MatchState } from '../_strings/kit';
 import { describeMatch, matchShapes } from '../_strings/view';
@@ -9,7 +9,11 @@ import type { RkSettings } from './model';
  * character, and one row per window. The current row carries p, the pattern's hash. A real
  * match's hash turns purple; a spurious hit's gets a dashed outline.
  */
-export function view(step: Step<MatchState<null>, MatchExtra>, _settings: RkSettings): Scene {
+export function view(
+  step: Step<MatchState<null>, MatchExtra>,
+  settings: RkSettings,
+  stage?: StageSize,
+): Scene {
   const { state } = step;
   const hs = state.search?.hashing;
   const count = Math.max(0, state.text.length - state.pattern.length + 1);
@@ -24,12 +28,16 @@ export function view(step: Step<MatchState<null>, MatchExtra>, _settings: RkSett
     spurious.has(s) ? 'remove' : found.has(s) ? 'found' : undefined,
   );
   const ready = hs && value(0) !== null;
-  const { shapes, bounds } = matchShapes(step, {
-    frame: { rows: 3, values: true },
-    values: { name: 't', items, tones, dashed: items.map((_, s) => spurious.has(s)) },
-    mapRows: (rows) =>
-      ready ? rows.map((r, k) => (k === rows.length - 1 ? { ...r, by: `p=${hs.p}` } : r)) : rows,
-  });
+  const { shapes, bounds } = matchShapes(
+    step,
+    {
+      frame: { rows: 3, values: true, valueChars: String(settings.q - 1).length },
+      values: { name: 't', items, tones, dashed: items.map((_, s) => spurious.has(s)) },
+      mapRows: (rows) =>
+        ready ? rows.map((r, k) => (k === rows.length - 1 ? { ...r, by: `p=${hs.p}` } : r)) : rows,
+    },
+    stage,
+  );
   return { shapes, bounds, label: label(step) };
 }
 

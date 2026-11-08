@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "manacher",
+  "id": "long-odd",
+  "title": "A long odd palindrome",
+  "notes": "abacabad hides abacaba, centered on the c. Once that palindrome is found, R jumps to its right end and the centers after it copy their radii from the mirror side.",
+  "settings": {
+    "method": "mirror"
+  },
+  "seed": 1,
+  "ops": [["load", "abacabad"], ["build"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

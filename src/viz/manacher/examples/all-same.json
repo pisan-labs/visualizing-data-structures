@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "manacher",
+  "id": "all-same",
+  "title": "All the same letter",
+  "notes": "aaaaaaaaaa. Every center is a palindrome as far as T goes. The mirror hands each center most of its radius, so it takes 19 comparisons, under 2N = 42.",
+  "settings": {
+    "method": "mirror"
+  },
+  "seed": 1,
+  "ops": [["load", "aaaaaaaaaa"], ["build"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -199,9 +199,10 @@ describe('backtracking practice', () => {
 });
 
 describe('drawn text size', () => {
-  // The 65 calls of four permutations drew at 4 px on a phone growing down; growing right, at 7.3.
+  // The 65 calls of four permutations drew at 4 px on a phone growing down, and at 7.3 growing
+  // right; with lower rows, the title on two lines and the panel's names above its rows, at 9.
   it('stays readable on a laptop and on a phone', () => {
-    expect(smallestText(backtracking, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(10);
-    expect(smallestText(backtracking, PHONE_STAGE).px).toBeGreaterThanOrEqual(7);
+    expect(smallestText(backtracking, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(backtracking, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

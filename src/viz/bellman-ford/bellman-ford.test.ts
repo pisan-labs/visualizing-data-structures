@@ -242,9 +242,10 @@ describe('Bellman-Ford practice', () => {
 });
 
 describe('drawn text size', () => {
-  // A long spring layout may turn on its side on a phone: 7.1 px before, 8.5 after.
+  // A long spring layout may turn on its side on a phone (7.1 px before, 8.5 after), and a
+  // long, thin one may come shorter along its length: 9.9.
   it('stays readable on a laptop and on a phone', () => {
     expect(smallestText(bellmanFord, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
-    expect(smallestText(bellmanFord, PHONE_STAGE).px).toBeGreaterThanOrEqual(8.5);
+    expect(smallestText(bellmanFord, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

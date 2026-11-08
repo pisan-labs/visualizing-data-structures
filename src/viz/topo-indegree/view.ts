@@ -12,11 +12,14 @@ import {
   drawRow,
   drawTable,
   layoutGraph,
+  layoutsFor,
   padBounds,
   placePanels,
   unionBounds,
   type VertexLook,
+  type GraphLayout,
 } from '../../layouts/graph';
+import { pickLayout } from '../../layouts/arrange';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import {
   describe,
@@ -39,11 +42,23 @@ export function view(
   settings: TopoSettings,
   stage?: StageSize,
 ): Scene {
+  const layout = layoutGraph(step.state.graph, settings.layout);
+  return pickLayout(
+    stage,
+    layoutsFor(layout, settings.layout, stage).map((l) => draw(step, settings, l, stage)),
+  );
+}
+
+function draw(
+  step: Step<TopoState, TopoExtra>,
+  settings: TopoSettings,
+  layout: GraphLayout,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const r = extra.run;
-  const layout = layoutGraph(g, settings.layout);
   const drawn = drawGraph(g, layout, {
     roles,
     vertex: r && ((v) => look(r, v)),

@@ -52,6 +52,8 @@ export interface GridFrame {
   below?: number;
   /** The drawing is at least this wide (the grid is centered in it). Default 0. */
   minWidth?: number;
+  /** Font size of the corner labels. Default: about 0.28 of the cell, at least 10. */
+  corner?: number;
 }
 
 export interface GridCellLook {
@@ -184,7 +186,7 @@ export function gridScene(
   const roles = content.roles ?? new Map<string, MarkRole>();
   const shapes: Shape[] = [];
   const cell = g.cell;
-  const small = Math.max(10, Math.round(cell * 0.28));
+  const small = frame.corner ?? Math.max(10, Math.round(cell * 0.28));
   const pre = content.prefix ?? '';
 
   for (let c = 0; c < frame.cols; c++) {
@@ -293,7 +295,7 @@ export function gridScene(
           x: x + 3,
           y: y + cell - 4,
           text: look.tag,
-          size: small + 1,
+          size: Math.max(13, small + 1),
           weight: 'bold',
           mono: true,
           role: roles.get(`${id}-tag`),

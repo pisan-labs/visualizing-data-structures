@@ -7,6 +7,9 @@ import type { Graph } from '../_graph/graph';
 import { parseGraph } from '../_graph/parse';
 import { dijkstra } from '.';
 import { pseudocode, type DijkstraRun, type DijkstraSettings } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import textSizeDef from './index';
 
 // ---------------------------------------------------------------------------------------------
 // References, written independently of the page.
@@ -275,5 +278,13 @@ describe('Dijkstra practice', () => {
         }
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // A long layered chain stood 466 units tall under its panels (9.9 px on a laptop); turned on its side it reads at 16.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(textSizeDef, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(textSizeDef, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

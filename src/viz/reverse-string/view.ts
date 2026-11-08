@@ -1,4 +1,5 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import {
   callStackHeight,
   callTreeBounds,
@@ -25,7 +26,8 @@ import {
 } from './model';
 
 const SIZE = 12.5;
-const TREE = { size: 11, levelGap: 36, gap: 10 };
+/** The chain's boxes, at the stack's font, the value under the call. */
+const TREE = { size: SIZE, levelGap: 38, gap: 10 };
 const GAP = 26;
 const CELL = { w: 30, h: 30, pitch: 33 };
 const MIN_ROOM = 4;
@@ -79,7 +81,7 @@ function mainLine(s: RevState, v: Variant): string {
 }
 
 /** The frame size for a whole run, from every text its frames will show. */
-function frameSize(s: RevState, v: Variant) {
+function frameSize(s: RevState, v: Variant, rows: 1 | 2) {
   const text = s.run?.text ?? '';
   const heads = [{ call: 'main' }, ...s.calls.map((c) => ({ call: callText(c, text, v) }))];
   const lines = ['no call yet'];
@@ -102,10 +104,14 @@ function frameSize(s: RevState, v: Variant) {
     if (first.returns !== null)
       tokenLines.push([`r = ${quote(first.returns)}`, quote(first.returns)]);
   }
-  return frameWidth(heads, lines, tokenLines, SIZE);
+  return frameWidth(heads, lines, tokenLines, SIZE, rows);
 }
 
-export function view(step: Step<RevState, undefined>, settings: RevSettings): Scene {
+export function view(
+  step: Step<RevState, undefined>,
+  settings: RevSettings,
+  stage?: StageSize,
+): Scene {
   const s = step.state;
   const v = settings.variant;
   const text = s.run?.text ?? s.cells.map((c) => c.ch).join('');
@@ -144,6 +150,33 @@ export function view(step: Step<RevState, undefined>, settings: RevSettings): Sc
   const treeTop = 30;
   const dx = -layout.bounds.x + (treeW - layout.bounds.w) / 2;
   const dy = treeTop - layout.bounds.y;
+  const treeBox: Bounds =
+    s.calls.length > 0 ? callTreeBounds(layout, dx, dy) : { x: 0, y: treeTop, w: treeW, h: 24 };
+  const run = s.run;
+  const cellsTop = 8;
+  const labelW = 26;
+  const cellsH = CELL.h + 18 + (v === 'swap' ? 30 : 0);
+  const cellsW = labelW + Math.max(4, s.cells.length) * CELL.pitch;
+  const room = Math.max(MIN_ROOM, run?.room ?? 0);
+  // The stack's frames hold their line on the call's row (the usual), or on a second row, which
+  // makes the stack narrow enough for a phone. Decided from the whole run's texts.
+  const arrangement = (rows: 1 | 2) => {
+    const size = frameSize(s, v, rows);
+    const width = Math.max(size.width, cellsW);
+    const right = treeW + GAP;
+    const stackTop = cellsTop + cellsH + 8;
+    const bounds = padBounds(
+      unionBounds(
+        treeBox,
+        { x: 0, y: 0, w: treeW, h: 30 },
+        { x: right, y: 0, w: width, h: cellsTop + cellsH },
+        { x: right, y: stackTop, w: width, h: callStackHeight(room, SIZE, rows) },
+      ),
+      12,
+    );
+    return { rows, size, width, right, stackTop, bounds };
+  };
+  const place = pickLayout(stage, [arrangement(1), arrangement(2)]);
   shapes.push({
     kind: 'text',
     id: 'tree-title',
@@ -167,14 +200,10 @@ export function view(step: Step<RevState, undefined>, settings: RevSettings): Sc
     });
   }
   shapes.push(...drawCallTree(layout, now, { dx, dy, roles }));
-  const treeBox: Bounds =
-    s.calls.length > 0 ? callTreeBounds(layout, dx, dy) : { x: 0, y: treeTop, w: treeW, h: 24 };
 
   // The characters: the string s (rest), or the array A that the swaps change (swap).
-  const right = treeW + GAP;
-  const labelW = 26;
+  const right = place.right;
   const cx = (i: number) => right + labelW + i * CELL.pitch;
-  const cellsTop = 8;
   shapes.push({
     kind: 'text',
     id: 'cells-name',
@@ -247,7 +276,6 @@ export function view(step: Step<RevState, undefined>, settings: RevSettings): Sc
       mono: true,
     });
   }
-  let cellsBottom = cellsTop + CELL.h + 18;
   if (v === 'swap' && topCall && s.run?.outcome === 'running') {
     // The top frame's i and j, under their cells. When they meet, j sits under i.
     const meet = topCall.i === topCall.j;
@@ -271,11 +299,8 @@ export function view(step: Step<RevState, undefined>, settings: RevSettings): Sc
       });
     }
   }
-  if (v === 'swap') cellsBottom += 30;
-  const cellsW = labelW + Math.max(4, s.cells.length) * CELL.pitch;
 
   // The call stack, main at the bottom.
-  const run = s.run;
   const frames: StackFrame[] = [
     {
       id: 'main',
@@ -302,10 +327,7 @@ export function view(step: Step<RevState, undefined>, settings: RevSettings): Sc
         phase === 'got' && child ? { from: String(child.id), value: quote(s.got[id]!) } : undefined,
     });
   }
-  const size = frameSize(s, v);
-  const width = Math.max(size.width, cellsW);
-  const room = Math.max(MIN_ROOM, run?.room ?? 0);
-  const stackTop = cellsBottom + 8;
+  const { size, width, stackTop } = place;
   // Before the first call main sits right under the title (so a still picture is tight); the
   // framing keeps the room either way.
   const stack = drawCallStack(frames, {
@@ -314,19 +336,10 @@ export function view(step: Step<RevState, undefined>, settings: RevSettings): Sc
     width,
     room: run ? room : 1,
     lineX: size.lineX,
+    rows: place.rows,
     size: SIZE,
     roles,
   });
   shapes.push(...stack.shapes);
-
-  const bounds = padBounds(
-    unionBounds(
-      treeBox,
-      { x: 0, y: 0, w: treeW, h: 30 },
-      { x: right, y: 0, w: Math.max(width, cellsW), h: cellsBottom },
-      { x: right, y: stackTop, w: width, h: callStackHeight(room, SIZE) },
-    ),
-    12,
-  );
-  return { shapes, bounds, label: describe(s, settings) };
+  return { shapes, bounds: place.bounds, label: describe(s, settings) };
 }

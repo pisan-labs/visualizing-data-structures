@@ -198,7 +198,7 @@ function oneGrid(
       x: geometry.gridLeft - 7,
       y: geometry.gridTop - 8,
       text: frame.corner,
-      size: 12,
+      size: 13,
       anchor: 'end',
       mono: true,
       cls: 'index',

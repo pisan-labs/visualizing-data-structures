@@ -6,6 +6,9 @@ import { formatGraph, parseGraph } from '../_graph/parse';
 import { prim } from '.';
 import { treeEdges, type PrimRun, type PrimSettings } from './model';
 import { MST_TEXT } from '../_graph/mst';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import textSizeDef from './index';
 
 // ---------------------------------------------------------------------------------------------
 // References, written independently of the page.
@@ -144,5 +147,13 @@ describe('prim', () => {
     const steps = t.entries[0]!.steps;
     expect(steps[0]!.say).toContain('no vertex K');
     expect(steps.at(-1)!.extra!.run!.r).toBe('A');
+  });
+});
+
+describe('drawn text size', () => {
+  // The queue in rows of 9 was 526 units wide (8.2 px on a phone); a phone now wraps it in rows of 6.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(textSizeDef, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(textSizeDef, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

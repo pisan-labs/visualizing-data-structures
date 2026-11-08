@@ -4,6 +4,8 @@ import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { parseText, reverseString } from '.';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 import type { RevSettings, Variant } from './model';
 
 const settings = (variant: Variant): RevSettings =>
@@ -146,5 +148,14 @@ describe('reverse-string practice', () => {
         }
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // The stack beside the tree drew at 7.8 px on a phone; the tree now has the stack's font, and
+  // a phone gets a narrower stack (under the tree, or with each line on a second row).
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(reverseString, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(reverseString, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "mod-pow",
+  "id": "right-to-left",
+  "title": "The bits from the right",
+  "notes": "7^13 mod 11 again, reading the bits from the lowest. p runs through 7, 7², 7⁴, 7⁸ mod 11, and the result picks up the powers where the bit is 1: 7 · 7⁴ · 7⁸ = 7^13.",
+  "settings": {
+    "order": "rtl"
+  },
+  "seed": 1,
+  "ops": [["pow", 7, 13, 11]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

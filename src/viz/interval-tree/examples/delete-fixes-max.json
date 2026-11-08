@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "interval-tree",
+  "id": "delete-fixes-max",
+  "title": "Delete fixes max on the way up",
+  "notes": "[25, 30] holds the largest high end, so it sets max all the way up to the root. When it goes, its successor takes its place, and every max on the path is worked out again from the node's own high end and its children's max.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insert", "16,22"],
+    ["insert", "8,10"],
+    ["insert", "25,30"],
+    ["insert", "5,9"],
+    ["insert", "12,15"],
+    ["insert", "20,27"],
+    ["insert", "28,29"],
+    ["insert", "1,4"],
+    ["delete", "25,30"]
+  ]
+}

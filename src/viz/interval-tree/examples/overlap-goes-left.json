@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "interval-tree",
+  "id": "overlap-goes-left",
+  "title": "One overlap: max says which way",
+  "notes": "Looking for anything that overlaps [11, 14]. The root misses, but its left child's max is 15, so something on the left ends late enough: go left. At [8, 10], the left max is only 9, which ends before 11: skip that side and go right, to [12, 15].",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insert", "16,22"],
+    ["insert", "8,10"],
+    ["insert", "25,30"],
+    ["insert", "5,9"],
+    ["insert", "12,15"],
+    ["insert", "20,27"],
+    ["insert", "28,29"],
+    ["insert", "1,4"],
+    ["overlap", "11,14"]
+  ]
+}

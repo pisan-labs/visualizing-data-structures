@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "interval-tree",
+  "id": "no-overlap",
+  "title": "Nothing overlaps: still one path",
+  "notes": "The point 11 sits in a gap between intervals. The search follows max down one path and falls off the tree without finding anything. It never looks at the other side, and it does not need to: CLRS proves that if the left max is big enough and nothing on the left overlaps, nothing on the right does either.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insert", "16,22"],
+    ["insert", "8,10"],
+    ["insert", "25,30"],
+    ["insert", "5,9"],
+    ["insert", "12,15"],
+    ["insert", "20,27"],
+    ["insert", "28,29"],
+    ["insert", "1,4"],
+    ["overlap", "11"]
+  ]
+}

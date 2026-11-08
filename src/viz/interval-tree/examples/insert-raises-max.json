@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "interval-tree",
+  "id": "insert-raises-max",
+  "title": "Insert raises max on the way down",
+  "notes": "Eight intervals go in, ordered by their low ends like keys in a BST. On the way down, every node the new interval passes gets max = max(max, new high end), since the new interval will sit in its subtree. Watch the root's max climb to 30.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insert", "16,22"],
+    ["insert", "8,10"],
+    ["insert", "25,30"],
+    ["insert", "5,9"],
+    ["insert", "12,15"],
+    ["insert", "20,27"],
+    ["insert", "28,29"],
+    ["insert", "1,4"]
+  ]
+}

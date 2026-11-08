@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "closest-pair",
+  "id": "repeated-point",
+  "title": "A repeated point",
+  "notes": "Two copies of one point are at distance 0. Once a half finds them, δ is 0 and the strip is empty.",
+  "settings": {
+    "method": "divide"
+  },
+  "seed": 1,
+  "ops": [["load", "2,3 8,8 5,5 10,1 2,3 7,2 4,10"], ["closest"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

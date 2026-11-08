@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "closest-pair",
+  "id": "brute-force",
+  "title": "Brute force tries every pair",
+  "notes": "The same sixteen points with the brute force method: all 120 pairs, whatever the points look like.",
+  "settings": {
+    "method": "brute"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "1,2 2,9 3,5 4,11 5,1 5,7 6,4 7,10 8,2 8,8 9,5 10,11 11,1 11,7 12,4 3,1"],
+    ["closest"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

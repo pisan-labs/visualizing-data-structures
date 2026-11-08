@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "closest-pair",
+  "id": "even-grid",
+  "title": "An even grid: every strip is full",
+  "notes": "Points three apart in each direction, so every pair of neighbours ties at distance 3. The strips are full, yet no two strip points are less than δ apart in y: the check stops at once and every comparison happens in the base cases.",
+  "settings": {
+    "method": "divide"
+  },
+  "seed": 1,
+  "ops": [["load", "0,0 3,0 6,0 9,0 0,3 3,3 6,3 9,3 0,6 3,6 6,6 9,6 0,9 3,9 6,9 9,9"], ["closest"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

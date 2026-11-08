@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "cfg-to-cnf",
+  "id": "nullable-blowup",
+  "title": "Nullable variables multiply rules",
+  "notes": "S → ABC, where each of A, B and C can vanish. DEL gives S every way of leaving some out: 7 right sides from one, and S₀ copies them all. Doing BIN first would avoid this.",
+  "settings": {
+    "order": "term-first"
+  },
+  "seed": 1,
+  "ops": [["load", "S -> ABC; A -> a | eps; B -> b | eps; C -> c | eps"]]
+}

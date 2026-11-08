@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "cfg-to-cnf",
+  "id": "anbn-derive",
+  "title": "aⁿbⁿ, then a derivation in 2n − 1 steps",
+  "notes": "Convert S → aSb | ε, then derive aabb in the new grammar. Four letters take seven steps: three rules A → BC and four rules A → a.",
+  "settings": {
+    "order": "term-first"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "S -> aSb | eps"],
+    ["derive", "aabb"]
+  ]
+}

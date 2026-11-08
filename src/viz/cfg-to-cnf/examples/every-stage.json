@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "cfg-to-cnf",
+  "id": "every-stage",
+  "title": "Every stage has work",
+  "notes": "Sipser's grammar has an ε-rule (B → ε), unit rules (A → B, A → S), a long rule (S → ASA) and a terminal beside a variable (S → aB). Each of the five stages has something to fix.",
+  "settings": {
+    "order": "term-first"
+  },
+  "seed": 1,
+  "ops": [["load", "S -> ASA | aB; A -> B | S; B -> b | eps"]]
+}

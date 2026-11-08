@@ -12,26 +12,19 @@
  * depends only on the machine and the screen and stays put while runs come and go.
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
-import {
-  LABEL_SIZE,
-  drawAutomaton,
-  layoutStates,
-  moveId,
-  type StateLook,
-} from '../../layouts/automaton';
+import { drawAutomaton, layoutStates, type StateLook } from '../../layouts/automaton';
 import {
   beside,
   drawColumn,
   padBounds,
   placePanels,
-  textWidth,
   unionBounds,
   type PanelCell,
 } from '../../layouts/graph';
 import { CELL_W } from '../../layouts/tape';
 import { drawTrace, type TraceLine } from '../../layouts/trace';
 import type { Bounds, Scene, Shape } from '../../render/scene';
-import type { Automaton } from '../_automata/automaton';
+import type { Automaton, Move } from '../_automata/automaton';
 import {
   acrossFits,
   describeTest,
@@ -58,7 +51,6 @@ import {
 
 const TAPE_H = 46 + 36;
 const GAP = 14;
-const LINE_H = 18;
 const NUM_W = 30;
 const CHAR_W = 14 * 0.6;
 
@@ -69,103 +61,28 @@ const NOMINAL = { w: 9 * CELL_W + 24 + 44, h: TAPE_H + GAP + 22 + KEEP * 20 + GA
 // The diagram
 
 /**
- * The machine as an automaton for drawAutomaton: one arrow per pair of states, labeled with
- * its longest move label, so the shared layout places a label as wide as the widest line.
+ * The machine as an automaton for drawAutomaton: one move per move of the machine, labeled
+ * "a, X → β", and the index of each in the machine.
  */
-function diagramOf(p: Pda): { a: Automaton; pairs: Map<string, number[]> } {
-  const pairs = new Map<string, number[]>();
-  p.moves.forEach((m, i) => {
-    const k = `${m.from}\u0000${m.to}`;
-    pairs.set(k, [...(pairs.get(k) ?? []), i]);
-  });
-  const a: Automaton = {
-    states: p.states,
-    alphabet: [],
-    start: p.start,
-    accept: p.accept,
-    moves: [...pairs].map(([k, ids]) => {
-      const [from, to] = k.split('\u0000') as [string, string];
-      const on = ids
-        .map((i) => moveLabel(p.moves[i]!))
-        .reduce((x, y) => (y.length > x.length ? y : x));
-      return { from, to, on };
-    }),
-  };
-  return { a, pairs };
+function diagramOf(p: Pda): { a: Automaton; index: Map<Move, number> } {
+  const moves = p.moves.map((m) => ({ from: m.from, to: m.to, on: moveLabel(m) }));
+  const a: Automaton = { states: p.states, alphabet: [], start: p.start, accept: p.accept, moves };
+  return { a, index: new Map(moves.map((m, i) => [m, i])) };
 }
 
-/** Points along an arrow shape, for finding which side of it a label is on. */
-function arrowPoints(s: Shape): { x: number; y: number }[] {
-  if (s.kind !== 'arrow') return [];
-  const out = [];
-  for (let k = 0; k <= 16; k++) {
-    const t = k / 16;
-    const c = s.via ?? { x: (s.x1 + s.x2) / 2, y: (s.y1 + s.y2) / 2 };
-    out.push({
-      x: (1 - t) ** 2 * s.x1 + 2 * (1 - t) * t * c.x + t ** 2 * s.x2,
-      y: (1 - t) ** 2 * s.y1 + 2 * (1 - t) * t * c.y + t ** 2 * s.y2,
-    });
-  }
-  return out;
-}
-
-/**
- * The state diagram with one label line per move. The shared layout places each arrow's label
- * as one line; a label of several lines grows away from its arrow (up above it, down below
- * it), so the line nearest the arrow stays where the layout put it.
- */
+/** The state diagram with one label line per move, each line marked by itself. */
 export function drawDiagram(
   p: Pda,
   across: boolean,
   roles: ReadonlyMap<string, MarkRole>,
   look?: (q: string) => StateLook | undefined,
 ): { shapes: Shape[]; bounds: Bounds } {
-  const { a, pairs } = diagramOf(p);
-  const d = drawAutomaton(a, layoutStates(a, across), { roles, look });
-  const byId = new Map(d.shapes.map((s) => [s.id, s]));
-  const labelIds = new Set(
-    [...pairs.keys()].map((k) => `${moveId(...(k.split('\u0000') as [string, string]))}-t`),
-  );
-  const shapes = d.shapes.filter((s) => !labelIds.has(s.id));
-  const boxes: Bounds[] = [d.bounds];
-  for (const [k, ids] of pairs) {
-    const [from, to] = k.split('\u0000') as [string, string];
-    const id = moveId(from, to);
-    const label = byId.get(`${id}-t`);
-    if (!label || label.kind !== 'text') continue;
-    const c = { x: label.x, y: label.y - LABEL_SIZE * 0.3 };
-    const pts = arrowPoints(byId.get(id)!);
-    const near = pts.reduce(
-      (best, q) =>
-        Math.hypot(q.x - c.x, q.y - c.y) < Math.hypot(best.x - c.x, best.y - c.y) ? q : best,
-      pts[0] ?? c,
-    );
-    const dx = c.x - near.x;
-    const dy = c.y - near.y;
-    const grow = ((ids.length - 1) * LINE_H) / 2;
-    const cy = Math.abs(dy) >= Math.abs(dx) ? c.y + Math.sign(dy || -1) * grow : c.y;
-    const arrowRole = roles.get(id);
-    ids.forEach((i, k) => {
-      const text = moveLabel(p.moves[i]!);
-      const y = cy + (k - (ids.length - 1) / 2) * LINE_H;
-      const lid = moveLineId(i);
-      shapes.push({
-        kind: 'text',
-        id: lid,
-        x: c.x,
-        y: y + LABEL_SIZE * 0.3,
-        text,
-        size: LABEL_SIZE,
-        anchor: 'middle',
-        mono: true,
-        cls: 'label',
-        role: roles.get(lid) ?? (arrowRole && ids.length === 1 ? arrowRole : undefined),
-      });
-      const w = textWidth(text, LABEL_SIZE, true);
-      boxes.push({ x: c.x - w / 2 - 2, y: y - LABEL_SIZE / 2 - 1, w: w + 4, h: LABEL_SIZE + 2 });
-    });
-  }
-  return { shapes, bounds: unionBounds(...boxes) };
+  const { a, index } = diagramOf(p);
+  return drawAutomaton(a, layoutStates(a, across), {
+    roles,
+    look,
+    label: (ms) => ms.map((m) => ({ text: m.on, id: moveLineId(index.get(m)!) })),
+  });
 }
 
 // ---------------------------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { bigODefinition, parseInput } from '.';
@@ -441,6 +442,26 @@ describe('big-o definition', () => {
           for (const stage of [undefined, { w: 880, h: 384 }, { w: 360, h: 536 }])
             inFrame(bigODefinition.view(t.at(t.length - 1).step, s, stage));
         }
+  });
+
+  it('practice witnesses are right by the reference, and the wrong ones break', () => {
+    const kind = bigODefinition.practice!.find((k) => k.id === 'which-witness')!;
+    for (let seed = 1; seed <= 60; seed++) {
+      const q = kind.make(makeRng(seed));
+      const p = PAIRS.find((x) =>
+        q.prompt.includes(`f(n) = ${exprOf(x.f).text} and g(n) = ${exprOf(x.g).text}.`),
+      )!;
+      const side: Side = q.prompt.includes('= Ω(g)') ? 'lower' : 'upper';
+      const far = p.id.startsWith('exponential') ? 260 : 3000;
+      const a = q.answer as { options: string[]; correct: number };
+      a.options.forEach((o, i) => {
+        const [, c, n0] = /^c = (\S+), n₀ = (\d+)$/.exec(o)!;
+        const bounds = [{ side, c: (parseConst(c!) as { r: Rat }).r }];
+        const fails = refFailures(p.id, bounds, Number(n0), far);
+        if (i === a.correct) expect(fails, `${p.id} ${o}`).toEqual([]);
+        else expect(fails.length, `${p.id} ${o}`).toBeGreaterThan(0);
+      });
+    }
   });
 
   it('samples every n for short ranges and at most 61 points for long ones', () => {

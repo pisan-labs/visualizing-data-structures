@@ -121,7 +121,7 @@ export function definitionPractice(def: () => Def): PracticeKind[] {
             'O',
             ['3 1', '3 20', '4 1', '4 10', '4 11', '18 1', '4 50', '5 8', '5 7'],
           ],
-          ['100n ; n^2', 'O', ['1 1', '1 99', '1 100', '2 50', '2 49', '100 1', '50 2', '50 1']],
+          ['100n ; n^2', 'O', ['1 1', '1 50', '2 50', '2 49', '3 34', '3 33', '100 1', '50 1']],
           ['n log n ; n', 'Omega', ['1 1', '1 2', '2 3', '2 4', '3 8', '3 7', '1/2 2']],
           ['2^n ; n!', 'O', ['1 1', '1 3', '1 4', '2 1', '1/2 1', '1/2 5', '1/2 6']],
           ['n log n + n ; n log n', 'O', ['2 1', '2 2', '1 2', '1.5 4', '1.5 3', '3 2']],
@@ -131,18 +131,26 @@ export function definitionPractice(def: () => Def): PracticeKind[] {
         const settings = settingsFor(relation);
         const setup: OpCall[] = [['compare', pair]];
         const past = `past ${settings.range}`;
-        const verdict = (w: string) => {
+        // What the page says about each: a witness (holds in the range, proved past it), or
+        // not (a counterexample in the range or past it). Anything else is left out.
+        const verdict = (w: string): 'good' | 'bad' | null => {
           const v = last([...setup, ['check', w]], settings).vars ?? {};
-          return v['first failure'] === 'none' && v[past] === 'proved';
+          if (typeof v['first failure'] === 'number') return 'bad';
+          if (v['first failure'] !== 'none') return null;
+          if (v[past] === 'proved') return 'good';
+          return String(v[past]).startsWith('breaks') ? 'bad' : null;
         };
         const label = (w: string) => {
           const [c, n0] = w.split(' ');
           return `c = ${c}, n₀ = ${n0}`;
         };
-        const good = shuffle(rng, tries.filter(verdict));
+        const good = shuffle(
+          rng,
+          tries.filter((w) => verdict(w) === 'good'),
+        );
         const bad = shuffle(
           rng,
-          tries.filter((w) => !verdict(w)),
+          tries.filter((w) => verdict(w) === 'bad'),
         );
         const right = good[0]!;
         const { f, g } = show(pair);

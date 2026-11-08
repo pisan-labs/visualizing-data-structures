@@ -38,7 +38,6 @@ export function rat(n: bigint, d = 1n): Rat {
   return { n: n / g, d: d / g };
 }
 
-export const ZERO = rat(0n);
 export const ONE = rat(1n);
 export const addR = (a: Rat, b: Rat): Rat => rat(a.n * b.d + b.n * a.d, a.d * b.d);
 export const subR = (a: Rat, b: Rat): Rat => rat(a.n * b.d - b.n * a.d, a.d * b.d);
@@ -50,12 +49,7 @@ export function cmpR(a: Rat, b: Rat): number {
   const r = b.n * a.d;
   return l < r ? -1 : l > r ? 1 : 0;
 }
-export const isInt = (a: Rat) => a.d === 1n;
-/** ⌊a⌋ */
-export function floorR(a: Rat): bigint {
-  const q = a.n / a.d;
-  return a.n < 0n && q * a.d !== a.n ? q - 1n : q;
-}
+const isInt = (a: Rat) => a.d === 1n;
 
 const commas = (s: string) => s.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
@@ -176,13 +170,6 @@ export function parseConst(token: string, what = 'c'): Const | Error {
   if (r.n <= 0n) return new Error(`${what} must be positive: the definition needs c > 0.`);
   if (cmpR(r, rat(BigInt(C_MAX))) > 0) return new Error(`Pick ${what} up to ${C_MAX}.`);
   return { r, text };
-}
-
-/** A constant's text read back (state stores the text). */
-export function constOf(text: string): Rat {
-  const c = parseConst(text);
-  if (c instanceof Error) throw c;
-  return c.r;
 }
 
 // ----- Functions -----

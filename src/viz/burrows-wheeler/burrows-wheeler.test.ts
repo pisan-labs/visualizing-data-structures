@@ -70,6 +70,11 @@ describe('Burrows-Wheeler transform', { timeout: 60_000 }, () => {
     expect(t.endState().l).toBe('annb$aa');
     expect(t.entries[0]!.steps.at(-1)!.say).toMatch(/^Done\. BWT\('banana'\) = 'annb\$aa'/);
   });
+
+  it('counts the runs of the string it rotated, with its $, not of the bare word', () => {
+    const t = run([['load', 'aaaaaa'], ['transform']]);
+    expect(t.entries[1]!.steps.at(-1)!.say).toMatch(/2 runs .* in 7, where 'aaaaaa\$' has 2\./);
+  });
 });
 
 describe('Burrows-Wheeler practice', () => {

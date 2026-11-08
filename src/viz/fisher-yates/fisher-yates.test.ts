@@ -58,6 +58,17 @@ describe('fisher-yates', () => {
       Math.max(naive[0]!, naive[4]!, naive[5]!),
     );
   });
+
+  it('does not claim the naive shuffle of two items is uneven (4 runs, 2 each)', () => {
+    const say = (values: string) =>
+      new Timeline(fisherYates, { method: 'naive', direction: 'forward' }, 1, [
+        ['load', values],
+        ['shuffle'],
+      ]).entries[1]!.steps[0]!.say;
+    expect(say('A B')).not.toMatch(/cannot come out even/);
+    expect(say('A B')).toMatch(/happens to come out even/);
+    expect(say('A B C')).toMatch(/cannot come out even/);
+  });
 });
 
 describe('drawn text size', () => {

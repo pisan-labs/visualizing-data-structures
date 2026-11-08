@@ -277,7 +277,7 @@ const transform: Op = {
     const tail = st.index !== null ? ` with index ${st.index}` : '';
     yield step(
       st,
-      `Done. BWT(${q(st.text)}) = ${q(st.l)}${tail}. It has ${plural(r, 'run')} of equal characters in ${st.l.length}, where the word has ${runs(st.s)}. Move-to-front and run-length coding turn runs like these into small numbers that compress well.`,
+      `Done. BWT(${q(st.text)}) = ${q(st.l)}${tail}. It has ${plural(r, 'run')} of equal characters in ${st.l.length}, where ${q(st.s)} has ${runs(st.s)}. Move-to-front and run-length coding turn runs like these into small numbers that compress well.`,
       ['ret'],
       1,
       [...st.l].map((_, i) => mk(lOutId(i), 'done')),

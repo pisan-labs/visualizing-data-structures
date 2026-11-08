@@ -3,7 +3,7 @@
   "viz": "lba",
   "id": "out-of-order",
   "title": "Right counts, wrong order",
-  "notes": "abcabc has two of each letter, but after the first pass the machine finds an a where only y's and z's may be. A PDA cannot even count two things at once; this machine counts three.",
+  "notes": "abcabc has two of each letter, but after the first pass the machine finds an a where only y's and z's may be. A PDA's stack can match one count against another, but not against a third; this machine checks all three.",
   "settings": {
     "machine": "anbncn"
   },

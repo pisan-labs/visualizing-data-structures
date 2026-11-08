@@ -42,7 +42,7 @@ export const rsa: VizDef<RsaState, RsaSettings, undefined> = {
         { value: 'euler', label: 'φ(n) = (p − 1)(q − 1), as in CLRS' },
         { value: 'carmichael', label: 'λ(n) = lcm(p − 1, q − 1), as real RSA does' },
       ],
-      help: 'Both work: e·d ≡ 1 mod λ(n) is enough for m^(ed) ≡ m. λ(n) divides φ(n), so it gives a smaller d.',
+      help: 'Both work: e·d ≡ 1 mod λ(n) is enough for m^(ed) ≡ m. λ(n) divides φ(n), so d is often smaller.',
     },
   ],
   defaults,

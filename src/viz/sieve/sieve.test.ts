@@ -39,6 +39,20 @@ describe('sieve', () => {
       { numRuns: 150 },
     );
   });
+
+  it('never names an empty range of smaller multiples', () => {
+    const says = new Timeline(sieve, { start: 'square', stop: 'sqrt' }, 1, [
+      ['sieve', 30],
+    ]).entries[0]!.steps.map((s) => s.say).join(' ');
+    expect(says).not.toMatch(/2·2 to 2·1|3·2 to 3·2/);
+    expect(says).toMatch(/starting at 2² = 4\./);
+    expect(says).toMatch(/the smaller ones, 5·2 to 5·4,/);
+  });
+
+  it('says "1 prime", not "1 primes"', () => {
+    const t = new Timeline(sieve, { start: 'square', stop: 'sqrt' }, 1, [['sieve', 2]]);
+    expect(t.entries[0]!.steps.at(-1)!.say).toMatch(/^There is 1 prime up to 2\./);
+  });
 });
 
 describe('drawn text size', () => {

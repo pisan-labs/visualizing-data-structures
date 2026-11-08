@@ -235,7 +235,8 @@ function* encode77(st: LzState, s: LzSettings): Generator<LzStep, void, void> {
     const max = Math.min(s.lookahead, n - pos - 1);
     const lo = Math.max(0, pos - s.window);
     let best = { off: 0, len: 0 };
-    for (let d = 1; d <= Math.min(s.window, pos); d++) {
+    // With one character left there is nothing to match: it has to go out as next.
+    for (let d = 1; max > 0 && d <= Math.min(s.window, pos); d++) {
       let k = 0;
       const cells: (Cmp | null)[] = [];
       while (k < max && text[pos - d + k] === text[pos + k]) {
@@ -264,9 +265,11 @@ function* encode77(st: LzState, s: LzSettings): Generator<LzStep, void, void> {
     const where =
       pos === 0
         ? 'The window is empty, so nothing can match.'
-        : best.len === 0
-          ? `Nothing in the window T[${lo}..${pos - 1}] starts with ${q(text[pos]!)}.`
-          : `The longest match is ${q(text.slice(pos, pos + best.len))}, ${best.off} back${best.off < best.len ? ': it runs into the lookahead, which is fine because the decoder copies one character at a time' : ''}.`;
+        : max === 0
+          ? `Only T[${pos}] = ${q(text[pos]!)} is left, and every triple ends with a next character, so there is nothing to match.`
+          : best.len === 0
+            ? `Nothing in the window T[${lo}..${pos - 1}] starts with ${q(text[pos]!)}.`
+            : `The longest match is ${q(text.slice(pos, pos + best.len))}, ${best.off} back${best.off < best.len ? ': it runs into the lookahead, which is fine because the decoder copies one character at a time' : ''}.`;
     yield step(
       st,
       s,
@@ -496,7 +499,7 @@ function* decodeW(st: LzState, s: LzSettings): Generator<LzStep, void, void> {
     st.out += cur;
     st.dk = k + 1;
     const say = tricky
-      ? `Code ${code} is not in the dictionary yet: the encoder made it on the step it wrote it. That only happens when it is the previous string plus its own first character, ${q(cur)}.${added}`
+      ? `Code ${code} is not in the dictionary yet: the encoder made it on its last step and used it at once, and the decoder is one step behind. That only happens when it is the previous string plus its own first character, ${q(cur)}.${added}`
       : `Code ${code} is ${q(cur)}: write it.${added}`;
     yield step(
       st,

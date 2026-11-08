@@ -53,6 +53,14 @@ describe('karatsuba', () => {
     const k = new Timeline(karatsuba, { split: 'three' }, 1, [['multiply', 1234, 5678]]);
     expect(k.entries[0]!.end.digitMults).toBeLessThan(16);
   });
+
+  it('9999·9999 is not the most calls for four digits, and 1 digit product is singular', () => {
+    // 9199 + 9199 splits into sums of 190, which carry once more than 99 + 99.
+    expect(refCalls(9999, 9999, 'three')).toBe(28);
+    expect(refCalls(9199, 9199, 'three')).toBe(31);
+    const t = new Timeline(karatsuba, { split: 'three' }, 1, [['multiply', 7, 8]]);
+    expect(t.entries[0]!.steps.at(-1)!.say).toMatch(/1 digit product;/);
+  });
 });
 
 describe('drawn text size', () => {

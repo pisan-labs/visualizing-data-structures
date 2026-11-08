@@ -121,8 +121,14 @@ function* sieve(n: number, st: SieveSettings): Generator<SieveStep, S, void> {
       );
       continue;
     }
+    const smaller =
+      p === 2
+        ? ''
+        : p === 3
+          ? ': the smaller one, 3·2, has a smaller prime factor and is crossed out already'
+          : `: the smaller ones, ${p}·2 to ${p}·${p - 1}, have a smaller prime factor and are crossed out already`;
     yield step(
-      `${p} is not crossed out, so it is prime. Cross out its multiples, starting at ${st.start === 'square' ? `${p}² = ${from}: the smaller ones, ${p}·2 to ${p}·${p - 1}, have a smaller prime factor and are crossed out already` : `2·${p} = ${from}`}.`,
+      `${p} is not crossed out, so it is prime. Cross out its multiples, starting at ${st.start === 'square' ? `${p}² = ${from}${smaller}` : `2·${p} = ${from}`}.`,
       ['loop', 'if', 'prime'],
       2,
       [[cellId(p), 'found']],
@@ -180,7 +186,7 @@ function* sieve(n: number, st: SieveSettings): Generator<SieveStep, S, void> {
   const primes = count('prime');
   const wasted = s.marks - count('crossed');
   yield step(
-    `There are ${primes} primes up to ${n}. The sieve made ${s.marks} cross-outs for ${count('crossed')} composite numbers${wasted ? `: ${wasted} of them hit a number that was already crossed out` : ''}.`,
+    `There ${primes === 1 ? 'is 1 prime' : `are ${primes} primes`} up to ${n}. The sieve made ${s.marks} cross-outs for ${count('crossed')} composite numbers${wasted ? `: ${wasted} of them hit a number that was already crossed out` : ''}.`,
     [],
     1,
   );

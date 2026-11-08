@@ -265,14 +265,17 @@ function limitReason(lim: Limit, b: Bound, ev: boolean | null): string {
     : `${limitWord(lim)} and ${v} < ${c}, so f(n) < ${c}·g(n) for every large n.`;
 }
 
-/** Look far past N for a counterexample: n = 2N, 4N, 8N... while values stay computable. */
-function probe(f: Expr, g: Expr, bounds: Bound[], N: number): bigint | null {
+/**
+ * Look far past N for a counterexample: n = 2N, 4N, 8N... while values stay computable. Gives
+ * the n found (checked exactly), or null and the last n tried.
+ */
+function probe(f: Expr, g: Expr, bounds: Bound[], N: number): { n: bigint | null; tried: bigint } {
   let last = BigInt(N);
   for (let k = 1; k <= 24; k++) {
     const n = BigInt(N) << BigInt(k);
-    if (!evaluable(f, n) || !evaluable(g, n)) return null;
+    if (!evaluable(f, n) || !evaluable(g, n)) break;
     if (!holdsAt(f, g, bounds, n)) {
-      // Narrow it down to a smaller example; any n found here is checked exactly.
+      // Narrow it down to a smaller example.
       let lo = last;
       let hi = n;
       while (hi - lo > 1n) {
@@ -280,11 +283,11 @@ function probe(f: Expr, g: Expr, bounds: Bound[], N: number): bigint | null {
         if (holdsAt(f, g, bounds, mid)) lo = mid;
         else hi = mid;
       }
-      return hi;
+      return { n: hi, tried: n };
     }
     last = n;
   }
-  return null;
+  return { n: null, tried: last };
 }
 
 /**
@@ -316,11 +319,14 @@ export function beyondRange(f: Expr, g: Expr, bounds: Bound[], N: number): Beyon
       kind: 'open',
       why: `${reasons} Whether it already holds from n₀ on takes algebra: the page checks typed functions only up to ${N}.`,
     };
-  const n = probe(f, g, bounds, N);
+  const { n, tried } = probe(f, g, bounds, N);
   if (n !== null) return { kind: 'fails', n, first: false, why: reasons };
+  const far = `n = ${N * 2}, ${N * 4}, ${N * 8} and so on up to ${nText(tried)}`;
   return {
     kind: 'open',
-    why: `${reasons} The page found no counterexample it could compute, so it cannot say where.`,
+    why: evs.some((e) => e === false)
+      ? `${reasons} It must break somewhere past ${N}, but the page tried ${far} without reaching it.`
+      : `${reasons} The page also tried ${far} and found nothing that breaks it, which is not a proof either way.`,
   };
 }
 

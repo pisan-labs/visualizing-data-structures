@@ -253,3 +253,7 @@
 2026-11-08 [code] src/layouts/text.ts: one textWidth with measured factors (regular 0.58, bold 0.64, mono 0.6: the widest of the site font, DejaVu Sans and monospace in Chromium) and wrapText; layouts/graph.ts and bars.ts re-export it, same numbers
 
 2026-11-08 [code] settled() in tests/e2e/helpers.ts also waits for playback to finish (no "Pause" button); it could return in the pause between two steps; full e2e 2167 passed, 5 skipped with it
+
+2026-11-08 [code] One source for the zoom buttons' room (src/render/stage.ts, StageSize.strip); three phone copies counted the buttons twice (about 30 px of empty band) and are gone
+
+2026-11-08 [code] halting-problem, chomsky-hierarchy, pumping-lemma and big-o-definition use textWidth and wrapText from src/layouts/text.ts instead of their own factors

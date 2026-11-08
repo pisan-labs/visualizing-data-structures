@@ -763,9 +763,9 @@ CI), leverage (what fixing it unblocks). Priority = interest + risk + leverage �
 | # | Item | I | P | R | L | Priority | Where |
 |---|---|---|---|---|---|---|---|
 | 1 | Done 8 November: `settled()` could return between two steps of a playback (nothing animates during the hold), so a count taken then is of the wrong step; two agents met it | 3 | 2 | 3 | 3 | 7 | `tests/e2e/helpers.ts` |
-| 2 | The zoom-button size is copied in four places (`graph.ts` 118×42, `circular-array.ts` 34 of 362, `_grammar/draw.ts` 34, `loop-counting/view.ts`); on phones `Stage.svelte` already gives the buttons a strip of their own, so the phone copies may compensate twice | 2 | 1 | 3 | 2 | 6 | `src/ui/Stage.svelte`, `src/layouts/` |
-| 3 | Two `textWidth` functions (`layouts/graph.ts`, `layouts/bars.ts`) and local estimators in three pages; CI's DejaVu font is wider than either assumes | 3 | 2 | 2 | 3 | 6 | `src/layouts/`, pumping-lemma, chomsky-hierarchy, big-o-definition |
-| 5 | Six word-wrap helpers | 2 | 2 | 1 | 3 | 4 | `_automata/regex.ts`, pumping-lemma, halting-problem, chomsky-hierarchy, dfa-to-regex, regex-to-nfa |
+| 2 | Done 8 November: the zoom-button size was copied in four places (`graph.ts` 118×42, `circular-array.ts` 34 of 362, `_grammar/draw.ts` 34, `loop-counting/view.ts`); on phones `Stage.svelte` already gives the buttons a strip of their own, so the phone copies may compensate twice | 2 | 1 | 3 | 2 | 6 | `src/ui/Stage.svelte`, `src/layouts/` |
+| 3 | Done 8 November: two `textWidth` functions (`layouts/graph.ts`, `layouts/bars.ts`) and local estimators in three pages; CI's DejaVu font is wider than either assumes | 3 | 2 | 2 | 3 | 6 | `src/layouts/`, pumping-lemma, chomsky-hierarchy, big-o-definition |
+| 5 | Done 8 November (two were text wrappers): six word-wrap helpers | 2 | 2 | 1 | 3 | 4 | `_automata/regex.ts`, pumping-lemma, halting-problem, chomsky-hierarchy, dfa-to-regex, regex-to-nfa |
 | 6 | The layout chooser `pickLayout` lives in `src/viz/_stage/arrange.ts` (23 users), beside `bestPlacement` in `_grammar/draw.ts` and per-page column pickers | 2 | 2 | 1 | 3 | 4 | `src/viz/_stage/`, `src/viz/_grammar/` |
 | 7 | `STAGES` in `layouts/graph.ts` still holds the old 884×305 desktop stage, the fallback for thumbnails, prerender and tests | 2 | 2 | 2 | 1 | 3 | `src/layouts/graph.ts` |
 | 8 | Chart code written three times: big-o-definition (exact fractions), doubling-experiment (log-log), amortized-analysis (two-lane bars) | 2 | 4 | 1 | 3 | 2 | those three views |

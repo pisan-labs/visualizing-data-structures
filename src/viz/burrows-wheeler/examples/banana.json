@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "burrows-wheeler",
+  "id": "banana",
+  "title": "Sorting the rotations of banana",
+  "notes": "banana$ has seven rotations. Sorted, their last characters spell annb$aa: the three a's that follow an n end up together, and so do the two n's that follow an a.",
+  "settings": {
+    "end": "sentinel"
+  },
+  "seed": 1,
+  "ops": [["load", "banana"], ["transform"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

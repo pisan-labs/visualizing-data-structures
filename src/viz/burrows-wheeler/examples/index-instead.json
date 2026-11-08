@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "burrows-wheeler",
+  "id": "index-instead",
+  "title": "No end marker: keep the index",
+  "notes": "Without $, banana's rotations sort with the original in row 3. The transform is L = nnbaaa with index 3, and the inverse starts its walk at row 3.",
+  "settings": {
+    "end": "index"
+  },
+  "seed": 1,
+  "ops": [["load", "banana"], ["transform"], ["invert"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

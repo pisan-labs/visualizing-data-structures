@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "burrows-wheeler",
+  "id": "one-letter",
+  "title": "One letter: a single run",
+  "notes": "aaaaaa$ sorts by where the $ falls, so L is all a's and then the $. Runs do not get better than this.",
+  "settings": {
+    "end": "sentinel"
+  },
+  "seed": 1,
+  "ops": [["load", "aaaaaa"], ["transform"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

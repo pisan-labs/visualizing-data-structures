@@ -14,6 +14,7 @@ import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { placePanels, unionBounds, padBounds } from '../../layouts/graph';
 import { CELL_W as TAPE_W, drawTape } from '../../layouts/tape';
 import { tableGeometry, tableScene, valueSize, type Cell } from '../../layouts/table';
+import { wrapText } from '../../layouts/text';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import {
   DD_ID,
@@ -44,21 +45,6 @@ const TEXT = 15;
 const LINE_H = 20;
 const LIST_H = 22;
 const LIST_W = 200;
-
-/** Words per line for a width, with room for wide fonts (CI's DejaVu Sans). */
-export function wrapText(text: string, width: number, size: number, mono = false): string[] {
-  const max = Math.max(10, Math.floor(width / (size * (mono ? 0.6 : 0.64))));
-  const out: string[] = [];
-  let line = '';
-  for (const word of text.split(' ')) {
-    if (line && line.length + 1 + word.length > max) {
-      out.push(line);
-      line = word;
-    } else line = line ? `${line} ${word}` : word;
-  }
-  if (line) out.push(line);
-  return out;
-}
 
 /** The color a finished cell keeps: accept and halt green, reject orange, a loop plain. */
 function outcomeRole(o: Outcome, framing: Framing): MarkRole | undefined {
@@ -93,7 +79,9 @@ function paragraphs(
   items: { text: string; role?: MarkRole; bold?: boolean }[],
 ): number {
   items.forEach((p, k) => {
-    wrapText(p.text, width, TEXT).forEach((line, l) => {
+    // The error role draws text bold too (Shapes.svelte), so those lines are measured bold.
+    const bold = p.bold || p.role === 'error';
+    wrapText(p.text, width, TEXT, { bold }).forEach((line, l) => {
       out.push(
         text(`proof-${k}-${l}`, x, y + TEXT, line, TEXT, {
           role: p.role,

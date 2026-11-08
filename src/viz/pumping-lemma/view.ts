@@ -12,6 +12,7 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { padBounds, unionBounds } from '../../layouts/graph';
 import { CELL_H, CELL_W, drawTape } from '../../layouts/tape';
+import { textWidth } from '../../layouts/text';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { pickLayout } from '../_stage/arrange';
 import { MAX_I, PART_NAMES, PUMPED, pieces, splits, type Parts } from './game';
@@ -47,10 +48,6 @@ const TRY_H = 28;
 const BADGE_W = 112;
 const BADGE_H = 30;
 
-/** Text width, wide enough for CI's DejaVu Sans. */
-const tw = (text: string, size: number, bold = false) =>
-  [...text].length * size * (bold ? 0.66 : 0.62);
-
 interface Item {
   id: string;
   text: string;
@@ -64,7 +61,7 @@ function flow(out: Shape[], items: Item[], x: number, y: number, width: number):
   let cx = x;
   let row = 0;
   for (const it of items) {
-    const w = tw(it.text, it.size, it.bold);
+    const w = textWidth(it.text, it.size, false, it.bold);
     if (cx > x && cx + w > x + width) {
       row++;
       cx = x;
@@ -294,7 +291,7 @@ function layout(
   if (segs.length) {
     const sg = segs[0]!;
     const text = lemma === 'regular' ? `|xy| ≤ p = ${st.p}` : `|vxy| ≤ p = ${st.p}`;
-    const w = tw(text, 12);
+    const w = textWidth(text, 12);
     const mid = x0 + ((sg.a + sg.b) / 2) * CELL_W;
     out.push({
       kind: 'text',
@@ -434,7 +431,8 @@ function layout(
     : st.search
       ? `${st.search.splits} splits · ${st.search.survivors} survive all i`
       : '';
-  const searchFits = stripW + 20 + tw('9999/9999 splits · 9999 survive all i', SMALL) <= width;
+  const searchFits =
+    stripW + 20 + textWidth('9999/9999 splits · 9999 survive all i', SMALL) <= width;
   if (search)
     out.push({
       kind: 'text',
@@ -447,7 +445,9 @@ function layout(
     });
   y += 16 + TRY_H + (searchFits ? 0 : LINE) + GAP;
 
-  // The verdict on the pumped string on show, and who won.
+  // The verdict on the pumped string on show, and who won: beside the badge if the longest fits.
+  const winnerFits =
+    BADGE_W + 14 + textWidth('The adversary wins this game', 15, false, true) <= width;
   if (st.winner && s !== null && st.parts && st.i !== null) {
     const inL = st.tried[st.i] === true;
     const role: MarkRole = inL ? 'found' : 'error';
@@ -479,18 +479,16 @@ function layout(
         : settings.role === 'prove'
           ? 'The adversary wins this game'
           : 'The page wins this game';
-    const fits = BADGE_W + 14 + tw('The adversary wins this game', 15, true) <= width;
     out.push({
       kind: 'text',
       id: 'winner',
-      x: fits ? x0 + BADGE_W + 14 : x0,
-      y: fits ? y + BADGE_H / 2 + 6 : y + BADGE_H + 20,
+      x: winnerFits ? x0 + BADGE_W + 14 : x0,
+      y: winnerFits ? y + BADGE_H / 2 + 6 : y + BADGE_H + 20,
       text: who,
       size: 15,
       weight: 'bold',
     });
   }
-  const winnerFits = BADGE_W + 14 + tw('The adversary wins this game', 15, true) <= width;
   y += BADGE_H + (winnerFits ? 0 : LINE + 4);
 
   const bounds = padBounds(unionBounds({ x: x0, y: 0, w: width, h: y }), 14);

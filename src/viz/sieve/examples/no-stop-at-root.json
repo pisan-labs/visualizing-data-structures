@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "sieve",
+  "id": "no-stop-at-root",
+  "title": "Going past the square root",
+  "notes": "Up to 60, trying every p up to n. Every prime past √60 ≈ 7.7 finds its square past 60 and crosses out nothing: the loop could have stopped at 7.",
+  "settings": {
+    "start": "square",
+    "stop": "all"
+  },
+  "seed": 1,
+  "ops": [["sieve", 60]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

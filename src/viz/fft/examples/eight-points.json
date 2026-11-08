@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "fft",
+  "id": "eight-points",
+  "title": "Eight points, three levels",
+  "notes": "Eight inputs need three levels of butterflies, 12 in all. The size-8 level uses ω = e^(2πi/8), which brings in √2/2 ≈ 0.71.",
+  "settings": {
+    "sign": "clrs"
+  },
+  "seed": 1,
+  "ops": [["fft", "1 1 1 1 0 0 0 0"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

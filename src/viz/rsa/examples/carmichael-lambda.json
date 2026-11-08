@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "rsa",
+  "id": "carmichael-lambda",
+  "title": "λ(n) instead of φ(n)",
+  "notes": "With λ(n) = lcm(60, 52) = 780 instead of φ(n) = 3120, e is still 7 but d shrinks to 223. Decryption still works: m^(ed) ≡ m (mod n) as long as ed ≡ 1 mod λ(n).",
+  "settings": {
+    "phi": "carmichael"
+  },
+  "seed": 1,
+  "ops": [
+    ["keys", 61, 53],
+    ["encrypt", 65],
+    ["decrypt", 1317]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

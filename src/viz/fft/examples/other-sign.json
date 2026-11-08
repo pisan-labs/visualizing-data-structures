@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "fft",
+  "id": "other-sign",
+  "title": "The other sign convention",
+  "notes": "The same [1, 2, 3, 4] with ω = e^(−2πi/n), as numpy uses. The roots go around the other way, so y[1] and y[3] swap: [10, −2+2i, −2, −2−2i].",
+  "settings": {
+    "sign": "numpy"
+  },
+  "seed": 1,
+  "ops": [["fft", "1 2 3 4"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

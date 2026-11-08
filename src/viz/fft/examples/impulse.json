@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "fft",
+  "id": "impulse",
+  "title": "A single 1",
+  "notes": "a = [1, 0, 0, 0] is the polynomial 1, which is 1 at every point: the transform is all ones.",
+  "settings": {
+    "sign": "clrs"
+  },
+  "seed": 1,
+  "ops": [["fft", "1 0 0 0"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

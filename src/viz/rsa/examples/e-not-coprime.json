@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "rsa",
+  "id": "e-not-coprime",
+  "title": "An e that shares a factor with φ(n)",
+  "notes": "e = 15 is refused for φ(n) = 3120: both are multiples of 15, so 15 has no inverse mod 3120, and no d could undo the encryption.",
+  "settings": {
+    "phi": "euler"
+  },
+  "seed": 1,
+  "ops": [
+    ["keys", 61, 53],
+    ["useE", 15]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

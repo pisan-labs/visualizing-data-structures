@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "euclid",
+  "id": "divides-evenly",
+  "title": "One call when b divides a",
+  "notes": "gcd(100, 25): 25 divides 100, so the first remainder is 0 and the next call is the base case.",
+  "settings": {
+    "version": "basic"
+  },
+  "seed": 1,
+  "ops": [["gcd", 100, 25]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

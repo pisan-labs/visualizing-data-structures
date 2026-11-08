@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "reservoir-sampling",
+  "id": "counts-even-out",
+  "title": "Every item equally likely",
+  "notes": "5000 samples of 2 from a stream of 8. Early items face more chances of being replaced, late items fewer chances to get in, and the two effects cancel: each count ends near 5000 · 2/8 = 1250.",
+  "settings": {
+    "k": 2
+  },
+  "seed": 1,
+  "ops": [["trials", 5000]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

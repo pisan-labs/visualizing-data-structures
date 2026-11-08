@@ -24,10 +24,13 @@
  *     opts.route(p, q) the page's own route for an arrow, and optionally its label's place
  *     opts.around      'avoid' routes an arrow blocked by a state around everything in its way
  *                      (src/layouts/route.ts) instead of a fixed bend
+ *     opts.label(ms)   an arrow's own label from the moves drawn along it: a string, or lines
+ *                      (one per move, say), each with an id of its own if the page marks it
  *   labelBeside(seg, text, toward)     where a label goes beside an arrow, clear of it
  *
  * Labels. Each move label sits beside the middle of its arrow, as close as it can be without
- * touching it, on the outside of a curve and above a level arrow. When that spot covers a
+ * touching it, on the outside of a curve and above a level arrow. A label of several lines is
+placed as one block, LINE_H apart. When that spot covers a
  * state, another label, or another arrow (a loop included), it slides along the arrow, moves
  * to the other side or further out, whichever costs least. A loop's label sits just past the
  * loop. Labels are placed for the whole diagram, before `show` picks what is drawn, so they
@@ -37,7 +40,8 @@
  * Shape ids (use them as mark ids): stateId(q) "s-q0" the circle, "s-q0-t" its name,
  * "s-q0-acc" the accept ring, "s-q0-n" the note, "start" the start arrow, moveId(p, q)
  * "m-q0-q1" the arrow (with "-a", "-b", ... for the pieces before the last of a routed arrow)
- * and "m-q0-q1-t" its label.
+ * and "m-q0-q1-t" its label (a label of lines: "m-q0-q1-t", "m-q0-q1-t1", ..., or the ids the
+page gives them).
  *
  * Sizes are in scene units: states have radius 22, layers sit 130 apart and states within a
  * layer 96 apart, so a 6-state diagram is about 760 x 250 across and stays readable on a phone
@@ -70,6 +74,8 @@ export const STATE_R = 22;
 export const LAYER_GAP = 130;
 export const ROW_GAP = 96;
 export const LABEL_SIZE = 15;
+/** The distance between the lines of a label of several lines. */
+export const LINE_H = 18;
 const NOTE_SIZE = 13;
 /** The room left between a label and its arrow. */
 const GAP = 5;
@@ -176,6 +182,19 @@ export interface DrawOptions {
   route?: (p: string, q: string) => ArrowRoute | undefined;
   /** How an arrow blocked by a state gets past it: a fixed bend, or the least curve that clears. */
   around?: 'bend' | 'avoid';
+  /**
+   * The label of an arrow, from the moves drawn along it (in the order the automaton lists
+   * them): one string, or several lines. Left out, the label lists their symbols, "a,b". The
+   * label is placed for all the arrow's moves, so it stays put while a diagram grows. A line
+   * takes the arrow's mark only when it is the label's one line; mark the others by their ids.
+   */
+  label?: (moves: Move[]) => string | LabelLine[];
+}
+
+/** A line of a move label, with the id of its text shape (by default the arrow's "-t", "-t1"...). */
+export interface LabelLine {
+  text: string;
+  id?: string;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -215,6 +234,12 @@ export const labelSize = (text: string, size = LABEL_SIZE): { w: number; h: numb
   h: size,
 });
 
+/** The box a label of these lines takes, the lines LINE_H apart. */
+const blockSize = (lines: readonly LabelLine[]): { w: number; h: number } => ({
+  w: Math.max(0, ...lines.map((l) => labelSize(l.text).w)),
+  h: lines.length ? LABEL_SIZE + (lines.length - 1) * LINE_H : 0,
+});
+
 /** The text's baseline for a label whose box has its middle at y. */
 const baseline = (y: number, size: number) => y + size * 0.3;
 
@@ -233,6 +258,12 @@ export function labelBeside(seg: Seg, text: string, toward: Pt, t = 0.5): Pt {
 const symbolList = (on: string[]) =>
   [...on].sort((x, y) => (x === EPS ? -1 : y === EPS ? 1 : x < y ? -1 : 1)).join(',');
 
+/** An arrow's label as lines: the page's, or its symbols. */
+function labelLines(moves: Move[], o: DrawOptions): LabelLine[] {
+  const l = o.label ? o.label(moves) : symbolList(moves.map((m) => m.on));
+  return typeof l === 'string' ? [{ text: l }] : l;
+}
+
 interface Arrow {
   key: string;
   p: string;
@@ -245,7 +276,9 @@ interface Arrow {
   /** A label place the page chose. */
   label?: Pt;
   /** The label for all its moves. */
-  text: string;
+  lines: LabelLine[];
+  /** Its box. */
+  size: { w: number; h: number };
   pts: Pt[];
   box: Box;
 }
@@ -259,6 +292,8 @@ function sampled(segs: Seg[]): { pts: Pt[]; box: Box } {
     box: { l: Math.min(...xs), r: Math.max(...xs), t: Math.min(...ys), b: Math.max(...ys) },
   };
 }
+
+const withLines = (lines: LabelLine[]) => ({ lines, size: blockSize(lines) });
 
 /** Every arrow's route: the page's, a loop, a straight line, or a curve. */
 function arrowsOf(a: Automaton, layout: StateLayout, o: DrawOptions): Arrow[] {
@@ -352,7 +387,7 @@ function arrowsOf(a: Automaton, layout: StateLayout, o: DrawOptions): Arrow[] {
       segs,
       loop,
       label: given.get(k)?.label,
-      text: symbolList(moves.map((m) => m.on)),
+      ...withLines(labelLines(moves, o)),
       ...sampled(segs),
     });
   }
@@ -374,7 +409,7 @@ interface Candidate {
 
 /** Places along an arrow for its label, the most natural first. */
 function candidates(x: Arrow, pos: Record<string, Pt>): Candidate[] {
-  const { w, h } = labelSize(x.text);
+  const { w, h } = x.size;
   const out: Candidate[] = [];
   if (x.loop) {
     const P = pos[x.p]!;
@@ -475,7 +510,7 @@ function placeLabels(
     start ? start.segs.map((s) => `${pt(s.a)}>${pt(s.b)}`).join('') : '-',
     ...arrows.map(
       (x) =>
-        `${x.key}:${x.text}:${x.segs.map((s) => `${pt(s.a)}${s.via ? `~${pt(s.via)}` : ''}>${pt(s.b)}`).join('|')}${x.label ? `@${pt(x.label)}` : ''}`,
+        `${x.key}:${x.lines.map((l) => l.text).join('\n')}:${x.segs.map((s) => `${pt(s.a)}${s.via ? `~${pt(s.via)}` : ''}>${pt(s.b)}`).join('|')}${x.label ? `@${pt(x.label)}` : ''}`,
     ),
   ].join(';');
   const hit = labelCache.get(key);
@@ -487,16 +522,17 @@ function placeLabels(
   for (const x of arrows)
     if (x.label) {
       out.set(x.key, x.label);
-      placed.push(boxAt(x.label, labelSize(x.text).w, labelSize(x.text).h));
+      placed.push(boxAt(x.label, x.size.w, x.size.h));
     }
-  // Long labels first: they have fewer places that fit.
+  // Large labels first: they have fewer places that fit.
+  const area = (x: Arrow) => x.size.w * x.size.h;
   const order = arrows
     .filter((x) => !x.label)
     .map((x, i) => ({ x, i }))
-    .sort((m, n) => n.x.text.length - m.x.text.length || m.i - n.i)
+    .sort((m, n) => area(n.x) - area(m.x) || m.i - n.i)
     .map(({ x }) => x);
   for (const x of order) {
-    const { w, h } = labelSize(x.text);
+    const { w, h } = x.size;
     const best = cheapest(candidates(x, pos), w, h, (b) =>
       conflicts(b, x, obstacles, states, placed),
     );
@@ -547,7 +583,7 @@ export function drawAutomaton(
           q: a.start,
           moves: [],
           segs: [startSeg],
-          text: '',
+          ...withLines([]),
           ...sampled([startSeg]),
         };
   const labels = placeLabels(arrows, pos, start);
@@ -584,22 +620,26 @@ export function drawAutomaton(
       });
     });
     for (const p of x.pts) grow(p, 2);
-    const text = symbolList(moves.map((m) => m.on));
+    const lines = moves.length === x.moves.length ? x.lines : labelLines(moves, o);
     const c = labels.get(x.key)!;
-    shapes.push({
-      kind: 'text',
-      id: `${id}-t`,
-      x: c.x,
-      y: baseline(c.y, LABEL_SIZE),
-      text,
-      size: LABEL_SIZE,
-      anchor: 'middle',
-      mono: true,
-      cls: 'label',
-      role: roles.get(`${id}-t`) ?? role,
-      opacity,
+    lines.forEach((l, k) => {
+      const lid = l.id ?? `${id}-t${k ? k : ''}`;
+      const y = c.y + (k - (lines.length - 1) / 2) * LINE_H;
+      shapes.push({
+        kind: 'text',
+        id: lid,
+        x: c.x,
+        y: baseline(y, LABEL_SIZE),
+        text: l.text,
+        size: LABEL_SIZE,
+        anchor: 'middle',
+        mono: true,
+        cls: 'label',
+        role: roles.get(lid) ?? (lines.length === 1 ? role : undefined),
+        opacity,
+      });
     });
-    const { w, h } = labelSize(text);
+    const { w, h } = blockSize(lines);
     grow(c, w / 2 + 2, h / 2 + 1);
   }
 
@@ -618,9 +658,7 @@ export function drawAutomaton(
   }
 
   // Notes, on the freest side of their state, clear of every label of the whole diagram.
-  const allLabels = arrows.map((x) =>
-    boxAt(labels.get(x.key)!, labelSize(x.text).w, labelSize(x.text).h),
-  );
+  const allLabels = arrows.map((x) => boxAt(labels.get(x.key)!, x.size.w, x.size.h));
   const notes: Box[] = [];
   const statePts = a.states.map((q) => pos[q]!);
   const obstacles = start ? [...arrows, start] : arrows;

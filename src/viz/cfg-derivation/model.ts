@@ -103,7 +103,7 @@ export function levelSentence(g: Grammar): string {
   if (c.level === 'regular')
     return 'Every rule is right-linear (A → wB or A → w, w all terminals), so the language is regular.';
   const miss = c.misses[0]!;
-  return `${miss.rule} is not right-linear (${miss.why}), so this is a context-free grammar.`;
+  return `${miss.rule} is not right-linear: ${miss.why}. So this is a context-free grammar.`;
 }
 
 const load: Op = {

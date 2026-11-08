@@ -142,7 +142,10 @@ describe('the Chomsky hierarchy', () => {
   it('says which rule rules out each lower level', () => {
     const c = level('S -> aSb | ab');
     expect(c.misses[0]).toMatchObject({ level: 'regular', rule: 'S → aSb' });
-    expect(c.misses[0]!.why).toContain('terminal comes after the variable');
+    expect(c.misses[0]!.why).toBe(
+      'b comes after the variable S, and a right-linear rule ends with its variable',
+    );
+    expect(c.misses[0]!.short).toBe('b after S');
     const cs = level('S -> aSBc | abc; cB -> Bc; bB -> bb');
     expect(cs.misses.map((m) => m.level)).toEqual(['regular', 'context-free']);
     expect(cs.misses[1]!.rule).toBe('cB → Bc');

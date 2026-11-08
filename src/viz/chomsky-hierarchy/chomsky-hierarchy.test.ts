@@ -7,6 +7,7 @@ import { textWidth } from '../../layouts/text';
 import type { Bounds, RectShape, Shape } from '../../render/scene';
 import {
   LEVELS,
+  checkLevels,
   classify,
   isVariable,
   parseGrammar,
@@ -17,7 +18,7 @@ import {
 } from '../_grammar/grammar';
 import { chomskyHierarchy, driverGrammar, parseInput } from '.';
 import { LANGUAGES, findLanguage } from './languages';
-import { LEVEL_REGION, REGIONS, checkLevels, inside, type RegionId } from './levels';
+import { LEVEL_REGION, REGIONS, inside, type RegionId } from './levels';
 import { defaults, regionId, tokenId, type ChSettings } from './model';
 import { randomGrammar } from './practice';
 import { LAPTOP_STAGE, PHONE_STAGE, TYPICAL_STAGES } from '../../render/stage';
@@ -96,24 +97,6 @@ function allWords(letters: string, n: number): string[] {
 }
 
 describe('chomsky-hierarchy: classifying grammars', () => {
-  it('agrees with the shared classify() on random grammars, level and missed rule alike', () => {
-    fc.assert(
-      fc.property(grammarArb, (g) => {
-        const mine = checkLevels(g.start, g.rules);
-        const shared = classify(g);
-        expect(mine.level).toBe(shared.level);
-        const misses = mine.checks.filter((c) => c.miss >= 0);
-        expect(misses.map((c) => c.level)).toEqual(shared.misses.map((m) => m.level));
-        misses.forEach((c, k) => {
-          const p = g.rules[c.miss]!;
-          const shown = `${p.lhs.join('')} → ${p.rhs.length ? p.rhs.join('') : 'ε'}`;
-          expect(shown).toBe(shared.misses[k]!.rule);
-        });
-      }),
-      { numRuns: 400 },
-    );
-  });
-
   it('never moves a grammar inward when a rule is added', () => {
     fc.assert(
       fc.property(grammarArb, productionArb, (g, extra) => {

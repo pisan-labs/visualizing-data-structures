@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { EPS, type Automaton } from './automaton';
-import { formatAutomaton, parseAutomaton, parseWord } from './parse';
+import { formatAutomaton, parseAutomaton, parseAutomatonPair, parseWord } from './parse';
 
 describe('automaton text', () => {
   it('reads moves, the start and the accept states', () => {
@@ -52,5 +52,29 @@ describe('automaton text', () => {
     expect(parseWord('a b a', a)).toBe('aba');
     expect(parseWord('ε', a)).toBe('');
     expect((parseWord('abc', a) as Error).message).toMatch(/"c" is not in the alphabet/);
+  });
+});
+
+describe('two machines', () => {
+  const pair = (t: string, check?: (m: Automaton, name: 'A' | 'B') => string | null) =>
+    parseAutomatonPair(t, { example: '"q0 a -> q1 | p0 b -> p1"', need: 'Both, please.', check });
+
+  it('reads A | B into two automata', () => {
+    const [a, b] = pair('q0 a -> q1; accept q1 | p0 b -> p1') as [Automaton, Automaton];
+    expect(a.accept).toEqual(['q1']);
+    expect(b.start).toBe('p0');
+  });
+
+  it('names the machine an error is in, and checks A before reading B', () => {
+    expect((pair('') as Error).message).toMatch(/^Type two machines separated by \|/);
+    expect((pair('q0 a -> q1') as Error).message).toMatch(
+      /with a \| between them.*Both, please\.$/,
+    );
+    expect((pair('q0 a -> q1 | | q0 a -> q1') as Error).message).toMatch(/there are 3 here/);
+    expect((pair('q0 a -> q1 | ') as Error).message).toMatch(/^Machine B is empty/);
+    expect((pair('q0 a -> q1 | q0 ab -> q1') as Error).message).toMatch(/^In machine B: "ab"/);
+    expect((pair('q0 a -> q1 | q0 ab -> q1', (_m, n) => `${n} is wrong`) as Error).message).toBe(
+      'A is wrong',
+    );
   });
 });

@@ -21,6 +21,7 @@ import { fitScore, padBounds, unionBounds } from '../../layouts/graph';
 import { textWidth, wrapText } from '../../layouts/text';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { BUTTONS_DROP, drawRules, ruleRows } from '../_grammar/draw';
+import { productionText } from '../_grammar/grammar';
 import { LANGUAGE, type LangId } from './languages';
 import {
   FORM,
@@ -29,7 +30,6 @@ import {
   NAME,
   SHORT_MACHINE,
   TYPE,
-  productionText,
   regionTitle,
   shownRegion,
   visibleRegions,

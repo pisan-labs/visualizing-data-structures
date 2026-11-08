@@ -18,6 +18,9 @@
  *   formatAutomaton(a)   -> text; parseAutomaton(formatAutomaton(a)) equals a. It has an
  *                           `alphabet` item only when some symbol is on no move.
  *   parseWord(text, a)   -> the input word, or an Error naming a symbol not in the alphabet
+ *   parseAutomatonPair(text, o) -> two machines typed as "A | B", or an Error that names the
+ *                           machine ("In machine B: ..."); o.check(m, name) adds a page's own
+ *                           test of each machine, such as being a DFA
  */
 import {
   EPS,
@@ -33,6 +36,9 @@ import {
 } from './automaton';
 
 export const MAX_WORD = 16;
+
+/** What separates the two machines of a pair. */
+export const PAIR_SEPARATOR = '|';
 
 export function parseAutomaton(raw: string): Automaton | Error {
   const items = raw
@@ -113,6 +119,41 @@ export function parseAutomaton(raw: string): Automaton | Error {
     return new Error(`Use at most ${MAX_SYMBOLS} different symbols.`);
   if (a.moves.length > MAX_MOVES) return new Error(`Use at most ${MAX_MOVES} moves.`);
   return a;
+}
+
+export interface PairOptions {
+  /** An input to show in an error, quoted, such as "p0 a -> p1; accept p1 | q0 b -> q1". */
+  example: string;
+  /** Why both are needed, said when one is missing ("The product needs both."). */
+  need?: string;
+  /** Why a machine will not do, or null; checked as each machine is read, A first. */
+  check?: (m: Automaton, name: 'A' | 'B') => string | null;
+}
+
+export function parseAutomatonPair(raw: string, o: PairOptions): [Automaton, Automaton] | Error {
+  const t = raw.trim();
+  const sep = PAIR_SEPARATOR;
+  if (!t) return new Error(`Type two machines separated by ${sep}, such as ${o.example}.`);
+  const parts = t.split(sep).map((x) => x.trim());
+  if (parts.length < 2)
+    return new Error(
+      `Type two machines, A and B, with a ${sep} between them, such as ${o.example}.${o.need ? ` ${o.need}` : ''}`,
+    );
+  if (parts.length > 2)
+    return new Error(
+      `Type exactly two machines, with one ${sep} between them: there are ${parts.length} here.`,
+    );
+  const got: Automaton[] = [];
+  for (const [i, part] of parts.entries()) {
+    const name = i === 0 ? 'A' : 'B';
+    if (!part) return new Error(`Machine ${name} is empty. Type its moves, such as "q0 a -> q1".`);
+    const m = parseAutomaton(part);
+    if (m instanceof Error) return new Error(`In machine ${name}: ${m.message}`);
+    const why = o.check?.(m, name);
+    if (why) return new Error(why);
+    got.push(m);
+  }
+  return got as [Automaton, Automaton];
 }
 
 export function formatAutomaton(a: Automaton): string {

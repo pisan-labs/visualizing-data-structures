@@ -16,7 +16,7 @@
 import type { Mark, OpSpec, PseudoBlock, Scalar, Step } from '../../engine/types';
 import { moveId, stateId } from '../../layouts/automaton';
 import { setText, type Automaton, type Move } from '../_automata/automaton';
-import { parseAutomaton, parseWord } from '../_automata/parse';
+import { PAIR_SEPARATOR, parseAutomatonPair, parseWord } from '../_automata/parse';
 import {
   describeMachine,
   looksLikeMachine,
@@ -115,7 +115,7 @@ export const rowCell = (pair: string, col: string) => `tbl-${pair}-${col}`;
 // ---------------------------------------------------------------------------------------------
 // Reading two machines
 
-export const SEPARATOR = '|';
+export const SEPARATOR = PAIR_SEPARATOR;
 
 export interface Loaded {
   a: Automaton;
@@ -130,31 +130,18 @@ const EXAMPLE = '"p0 a -> p1; accept p1 | q0 b -> q1; accept q1"';
 
 /** "A | B" -> two DFAs over one alphabet, or an Error that names the machine and the item. */
 export function parseMachines(raw: string): Loaded | Error {
-  const t = raw.trim();
-  if (!t) return new Error(`Type two machines separated by |, such as ${EXAMPLE}.`);
-  const parts = t.split(SEPARATOR).map((x) => x.trim());
-  if (parts.length < 2)
-    return new Error(
-      `Type two machines, A and B, with a | between them, such as ${EXAMPLE}. The product needs both.`,
-    );
-  if (parts.length > 2)
-    return new Error(
-      `Type exactly two machines, with one | between them: there are ${parts.length} here.`,
-    );
-  const got: Automaton[] = [];
-  for (const [i, part] of parts.entries()) {
-    const name = i === 0 ? 'A' : 'B';
-    if (!part) return new Error(`Machine ${name} is empty. Type its moves, such as "q0 a -> q1".`);
-    const m = parseAutomaton(part);
-    if (m instanceof Error) return new Error(`In machine ${name}: ${m.message}`);
-    const why = whyNotDfa(m);
-    if (why)
-      return new Error(
-        `Machine ${name} is not a DFA: ${why}. The NFA to DFA page turns an NFA into a DFA first.`,
-      );
-    got.push(m);
-  }
-  const [a0, b0] = got as [Automaton, Automaton];
+  const got = parseAutomatonPair(raw, {
+    example: EXAMPLE,
+    need: 'The product needs both.',
+    check: (m, name) => {
+      const why = whyNotDfa(m);
+      return why
+        ? `Machine ${name} is not a DFA: ${why}. The NFA to DFA page turns an NFA into a DFA first.`
+        : null;
+    },
+  });
+  if (got instanceof Error) return got;
+  const [a0, b0] = got;
   const [a, b] = align(a0, b0);
   for (const [name, m] of [
     ['A', a],

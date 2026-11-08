@@ -21,18 +21,9 @@ import {
 } from '../../layouts/automaton';
 import { CELL_H, drawTape } from '../../layouts/tape';
 import type { Bounds, CircleShape, Shape } from '../../render/scene';
-import type { Automaton, Move } from '../_automata/automaton';
+import type { Move } from '../_automata/automaton';
 import { kindName, writes, type Kind, type Machine } from './machine';
 import { outputId } from './model';
-
-/** The automaton drawAutomaton draws: a Mealy move's "symbol" is its label, c/o. */
-export function drawnFa(m: Machine): Automaton {
-  if (m.kind === 'moore') return m.fa;
-  return {
-    ...m.fa,
-    moves: m.fa.moves.map((mv) => ({ ...mv, on: `${mv.on}/${writes(m, mv.from, mv.on)}` })),
-  };
-}
 
 const nameSize = (q: string) =>
   q.length <= 2 ? 14 : q.length === 3 ? 13 : q.length === 4 ? 12 : 10;
@@ -43,13 +34,19 @@ export function drawMachine(
   layout: StateLayout,
   o: DrawOptions = {},
 ): { shapes: Shape[]; bounds: Bounds } {
-  const pick = o.show?.move;
-  const show = o.show && {
-    ...o.show,
-    move: pick && ((mv: Move) => pick({ ...mv, on: mv.on.split('/')[0]! })),
-  };
-  const d = drawAutomaton(drawnFa(m), layout, { ...o, show });
-  if (m.kind === 'mealy') return d;
+  const mealy = m.kind === 'mealy';
+  const d = drawAutomaton(m.fa, layout, {
+    ...o,
+    // A Mealy move is labeled c/o: the symbol read and what the machine writes.
+    label: mealy
+      ? (ms: Move[]) =>
+          [...ms]
+            .sort((x, y) => (x.on < y.on ? -1 : 1))
+            .map((mv) => `${mv.on}/${writes(m, mv.from, mv.on)}`)
+            .join(',')
+      : undefined,
+  });
+  if (mealy) return d;
   const pre = o.prefix ?? '';
   const roles = o.roles ?? new Map<string, MarkRole>();
   const circles = new Map<string, CircleShape>();

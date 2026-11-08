@@ -191,4 +191,11 @@ describe('regular expressions', () => {
     expect((parseRegex('a[b]') as Error).message).toMatch(/not allowed/);
     expect(showRegex(parseRegex('(a|b)*abb') as Regex)).toBe('(a|b)*abb');
   });
+
+  it('takes 40 characters unless told otherwise', () => {
+    const long = '(a|b)'.repeat(11);
+    expect((parseRegex(long) as Error).message).toMatch(/40 characters or fewer/);
+    expect((parseRegex(long, { max: 50 }) as Error).message).toMatch(/50 characters or fewer/);
+    expect(showRegex(parseRegex(long, { max: Infinity }) as Regex)).toBe(long);
+  });
 });

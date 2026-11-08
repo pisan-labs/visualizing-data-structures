@@ -1,6 +1,15 @@
 import type { Mark, MarkRole, OpSpec, PseudoBlock, Scalar, Step } from '../../engine/types';
 import { ruleShapeId } from '../_grammar/draw';
-import { isVariable, parseRules, type Level, type Production, type Sym } from '../_grammar/grammar';
+import {
+  checkLevels,
+  isVariable,
+  parseRules,
+  productionText,
+  type GrammarLevel,
+  type Level,
+  type Production,
+  type Sym,
+} from '../_grammar/grammar';
 import {
   LANGUAGE,
   LANGUAGE_KEYS,
@@ -12,14 +21,11 @@ import {
 import {
   LEVEL_FORM,
   LEVEL_REGION,
-  checkLevels,
   grammarWord,
   levelWord,
-  productionText,
   regionTitle,
   shownOut,
   shownRegion,
-  type GrammarLevel,
   type MapSettings,
   type RegionId,
 } from './levels';

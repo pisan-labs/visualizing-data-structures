@@ -21,6 +21,8 @@
  *                              by variable
  *   parseWord(text, g?)     -> the word's symbols, or an Error naming a symbol that is wrong
  *   classify(rules)         -> regular, context-free, context-sensitive or unrestricted, and why
+ *   checkLevels(start, rules) -> the same, level by level: the first rule that breaks each
+ *                              level tried; ruleMiss(level, rule, ...) why one rule breaks it
  *   minLengths(g)           -> the shortest word each variable derives (Infinity: none)
  *   searchDerivation(g, w, mode) -> a breadth-first search for a leftmost or rightmost
  *                              derivation, optionally for two (ambiguity), with a cap
@@ -249,15 +251,120 @@ export type Level = 'regular' | 'context-free' | 'context-sensitive' | 'unrestri
 
 export const LEVELS: Level[] = ['regular', 'context-free', 'context-sensitive', 'unrestricted'];
 
+const sideText = (syms: readonly Sym[]) => (syms.length ? syms.join('') : EPS);
+/** A rule as text: "aB → b", "S → ε". */
+export const productionText = (p: Production) => `${sideText(p.lhs)} → ${sideText(p.rhs)}`;
+
+export interface RuleMiss {
+  /** A sentence: why the rule does not fit the level's form. */
+  why: string;
+  /** A few words, for the panel. */
+  short: string;
+}
+
+const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
+
+/**
+ * Why rule p does not fit a level's form, or null when it fits. `start` is the start variable and
+ * `startOnRight` whether it appears on any right side (for S → ε in a context-sensitive grammar).
+ */
+export function ruleMiss(
+  level: Level,
+  p: Production,
+  start: Sym,
+  startOnRight: boolean,
+): RuleMiss | null {
+  const oneVariable = p.lhs.length === 1 && isVariable(p.lhs[0]!);
+  const left = sideText(p.lhs);
+  if (level === 'regular' || level === 'context-free') {
+    if (!oneVariable) {
+      return {
+        why: `its left side, ${left}, is ${plural(p.lhs.length, 'symbol')}, and a ${level} rule has one variable there`,
+        short: `${plural(p.lhs.length, 'symbol')} on the left`,
+      };
+    }
+    if (level === 'context-free') return null;
+    const vars = p.rhs.filter(isVariable);
+    if (vars.length > 1) {
+      return {
+        why: `it has ${vars.length} variables on the right (${vars.join(', ')}), and a right-linear rule has at most one`,
+        short: `${vars.length} variables on the right`,
+      };
+    }
+    if (vars.length === 1 && !isVariable(p.rhs.at(-1)!)) {
+      const v = vars[0]!;
+      const after = p.rhs.slice(p.rhs.indexOf(v) + 1).join('');
+      return {
+        why: `${after} comes after the variable ${v}, and a right-linear rule ends with its variable`,
+        short: `${after} after ${v}`,
+      };
+    }
+    return null;
+  }
+  if (level === 'context-sensitive') {
+    if (p.rhs.length >= p.lhs.length) return null;
+    const startEps = p.rhs.length === 0 && p.lhs.length === 1 && p.lhs[0] === start;
+    if (startEps && !startOnRight) return null;
+    if (startEps) {
+      return {
+        why: `${start} → ε is allowed only when ${start} is on no right side, and ${start} is on one`,
+        short: `${start} → ε with ${start} on a right side`,
+      };
+    }
+    return {
+      why: `its right side is shorter than its left (${plural(p.rhs.length, 'symbol')} against ${p.lhs.length}), so it shrinks the string`,
+      short: `shrinks ${p.lhs.length} symbols to ${p.rhs.length}`,
+    };
+  }
+  return null;
+}
+
+export interface LevelCheck {
+  level: Level;
+  /** The first rule (an index) that does not fit this level's form, or -1 when all fit. */
+  miss: number;
+  why: string;
+  short: string;
+}
+
+export interface GrammarLevel {
+  /** The most restrictive level whose form every rule fits. */
+  level: Level;
+  /** One check per level tried, from regular out; every one but the last has a miss. */
+  checks: LevelCheck[];
+}
+
+/** Whether the start variable appears on a right side. */
+export const startOnRight = (start: Sym, rules: readonly Production[]) =>
+  rules.some((p) => p.rhs.includes(start));
+
+/**
+ * Check the rules level by level from the most restrictive, and stop at the first level whose
+ * form every rule fits.
+ */
+export function checkLevels(start: Sym, rules: readonly Production[]): GrammarLevel {
+  const onRight = startOnRight(start, rules);
+  const checks: LevelCheck[] = [];
+  for (const level of LEVELS) {
+    const at = rules.findIndex((p) => ruleMiss(level, p, start, onRight));
+    const m = at >= 0 ? ruleMiss(level, rules[at]!, start, onRight)! : null;
+    checks.push({ level, miss: at, why: m?.why ?? '', short: m?.short ?? '' });
+    if (at < 0) return { level, checks };
+  }
+  // Unrestricted fits every rule, so the loop always returns.
+  return { level: 'unrestricted', checks };
+}
+
 export interface Classification {
   /** The most restrictive level whose form every rule fits. */
   level: Level;
-  /** For each more restrictive level, the first rule that does not fit it, and why. */
-  misses: { level: Level; rule: string; why: string }[];
+  /**
+   * For each more restrictive level, the first rule that does not fit it, and why: `why` as a
+   * clause ("its left side, cB, is 2 symbols, and a context-free rule has one variable there"),
+   * `short` in a few words ("2 symbols on the left").
+   */
+  misses: { level: Level; rule: string; why: string; short: string }[];
 }
-
-const productionText = (p: Production) =>
-  `${p.lhs.join('')} → ${p.rhs.length ? p.rhs.join('') : EPS}`;
 
 /**
  * The level of the Chomsky hierarchy a grammar's rules fit:
@@ -270,38 +377,16 @@ const productionText = (p: Production) =>
  * ε-rules is not non-contracting), so the levels are checked from the most restrictive up.
  */
 export function classify(g: { start: Sym; rules: Production[] }): Classification {
-  const misses: Classification['misses'] = [];
-  const first = (level: Level, why: (p: Production) => string | null): boolean => {
-    for (const p of g.rules) {
-      const w = why(p);
-      if (w) {
-        misses.push({ level, rule: productionText(p), why: w });
-        return false;
-      }
-    }
-    return true;
-  };
-  const oneVar = (p: Production) =>
-    p.lhs.length === 1 && isVariable(p.lhs[0]!) ? null : 'more than one variable on the left';
-  const regular = first('regular', (p) => {
-    const o = oneVar(p);
-    if (o) return o;
-    const vars = p.rhs.filter(isVariable).length;
-    if (vars > 1) return 'more than one variable on the right';
-    if (vars === 1 && !isVariable(p.rhs.at(-1)!)) return 'a terminal comes after the variable';
-    return null;
-  });
-  if (regular) return { level: 'regular', misses };
-  if (first('context-free', oneVar)) return { level: 'context-free', misses };
-  const startOnRight = g.rules.some((p) => p.rhs.includes(g.start));
-  const cs = first('context-sensitive', (p) => {
-    if (p.rhs.length >= p.lhs.length) return null;
-    const startEps = p.rhs.length === 0 && p.lhs.length === 1 && p.lhs[0] === g.start;
-    if (startEps && !startOnRight) return null;
-    if (startEps) return 'S → ε is allowed only when S appears on no right side';
-    return 'the right side is shorter than the left';
-  });
-  return { level: cs ? 'context-sensitive' : 'unrestricted', misses };
+  const { level, checks } = checkLevels(g.start, g.rules);
+  const misses = checks
+    .filter((c) => c.miss >= 0)
+    .map((c) => ({
+      level: c.level,
+      rule: productionText(g.rules[c.miss]!),
+      why: c.why,
+      short: c.short,
+    }));
+  return { level, misses };
 }
 
 // ---------------------------------------------------------------------------------------------

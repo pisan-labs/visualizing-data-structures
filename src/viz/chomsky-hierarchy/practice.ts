@@ -1,9 +1,16 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
-import { LEVELS, parseRules, type Level } from '../_grammar/grammar';
+import {
+  LEVELS,
+  parseRules,
+  productionText,
+  ruleMiss,
+  startOnRight,
+  type Level,
+} from '../_grammar/grammar';
 import { LANGUAGE, LANGUAGES, TOOL_TEXT, type LangId, type Tool } from './languages';
-import { NAME, productionText, ruleMiss, startOnRight, type RegionId } from './levels';
+import { NAME, type RegionId } from './levels';
 import { defaults, regionId, type ChExtra, type ChSettings, type ChState } from './model';
 
 type Def = VizDef<ChState, ChSettings, ChExtra>;

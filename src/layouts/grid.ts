@@ -18,8 +18,11 @@
  *     that stays (frontier, closed, path), and `dim` to fade it.
  *   - `arrows`: short arrows between neighbouring cells (8 directions), across their shared
  *     edge or corner, clear of the middle text: parent pointers, or the steps of a path.
- *   - `colNames`, `rowNames`: the header labels. Default A, B, C... and 1, 2, 3...
- *   - `roles`: the step's marks by shape id. A mark beats the role from `cell`.
+ *   - `colNames`, `rowNames`: the header labels. Default A, B, C... and 1, 2, 3... An empty
+ *     name draws no label.
+ *   - `roles`: the step's marks by shape id (with the prefix). A mark beats the role from `cell`.
+ *   - `prefix`: put in front of every shape id, so two grids, or a grid and other shapes, can
+ *     share a scene. Default none.
  *
  * Shape ids (use them as mark ids):
  * - `cell-<r>-<c>`: a cell. Marking it colors its box and its middle text (`cell-<r>-<c>-t`)
@@ -27,6 +30,8 @@
  * - `wall-<r>-<c>-<k>`: the hatch lines of a wall, k = 0, 1, 2.
  * - `<arrow id>`: an arrow, with the id the page gave it.
  * - `gcol-<c>`, `grow-<r>`: the header labels.
+ *
+ * With a `prefix`, every id above starts with it, arrows included: `cellShapeId(r, c, prefix)`.
  *
  * Sizes are in scene units. A 10 x 14 grid of 40-unit cells is 600 units wide with its
  * headers, so a phone in portrait (about 362 px of drawing) shows the middle text near 10 px
@@ -79,6 +84,8 @@ export interface GridContent {
   colNames?: readonly string[];
   rowNames?: readonly string[];
   roles?: ReadonlyMap<string, MarkRole>;
+  /** Put in front of every shape id. Default none. */
+  prefix?: string;
 }
 
 export interface GridGeometry {
@@ -102,7 +109,7 @@ const PAD = 10;
 /** Room for the column letters above the grid and the row numbers left of it. */
 const HEAD = 26;
 
-export const cellShapeId = (r: number, c: number) => `cell-${r}-${c}`;
+export const cellShapeId = (r: number, c: number, prefix = '') => `${prefix}cell-${r}-${c}`;
 
 /** A, B, ... Z, then AA, AB... */
 export function columnName(c: number): string {
@@ -178,14 +185,17 @@ export function gridScene(
   const shapes: Shape[] = [];
   const cell = g.cell;
   const small = Math.max(10, Math.round(cell * 0.28));
+  const pre = content.prefix ?? '';
 
   for (let c = 0; c < frame.cols; c++) {
+    const text = content.colNames?.[c] ?? columnName(c);
+    if (text === '') continue;
     shapes.push({
       kind: 'text',
-      id: `gcol-${c}`,
+      id: `${pre}gcol-${c}`,
       x: g.cx(c),
       y: g.gridTop - 8,
-      text: content.colNames?.[c] ?? columnName(c),
+      text,
       size: 13,
       anchor: 'middle',
       cls: 'index',
@@ -193,12 +203,14 @@ export function gridScene(
     });
   }
   for (let r = 0; r < frame.rows; r++) {
+    const text = content.rowNames?.[r] ?? String(r + 1);
+    if (text === '') continue;
     shapes.push({
       kind: 'text',
-      id: `grow-${r}`,
+      id: `${pre}grow-${r}`,
       x: g.gridLeft - 8,
       y: g.cy(r) + 4.5,
-      text: content.rowNames?.[r] ?? String(r + 1),
+      text,
       size: 13,
       anchor: 'end',
       cls: 'index',
@@ -208,7 +220,7 @@ export function gridScene(
 
   for (let r = 0; r < frame.rows; r++) {
     for (let c = 0; c < frame.cols; c++) {
-      const id = cellShapeId(r, c);
+      const id = cellShapeId(r, c, pre);
       const x = g.left(c);
       const y = g.top(r);
       if (content.wall(r, c)) {
@@ -222,7 +234,7 @@ export function gridScene(
         lines.forEach(([x1, y1, x2, y2], k) =>
           shapes.push({
             kind: 'arrow',
-            id: `wall-${r}-${c}-${k}`,
+            id: `${pre}wall-${r}-${c}-${k}`,
             x1,
             y1,
             x2,
@@ -296,11 +308,12 @@ export function gridScene(
   }
 
   for (const a of content.arrows ?? []) {
+    const id = `${pre}${a.id}`;
     shapes.push({
       kind: 'arrow',
-      id: a.id,
+      id,
       ...arrowEnds(g, a.from, a.to),
-      role: roles.get(a.id) ?? a.role,
+      role: roles.get(id) ?? a.role,
       dashed: a.dashed,
       z: 3,
     });

@@ -1,5 +1,4 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
-import { prefixIds } from '../../layouts/align';
 import { pickLayout, translate } from '../../layouts/arrange';
 import { fitScore } from '../../layouts/graph';
 import { gridScene } from '../../layouts/grid';
@@ -169,11 +168,12 @@ function oneGrid(
   const lit = new Set(run.lit.filter((c) => c[0] === s).map((c) => `${c[1]},${c[2]}`));
   const found = run.found && run.found[0] === s ? `${run.found[1]},${run.found[2]}` : null;
   const pre = frame.sliceNames ? `s${s}-` : '';
-  // gridScene looks marks up by its own ids: strip this slice's prefix.
-  const local = new Map<string, MarkRole>();
-  for (const [id, role] of roles) if (id.startsWith(pre)) local.set(id.slice(pre.length), role);
   const valueSize = Math.min(15, Math.round(cell * 0.46));
-  const { shapes, bounds, geometry } = gridScene(
+  const {
+    shapes: out,
+    bounds,
+    geometry,
+  } = gridScene(
     { rows: frame.rows, cols: frame.cols, cell },
     {
       wall: () => false,
@@ -187,14 +187,14 @@ function oneGrid(
       },
       rowNames: frame.rowNames,
       colNames: frame.colNames,
-      roles: local,
+      roles,
+      prefix: pre,
     },
   );
-  const out = shapes.filter((x) => !(x.kind === 'text' && x.text === ''));
   if (frame.corner) {
     out.push({
       kind: 'text',
-      id: 'corner',
+      id: `${pre}corner`,
       x: geometry.gridLeft - 7,
       y: geometry.gridTop - 8,
       text: frame.corner,
@@ -208,7 +208,7 @@ function oneGrid(
   if (frame.caption) {
     out.push({
       kind: 'text',
-      id: 'caption',
+      id: `${pre}caption`,
       x: geometry.gridLeft,
       y: geometry.gridBottom + 26,
       text: frame.caption,
@@ -218,7 +218,7 @@ function oneGrid(
     });
     h += 30;
   }
-  return { shapes: pre ? prefixIds(out, pre) : out, w: bounds.w, h };
+  return { shapes: out, w: bounds.w, h };
 }
 
 const TITLE = 22;

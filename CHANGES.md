@@ -241,3 +241,5 @@
 2026-11-08 [code] Merged loop-counting (wave 6): 11 loop patterns lit cell by cell, the exact T(n) checked against the run and simplified to Big-O, Grow reads the doubling ratios; opens on the triangle
 
 2026-11-08 [code] Merged big-o-definition (wave 6): f against c*g with c and n0 as handles, the smallest n0 for a c, O, Omega and Theta, the limit test; exact checks over the named range, hand-worked algebra for the menu pairs past it
+
+2026-11-08 [code] Merged amortized-analysis (wave 6): dynamic array (x2, x1.5, +4) and binary counter by aggregate, accounting (coins, the moment the bank goes short) and potential; opens on 16 appends with coins; the dynamic array page links to it

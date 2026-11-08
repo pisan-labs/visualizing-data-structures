@@ -24,7 +24,7 @@ That copy is O(n). So is append O(n)?
 
 Most appends don't copy anything. Start with one slot and append 16 values. The copies happen on the 2nd, 3rd, 5th and 9th appends, and they copy 1, 2, 4 and 8 items. That is 15 copies for 16 appends. In general the copies add up to 1 + 2 + 4 + ..., a sum that always stays below 2n for n appends. Fewer than 2 copies per append, however long you keep going.
 
-This is amortized analysis: a few expensive operations, paid for by lots of cheap ones. The **copies/append** variable keeps the running average. Watch it in [sixteen appends, under two copies each](#example:amortized). It jumps every time the array doubles, sinks back, and never reaches 2.
+This is amortized analysis: a few expensive operations, paid for by lots of cheap ones. The **copies/append** variable keeps the running average. Watch it in [sixteen appends, under two copies each](#example:amortized). It jumps every time the array doubles, sinks back, and never reaches 2. [Amortized analysis](/amortized-analysis/) works this out three ways, with coins in a bank and with a potential.
 
 ```check
 Q: An array starts with 1 slot and doubles when full. How many values have been copied after 9 appends?

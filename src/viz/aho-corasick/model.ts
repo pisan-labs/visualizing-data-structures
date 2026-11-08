@@ -82,7 +82,7 @@ export interface AcExtra {
 export type AcStep = Step<AcState, AcExtra>;
 type Op = OpSpec<AcState, AcSettings, AcExtra>;
 
-export const ROOT = 0;
+export const ROOT: number = 0;
 export const failId = (u: number) => `fail-${u}`;
 export const dictId = (u: number) => `dict-${u}`;
 export const textId = (i: number) => `t-${i}`;

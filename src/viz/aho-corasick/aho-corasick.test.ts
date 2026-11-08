@@ -8,8 +8,8 @@ import { smallestText } from '../../render/text-size';
 import { ahoCorasick } from '.';
 import { PATTERN_SETS, ROOT, spell, type AcSettings, type PatternSet } from './model';
 
-const run = (ops: OpCall[], s: Partial<AcSettings> = {}) =>
-  new Timeline(ahoCorasick, { ...ahoCorasick.defaults, ...s }, 1, ops);
+const run = (ops: OpCall[], s: { patterns?: PatternSet; outputs?: AcSettings['outputs'] } = {}) =>
+  new Timeline(ahoCorasick, { ...ahoCorasick.defaults, ...s } as AcSettings, 1, ops);
 
 /** Every (start, word), by brute force. */
 function brute(patterns: readonly string[], text: string): string[] {

@@ -302,7 +302,7 @@ function buildSecond(W: Work, keys: number[]): number {
     W.nodes[uid] = { uid, key, kids: [] };
     if (root === null) root = uid;
     else {
-      const [win, lose] = key < W.key(root) ? [uid, root] : [root, uid];
+      const [win, lose]: [number, number] = key < W.key(root) ? [uid, root] : [root, uid];
       W.nodes[win]!.kids.unshift(lose);
       root = win;
     }

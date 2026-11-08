@@ -140,7 +140,7 @@ export const intervalPartitioning: VizDef<PartState, PartSettings, PartExtra> = 
     soonestFree,
   ] as unknown as SavedExample[],
   practice: partPractice(() => intervalPartitioning),
-  preview: { example: 'ten-lectures', level: 2, hide: ['heap'] },
+  preview: { example: 'soonest-free', level: 2, hide: ['heap', 'depth', 'axis', 'tick', 'time'] },
 };
 
 /**

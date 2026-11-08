@@ -7,7 +7,7 @@
   "settings": {
     "queue": "decrease",
     "start": "A",
-    "layout": "force"
+    "layout": "circle"
   },
   "seed": 1,
   "ops": [

@@ -6,7 +6,7 @@
   "notes": "Six vertices and 15 edges. Only 5 can join the tree, so 10 are rejected. On a dense graph, sorting the edges is most of the work.",
   "settings": {
     "stop": false,
-    "layout": "force"
+    "layout": "circle"
   },
   "seed": 1,
   "ops": [

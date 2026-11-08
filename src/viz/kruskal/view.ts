@@ -148,6 +148,7 @@ export function view(
   for (const [id, role] of marks) roles.set(id, role);
   const drawn = drawGraph(g, layout, {
     roles,
+    weightSuffix: '✗',
     edge:
       r &&
       ((key) => {

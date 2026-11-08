@@ -500,9 +500,15 @@ function pack(parts: { names: string[]; pts: Pt[] }[]): Record<string, Pt> {
   return pos;
 }
 
+/** Whether some weight label takes two or more characters. */
+const wideWeights = (g: GraphLike) => g.weighted && g.edges.some((e) => String(e.w).length > 1);
+
 function circleLayout(g: GraphLike): Record<string, Pt> {
   const n = g.vertices.length;
-  const R = n <= 1 ? 0 : Math.max(EDGE * 0.6, 35 / Math.sin(Math.PI / n));
+  // Many chords (more than two edges per vertex) with weights of two or more characters get a
+  // wider circle, so the weights in the middle, where the chords cross, have room.
+  const roomy = wideWeights(g) && g.edges.length > 2 * n ? 1.35 : 1;
+  const R = n <= 1 ? 0 : Math.max(EDGE * 0.6, 35 / Math.sin(Math.PI / n)) * roomy;
   const pos: Record<string, Pt> = {};
   g.vertices.forEach((v, i) => {
     const a = -Math.PI / 2 + (2 * Math.PI * i) / Math.max(1, n);
@@ -548,10 +554,12 @@ function separate(pos: Record<string, Pt>, names: string[]): void {
 const cache = new Map<string, GraphLayout>();
 
 export function layoutGraph(g: GraphLike, template: GraphTemplate): GraphLayout {
+  // The key also seeds the spring layout, so the circle's weight check is kept out of it.
   const key = `${template}|${g.directed ? 'd' : 'u'}|${g.vertices.join(',')}|${g.edges
     .map((e) => `${e.u}-${e.v}`)
     .join(',')}`;
-  const hit = cache.get(key);
+  const cacheKey = template === 'circle' ? `${key}|${wideWeights(g)}` : key;
+  const hit = cache.get(cacheKey);
   if (hit) return hit;
   let pos: Record<string, Pt>;
   if (template === 'circle') pos = circleLayout(g);
@@ -578,7 +586,7 @@ export function layoutGraph(g: GraphLike, template: GraphTemplate): GraphLayout 
     ),
   };
   if (cache.size > 400) cache.clear();
-  cache.set(key, layout);
+  cache.set(cacheKey, layout);
   return layout;
 }
 
@@ -631,6 +639,8 @@ export interface DrawGraphOptions {
   pointers?: { name: string; at: string; role?: MarkRole }[];
   /** Draw weights. Default: when the graph is weighted. */
   weights?: boolean;
+  /** Text a page may add after a weight on some steps (Kruskal's ✗), so its spot has room. */
+  weightSuffix?: string;
   /** Opacity of a whole vertex (circle, name, ring), such as a vertex being removed. */
   fade?(v: string): number | undefined;
 }
@@ -751,14 +761,70 @@ interface Geometry {
 
 const geometryCache = new WeakMap<GraphLayout, Map<string, Geometry>>();
 
+/** How far a weight or an edge letter sits from its edge's line. */
+const LABEL_OFF = 11;
+/** Where along an edge a label may slide to, as fractions of its length, middle first. */
+const ALONG = [0.5, 0.42, 0.58, 0.34, 0.66, 0.26, 0.74];
+
+/** The box a weight's text takes, centred on its spot (drawn 13 bold, baseline 4.5 lower). */
+function weightBox(at: Pt, text: string): Bounds {
+  const w = textWidth(text, 13);
+  return { x: at.x - w / 2, y: at.y - 5.5, w, h: 12 };
+}
+
+/** The box an edge letter takes, centred on its spot (drawn 13.5 mono, baseline 5 lower). */
+function kindBox(at: Pt): Bounds {
+  const w = textWidth('C', 13.5, true) + 2;
+  return { x: at.x - w / 2, y: at.y - 6.5, w, h: 14 };
+}
+
+/**
+ * A spot LABEL_OFF beside a route, a fraction t of the way along it, on side `side` (+1 is the
+ * side of the route's normal: outside the bend for a bent edge).
+ */
+function spotAlong(r: Route, t: number, side: number): Pt {
+  const pts = r.pts;
+  const lens = pts.slice(1).map((p, i) => dist(pts[i]!, p));
+  let want = t * lens.reduce((a, b) => a + b, 0);
+  let i = 0;
+  while (i < lens.length - 1 && want > lens[i]!) want -= lens[i++]!;
+  const a = pts[i]!;
+  const b = pts[i + 1]!;
+  const len = lens[i] || 1;
+  const f = want / len;
+  let nx = (b.y - a.y) / len;
+  let ny = -(b.x - a.x) / len;
+  if (nx * r.nx + ny * r.ny < 0) {
+    nx = -nx;
+    ny = -ny;
+  }
+  return {
+    x: a.x + (b.x - a.x) * f + nx * LABEL_OFF * side,
+    y: a.y + (b.y - a.y) * f + ny * LABEL_OFF * side,
+  };
+}
+
 /**
  * Everything about where things go that does not depend on a step: edge routes, the spots for
  * weights and edge letters, and a spot beside every vertex for a badge and for pointers. The
  * spots avoid other vertices, edges, labels and each other, so a badge stays put when others
- * appear.
+ * appear. A weight or an edge letter sits at the middle of its edge unless that lands on a
+ * vertex, another label or a badge (when the page shows badges or pointers); then it slides
+ * along its edge, or to the other side, to the clearest spot near the middle.
  */
-function geometry(g: GraphLike, layout: GraphLayout, weights: boolean): Geometry {
-  const key = `${g.directed}|${weights}|${g.edges.map((e) => `${e.u}-${e.v}`).join(',')}`;
+function geometry(
+  g: GraphLike,
+  layout: GraphLayout,
+  /** Whether the page draws weights (and what may follow them), badges and pointers. */
+  {
+    weights,
+    suffix,
+    notes,
+    pointers,
+  }: { weights: boolean; suffix: string; notes: boolean; pointers: boolean },
+): Geometry {
+  const edges = g.edges.map((e) => `${e.u}-${e.v}${weights ? `:${e.w}` : ''}`).join(',');
+  const key = `${g.directed}|${weights}|${suffix}|${notes}|${pointers}|${edges}`;
   let byKey = geometryCache.get(layout);
   const hit = byKey?.get(key);
   if (hit) return hit;
@@ -767,9 +833,11 @@ function geometry(g: GraphLike, layout: GraphLayout, weights: boolean): Geometry
   const arcs = new Set(g.edges.map((e) => `${e.u}>${e.v}`));
   const routes = new Map<string, Route>();
   const labels = new Map<string, { weight?: Pt; kind?: Pt }>();
-  const segments: [Pt, Pt][] = [];
+  const segments: [Pt, Pt, string][] = [];
   const taken: Bounds[] = [];
   const leaving = new Map(g.vertices.map((v) => [v, [] as Pt[]]));
+  /** Per edge: its label text, its route, and the sides its labels may use (first preferred). */
+  const plans: { k: string; text: string; r: Route; sides: number[]; kindSide: number }[] = [];
   for (const e of g.edges) {
     const p = pos[e.u];
     const q = pos[e.v];
@@ -780,7 +848,7 @@ function geometry(g: GraphLike, layout: GraphLayout, weights: boolean): Geometry
     // The two arcs of a pair each keep to their right of the line between their ends.
     const r = route(p, q, others, paired ? -6 : 0);
     routes.set(k, r);
-    for (let i = 0; i + 1 < r.pts.length; i++) segments.push([r.pts[i]!, r.pts[i + 1]!]);
+    for (let i = 0; i + 1 < r.pts.length; i++) segments.push([r.pts[i]!, r.pts[i + 1]!, k]);
     leaving.get(e.u)!.push(r.pts[1]!);
     leaving.get(e.v)!.push(r.pts[r.pts.length - 2]!);
     // Weight on one side and the edge letter on the other. A paired arc or a bent edge has
@@ -791,16 +859,95 @@ function geometry(g: GraphLike, layout: GraphLayout, weights: boolean): Geometry
     const tx = -r.ny;
     const ty = r.nx;
     const apart = oneSide && weights ? 9 : 0;
-    const out = { x: r.mid.x + r.nx * 11 * s, y: r.mid.y + r.ny * 11 * s };
-    const spot = {
+    const out = { x: r.mid.x + r.nx * LABEL_OFF * s, y: r.mid.y + r.ny * LABEL_OFF * s };
+    labels.set(k, {
       weight: weights ? { x: out.x - tx * apart, y: out.y - ty * apart } : undefined,
       kind: oneSide
         ? { x: out.x + tx * apart, y: out.y + ty * apart }
-        : { x: r.mid.x - r.nx * 11, y: r.mid.y - r.ny * 11 },
-    };
-    labels.set(k, spot);
-    if (spot.weight) taken.push({ x: spot.weight.x - 10, y: spot.weight.y - 8, w: 20, h: 16 });
+        : { x: r.mid.x - r.nx * LABEL_OFF, y: r.mid.y - r.ny * LABEL_OFF },
+    });
+    plans.push({
+      k,
+      text: String(e.w) + suffix,
+      r,
+      sides: oneSide ? [s] : [s, -s],
+      kindSide: oneSide ? s : -1,
+    });
   }
+
+  // Weights first, each clear of the vertices and the weights before it.
+  const weightBoxes = new Map<string, Bounds>();
+  const clash = (b: Bounds, blockers: Bounds[]) => {
+    let n = 0;
+    // On a vertex, or just touching it.
+    for (const v of g.vertices)
+      if (boxHitsCircle(b, pos[v]!, R - 1)) n += 10;
+      else if (boxHitsCircle(b, pos[v]!, R + 2)) n += 2;
+    for (const t of blockers) if (overlaps(t, b)) n += 8;
+    return n;
+  };
+  /** A label's spot: `first` (its middle spot) when clear, else the clearest spot near it. */
+  const place = (
+    plan: (typeof plans)[number],
+    first: Pt,
+    side: number,
+    box: (at: Pt) => Bounds,
+    blockers: Bounds[],
+  ): Pt => {
+    // Only touching a vertex is fine at the middle; elsewhere it counts against a spot.
+    if (clash(box(first), blockers) < 8) return first;
+    const score = (at: Pt, extra: number) => {
+      const b = box(at);
+      let n = clash(b, blockers) + extra;
+      // Across another edge, or nearer to it than to its own, it reads as that edge's.
+      for (const [p, q, k] of segments) {
+        if (k === plan.k) continue;
+        if (boxHitsSegment(b, p, q)) n += 1;
+        if (segDist(at, p, q) < LABEL_OFF + 3) n += 0.75;
+      }
+      return n;
+    };
+    let pick = { at: first, n: score(first, 0) };
+    for (const t of ALONG)
+      for (const sd of plan.sides) {
+        const at = spotAlong(plan.r, t, sd);
+        const n = score(at, Math.abs(t - 0.5) * 6 + (sd === side ? 0 : 0.25));
+        if (n < pick.n) pick = { at, n };
+      }
+    return pick.at;
+  };
+  const placeWeight = (plan: (typeof plans)[number], blockers: Bounds[]) => {
+    const spot = labels.get(plan.k)!;
+    spot.weight = place(
+      plan,
+      spot.weight!,
+      plan.sides[0]!,
+      (at) => weightBox(at, plan.text),
+      blockers,
+    );
+    weightBoxes.set(plan.k, weightBox(spot.weight, plan.text));
+  };
+  if (weights) {
+    for (const plan of plans) placeWeight(plan, [...weightBoxes.values()]);
+    // A weight placed early may sit where a later one has no room: give each that still
+    // clashes another try against all the others, a few rounds.
+    for (let round = 0; round < 4; round++) {
+      let moved = false;
+      for (const plan of plans) {
+        const rest = [...weightBoxes].filter(([k]) => k !== plan.k).map(([, b]) => b);
+        if (clash(weightBoxes.get(plan.k)!, rest) < 8) continue;
+        const before = labels.get(plan.k)!.weight!;
+        placeWeight(plan, rest);
+        moved ||= labels.get(plan.k)!.weight !== before;
+      }
+      if (!moved) break;
+    }
+    for (const plan of plans) {
+      const w = labels.get(plan.k)!.weight!;
+      taken.push({ x: w.x - 10, y: w.y - 8, w: 20, h: 16 });
+    }
+  }
+
   const cost = (b: Bounds, self: string) => {
     let n = 0;
     for (const v of g.vertices) if (v !== self && boxHitsCircle(b, pos[v]!, R + 6)) n += 4;
@@ -817,7 +964,7 @@ function geometry(g: GraphLike, layout: GraphLayout, weights: boolean): Geometry
       if (!pick || n < pick.n) pick = { a, b, n };
       if (n === 0) break;
     }
-    return pick!;
+    return pick;
   };
   /** A badge of width w beside v in direction a, its near side just clear of the circle. */
   const noteBox = (v: string, a: number, w: number): Bounds => {
@@ -832,7 +979,7 @@ function geometry(g: GraphLike, layout: GraphLayout, weights: boolean): Geometry
       v,
       (a) => noteBox(v, a, NOTE_W),
       () => false,
-    );
+    )!;
     taken.push(pick.b);
     note.set(v, pick.a);
   }
@@ -840,16 +987,59 @@ function geometry(g: GraphLike, layout: GraphLayout, weights: boolean): Geometry
   for (const v of g.vertices) {
     const at = pos[v]!;
     const used = note.get(v)!;
-    const pick = best(
-      v,
-      (a) => {
-        const c = { x: at.x + Math.cos(a) * (R + 13), y: at.y + Math.sin(a) * (R + 13) };
-        return { x: c.x - 14, y: c.y - 10, w: 28, h: 20 };
-      },
-      (a) => Math.abs(Math.atan2(Math.sin(a - used), Math.cos(a - used))) < 0.7,
-    );
+    const badge = noteBox(v, used, NOTE_W);
+    const spot = (a: number) => ({
+      x: at.x + Math.cos(a) * (R + 13),
+      y: at.y + Math.sin(a) * (R + 13),
+    });
+    const near = (a: number) => Math.abs(Math.atan2(Math.sin(a - used), Math.cos(a - used))) < 0.7;
+    // Never on the vertex's own badge: not beside it, and a label (about 12 x 18) not on it.
+    const onBadge = (a: number) => {
+      const c = spot(a);
+      return overlaps({ x: c.x - 6, y: c.y - 9, w: 12, h: 18 }, badge);
+    };
+    const boxAt = (a: number) => {
+      const c = spot(a);
+      return { x: c.x - 14, y: c.y - 10, w: 28, h: 20 };
+    };
+    const pick = best(v, boxAt, (a) => near(a) || (notes && onBadge(a))) ?? best(v, boxAt, near)!;
     taken.push(pick.b);
     pointer.set(v, { at: { x: pick.b.x + 14, y: pick.b.y + 10 }, a: pick.a });
+  }
+  // Badges and pointers could not always keep clear of the weights: move those weights instead.
+  // Then edge letters, clear of everything.
+  const marks = [
+    ...(notes ? g.vertices.map((v) => noteBox(v, note.get(v)!, NOTE_W)) : []),
+    ...(pointers
+      ? [...pointer.values()].map(({ at, a }) => {
+          // Room for two labels side by side, as drawGraph sets them.
+          const dx = Math.abs(Math.sin(a)) * 6.5;
+          const dy = Math.abs(Math.cos(a)) * 6.5;
+          return { x: at.x - dx - 6, y: at.y - dy - 9, w: 2 * dx + 12, h: 2 * dy + 18 };
+        })
+      : []),
+  ];
+  if (weights && marks.length)
+    for (const plan of plans) {
+      const b = weightBoxes.get(plan.k)!;
+      if (!marks.some((m) => overlaps(m, b))) continue;
+      const rest = [...weightBoxes].filter(([k]) => k !== plan.k).map(([, x]) => x);
+      const spot = labels.get(plan.k)!;
+      spot.weight = place(plan, spot.weight!, plan.sides[0]!, (at) => weightBox(at, plan.text), [
+        ...rest,
+        ...marks,
+      ]);
+      weightBoxes.set(plan.k, weightBox(spot.weight, plan.text));
+    }
+  const kindBoxes: Bounds[] = [];
+  for (const plan of plans) {
+    const spot = labels.get(plan.k)!;
+    spot.kind = place(plan, spot.kind!, plan.kindSide, kindBox, [
+      ...weightBoxes.values(),
+      ...marks,
+      ...kindBoxes,
+    ]);
+    kindBoxes.push(kindBox(spot.kind));
   }
   const geo = { routes, note, pointer, labels, noteBox };
   if (!byKey) {
@@ -871,7 +1061,12 @@ export function drawGraph(
   const shapes: Shape[] = [];
   const boxes: Bounds[] = [layout.bounds];
   const showWeights = o.weights ?? g.weighted;
-  const geo = geometry(g, layout, showWeights);
+  const geo = geometry(g, layout, {
+    weights: showWeights,
+    suffix: o.weightSuffix ?? '',
+    notes: !!o.note,
+    pointers: !!o.pointers,
+  });
 
   for (const e of g.edges) {
     const key = `${e.u}-${e.v}`;

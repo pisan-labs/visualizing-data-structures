@@ -20,18 +20,7 @@ const STAGES: (StageSize | undefined)[] = [undefined, ...TYPICAL_STAGES];
  * is in where src/layouts/graph.ts places labels (or in the example's graph), so they wait for
  * that. The test fails when one of them comes clean, so the list only shrinks.
  */
-const KNOWN: Record<string, string[]> = {
-  // Six vertices joined by nearly every edge: weights at the middles of crossing edges collide.
-  kruskal: ['dense'],
-  // The same dense graph, and the weight of D-G under D's key badge.
-  prim: ['dense', 'key-drops', 'lazy-queue', 'other-root'],
-  // The page's starting graph drawn on a circle: chords pass through vertices, weights on them.
-  'steiner-tree': ['hidden-hub'],
-  // An edge letter (C, F, B) at the middle of a short edge lands on a vertex or a note box.
-  'topo-dfs': ['last-goes-first', 'getting-dressed', 'keep-going'],
-  // The weight of B-C sits on vertex E.
-  tsp: ['exact-table'],
-};
+const KNOWN: Record<string, string[]> = {};
 
 const vizId = (p: string) => p.split('/').at(-2)!;
 

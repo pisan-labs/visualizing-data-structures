@@ -246,7 +246,8 @@ export function view(
   }
 
   // The stack panel: under the tree, or right of it on a wide stage.
-  const panel = stackPanel(s, stack, extra.popped ?? [], roles);
+  // During a query the spine is not drawn in color, but the panel still lists the stack.
+  const panel = stackPanel(s, extra.range ? rightSpine(s) : stack, extra.popped ?? [], roles);
   const mainBounds = unionBounds(...boxes);
   const slots = Math.max(n, 3);
   const panelW = 70 + slots * (CELL.w + 4);

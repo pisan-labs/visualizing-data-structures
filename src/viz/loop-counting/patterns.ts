@@ -113,6 +113,8 @@ export interface Pattern {
   /** The same for the drawing, in a few words. */
   dropShort(found: Found): string;
   order(found: Found): Order;
+  /** Said after the Big-O, when it needs a warning: a best case is not the whole story. */
+  caveat?(found: Found): string | null;
 }
 
 // ----- Helpers -----
@@ -144,6 +146,12 @@ const SUP: Record<string, string> = {
   '9': '⁹',
 };
 export const sup = (n: number) => [...String(n)].map((c) => SUP[c] ?? c).join('');
+
+/** "= 4" for a perfect square, "≈ 3.16" otherwise. */
+const rootText = (n: number) => {
+  const r = isqrt(n);
+  return r * r === n ? `= ${r}` : `≈ ${Math.sqrt(n).toFixed(2)}`;
+};
 
 const range = (n: number) => Array.from({ length: n }, (_, k) => String(k + 1));
 const times = (k: number) => plural(k, 'time');
@@ -456,7 +464,7 @@ const sequence: Pattern = {
     yield {
       row: { s: 0, r: 1 },
       say: () =>
-        `The second loop ran ${times(n)} more, after the first was done: ${n} + ${n} = ${c}. One loop after another adds.`,
+        `The second loop ran ${n} more ${n === 1 ? 'time' : 'times'}, after the first was done: ${n} + ${n} = ${c}. One loop after another adds.`,
       lines: ['loop2', 'body2'],
       level: 2,
       v: { count: c },
@@ -571,7 +579,7 @@ const sqrt: Pattern = {
     yield {
       probe: last <= n ? [0, 0, last - 1] : undefined,
       say: () =>
-        `i = ${last}: ${last}·${last} = ${last * last} > ${n}, so the loop stops. i never gets past √${n} ≈ ${Math.sqrt(n).toFixed(2)}.`,
+        `i = ${last}: ${last}·${last} = ${last * last} > ${n}, so the loop stops. The body only ran for i up to √${n} ${rootText(n)}.`,
       lines: ['outer'],
       level: 2,
       v: { i: last, count },
@@ -741,7 +749,7 @@ const search: Pattern = {
     ...row1(n, 'i', 'A', ''),
     values: VALUES.slice(0, n).map(String),
     caption: `x = ${targetValue(n, found)}${found === 'missing' ? ', not in A' : ''}`,
-    describe: `The row is the array A, ${n} items long; the loop looks for x.`,
+    describe: `The row is the array A, ${plural(n, 'item')} long; the loop looks for x.`,
   }),
   *walk(n, found): Walk {
     const x = targetValue(n, found);
@@ -790,13 +798,17 @@ const search: Pattern = {
   expand: () => null,
   drop: (found) =>
     found === 'first'
-      ? 'T(n) = 1 does not grow with n: O(1). But that is only the best case: when x is missing, the same loop takes n comparisons, O(n).'
+      ? 'T(n) = 1 does not grow with n, and there is nothing to drop.'
       : found === 'middle'
         ? 'Drop the factor ½ (the ceiling only adds less than 1). Stopping halfway is still linear.'
         : 'T(n) = n has nothing to drop. An early exit does not help the worst case.',
   dropShort: (found) =>
     found === 'first' ? 'best case only' : found === 'middle' ? 'drop the ½' : 'nothing to drop',
   order: (found) => (found === 'first' ? '1' : 'n'),
+  caveat: (found) =>
+    found === 'first'
+      ? 'But that is only the best case: when x is missing, the same loop makes n comparisons, O(n).'
+      : null,
 };
 
 const triple: Pattern = {

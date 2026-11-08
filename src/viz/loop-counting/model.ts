@@ -201,7 +201,7 @@ const run: Op = {
     yield {
       state: at(st),
       marks: [mark('f-bigo', 'found')],
-      say: `${ex ? `T(n) ${relation(ex)}. ` : ''}${p.drop(f)} So the count is ${bigO(order)}.`,
+      say: `${ex ? `T(n) ${relation(ex)}. ` : ''}${p.drop(f)} So the count is ${bigO(order)}.${p.caveat?.(f) ? ` ${p.caveat(f)}` : ''}`,
       lines: p.counted,
       vars: { n, count, 'T(n)': formulaText(p, f), 'Big-O': bigO(order) },
       level: 1,

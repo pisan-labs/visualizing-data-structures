@@ -267,3 +267,5 @@
 2026-11-08 [note] Deployed at 08:26 on Yusuf's "merge next to main and deploy": main fast-forwarded 65a9e38..1d91418 (CI run 98 green): the four Big-O pages and the settled, zoom and text-width cleanups
 
 2026-11-08 [note] Handover at Yusuf's request (about 08:45; context about 70%): HANDOFF.md rewritten and fact-checked; the next session starts at once
+
+2026-11-08 [code] src/layouts/chart.ts: axes, rules, tick labels, segment clipping, powers of ten and fitSize shared by big-o-definition, doubling-experiment and amortized-analysis; sup moved to src/layouts/text.ts; 100,064 scenes hashed before and after, identical

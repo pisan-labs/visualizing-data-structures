@@ -4,6 +4,7 @@
  *
  *   textWidth(text, size, mono?, bold?)  an upper bound on the drawn width
  *   wrapText(text, maxWidth, size, { mono, bold })  words wrapped into lines no wider than maxWidth
+ *   sup(k)  a number in superscript digits: sup(-3) is "⁻³"
  *
  * The factors are measured, not guessed (Chromium, 8 November 2026, ten label-like strings
  * such as "q0 q1 q2 accept", "aⁿbⁿcⁿ", "Θ(n²) Ω(n) ∅ ε", "insert(42)"): glyphs average 0.50 of
@@ -49,3 +50,7 @@ export function wrapText(
   if (line) lines.push(line);
   return lines;
 }
+
+/** A number (or a string of digits and minus signs) in superscript: sup(-3) is "⁻³". */
+export const sup = (k: number | string): string =>
+  String(k).replace(/[-0-9]/g, (ch) => (ch === '-' ? '⁻' : '⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(ch)]!));

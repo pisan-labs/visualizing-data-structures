@@ -17,8 +17,16 @@
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { pickLayout, translate } from '../../layouts/arrange';
+import {
+  axisLines,
+  clipToBox,
+  fitSize as fitTo,
+  powerOfTen,
+  rule,
+  tickLabel,
+  type PlotBox,
+} from '../../layouts/chart';
 import type { Bounds, Scene, Shape } from '../../render/scene';
-import { sup } from '../big-o-definition/expr';
 import {
   bOf,
   commas,
@@ -43,7 +51,7 @@ const GAP = 24;
 
 /** The size, at most `max`, at which a text fits in `room`. */
 const fitSize = (text: string, max: number, room: number, em: number) =>
-  Math.min(max, Math.floor((room / ([...text].length * em)) * 2) / 2);
+  fitTo(text, max, room, (t) => [...t].length * em);
 
 interface Block {
   shapes: Shape[];
@@ -186,6 +194,7 @@ function tableBlock(state: DxState, settings: DxSettings, roles: Roles): Block {
 // reading at the guess, "p-hint" before any run.
 
 const P = { w: 440, x0: 60, x1: 420, y0: 50, y1: 270, h: 322, tick: 13, title: 13 };
+const BOX: PlotBox = { x0: P.x0, x1: P.x1, y0: P.y0, y1: P.y1 };
 
 interface Frame {
   axes: Axes;
@@ -208,8 +217,6 @@ export function nShort(n: number): string {
 }
 
 function chartFrame(shapes: Shape[], f: Frame, sizes: readonly number[], guessN: number | null) {
-  const line = (id: string, x1: number, y1: number, x2: number, y2: number, opacity: number) =>
-    shapes.push({ kind: 'arrow', id, x1, y1, x2, y2, head: 'none', opacity });
   const label = (
     id: string,
     x: number,
@@ -217,10 +224,9 @@ function chartFrame(shapes: Shape[], f: Frame, sizes: readonly number[], guessN:
     text: string,
     anchor: 'start' | 'middle' | 'end',
     size = P.tick,
-  ) => shapes.push({ kind: 'text', id, x, y, text, size, anchor, cls: 'label' });
+  ) => shapes.push(tickLabel(id, x, y, text, size, anchor));
 
-  line('p-axis-x', P.x0, P.y1, P.x1 + 6, P.y1, 0.7);
-  line('p-axis-y', P.x0, P.y1, P.x0, P.y0 - 6, 0.7);
+  axisLines(shapes, 'p', BOX);
   label('p-ylab', 4, 24, 'T(n), log scale', 'start', P.title);
   label('p-xlab', P.x1, P.y1 + 44, 'n, log scale: each step is ×2', 'end', P.title);
   if (sizes.length === 0) return;
@@ -230,8 +236,8 @@ function chartFrame(shapes: Shape[], f: Frame, sizes: readonly number[], guessN:
   const every = Math.ceil((y1 - y0) / 7);
   for (let e = y1; e >= y0; e -= every) {
     const y = pyLog(f, e);
-    label(`p-ty-${e}`, P.x0 - 6, y + 4, e === 0 ? '1' : e === 1 ? '10' : `10${sup(e)}`, 'end');
-    if (e > y0) line(`p-gy-${e}`, P.x0, y, P.x1, y, 0.18);
+    label(`p-ty-${e}`, P.x0 - 6, y + 4, powerOfTen(e), 'end');
+    if (e > y0) shapes.push(rule(`p-gy-${e}`, P.x0, P.x1, y, { opacity: 0.18 }));
   }
 
   // x: a grid line at each size, and labels that skip every other size when they would touch.
@@ -240,7 +246,16 @@ function chartFrame(shapes: Shape[], f: Frame, sizes: readonly number[], guessN:
   const widest = Math.max(...sizes.map((n) => nShort(n).length)) * P.tick * PROP;
   const skip = step < widest + 2 ? 2 : 1;
   sizes.forEach((n, k) => {
-    line(`p-gx-${k}`, xs[k]!, P.y0, xs[k]!, P.y1, 0.12);
+    shapes.push({
+      kind: 'arrow',
+      id: `p-gx-${k}`,
+      x1: xs[k]!,
+      y1: P.y0,
+      x2: xs[k]!,
+      y2: P.y1,
+      head: 'none',
+      opacity: 0.12,
+    });
     if ((sizes.length - 1 - k) % skip === 0)
       label(`p-tx-${k}`, xs[k]!, P.y1 + 18, nShort(n), 'middle');
   });
@@ -254,30 +269,6 @@ function chartFrame(shapes: Shape[], f: Frame, sizes: readonly number[], guessN:
     );
     if (!near) label('p-tx-g', x, P.y1 + 18, nShort(guessN), 'middle');
   }
-}
-
-/** The part of the line through (xa, ya) and (xb, yb) inside the plot, or null. */
-function clip(xa: number, ya: number, xb: number, yb: number) {
-  let t0 = 0;
-  let t1 = 1;
-  const dx = xb - xa;
-  const dy = yb - ya;
-  for (const [p, q] of [
-    [-dx, xa - P.x0],
-    [dx, P.x1 - xa],
-    [-dy, ya - P.y0],
-    [dy, P.y1 - ya],
-  ] as const) {
-    if (p === 0) {
-      if (q < 0) return null;
-      continue;
-    }
-    const t = q / p;
-    if (p < 0) t0 = Math.max(t0, t);
-    else t1 = Math.min(t1, t);
-  }
-  if (t1 - t0 <= 1e-9) return null;
-  return { x1: xa + dx * t0, y1: ya + dy * t0, x2: xa + dx * t1, y2: ya + dy * t1 };
 }
 
 function chartBlock(state: DxState, roles: Roles): Block {
@@ -307,7 +298,7 @@ function chartBlock(state: DxState, roles: Roles): Block {
     const at = (l2: number) => pyLog(f, lgA + state.fit!.b * l2 * Math.LOG10E * Math.LN2);
     const xa = P.x0;
     const xb = P.x1;
-    const seg = clip(xa, at(f.axes.x0), xb, at(f.axes.x1)) ?? {
+    const seg = clipToBox(BOX, xa, at(f.axes.x0), xb, at(f.axes.x1)) ?? {
       x1: pts.at(-1)!.x,
       y1: pts.at(-1)!.y,
       x2: pts.at(-1)!.x,

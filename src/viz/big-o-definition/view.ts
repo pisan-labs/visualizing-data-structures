@@ -24,6 +24,15 @@
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { pickLayout, translate } from '../../layouts/arrange';
+import {
+  axisLines,
+  clipToBox,
+  fitSize as fitTo,
+  powerOfTen,
+  rule,
+  tickLabel,
+  type PlotBox,
+} from '../../layouts/chart';
 import { textWidth } from '../../layouts/text';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import {
@@ -37,7 +46,6 @@ import {
   mulR,
   rat,
   subR,
-  sup,
   valuesUpTo,
   type Rat,
 } from './expr';
@@ -71,7 +79,7 @@ type Roles = Map<string, MarkRole>;
 
 /** The size, at most `max`, at which a text fits in `room`. */
 const fitSize = (text: string, max: number, room: number, bold = false) =>
-  Math.min(max, Math.floor((room / textWidth(text, 1, false, bold)) * 2) / 2);
+  fitTo(text, max, room, (t) => textWidth(t, 1, false, bold));
 
 interface Axis {
   log: boolean;
@@ -153,8 +161,6 @@ function tickText(v: Rat): string {
   return `${neg}${Number(a.toFixed(a < 1 ? 3 : a < 100 ? 1 : 0)).toLocaleString('en-US')}`;
 }
 
-const powerText = (k: number) => (k === 0 ? '1' : k === 1 ? '10' : `10${sup(k)}`);
-
 /** The n whose values the curves pass through: every n, or evenly spread ones, and N. */
 export function samples(N: number): number[] {
   const step = Math.max(1, Math.ceil((N - 1) / SEGMENTS));
@@ -173,6 +179,8 @@ interface Plot {
 
 const yOf = (p: number, plot: Plot) => plot.py1 - p * (plot.py1 - plot.py0);
 
+const boxOf = (plot: Plot): PlotBox => ({ x0: PX0, x1: PX1, y0: plot.py0, y1: plot.py1 });
+
 /**
  * A curve through (n, p) points as segments "id-n", clipped to the plot: a segment wholly
  * outside is left out, one half outside is cut at the edge.
@@ -186,39 +194,17 @@ function curve(
   role: (a: number, b: number) => MarkRole | undefined,
   dashed = false,
 ) {
+  const box = boxOf(plot);
   for (let i = 0; i + 1 < pts.length; i++) {
     const a = pts[i]!;
     const b = pts[i + 1]!;
     if (a.p === null || b.p === null) continue;
-    let t0 = 0;
-    let t1 = 1;
-    const dp = b.p - a.p;
-    for (const [edge, keepAbove] of [
-      [0, true],
-      [1, false],
-    ] as const) {
-      // Keep the part with p >= 0 (keepAbove) or p <= 1.
-      const inside = (p: number) => (keepAbove ? p >= edge : p <= edge);
-      if (!inside(a.p) && !inside(b.p)) {
-        t0 = 1;
-        t1 = 0;
-        break;
-      }
-      if (inside(a.p) && inside(b.p)) continue;
-      const t = (edge - a.p) / dp;
-      if (inside(a.p)) t1 = Math.min(t1, t);
-      else t0 = Math.max(t0, t);
-    }
-    if (t1 - t0 <= 1e-9) continue;
-    const xa = xOf(a.n, N);
-    const xb = xOf(b.n, N);
+    const seg = clipToBox(box, xOf(a.n, N), yOf(a.p, plot), xOf(b.n, N), yOf(b.p, plot));
+    if (!seg) continue;
     shapes.push({
       kind: 'arrow',
       id: `${id}-${a.n}`,
-      x1: xa + (xb - xa) * t0,
-      y1: yOf(a.p + dp * t0, plot),
-      x2: xa + (xb - xa) * t1,
-      y2: yOf(a.p + dp * t1, plot),
+      ...seg,
       head: 'none',
       role: role(a.n, b.n),
       dashed,
@@ -227,49 +213,14 @@ function curve(
 }
 
 function frame(shapes: Shape[], pre: string, axis: Axis, N: number, plot: Plot) {
-  shapes.push({
-    kind: 'arrow',
-    id: `${pre}-axis-x`,
-    x1: PX0,
-    y1: plot.py1,
-    x2: PX1 + 6,
-    y2: plot.py1,
-    head: 'none',
-    opacity: 0.7,
-  });
-  shapes.push({
-    kind: 'arrow',
-    id: `${pre}-axis-y`,
-    x1: PX0,
-    y1: plot.py1,
-    x2: PX0,
-    y2: plot.py0 - 4,
-    head: 'none',
-    opacity: 0.7,
-  });
+  axisLines(shapes, pre, boxOf(plot), { x: 6, y: 4 });
   const every = N <= 20 ? 5 : N <= 50 ? 10 : N <= 100 ? 20 : 50;
   const ticks = [1, ...Array.from({ length: Math.floor(N / every) }, (_, i) => (i + 1) * every)];
-  for (const n of ticks) {
-    shapes.push({
-      kind: 'text',
-      id: `${pre}-tick-x-${n}`,
-      x: xOf(n, N),
-      y: plot.py1 + 17,
-      text: String(n),
-      size: TICK,
-      anchor: 'middle',
-      cls: 'label',
-    });
-  }
-  shapes.push({
-    kind: 'text',
-    id: `${pre}-tick-n`,
-    x: PX1 + 12,
-    y: plot.py1 + 4,
-    text: 'n',
-    size: TICK + 1,
-    cls: 'label',
-  });
+  for (const n of ticks)
+    shapes.push(
+      tickLabel(`${pre}-tick-x-${n}`, xOf(n, N), plot.py1 + 17, String(n), TICK, 'middle'),
+    );
+  shapes.push(tickLabel(`${pre}-tick-n`, PX1 + 12, plot.py1 + 4, 'n', TICK + 1));
   // y ticks: the top, 0, the middle when there is room, the bottom when it is negative and
   // clear of 0; on a log axis, powers of ten counted down from the top.
   const ys: { p: number; text: string }[] = [];
@@ -277,7 +228,7 @@ function frame(shapes: Shape[], pre: string, axis: Axis, N: number, plot: Plot) 
     const span = axis.lhi - axis.llo;
     const step = Math.max(1, Math.ceil(span / 3));
     for (let k = axis.lhi; k >= axis.llo; k -= step)
-      ys.push({ p: (k - axis.llo) / span, text: powerText(k) });
+      ys.push({ p: (k - axis.llo) / span, text: powerOfTen(k) });
   } else {
     // Exact positions: the top can be far past what a double holds (n! at n = 200).
     const zero = place(axis, rat(0n));
@@ -288,27 +239,8 @@ function frame(shapes: Shape[], pre: string, axis: Axis, N: number, plot: Plot) 
   }
   ys.forEach((t, i) => {
     const y = yOf(t.p, plot);
-    shapes.push({
-      kind: 'text',
-      id: `${pre}-tick-y-${i}`,
-      x: PX0 - 6,
-      y: y + 4,
-      text: t.text,
-      size: TICK,
-      anchor: 'end',
-      cls: 'label',
-    });
-    if (t.p > 0.001)
-      shapes.push({
-        kind: 'arrow',
-        id: `${pre}-grid-${i}`,
-        x1: PX0,
-        y1: y,
-        x2: PX1,
-        y2: y,
-        head: 'none',
-        opacity: 0.18,
-      });
+    shapes.push(tickLabel(`${pre}-tick-y-${i}`, PX0 - 6, y + 4, t.text, TICK, 'end'));
+    if (t.p > 0.001) shapes.push(rule(`${pre}-grid-${i}`, PX0, PX1, y, { opacity: 0.18 }));
   });
 }
 
@@ -575,7 +507,7 @@ function ratioChart(step: Step<DefState, DefExtra>, settings: DefSettings, roles
         continue;
       }
       const y = yOf(p, plot);
-      shapes.push({ kind: 'arrow', id, x1: PX0, y1: y, x2: PX1, y2: y, head: 'none', role });
+      shapes.push(rule(id, PX0, PX1, y, { role }));
       const text = `${name} = ${b.text}`;
       const w = textWidth(text, TICK, false, true);
       const spots: Bounds[] = [];
@@ -610,17 +542,7 @@ function ratioChart(step: Step<DefState, DefExtra>, settings: DefSettings, roles
         lim.kind === 'zero' ? (axis.log ? -1 : place(axis, rat(0n))) : place(axis, lim.value);
       if (p >= 0 && p <= 1) {
         const y = yOf(p, plot);
-        shapes.push({
-          kind: 'arrow',
-          id: 'r-lim-line',
-          x1: PX0,
-          y1: y,
-          x2: PX1,
-          y2: y,
-          head: 'none',
-          dashed: true,
-          role: 'found',
-        });
+        shapes.push(rule('r-lim-line', PX0, PX1, y, { dashed: true, role: 'found' }));
       }
     }
     const caption = `f(n)/g(n) → ${limitText(lim)} as n grows${lim.kind === 'zero' && axis.log ? ' (0 is off a log scale)' : ''}`;

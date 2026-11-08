@@ -9,7 +9,11 @@
  * log n, 2^n, n!, +, -, * or juxtaposition, and / by a number, for example "n^2/2 - 3n". The
  * page's own text (n², 2ⁿ, −, ·) reads back too.
  */
+import { sup } from '../../layouts/text';
 import { halvings } from '../big-o-lab/model';
+
+/** Superscript exponent for "10³⁰" (from src/layouts/text.ts; other files here import it from this one). */
+export { sup };
 
 // ----- Exact rationals -----
 
@@ -76,10 +80,6 @@ function decimalDen(d: bigint): number | null {
   for (let k = 0; k <= 6; k++) if (10n ** BigInt(k) % d === 0n) return k;
   return null;
 }
-
-/** Superscript exponent for "10³⁰". */
-export const sup = (k: number | string) =>
-  String(k).replace(/[-0-9]/g, (ch) => (ch === '-' ? '⁻' : '⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(ch)]!));
 
 function sci(v: number, neg: boolean): string {
   const lg = Math.log10(Math.abs(v));

@@ -768,7 +768,7 @@ CI), leverage (what fixing it unblocks). Priority = interest + risk + leverage â
 | 5 | Done 8 November (two were text wrappers): six word-wrap helpers | 2 | 2 | 1 | 3 | 4 | `_automata/regex.ts`, pumping-lemma, halting-problem, chomsky-hierarchy, dfa-to-regex, regex-to-nfa |
 | 6 | Done 8 November (moved; the other choosers score differently and stay apart): the layout chooser `pickLayout` lives in `src/viz/_stage/arrange.ts` (23 users), beside `bestPlacement` in `_grammar/draw.ts` and per-page column pickers | 2 | 2 | 1 | 3 | 4 | `src/viz/_stage/`, `src/viz/_grammar/` |
 | 7 | Done 8 November: `STAGES` in `layouts/graph.ts` still held the old 884Ã—305 desktop stage, the fallback for thumbnails, prerender and tests | 2 | 2 | 2 | 1 | 3 | `src/layouts/graph.ts` |
-| 8 | Chart code written three times: big-o-definition (exact fractions), doubling-experiment (log-log), amortized-analysis (two-lane bars) | 2 | 4 | 1 | 3 | 2 | those three views |
+| 8 | Done 8 November (the shared parts: axes, grid and reference lines, tick labels, clipping, powers of ten, fit-to-room sizes, in `src/layouts/chart.ts`; each page keeps its own scales): chart code written three times: big-o-definition (exact fractions), doubling-experiment (log-log), amortized-analysis (two-lane bars) | 2 | 4 | 1 | 3 | 2 | those three views |
 | 9 | Shared code living in page folders, imported by siblings: avl (treap, splay, red-black), hash-chaining (4 pages), linked-list (3), regex-to-nfa (regex-engines), prim (kruskal), leftist-heap (skew-heap) | 2 | 3 | 1 | 2 | 2 | those folders |
 | 10 | `matches()` in `_automata/regex.ts` is exponential on deeply nested concatenations | 1 | 2 | 2 | 1 | 2 | `src/viz/_automata/regex.ts` |
 

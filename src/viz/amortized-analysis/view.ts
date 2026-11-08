@@ -1,5 +1,6 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { pickLayout, translate } from '../../layouts/arrange';
+import { rule, tickLabel } from '../../layouts/chart';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import {
   BITS,
@@ -407,36 +408,15 @@ function chartBlock(state: AmState, settings: AmSettings, roles: Roles): Block {
   return { shapes, w: GUTTER + CHART_W, h: bottom + 22 };
 }
 
-function label(id: string, x: number, y: number, text: string): Shape {
-  return { kind: 'text', id, x, y, text, size: 13, cls: 'label' };
-}
+const label = (id: string, x: number, y: number, text: string) => tickLabel(id, x, y, text, 13);
 
-function scale(id: string, y: number, text: string): Shape {
-  return {
-    kind: 'text',
-    id,
-    x: GUTTER - 6,
-    y,
-    text,
-    size: 11,
-    anchor: 'end',
-    cls: 'index',
-    mono: true,
-  };
-}
+/** A value on a lane's scale, in the gutter left of the chart. */
+const scale = (id: string, y: number, text: string) =>
+  tickLabel(id, GUTTER - 6, y, text, 11, 'end', { cls: 'index', mono: true });
 
-function line(id: string, y: number, dashed: boolean): Shape {
-  return {
-    kind: 'arrow',
-    id,
-    x1: GUTTER,
-    y1: y,
-    x2: GUTTER + CHART_W,
-    y2: y,
-    head: 'none',
-    dashed,
-  };
-}
+/** A line across the chart: a lane's zero line, or a dashed reference. */
+const line = (id: string, y: number, dashed: boolean) =>
+  rule(id, GUTTER, GUTTER + CHART_W, y, { dashed });
 
 // ----- Putting the parts together -----
 

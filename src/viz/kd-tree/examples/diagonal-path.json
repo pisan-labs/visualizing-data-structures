@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "kd-tree",
+  "id": "diagonal-path",
+  "title": "Points on a diagonal make a path",
+  "notes": "Each point is larger than the last on both x and y, so every insert goes right. The tree is a path of height n − 1, and the search for the point nearest (8, 1) walks most of it.",
+  "settings": {
+    "prune": true
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", "1,1 2,2 3,3 4,4 5,5 6,6 7,7 8,8"],
+    ["nearest", "8,1"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

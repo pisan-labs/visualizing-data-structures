@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "kd-tree",
+  "id": "build-and-split",
+  "title": "Eight points, eight splitting lines",
+  "notes": "Each new point walks down the tree, comparing x at even depths and y at odd depths, then draws its own line inside the cell it lands in.",
+  "settings": {
+    "prune": true
+  },
+  "seed": 1,
+  "ops": [["insert", "6,5 3,8 9,2 2,3 8,9 4,1 10,6 1,10"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

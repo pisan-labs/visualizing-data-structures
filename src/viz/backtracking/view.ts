@@ -1,11 +1,12 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
-import { pickLayout, translate } from '../../layouts/arrange';
+import { onStage, translate } from '../../layouts/arrange';
 import {
   drawCallTree,
   edgeLabelSize,
   layoutCallTree,
   monoWidth,
   padBounds,
+  riseUnderTitle,
   unionBounds,
   type CallState,
   type CallTreeOptions,
@@ -20,12 +21,29 @@ import { describe, seqText, type BtNode, type BtSettings, type BtState } from '.
 export const FULL_LIMIT = 16;
 const FULL: CallTreeOptions = { size: 12, gap: 8, levelGap: 54, twoLines: true };
 const FULL_ONE: CallTreeOptions = { size: 12, gap: 8, levelGap: 48, twoLines: false };
-const COMPACT: CallTreeOptions = { size: 11, gap: 3, levelGap: 36, twoLines: false, minW: 22 };
+const COMPACT: CallTreeOptions = {
+  size: 11,
+  gap: 2,
+  levelGap: 28,
+  twoLines: false,
+  minW: 22,
+  padX: 0.6,
+  tagMin: 11,
+};
+/**
+ * Growing right (a phone), a big tree is as tall as its rows: four permutations have 24. Lower
+ * boxes packed closer keep it readable.
+ */
+const COMPACT_RIGHT: CallTreeOptions = { ...COMPACT, gap: 2, boxH: 1.6 };
 const CELL = { w: 28, h: 26, pitch: 31 };
-const LABEL_W = 64;
+const ROW_LABEL_W = 64;
+/** A row's name above it, in a narrow panel. */
+const ABOVE_H = 18;
 /** Found outputs per row: the usual, then the others a stage may draw larger with. */
 const PER_ROW = [6, 2, 3, 4, 8, 12];
 const TITLE_H = 24;
+/** A second line of the title. */
+const TITLE_LINE = 16;
 /** Room between the tree and the panel under it, and beside it. */
 const VGAP = 18;
 const HGAP = 36;
@@ -87,36 +105,53 @@ export function view(
         : 'decision tree: take or skip each value'
       : 'decision tree: pick the next value';
 
-  // The tree, growing down (the usual) or right (a tall phone stage), under its title.
+  // The tree, growing down (the usual) or right (a tall phone stage), under its title. Growing
+  // right, the tree is narrow, so the title breaks after its colon, and the tree rises into the
+  // empty corner beside it.
   const tree = (direction: TreeDirection) => {
     // Growing right, an edge's label sits in the gap before its box, so the gap fits the widest.
     const edges = finished.map((c) => c.edge ?? '');
     const widest = Math.max(0, ...edges.map((e) => monoWidth(e, edgeLabelSize(opts.size!))));
     const columnGap = widest ? Math.round(widest + 10) : undefined;
-    const layout = layoutCallTree(finished, { ...opts, direction, columnGap });
-    const treeW = Math.max(layout.bounds.w, monoWidth(treeTitle, 12.5), 220);
+    const right = direction === 'right';
+    const layout = layoutCallTree(finished, {
+      ...(right && compact ? COMPACT_RIGHT : opts),
+      direction,
+      columnGap,
+    });
+    const title = right ? treeTitle.replace(': ', ':\n').split('\n') : [treeTitle];
+    const titleH = TITLE_H + (title.length - 1) * TITLE_LINE;
+    const titleW = Math.max(...title.map((t) => monoWidth(t, 12.5)));
+    const treeW = Math.max(layout.bounds.w, titleW, right ? 120 : 220);
     const dx = -layout.bounds.x + (treeW - layout.bounds.w) / 2;
-    const dy = TITLE_H + 10 - layout.bounds.y;
-    const h = s.nodes.length ? layout.bounds.h + TITLE_H + 10 : TITLE_H + 16;
-    return { layout, dx, dy, w: treeW, h };
+    let dy = titleH + 10 - layout.bounds.y;
+    if (right) dy -= riseUnderTitle(layout, dx, dy, { x: 0, y: 0, w: titleW, h: titleH });
+    const h = s.nodes.length
+      ? Math.max(titleH, layout.bounds.y + dy + layout.bounds.h)
+      : titleH + 16;
+    return { layout, dx, dy, w: treeW, h, title };
   };
 
   // The values, the partial solution, and what the search has output so far.
-  const panel = (perRow: number): Block => {
+  // Each row's name is left of it (the usual) or, in a narrow panel, above it.
+  const panel = (perRow: number, above = false): Block => {
     const shapes: Shape[] = [];
     let y = 0;
     const n = Math.max(1, s.values.length);
-    const rowLabel = (id: string, text: string, at: number) =>
+    const LABEL_W = above ? 0 : ROW_LABEL_W;
+    const rowLabel = (id: string, text: string, at: number) => {
       shapes.push({
         kind: 'text',
         id,
         x: 0,
-        y: at + CELL.h / 2 + 5,
+        y: above ? at + 13 : at + CELL.h / 2 + 5,
         text,
         size: 12.5,
         cls: 'label',
         mono: true,
       });
+      return above ? ABOVE_H : 0;
+    };
     const cell = (
       id: string,
       text: string,
@@ -150,10 +185,10 @@ export function view(
           role: role === 'active' ? 'active' : undefined,
         });
     };
-    rowLabel('values-label', 'values', y);
+    y += rowLabel('values-label', 'values', y);
     s.values.forEach((v, i) => cell(`value-${i}`, String(v), LABEL_W + i * CELL.pitch, y));
     y += CELL.h + 10;
-    rowLabel('chosen-label', 'chosen', y);
+    y += rowLabel('chosen-label', 'chosen', y);
     for (let i = 0; i < n; i++) {
       const v = s.chosen[i];
       cell(
@@ -168,7 +203,7 @@ export function view(
       );
     }
     y += CELL.h + 14;
-    rowLabel('found-label', 'found', y);
+    y += rowLabel('found-label', 'found', y);
     // Many outputs (a big tree) are listed without spaces, so more of them fit on a row.
     const show = (xs: readonly number[]) => (compact ? `[${xs.join(',')}]` : seqText(xs));
     const leaves = s.nodes.filter((x) => x.kind === 'leaf');
@@ -214,6 +249,7 @@ export function view(
   interface Arrangement {
     t: ReturnType<typeof tree>;
     perRow: number;
+    above: boolean;
     /** Where the panel's top left corner goes. */
     px: number;
     py: number;
@@ -223,11 +259,14 @@ export function view(
   const options: Arrangement[] = [];
   for (const direction of stage ? (['down', 'right'] as const) : (['down'] as const)) {
     const t = tree(direction);
-    for (const perRow of stage ? PER_ROW : PER_ROW.slice(0, 1)) {
-      const p = panel(perRow);
+    for (const [perRow, above] of stage
+      ? PER_ROW.flatMap((k) => [[k, false] as const, [k, true] as const])
+      : [[PER_ROW[0]!, false] as const]) {
+      const p = panel(perRow, above);
       const make = (px: number, py: number): Arrangement => ({
         t,
         perRow,
+        above,
         px,
         py,
         bounds: padBounds(
@@ -239,21 +278,26 @@ export function view(
       if (stage) options.push(make(t.w + HGAP, drop));
     }
   }
-  // With no stage, the tree grows down with the panel under it, as it always has.
-  const place = pickLayout(stage, options);
+  // With no stage, the tree grows down with the panel under it, as it always has. With one, the
+  // arrangement drawn largest wins.
+  const place = stage
+    ? options.reduce((a, b) => (onStage(b.bounds, stage) > onStage(a.bounds, stage) ? b : a))
+    : options[0]!;
   const { layout, dx, dy } = place.t;
 
   const shapes: Shape[] = [];
-  shapes.push({
-    kind: 'text',
-    id: 'tree-title',
-    x: 0,
-    y: 15,
-    text: treeTitle,
-    size: 12.5,
-    cls: 'label',
-    mono: true,
-  });
+  place.t.title.forEach((line, i) =>
+    shapes.push({
+      kind: 'text',
+      id: i ? `tree-title-${i + 1}` : 'tree-title',
+      x: 0,
+      y: 15 + i * TITLE_LINE,
+      text: line,
+      size: 12.5,
+      cls: 'label',
+      mono: true,
+    }),
+  );
   if (s.nodes.length) shapes.push(...drawCallTree(layout, now, { dx, dy, roles }));
   else
     shapes.push({
@@ -266,6 +310,6 @@ export function view(
       cls: 'label',
       mono: true,
     });
-  shapes.push(...translate(panel(place.perRow).shapes, place.px, place.py));
+  shapes.push(...translate(panel(place.perRow, place.above).shapes, place.px, place.py));
   return { shapes, bounds: place.bounds, label: describe(s) };
 }

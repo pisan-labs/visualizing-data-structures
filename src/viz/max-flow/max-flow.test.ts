@@ -145,9 +145,10 @@ describe('max-flow', () => {
 });
 
 describe('drawn text size', () => {
-  // A left-to-right network may turn to run top to bottom on a phone: 6.8 px before, 8.1 after.
+  // A left-to-right network may turn to run top to bottom on a phone: 6.8 px before, 8.1 after,
+  // and 9.8 once the turned network may come shorter from s to t.
   it('stays readable on a laptop and on a phone', () => {
     expect(smallestText(maxFlow, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(12.5);
-    expect(smallestText(maxFlow, PHONE_STAGE).px).toBeGreaterThanOrEqual(8);
+    expect(smallestText(maxFlow, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

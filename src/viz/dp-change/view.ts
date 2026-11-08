@@ -1,11 +1,13 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
 import type { Scene, Shape } from '../../render/scene';
 import {
   boxRow,
+  fitCellW,
   tableGeometry,
   tableScene,
   type TableFrame,
   type TableLink,
+  valueSize,
 } from '../../layouts/table';
 import { describe, type ChangeExtra, type ChangeSettings, type ChangeState } from './model';
 
@@ -20,19 +22,25 @@ const show = (v: number | null | undefined) =>
  * reads (one lane per coin), and under the table the coins the traceback takes and what greedy
  * would pay. Number of ways: one row per prefix of the coins.
  */
-export function view(step: Step<ChangeState, ChangeExtra>, settings: ChangeSettings): Scene {
+export function view(
+  step: Step<ChangeState, ChangeExtra>,
+  settings: ChangeSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const amounts = Array.from({ length: state.amount + 1 }, (_, a) => String(a));
   const label = describe(state, settings);
 
   if (settings.goal === 'ways') {
-    const frame: TableFrame = {
+    const waysOf = (cellW: number | undefined): TableFrame => ({
       rows: state.table.length,
       cols: state.amount + 1,
       colHeads: 1,
       rowHeads: [62],
-    };
+      ...(cellW ? { cellW } : {}),
+    });
+    const frame = waysOf(fitCellW(stage, waysOf, (w) => [20, valueSize('00', w)]));
     const links: TableLink[] = (extra.reads ?? []).map((r, k) => ({
       id: `read-${k}`,
       from: r.from,
@@ -50,7 +58,7 @@ export function view(step: Step<ChangeState, ChangeExtra>, settings: ChangeSetti
     return { shapes, bounds, label };
   }
 
-  const frame: TableFrame = {
+  const frameOf = (cellW: number | undefined): TableFrame => ({
     rows: 2,
     cols: state.amount + 1,
     colHeads: 1,
@@ -58,7 +66,13 @@ export function view(step: Step<ChangeState, ChangeExtra>, settings: ChangeSetti
     rowHeads: [72],
     arcLanes: Math.max(1, state.coins.length),
     below: 2 * STRIP_H + STRIP_GAP,
-  };
+    ...(cellW ? { cellW } : {}),
+  });
+  // On a phone, narrower cells draw the arc labels (16 units) larger; values and coins stay
+  // two digits wide.
+  const frame = frameOf(
+    fitCellW(stage, frameOf, (w) => [16, valueSize('00', w), valueSize('00', Math.min(w - 6, 46))]),
+  );
   const g = tableGeometry(frame);
   const links: TableLink[] = [];
   for (const r of extra.reads ?? []) {

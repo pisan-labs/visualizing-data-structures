@@ -5,6 +5,9 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { balancedOrderOf, bst, parseKeyInput, zigzagOrderOf } from '.';
 import { treeHeight, type BSTSettings, type BSTState } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import textSizeDef from './index';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: a plain recursive BST with the same conventions, written independently.
@@ -418,5 +421,13 @@ describe('binary search tree practice', () => {
         expect(q.watch!.length).toBeGreaterThan(0);
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // nil was 12, and deep trees kept 56 between levels when labelled (10.2 px on a laptop); nil at 13, deep trees closer.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(textSizeDef, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(textSizeDef, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

@@ -11,6 +11,7 @@ import type { TmSettings } from './model';
 import { fitLine } from '../../layouts/trace';
 import { arrowLabel, diagramOf, view } from './view';
 import { LAPTOP_STAGE, PHONE_STAGE, TYPICAL_STAGES } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 const settings = (s: Partial<TmSettings> = {}): TmSettings =>
   ({ ...turingMachine.defaults, ...s }) as TmSettings;
@@ -328,5 +329,13 @@ describe('Turing machine page', () => {
     expect(fitLine({ parts: ['', 'q0', '01'] }, 14)).toBe('q0 01');
     // With nothing left of the head, the right side gets all the room.
     expect(fitLine({ parts: ['', 'q0', '0123456789abcdef'] }, 14)).toBe('q0 0123456789…');
+  });
+});
+
+describe('drawn text size', () => {
+  // On a phone a long chain of states runs across, a little tighter, under the tape and trace.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(turingMachine, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(turingMachine, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

@@ -243,6 +243,8 @@ export function networkLayout(net: Network, template: FlowTemplate, spread = 1):
  * shape. With no stage, only networkLayout, so thumbnails stay.
  */
 const TURN_WIDEN = 1.4;
+/** A turned network may also come this much shorter from s to t. */
+const TURN_SHORTEN = 0.75;
 
 export function networkLayouts(
   net: Network,
@@ -268,17 +270,29 @@ export function networkLayouts(
     h: turned.bounds.h,
   };
   const side: GraphLayout = { pos, r, bounds };
+  // Turned, the column is long and its labels sit beside the arcs, so it may also come shorter.
+  const ys = Object.values(pos).map((p) => p.y);
+  const top = Math.min(...ys);
+  const shortPos: Record<string, Pt> = {};
+  for (const [v, p] of Object.entries(pos))
+    shortPos[v] = { x: p.x, y: top + (p.y - top) * TURN_SHORTEN };
+  const short: GraphLayout = {
+    pos: shortPos,
+    r,
+    bounds: { ...bounds, h: (bounds.h - 2 * r) * TURN_SHORTEN + 2 * r },
+  };
   // Only when its labels stay clear at their longest (every arc full, costs shown), drawn as
   // flow or as the residual network, so the choice holds through a run.
   const full: Flow = Object.fromEntries(net.graph.edges.map((e) => [keyOf(e), e.w ?? 1]));
-  const clear = [false, true].every((residual) =>
-    [false, true].every(
-      (costs) =>
-        overlaps(drawNetwork(net, side, { roles: new Map(), flow: full, residual, costs }).shapes)
-          .length === 0,
-    ),
-  );
-  return clear ? [layout, side] : [layout];
+  const clear = (l: GraphLayout) =>
+    [false, true].every((residual) =>
+      [false, true].every(
+        (costs) =>
+          overlaps(drawNetwork(net, l, { roles: new Map(), flow: full, residual, costs }).shapes)
+            .length === 0,
+      ),
+    );
+  return [layout, ...[side, short].filter(clear)];
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -334,26 +348,47 @@ export function residualCost(net: Network, u: string, v: string, flow: Flow): nu
 
 /**
  * Labels such as "12/16" are wider than the weights the graph drawing leaves room for. Move each
- * one straight away from its arc until its box clears the line.
+ * one straight away from its arc until its box clears the line, to the less crowded side.
  */
 function clearLabels(shapes: Shape[]) {
   const normals = new Map<string, { nx: number; ny: number }>();
   const lines = new Map<string, Extract<Shape, { kind: 'arrow' }>[]>();
+  const ids = new Set(shapes.map((sh) => sh.id));
   for (const sh of shapes) {
     if (sh.kind !== 'arrow' || !sh.id.startsWith('e-')) continue;
-    const key = sh.id.replace(/^e-/, '').replace(/-a$/, '');
+    // A bent arc's first part is "e-u-v-a", but "e-s-a" is the arc into a vertex named a.
+    const part = sh.id.endsWith('-a') && ids.has(sh.id.slice(0, -2));
+    const key = sh.id.slice(2, part ? -2 : undefined);
     lines.set(key, [...(lines.get(key) ?? []), sh]);
   }
-  for (const sh of shapes) {
-    if (sh.kind !== 'text' || !sh.id.startsWith('ew-')) continue;
+  const texts = shapes.filter(
+    (sh): sh is Extract<Shape, { kind: 'text' }> => sh.kind === 'text' && sh.id.startsWith('ew-'),
+  );
+  const box = (t: Extract<Shape, { kind: 'text' }>) => {
+    const size = t.size ?? 13;
+    const w = textWidth(t.text, size, false, true) + 4;
+    return { x: t.x - w / 2, y: t.y - size, w, h: size + 4 };
+  };
+  const hit = (a: Bounds, b: Bounds) =>
+    a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+  const crosses = (b: Bounds, a: Extract<Shape, { kind: 'arrow' }>) => {
+    for (let i = 0; i <= 12; i++) {
+      const x = a.x1 + ((a.x2 - a.x1) * i) / 12;
+      const y = a.y1 + ((a.y2 - a.y1) * i) / 12;
+      if (x > b.x && x < b.x + b.w && y > b.y && y < b.y + b.h) return true;
+    }
+    return false;
+  };
+  for (const sh of texts) {
     const segs = lines.get(sh.id.slice(3));
     if (!segs) continue;
     const size = sh.size ?? 13;
-    const w = textWidth(sh.text, size) / 2 + 2;
+    // Drawn bold: measure it so.
+    const w = textWidth(sh.text, size, false, true) / 2 + 3;
     const h = size / 2 + 2;
     const c = { x: sh.x, y: sh.y - size * 0.35 };
-    // The nearest segment, and the label's offset from it.
-    let best: { d: number; nx: number; ny: number } | null = null;
+    // The nearest segment, the label's offset from it, and the foot of that offset.
+    let best: { d: number; nx: number; ny: number; px: number; py: number } | null = null;
     for (const a of segs) {
       const dx = a.x2 - a.x1;
       const dy = a.y2 - a.y1;
@@ -368,26 +403,35 @@ function clearLabels(shapes: Shape[]) {
         nx = -nx;
         ny = -ny;
       }
-      if (!best || d < best.d) best = { d, nx, ny };
+      if (!best || d < best.d) best = { d, nx, ny, px, py };
     }
     if (!best) continue;
     const need = Math.abs(best.nx) * w + Math.abs(best.ny) * h;
     if (best.d < need) {
-      sh.x += best.nx * (need - best.d);
-      sh.y += best.ny * (need - best.d);
+      const f = best;
+      // Clear of the line on its own side, or on the other side when that side is crowded
+      // with other labels and arcs.
+      const at = (side: number) => ({
+        x: f.px + f.nx * need * side,
+        y: f.py + f.ny * need * side + size * 0.35,
+      });
+      const crowd = (side: number) => {
+        const b = box({ ...sh, ...at(side) });
+        let n = 0;
+        for (const o of texts) if (o !== sh && hit(b, box(o))) n += 2;
+        for (const [k, ss] of lines)
+          if (k !== sh.id.slice(3)) for (const a of ss) if (crosses(b, a)) n += 1;
+        return n;
+      };
+      const side = crowd(-1) < crowd(1) ? -1 : 1;
+      Object.assign(sh, at(side));
+      if (side < 0) best = { ...best, nx: -best.nx, ny: -best.ny };
     }
     normals.set(sh.id, best);
   }
   // Labels that still overlap each other move apart, each along its own normal.
-  const labels = shapes.filter(
-    (sh): sh is Extract<Shape, { kind: 'text' }> => sh.kind === 'text' && normals.has(sh.id),
-  );
-  const box = (t: Extract<Shape, { kind: 'text' }>) => {
-    const size = t.size ?? 13;
-    const w = textWidth(t.text, size) + 4;
-    return { x: t.x - w / 2, y: t.y - size, w, h: size + 4 };
-  };
-  for (let round = 0; round < 6; round++) {
+  const labels = texts.filter((sh) => normals.has(sh.id));
+  for (let round = 0; round < 20; round++) {
     let moved = false;
     for (let i = 0; i < labels.length; i++)
       for (let j = i + 1; j < labels.length; j++) {

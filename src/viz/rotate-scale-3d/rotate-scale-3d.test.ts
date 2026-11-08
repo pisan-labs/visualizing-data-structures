@@ -1,5 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { det3, project, type Vec3 } from '../../layouts/space';
@@ -144,5 +146,13 @@ describe('3D rotation and scale', () => {
     expect(fixed2(1.005 + 1e-9)).toBe('1.01');
     expect(parseNumber('1.5')).toBe(1.5);
     expect(parseNumber('1.25')).toBeInstanceOf(Error);
+  });
+});
+
+describe('drawn text size', () => {
+  // Vector labels were 12 units (10.9 px on a laptop): now 14.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(rotateScale3d, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(rotateScale3d, PHONE_STAGE).px).toBeGreaterThanOrEqual(11);
   });
 });

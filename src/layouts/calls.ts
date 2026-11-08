@@ -81,7 +81,11 @@
  *     true), minW (narrowest box, default 34), direction ('down', the default, or 'right':
  *     the root at the left and a column per level, for a tall phone stage, where a wide tree
  *     draws tiny), columnGap (direction 'right': room between columns, default 1.8 em; a view
- *     with edge labels makes it fit the widest).
+ *     with edge labels makes it fit the widest), boxH (box height in em: 2.6 with two lines and
+ *     1.85 with one by default; a big tree packs its rows closer with less), padX (room around
+ *     the text, left and right together, default 0.9 em; a wide tree packs closer with less)
+ *     and tagMin (the smallest badge font, TAG_MIN by default: a big tree that is drawn small
+ *     raises it).
  *     The algorithm is a tidy tree for any number of children: each subtree is laid out on its
  *     own, then the children of a node are packed left to right (top to bottom when growing
  *     right) as close as their outlines allow at every depth, and the parent is centered over
@@ -103,20 +107,21 @@
  *
  *   callNodeShapes(box, call, roles, options) draws one box the same way, for layouts that
  *   place nodes themselves (a memoized DAG, a table of subproblems). options: size, twoLines,
- *   enterFrom, direction (where the badge goes), and shapeId (the box's id, default
+ *   enterFrom, direction (where the badge goes), tagMin, and shapeId (the box's id, default
  *   callShapeId(call.id); the label, value and tag ids add "-label", "-value", "-tag" and
  *   "-tagtext" to it).
  *   callTreeBounds(layout, dx, dy, levelNotes): the bounds after an offset, notes included
  *   (level notes are for trees that grow down).
  *   callTreeObstacles(layout, dx, dy): the boxes, badges and points along the edges, for
  *   sliding a table or a second picture into the room the tree leaves (src/layouts/room.ts).
- *   tagBox(box, tag, size, twoLines, direction): where a badge goes.
+ *   riseUnderTitle(layout, dx, dy, title, clear): how far the tree can move up beside its title.
+ *   tagBox(box, tag, size, twoLines, direction, min): where a badge goes.
  *
  * Helpers: monoWidth(text, size), fitSize(text, width, size, min), unionBounds, padBounds.
  */
 import type { MarkRole } from '../engine/types';
 import type { Bounds, Shape } from '../render/scene';
-import { along } from './room';
+import { along, room } from './room';
 
 /** Width of monospace text: 0.6 em per character. */
 export function monoWidth(text: string, size: number): number {
@@ -408,6 +413,12 @@ export interface CallTreeOptions {
   direction?: TreeDirection;
   /** direction 'right': the space between one level's widest box (and badge) and the next. */
   columnGap?: number;
+  /** Box height in em (default 2.6 with two lines, 1.85 with one). */
+  boxH?: number;
+  /** Room around a box's text, left and right together, in em (default 0.9). */
+  padX?: number;
+  /** The smallest tag font (default TAG_MIN): a big tree drawn small raises it to stay readable. */
+  tagMin?: number;
 }
 
 export interface PlacedCall {
@@ -429,6 +440,7 @@ export interface CallTreeLayout {
   twoLines: boolean;
   levelGap: number;
   direction: TreeDirection;
+  tagMin: number;
   /** Every box and badge, for views that fit something into the room the tree leaves. */
   rects: Bounds[];
 }
@@ -436,12 +448,18 @@ export interface CallTreeLayout {
 export const callShapeId = (id: string) => `call-${id}`;
 
 /** Box size for a call: the label, and the value under it (two lines) or after it (one). */
-export function callBoxSize(call: Pick<TreeCall, 'label' | 'value'>, size = 12.5, twoLines = true) {
+export function callBoxSize(
+  call: Pick<TreeCall, 'label' | 'value'>,
+  size = 12.5,
+  twoLines = true,
+  boxH?: number,
+  padX = 0.9,
+) {
   const label = monoWidth(call.label, size);
   const value = call.value ? monoWidth(call.value, smaller(size)) : 0;
   const text = twoLines ? Math.max(label, value) : label + (value ? size * 0.5 + value : 0);
-  const w = Math.round(text + size * 0.9);
-  const h = Math.round(twoLines ? size * 2.6 : size * 1.85);
+  const w = Math.round(text + size * padX);
+  const h = Math.round(size * (boxH ?? (twoLines ? 2.6 : 1.85)));
   return { w, h };
 }
 
@@ -455,9 +473,9 @@ export const TAG_MIN = 10;
 /** The font of an edge label ("take 3"): 0.8 of the box font, and at least TAG_MIN. */
 export const edgeLabelSize = (size: number) => Math.max(TAG_MIN, Math.round(size * 0.8 * 10) / 10);
 
-/** Badge size for a tag. */
-export function tagSize(tag: string, size: number) {
-  const s = Math.max(TAG_MIN, Math.round(size * 0.74 * 10) / 10);
+/** Badge size for a tag: 0.74 of the box font, and at least `min`. */
+export function tagSize(tag: string, size: number, min = TAG_MIN) {
+  const s = Math.max(min, Math.round(size * 0.74 * 10) / 10);
   return { w: Math.round(monoWidth(tag, s) + s * 0.9), h: Math.round(s * 1.5), s };
 }
 
@@ -473,8 +491,9 @@ export function tagBox(
   size: number,
   twoLines: boolean,
   direction: TreeDirection = 'down',
+  min = TAG_MIN,
 ): Bounds & { s: number } {
-  const t = tagSize(tag, size);
+  const t = tagSize(tag, size, min);
   const x0 = box.x - box.w / 2;
   const y0 = box.y - box.h / 2;
   if (direction === 'right')
@@ -502,6 +521,8 @@ export function layoutCallTree(calls: TreeCall[], options: CallTreeOptions = {})
   const minW = options.minW ?? 34;
   const direction = options.direction ?? 'down';
   const right = direction === 'right';
+  const tagMin = options.tagMin ?? TAG_MIN;
+  const badge = (tag: string) => tagSize(tag, size, tagMin);
 
   const byId = new Map(calls.map((c) => [c.id, c]));
   const kids = new Map<string, string[]>();
@@ -522,14 +543,14 @@ export function layoutCallTree(calls: TreeCall[], options: CallTreeOptions = {})
   // right when the tree grows down, above and below when it grows right.
   const boxOf = new Map<string, { w: number; h: number; left: number; right: number }>();
   for (const c of calls) {
-    const b = callBoxSize(c, size, twoLines);
+    const b = callBoxSize(c, size, twoLines, options.boxH, options.padX);
     const w = Math.max(minW, b.w);
     if (right) {
-      const half = Math.max(b.h, c.tag ? tagSize(c.tag, size).h : 0) / 2;
+      const half = Math.max(b.h, c.tag ? badge(c.tag).h : 0) / 2;
       boxOf.set(c.id, { w, h: b.h, left: half, right: half });
     } else {
       // A tag badge hangs over the top-right corner; keep room for it.
-      const over = c.tag ? Math.max(0, tagSize(c.tag, size).w / 2) : 0;
+      const over = c.tag ? Math.max(0, badge(c.tag).w / 2) : 0;
       boxOf.set(c.id, { w, h: b.h, left: w / 2, right: w / 2 + over });
     }
   }
@@ -605,8 +626,7 @@ export function layoutCallTree(calls: TreeCall[], options: CallTreeOptions = {})
       const measure = (id: string, depth: number) => {
         const c = byId.get(id)!;
         widths[depth] = Math.max(widths[depth] ?? 0, boxOf.get(id)!.w);
-        if (c.tag)
-          badges[depth] = Math.max(badges[depth] ?? 0, boxOf.get(id)!.w + tagSize(c.tag, size).w);
+        if (c.tag) badges[depth] = Math.max(badges[depth] ?? 0, boxOf.get(id)!.w + badge(c.tag).w);
         for (const k of kids.get(id) ?? []) measure(k, depth + 1);
       };
       measure(root, 0);
@@ -621,11 +641,11 @@ export function layoutCallTree(calls: TreeCall[], options: CallTreeOptions = {})
     for (const n of nodes.values()) {
       rects.push({ x: n.x - n.w / 2, y: n.y - n.h / 2, w: n.w, h: n.h });
       const tag = byId.get(n.id)!.tag;
-      if (tag) rects.push(tagBox(n, tag, size, twoLines, direction));
+      if (tag) rects.push(tagBox(n, tag, size, twoLines, direction, tagMin));
     }
     bounds = unionBounds(...rects);
   }
-  return { nodes, levels, bounds, size, twoLines, levelGap, direction, rects };
+  return { nodes, levels, bounds, size, twoLines, levelGap, direction, tagMin, rects };
 }
 
 const NODE_ROLE: Record<CallState, MarkRole | undefined> = {
@@ -647,6 +667,7 @@ export function callNodeShapes(
     enterFrom?: { x: number; y: number };
     shapeId?: string;
     direction?: TreeDirection;
+    tagMin?: number;
   } = {},
 ): Shape[] {
   const size = opts.size ?? 12.5;
@@ -716,7 +737,7 @@ export function callNodeShapes(
     });
   }
   if (call.tag) {
-    const t = tagBox(box, call.tag, size, twoLines, opts.direction);
+    const t = tagBox(box, call.tag, size, twoLines, opts.direction, opts.tagMin);
     const tx = t.x;
     const ty = t.y;
     const tagRole = roles.get(`${id}-tag`) ?? call.tagRole ?? 'compare';
@@ -839,6 +860,7 @@ export function drawCallTree(
         twoLines: layout.twoLines,
         enterFrom: parent && { x: parent.x, y: parent.y },
         direction: layout.direction,
+        tagMin: layout.tagMin,
       }),
     );
   }
@@ -889,4 +911,21 @@ export function callTreeObstacles(layout: CallTreeLayout, dx = 0, dy = 0): Bound
     else out.push(...along(q.x + dx, q.y + q.h / 2 + dy, n.x + dx, n.y - n.h / 2 + dy));
   }
   return out;
+}
+
+/**
+ * How far a tree drawn at (dx, dy) under a title can move up into the room beside the title
+ * before it comes within `clear` of it, never above the title's top. A tree that grows right
+ * from a root halfway down leaves its top left corner empty, where a short title sits.
+ */
+export function riseUnderTitle(
+  layout: CallTreeLayout,
+  dx: number,
+  dy: number,
+  title: Bounds,
+  clear = 6,
+): number {
+  if (layout.nodes.size === 0) return 0;
+  const top = layout.bounds.y + dy - title.y;
+  return Math.max(0, Math.min(top, room(callTreeObstacles(layout, dx, dy), [title], 'y', clear)));
 }

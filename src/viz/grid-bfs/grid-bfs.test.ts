@@ -4,6 +4,9 @@ import { Timeline } from '../../engine/timeline';
 import { parseGrid, parseGridInput, START_TEXT, type Grid } from '../_grid/grid';
 import { gridBfs } from '.';
 import type { BfsGridSettings } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import textSizeDef from './index';
 
 const settings = (moves: '4' | '8' = '4'): BfsGridSettings => ({ moves });
 
@@ -128,5 +131,13 @@ describe('grid BFS', () => {
       }),
       { numRuns: 200 },
     );
+  });
+});
+
+describe('drawn text size', () => {
+  // S and T tags were 12 (10.7 px on a laptop, 8.8 on a phone); at 13, 11.6 and 9.6.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(textSizeDef, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(textSizeDef, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

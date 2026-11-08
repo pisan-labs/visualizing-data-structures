@@ -289,10 +289,13 @@ export const GRID_ROW = 24;
 const GRID_PITCH = GRID_ROW + 3;
 const HEAD_H = 22;
 
-/** Column widths that fit the longest text of each column (header included), in 14-unit mono. */
+/** The size of the grid's text: headers and cells alike. */
+const GRID_SIZE = 15;
+
+/** Column widths that fit the longest text of each column (header included), in mono. */
 export function gridWidths(columns: string[][], min = 30): number[] {
   return columns.map((texts) =>
-    Math.max(min, ...texts.map((t) => textWidth(t, t.length <= 3 ? 15 : 14, true) + 12)),
+    Math.max(min, ...texts.map((t) => textWidth(t, GRID_SIZE, true) + 12)),
   );
 }
 
@@ -312,7 +315,7 @@ export function drawGrid(shapes: Shape[], o: GridOptions): Bounds {
       x: xs[k]! + o.widths[k]! / 2,
       y: o.y + HEAD_H - 7,
       text: o.head[k]!,
-      size: 14,
+      size: GRID_SIZE,
       anchor: 'middle',
       cls: 'label',
       role: roles.get(`${o.id}--h-${c}`),
@@ -336,7 +339,7 @@ export function drawGrid(shapes: Shape[], o: GridOptions): Bounds {
         role,
         opacity: cell.dim ? 0.5 : undefined,
       });
-      const size = cell.text.length <= 3 ? 15 : 14;
+      const size = GRID_SIZE;
       shapes.push({
         kind: 'text',
         id: `${id}-t`,

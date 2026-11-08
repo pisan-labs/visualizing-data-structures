@@ -3,7 +3,8 @@
  * merged in to its right, the recursion as an indented list of calls under the trees, and (for
  * a leftist heap) the npl of every node under it.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import {
   drawBinaryTree,
   labelSize,
@@ -13,6 +14,7 @@ import {
   type TreeLayout,
 } from '../../layouts/binary-tree';
 import type { Bounds, Scene, Shape } from '../../render/scene';
+import { ZOOM_DROP } from '../../render/stage';
 import {
   conv,
   heightOf,
@@ -42,7 +44,21 @@ function shifted(t: TreeLayout<number>, dx: number, dy: number): TreeLayout<numb
 }
 
 export function meldView(variant: Variant) {
-  return function view(step: Step<MeldState, MeldExtra>, settings: MeldSettings): Scene {
+  /**
+   * On a stage, the call list may stand beside the trees instead of under them (a deep heap on
+   * a wide laptop): whichever is drawn larger.
+   */
+  return function view(
+    step: Step<MeldState, MeldExtra>,
+    settings: MeldSettings,
+    stage?: StageSize,
+  ): Scene {
+    const under = draw(step, settings, false);
+    if (!stage || step.extra === undefined) return under;
+    return pickLayout(stage, [under, draw(step, settings, true)]);
+  };
+
+  function draw(step: Step<MeldState, MeldExtra>, settings: MeldSettings, beside: boolean): Scene {
     const { state: s } = step;
     const extra = step.extra;
     const K = conv(variant, settings);
@@ -50,7 +66,7 @@ export function meldView(variant: Variant) {
     // Deep trees (a leftist heap can be a long left chain) get closer levels.
     const deepest = Math.max(heightOf(s, s.root), heightOf(s, s.other));
     const base = K.leftist ? 56 : 52;
-    const levelGap = deepest <= 4 ? base : Math.max(40, base - 3 * (deepest - 4));
+    const levelGap = deepest <= 4 ? base : Math.max(40, base - 4 * (deepest - 4));
     const access = {
       left: (u: number) => s.nodes[u]!.left,
       right: (u: number) => s.nodes[u]!.right,
@@ -192,8 +208,9 @@ export function meldView(variant: Variant) {
       // The recursion, outermost call first, each nested call indented.
       const frames = extra.frames ?? [];
       const all = unionBounds(...boxes);
-      const x0 = all.x;
-      const y0 = all.y + all.h + 26;
+      // Beside, the list starts low enough to clear the stage's zoom buttons.
+      const x0 = beside ? all.x + all.w + 30 : all.x;
+      const y0 = beside ? all.y + ZOOM_DROP + 14 : all.y + all.h + 26;
       if (frames.length) {
         shapes.push({
           kind: 'text',
@@ -229,5 +246,5 @@ export function meldView(variant: Variant) {
       bounds: padBounds(unionBounds(...boxes), 14),
       label: meldDescribe(variant, s, settings),
     };
-  };
+  }
 }

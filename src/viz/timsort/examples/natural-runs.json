@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "timsort",
+  "id": "natural-runs",
+  "title": "Natural runs: up, down, up",
+  "notes": "A run that goes up, one that goes down (reversed in place) and one more that goes up. Timsort uses the order that is already there.",
+  "settings": {
+    "minrun": 4,
+    "gallop": true,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "12 25 38 51 47 33 19 6 22 29 41 15 60 70"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

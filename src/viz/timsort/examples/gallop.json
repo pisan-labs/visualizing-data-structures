@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "timsort",
+  "id": "gallop",
+  "title": "Galloping skips what is already in place",
+  "notes": "Two runs that barely overlap. Galloping finds that the front of the left run and the back of the right run are already in place, so only a few values are copied and merged.",
+  "settings": {
+    "minrun": 4,
+    "gallop": true,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "10 20 30 40 50 60 45 70 55 65 75 80 85 90 95 99"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

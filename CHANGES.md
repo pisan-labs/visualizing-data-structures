@@ -237,3 +237,5 @@
 2026-11-08 [plan] Wave 6, understanding Big-O (PLAN.md section 14): big-o-definition, loop-counting, doubling-experiment, amortized-analysis in Foundations; then the shared-code cleanup
 
 2026-11-08 [decision] Wave 6 defaults taken at 04:13 with no answer (PLAN.md decisions 35 to 37): amortized analysis its own page; doubling experiments on step counts with a noise setting; the four pages in Foundations
+
+2026-11-08 [code] Merged loop-counting (wave 6): 11 loop patterns lit cell by cell, the exact T(n) checked against the run and simplified to Big-O, Grow reads the doubling ratios; opens on the triangle

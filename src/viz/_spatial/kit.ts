@@ -254,6 +254,38 @@ export function drawClippedCircle(
   }
 }
 
+/** A convex or simple polygon clipped to an axis-parallel box (Sutherland–Hodgman). */
+export function clipPolygon(
+  pts: Vec[],
+  box: { xmin: number; xmax: number; ymin: number; ymax: number },
+): Vec[] {
+  const sides: [(p: Vec) => boolean, (a: Vec, b: Vec) => Vec][] = [
+    [(p) => p.x >= box.xmin, (a, b) => cut(a, b, 'x', box.xmin)],
+    [(p) => p.x <= box.xmax, (a, b) => cut(a, b, 'x', box.xmax)],
+    [(p) => p.y >= box.ymin, (a, b) => cut(a, b, 'y', box.ymin)],
+    [(p) => p.y <= box.ymax, (a, b) => cut(a, b, 'y', box.ymax)],
+  ];
+  let out = pts;
+  for (const [inside, meet] of sides) {
+    const next: Vec[] = [];
+    out.forEach((b, i) => {
+      const a = out[(i + out.length - 1) % out.length]!;
+      if (inside(b)) {
+        if (!inside(a)) next.push(meet(a, b));
+        next.push(b);
+      } else if (inside(a)) next.push(meet(a, b));
+    });
+    out = next;
+    if (!out.length) break;
+  }
+  return out;
+}
+
+function cut(a: Vec, b: Vec, axis: 'x' | 'y', v: number): Vec {
+  const t = (v - a[axis]) / (b[axis] - a[axis]);
+  return { x: a.x + t * (b.x - a.x), y: a.y + t * (b.y - a.y) };
+}
+
 export interface BoxOptions {
   id: string;
   /** Opposite corners in world units. */

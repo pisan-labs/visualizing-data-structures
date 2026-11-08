@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "delaunay",
+  "id": "add-a-point",
+  "title": "A new point inside a triangle",
+  "notes": "Three points make one triangle, plus scaffolding around it. The fourth lands inside that triangle, so inside its circle: the triangle goes, and the new point is joined to the three edges of the hole.",
+  "settings": {
+    "voronoi": false
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", "2,2 10,3 6,10"],
+    ["insert", "6,5"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

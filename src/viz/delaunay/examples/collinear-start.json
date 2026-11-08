@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "delaunay",
+  "id": "collinear-start",
+  "title": "Points on a line make no triangles",
+  "notes": "Four points on one line have no triangulation at all, only scaffolding. One point off the line, and three triangles appear at once.",
+  "settings": {
+    "voronoi": false
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", "1,1 4,4 7,7 10,10"],
+    ["insert", "3,8"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

@@ -383,6 +383,9 @@ The About page credits Galles and Lucet as inspiration.
 | 32 | Regex syntax (2026-11-07, default taken, confirmed by Yusuf) | Formal regular expressions only; a regex-engine comparison page in wave 5C |
 | 33 | Automata scope (2026-11-07, default taken, confirmed by Yusuf) | Waves 5A, 5B and 5C as in 13.5; agents start 5A after the stage work is committed |
 | 34 | Deploys (2026-11-07, replaces 27) | Work goes to `next` (CI runs there). Every push to `main` publishes (15 Netlify credits), so `main` only fast-forwards to `next`: daily at 17:27 Europe/Berlin, or when Yusuf says "deploy" |
+| 35 | Amortized analysis (2026-11-08, default taken) | Its own page (dynamic array and binary counter, aggregate, accounting and potential), linked from the dynamic array page |
+| 36 | Doubling experiments (2026-11-08, default taken) | Deterministic step counts, with an optional noise setting to show why real timings need care |
+| 37 | Big-O pages (2026-11-08, default taken) | The four wave 6 pages go in Foundations, after the growth lab |
 
 ## 12. Questions asked 2026-11-04
 

@@ -16,6 +16,11 @@
 
   const MAX_BULK = 50;
 
+  // The box starts about as wide as the sample input (an average character is about 0.7ch, and
+  // the padding 22px), up to 24 characters, and grows into whatever room the buttons leave on the
+  // row. So a box for long inputs no longer pushes the buttons to a second row by itself.
+  const sampleChars = $derived(Math.min(24, (controls.input?.sample ?? '').length));
+
   /** "a", "a and b", "a, b and c". */
   function andList(xs: readonly string[]): string {
     return xs.length <= 1 ? (xs[0] ?? '') : `${xs.slice(0, -1).join(', ')} and ${xs.at(-1)}`;
@@ -85,6 +90,7 @@
       bind:this={input}
       class="field"
       class:wide={controls.input.maxLength > 40}
+      style:--basis="max(96px, calc({sampleChars * 0.7}ch + 22px))"
       bind:value={text}
       placeholder={controls.input.placeholder}
       maxlength={controls.input.maxLength}
@@ -176,15 +182,15 @@
     font-weight: 600;
   }
 
+  /* --basis, set inline, follows the sample input's length. */
   input {
-    flex: 1 1 140px;
+    flex: 1 1 var(--basis, 140px);
     min-width: 0;
     max-width: 260px;
   }
 
-  /* Long inputs (a graph's edges, a text to search) get room to be read. */
+  /* Long inputs (a graph's edges, a text to search) may grow wider to be read. */
   input.wide {
-    flex-basis: 320px;
     max-width: 640px;
   }
 
@@ -257,6 +263,11 @@
   @media (max-width: 520px) {
     input {
       max-width: none;
+    }
+
+    /* On a phone a long input gets a line of its own. */
+    input.wide {
+      flex-basis: 100%;
     }
   }
 </style>

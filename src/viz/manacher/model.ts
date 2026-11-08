@@ -196,7 +196,7 @@ function* center(run: Run, settings: ManacherSettings): Generator<ManacherStep, 
     st.p[i] = k;
     const why =
       pj < room
-        ? `P[${j}] = ${pj} fits inside, so P[${i}] = ${k} for sure.`
+        ? `P[${j}] = ${pj} fits inside, so P[${i}] starts at ${k}, and the next comparison only confirms it: the pair just past it differs here, as it does at the mirror.`
         : `P[${j}] = ${pj}, but only R − i = ${room} of that is inside, so P[${i}] starts at ${k} and must be checked past R.`;
     yield run.step(
       `i = ${i} is inside the palindrome around C = ${st.c}, which reaches R = ${st.r}. Its mirror is i' = 2C − i = ${j}, and the palindrome makes both sides look the same. ${why}`,

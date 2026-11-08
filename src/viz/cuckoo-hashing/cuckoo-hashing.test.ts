@@ -80,6 +80,22 @@ describe('cuckoo hashing', () => {
     expect(t.endState().t[0][4]!.uid).toBe(four.uid);
   });
 
+  it('starts every step of a search or delete, hit or miss, with the operation', () => {
+    const t = run([
+      ['insert', 61],
+      ['insert', 4],
+      ['search', 61],
+      ['search', 99],
+      ['delete', 99],
+      ['delete', 4],
+    ]);
+    for (const e of t.entries.slice(2)) {
+      const call = `${e.call[0]}(${e.call[1]}): `;
+      for (const st of e.steps) expect(st.say.startsWith(call)).toBe(true);
+    }
+    expect(t.entries[3]!.steps.at(-1)!.say).toMatch(/^search\(99\): .* not in the table/);
+  });
+
   it('detects a cycle and rehashes into bigger tables', () => {
     const t = run([5, 126, 247].map((k): OpCall => ['insert', k]));
     const end = t.endState();

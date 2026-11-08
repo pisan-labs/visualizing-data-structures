@@ -231,3 +231,5 @@
 2026-11-07 [code] dfa-to-regex e2e: the readability check waits for the drawing to settle; its count only passed when the poll caught a mid-animation frame (failed 1 in 15 on phone)
 
 2026-11-07 [code] The 25 e2e specs that count drawn labels now wait for settled() first; all 422 tests in them pass that way, so none relied on a mid-animation frame
+
+2026-11-08 [note] Deployed at 01:58 on Yusuf's "merge next to main and deploy": main fast-forwarded 381c171..65a9e38 (CI run 87 green); live bundle matched the local build, all 125 pages return 200; all 17 automata pages are live

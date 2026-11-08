@@ -40,7 +40,7 @@ test('a message not below n is refused', async ({ page }) => {
 
 test('"Show me" links load an example and play it', async ({ page }) => {
   await page.getByRole('tab', { name: 'Learn' }).click();
-  await showMe(page, page.getByRole('link', { name: 'Show me' }).first());
+  await showMe(page, page.getByRole('link', { name: 'Making a key pair' }));
   await expect(narration(page)).toContainText('143');
 });
 

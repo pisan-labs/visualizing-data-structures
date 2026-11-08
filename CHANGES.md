@@ -335,3 +335,5 @@
 2026-11-08 [code] Merged wave 7J: cfg-to-cnf, ll1-parsing, lr0-parsing, lba, rice-theorem (no kit changes)
 
 2026-11-08 [code] Merged wave 7G: euler-path, graph-coloring, bidirectional-search, boruvka, johnson, lca, pagerank (no kit changes)
+
+2026-11-08 [code] Merged wave 7C: kd-tree, quadtree, closest-pair, segment-intersection (CLRS any-intersection default, Bentley-Ottmann setting), delaunay with Voronoi toggle (new _spatial kit)

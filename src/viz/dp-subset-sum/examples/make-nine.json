@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "dp-subset-sum",
+  "id": "make-nine",
+  "title": "Make 9 from 3, 4, 5 and 2",
+  "notes": "Two subsets make 9: 3 + 4 + 2 and 4 + 5. The walk back leaves a number out whenever the row above already reaches the sum, so it finds 4 + 5.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["numbers", "3 4 5 2"], ["target", 9], ["fill"], ["trace"]],
+  "at": {
+    "op": 2,
+    "step": 0
+  }
+}

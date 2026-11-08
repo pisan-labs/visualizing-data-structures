@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "dp-subset-sum",
+  "id": "largest",
+  "title": "Six numbers, target 14: 105 cells",
+  "notes": "The largest table here. Its size is (n + 1)(T + 1), so doubling T doubles the work, although it adds only one bit to the input.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["numbers", "5 9 3 11 7 4"], ["target", 14], ["fill"], ["trace"]],
+  "at": {
+    "op": 2,
+    "step": 0
+  }
+}

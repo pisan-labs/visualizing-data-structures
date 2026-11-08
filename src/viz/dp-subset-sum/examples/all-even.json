@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "dp-subset-sum",
+  "id": "all-even",
+  "title": "Even numbers never make an odd sum",
+  "notes": "2, 4, 6 and 8 make only even sums, so every odd column stays F and S[4][7] = F.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["numbers", "2 4 6 8"], ["target", 7], ["fill"], ["trace"]],
+  "at": {
+    "op": 2,
+    "step": 0
+  }
+}

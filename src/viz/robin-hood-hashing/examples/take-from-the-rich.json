@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "robin-hood-hashing",
+  "id": "take-from-the-rich",
+  "title": "Take from the rich",
+  "notes": "22 and 33 start at slot 0, 1 at slot 1. When 44 (home 0) reaches slot 2 it is 2 from home, while 1 sits only 1 from its home. 44 takes the slot and 1 moves on. The longest distance is 2; plain linear probing would leave 44 at distance 3.",
+  "settings": {
+    "m": 11,
+    "policy": "robin"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 22],
+    ["insert", 33],
+    ["insert", 1],
+    ["insert", 44]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

@@ -11,6 +11,7 @@ import halfFull from './examples/half-full.json';
 import thresholdOne from './examples/threshold-one.json';
 import explain from './explain.md?raw';
 import {
+  collidingKeys,
   defaults,
   describe,
   init,
@@ -80,7 +81,11 @@ export const hashRehash: VizDef<RehashState, RehashSettings, RehashExtra> = {
     random: { label: 'Insert random', make: (rng) => [['insert', rng.int(1, 99)]] },
     presets: [
       { label: 'Random keys', make: (rng, n) => inserts(distinctKeys(rng, n)) },
-      { label: 'All colliding keys', make: (_rng, n) => [['fill', 'collide', n]] },
+      {
+        label: 'All colliding keys',
+        make: (rng, n, s) =>
+          inserts(collidingKeys(rng, { ...defaults, ...s } as RehashSettings, n)),
+      },
       {
         label: 'Sequential keys',
         make: (rng, n) => {

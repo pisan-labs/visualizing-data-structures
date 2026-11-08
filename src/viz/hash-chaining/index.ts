@@ -14,6 +14,7 @@ import tailInsert from './examples/tail-insert.json';
 import explain from './explain.md?raw';
 import { distinctKeys, parseKeyInput, readKey } from '../_hashing/hashing';
 import {
+  collidingKeys,
   defaults,
   describe,
   init,
@@ -95,7 +96,13 @@ export const hashChaining: VizDef<ChainState, ChainSettings, ChainExtra> = {
     random: { label: 'Insert random', make: (rng) => [['insert', rng.int(1, 99)]] },
     presets: [
       { label: 'Random keys', make: (rng, n) => inserts(distinctKeys(rng, n)) },
-      { label: 'All colliding keys', make: (_rng, n) => [['fill', 'collide', n]] },
+      {
+        label: 'All colliding keys',
+        make: (rng, n, s) =>
+          collidingKeys(rng, { ...defaults, ...s } as ChainSettings, n).keys.map(
+            (k) => ['insert', k] as OpCall,
+          ),
+      },
       {
         label: 'Sequential keys',
         make: (rng, n) => {

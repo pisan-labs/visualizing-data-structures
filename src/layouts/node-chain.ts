@@ -1,7 +1,10 @@
 /**
  * A chain of linked nodes for the stack, queue and deque pages built on linked lists.
  * (src/layouts/linked.ts, built for the linked-list pages, is the general version; this one
- * only needs chains where each pointer field is null or points at a neighbour.)
+ * only needs chains where each pointer field is null or points at a neighbour. It takes the
+ * node's field geometry, the "null" marker and the pointer labels from linked.ts, at its own
+ * larger sizes; its links are plain polylines, its ids and spacing are its own, so the three
+ * pages keep their pictures and marks.)
  *
  * - A node is a box: [value | next] for a singly linked list, [prev | value | next] for a
  *   doubly linked one. A pointer field that is set sends an arrow to its neighbour; a null
@@ -20,6 +23,7 @@
  */
 import type { MarkRole, Value } from '../engine/types';
 import type { Bounds, Shape } from '../render/scene';
+import { fieldOffsets, nodeWidth, nullText, pointerText, type NodeStatus } from './linked';
 
 export type ChainKind = 'single' | 'double';
 
@@ -27,7 +31,7 @@ export interface ChainNode {
   uid: number;
   value: Value;
   /** pending: made, not linked in yet. garbage: nothing points at it any more. */
-  status?: 'live' | 'pending' | 'garbage';
+  status?: NodeStatus;
   /** Whether next points at the node in the following slot; otherwise it is null. */
   next: boolean;
   /** Doubly linked only: whether prev points at the node in the previous slot. */
@@ -64,7 +68,6 @@ const ROW_H = ABOVE + H + BELOW + LANE;
 /** The band at the top holds the returned value, clear of the stage's zoom buttons. */
 const TOP = 96;
 const X0 = 64;
-const LABEL = 15;
 /** Paint order: node boxes are 1 and text 2, so links and dividers go in between. */
 const LINK_Z = 1.5;
 /** How far next arrows sit above, and prev arrows below, the middle of a doubly linked node. */
@@ -78,9 +81,13 @@ const SIZES = {
 const valueSize = (text: string) => (text.length <= 3 ? 20 : text.length <= 5 ? 16 : 13);
 
 export function drawChain(d: ChainDrawing): { shapes: Shape[]; bounds: Bounds } {
-  const { field, value: vw } = SIZES[d.kind];
+  const size = SIZES[d.kind];
+  const { field, value: vw } = size;
   const double = d.kind === 'double';
-  const W = vw + field * (double ? 2 : 1);
+  const W = nodeWidth(d.kind, size);
+  const off = fieldOffsets(d.kind, size);
+  const nextAt = off.next!;
+  const prevAt = off.prev ?? 0;
   const pitch = W + GAP;
   const role = (id: string) => d.roles.get(id);
   const rows = Math.max(MIN_ROWS, Math.ceil((d.nodes.length + 1) / COLS));
@@ -139,15 +146,13 @@ export function drawChain(d: ChainDrawing): { shapes: Shape[]; bounds: Bounds } 
       role: role(id),
       cls: live ? 'cell live' : status === 'pending' ? 'cell ghost' : 'cell',
     });
-    // Field dividers.
-    const dividers = double ? [p.x + field, p.x + field + vw] : [p.x + vw];
-    dividers.forEach((x, i) =>
+    off.dividers.forEach((dx, i) =>
       shapes.push({
         kind: 'arrow',
         id: `${id}-div${i}`,
-        x1: x,
+        x1: p.x + dx,
         y1: p.y,
-        x2: x,
+        x2: p.x + dx,
         y2: p.y + H,
         head: 'none',
         cls: 'divider',
@@ -158,7 +163,7 @@ export function drawChain(d: ChainDrawing): { shapes: Shape[]; bounds: Bounds } 
     shapes.push({
       kind: 'text',
       id: `v${node.uid}`,
-      x: p.x + (double ? field : 0) + vw / 2,
+      x: p.x + off.value + vw / 2,
       y: p.cy + 7,
       text,
       size: valueSize(text),
@@ -183,7 +188,7 @@ export function drawChain(d: ChainDrawing): { shapes: Shape[]; bounds: Bounds } 
     // next: an arrow to the following slot, routed around the row end; or a slash.
     // In a doubly linked list, next arrows run a little above the middle and prev arrows a
     // little below; routed links use separate lanes for the same reason.
-    const nx = p.x + W - field / 2;
+    const nx = p.x + nextAt + field / 2;
     const ny = p.cy - (double ? SPLIT : 0);
     const nextRole = role(`${id}-next`);
     if (node.next) {
@@ -209,8 +214,8 @@ export function drawChain(d: ChainDrawing): { shapes: Shape[]; bounds: Bounds } 
       line(
         `${id}-next-null`,
         [
-          [p.x + W - field + 3, p.y + H - 4],
-          [p.x + W - 3, p.y + 4],
+          [p.x + nextAt + 3, p.y + H - 4],
+          [p.x + nextAt + field - 3, p.y + 4],
         ],
         { role: nextRole },
       );
@@ -218,7 +223,7 @@ export function drawChain(d: ChainDrawing): { shapes: Shape[]; bounds: Bounds } 
 
     if (double) {
       const prevRole = role(`${id}-prev`);
-      const px = p.x + field / 2;
+      const px = p.x + prevAt + field / 2;
       const py = p.cy + SPLIT;
       if (node.prev && k > 0) {
         const q = slot(k - 1);
@@ -242,8 +247,8 @@ export function drawChain(d: ChainDrawing): { shapes: Shape[]; bounds: Bounds } 
         line(
           `${id}-prev-null`,
           [
-            [p.x + 3, p.y + H - 4],
-            [p.x + field - 3, p.y + 4],
+            [p.x + prevAt + 3, p.y + H - 4],
+            [p.x + prevAt + field - 3, p.y + 4],
           ],
           { role: prevRole },
         );
@@ -261,21 +266,10 @@ export function drawChain(d: ChainDrawing): { shapes: Shape[]; bounds: Bounds } 
       const at = slot(ptr.side === 'above' ? 0 : d.nodes.length);
       x = ptr.side === 'above' ? X0 - 30 : at.x + 22;
       y = at.y;
-      shapes.push({
-        kind: 'text',
-        id: `${ptr.name}-null`,
-        x,
-        y: y + H / 2 + 5,
-        text: 'null',
-        size: 14,
-        anchor: 'middle',
-        mono: true,
-        cls: 'label',
-        role: r,
-      });
+      shapes.push(nullText(`${ptr.name}-null`, x, y + H / 2, r));
     } else {
       const p = slot(ptr.to);
-      x = p.x + (double ? field : 0) + vw / 2;
+      x = p.x + off.value + vw / 2;
       y = p.y;
     }
     const above = ptr.side === 'above';
@@ -284,18 +278,7 @@ export function drawChain(d: ChainDrawing): { shapes: Shape[]; bounds: Bounds } 
     const tail = above ? y - 30 : y + H + 30;
     shapes.push(
       { kind: 'arrow', id: `${ptr.name}-arrow`, x1: x, y1: tail, x2: x, y2: tip, role: r },
-      {
-        kind: 'text',
-        id: ptr.name,
-        x,
-        y: above ? y - 36 : y + H + 47,
-        text: ptr.name,
-        size: LABEL,
-        anchor: 'middle',
-        mono: true,
-        cls: 'pointer',
-        role: r,
-      },
+      { ...pointerText(ptr.name, ptr.name, x, above ? y - 36 : y + H + 47, r), cls: 'pointer' },
     );
   }
 
@@ -339,7 +322,7 @@ export function drawChain(d: ChainDrawing): { shapes: Shape[]; bounds: Bounds } 
         weight: 'bold',
         role: role('out'),
         z: 3,
-        enterFrom: { x: p.x + (double ? field : 0) + vw / 2, y: p.cy + 7 },
+        enterFrom: { x: p.x + off.value + vw / 2, y: p.cy + 7 },
       },
     );
   }

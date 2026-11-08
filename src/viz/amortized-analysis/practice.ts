@@ -40,7 +40,7 @@ export function amortizedPractice(def: () => Def): PracticeKind[] {
         const copies = sum(s.costs) - n;
         const grows = s.costs.filter((c) => c > 1).map((c) => c - 1);
         return {
-          prompt: `An empty dynamic array doubles when it is full, starting with 1 slot. How many items have been copied in all after ${n} appends?`,
+          prompt: `An empty dynamic array gets 1 slot on its first append and doubles whenever it is full. How many items have been copied in all after ${n} appends?`,
           setup: [],
           settings,
           answer: { kind: 'number', value: copies },

@@ -78,7 +78,7 @@ Grow by 4 slots instead and only 4 cheap appends come before the next grow, howe
 
 No constant charge survives it. With 3 coins the bank goes short at append 17, with 4 at append 25. Each extra coin buys 8 more appends, and the bill keeps growing. [No charge survives growing by 4](#example:constant-growth-bank)
 
-Growing by 1.5 works, it just needs a bigger charge. After a grow only a third of the slots are free, so each new item pays for its own copy and two older ones: a charge of 4, or Φ = 3·size − 2·capacity. With 3 coins the bank goes short at append 9. [Growing by 1.5 needs 4 coins](#example:growth-needs-four) Any factor above 1 works the same way; the dynamic array page has the trade between memory and copying.
+Growing by 1.5 works, it just needs a bigger charge. After a grow only a third of the slots are free, so each new item pays for its own copy and two older ones: a charge of 4, or Φ = 3·size − 2·capacity. With 3 coins the bank goes short at append 9. [Growing by 1.5 needs 4 coins](#example:growth-needs-four) Any factor above 1 works the same way; [the dynamic array page](/dynamic-array/) has the trade between memory and copying.
 
 ## Common mistakes
 

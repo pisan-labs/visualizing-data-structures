@@ -52,7 +52,7 @@
  * Sizes are in scene units, chosen so a 9 x 9 table (two strings of 8 characters) or 16
  * columns stay readable on a phone in portrait and on a 1366x768 laptop.
  */
-import type { MarkRole } from '../engine/types';
+import type { MarkRole, StageSize } from '../engine/types';
 import type { Bounds, Shape } from '../render/scene';
 
 /** A cell position: [row, column]. */
@@ -130,7 +130,47 @@ export function cellWidthFor(cols: number): number {
 export function valueSize(text: string, cellW: number): number {
   const n = Math.max(1, text.length);
   const fit = Math.floor((cellW - 6) / (n * 0.6));
-  return Math.max(12, Math.min(n === 1 ? 28 : n === 2 ? 26 : 24, fit));
+  // A narrow cell (a column of a string's table) keeps its digit from filling the box.
+  return Math.max(12, Math.min(n === 1 ? 28 : n === 2 ? 26 : 24, fit, Math.floor(cellW * 0.85)));
+}
+
+/**
+ * Font size for a bold header label over a column `cellW` wide: two units under its value
+ * size, but in a narrow column as large as fits the column (headers have no box to clear).
+ */
+export function headSize(text: string, cellW: number): number {
+  const fill = Math.floor((cellW - 3) / (Math.max(1, text.length) * 0.6));
+  return Math.min(24, Math.max(valueSize(text, cellW) - 2, fill));
+}
+
+/**
+ * The cell width that draws a table's smallest text largest on `stage`: on a tall phone stage a
+ * long row is narrower than the stage is tall, so narrower cells draw the whole table, and its
+ * fixed-size labels, larger. `frameOf(w)` is the frame at cell width w, `fontsOf(w)` the font
+ * sizes drawn at that width (values, labels), and the result goes no narrower than `min`.
+ * Decided from the frame, never from a step, so the camera holds still. With no stage, or
+ * when nothing is clearly larger, the frame's usual width (cellWidthFor).
+ */
+export function fitCellW(
+  stage: StageSize | undefined,
+  frameOf: (cellW: number | undefined) => TableFrame,
+  fontsOf: (cellW: number) => readonly number[],
+  min = 28,
+): number | undefined {
+  if (!stage) return undefined;
+  const usual = frameOf(undefined);
+  const start = usual.cellW ?? cellWidthFor(usual.cols);
+  let best: number | undefined;
+  let score = -Infinity;
+  for (let w = start; w >= min; w--) {
+    const g = tableGeometry(frameOf(w));
+    const s = Math.min(stage.w / g.width, stage.h / g.height) * Math.min(...fontsOf(w));
+    if (s > score * 1.01) {
+      best = w === start ? undefined : w;
+      score = s;
+    }
+  }
+  return best;
 }
 
 export interface TableGeometry {
@@ -328,7 +368,7 @@ export function tableScene(
       const id = `ch-${k}-${c}`;
       const isIndex = colStyle(k) === 'index';
       shapes.push(
-        text(id, g.cx(c), g.headY(k), t, isIndex ? 20 : Math.min(24, valueSize(t, w) - 2), {
+        text(id, g.cx(c), g.headY(k), t, isIndex ? 20 : headSize(t, w), {
           mono: true,
           cls: isIndex ? 'index' : undefined,
           weight: isIndex ? 'normal' : 'bold',
@@ -358,7 +398,7 @@ export function tableScene(
     lane.forEach((t, j) => {
       if (!t) return;
       shapes.push(
-        text(`corner-${k}-${j}`, g.headX(j), g.headY(k), t, 17, {
+        text(`corner-${k}-${j}`, g.headX(j), g.headY(k), t, 20, {
           mono: true,
           cls: 'label',
         }),
@@ -424,7 +464,7 @@ export function tableScene(
       shapes.push({ kind: 'arrow', id, x1: x2, y1: y, x2, y2: top, role, z });
       if (link.label) {
         shapes.push(
-          text(`${id}-label`, (x1 + x2) / 2, y - 6, link.label, 16, {
+          text(`${id}-label`, (x1 + x2) / 2, y - 9, link.label, 16, {
             cls: 'label',
             mono: true,
             role,
@@ -500,13 +540,21 @@ export function boxRow(
   id: string,
   y: number,
   boxes: readonly (RowBox | null)[],
-  opts: { w: number; h?: number; label?: string; labelX?: number; size?: number },
+  opts: {
+    w: number;
+    h?: number;
+    label?: string;
+    labelX?: number;
+    size?: number;
+    /** Font size of the label. Default 17. */
+    labelSize?: number;
+  },
 ): Shape[] {
   const h = opts.h ?? 40;
   const shapes: Shape[] = [];
   if (opts.label) {
     shapes.push(
-      text(`${id}-label`, opts.labelX ?? 0, y + h / 2 + 6, opts.label, 17, {
+      text(`${id}-label`, opts.labelX ?? 0, y + h / 2 + 6, opts.label, opts.labelSize ?? 17, {
         anchor: 'end',
         cls: 'label',
         mono: true,

@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "lz-compression",
+  "id": "small-window",
+  "title": "A window too small to see the repeat",
+  "notes": "abcabcabcabc repeats every 3 characters, but with a window of 2 LZ77 cannot look back that far. Every triple is a plain character. Try the same text with the window at 8.",
+  "settings": {
+    "method": "lz77",
+    "window": 2,
+    "lookahead": 6
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "abcabcabcabc"
+    ],
+    [
+      "encode"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

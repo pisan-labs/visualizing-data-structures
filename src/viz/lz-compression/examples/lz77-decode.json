@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "viz": "lz-compression",
+  "id": "lz77-decode",
+  "title": "LZ77: decoding copies one character at a time",
+  "notes": "The same triples decoded. The copy (2,4,c) reads characters it wrote itself a moment earlier: that is why the decoder copies one at a time.",
+  "settings": {
+    "method": "lz77",
+    "window": 8,
+    "lookahead": 6
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "abababcababc"
+    ],
+    [
+      "encode"
+    ],
+    [
+      "decode"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

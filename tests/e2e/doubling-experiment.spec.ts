@@ -134,7 +134,8 @@ test('noise makes single ratios jump, and says so', async ({ page }) => {
   await toEnd(page);
   await expect(narration(page)).toContainText('With noise on, b went');
   await expect(narration(page)).toContainText('The true count grows like n².');
-  await expect(svgText(page, 'T(n): one timed run per size, with noise')).toHaveCount(1);
+  // Beside the plot the title breaks after its comma; under it, it fits on one line.
+  await expect(svgText(page, /^T\(n\): one timed run per size,/)).toHaveCount(1);
   await options(page, 'On: the median of 5 timed runs per size');
   await expect(narration(page)).toContainText('with one run per size, b would have gone');
   await page.getByRole('button', { name: 'Step back' }).click();

@@ -1,6 +1,6 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout, translate } from '../../layouts/arrange';
 import type { Bounds, Scene, Shape } from '../../render/scene';
-import { pickLayout, translate } from '../_stage/arrange';
 import {
   BITS,
   amortized,

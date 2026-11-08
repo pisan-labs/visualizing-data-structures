@@ -8,12 +8,16 @@
  * Decide from sizes that hold for a whole operation (the finished tree, the reserved room),
  * never from what the current step happens to show, so the drawing does not jump mid-run.
  *
- * This is a page-local helper for now; it belongs beside fitScore and placePanels in
- * src/layouts once that folder is free to change.
+ * Other choosers look alike but score differently, so each keeps its own pictures. With no
+ * stage, `placePanels` (graph.ts), `pickBest` (_automata/panels.ts) and `bestPlacement`
+ * (_grammar/draw.ts) judge on both typical stages (fitScore) instead of keeping the first; the
+ * last two also make every challenger beat the current leader (by 5% and 3%), where here only
+ * the first has a head start.
  */
-import type { StageSize } from '../../engine/types';
-import { fitScore } from '../../layouts/graph';
-import type { Bounds, Shape } from '../../render/scene';
+import type { StageSize } from '../engine/types';
+import type { Bounds, Shape } from '../render/scene';
+import { ZOOM_DROP } from '../render/stage';
+import { fitScore } from './graph';
 
 /**
  * The arrangement drawn largest on `stage`, or the first one when there is no stage. Another
@@ -63,7 +67,7 @@ export interface PanelPlace {
 /**
  * A view that draws its panel (matrices, a legend, a list) under its main picture can offer the
  * panel beside it instead: right of `main`, its top `drop` units under the main picture's top,
- * clear of the stage's zoom buttons. `usual` is the scene's bounds with the panel under; `panel`
+ * clear of the stage's zoom buttons (ZOOM_DROP by default). `usual` is the scene's bounds with the panel under; `panel`
  * is the panel's box there. Beside, the bounds keep `usual`'s top left corner and its margins
  * (`pad` right and below). With no stage, or when beside is not clearly larger, nothing moves.
  */
@@ -77,7 +81,7 @@ export function panelPlace(
   const under: PanelPlace = { dx: 0, dy: 0, bounds: usual, beside: false };
   if (!stage) return under;
   const gap = o.gap ?? 30;
-  const drop = o.drop ?? 34;
+  const drop = o.drop ?? ZOOM_DROP;
   const pad = o.pad ?? 14;
   const dx = main.x + main.w + gap - panel.x;
   const dy = main.y + drop - panel.y;

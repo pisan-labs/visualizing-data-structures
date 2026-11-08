@@ -1,10 +1,10 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { prefixIds } from '../../layouts/align';
+import { pickLayout, translate } from '../../layouts/arrange';
 import { fitScore } from '../../layouts/graph';
 import { gridScene } from '../../layouts/grid';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { zoomCorner } from '../../render/stage';
-import { pickLayout, translate } from '../_stage/arrange';
 import {
   bigO,
   commas,

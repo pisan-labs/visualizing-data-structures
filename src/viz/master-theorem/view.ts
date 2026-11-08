@@ -1,4 +1,5 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import {
   callTreeBounds,
   drawCallTree,
@@ -7,7 +8,6 @@ import {
   type TreeCall,
 } from '../../layouts/calls';
 import type { Scene, Shape } from '../../render/scene';
-import { pickLayout } from '../_stage/arrange';
 import {
   CHECK_ROWS,
   caseNumber,

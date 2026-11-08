@@ -1,6 +1,6 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import type { Bounds, Scene, Shape } from '../../render/scene';
-import { pickLayout } from '../_stage/arrange';
 import {
   MAX_LISTED_BITS,
   bin,

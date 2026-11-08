@@ -259,3 +259,5 @@
 2026-11-08 [code] halting-problem, chomsky-hierarchy, pumping-lemma and big-o-definition use textWidth and wrapText from src/layouts/text.ts instead of their own factors
 
 2026-11-08 [note] Full e2e after the zoom and text-width cleanups: 2166 passed, 1 failed (factorial axe dark, one color-contrast node), 5 skipped; the failing test then passed 32 of 32 alone; logged as register item 11
+
+2026-11-08 [code] pickLayout and panelPlace moved to src/layouts/arrange.ts (panelPlace's default drop is now ZOOM_DROP) and placeStrip to src/layouts/table-strip.ts; bestPlacement, pickBest and the per-page pickers in floyd-warshall, multitape-tm, pda, regex-to-nfa and chomsky-hierarchy stay apart, as they judge a picture with no stage on both typical stages or use other margins; scene hashes of all 950 curated examples at the three conformance stages unchanged

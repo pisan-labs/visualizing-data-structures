@@ -1,4 +1,5 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { panelPlace, pickLayout, translate } from '../../layouts/arrange';
 import { drawMatrix, text, textW } from '../../layouts/plane';
 import {
   add3,
@@ -12,7 +13,6 @@ import {
   type Vec3,
 } from '../../layouts/space';
 import type { Scene, Shape } from '../../render/scene';
-import { panelPlace, pickLayout, translate } from '../_stage/arrange';
 import {
   VIEW,
   describe,

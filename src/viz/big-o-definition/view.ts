@@ -23,9 +23,9 @@
  * "r-lim" its caption, "r-key", "r-cur").
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout, translate } from '../../layouts/arrange';
 import { textWidth } from '../../layouts/text';
 import type { Bounds, Scene, Shape } from '../../render/scene';
-import { pickLayout, translate } from '../_stage/arrange';
 import {
   approx,
   cmpR,

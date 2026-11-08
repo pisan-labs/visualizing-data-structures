@@ -1,4 +1,5 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout, translate } from '../../layouts/arrange';
 import {
   callBoxSize,
   callNodeShapes,
@@ -14,7 +15,6 @@ import {
 } from '../../layouts/calls';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { ordinal } from '../_recursion/kit';
-import { pickLayout, translate } from '../_stage/arrange';
 import {
   describe,
   edgeKey,

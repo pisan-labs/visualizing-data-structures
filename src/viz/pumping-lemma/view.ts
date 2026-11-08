@@ -10,11 +10,11 @@
  * string p allows), so the camera holds still while splits and i's change.
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import { padBounds, unionBounds } from '../../layouts/graph';
 import { CELL_H, CELL_W, drawTape } from '../../layouts/tape';
 import { textWidth } from '../../layouts/text';
 import type { Bounds, Scene, Shape } from '../../render/scene';
-import { pickLayout } from '../_stage/arrange';
 import { MAX_I, PART_NAMES, PUMPED, pieces, splits, type Parts } from './game';
 import { lang, show, type Lemma } from './languages';
 import {

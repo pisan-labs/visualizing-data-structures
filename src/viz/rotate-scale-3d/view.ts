@@ -1,4 +1,5 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { panelPlace, pickLayout, translate } from '../../layouts/arrange';
 import { drawMatrix, text, textW } from '../../layouts/plane';
 import {
   column3,
@@ -12,7 +13,6 @@ import {
   type Vec3,
 } from '../../layouts/space';
 import type { Scene, Shape } from '../../render/scene';
-import { panelPlace, pickLayout, translate } from '../_stage/arrange';
 import { R, SHAPES, describe, type Rs3Extra, type Rs3Settings, type RsState } from './model';
 
 const O: Vec3 = { x: 0, y: 0, z: 0 };

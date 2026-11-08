@@ -1,4 +1,5 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import {
   drawLink,
   drawNode,
@@ -9,7 +10,6 @@ import {
   type Pt,
 } from '../../layouts/linked';
 import type { Scene, Shape } from '../../render/scene';
-import { pickLayout } from '../_stage/arrange';
 import { ARG_BAND, argAndFormula } from '../hash-open/grid';
 import {
   describe,

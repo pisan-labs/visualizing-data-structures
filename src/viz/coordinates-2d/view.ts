@@ -1,4 +1,5 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { panelPlace, pickLayout, translate } from '../../layouts/arrange';
 import {
   add,
   drawFrameGrid,
@@ -12,7 +13,6 @@ import {
   text,
 } from '../../layouts/plane';
 import type { Scene, Shape } from '../../render/scene';
-import { panelPlace, pickLayout, translate } from '../_stage/arrange';
 import {
   R,
   describe,

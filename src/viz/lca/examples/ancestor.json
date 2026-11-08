@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "lca",
+  "id": "ancestor",
+  "title": "One vertex is the other's ancestor",
+  "notes": "H is 3 deep and B is 1 deep. Lifting H by the difference, 2 = 10 in binary, is one jump of 2, and it lands on B itself. B is the answer.",
+  "settings": {
+    "root": "A",
+    "above": "nil"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-D, B-E, C-F, D-G, D-H, E-I, F-J"], ["build"], ["query", "H", "B"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

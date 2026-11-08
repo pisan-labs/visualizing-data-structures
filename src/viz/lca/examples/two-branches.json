@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "lca",
+  "id": "two-branches",
+  "title": "Two vertices on different branches",
+  "notes": "G and J are both 3 deep, on opposite sides of the root. The big jumps land both on NIL (too far), the 2-step jump lands them on B and C (different, so take it), and their parent A is the answer.",
+  "settings": {
+    "root": "A",
+    "above": "nil"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-D, B-E, C-F, D-G, D-H, E-I, F-J"], ["build"], ["query", "G", "J"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

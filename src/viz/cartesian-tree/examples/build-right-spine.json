@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "cartesian-tree",
+  "id": "build-right-spine",
+  "title": "Build with the right-spine stack",
+  "notes": "Eight values go in left to right. Each new value pops the stack (the right spine) while the top is bigger, takes the last node popped as its left child, and hangs on the right of what is left. Count the pops: never more than the values.",
+  "settings": {
+    "heap": "min"
+  },
+  "seed": 1,
+  "ops": [
+    ["append", 5],
+    ["append", 2],
+    ["append", 8],
+    ["append", 6],
+    ["append", 9],
+    ["append", 1],
+    ["append", 7],
+    ["append", 3]
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "cartesian-tree",
+  "id": "sorted-chain",
+  "title": "Sorted input makes a chain",
+  "notes": "Rising values never pop, so every value hangs on the right of the one before: a chain of height n - 1. The build is still O(n), but a query near the end walks down the whole chain.",
+  "settings": {
+    "heap": "min"
+  },
+  "seed": 1,
+  "ops": [
+    ["append", 10],
+    ["append", 20],
+    ["append", 30],
+    ["append", 40],
+    ["append", 50],
+    ["append", 60],
+    ["append", 70],
+    ["rmq", 4, 6]
+  ]
+}

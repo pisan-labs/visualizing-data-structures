@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "amortized-analysis",
+  "id": "counter-flips",
+  "title": "Fewer than 2 flips per increment",
+  "notes": "Sixteen increments counted the plain way. Bit 0 flips every time, bit 1 every second time, bit 2 every fourth: 31 flips in all, under 2 per increment, even though the 16th flips 5 bits.",
+  "settings": {
+    "structure": "counter",
+    "growth": "2",
+    "charge": "auto",
+    "method": "aggregate"
+  },
+  "seed": 1,
+  "ops": [["run", 16]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

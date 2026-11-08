@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "amortized-analysis",
+  "id": "constant-growth-bank",
+  "title": "No charge survives growing by 4",
+  "notes": "Growing by 4 with a charge of 3. The bank fills up between copies and pays out more each time, until the 17th append copies 16 items and the bank goes below zero. A charge of 4 lasts until append 25; any constant runs out.",
+  "settings": {
+    "structure": "array",
+    "growth": "4",
+    "charge": "auto",
+    "method": "accounting"
+  },
+  "seed": 1,
+  "ops": [["run", 20]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

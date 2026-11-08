@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "amortized-analysis",
+  "id": "charge-too-small",
+  "title": "Two coins per append run out",
+  "notes": "The same appends charged only 2 coins each. The fifth append copies 4 items with 1 coin in the bank and 1 spare from its own charge: the bank goes to −2, so 2 coins per append cannot pay for doubling.",
+  "settings": {
+    "structure": "array",
+    "growth": "2",
+    "charge": "2",
+    "method": "accounting"
+  },
+  "seed": 1,
+  "ops": [["run", 8]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

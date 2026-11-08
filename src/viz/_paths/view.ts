@@ -129,7 +129,7 @@ export function drawKeyed(shapes: Shape[], o: KeyedOptions): Bounds {
       x: x + w / 2,
       y: y + 35,
       text: c.value,
-      size: c.value.length <= 3 ? 14 : 12.5,
+      size: c.value.length <= 3 ? 14 : 13,
       anchor: 'middle',
       mono: true,
       role: textRole(`${rid}-t`),

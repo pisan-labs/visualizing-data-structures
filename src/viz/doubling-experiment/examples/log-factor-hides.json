@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "doubling-experiment",
+  "id": "log-factor-hides",
+  "title": "n log n reads as n^1.1",
+  "notes": "Merge sort, n = 1,000 to 128,000. The ratios go 2.23, 2.21, … 2.14, so b slides from 1.16 to 1.09. Merge sort is n log n, and a doubling test cannot tell n log n from n^1.1.",
+  "settings": {
+    "algo": "merge",
+    "noise": "off",
+    "fit": "last"
+  },
+  "seed": 1,
+  "ops": [["run", 1000]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

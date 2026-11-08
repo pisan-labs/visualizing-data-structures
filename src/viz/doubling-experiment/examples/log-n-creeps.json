@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "doubling-experiment",
+  "id": "log-n-creeps",
+  "title": "log n: b creeps toward 0",
+  "notes": "Binary search for a missing value, n = 1 to 128: 1, 2, 3, … 8 probes. Each doubling adds one probe, so the ratios fall toward 1 and b falls from 1.00 to 0.19.",
+  "settings": {
+    "algo": "binary",
+    "noise": "off",
+    "fit": "last"
+  },
+  "seed": 1,
+  "ops": [["run", 1]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

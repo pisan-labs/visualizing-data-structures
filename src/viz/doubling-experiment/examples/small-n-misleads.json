@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "doubling-experiment",
+  "id": "small-n-misleads",
+  "title": "Small n hides the exponent",
+  "notes": "Brute-force 3-sum from n = 3. It checks n(n−1)(n−2)/6 = n³/6 − n²/2 + n/3 triples, and at small n the lower terms are big: b goes 4.32, 3.46, 3.20 and only gets to 3.01 at n = 384.",
+  "settings": {
+    "algo": "threesum",
+    "noise": "off",
+    "fit": "last"
+  },
+  "seed": 1,
+  "ops": [["run", 3]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "doubling-experiment",
+  "id": "fit-every-point",
+  "title": "Fitting every point drags b",
+  "notes": "The small-n experiment again, fitted with a least-squares line through every point. The small sizes drag the slope up to 3.24, and the prediction at n = 1,000 comes out 64% too high. The last two sizes alone give 3.01.",
+  "settings": {
+    "algo": "threesum",
+    "noise": "off",
+    "fit": "all"
+  },
+  "seed": 1,
+  "ops": [
+    ["run", 3],
+    ["predict", 1000]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

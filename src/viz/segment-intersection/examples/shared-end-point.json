@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "segment-intersection",
+  "id": "shared-end-point",
+  "title": "Segments that share an end point",
+  "notes": "Touching counts as meeting. Three segments start at (1, 6): the left-end event inserts them together, ordered by slope.",
+  "settings": {
+    "mode": "all"
+  },
+  "seed": 1,
+  "ops": [["load", "1,6 11,0 1,6 11,6 1,6 11,12 4,1 9,2"], ["sweep"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

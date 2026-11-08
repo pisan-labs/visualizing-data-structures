@@ -36,7 +36,7 @@ LZW sends no offsets. It starts with every single byte in a dictionary, codes 0 
 
 The decoder never receives the dictionary. It starts with the same 256 bytes and, after each code, adds the previous string plus the first character of the current one. That is exactly what the encoder added, one step later. [LZW: the dictionary grows as it reads](#example:lzw-grows) [Show me](#play:lzw-grows)
 
-There is one trap. Sometimes a code arrives that the decoder has not made yet: the encoder created it and used it on the same step. That only happens when the string is the previous string plus its own first character, so the decoder can work it out. abababab… hits it.
+There is one trap. Sometimes a code arrives that the decoder has not made yet: the encoder made it on its last step and used it at once, before the decoder, one step behind, could make it. That only happens when the string is the previous string plus its own first character, so the decoder can work it out. abababab… hits it.
 
 ```check
 Q: LZW on abab writes 97 (a), 98 (b), then 256. What is code 256?

@@ -104,6 +104,14 @@ describe('LZ77 and LZW', { timeout: 60_000 }, () => {
     expect(t.entries[1]!.steps.at(-1)!.vars!.ratio).toBe(`${Math.round((100 * 3 * 15) / 80)}%`);
   });
 
+  it('does not call the last character a mismatch when only it is left', () => {
+    // aa: at position 1 the a in the window does match, but no room is left for a match.
+    const steps = run([['load', 'aa'], ['encode']]).entries[1]!.steps;
+    expect(steps.some((s) => /does not match/.test(s.say))).toBe(false);
+    expect(steps.some((s) => /Nothing in the window/.test(s.say))).toBe(false);
+    expect(steps.some((s) => /Only T\[1\] = 'a' is left/.test(s.say))).toBe(true);
+  });
+
   it('decodes without an encode first and explains bad input', () => {
     const t = run([['load', 'abab'], ['decode'], ['load', 'a b'], ['load', 'x'.repeat(21)]]);
     expect(t.entries[1]!.end.out).toBe('abab');

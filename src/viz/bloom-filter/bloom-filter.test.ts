@@ -82,13 +82,20 @@ describe('Bloom filter', () => {
             else if (op === 'insert' && typeof x === 'number') ref.insert(x);
             else if (op === 'query' && typeof x === 'number')
               expect(last.vars!.answer).toBe(ref.query(x) ? 'maybe' : 'no');
-            expect(t.entries[i]!.end.bits.map(Boolean)).toEqual(ref.bits);
+            const end = t.entries[i]!.end;
+            expect(end.bits.map(Boolean)).toEqual(ref.bits);
+            // After each operation, the bits are exactly the union of the keys' bits.
+            const all = new Set(end.keys.flatMap((x) => positions(x, m, k)));
+            end.bits.forEach((b, j) => expect(b === 1).toBe(all.has(j)));
           });
           for (let i = 0; i < t.length; i++) {
             const s = t.at(i).step.state;
             // Every bit set belongs to some key, and every key's bits are set.
             const union = new Set(s.keys.flatMap((x) => positions(x, m, k)));
-            s.bits.forEach((b, j) => expect(b === 1).toBe(union.has(j)));
+            // Mid-insert some bits of the new key are still 0; a set bit always has an owner.
+            s.bits.forEach((b, j) => {
+              if (b === 1) expect(union.has(j)).toBe(true);
+            });
             expect(t.at(i).step.vars!['bits set']).toBe(ones(s));
             expect(s.fp).toBeLessThanOrEqual(s.absent);
           }

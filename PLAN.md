@@ -16,7 +16,7 @@ within 15 minutes, the recommendation goes ahead.
 
 ## 1. Goal
 
-StepWise (<https://stepwise.pisan.me>) is our own set of interactive data structure and
+StepWise (<https://stepwise.hintwise.org>) is our own set of interactive data structure and
 algorithm visualizations for university courses. The Galles/Lucet site
 (<https://cmps-people.ok.ubc.ca/ylucet/DS/Algorithms.html>) sets the baseline coverage: 50
 pages, Appendix A. The catalog grows from there to everything in Appendix B.
@@ -353,7 +353,7 @@ The About page credits Galles and Lucet as inspiration.
 | 2 | Code panel | Synced pseudocode in formal and plain-English versions, plus static Python, Java and C++ tabs tested in CI against the model (12.1) |
 | 3 | Saving | No server in v1 |
 | 4 | UI framework | Svelte 5; no student contributors expected |
-| 5 | Hosting | Netlify site `stepwise-pisan-labs`, final domain `stepwise.pisan.me`; public repo; publishing locked until Yusuf releases it |
+| 5 | Hosting | Netlify site `stepwise-pisan-labs`, final domain `stepwise.hintwise.org` (was `stepwise.pisan.me`, which now redirects); public repo; publishing locked until Yusuf releases it |
 | 6 | License | MIT code, CC BY 4.0 text |
 | 7 | Slices | Stack done; BST is in wave 1 |
 | 8 | Pace | As fast as the quota allows; parallel agents; hourly reports; 15-minute rule for decisions |

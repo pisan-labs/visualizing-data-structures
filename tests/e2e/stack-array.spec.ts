@@ -218,7 +218,7 @@ test('old /#/ links move to the page address and keep their state', async ({ pag
 test('each visualization page has its own title and preview tags', async ({ request }) => {
   const html = await (await request.get('/stack-array/')).text();
   expect(html).toContain('<title>Stack (array) · StepWise</title>');
-  expect(html).toContain('<link rel="canonical" href="https://stepwise.pisan.me/stack-array/"');
+  expect(html).toContain('<link rel="canonical" href="https://stepwise.hintwise.org/stack-array/"');
   expect(html).toMatch(/og:description" content="Push, pop and peek/);
 });
 

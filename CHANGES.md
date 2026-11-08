@@ -287,3 +287,5 @@
 2026-11-08 [code] Merged: drawTape rows, key and enter options, gridScene prefix and no empty headers, automata loadOp parse/describe (pda, mealy-moore); scene hashes unchanged
 
 2026-11-08 [code] Merged: input box sized from the sample (33 pages wrapped buttons at 1366, now 9), "needs l, r and an amount", Master theorem lays out for the stage (smallest text 7.7/3.9 px to 11.4/9.0 px)
+
+2026-11-08 [decision] The site moved to https://stepwise.hintwise.org/ (Yusuf, 13:00); stepwise.pisan.me 301-redirects there; SITE_URL, og tags, canonical test and docs updated

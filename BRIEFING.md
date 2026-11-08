@@ -22,7 +22,7 @@ the browser, exported as files, and embedded in Canvas.
   interpolates between scenes and draws them as SVG.
 - **Saved example:** settings + seed + the list of operations, plus a format version.
   Share links compress it into the URL hash.
-- **Hosting:** Netlify site `stepwise-pisan-labs`, domain `stepwise.pisan.me`. All work goes to
+- **Hosting:** Netlify site `stepwise-pisan-labs`, domain `stepwise.hintwise.org` (`stepwise.pisan.me` redirects to it). All work goes to
   `main`, as in Yusuf's other projects, and Yusuf deploys to Netlify by hand for now. GitHub
   Actions runs CI on every push.
 - **License:** MIT for code; CC BY 4.0 for written explanations.
@@ -37,7 +37,7 @@ the browser, exported as files, and embedded in Canvas.
   as needed.
 - **Pace:** as fast as the quota allows; no external deadlines.
 - **Name:** **StepWise** (capital W), set in `src/site.ts`. It will live at
-  `https://stepwise.pisan.me` (Netlify site `stepwise-pisan-labs`); nothing is published until the
+  `https://stepwise.hintwise.org` (Netlify site `stepwise-pisan-labs`); nothing is published until the
   first deploy.
 
 ## Non-goals (v1)

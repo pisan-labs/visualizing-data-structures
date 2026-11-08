@@ -10,7 +10,7 @@ next one at once, so the 16:52 session-start run (which looks only for a marker 
 
 ## What is live
 
-- `main` is at `1d91418`, live on Netlify (site `stepwise-pisan-labs`, `stepwise.pisan.me`),
+- `main` is at `1d91418`, live on Netlify (site `stepwise-pisan-labs`, `stepwise.hintwise.org`, formerly `stepwise.pisan.me`),
   deployed at 08:26 on Yusuf's word after CI run 98 passed: 129 pages. The live bundle matched a
   local build of `1d91418`, and every page returned 200.
 - `next` is ahead of `main` by two cleanups and their logs: the layout chooser and table strip

@@ -18,7 +18,7 @@ In [Evenly spread values](#example:one-probe), 55 is about halfway between 5 and
 
 ## How it works
 
-The loop runs while x could still be in the window: `lo <= hi` and `A[lo] <= x <= A[hi]`. The second part matters. It keeps pos inside the window, and it stops the search as soon as x falls outside the values that are left. In [Not there](#example:not-found), the first guess is too small, the window becomes `A[6..11]`, and 50 is below `A[6] = 55`. Done, after one probe.
+The loop runs while x could still be in the window: `lo <= hi` and `A[lo] <= x <= A[hi]`. The second part matters. It keeps pos inside the window, and it stops the search as soon as x falls outside the values that are left. In [Not there](#example:not-there), the first guess is too small, the window becomes `A[6..11]`, and 50 is below `A[6] = 55`. Done, after one probe.
 
 One more check sits before the formula. If `A[lo] = A[hi]`, the formula divides by zero. But then every value in the window is the same, and x is between them, so x is that value. [Every value the same](#example:all-equal)
 

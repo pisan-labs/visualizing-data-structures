@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, StageSize } from '../../engine/types';
+import { textWidth } from '../../layouts/text';
 import type { Bounds, RectShape, Shape } from '../../render/scene';
 import {
   LEVELS,
@@ -351,7 +352,7 @@ const overlaps = (a: Bounds, b: Bounds) =>
 const textBox = (s: Shape): Bounds | null => {
   if (s.kind !== 'text') return null;
   const size = s.size ?? 16;
-  const w = s.text.length * size * 0.6;
+  const w = textWidth(s.text, size, s.mono, s.weight === 'bold');
   const x = s.anchor === 'middle' ? s.x - w / 2 : s.x;
   return { x, y: s.y - size * 0.8, w, h: size };
 };

@@ -47,6 +47,13 @@ describe('count-min sketch', () => {
     expect(last.say).toContain('row 1: 5');
   });
 
+  it('says false heavy hitters in the plural when there are several', () => {
+    const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    const t = run(items.map((x): OpCall => ['add', x]).concat([['heavy']]), { d: 1, w: 4 });
+    const say = t.entries.at(-1)!.steps.at(-1)!.say;
+    expect(say).toContain('are reported only because of overestimates: false heavy hitters.');
+  });
+
   it('matches a reference sketch and never estimates too low', () => {
     const item = fc.integer({ min: 0, max: 40 });
     const call: fc.Arbitrary<OpCall> = fc.oneof(

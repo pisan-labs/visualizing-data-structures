@@ -312,9 +312,11 @@ const del: Op = {
       n.max = w.maxOf(u);
       if (n.max !== old) changed += 1;
       yield w.step(
-        n.max !== old
-          ? `${showN(n)}: its subtree lost the interval that set its max. max = largest of ${n.hi} and its children's max = ${n.max} (was ${old}).`
-          : `${showN(n)}: max stays ${n.max}.`,
+        n.max === old
+          ? `${showN(n)}: max stays ${n.max}.`
+          : n.max < old
+            ? `${showN(n)}: its subtree lost the interval that set its max. max = largest of ${n.hi} and its children's max = ${n.max} (was ${old}).`
+            : `${showN(n)}: it now holds the subtrees of the deleted node, so its max rises. max = largest of ${n.hi} and its children's max = ${n.max} (was ${old}).`,
         ['del.fix'],
         n.max !== old ? 2 : 3,
         [nodeMark(u, n.max !== old ? 'new' : 'compare')],
@@ -473,7 +475,7 @@ const all: Op = {
     yield* steps;
     const found = ex.found!.map((u) => showN(w.n(u)));
     yield w.step(
-      `${found.length === 0 ? `Nothing overlaps ${show(q)}` : `${plural(found.length, 'interval')} overlap ${show(q)}: ${found.join(', ')}`}. The search looked at ${ex.path!.length} of ${treeSize(w.W)} nodes and skipped ${plural(ex.pruned!.length, 'subtree')}.`,
+      `${found.length === 0 ? `Nothing overlaps ${show(q)}` : `${plural(found.length, 'interval')} ${found.length === 1 ? 'overlaps' : 'overlap'} ${show(q)}: ${found.join(', ')}`}. The search looked at ${ex.path!.length} of ${treeSize(w.W)} nodes and skipped ${plural(ex.pruned!.length, 'subtree')}.`,
       ['all.check'],
       1,
       ex.found!.map((u) => nodeMark(u, 'found')),

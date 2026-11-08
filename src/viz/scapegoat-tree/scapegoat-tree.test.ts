@@ -202,6 +202,49 @@ describe('scapegoat tree', () => {
     );
   });
 
+  it('after deletes, an insert that rebuilds claims only its own node is within the limit', () => {
+    // Deletes left this tree one level taller than the limit; the rebuild fixes 15's path only.
+    const keys = [
+      ['insert', 11],
+      ['delete', 15],
+      ['insert', 1],
+      ['insert', 8],
+      ['insert', 30],
+      ['delete', 10],
+      ['insert', 6],
+      ['delete', 22],
+      ['delete', 1],
+      ['insert', 11],
+      ['delete', 12],
+      ['delete', 28],
+      ['insert', 18],
+      ['insert', 11],
+      ['insert', 22],
+      ['insert', 7],
+      ['insert', 7],
+      ['insert', 29],
+      ['delete', 10],
+      ['delete', 5],
+      ['delete', 21],
+      ['insert', 13],
+      ['delete', 19],
+      ['insert', 3],
+      ['delete', 1],
+      ['insert', 1],
+      ['insert', 16],
+      ['insert', 23],
+      ['delete', 7],
+      ['delete', 8],
+      ['insert', 15],
+    ] as OpCall[];
+    const t = run(keys, { alpha: '0.6' });
+    const last = t.entries.at(-1)!.steps.at(-1)!;
+    expect(last.vars!.height).toBeGreaterThan(Number(last.vars!.limit));
+    expect(last.vars!.depth).toBeLessThanOrEqual(Number(last.vars!.limit));
+    expect(last.say).not.toContain('every node');
+    expect(last.say).toContain(`15 is now at depth ${last.vars!.depth}`);
+  });
+
   it('rebuilds a chain of rising keys and stays low', () => {
     const t = run([10, 20, 30, 40, 50, 60, 70].map((k) => ['insert', k] as OpCall));
     expect(t.endState().rebuilds).toBeGreaterThan(0);

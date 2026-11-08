@@ -66,7 +66,7 @@ Clearing the bits of x sounds easy, but a bit doesn't know who set it. In [Why t
 
 ## When to use it, and when not
 
-Use a Bloom filter in front of something slow, when most answers are "no". Databases such as Cassandra and RocksDB keep one per file on disk, so a lookup skips the files that can't hold the key. A web cache can skip storing pages that were only requested once. A spell checker in 1970 (the original use) kept a dictionary in memory that didn't fit as words.
+Use a Bloom filter in front of something slow, when most answers are "no". Databases such as Cassandra and RocksDB keep one per file on disk, so a lookup skips the files that can't hold the key. A web cache can skip storing pages that were only requested once. Bloom's own 1970 example was hyphenation: most words follow simple rules, and a filter of the exceptions, kept in memory, said which words needed a slow trip to the disk.
 
 Avoid it when:
 

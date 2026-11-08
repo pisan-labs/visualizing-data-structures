@@ -36,6 +36,18 @@ describe('rope', () => {
     expect(t.entries[3]!.steps.at(-1)!.vars?.returned).toBe('!');
   });
 
+  it('says where it counts from when a split goes right inside R2', () => {
+    const t = new Timeline(rope, settings(), 1, [
+      ['load', 'keep this not this part'],
+      ['delete', 10, 9],
+    ]);
+    const says = t.entries[1]!.steps.map((st) => st.say);
+    // The second cut works inside R2, which starts at position 10.
+    expect(says).toContain(
+      'At this node, 19 is past weight 2 (counting from 10): go right, looking for position 7 there. The left subtree stays in the left part.',
+    );
+  });
+
   it('matches a reference string for any sequence of edits', () => {
     const word = fc.stringMatching(/^[a-z]{1,5}$/);
     const call = fc.oneof(

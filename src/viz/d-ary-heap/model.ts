@@ -430,7 +430,7 @@ const insert: Op = {
     forget(c);
     yield step(
       c,
-      `${key} is in. Insert took ${plural(W.comparisons, 'comparison')}: at most one per level, and a ${K.d}-ary heap has only ${heightOf(W.n, K.d)} levels below the root. ${summary(W.n, K.d)}`,
+      `${key} is in. Insert took ${plural(W.comparisons, 'comparison')}: at most one per level, and this ${K.d}-ary heap has ${plural(heightOf(W.n, K.d), 'level')} below the root. ${summary(W.n, K.d)}`,
       ['ins.sig'],
       1,
       [node(uid, 'done')],
@@ -598,12 +598,11 @@ const update: Op = {
       2,
       [node(item.uid, 'active')],
     );
-    if (up) yield* siftUp(c, p, '');
-    else yield* siftDown(c, p, '');
+    const at = up ? yield* siftUp(c, p, '') : yield* siftDown(c, p, '');
     forget(c);
     yield step(
       c,
-      `A[${i}] is now ${key}, and the heap is in order again after ${plural(W.comparisons, 'comparison')}. ${summary(W.n, K.d)}`,
+      `${old} became ${key}, ${at === p ? `still at A[${i}]` : `now at A[${K.ix(at)}]`}, and the heap is in order again after ${plural(W.comparisons, 'comparison')}. ${summary(W.n, K.d)}`,
       ['upd.sig'],
       1,
       [node(item.uid, 'done')],

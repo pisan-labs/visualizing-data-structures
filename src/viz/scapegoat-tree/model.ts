@@ -344,7 +344,7 @@ const insert: KitOp = {
     c.vars.depth = depthOf(W, uid);
     yield step(
       c,
-      `Done: every node is within the depth limit again. ${summary(c, st)}`,
+      `Done: ${k} is now at depth ${c.vars.depth}, within the limit of ${depthLimit(treeSize(W), st.alpha)}. ${summary(c, st)}`,
       ['ins.rebuild'],
       1,
       [nodeMark(uid, 'new')],

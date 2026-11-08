@@ -290,7 +290,7 @@ function* split(
   }
   yield step(
     c,
-    `At this node, ${base + i} is past ${cmpText}: go right, looking for position ${i - lw} there. The left subtree stays in the left part.`,
+    `At this node, ${base + i} is past ${cmpText} (counting from ${base}): go right, looking for position ${i - lw} there. The left subtree stays in the left part.`,
     ['sp.cmp', 'sp.right'],
     3,
     [node(u, 'active'), ...(v.right !== null ? [node(v.right, 'compare')] : [])],

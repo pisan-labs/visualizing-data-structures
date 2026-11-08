@@ -132,6 +132,21 @@ describe('interval tree', () => {
     );
   });
 
+  it('says a max rises when the successor takes over bigger subtrees', () => {
+    const calls: OpCall[] = [
+      ['insert', '50-60'],
+      ['insert', '30-90'],
+      ['insert', '70-75'],
+      ['delete', '50-60'],
+    ];
+    const t = new Timeline(intervalTree, intervalTree.defaults, 1, calls);
+    const says = t.entries.at(-1)!.steps.map((st) => st.say);
+    const fix = says.find((x) => x.startsWith('[70, 75]: '))!;
+    expect(fix).toContain('max rises');
+    expect(fix).toContain('= 90 (was 75)');
+    expect(fix).not.toContain('lost');
+  });
+
   it('reads intervals in several forms', () => {
     expect(parseIntervalInput('15,23')).toBe('15-23');
     expect(parseIntervalInput('[15, 23]')).toBe('15-23');

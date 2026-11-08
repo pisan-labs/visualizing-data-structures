@@ -418,7 +418,7 @@ const remove: Op = {
       c,
       `${shifted.length ? `Shifted back: ${shifted.join(', ')}. ` : ''}${
         robin
-          ? `The next slot ${stop ? `holds ${stop.key}, already at its home` : 'is empty'}, so the shifting stops. No tombstone: every key is still reachable, and every distance went down by one.`
+          ? `The next slot ${stop ? `holds ${stop.key}, already at its home` : 'is empty'}, so the shifting stops. No tombstone: every key is still reachable, and each key that moved is one closer to home.`
           : 'No key after the hole can move back, so the shifting stops. No tombstone needed.'
       } ${summary(c.s)}`,
       robin ? ['del.stop'] : ['del.stop'],

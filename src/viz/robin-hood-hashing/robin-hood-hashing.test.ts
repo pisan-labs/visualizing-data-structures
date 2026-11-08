@@ -88,7 +88,39 @@ describe('Robin Hood hashing', () => {
     expect(last.vars!.probes).toBe(4);
     const d = run([...base, ['delete', 33]]);
     expect(d.entries.at(-1)!.steps.at(-1)!.vars!.shifts).toBe(2);
+    // 22 did not move, so only the moved keys got closer to home.
+    expect(d.entries.at(-1)!.steps.at(-1)!.say).toContain('each key that moved is one closer');
+    expect(d.entries.at(-1)!.steps.at(-1)!.say).not.toContain('every distance');
     expect(keysOf(d.endState()).slice(0, 6)).toEqual([22, 44, 1, null, 4, 5]);
+  });
+
+  it('backward-shift delete leaves every key findable (m = 5: insert 1, 0, 5, delete 0)', () => {
+    const calls: OpCall[] = [
+      ['insert', 1],
+      ['insert', 0],
+      ['insert', 5],
+      ['delete', 0],
+    ];
+    const t = run(calls, { m: 5, policy: 'robin' });
+    expect(keysOf(t.entries[2]!.end)).toEqual([0, 5, 1, null, null]);
+    // 5 and 1 each shift back one slot; nothing is left behind a hole.
+    expect(keysOf(t.endState())).toEqual([5, 1, null, null, null]);
+    const del = t.entries[3]!.steps;
+    expect(del.at(-1)!.vars!.shifts).toBe(2);
+    for (const k of [5, 1]) {
+      const found = run([...calls, ['search', k]], { m: 5, policy: 'robin' });
+      expect(found.entries[4]!.steps.at(-1)!.vars!.found).toBe(true);
+    }
+    expect(run([...calls, ['search', 0]], { m: 5 }).entries[4]!.steps.at(-1)!.vars!.found).toBe(
+      false,
+    );
+    // The hole moves along during the shift, so a mid-shift step may show a gap; the steps
+    // outside the shift never do.
+    for (const st of del.filter((x) => !x.lines.includes('del.shift')))
+      st.state.slots.forEach((c, j) => {
+        if (!c) return;
+        for (let q = c.key % 5; q !== j; q = (q + 1) % 5) expect(st.state.slots[q]).not.toBeNull();
+      });
   });
 
   it('matches a reference table and keeps every key findable', () => {
@@ -117,7 +149,10 @@ describe('Robin Hood hashing', () => {
             expect(keysOf(t.entries[i]!.end)).toEqual(ref.t);
           });
           for (let i = 0; i < t.length; i++) {
-            const s = t.at(i).step.state;
+            const st = t.at(i).step;
+            // Mid-delete, the hole is still moving along, so a gap is expected there.
+            if (st.lines.includes('del.shift') || st.lines.includes('del.scan')) continue;
+            const s = st.state;
             s.slots.forEach((c, j) => {
               if (!c) return;
               // No empty slot between a key and its home.

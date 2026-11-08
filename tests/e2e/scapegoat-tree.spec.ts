@@ -30,7 +30,7 @@ test.beforeEach(async ({ page }) => {
 test('a key that lands too deep finds a scapegoat and rebuilds its subtree', async ({ page }) => {
   await op(page, 'Insert', '50 30 70 20 40 60 80 85 90 95 97');
   await toEnd(page);
-  await expect(narration(page)).toContainText('every node is within the depth limit again');
+  await expect(narration(page)).toContainText(/97 is now at depth \d, within the limit of 5/);
   await expect(stage(page)).toHaveAttribute('aria-label', /90 has left 85 and right 95/);
   // Step back to the moment the scapegoat is found.
   const back = page.getByRole('button', { name: 'Step back' });

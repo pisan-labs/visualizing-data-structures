@@ -293,7 +293,7 @@ const heavy: Op = {
               : 'No item reaches it.'
           }${
             fake.length
-              ? ` ${list(fake.map((h) => h.item))} ${fake.length === 1 ? 'is' : 'are'} reported only because of overestimates: a false heavy hitter.`
+              ? ` ${list(fake.map((h) => h.item))} ${fake.length === 1 ? 'is' : 'are'} reported only because of overestimates: ${fake.length === 1 ? 'a false heavy hitter' : 'false heavy hitters'}.`
               : hits.length
                 ? ' Every one is a real heavy hitter, and none is missed: an estimate is never too low.'
                 : ''

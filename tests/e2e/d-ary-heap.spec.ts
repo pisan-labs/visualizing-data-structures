@@ -56,7 +56,7 @@ test('decrease-key in a 4-ary min-heap climbs to the root', async ({ page }) => 
   const next = page.getByRole('button', { name: 'Forward to the next operation' });
   await next.click();
   await next.click();
-  await expect(narration(page)).toContainText('A[13] is now 3');
+  await expect(narration(page)).toContainText('became 3, now at A[1]');
   await expect(stage(page)).toHaveAttribute('aria-label', /The root is 3\./);
 });
 

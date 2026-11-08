@@ -61,7 +61,7 @@ Why does that work? Deletes never make a node deeper. They make the tree sparser
 
 A single insert can rebuild the whole tree, which is O(n). That sounds bad. But right after a rebuild, the subtree is perfectly balanced, and it takes a lot of inserts into that subtree (about a constant fraction of its size) before any node in it can be unbalanced again. Charge the rebuild to those inserts and each pays O(log n) extra. Same trick as a dynamic array that doubles: rare expensive steps, spread over many cheap ones.
 
-Search never pays anything. The depth limit holds after every insert, so search is O(log n) in the worst case, not just on average. That's better than a treap or a splay tree can promise.
+Search never pays anything. Every insert leaves its new node within the depth limit, and deletes can leave the tree at most one level taller than the limit before the full rebuild kicks in. So the height stays O(log n), and search is O(log n) in the worst case, not just on average. That's better than a treap or a splay tree can promise.
 
 ## Choosing α
 

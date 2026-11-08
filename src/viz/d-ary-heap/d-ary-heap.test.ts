@@ -38,6 +38,23 @@ describe('d-ary heap', () => {
     expect(ext.vars?.comparisons).toBe(3);
   });
 
+  it('says where an updated key ends up, not just where it started', () => {
+    const t = new Timeline(dAryHeap, settings({ d: 4, order: 'min', index: 'one' }), 1, [
+      ['build', '8 30 14 22 41 35 50 19 27 60 44 38 55'],
+      ['update', 13, 3],
+      ['update', 9, 17],
+    ]);
+    const end = (i: number) => t.entries[i]!.steps.at(-1)!.say;
+    expect(end(1)).toContain('became 3, now at A[1]');
+    expect(end(1)).not.toContain('A[13] is now 3');
+    expect(end(2)).toContain('became 17, now at A[2]');
+    const one = new Timeline(dAryHeap, settings({ d: 3 }), 1, [
+      ['insert', 5],
+      ['insert', 9],
+    ]);
+    expect(one.entries[1]!.steps.at(-1)!.say).toContain('has 1 level below the root');
+  });
+
   it('matches a reference priority queue and keeps heap order on every step', () => {
     const call = fc.oneof(
       fc.integer({ min: -20, max: 120 }).map((k) => ['insert', k] as OpCall),

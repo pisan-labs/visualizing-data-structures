@@ -40,6 +40,9 @@ describe('merkle tree', () => {
     ]);
     expect(t.entries[1]!.steps.at(-1)!.vars?.verified).toBe('yes');
     expect(t.entries[2]!.steps.at(-1)!.vars?.verified).toBe('no');
+    // prove names the block it proves, instead of "block 4 is block 4".
+    expect(t.entries[1]!.steps[0]!.say).toContain('to show that block 4, "e", is in the tree');
+    expect(t.entries[2]!.steps[0]!.say).toContain('to show that "x" is block 1');
   });
 
   it('matches the definition after any edits, and every proof checks out', () => {

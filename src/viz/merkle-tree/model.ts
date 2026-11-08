@@ -425,7 +425,7 @@ function* proveAndCheck(
   c.extra.proof = { leaf: i, items: [], used: 0, data };
   yield step(
     c,
-    `${name}: to show that ${tamper ? `"${data}"` : `block ${i}`} is block ${i}, send the sibling of every node on the path from leaf ${i} to the root. That is the proof.`,
+    `${name}: to show that ${tamper ? `"${data}" is block ${i}` : `block ${i}, "${data}", is in the tree`}, send the sibling of every node on the path from leaf ${i} to the root. That is the proof.`,
     ['pf.sig'],
     2,
     [mark(hashId(0, i), 'active'), mark(blockId(i), 'active')],

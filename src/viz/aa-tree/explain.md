@@ -68,7 +68,7 @@ Real code doesn't check which skews and splits are needed. It just calls all fiv
 ```check
 Q: Why can a deleted inner node always be replaced by a leaf on level 1?
 - Because AA trees are perfectly balanced
-* Because a level-1 node has no left child, and a horizontal partner has no children, so the largest key on the left goes all the way down to level 1
+* Because a node with no right child must be on level 1, and a level-1 node has no left child
 - Because delete always removes the root
 = Walk to the largest key on the left: you go right until you can't. A node with no right child above level 1 can't exist (rule 4), and a level-1 node has no left child (rule 1), so you stop at a leaf on level 1.
 ```

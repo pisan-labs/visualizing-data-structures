@@ -289,3 +289,11 @@
 2026-11-08 [code] Merged: input box sized from the sample (33 pages wrapped buttons at 1366, now 9), "needs l, r and an amount", Master theorem lays out for the stage (smallest text 7.7/3.9 px to 11.4/9.0 px)
 
 2026-11-08 [decision] The site moved to https://stepwise.hintwise.org/ (Yusuf, 13:00); stepwise.pisan.me 301-redirects there; SITE_URL, og tags, canonical test and docs updated
+
+2026-11-08 [code] Merged: graph weights and edge letters slide along their edge off vertices, badges, pointers and each other (drawGraph); kruskal and prim dense examples on a circle; paths.test.ts KNOWN overlaps now empty; about 182k of 1.04M graph scenes moved a label
+
+2026-11-08 [code] Merged: drawAutomaton label option (pda, mealy-moore), classify() reasons from the Chomsky page now in _grammar, parseRegex max option, parseAutomatonPair for product-construction
+
+2026-11-08 [code] Merged: call trees grow right on a phone with badge text at least 10 (fibonacci-calls, recursion-dag, backtracking), n-queens solutions beside the board, suffix-tree and dp-knapsack sizes; smallestText() checks in each page's tests
+
+2026-11-08 [note] Still small after the fixes: fib(8) and permutation trees about 7 px on a phone, suffix-tree 7.3 px on a phone (needs a trie layout change), regex-engines, nfa-to-dfa, graph-representations, bfs not yet measured-and-fixed

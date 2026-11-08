@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "aho-corasick",
+  "id": "ushers",
+  "title": "Three matches in ushers",
+  "notes": "Patterns he, she, his and hers. Reading ushers, the scan reaches she at position 3; she's output link says he ends there too. Then the e node's r and s edges finish hers. One pass, three matches.",
+  "settings": {
+    "patterns": "he she his hers",
+    "outputs": "links"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "search",
+      "ushers"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "aho-corasick",
+  "id": "dna",
+  "title": "DNA: failure links keep the scan moving",
+  "notes": "Patterns ACC, ATC, CAT and GCG in GCATCGCATC. After GC fails on A, the failure link jumps to C, so the CAT that starts inside GCA is not missed.",
+  "settings": {
+    "patterns": "ACC ATC CAT GCG",
+    "outputs": "links"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "search",
+      "GCATCGCATC"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

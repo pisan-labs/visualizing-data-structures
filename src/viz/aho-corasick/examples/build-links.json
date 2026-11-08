@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "aho-corasick",
+  "id": "build-links",
+  "title": "Failure links, level by level",
+  "notes": "Breadth-first order guarantees a node's parent already has its link. she fails to he, his to s, hers to s: each is the longest proper suffix still in the trie.",
+  "settings": {
+    "patterns": "he she his hers",
+    "outputs": "links"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "build"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -114,7 +114,11 @@ export function lzPractice(def: () => Def): PracticeKind[] {
           prompt: `LZW encodes \`${t}\`, starting with every single byte and numbering new strings from 256. Which string becomes code ${d.code}?`,
           settings: { ...lzwSet },
           setup: [['load', t]],
-          answer: choice(rng, d.str, [...shuffle(rng, others), d.str.slice(0, -1) || 'ab', d.str + 'a']),
+          answer: choice(rng, d.str, [
+            ...shuffle(rng, others),
+            d.str.slice(0, -1) || 'ab',
+            d.str + 'a',
+          ]),
           explain: `Code ${d.code} is \`${d.str}\`: LZW learned it when it wrote the code for \`${d.str.slice(0, -1)}\` and \`${d.str.slice(-1)}\` came next.`,
           watch: [['encode']],
         };

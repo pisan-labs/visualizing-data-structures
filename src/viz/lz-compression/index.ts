@@ -133,7 +133,10 @@ export const lzCompression: VizDef<LzState, LzSettings, LzExtra> = {
     },
     {
       op: 'LZW encode',
-      best: { cost: 'O(n)', why: 'One dictionary lookup per character, with a hash table or a trie.' },
+      best: {
+        cost: 'O(n)',
+        why: 'One dictionary lookup per character, with a hash table or a trie.',
+      },
       average: {
         cost: 'O(n)',
         why: 'The same: each character extends w once.',
@@ -178,10 +181,14 @@ export const lzCompression: VizDef<LzState, LzSettings, LzExtra> = {
         const st = e.end;
         if (e.call[0] === 'encode') {
           input.push(lz ? `lz77 ${s.window} ${s.lookahead} ${st.text}` : `lzw ${st.text}`);
-          expected.push(lz ? st.triples.map(tripleText).join(' ') : st.codes.map((c) => c.code).join(' '));
+          expected.push(
+            lz ? st.triples.map(tripleText).join(' ') : st.codes.map((c) => c.code).join(' '),
+          );
         } else if (e.call[0] === 'decode') {
           input.push(
-            lz ? `unlz77 ${st.triples.map(tripleText).join(' ')}` : `unlzw ${st.codes.map((c) => c.code).join(' ')}`,
+            lz
+              ? `unlz77 ${st.triples.map(tripleText).join(' ')}`
+              : `unlzw ${st.codes.map((c) => c.code).join(' ')}`,
           );
           expected.push(st.out);
         }

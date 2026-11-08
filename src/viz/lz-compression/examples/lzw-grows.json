@@ -10,18 +10,7 @@
     "lookahead": 6
   },
   "seed": 1,
-  "ops": [
-    [
-      "load",
-      "abababababab"
-    ],
-    [
-      "encode"
-    ],
-    [
-      "decode"
-    ]
-  ],
+  "ops": [["load", "abababababab"], ["encode"], ["decode"]],
   "at": {
     "op": 0,
     "step": 0

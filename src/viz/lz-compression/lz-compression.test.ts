@@ -38,7 +38,7 @@ function unlzw(codes: number[]): string {
 /** A plain greedy LZ77 encoder: longest match, nearest on ties, a next character always left. */
 function refLz77(text: string, w: number, a: number) {
   const out: { off: number; len: number; next: string; at: number }[] = [];
-  for (let pos = 0; pos < text.length; ) {
+  for (let pos = 0; pos < text.length;) {
     let off = 0;
     let len = 0;
     for (let d = 1; d <= Math.min(w, pos); d++) {
@@ -52,7 +52,11 @@ function refLz77(text: string, w: number, a: number) {
   return out;
 }
 
-const textArb = fc.string({ unit: fc.constantFrom('a', 'b', 'c'), minLength: 1, maxLength: MAX_TEXT });
+const textArb = fc.string({
+  unit: fc.constantFrom('a', 'b', 'c'),
+  minLength: 1,
+  maxLength: MAX_TEXT,
+});
 const settingsArb = fc.record({
   method: fc.constantFrom('lz77' as const, 'lzw' as const),
   window: fc.integer({ min: 1, max: 16 }),
@@ -108,7 +112,10 @@ describe('LZ77 and LZW', { timeout: 60_000 }, () => {
   });
 
   it('meets the tricky LZW case', () => {
-    const t = run([['load', 'abababababab'], ['encode'], ['decode']], { ...defaults, method: 'lzw' });
+    const t = run([['load', 'abababababab'], ['encode'], ['decode']], {
+      ...defaults,
+      method: 'lzw',
+    });
     expect(t.entries[2]!.steps.some((s) => s.lines.includes('d.tricky'))).toBe(true);
   });
 });

@@ -1,8 +1,7 @@
 /**
  * The text on top (the input while encoding, the output while decoding) with the position
  * pointer; for LZ77 the window and the lookahead as tinted spans, and the match found drawn as
- * a row: the source characters under the place they are copied to, with an arrow from the
- * source. For LZW the row is the phrase w being read. Under or beside it: the triples or codes
+ * a row: the source characters under the place they are copied to, labeled with the offset. For LZW the row is the phrase w being read. Under or beside it: the triples or codes
  * written so far, and for LZW the dictionary entries made from 256 up. The panels are sized for
  * every token the text will need, so the camera holds still while they fill.
  */
@@ -10,7 +9,7 @@ import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { alignScene, fitOn, type AlignFrame, type AlignRow } from '../../layouts/align';
 import { pickBest, translate } from '../../layouts/arrange';
 import type { Bounds, Scene, Shape } from '../../render/scene';
-import { arcShape, pointerShapes, spanShapes } from '../_strings/overlay';
+import { pointerShapes, spanShapes } from '../_strings/overlay';
 import {
   describe,
   dictId,
@@ -141,16 +140,24 @@ export function view(step: Step<LzState, LzExtra>, settings: LzSettings, stage?:
   const g = align.geometry;
   const main: Shape[] = [...align.shapes];
   if (st.phase === 'encode' && lz && st.pos < n) {
-    main.push(...spanShapes(g, 'window', Math.max(0, st.pos - settings.window), st.pos - 1, 'visit'));
     main.push(
-      ...spanShapes(g, 'ahead', st.pos, Math.min(n - 1, st.pos + settings.lookahead - 1), 'active', {
-        top: g.textTop + 5,
-        bottom: g.textBottom - 5,
-        outline: false,
-      }),
+      ...spanShapes(g, 'window', Math.max(0, st.pos - settings.window), st.pos - 1, 'visit'),
+    );
+    main.push(
+      ...spanShapes(
+        g,
+        'ahead',
+        st.pos,
+        Math.min(n - 1, st.pos + settings.lookahead - 1),
+        'active',
+        {
+          top: g.textTop + 5,
+          bottom: g.textBottom - 5,
+          outline: false,
+        },
+      ),
     );
   }
-  if (extra.copy) main.push(arcShape(g, 'copy', extra.copy.from, extra.copy.to, g.textBottom + 3, 4));
   if (st.phase !== 'none') {
     const at = decoding ? st.out.length : st.pos;
     if (at < n) main.push(...pointerShapes(g, [{ name: decoding ? 'next' : 'pos', at }], roles));
@@ -170,7 +177,14 @@ export function view(step: Step<LzState, LzExtra>, settings: LzSettings, stage?:
       if (!tokRoles.has(tokId(k)) && k < decoded) tokRoles.set(tokId(k), 'done');
 
   const layout = (width: number) => {
-    const out = chipPanel(lz ? 'triples (offset, length, next)' : 'codes', 'tok-title', tokens, shownTokens, width, tokRoles);
+    const out = chipPanel(
+      lz ? 'triples (offset, length, next)' : 'codes',
+      'tok-title',
+      tokens,
+      shownTokens,
+      width,
+      tokRoles,
+    );
     if (lz) return out;
     const dict = chipPanel(
       'dictionary',
@@ -211,5 +225,11 @@ export function view(step: Step<LzState, LzExtra>, settings: LzSettings, stage?:
   ];
   const pick = pickBest(candidates, stage);
   const shapes = [...main, ...translate(pick.panel.shapes, pick.dx, pick.dy)];
-  return { shapes, bounds: pick.bounds, label: describe(st, settings) };
+  return {
+    shapes,
+    bounds: pick.bounds,
+    label:
+      describe(st, settings) +
+      (extra.copy ? ` Copying from position ${extra.copy.from} to ${extra.copy.to}.` : ''),
+  };
 }

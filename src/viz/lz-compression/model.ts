@@ -77,7 +77,7 @@ export interface LzRow {
 
 export interface LzExtra {
   row?: LzRow;
-  /** Arrow from a copy's source to where it goes. */
+  /** A copy's source and where it goes, for the screen-reader label. */
   copy?: { from: number; to: number };
 }
 
@@ -167,7 +167,8 @@ export function lzw(text: string): { codes: Code[]; dict: Code[] } {
 export function parseText(raw: Value | undefined): string | { error: string } {
   const t = String(raw ?? '').trim();
   if (!t) return { error: 'Type a text, such as abababcababc.' };
-  if (/\s/.test(t)) return { error: 'Type the text with no spaces, so every character is one cell.' };
+  if (/\s/.test(t))
+    return { error: 'Type the text with no spaces, so every character is one cell.' };
   const bad = /[^A-Za-z0-9]/.exec(t);
   if (bad) return { error: `"${t}" has "${bad[0]}" in it. Use letters and digits only.` };
   if (t.length > MAX_TEXT)
@@ -184,7 +185,11 @@ export function parseInput(token: string): Value | Error {
 
 const mk = (id: string, role: Mark['role']): Mark => ({ id, role });
 
-function vars(st: LzState, s: LzSettings, more: Record<string, Scalar> = {}): Record<string, Scalar> {
+function vars(
+  st: LzState,
+  s: LzSettings,
+  more: Record<string, Scalar> = {},
+): Record<string, Scalar> {
   const tokens = s.method === 'lz77' ? st.triples.length : st.codes.length;
   const inBits = 8 * st.pos;
   const out = outBits(st, s);
@@ -378,7 +383,13 @@ const load: Op = {
       return s;
     }
     const st = fresh(t);
-    yield step(st, settings, `The text is ${q(t)}, ${plural(t.length, 'character')}, ${8 * t.length} bits as bytes. Press Encode.`, [], 1);
+    yield step(
+      st,
+      settings,
+      `The text is ${q(t)}, ${plural(t.length, 'character')}, ${8 * t.length} bits as bytes. Press Encode.`,
+      [],
+      1,
+    );
     return st;
   },
 };
@@ -408,7 +419,13 @@ const encode: Op = {
 };
 
 function* decode77(st: LzState, s: LzSettings): Generator<LzStep, void, void> {
-  yield step(st, s, 'Decode: read the triples in order. Each copies from what is already written, then adds one character.', ['d.sig'], 2);
+  yield step(
+    st,
+    s,
+    'Decode: read the triples in order. Each copies from what is already written, then adds one character.',
+    ['d.sig'],
+    2,
+  );
   for (let k = 0; k < st.triples.length; k++) {
     const t = st.triples[k]!;
     const start = st.out.length;
@@ -421,9 +438,17 @@ function* decode77(st: LzState, s: LzSettings): Generator<LzStep, void, void> {
         `${tripleText(t)}: copy T[${from}] = ${q(st.out[from]!)} to T[${start + j}].${from >= start ? ' It was written by this same triple a moment ago.' : ''}`,
         ['d.copy'],
         3,
-        [mk(tokId(k), 'active'), mk(textId(start + j), 'new')],
+        [mk(tokId(k), 'active'), mk(textId(from), 'compare'), mk(textId(start + j), 'new')],
         {},
-        { row: { dst: start, src: start - t.off, cells: Array.from({ length: j + 1 }, () => 'match' as Cmp), label: `−${t.off}` }, copy: { from, to: start + j } },
+        {
+          row: {
+            dst: start,
+            src: start - t.off,
+            cells: Array.from({ length: j + 1 }, () => 'match' as Cmp),
+            label: `−${t.off}`,
+          },
+          copy: { from, to: start + j },
+        },
       );
     }
     st.out += t.next;
@@ -444,7 +469,13 @@ function* decodeW(st: LzState, s: LzSettings): Generator<LzStep, void, void> {
   const strOf = (code: number) => (code < 256 ? String.fromCharCode(code) : dict.get(code));
   const decodedDict: Code[] = [];
   st.dict = [];
-  yield step(st, s, 'Decode: start from the same 256 single bytes. Each code adds the previous string plus the first character of this one, so the dictionary is rebuilt one step behind the encoder.', ['d.sig', 'd.init'], 2);
+  yield step(
+    st,
+    s,
+    'Decode: start from the same 256 single bytes. Each code adds the previous string plus the first character of this one, so the dictionary is rebuilt one step behind the encoder.',
+    ['d.sig', 'd.init'],
+    2,
+  );
   let prev: string | null = null;
   for (let k = 0; k < st.codes.length; k++) {
     const code = st.codes[k]!.code;
@@ -473,7 +504,10 @@ function* decodeW(st: LzState, s: LzSettings): Generator<LzStep, void, void> {
       `${say} The text so far: ${q(st.out)}.`,
       tricky ? ['d.read', 'd.tricky', 'd.add', 'd.out'] : ['d.read', 'd.look', 'd.add', 'd.out'],
       2,
-      [mk(tokId(k), 'done'), ...(prev !== null ? [mk(dictId(256 + decodedDict.length - 1), 'new')] : [])],
+      [
+        mk(tokId(k), 'done'),
+        ...(prev !== null ? [mk(dictId(256 + decodedDict.length - 1), 'new')] : []),
+      ],
     );
     prev = cur;
   }
@@ -514,17 +548,37 @@ export const ops: Record<string, Op> = { load, encode, decode };
 export function pseudocode(settings: LzSettings): PseudoBlock[] {
   if (settings.method === 'lz77') {
     const enc = [
-      L('sig', 0, `lz77(T, W = ${settings.window}, A = ${settings.lookahead})`, 'To compress T with a sliding window:'),
+      L(
+        'sig',
+        0,
+        `lz77(T, W = ${settings.window}, A = ${settings.lookahead})`,
+        'To compress T with a sliding window:',
+      ),
       L('loop', 1, 'pos = 0; while pos < n', 'Until the whole text is written,'),
       L('try', 2, 'for d = 1 to min(W, pos)', 'try every start in the window,'),
-      L('cmp', 3, 'k = longest with T[pos − d + k] == T[pos + k], k < A', 'and see how far it matches the lookahead.'),
-      L('emit', 2, 'write (best d, best k, T[pos + k])', 'Write the longest match and the character after it.'),
+      L(
+        'cmp',
+        3,
+        'k = longest with T[pos − d + k] == T[pos + k], k < A',
+        'and see how far it matches the lookahead.',
+      ),
+      L(
+        'emit',
+        2,
+        'write (best d, best k, T[pos + k])',
+        'Write the longest match and the character after it.',
+      ),
       L('move', 2, 'pos = pos + k + 1', 'Move past them.'),
       L('ret', 1, 'return the triples', 'That is the compressed text.'),
     ];
     const dec = [
       L('d.sig', 0, 'unlz77(triples)', 'To decompress:'),
-      L('d.copy', 1, 'for (d, k, c): repeat k times: out += out[len(out) − d]', 'copy k characters from d back, one at a time,'),
+      L(
+        'd.copy',
+        1,
+        'for (d, k, c): repeat k times: out += out[len(out) − d]',
+        'copy k characters from d back, one at a time,',
+      ),
       L('d.next', 2, 'out += c', 'then add the next character.'),
       L('d.ret', 1, 'return out', 'The text is back.'),
     ];
@@ -535,7 +589,12 @@ export function pseudocode(settings: LzSettings): PseudoBlock[] {
   }
   const enc = [
     L('sig', 0, 'lzw(T)', 'To compress T with a growing dictionary:'),
-    L('init', 1, 'dict = every single byte, codes 0..255; w = ""', 'Start with every single character.'),
+    L(
+      'init',
+      1,
+      'dict = every single byte, codes 0..255; w = ""',
+      'Start with every single character.',
+    ),
     L('read', 1, 'for each character c of T', 'Read the text one character at a time.'),
     L('in', 2, 'if w + c is in dict', 'If the string so far plus c is known,'),
     L('grow', 3, 'w = w + c', 'keep reading.'),
@@ -547,11 +606,26 @@ export function pseudocode(settings: LzSettings): PseudoBlock[] {
   ];
   const dec = [
     L('d.sig', 0, 'unlzw(codes)', 'To decompress:'),
-    L('d.init', 1, 'dict = every single byte; prev = none', 'Start with the same single characters.'),
+    L(
+      'd.init',
+      1,
+      'dict = every single byte; prev = none',
+      'Start with the same single characters.',
+    ),
     L('d.read', 1, 'for each code', 'For each code,'),
     L('d.look', 2, 'cur = dict[code]', 'look it up;'),
-    L('d.tricky', 2, 'if code is not in dict: cur = prev + prev[0]', 'a code not made yet is the previous string plus its own first character.'),
-    L('d.add', 2, 'if prev: add prev + cur[0]', 'Learn the string the encoder learned one step earlier,'),
+    L(
+      'd.tricky',
+      2,
+      'if code is not in dict: cur = prev + prev[0]',
+      'a code not made yet is the previous string plus its own first character.',
+    ),
+    L(
+      'd.add',
+      2,
+      'if prev: add prev + cur[0]',
+      'Learn the string the encoder learned one step earlier,',
+    ),
     L('d.out', 2, 'out += cur; prev = cur', 'and write cur.'),
     L('d.ret', 1, 'return out', 'The text is back.'),
   ];

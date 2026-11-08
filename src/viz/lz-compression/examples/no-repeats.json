@@ -10,15 +10,7 @@
     "lookahead": 6
   },
   "seed": 1,
-  "ops": [
-    [
-      "load",
-      "abcdefghij"
-    ],
-    [
-      "encode"
-    ]
-  ],
+  "ops": [["load", "abcdefghij"], ["encode"]],
   "at": {
     "op": 0,
     "step": 0

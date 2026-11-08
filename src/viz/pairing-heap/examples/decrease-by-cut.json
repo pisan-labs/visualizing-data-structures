@@ -1,0 +1,33 @@
+{
+  "format": 1,
+  "viz": "pairing-heap",
+  "id": "decrease-by-cut",
+  "title": "Decrease-key by cutting",
+  "notes": "Lower a key deep in the tree. Instead of sifting it up, cut it off with its whole subtree and meld that piece back with the root: one cut and one comparison.",
+  "settings": {
+    "pass": "two-pass",
+    "draw": "tree"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 30],
+    ["insert", 52],
+    ["insert", 18],
+    ["insert", 44],
+    ["insert", 61],
+    ["insert", 25],
+    ["insert", 9],
+    ["insert", 70],
+    ["insert", 38],
+    ["insert", 14],
+    ["insert", 57],
+    ["insert", 22],
+    ["deleteMin"],
+    ["decrease", 57, 4],
+    ["decrease", 44, 20]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

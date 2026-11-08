@@ -19,7 +19,7 @@ import { moveId, stateId } from '../../layouts/automaton';
 import { EPS, setName, setText, SYMBOL, type Automaton, type Move } from '../_automata/automaton';
 import { plural, words } from '../_automata/page';
 import { readRegex, regexSize } from '../_automata/regex';
-import { construct, type Frag } from '../regex-to-nfa/construct';
+import { construct, type Frag } from '../_automata/thompson-construct';
 import {
   Backtracker,
   backtrack,

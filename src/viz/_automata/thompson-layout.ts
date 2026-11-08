@@ -41,8 +41,8 @@ import {
   type Seg,
 } from '../../layouts/route';
 import type { Bounds } from '../../render/scene';
-import type { Move } from '../_automata/automaton';
-import type { Construction, Frag } from './construct';
+import type { Move } from './automaton';
+import type { Construction, Frag } from './thompson-construct';
 
 /** Between two states joined by an arrow, along the flow. */
 export const GAP = 80;

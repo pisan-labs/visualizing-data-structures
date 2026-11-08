@@ -16,8 +16,8 @@ import {
   type UnionSign,
 } from '../_automata/regex';
 import regexToNfa, { parseInput } from '.';
-import { construct, pending, type Construction } from './construct';
-import { pictures } from './layout';
+import { construct, pending, type Construction } from '../_automata/thompson-construct';
+import { pictures } from '../_automata/thompson-layout';
 import { drawn, readWord, type RxSettings } from './model';
 import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 

@@ -29,7 +29,7 @@ import {
   type PrimSettings,
   type PrimState,
 } from './model';
-import { mstPresets, randomMst } from './mst';
+import { mstPresets, randomMst } from '../_graph/mst';
 import { primPractice } from './practice';
 import { view } from './view';
 

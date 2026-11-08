@@ -1,6 +1,6 @@
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, SavedExample, Settings, VizDef } from '../../engine/types';
-import { distinctKeys, parseNumberInput, readNumber } from '../hash-chaining/hashing';
+import { distinctKeys, parseNumberInput, readNumber } from '../_hashing/hashing';
 import cppSource from './code/cpp/linear_probing.hpp?raw';
 import javaSource from './code/java/LinearProbingTable.java?raw';
 import pythonSource from './code/python/linear_probing.py?raw';

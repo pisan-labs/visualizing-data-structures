@@ -12,7 +12,7 @@ import {
 } from '../_automata/automaton';
 import { plural, words } from '../_automata/page';
 import { readRegex, regexSize, type UnionSign } from '../_automata/regex';
-import { construct, type Construction, type Frag } from './construct';
+import { construct, type Construction, type Frag } from '../_automata/thompson-construct';
 
 export interface RxSettings {
   [key: string]: Scalar;

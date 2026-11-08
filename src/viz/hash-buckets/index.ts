@@ -1,6 +1,6 @@
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, SavedExample, Settings, VizDef } from '../../engine/types';
-import { distinctKeys, parseNumberInput, readNumber } from '../hash-chaining/hashing';
+import { distinctKeys, parseNumberInput, readNumber } from '../_hashing/hashing';
 import cppSource from './code/cpp/bucket_hash_table.hpp?raw';
 import javaSource from './code/java/BucketHashTable.java?raw';
 import pythonSource from './code/python/bucket_hash_table.py?raw';

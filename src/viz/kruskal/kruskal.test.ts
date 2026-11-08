@@ -5,7 +5,7 @@ import { components, keyOf, type Graph } from '../_graph/graph';
 import { formatGraph, parseGraph } from '../_graph/parse';
 import { kruskal } from '.';
 import type { KruskalRun, KruskalSettings } from './model';
-import { MST_TEXT } from '../prim/mst';
+import { MST_TEXT } from '../_graph/mst';
 
 // A reference written independently of the page: sort, then join with a label array.
 function reference(g: Graph): { weight: number; tree: string[] } {

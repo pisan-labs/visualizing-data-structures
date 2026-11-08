@@ -1,7 +1,7 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
-import { randomRegex, randomWord } from './gen';
+import { randomRegex, randomWord } from '../_automata/regex-random';
 import { defaults, type RxExtra, type RxSettings, type RxState } from './model';
 import { setText } from '../_automata/automaton';
 import { readRegex, showRegex } from '../_automata/regex';

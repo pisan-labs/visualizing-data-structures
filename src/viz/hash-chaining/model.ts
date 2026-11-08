@@ -11,7 +11,7 @@ import {
   shuffle,
   type HashFn,
   type Key,
-} from './hashing';
+} from '../_hashing/hashing';
 
 /** One node of a chain. The uid lets the drawing follow the node when the chain changes. */
 export interface Entry {

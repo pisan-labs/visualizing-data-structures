@@ -8,8 +8,8 @@ import descendingChain from './examples/descending-chain.json';
 import insertSwaps from './examples/insert-swaps.json';
 import mergeTwoHeaps from './examples/merge-two-heaps.json';
 import rankConvention from './examples/rank-convention.json';
-import { init, parseMeldInput, type MeldExtra, type MeldState } from './meld';
-import { meldCodeScript, meldPractice, meldPresets } from './meld-shared';
+import { init, parseMeldInput, type MeldExtra, type MeldState } from '../_meld/meld';
+import { meldCodeScript, meldPractice, meldPresets } from '../_meld/meld-shared';
 import {
   defaults,
   describe,

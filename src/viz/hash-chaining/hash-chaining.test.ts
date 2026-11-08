@@ -4,7 +4,14 @@ import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, Value } from '../../engine/types';
 import { hashChaining } from '.';
-import { hashOf, loadFactor, parseKeyInput, readKey, type HashFn, type Key } from './hashing';
+import {
+  hashOf,
+  loadFactor,
+  parseKeyInput,
+  readKey,
+  type HashFn,
+  type Key,
+} from '../_hashing/hashing';
 import {
   collidingKeys,
   longestOf,

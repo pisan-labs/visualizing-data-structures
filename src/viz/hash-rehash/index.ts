@@ -1,6 +1,6 @@
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, SavedExample, Settings, VizDef } from '../../engine/types';
-import { distinctKeys, parseNumberInput, readNumber } from '../hash-chaining/hashing';
+import { distinctKeys, parseNumberInput, readNumber } from '../_hashing/hashing';
 import cppSource from './code/cpp/resizing_table.hpp?raw';
 import javaSource from './code/java/ResizingTable.java?raw';
 import pythonSource from './code/python/resizing_table.py?raw';

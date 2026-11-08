@@ -4,7 +4,7 @@ import { layoutSetting } from '../../layouts/graph';
 import type { Graph } from '../_graph/graph';
 import { graphInput } from '../_graph/kit';
 import { loadCall } from '../_graph/presets';
-import { mstPresets, randomMst } from '../prim/mst';
+import { mstPresets, randomMst } from '../_graph/mst';
 import cppSource from './code/cpp/kruskal.hpp?raw';
 import javaSource from './code/java/Kruskal.java?raw';
 import pythonSource from './code/python/kruskal.py?raw';

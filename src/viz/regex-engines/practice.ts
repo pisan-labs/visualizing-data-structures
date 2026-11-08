@@ -2,7 +2,7 @@ import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
 import { showRegex } from '../_automata/regex';
-import { randomRegex, randomWord } from '../regex-to-nfa/gen';
+import { randomRegex, randomWord } from '../_automata/regex-random';
 import {
   defaults,
   growthShape,

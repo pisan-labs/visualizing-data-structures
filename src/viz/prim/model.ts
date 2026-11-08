@@ -33,7 +33,7 @@ import {
   type Graph,
 } from '../_graph/graph';
 import { graphVars, loadOp, type GraphState } from '../_graph/kit';
-import { directedRefusal, readyText, startMstGraph, treeWords } from './mst';
+import { directedRefusal, readyText, startMstGraph, treeWords } from '../_graph/mst';
 
 export type PrimState = GraphState;
 export type QueueKind = 'decrease' | 'lazy';

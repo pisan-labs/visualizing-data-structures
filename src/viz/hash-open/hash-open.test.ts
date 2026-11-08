@@ -2,7 +2,7 @@ import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
-import { loadFactor } from '../hash-chaining/hashing';
+import { loadFactor } from '../_hashing/hashing';
 import { hashOpen } from '.';
 import {
   delCount,

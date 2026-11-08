@@ -3,7 +3,7 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
 import { keyOf } from '../_graph/graph';
 import { loadCall } from '../_graph/presets';
-import { fewWeights, randomMst } from '../prim/mst';
+import { fewWeights, randomMst } from '../_graph/mst';
 import { defaults, type KruskalExtra, type KruskalSettings, type KruskalState } from './model';
 
 type Def = VizDef<KruskalState, KruskalSettings, KruskalExtra>;

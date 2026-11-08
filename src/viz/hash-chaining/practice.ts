@@ -1,7 +1,7 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, Settings, VizDef } from '../../engine/types';
-import { fmtNum, hashOf, shuffle } from './hashing';
+import { fmtNum, hashOf, shuffle } from '../_hashing/hashing';
 import { defaults, sizeOf, type ChainExtra, type ChainSettings, type ChainState } from './model';
 
 type Def = VizDef<ChainState, ChainSettings, ChainExtra>;

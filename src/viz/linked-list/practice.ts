@@ -2,7 +2,7 @@ import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
 import { defaults, node, values, type ListExtra, type ListSettings, type ListState } from './model';
-import { call, calls, choice, distinct, lineText, pick } from './practice-util';
+import { call, calls, choice, distinct, lineText, pick } from '../_lists/practice-util';
 
 type Def = VizDef<ListState, ListSettings, ListExtra>;
 

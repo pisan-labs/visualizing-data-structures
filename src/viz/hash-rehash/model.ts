@@ -1,6 +1,6 @@
 import type { Rng } from '../../engine/rng';
 import type { Mark, OpSpec, PseudoBlock, Scalar, Step, Value } from '../../engine/types';
-import { fmtNum, MAX_KEY, nextPrime, readNumber, shuffle } from '../hash-chaining/hashing';
+import { fmtNum, MAX_KEY, nextPrime, readNumber, shuffle } from '../_hashing/hashing';
 
 export interface Cell {
   uid: number;

@@ -3,7 +3,7 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall, SavedExample, Settings, VizDef } from '../../engine/types';
 import { EPS } from '../_automata/automaton';
 import { regexSize, showRegex } from '../_automata/regex';
-import { randomRegex, randomWord } from '../regex-to-nfa/gen';
+import { randomRegex, randomWord } from '../_automata/regex-random';
 import cppSource from './code/cpp/regex_engines.hpp?raw';
 import javaSource from './code/java/RegexEngines.java?raw';
 import pythonSource from './code/python/regex_engines.py?raw';

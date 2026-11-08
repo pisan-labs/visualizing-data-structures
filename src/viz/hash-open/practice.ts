@@ -1,7 +1,7 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, Settings, VizDef } from '../../engine/types';
-import { fmtNum, shuffle } from '../hash-chaining/hashing';
+import { fmtNum, shuffle } from '../_hashing/hashing';
 import {
   defaults,
   delCount,

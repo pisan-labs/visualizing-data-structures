@@ -27,7 +27,7 @@ import {
   type Graph,
 } from '../_graph/graph';
 import { graphVars, loadOp, type GraphState } from '../_graph/kit';
-import { directedRefusal, edgeWords, readyText, startMstGraph, treeWords } from '../prim/mst';
+import { directedRefusal, edgeWords, readyText, startMstGraph, treeWords } from '../_graph/mst';
 
 export type KruskalState = GraphState;
 

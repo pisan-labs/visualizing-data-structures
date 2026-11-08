@@ -4,7 +4,7 @@
  * chart of steps against n (grow).
  *
  * The NFA is the picture regex-to-nfa lays out for Thompson's construction (pictures() in
- * src/viz/regex-to-nfa/layout.ts: a star's repeat arrow above its body, its skip arrow below),
+ * src/viz/_automata/thompson-layout.ts: a star's repeat arrow above its body, its skip arrow below),
  * drawn by the shared drawAutomaton. The backtracker lights the one state it is visiting; the
  * simulation lights its whole set.
  *
@@ -26,7 +26,7 @@ import { clearOfButtons, padBounds, textWidth, unionBounds } from '../../layouts
 import { CELL_W, drawTape } from '../../layouts/tape';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { drawGrid, gridWidths, GRID_ROW } from '../_automata/panels';
-import { pairKey, pictures, type Picture } from '../regex-to-nfa/layout';
+import { pairKey, pictures, type Picture } from '../_automata/thompson-layout';
 import { CAP } from './engines';
 import {
   describe,

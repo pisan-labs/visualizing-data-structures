@@ -1,5 +1,5 @@
 /**
- * Helpers the two minimum-spanning-tree pages share (prim and kruskal), on top of ../_graph.
+ * Helpers the two minimum-spanning-tree pages share (prim and kruskal), on top of graph.ts, parse.ts and presets.ts here.
  *
  * Both pages start from the same weighted undirected graph (MST_TEXT), so compare mode puts
  * Prim and Kruskal side by side on it from the first step. Its weights are such that the
@@ -17,16 +17,9 @@
  */
 import type { Rng } from '../../engine/rng';
 import type { OpCall, Preset } from '../../engine/types';
-import { components, listWords, makeGraph, plural, type Edge, type Graph } from '../_graph/graph';
-import { parseGraph } from '../_graph/parse';
-import {
-  completeGraph,
-  gridGraph,
-  loadCall,
-  randomGraph,
-  shuffle,
-  twoComponents,
-} from '../_graph/presets';
+import { components, listWords, makeGraph, plural, type Edge, type Graph } from './graph';
+import { parseGraph } from './parse';
+import { completeGraph, gridGraph, loadCall, randomGraph, shuffle, twoComponents } from './presets';
 
 /** Undirected, 8 vertices and 14 edges, one minimum spanning tree of weight 19. */
 export const MST_TEXT =

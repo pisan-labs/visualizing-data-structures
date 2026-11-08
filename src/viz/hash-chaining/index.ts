@@ -12,7 +12,7 @@ import oneBucket from './examples/one-bucket.json';
 import patternKeys from './examples/pattern-keys.json';
 import tailInsert from './examples/tail-insert.json';
 import explain from './explain.md?raw';
-import { distinctKeys, parseKeyInput, readKey } from './hashing';
+import { distinctKeys, parseKeyInput, readKey } from '../_hashing/hashing';
 import {
   defaults,
   describe,

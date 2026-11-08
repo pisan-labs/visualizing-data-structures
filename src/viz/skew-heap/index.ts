@@ -9,9 +9,9 @@ import {
   type MeldExtra,
   type MeldSettings,
   type MeldState,
-} from '../leftist-heap/meld';
-import { meldCodeScript, meldPractice, meldPresets } from '../leftist-heap/meld-shared';
-import { meldView } from '../leftist-heap/meld-view';
+} from '../_meld/meld';
+import { meldCodeScript, meldPractice, meldPresets } from '../_meld/meld-shared';
+import { meldView } from '../_meld/meld-view';
 import cppSource from './code/cpp/skew_heap.hpp?raw';
 import javaSource from './code/java/SkewHeap.java?raw';
 import pythonSource from './code/python/skew_heap.py?raw';

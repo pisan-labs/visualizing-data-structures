@@ -7,7 +7,7 @@ import {
   primeBelow,
   readNumber,
   shuffle,
-} from '../hash-chaining/hashing';
+} from '../_hashing/hashing';
 
 /** A slot's content. `del` marks a tombstone: a key was deleted here. */
 export interface Cell {

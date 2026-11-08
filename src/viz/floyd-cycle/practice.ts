@@ -1,7 +1,7 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
-import { choice, distinct } from '../linked-list/practice-util';
+import { choice, distinct } from '../_lists/practice-util';
 import { defaults, formatSpec, type FExtra, type FSettings, type FState } from './model';
 
 type Def = VizDef<FState, FSettings, FExtra>;

@@ -1,7 +1,7 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, Settings, VizDef } from '../../engine/types';
-import { shuffle } from '../hash-chaining/hashing';
+import { shuffle } from '../_hashing/hashing';
 import { defaults, type BucketExtra, type BucketSettings, type BucketState } from './model';
 
 type Def = VizDef<BucketState, BucketSettings, BucketExtra>;

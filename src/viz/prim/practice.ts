@@ -3,7 +3,7 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, Step, VizDef } from '../../engine/types';
 import { loadCall, shuffle } from '../_graph/presets';
 import { defaults, type PrimExtra, type PrimRun, type PrimSettings, type PrimState } from './model';
-import { randomMst } from './mst';
+import { randomMst } from '../_graph/mst';
 
 type Def = VizDef<PrimState, PrimSettings, PrimExtra>;
 type PStep = Step<PrimState, PrimExtra>;

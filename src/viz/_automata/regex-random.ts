@@ -1,6 +1,6 @@
 /** Random expressions and words, for the presets and the practice questions. */
 import type { Rng } from '../../engine/rng';
-import { showRegex, type Regex, type UnionSign } from '../_automata/regex';
+import { showRegex, type Regex, type UnionSign } from './regex';
 
 const pick = <T>(rng: Rng, xs: readonly T[]): T => xs[rng.int(0, xs.length - 1)]!;
 

@@ -24,7 +24,7 @@ import {
   type ListSettings,
   type ListState,
 } from './model';
-import { listScript } from './driver';
+import { listScript } from '../_lists/driver';
 import { listPractice } from './practice';
 import { view } from './view';
 

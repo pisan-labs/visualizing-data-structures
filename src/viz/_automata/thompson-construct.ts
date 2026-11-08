@@ -14,8 +14,8 @@
  *   accepts back to the old start. Sipser has no R+ or R?; here R+ is the star without the new
  *   start, and R? is a new accepting start with an ε-move to R's start.
  */
-import { EPS, makeAutomaton, sortStates, type Automaton, type Move } from '../_automata/automaton';
-import { thompson, type ParsedRegex, type RegexTree } from '../_automata/regex';
+import { EPS, makeAutomaton, sortStates, type Automaton, type Move } from './automaton';
+import { thompson, type ParsedRegex, type RegexTree } from './regex';
 
 export type Construction = 'thompson' | 'sipser';
 

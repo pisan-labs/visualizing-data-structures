@@ -11,7 +11,7 @@ import {
   rightPath,
   type MeldExtra,
   type MeldState,
-} from './meld';
+} from '../_meld/meld';
 import type { LeftistSettings } from './model';
 
 // ---------------------------------------------------------------------------------------------

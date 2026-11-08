@@ -19,8 +19,8 @@ import { fitScore, padBounds, unionBounds } from '../../layouts/graph';
 import { CELL_H, CELL_W, drawTape } from '../../layouts/tape';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { EPS } from '../_automata/automaton';
-import { pending } from './construct';
-import { boxAround, pairKey, pictures, type Picture } from './layout';
+import { pending } from '../_automata/thompson-construct';
+import { boxAround, pairKey, pictures, type Picture } from '../_automata/thompson-layout';
 import { describe, drawn, type RxExtra, type RxSettings, type RxState } from './model';
 
 const RX_W = 26;

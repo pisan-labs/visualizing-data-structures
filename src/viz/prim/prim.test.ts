@@ -5,7 +5,7 @@ import type { Graph } from '../_graph/graph';
 import { formatGraph, parseGraph } from '../_graph/parse';
 import { prim } from '.';
 import { treeEdges, type PrimRun, type PrimSettings } from './model';
-import { MST_TEXT } from './mst';
+import { MST_TEXT } from '../_graph/mst';
 
 // ---------------------------------------------------------------------------------------------
 // References, written independently of the page.

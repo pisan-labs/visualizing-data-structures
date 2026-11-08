@@ -6,8 +6,8 @@ import {
   meldPseudocode,
   type MeldSettings,
   type MeldState,
-} from './meld';
-import { meldView } from './meld-view';
+} from '../_meld/meld';
+import { meldView } from '../_meld/meld-view';
 
 export interface LeftistSettings extends MeldSettings {
   [key: string]: Scalar;
@@ -17,7 +17,7 @@ export interface LeftistSettings extends MeldSettings {
 
 export const defaults: LeftistSettings = { npl: '-1' };
 
-export { init } from './meld';
+export { init } from '../_meld/meld';
 
 export const ops = meldOps('leftist');
 

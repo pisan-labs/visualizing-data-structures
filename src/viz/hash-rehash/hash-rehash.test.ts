@@ -2,7 +2,7 @@ import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
-import { nextPrime } from '../hash-chaining/hashing';
+import { nextPrime } from '../_hashing/hashing';
 import { hashRehash } from '.';
 import {
   MAX_M,

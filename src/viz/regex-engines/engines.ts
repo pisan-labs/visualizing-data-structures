@@ -1,7 +1,7 @@
 /**
  * The two engines this page compares, on one machine: the NFA that Thompson's construction
  * builds from the expression (thompson() in src/viz/_automata/regex.ts, through the fragments of
- * src/viz/regex-to-nfa/construct.ts).
+ * src/viz/_automata/thompson-construct.ts).
  *
  * - The backtracker walks one path of the NFA at a time, depth first, the way Perl, Python's re,
  *   Java and JavaScript match. Where two ε-arrows leave a state it takes the first and pushes the
@@ -21,7 +21,7 @@
  * way first. A union always tries its left side first, as every backtracking engine does.
  */
 import { closure, EPS, sortStates, type Automaton, type Move } from '../_automata/automaton';
-import type { Frag } from '../regex-to-nfa/construct';
+import type { Frag } from '../_automata/thompson-construct';
 
 export type Order = 'greedy' | 'lazy';
 export type BtResult = 'accept' | 'reject' | 'stopped';

@@ -5,8 +5,8 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { closure, EPS, sortStates } from '../_automata/automaton';
 import { matches, readRegex, regexSize, showRegex } from '../_automata/regex';
-import { construct } from '../regex-to-nfa/construct';
-import { randomRegex } from '../regex-to-nfa/gen';
+import { construct } from '../_automata/thompson-construct';
+import { randomRegex } from '../_automata/regex-random';
 import { backtrack, CAP, machine, simulate, type Machine, type Order } from './engines';
 import def from './index';
 import {

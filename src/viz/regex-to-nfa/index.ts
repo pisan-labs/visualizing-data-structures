@@ -13,7 +13,7 @@ import sipserAbb from './examples/sipser-abb.json';
 import sipserStars from './examples/sipser-stars.json';
 import starThenStar from './examples/star-then-star.json';
 import explain from './explain.md?raw';
-import { randomText, randomWord } from './gen';
+import { randomText, randomWord } from '../_automata/regex-random';
 import {
   DEFAULT_TEXT,
   defaults,

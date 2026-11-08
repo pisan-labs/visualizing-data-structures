@@ -4,13 +4,7 @@ import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, Step } from '../../engine/types';
 import { skewHeap } from '.';
-import {
-  heightOf,
-  MAX_KEYS,
-  rightPath,
-  type MeldExtra,
-  type MeldState,
-} from '../leftist-heap/meld';
+import { heightOf, MAX_KEYS, rightPath, type MeldExtra, type MeldState } from '../_meld/meld';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: the plain recursive skew heap, written independently.

@@ -1,5 +1,5 @@
 import type { OpCall, SavedExample, Settings, Value, VizDef } from '../../engine/types';
-import { listScript } from '../linked-list/driver';
+import { listScript } from '../_lists/driver';
 import { parseListValue } from '../linked-list/model';
 import cppSource from './code/cpp/doubly_linked_list.hpp?raw';
 import javaSource from './code/java/DoublyLinkedList.java?raw';

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "johnson",
+  "id": "unreachable",
+  "title": "Unreachable pairs stay ∞",
+  "notes": "A, B, C and D, E are separate pieces. q reaches everyone, so h is defined everywhere, but Dijkstra from A never reaches D or E: those entries stay ∞.",
+  "settings": {
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B:1, B>C:-2, A>C:2, D>E:3"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

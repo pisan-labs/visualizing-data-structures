@@ -9,7 +9,8 @@
  *   looksLikeMachine(text), wordProblem(text, a), parseBatch(text, a)
  *
  * Loading
- *   loadOp(o)          the Load operation: reads the text, or keeps the old machine and says why
+ *   loadOp(o)          the Load operation: reads the text, or keeps the old machine and says why;
+ *                      `parse` and `describe` serve machines that are not automata (PDA, Mealy)
  *   whyNotDfa(a)       why a machine is not a DFA, or null
  *   describeMachine(a) "a DFA with 3 states over {0, 1}: start q0, accept q2, and 6 moves."
  *
@@ -171,32 +172,56 @@ export function describeMachine(a: Automaton): string {
   return `${kind} with ${plural(a.states.length, 'state')} ${over}: start ${a.start}, ${acc}, and ${plural(a.moves.length, 'move')}.`;
 }
 
-export interface LoadOptions<S> {
+interface LoadCommon<S, M, Set> {
   /** What the page calls the machine it holds: "machine" (the default), "NFA", "DFA". */
   what?: string;
-  /** The page's state with this automaton loaded. */
-  make(a: Automaton, old: S): S;
-  /** Why this automaton cannot be loaded here, or null. */
-  check?(a: Automaton): string | null;
+  /** The page's state with this machine loaded. */
+  make(m: M, old: S): S;
+  /** Why this machine cannot be loaded here, or null. */
+  check?(m: M): string | null;
   /** What to say after a good load, such as "Press Convert." */
-  ready(a: Automaton): string;
+  ready(m: M, settings: Set): string;
   vars(s: S): Record<string, Scalar>;
   /** The input box takes words too: a word sent to Load gets told to press Run. */
   words?: boolean;
+  /** Whether text that did not parse was meant as a machine. Default looksLikeMachine. */
+  looksLike?(text: string): boolean;
+  /** Moves to show when a word was sent to Load. Default "q0 a -> q1; accept q1". */
+  example?: string;
 }
 
+/** How a page reads its machine. An automaton page may leave both out. */
+interface LoadReader<M> {
+  /** Read the text as a machine, or say what is wrong. Default parseAutomaton. */
+  parse(text: string): M | Error;
+  /** "a DFA with 3 states over {0, 1}: ..." for the narration. Default describeMachine. */
+  describe(m: M): string;
+}
+
+/**
+ * What loadOp needs. Pages whose machines are not automata (a Mealy or Moore machine, a PDA)
+ * pass `parse` and `describe`, and usually `looksLike` and `example`, for their own syntax.
+ */
+export type LoadOptions<S, M = Automaton, Set = unknown> = LoadCommon<S, M, Set> &
+  (M extends Automaton ? Partial<LoadReader<M>> : LoadReader<M>);
+
 /** The Load operation: one step, with the new machine, or the old one and what was wrong. */
-export function loadOp<S, Set, X>(o: LoadOptions<S>): OpSpec<S, Set, X> {
+export function loadOp<S, Set, X, M = Automaton>(o: LoadOptions<S, M, Set>): OpSpec<S, Set, X> {
+  const reader = o as Partial<LoadReader<M>>;
+  const parse = reader.parse ?? ((t: string) => parseAutomaton(t) as M | Error);
+  const describe = reader.describe ?? ((m: M) => describeMachine(m as Automaton));
+  const looksLike = o.looksLike ?? looksLikeMachine;
+  const example = o.example ?? 'q0 a -> q1; accept q1';
   return {
     label: 'Load',
     arity: 1,
-    *run(s, [arg]) {
+    *run(s, [arg], { settings }) {
       const text = String(arg ?? '').trim();
-      const a = parseAutomaton(text);
+      const a = parse(text);
       const problem =
         a instanceof Error
-          ? o.words && text && !looksLikeMachine(text)
-            ? `"${text}" is not a machine. Type moves such as "q0 a -> q1; accept q1"; to run a word, press Run.`
+          ? o.words && text && !looksLike(text)
+            ? `"${text}" is not a machine. Type moves such as "${example}"; to run a word, press Run.`
             : a.message
           : o.check?.(a);
       if (problem || a instanceof Error) {
@@ -214,7 +239,7 @@ export function loadOp<S, Set, X>(o: LoadOptions<S>): OpSpec<S, Set, X> {
       yield {
         state: next,
         marks: [],
-        say: `Loaded ${describeMachine(a)} ${o.ready(a)}`,
+        say: `Loaded ${describe(a)} ${o.ready(a, settings)}`,
         lines: [],
         level: 1,
         vars: o.vars(next),

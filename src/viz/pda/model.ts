@@ -17,7 +17,7 @@
 import type { Mark, OpSpec, PseudoBlock, Scalar, Step, Value } from '../../engine/types';
 import { moveId, stateId } from '../../layouts/automaton';
 import { setText } from '../_automata/automaton';
-import { MAX_BATCH, plural, wordText, words, type Verdict } from '../_automata/page';
+import { MAX_BATCH, loadOp, plural, wordText, words, type Verdict } from '../_automata/page';
 import { rowOk, testRowId, verdictId, type TestRow, type TestTable } from '../_automata/panels';
 import {
   CAP,
@@ -709,38 +709,24 @@ const test: Op = {
   },
 };
 
-const load: Op = {
-  label: 'Load',
-  arity: 1,
-  *run(s, [arg], { settings }) {
-    const text = String(arg ?? '').trim();
-    const p = parsePda(text);
-    if (p instanceof Error) {
-      const problem =
-        text && !looksLikePda(text)
-          ? `"${text}" is not a machine. Type moves such as "q0 a, eps -> q0 a; accept q0"; to run a word, press Run.`
-          : p.message;
-      yield refuse(s, `Nothing loaded. ${problem} The machine stays as it was.`, []);
-      return s;
-    }
-    const next: S = { machine: p };
+const load = loadOp<S, PdaSettings, X, Pda>({
+  parse: parsePda,
+  describe: describePda,
+  looksLike: looksLikePda,
+  example: 'q0 a, eps -> q0 a; accept q0',
+  words: true,
+  make: (p) => ({ machine: p }),
+  ready: (p, settings) => {
     const hint =
       settings.accept === 'stack' && p.accept.length
-        ? ' Options says accept by empty stack, so its accept states do not count.'
+        ? 'Options says accept by empty stack, so its accept states do not count. '
         : settings.accept === 'state' && !p.accept.length
-          ? ' It has no accept states, so by final state it accepts nothing: switch Options to accept by empty stack.'
+          ? 'It has no accept states, so by final state it accepts nothing: switch Options to accept by empty stack. '
           : '';
-    yield {
-      state: next,
-      marks: [],
-      say: `Loaded ${describePda(p)}${hint} Type a word and press Run, or words with + or - in front and press Test.`,
-      lines: [],
-      level: 1,
-      vars: runVars(null),
-    } satisfies PdaStep;
-    return next;
+    return `${hint}Type a word and press Run, or words with + or - in front and press Test.`;
   },
-};
+  vars: () => runVars(null),
+});
 
 export const ops = { load, run, test };
 

@@ -8,16 +8,15 @@
  * Decide from sizes that hold for a whole operation (the finished tree, the reserved room),
  * never from what the current step happens to show, so the drawing does not jump mid-run.
  *
- * Other choosers look alike but score differently, so each keeps its own pictures. With no
- * stage, `placePanels` (graph.ts), `pickBest` (_automata/panels.ts) and `bestPlacement`
- * (_grammar/draw.ts) judge on both typical stages (fitScore) instead of keeping the first; the
- * last two also make every challenger beat the current leader (by 5% and 3%), where here only
- * the first has a head start.
+ * `pickBest` below is the other chooser: it pads each candidate as views pad a scene, and with
+ * no stage it judges on both typical stages (fitScore) instead of keeping the first; every
+ * challenger must beat the current leader by 5%, where in `pickLayout` only the first has a head
+ * start. `placePanels` (graph.ts) and `bestPlacement` (_grammar/draw.ts) score their own way.
  */
 import type { StageSize } from '../engine/types';
 import type { Bounds, Shape } from '../render/scene';
 import { ZOOM_DROP } from '../render/stage';
-import { fitScore } from './graph';
+import { fitScore, padBounds } from './graph';
 
 /**
  * The arrangement drawn largest on `stage`, or the first one when there is no stage. Another
@@ -34,6 +33,30 @@ export function pickLayout<T extends { bounds: Bounds }>(
     const s = fitScore(o.bounds, stage);
     if (s > score) {
       best = o;
+      score = s;
+    }
+  }
+  return best;
+}
+
+/** How large a scene with this content box is drawn on the stage (padded by 14 as views pad it). */
+export const onStage = (b: Bounds, stage?: StageSize): number => fitScore(padBounds(b, 14), stage);
+
+/**
+ * The candidate drawn largest (onStage), on `stage` or, with none, on both typical stages.
+ * Earlier candidates win near ties (within 5%), so the first one listed is the house style and
+ * another must be clearly better to replace it.
+ */
+export function pickBest<T extends { bounds: Bounds }>(
+  candidates: readonly T[],
+  stage?: StageSize,
+): T {
+  let best = candidates[0]!;
+  let score = onStage(best.bounds, stage);
+  for (const c of candidates.slice(1)) {
+    const s = onStage(c.bounds, stage);
+    if (s > score * 1.05) {
+      best = c;
       score = s;
     }
   }

@@ -12,6 +12,7 @@
  * (or on both a laptop and a phone when there is no stage). The choice is made from the
  * finished DFA and table, so it holds through a run.
  */
+import { pickBest } from '../../layouts/arrange';
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import {
   drawAutomaton,
@@ -23,7 +24,7 @@ import { below, beside, padBounds, placePanels, translate, unionBounds } from '.
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { setName, stateLetter, type Automaton } from '../_automata/automaton';
 import { automatonKey } from '../_automata/page';
-import { drawGrid, gridWidths, pickBest } from '../_automata/panels';
+import { drawGrid, gridWidths } from '../_automata/panels';
 import {
   DFA_PREFIX,
   MAX_ALL,

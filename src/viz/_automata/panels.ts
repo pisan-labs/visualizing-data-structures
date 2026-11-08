@@ -1,7 +1,8 @@
 /**
  * The drawing around a state diagram, shared by the automata pages: the input as a tape, the
  * accept or reject badge, a batch test's table, a table with one row per state, and the choice
- * of how to arrange a diagram with its panels on the stage.
+ * of how to arrange a diagram with its panels on the stage (pickBest, for choosing among whole
+ * arrangements, is in src/layouts/arrange.ts).
  *
  *   faScene(a, opts, stage, nominal, block)  the diagram across or down, whichever draws larger
  *                                             with a block of the nominal size, and the block
@@ -9,18 +10,11 @@
  *   stack(parts)                              panels stacked top to bottom, as one block
  *   drawInputTape, drawVerdict, drawTestTable the run's panels; describeTest for screen readers
  *   drawGrid(shapes, o), gridWidths(columns)  a table, one row per state, room kept for rows
- *   pickBest(candidates, stage)               the arrangement drawn largest; onStage(b, stage)
  */
 import type { MarkRole, StageSize } from '../../engine/types';
+import { onStage } from '../../layouts/arrange';
 import { drawAutomaton, layoutStates, type DrawOptions } from '../../layouts/automaton';
-import {
-  below,
-  fitScore,
-  padBounds,
-  placePanels,
-  textWidth,
-  unionBounds,
-} from '../../layouts/graph';
+import { below, padBounds, placePanels, textWidth, unionBounds } from '../../layouts/graph';
 import { CELL_W, drawTape, tapeWindow } from '../../layouts/tape';
 import type { Bounds, Shape } from '../../render/scene';
 import type { Automaton } from './automaton';
@@ -254,7 +248,7 @@ export function acrossFits(
   const score = (across: boolean) => {
     const d = diagram(across);
     const b = placePanels([], d, stage, (_out, x, y) => ({ x, y, ...nominal }));
-    return fitScore(padBounds(unionBounds(d, b), 14), stage);
+    return onStage(unionBounds(d, b), stage);
   };
   const out = score(true) >= score(false);
   if (acrossCache.size > 300) acrossCache.clear();
@@ -360,27 +354,4 @@ export function drawGrid(shapes: Shape[], o: GridOptions): Bounds {
   });
   const n = Math.max(o.rows.length, o.reserve ?? 0, 1);
   return { x: o.x, y: o.y, w: width, h: HEAD_H + n * GRID_PITCH - 3 };
-}
-
-// ---------------------------------------------------------------------------------------------
-// Choosing an arrangement
-
-/** How large a scene with this content box is drawn on the stage (padded as views pad it). */
-export const onStage = (b: Bounds, stage?: StageSize): number => fitScore(padBounds(b, 14), stage);
-
-/**
- * The candidate drawn largest. Earlier candidates win near ties (within 5%), so the first one
- * listed is the house style and another must be clearly better to replace it.
- */
-export function pickBest<T extends { bounds: Bounds }>(candidates: T[], stage?: StageSize): T {
-  let best = candidates[0]!;
-  let score = onStage(best.bounds, stage);
-  for (const c of candidates.slice(1)) {
-    const s = onStage(c.bounds, stage);
-    if (s > score * 1.05) {
-      best = c;
-      score = s;
-    }
-  }
-  return best;
 }

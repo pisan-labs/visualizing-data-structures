@@ -65,7 +65,7 @@ function frameFor(state: BitState, arr: Arrangement): Frame {
   const listW = listed ? LIST_COLS * colWidth(state) : 0;
   const base = { arr, x0, rowsTop, row };
   if (arr === 'beside') {
-    const lx = right + (listed ? 40 : OUT_GAP + 64 + 40);
+    const lx = right + (listed ? DEC_W + 10 : OUT_GAP + 64 + 40);
     const ly = TOP + 4;
     return {
       ...base,

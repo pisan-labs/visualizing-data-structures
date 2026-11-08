@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "graph-coloring",
+  "id": "even-cycle",
+  "title": "An even cycle: 2 colors",
+  "notes": "Around a cycle of 6, the colors alternate 1, 2, 1, 2, 1, 2. Any graph without an odd cycle is bipartite and needs only 2.",
+  "settings": {
+    "order": "given",
+    "layout": "circle"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, B-C, C-D, D-E, E-F, A-F"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

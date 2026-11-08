@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "graph-coloring",
+  "id": "one-at-a-time",
+  "title": "One vertex at a time, smallest free color",
+  "notes": "Name order on the graph every graph page starts with. Each vertex looks at its colored neighbours and takes the smallest color they leave free. Three colors in the end.",
+  "settings": {
+    "order": "given",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-D, B-E, C-E, C-F, D-G, E-G, F-H, G-H"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

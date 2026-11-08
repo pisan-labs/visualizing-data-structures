@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "graph-coloring",
+  "id": "odd-cycle",
+  "title": "An odd cycle needs a third color",
+  "notes": "Around a cycle of 5, alternating 1 and 2 breaks down at the last vertex: E touches both A (1) and D (2). Its largest clique is just an edge, so the clique bound says 2, and the truth is 3.",
+  "settings": {
+    "order": "given",
+    "layout": "circle"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, B-C, C-D, D-E, A-E"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

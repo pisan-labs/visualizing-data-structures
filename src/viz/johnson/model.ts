@@ -20,7 +20,7 @@ import { edgeId, vertexId, weightId } from '../../layouts/graph';
 import { describeGraph, keyOf, listWords, plural, type Graph } from '../_graph/graph';
 import { graphVars, loadOp, type GraphState } from '../_graph/kit';
 import { parseGraph } from '../_graph/parse';
-import { arcs, dist, type Arc } from '../_paths/kit';
+import { arcs, type Arc } from '../_paths/kit';
 
 export type JohnsonState = GraphState;
 
@@ -165,7 +165,15 @@ function runVars(g: Graph, r: JohnsonRun): Record<string, Scalar> {
   };
 }
 
-const signed = (n: number) => (n < 0 ? `(${n})` : String(n));
+/**
+ * Every number the page shows, in narration and in the drawing: a true minus sign (−, as in the
+ * pseudocode) for negatives, ∞ for no value.
+ */
+export const fmt = (n: number | null | undefined): string =>
+  n === null || n === undefined ? '∞' : n < 0 ? `−${-n}` : String(n);
+
+/** A number inside a sum: negatives in parentheses, "(−2)". */
+export const signed = (n: number) => (n < 0 ? `(${fmt(n)})` : fmt(n));
 
 /** The cycle through v found by following predecessors back V times. */
 function cycleThrough(pi: Record<string, string | null>, v: string, n: number): string[] {
@@ -239,7 +247,7 @@ const run: Op = {
           changed = true;
           const k = edgeKeyOf(g, a);
           yield step(
-            `Pass ${pass}: h(${a.u}) + w(${a.u}, ${a.v}) = ${r.h[a.u]} + ${signed(a.w)} = ${nh} is less than h(${a.v}) = ${old}, so h(${a.v}) = ${nh}.`,
+            `Pass ${pass}: h(${a.u}) + w(${a.u}, ${a.v}) = ${fmt(r.h[a.u])} + ${signed(a.w)} = ${fmt(nh)} is less than h(${a.v}) = ${fmt(old)}, so h(${a.v}) = ${fmt(nh)}.`,
             ['pass', 'relax'],
             3,
             [
@@ -263,7 +271,7 @@ const run: Op = {
       pass++;
       r.pass = pass;
       yield step(
-        `Pass ${pass - 1} lowered some h values: run pass ${pass}. h is now ${g.vertices.map((v) => `${v} ${r.h[v]}`).join(', ')}.`,
+        `Pass ${pass - 1} lowered some h values: run pass ${pass}. h is now ${g.vertices.map((v) => `${v} ${fmt(r.h[v])}`).join(', ')}.`,
         ['pass'],
         2,
         g.vertices.map((v) => mark(hCellId(v), 'visit')),
@@ -290,7 +298,7 @@ const run: Op = {
     // 3. Reweight.
     r.phase = 'reweight';
     yield step(
-      `h = ${g.vertices.map((v) => `${v} ${r.h[v]}`).join(', ')}. Reweight every arc: w'(u, v) = w(u, v) + h(u) − h(v). The triangle inequality h(v) ≤ h(u) + w(u, v) makes every w' at least 0.`,
+      `h = ${g.vertices.map((v) => `${v} ${fmt(r.h[v])}`).join(', ')}. Reweight every arc: w'(u, v) = w(u, v) + h(u) − h(v). The triangle inequality h(v) ≤ h(u) + w(u, v) makes every w' at least 0.`,
       ['rw'],
       2,
       g.vertices.map((v) => mark(hCellId(v), 'done')),
@@ -300,7 +308,7 @@ const run: Op = {
       const k = keyOf(e);
       r.w2[k] = w2;
       yield step(
-        `w'(${e.u}, ${e.v}) = ${e.w} + ${signed(r.h[e.u]!)} − ${signed(r.h[e.v]!)} = ${w2}.${w2 === 0 ? ' An arc on a shortest path from q gets weight 0.' : ''}`,
+        `w'(${e.u}, ${e.v}) = ${fmt(e.w)} + ${signed(r.h[e.u]!)} − ${signed(r.h[e.v]!)} = ${fmt(w2)}.${w2 === 0 ? ' An arc on a shortest path from q gets weight 0.' : ''}`,
         ['rw', 'rw.e'],
         3,
         [mark(edgeId(k), 'active'), mark(weightId(k), 'active')],
@@ -319,7 +327,7 @@ const run: Op = {
         r.settled.push(u);
         r.d2[u] = res.d[u]!;
         yield step(
-          `Dijkstra from ${s} on w': settle ${u} with d' = ${res.d[u]}.`,
+          `Dijkstra from ${s} on w': settle ${u} with d' = ${fmt(res.d[u])}.`,
           ['dij', 'dij.s'],
           3,
           [mark(vertexId(u), 'active'), mark(d2CellId(u), 'active')],
@@ -335,7 +343,7 @@ const run: Op = {
       yield step(
         `Row ${s}: un-reweight each d'(${s}, t) by − h(${s}) + h(t).${
           sample
-            ? ` For example D[${s}][${sample}] = ${res.d[sample]} − ${signed(r.h[s]!)} + ${signed(r.h[sample]!)} = ${row[sample]}.`
+            ? ` For example D[${s}][${sample}] = ${fmt(res.d[sample])} − ${signed(r.h[s]!)} + ${signed(r.h[sample]!)} = ${fmt(row[sample])}.`
             : ''
         }${g.vertices.some((t) => res.d[t] === null) ? ` ${listWords(g.vertices.filter((t) => res.d[t] === null))} cannot be reached from ${s}: ∞.` : ''}`,
         ['dij', 'unrw'],
@@ -417,9 +425,9 @@ export const initialVars = (s: S) => graphVars(s.graph);
 export const describe = (s: S): string => describeGraph(s.graph);
 
 export function describeRun(g: Graph, r: JohnsonRun): string {
-  const h = g.vertices.map((v) => `${v} ${dist(r.h[v])}`).join(', ');
+  const h = g.vertices.map((v) => `${v} ${fmt(r.h[v])}`).join(', ');
   const rows = Object.entries(r.D)
-    .map(([s, row]) => `${s}: ${g.vertices.map((t) => dist(row[t])).join(' ')}`)
+    .map(([s, row]) => `${s}: ${g.vertices.map((t) => fmt(row[t])).join(' ')}`)
     .join('; ');
   return `Phase: ${PHASE_WORDS[r.phase]}. h: ${h}.${rows ? ` Rows: ${rows}.` : ''}${
     r.cycle ? ` Negative cycle: ${r.cycle.join(', ')}.` : ''

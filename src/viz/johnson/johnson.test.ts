@@ -94,6 +94,25 @@ describe('johnson', () => {
   });
 });
 
+describe('number format', () => {
+  it('prints negatives with a true minus sign in narration, practice and the drawing', () => {
+    const g = 'A B C D; A>B:4, B>C:-3, C>D:2, A>D:5, D>B:-1';
+    const t = new Timeline(johnson, johnson.defaults, 1, [['load', g], ['run']]);
+    const steps = t.entries.at(-1)!.steps;
+    const said = steps.map((s) => s.say).join(' ');
+    expect(said).toMatch(/−\d/);
+    expect(said).not.toMatch(/-\d/);
+    const first = johnson.view(steps[0]!, johnson.defaults);
+    const texts = first.shapes.flatMap((sh) => (sh.kind === 'text' ? [sh.text] : []));
+    expect(texts).toContain('−3');
+    expect(texts.some((x) => /-\d/.test(x))).toBe(false);
+    const last = johnson.view(steps.at(-1)!, johnson.defaults);
+    const lastTexts = last.shapes.flatMap((sh) => (sh.kind === 'text' ? [sh.text] : []));
+    expect(lastTexts.some((x) => /-\d/.test(x))).toBe(false);
+    expect(lastTexts.some((x) => /−\d/.test(x))).toBe(true);
+  });
+});
+
 describe('drawn text size', () => {
   it('stays readable on a laptop and on a phone', () => {
     expect(smallestText(johnson, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);

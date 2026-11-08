@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "boruvka",
+  "id": "path",
+  "title": "The slowest case: pieces pair off",
+  "notes": "Eight vertices in a row. The light edges pair the vertices up, then the pairs pair up, then the halves join: 3 rounds, log₂ 8. Each round only halves the number of components.",
+  "settings": {
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B:1, B-C:3, C-D:1, D-E:5, E-F:1, F-G:3, G-H:1"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

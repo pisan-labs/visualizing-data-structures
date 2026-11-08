@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "boruvka",
+  "id": "all-at-once",
+  "title": "One round is enough",
+  "notes": "Each vertex's cheapest edge is part of a chain A-B, B-C, C-D, so the very first round builds the whole tree. The heavy diagonals never come close.",
+  "settings": {
+    "layout": "circle"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B:1, B-C:2, C-D:3, A-D:9, A-C:7, B-D:8"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

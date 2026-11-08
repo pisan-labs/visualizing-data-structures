@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "graph-coloring",
+  "id": "bad-order",
+  "title": "A bad order: 4 colors where 2 would do",
+  "notes": "Four pairs, A B, C D, E F and G H, and every vertex is joined to every other vertex except its partner. The graph has no odd cycle, so 2 colors are enough. Name order gives each pair a new color: 4.",
+  "settings": {
+    "order": "given",
+    "layout": "circle"
+  },
+  "seed": 1,
+  "ops": [["load", "A-D, A-F, A-H, B-C, B-E, B-G, C-F, C-H, D-E, D-G, E-H, F-G"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

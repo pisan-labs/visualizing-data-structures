@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "lca",
+  "id": "build-table",
+  "title": "Fill the table row by row",
+  "notes": "Ten vertices rooted at A. Row 0 holds parents. Row 1 jumps 2 up by jumping 1 twice, row 2 jumps 4 by jumping 2 twice, and row 3 (8 up) is all NIL: the tree is only 3 deep.",
+  "settings": {
+    "root": "A",
+    "above": "nil"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-D, B-E, C-F, D-G, D-H, E-I, F-J"], ["build"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

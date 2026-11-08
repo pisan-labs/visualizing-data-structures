@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "euler-path",
+  "id": "bridges",
+  "title": "The seven bridges of Königsberg",
+  "notes": "Four land masses, A to D, and seven bridges. The page has no double edges, so the second bridge to B and to C gets a midpoint, e and f. A, B, C and D all have odd degree: four odd vertices, so no walk crosses every bridge once. Euler, 1736.",
+  "settings": {
+    "arrows": "follow",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-e, B-e, A-C, A-f, C-f, A-D, B-D, C-D"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

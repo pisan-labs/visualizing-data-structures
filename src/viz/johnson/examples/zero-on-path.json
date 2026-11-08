@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "johnson",
+  "id": "zero-on-path",
+  "title": "Arcs on q's shortest paths get weight 0",
+  "notes": "A>B and B>C are negative. After reweighting, every arc that lies on a shortest path from q has w' = 0, and the rest are positive. Every path from s to t changes by the same h(s) − h(t), so the shortest ones stay shortest.",
+  "settings": {
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B:-2, B>C:-1, A>C:4, C>D:2, D>A:3"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

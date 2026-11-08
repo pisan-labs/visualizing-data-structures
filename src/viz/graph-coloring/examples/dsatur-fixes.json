@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "graph-coloring",
+  "id": "dsatur-fixes",
+  "title": "DSatur finds the 2 colors",
+  "notes": "The same graph with DSatur. After A, every neighbour of A has a forced color, and DSatur takes those first. A bipartite graph always comes out with 2 colors this way.",
+  "settings": {
+    "order": "dsatur",
+    "layout": "circle"
+  },
+  "seed": 1,
+  "ops": [["load", "A-D, A-F, A-H, B-C, B-E, B-G, C-F, C-H, D-E, D-G, E-H, F-G"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

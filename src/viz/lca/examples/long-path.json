@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "lca",
+  "id": "long-path",
+  "title": "A long path: 7 steps in 3 jumps",
+  "notes": "Twelve vertices in a row, so the table needs 4 rows. L is 7 below E, and 7 = 111 in binary: jumps of 1, 2 and 4 reach E. Walking up one step at a time would take 7.",
+  "settings": {
+    "root": "A",
+    "above": "nil"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, B-C, C-D, D-E, E-F, F-G, G-H, H-I, I-J, J-K, K-L"],
+    ["build"],
+    ["query", "L", "E"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

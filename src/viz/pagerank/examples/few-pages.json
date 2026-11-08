@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "pagerank",
+  "id": "few-pages",
+  "title": "Rank flows along the links",
+  "notes": "Six pages. C is linked from A, B and D, yet A ends on top: C sends all its rank to A, and D and E add theirs. F links nowhere, so its rank is spread over everyone.",
+  "settings": {
+    "damping": "0.85",
+    "dangling": "spread",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B, A>C, B>C, B>F, C>A, D>A, D>C, E>A, E>D"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

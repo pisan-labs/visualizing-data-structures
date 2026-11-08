@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bidirectional-search",
+  "id": "no-path",
+  "title": "No path: one side runs dry",
+  "notes": "A to F are one piece, G and H another. The search from H runs out of new vertices after two turns, which proves there is no path. Plain BFS from A has to sweep A's whole piece to learn the same thing.",
+  "settings": {
+    "side": "alternate",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, B-D, C-D, D-E, E-F, G-H"],
+    ["run", "A", "H"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

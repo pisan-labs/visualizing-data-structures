@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "euler-path",
+  "id": "pieces",
+  "title": "Even degrees, but two pieces",
+  "notes": "Every degree is 2, so the degree test passes. But the two triangles share no vertex, and one walk cannot jump from one to the other.",
+  "settings": {
+    "arrows": "follow",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, B-C, A-C, D-E, E-F, D-F"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

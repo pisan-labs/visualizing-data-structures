@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "boruvka",
+  "id": "ties",
+  "title": "Equal weights need one rule",
+  "notes": "A triangle of 1s. If A picked A-B, B picked B-C and C picked A-C, the three picks would close a cycle. With one rule for ties (the earlier edge in the list wins), B and C both prefer edges to A, and no cycle can form.",
+  "settings": {
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B:1, A-C:1, B-C:1, C-D:2"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

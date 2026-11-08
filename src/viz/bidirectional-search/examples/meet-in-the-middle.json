@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bidirectional-search",
+  "id": "meet-in-the-middle",
+  "title": "Two searches meet in the middle",
+  "notes": "From A to H on the graph every graph page starts with. A's side finds B and C, H's side finds F and G, and the next layer from A runs into them.",
+  "settings": {
+    "side": "alternate",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, B-D, B-E, C-E, C-F, D-G, E-G, F-H, G-H"],
+    ["run", "A", "H"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

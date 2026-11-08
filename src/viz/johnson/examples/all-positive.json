@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "johnson",
+  "id": "all-positive",
+  "title": "No negative weights: h is all 0",
+  "notes": "Every weight is positive, so q's 0 arcs are already the shortest way in: h is 0 everywhere, w' = w, and Johnson is just Dijkstra from every vertex.",
+  "settings": {
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B:2, A>C:5, B>C:1, C>D:3, B>D:6"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

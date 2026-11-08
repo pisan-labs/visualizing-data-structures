@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "lca",
+  "id": "siblings",
+  "title": "Siblings, with the root as its own ancestor",
+  "notes": "G and H share the parent D. Every jump, even of 1, lands both on the same vertex, so they never jump: the answer is their parent, D. With the root as its own ancestor (see the options) the jumps past the root give A instead of NIL. Same answer.",
+  "settings": {
+    "root": "A",
+    "above": "self"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-D, B-E, C-F, D-G, D-H, E-I, F-J"], ["build"], ["query", "G", "H"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

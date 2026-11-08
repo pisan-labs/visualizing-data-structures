@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "graph-coloring",
+  "id": "welsh-powell",
+  "title": "Busy vertices first saves a color",
+  "notes": "In name order this graph needs 4 colors. Largest degree first starts with G, the busiest vertex, then A, C, E and F, while they still have choices, and gets away with 3.",
+  "settings": {
+    "order": "largest",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-D, A-F, B-C, C-E, C-G, D-G, E-F, E-G, F-G"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

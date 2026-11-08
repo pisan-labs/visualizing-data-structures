@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "pagerank",
+  "id": "trap",
+  "title": "A rank trap: two pages link only to each other",
+  "notes": "E and F link to each other and nowhere else. Rank flows in from D and never flows out, so the pair soaks up most of it. Only the random jump keeps A to D alive.",
+  "settings": {
+    "damping": "0.85",
+    "dangling": "spread",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B, B>C, C>A, C>D, D>E, E>F, F>E"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "pagerank",
+  "id": "no-jump",
+  "title": "d = 1: no random jump, no convergence",
+  "notes": "A, B, C and D form a one-way ring, and E feeds A. With d = 1 nobody ever jumps: E's rank pours into A once, then the bump goes round and round the ring and never settles. The run stops at 100 iterations.",
+  "settings": {
+    "damping": "1",
+    "dangling": "spread",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B, B>C, C>D, D>A, E>A"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "boruvka",
+  "id": "forest",
+  "title": "Two pieces: a spanning forest",
+  "notes": "A, B, C and D are one piece, E, F and G another. When each piece is joined, no edge leaves it, so the next round has no picks and Borůvka stops with two trees.",
+  "settings": {
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B:3, A-C:1, B-C:2, C-D:4, E-F:2, F-G:1, E-G:5"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

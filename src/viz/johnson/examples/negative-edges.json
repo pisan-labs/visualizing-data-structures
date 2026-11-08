@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "johnson",
+  "id": "negative-edges",
+  "title": "Negative edges, every pair",
+  "notes": "Five vertices, two negative arcs, no negative cycle. Bellman-Ford from q finds h from 0 down to −5, every arc gets a nonnegative w', and five Dijkstras fill the matrix.",
+  "settings": {
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B:3, A>C:8, A>E:-4, B>D:1, B>E:7, C>B:4, D>A:2, D>C:-5, E>D:6"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "lca",
+  "id": "other-root",
+  "title": "The same tree, rooted at D",
+  "notes": "Change the root and the ancestors change. Rooted at D, the path from G to J runs through D at the top, so LCA(G, J) is D, not A.",
+  "settings": {
+    "root": "D",
+    "above": "nil"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-D, B-E, C-F, D-G, D-H, E-I, F-J"], ["build"], ["query", "G", "J"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

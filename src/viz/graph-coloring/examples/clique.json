@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "graph-coloring",
+  "id": "clique",
+  "title": "A clique forces the count",
+  "notes": "A, B, C and D are all joined to each other, so they need 4 different colors whatever the order. Greedy uses exactly 4, which proves 4 is the best.",
+  "settings": {
+    "order": "given",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, A-D, B-C, B-D, C-D, A-E, E-F, B-F"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

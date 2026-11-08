@@ -22,7 +22,6 @@ import {
 import {
   beside,
   drawColumn,
-  fitScore,
   padBounds,
   placePanels,
   textWidth,
@@ -34,6 +33,7 @@ import { drawTrace, type TraceLine } from '../../layouts/trace';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import type { Automaton } from '../_automata/automaton';
 import {
+  acrossFits,
   describeTest,
   drawInputTape,
   drawTestTable,
@@ -262,24 +262,6 @@ function drawBadge(
 // ---------------------------------------------------------------------------------------------
 // The scene
 
-const acrossCache = new Map<string, boolean>();
-
-/** Does the diagram draw larger across than down, with a block of the nominal size placed? */
-function acrossFits(p: Pda, stage: StageSize | undefined): boolean {
-  const key = `${stage ? `${stage.w}x${stage.h}` : '-'}|${pdaKey(p)}`;
-  const hit = acrossCache.get(key);
-  if (hit !== undefined) return hit;
-  const score = (across: boolean) => {
-    const d = drawDiagram(p, across, new Map());
-    const b = placePanels([], d.bounds, stage, (_out, x, y) => ({ x, y, ...NOMINAL }));
-    return fitScore(padBounds(unionBounds(d.bounds, b), 14), stage);
-  };
-  const out = score(true) >= score(false);
-  if (acrossCache.size > 300) acrossCache.clear();
-  acrossCache.set(key, out);
-  return out;
-}
-
 export function view(
   step: Step<PdaState, PdaExtra>,
   _settings: PdaSettings,
@@ -324,7 +306,10 @@ export function view(
     };
   }
 
-  const across = acrossFits(p, stage);
+  const across = acrossFits(`pda|${pdaKey(p)}`, (dir) => drawDiagram(p, dir, new Map()).bounds, {
+    stage,
+    nominal: NOMINAL,
+  });
   const live = new Set(r?.live ?? []);
   const dead = new Set(r?.dead ?? []);
   const d = drawDiagram(p, across, roles, (q) =>

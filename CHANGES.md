@@ -275,3 +275,5 @@
 2026-11-08 [code] axeFindings() in tests/e2e/helpers.ts: all 65 specs with axe scans now list each failing element (rule, selector, HTML, axe's reason) instead of a count, so the intermittent factorial failure (register item 11) names its element next time
 
 2026-11-08 [code] Shared code out of page folders (register item 9): avl kits to _bst, hashing to _hashing, list helpers to _lists, meld to _meld, prim/mst to _graph/mst.ts, Thompson construction, layout and random regexes to _automata; imports only
+
+2026-11-08 [code] One acrossFits in src/viz/_automata/panels.ts for the finite automata and the PDA (pda/view.ts had a near copy); scenes of nine automata pages hashed before and after, identical

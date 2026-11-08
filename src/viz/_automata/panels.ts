@@ -223,7 +223,12 @@ export function faScene(
   nominal: { w: number; h: number },
   block?: (out: Shape[], x: number, y: number) => Bounds,
 ): { shapes: Shape[]; bounds: Bounds } {
-  const across = !stage || acrossFits(a, stage, nominal);
+  const across =
+    !stage ||
+    acrossFits(`fa|${automatonKey(a)}`, (dir) => drawAutomaton(a, layoutStates(a, dir)).bounds, {
+      stage,
+      nominal,
+    });
   const d = drawAutomaton(a, layoutStates(a, across), opts);
   const shapes = [...d.shapes];
   const boxes = [d.bounds];
@@ -233,18 +238,27 @@ export function faScene(
 
 const acrossCache = new Map<string, boolean>();
 
-function acrossFits(a: Automaton, stage: StageSize, nominal: { w: number; h: number }): boolean {
-  const key = `${stage.w}x${stage.h}|${nominal.w}x${nominal.h}|${automatonKey(a)}`;
-  const hit = acrossCache.get(key);
+/**
+ * Does a diagram draw larger laid out across than down, once a block of the `nominal` size is
+ * placed beside it by placePanels? `diagram(across)` gives the diagram's box either way; `key`
+ * names the machine (prefixed by its kind) for the cache. Ties go across.
+ */
+export function acrossFits(
+  key: string,
+  diagram: (across: boolean) => Bounds,
+  { stage, nominal }: { stage: StageSize | undefined; nominal: { w: number; h: number } },
+): boolean {
+  const full = `${stage ? `${stage.w}x${stage.h}` : '-'}|${nominal.w}x${nominal.h}|${key}`;
+  const hit = acrossCache.get(full);
   if (hit !== undefined) return hit;
   const score = (across: boolean) => {
-    const d = drawAutomaton(a, layoutStates(a, across));
-    const b = placePanels([], d.bounds, stage, (_out, x, y) => ({ x, y, ...nominal }));
-    return fitScore(padBounds(unionBounds(d.bounds, b), 14), stage);
+    const d = diagram(across);
+    const b = placePanels([], d, stage, (_out, x, y) => ({ x, y, ...nominal }));
+    return fitScore(padBounds(unionBounds(d, b), 14), stage);
   };
   const out = score(true) >= score(false);
   if (acrossCache.size > 300) acrossCache.clear();
-  acrossCache.set(key, out);
+  acrossCache.set(full, out);
   return out;
 }
 

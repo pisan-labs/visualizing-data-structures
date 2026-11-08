@@ -214,7 +214,7 @@ export function drawCounts(
   labels.forEach((label, k) => {
     const bx = x + k * (o.barW + o.gap);
     const c = counts[k] ?? 0;
-    const bh = Math.max(c > 0 ? 2 : 0, (c / max) * o.h);
+    const bh = Math.max(c > 0 ? 2 : 1, (c / max) * o.h);
     const role = o.roles.get(`${prefix}-bar-${k}`) ?? o.highlight?.get(k);
     shapes.push(box(`${prefix}-bar-${k}`, bx, base - bh, o.barW, bh, { r: 1, role }));
     shapes.push(

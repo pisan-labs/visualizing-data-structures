@@ -59,7 +59,7 @@ export const modPow: VizDef<PowState, PowSettings, undefined> = {
       label: 'a b m',
       placeholder: `e.g. 7 13 11 (b up to ${MAX_B})`,
       maxLength: 20,
-      sample: '7 13 11',
+      sample: '7',
       parse: (t) => parseWhole(t, 0, MAX_B, 'Each number'),
     },
     buttons: [

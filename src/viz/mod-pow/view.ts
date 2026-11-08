@@ -69,7 +69,7 @@ export function barsPart(s: PowState, roles: ReadonlyMap<string, MarkRole>): Par
   rows.forEach(([id, label, n, role], r) => {
     const y = 30 + r * 52;
     shapes.push(txt(`${id}-label`, 0, y + 14, label, 14));
-    const w = Math.max(n > 0 ? 3 : 0, (n / max) * W);
+    const w = Math.max(n > 0 ? 3 : 1, (n / max) * W);
     shapes.push(box(id, 0, y + 22, w, 18, { r: 1, role: roles.get(id) ?? role }));
     shapes.push(txt(`${id}-n`, w + 6, y + 36, String(n), 15, { weight: 'bold' }));
   });

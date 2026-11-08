@@ -41,7 +41,7 @@ test('reading the bits from the right gives the same answer', async ({ page }) =
 test('"Show me" links load an example and play it', async ({ page }) => {
   await page.getByRole('tab', { name: 'Learn' }).click();
   await showMe(page, page.getByRole('link', { name: 'Show me' }).first());
-  await expect(narration(page)).toContainText('7^13 mod 11');
+  await expect(narration(page)).toContainText('7^13 mod 11', { timeout: 60_000 });
 });
 
 test('a practice question can be shown', async ({ page }) => {

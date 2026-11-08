@@ -58,7 +58,7 @@ export const rsa: VizDef<RsaState, RsaSettings, undefined> = {
       label: 'numbers',
       placeholder: 'p q, e.g. 61 53; or a message below n',
       maxLength: 20,
-      sample: '61 53',
+      sample: '61',
       parse: (t) => parseWhole(t, 0, 99999, 'Each number'),
     },
     buttons: [

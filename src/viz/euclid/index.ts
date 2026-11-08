@@ -59,7 +59,7 @@ export const euclid: VizDef<EuState, EuclidSettings, undefined> = {
       label: 'a b',
       placeholder: `two numbers, e.g. 240 46 (0 to ${MAX})`,
       maxLength: 20,
-      sample: '240 46',
+      sample: '240',
       parse: (t) => parseWhole(t, 0, MAX, 'Each number'),
     },
     buttons: [

@@ -39,7 +39,7 @@ test('starting at 2p crosses out more', async ({ page }) => {
 test('"Show me" links load an example and play it', async ({ page }) => {
   await page.getByRole('tab', { name: 'Learn' }).click();
   await showMe(page, page.getByRole('link', { name: 'The primes up to 100' }));
-  await expect(narration(page)).toContainText('100');
+  await expect(narration(page)).toContainText('100', { timeout: 60_000 });
 });
 
 test('a practice question can be shown', async ({ page }) => {

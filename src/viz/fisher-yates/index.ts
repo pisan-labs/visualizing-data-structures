@@ -29,7 +29,8 @@ import { view } from './view';
 export function parseValues(token: string): Value | Error {
   const t = token.trim().replace(/\s+/g, ' ');
   if (!t) return new Error('Type some values first, such as A B C D, or a number of trials.');
-  if (t.split(/[ ,]+/).some((v) => v.length > 3))
+  // A number of trials may be longer; values are at most 3 characters.
+  if (!/^\d+$/.test(t) && t.split(/[ ,]+/).some((v) => v.length > 3))
     return new Error('Keep each value to 3 characters.');
   if (t.includes('|')) return new Error('Values cannot contain |.');
   return t;

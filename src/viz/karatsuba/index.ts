@@ -60,7 +60,7 @@ export const karatsuba: VizDef<KaraState, KaraSettings, undefined> = {
       label: 'x y',
       placeholder: `two numbers, e.g. 1234 5678 (up to ${MAX})`,
       maxLength: 20,
-      sample: '1234 5678',
+      sample: '1234',
       parse: (t) => parseWhole(t, 0, MAX, 'Each number'),
     },
     buttons: [

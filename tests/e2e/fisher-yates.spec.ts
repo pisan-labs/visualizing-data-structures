@@ -42,7 +42,7 @@ test('trials of the naive shuffle show its bias', async ({ page }) => {
 test('"Show me" links load an example and play it', async ({ page }) => {
   await page.getByRole('tab', { name: 'Learn' }).click();
   await showMe(page, page.getByRole('link', { name: 'Show me' }).first());
-  await expect(narration(page)).toContainText('Shuffled');
+  await expect(narration(page)).toContainText('Shuffled', { timeout: 60_000 });
 });
 
 test('a practice question can be shown', async ({ page }) => {

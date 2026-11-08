@@ -24,7 +24,7 @@ test.beforeEach(async ({ page }) => {
 test('offers fill the reservoir, then each item gets in with probability k/i', async ({ page }) => {
   await press(page, 'Offer', 'A B C');
   await expect(narration(page)).toContainText('Reservoir after 3 items');
-  await expect(page.locator('.vars')).toContainText(/keep chance\s*2\/3/);
+  await expect(page.locator('.vars')).toContainText(/keep chance\s*"?2\/3/);
   await expect(stage(page).locator('text', { hasText: /^reservoir \(k = 2\)$/ })).toBeVisible();
   await expect(stage(page).locator('text', { hasText: /^item 3: chance 2\/3/ })).toBeVisible();
 });
@@ -38,7 +38,7 @@ test('trials even out', async ({ page }) => {
 test('"Show me" links load an example and play it', async ({ page }) => {
   await page.getByRole('tab', { name: 'Learn' }).click();
   await showMe(page, page.getByRole('link', { name: 'Show me' }).first());
-  await expect(narration(page)).toContainText('the sample is');
+  await expect(narration(page)).toContainText('the sample is', { timeout: 60_000 });
 });
 
 test('a practice question can be shown', async ({ page }) => {

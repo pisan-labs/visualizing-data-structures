@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "dp-subset-sum",
+  "id": "zero-target",
+  "title": "Target 0: the empty set",
+  "notes": "Column 0 is T in every row: taking nothing adds up to 0. The walk back takes nothing.",
+  "settings": {},
+  "seed": 1,
+  "ops": [["numbers", "4 6 9"], ["target", 0], ["fill"], ["trace"]],
+  "at": {
+    "op": 2,
+    "step": 0
+  }
+}

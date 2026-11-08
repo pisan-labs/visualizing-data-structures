@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "dp-lis",
+  "id": "tails-not-lis",
+  "title": "tails is not the subsequence",
+  "notes": "After 3, 4, 5, 1 the tails are 1, 4, 5, which is not a subsequence at all: 1 comes last. Only its length counts. P still finds 3, 4, 5.",
+  "settings": {
+    "method": "tails"
+  },
+  "seed": 1,
+  "ops": [["values", "3 4 5 1"], ["fill"], ["trace"]],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

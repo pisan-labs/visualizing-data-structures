@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "fractional-knapsack",
+  "id": "whole-lucky",
+  "title": "Whole items, and greedy gets lucky",
+  "notes": "4:12 and 3:8 have the best ratios and fill the capacity of 7 exactly, so greedy with whole items matches the table's 20. Lucky is not the same as right.",
+  "settings": {
+    "mode": "whole"
+  },
+  "seed": 1,
+  "ops": [["items", "4:12 3:8 2:5"], ["capacity", 7], ["fill"]],
+  "at": {
+    "op": 2,
+    "step": 0
+  }
+}

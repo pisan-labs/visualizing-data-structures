@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "interval-partitioning",
+  "id": "ten-lectures",
+  "title": "Ten lectures in three rooms",
+  "notes": "Sorted by start time, each lecture takes the room that is free soonest, if it is free in time. Three rooms are enough, and three lectures are on at 9, so three are needed.",
+  "settings": {
+    "touch": "share"
+  },
+  "seed": 1,
+  "ops": [["load", "9-11 9-13 9-11 11-13 11-14 13-15 14-16 14-16 15-17 16-18"], ["schedule"]],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

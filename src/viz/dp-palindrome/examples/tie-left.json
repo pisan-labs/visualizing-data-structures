@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "dp-palindrome",
+  "id": "tie-left",
+  "title": "Ties going left find another palindrome",
+  "notes": "The same table as BBABCBCAB: length 7, but going left on ties drops a different end and finds BABCBAB. Both are right.",
+  "settings": {
+    "tie": "left"
+  },
+  "seed": 1,
+  "ops": [["load", "BBABCBCAB"], ["fill"], ["trace"]],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "dp-subset-sum",
+  "id": "row-by-row",
+  "title": "One row at a time",
+  "notes": "Fill one row per number and predict it first: a row is the row above, plus the row above shifted right by the new number.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["numbers", "2 3 7 8 10"],
+    ["target", 11],
+    ["row"],
+    ["row"],
+    ["row"],
+    ["row"],
+    ["row"],
+    ["row"],
+    ["trace"]
+  ],
+  "at": {
+    "op": 2,
+    "step": 0
+  }
+}

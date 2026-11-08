@@ -28,12 +28,13 @@ One-time setup, done in the Netlify web UI:
    to the `pisan-labs` organization.
 2. Leave the build settings alone. `netlify.toml` sets the build command (`npm run build`), the
    publish folder (`dist`), and Node 22. Deploy.
-3. **Domain management → Add a domain**, enter `<name>.pisan.me`, and add the DNS record Netlify
-   shows (a `CNAME` from `<name>` to `<site>.netlify.app`) at the DNS provider for `pisan.me`.
-   Netlify issues the HTTPS certificate on its own.
+3. **Domain management → Add a domain**, enter `<name>.hintwise.org`, and add the DNS record
+   Netlify shows (a `CNAME` from `<name>` to `<site>.netlify.app`) in Cloudflare, which serves
+   DNS for `hintwise.org`. Set the record to "DNS only" (grey cloud), not proxied, so Netlify can
+   issue the HTTPS certificate on its own.
 
-For now Yusuf deploys by hand from the Netlify dashboard, so a push to `main` does not publish
-anything by itself. Tests run in GitHub Actions, not on Netlify.
+Netlify builds and publishes every push to `main`; `main` only moves by fast-forwarding to
+`next` (see `CLAUDE.md`). Tests run in GitHub Actions, not on Netlify.
 
 ## Licenses
 

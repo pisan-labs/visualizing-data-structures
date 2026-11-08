@@ -301,3 +301,7 @@
 2026-11-08 [note] Deployed at 14:16 on Yusuf's "implement everything and then deploy": main 1d91418..18e1bb5 (CI run 112 green, full local e2e 2167 passed); live bundle matches, all 129 pages 200 at stepwise.hintwise.org, canonical links on the new address
 
 2026-11-08 [code] Merged: larger smallest text on 33 pages (stage-aware layouts: turned graph and flow layouts, sideways suffix tree, tight DFA, fit-the-screen defaults on graph-representations and stack-array, label sizes 11-12 to 13-14); still short on a phone: nfa-to-dfa 6.8, regex-engines 7.1, max-flow 8.1, string matching pages 7.2
+
+2026-11-08 [doc] README: hintwise.org DNS is at Cloudflare (CNAME, DNS only); a push to main publishes
+
+2026-11-08 [plan] Yusuf: fix the remaining small-text pages too; four agents by layout family (automata, recursion and analysis, strings/DP/arrays, graphs/lists/trees)

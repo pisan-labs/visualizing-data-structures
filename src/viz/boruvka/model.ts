@@ -183,6 +183,7 @@ const run: Op = {
       2,
     );
 
+    let stopped = '';
     for (;;) {
       const names = compNames(g, r.comp);
       const label = Object.fromEntries(names.map((c) => [c, compText(c)]));
@@ -230,6 +231,7 @@ const run: Op = {
       r.at = undefined;
       const picks = names.filter((c) => r.pick[c]);
       if (picks.length === 0) {
+        stopped = `No edge leaves any component, so round ${r.round} adds nothing. `;
         r.round--;
         break;
       }
@@ -281,7 +283,11 @@ const run: Op = {
     r.pick = {};
     r.final = true;
     const edges = r.T.map((k) => edgeOf(g, k));
-    yield step(`Done after ${plural(r.round, 'round')}. ${treeWords(g, edges)}`, ['ret'], 1);
+    yield step(
+      `${stopped}Done after ${plural(r.round, 'round')}. ${treeWords(g, edges)}`,
+      ['ret'],
+      1,
+    );
     return s;
   },
 };

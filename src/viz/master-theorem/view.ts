@@ -28,7 +28,7 @@ import {
   type Rec,
 } from './model';
 
-const TREE = { size: 12.5, gap: 8, levelGap: 54, twoLines: true } as const;
+const TREE = { size: 13, gap: 8, levelGap: 56, twoLines: true } as const;
 /** Line spacing of the summary and the check table; `tight` is for the stacked arrangements. */
 const SPACING = { loose: { line: 24, row: 22, note: 20 }, tight: { line: 20, row: 18, note: 17 } };
 /** Level notes listed under the tree: the size drawCallTree gives them, and their spacing. */

@@ -604,10 +604,10 @@ export function turnLayout(layout: GraphLayout): GraphLayout {
   return { pos, r: layout.r, bounds: boxOf(Object.values(pos), layout.r) };
 }
 
-/** The same layout with every x scaled by kx (the circles stay). */
-function widenLayout(layout: GraphLayout, kx: number): GraphLayout {
+/** The same layout with every x scaled by kx and every y by ky (the circles stay). */
+function stretchLayout(layout: GraphLayout, kx: number, ky: number): GraphLayout {
   const pos: Record<string, Pt> = {};
-  for (const [v, p] of Object.entries(layout.pos)) pos[v] = { x: p.x * kx, y: p.y };
+  for (const [v, p] of Object.entries(layout.pos)) pos[v] = { x: p.x * kx, y: p.y * ky };
   return { pos, r: layout.r, bounds: boxOf(Object.values(pos), layout.r) };
 }
 
@@ -616,15 +616,21 @@ function widenLayout(layout: GraphLayout, kx: number): GraphLayout {
  * weight beside a level edge: it widens by this much.
  */
 const TURN_WIDEN = 1.45;
+/**
+ * A long, thin spring layout may also come shorter along its length by this much, for a stage where
+ * that length is what limits the picture (a path down a phone): its edges keep room for a
+ * weight beside them and for an arrowhead.
+ */
+const SQUEEZE = 0.78;
 
 /**
  * The layouts a view may draw a graph with on this stage: the layout, and for a spring layout
  * (whose direction means nothing) that is clearly longer one way than the other, the same layout
- * turned on its side. A long path drawn across a laptop then runs down a phone. A layered
- * layout clearly longer one way turns too: its layers then run left to right, as many books
- * draw a DAG, widened so weights have room. With no stage, only the layout, so thumbnails and
- * practice pictures stay as they are. The view draws each and keeps the one drawn largest
- * (pickLayout in arrange.ts).
+ * turned on its side, and both a little shorter along their length. A long path drawn across a
+ * laptop then runs down a phone. A layered layout clearly longer one way turns too: its layers
+ * then run left to right, as many books draw a DAG, widened so weights have room. With no
+ * stage, only the layout, so thumbnails and practice pictures stay as they are. The view draws
+ * each and keeps the one drawn largest (pickLayout in arrange.ts).
  */
 export function layoutsFor(
   layout: GraphLayout,
@@ -635,7 +641,12 @@ export function layoutsFor(
   const { w, h } = layout.bounds;
   if (Math.max(w, h) <= 1.3 * Math.min(w, h)) return [layout];
   const turned = turnLayout(layout);
-  return [layout, template === 'layered' ? widenLayout(turned, TURN_WIDEN) : turned];
+  if (template === 'layered') return [layout, stretchLayout(turned, TURN_WIDEN, 1)];
+  const squeeze = (l: GraphLayout) =>
+    l.bounds.w > l.bounds.h ? stretchLayout(l, SQUEEZE, 1) : stretchLayout(l, 1, SQUEEZE);
+  // Only a long, thin layout (a path, a chain) squeezes: a rounder one needs its room.
+  if (Math.max(w, h) <= 2.2 * Math.min(w, h)) return [layout, turned];
+  return [layout, turned, squeeze(layout), squeeze(turned)];
 }
 
 // ---------------------------------------------------------------------------------------------

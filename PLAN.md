@@ -750,6 +750,43 @@ Two agents at a time: `big-o-definition` and `loop-counting` first, then
 `doubling-experiment` and `amortized-analysis`. Then the shared-code cleanup (HANDOFF.md, next in
 order).
 
+## 15. Shared-code cleanup (started 2026-11-08)
+
+Yusuf asked (8 November), once the Big-O pages were done: start the shared-code search and the
+code cleanup. The search (8 November) covered 929 source and test files, about 227 000 lines.
+
+### 15.1 Debt register
+
+Scored 1 to 5: interest (ongoing cost), principal (cost to fix), risk (of a wrong page or a red
+CI), leverage (what fixing it unblocks). Priority = interest + risk + leverage − principal.
+
+| # | Item | I | P | R | L | Priority | Where |
+|---|---|---|---|---|---|---|---|
+| 1 | `settled()` can return between two steps of a playback (nothing animates during the hold), so a count taken then is of the wrong step; two agents met it | 3 | 2 | 3 | 3 | 7 | `tests/e2e/helpers.ts` |
+| 2 | The zoom-button size is copied in four places (`graph.ts` 118×42, `circular-array.ts` 34 of 362, `_grammar/draw.ts` 34, `loop-counting/view.ts`); on phones `Stage.svelte` already gives the buttons a strip of their own, so the phone copies may compensate twice | 2 | 1 | 3 | 2 | 6 | `src/ui/Stage.svelte`, `src/layouts/` |
+| 3 | Two `textWidth` functions (`layouts/graph.ts`, `layouts/bars.ts`) and local estimators in three pages; CI's DejaVu font is wider than either assumes | 3 | 2 | 2 | 3 | 6 | `src/layouts/`, pumping-lemma, chomsky-hierarchy, big-o-definition |
+| 4 | `graphLines` (code-tab driver input for a graph) copied identically in 19 pages | 2 | 1 | 2 | 1 | 4 | graph pages |
+| 5 | Six word-wrap helpers | 2 | 2 | 1 | 3 | 4 | `_automata/regex.ts`, pumping-lemma, halting-problem, chomsky-hierarchy, dfa-to-regex, regex-to-nfa |
+| 6 | The layout chooser `pickLayout` lives in `src/viz/_stage/arrange.ts` (23 users), beside `bestPlacement` in `_grammar/draw.ts` and per-page column pickers | 2 | 2 | 1 | 3 | 4 | `src/viz/_stage/`, `src/viz/_grammar/` |
+| 7 | `STAGES` in `layouts/graph.ts` still holds the old 884×305 desktop stage, the fallback for thumbnails, prerender and tests | 2 | 2 | 2 | 1 | 3 | `src/layouts/graph.ts` |
+| 8 | Chart code written three times: big-o-definition (exact fractions), doubling-experiment (log-log), amortized-analysis (two-lane bars) | 2 | 4 | 1 | 3 | 2 | those three views |
+| 9 | Shared code living in page folders, imported by siblings: avl (treap, splay, red-black), hash-chaining (4 pages), linked-list (3), regex-to-nfa (regex-engines), prim (kruskal), leftist-heap (skew-heap) | 2 | 3 | 1 | 2 | 2 | those folders |
+| 10 | `matches()` in `_automata/regex.ts` is exponential on deeply nested concatenations | 1 | 2 | 2 | 1 | 2 | `src/viz/_automata/regex.ts` |
+
+### 15.2 Debt to keep
+
+- The pseudocode line helper `L` (107 copies) and `mark` (90): one-line, never change, and a
+  shared import would save nothing.
+- `plural` and `distinct` variants (about 20 each): small, and their signatures differ on purpose.
+- Large model files (bst, linked lists, np-reductions, over 1000 lines): one page each, mostly
+  narration; they are long, not tangled.
+- Two TODO or FIXME comments in the whole tree.
+
+### 15.3 Order
+
+Highest priority first, one item per commit, each with the full checks and screenshots before
+and after when a drawing can change: 1, 2, 3, 4, 5, 6, 7, then 8 and 9 (larger).
+
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 
 | Page | Controls |

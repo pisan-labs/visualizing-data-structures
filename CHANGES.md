@@ -247,3 +247,5 @@
 2026-11-08 [code] mealy-moore property test: generate only machines the page loads; it failed about 1 run in 6 when a random 5-state Mealy machine needed a 13-state Moore machine and Load rightly refused it
 
 2026-11-08 [code] Merged doubling-experiment (wave 6): six instrumented algorithms measured at n, 2n, 4n, ...; T(n), ratio and b beside a log-log plot with the fitted model and a checked prediction; seeded noise and fit options; wave 6 is done
+
+2026-11-08 [plan] Shared-code cleanup: debt register in PLAN.md section 15 (10 items ranked by interest, risk and leverage against principal, and what to keep)

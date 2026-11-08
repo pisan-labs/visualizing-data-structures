@@ -16,6 +16,7 @@ import type { MarkRole, StageSize } from '../../engine/types';
 import { layoutForest, type ForestLayout } from '../../layouts/forest';
 import { fitScore, padBounds, textWidth, unionBounds } from '../../layouts/graph';
 import type { Bounds, Shape } from '../../render/scene';
+import { ZOOM_DROP } from '../../render/stage';
 import { EPS, formText, isVariable, type ParseTree, type Rule, type Sym } from './grammar';
 
 export const RULE_SIZE = 15;
@@ -334,9 +335,9 @@ export function bestPlacement(
 
 /**
  * The stage's zoom buttons sit over the top right corner, so a block put beside another at the
- * top starts this much lower (as placePanels does in src/layouts/graph.ts).
+ * top starts this much lower, in scene units (src/render/stage.ts).
  */
-export const BUTTONS_DROP = 34;
+export const BUTTONS_DROP = ZOOM_DROP;
 
 /**
  * Two blocks: b beside a, or b under a (left aligned). Beside, b starts `drop` lower: pass

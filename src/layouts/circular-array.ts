@@ -4,8 +4,9 @@
  * their indices, a front and a rear pointer, the wraparound (a seam on the ring, a return path
  * under the row), a value waiting to go in and a value coming out.
  */
-import type { MarkRole, Value } from '../engine/types';
+import type { MarkRole, StageSize, Value } from '../engine/types';
 import type { Bounds, Shape } from '../render/scene';
+import { ZOOM_BUTTONS, zoomCorner } from '../render/stage';
 
 export interface CellValue {
   uid: number;
@@ -29,6 +30,8 @@ export interface CircularDrawing {
   incoming?: { uid: number; value: Value; error?: boolean; at: number };
   /** A copy of a value on its way out of cell `from`. */
   out?: { value: Value; from: number; label: string };
+  /** The screen the view draws for, if known: the row keeps clear of its zoom buttons. */
+  stage?: StageSize;
 }
 
 /** Font size for a value inside a cell, by length. */
@@ -169,24 +172,46 @@ function ring(n: number): Geometry {
 }
 
 /**
- * On a phone the stage's zoom buttons cover the top right corner of the drawing: about 34 px
- * of a 362 px wide picture. In scene units that grows with the drawing's width.
+ * How much lower the row starts so the boxes above it (a value going in or out, with its label)
+ * clear the stage's zoom buttons. With the row at its highest, the labels' tops are `top` units
+ * from the drawing's top and the boxes reach `reach` units from its left; the drawing is
+ * `width` by `height`. Nothing when the buttons have a strip of their own (a phone) or the row
+ * is drawn narrower than the stage, clear of them. With no stage, enough for a row as wide as a
+ * phone's drawing (362 px) under the buttons.
  */
-export const zoomButtonsHeight = (width: number) => Math.ceil((34 * width) / 362);
+function buttonsDrop(
+  width: number,
+  height: number,
+  top: number,
+  reach: number,
+  stage?: StageSize,
+): number {
+  if (!stage) return Math.max(0, Math.ceil((ZOOM_BUTTONS.size * width) / 362) - 6);
+  const corner = zoomCorner(stage);
+  let drop = 0;
+  for (let i = 0; corner && i < 4; i++) {
+    const s = Math.min(stage.w / width, stage.h / (height + drop));
+    const margin = Math.max(0, (stage.w - width * s) / 2);
+    if (margin + reach * s <= stage.w - corner.w || (top + drop) * s >= corner.h - 0.5) break;
+    drop = Math.ceil(corner.h / s - top);
+  }
+  return drop;
+}
 
-function row(n: number, readouts: number): Geometry {
+function row(n: number, readouts: number, stage?: StageSize): Geometry {
   const x0 = 46;
   const w = 62;
   const h = 50;
   const width = x0 + n * w + 46;
+  // Past 8 cells a phone shrinks the row below readable sizes, so the labels grow with it.
+  const font = Math.max(1, width / 588);
+  const height = 156 + h + 116 + (readouts ? 52 : 18);
   // Keep the value boxes (and their labels) below the zoom buttons.
-  const y0 = Math.max(156, zoomButtonsHeight(width) + 150);
+  const y0 = 156 + buttonsDrop(width, height, 24 - 14 * font, width - 43, stage);
   const xOf = (i: number) => x0 + i * w;
   const right = xOf(n);
   const under = y0 + h + 116;
   const mid = y0 + h - 10;
-  // Past 8 cells a phone shrinks the row below readable sizes, so the labels grow with it.
-  const font = Math.max(1, width / 588);
   return {
     cell: (i) => ({ x: xOf(i), y: y0, w, h }),
     index: (i) => ({ x: xOf(i) + w / 2, y: y0 + h + 21 }),
@@ -220,7 +245,7 @@ function row(n: number, readouts: number): Geometry {
 /** Shapes for a circular array. Shape ids: cell-i, idx-i, v<uid>, front, rear, wrap, out... */
 export function drawCircular(d: CircularDrawing): { shapes: Shape[]; bounds: Bounds } {
   const n = d.capacity;
-  const g = d.layout === 'row' ? row(n, d.readouts.length) : ring(n);
+  const g = d.layout === 'row' ? row(n, d.readouts.length, d.stage) : ring(n);
   const role = (id: string) => d.roles.get(id);
   const f = g.font;
   const shapes: Shape[] = [];

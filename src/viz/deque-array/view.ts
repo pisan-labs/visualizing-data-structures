@@ -1,9 +1,13 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { drawCircular } from '../../layouts/circular-array';
 import type { Scene } from '../../render/scene';
 import { describe, type DequeExtra, type DequeSettings, type DequeState } from './model';
 
-export function view(step: Step<DequeState, DequeExtra>, settings: DequeSettings): Scene {
+export function view(
+  step: Step<DequeState, DequeExtra>,
+  settings: DequeSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const n = state.capacity;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
@@ -22,6 +26,7 @@ export function view(step: Step<DequeState, DequeExtra>, settings: DequeSettings
     roles,
     incoming: extra.incoming,
     out: extra.out,
+    stage,
   });
   return { shapes, bounds, label: describe(state, settings, extra.pending) };
 }

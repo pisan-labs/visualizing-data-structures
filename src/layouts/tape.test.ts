@@ -79,4 +79,50 @@ describe('the tape layout', () => {
     expect((withHead.find((s) => s.id === 'tape-0') as { y: number }).y).toBe(top);
     expect(b.h).toBe(26 + 36);
   });
+
+  it('wraps onto rows, with the head and the wall on their own rows', () => {
+    const shapes: Shape[] = [];
+    const b = drawTape(shapes, {
+      x: 0,
+      y: 0,
+      cells: [...'abcdefg'],
+      to: 7,
+      rows: { width: 3, pitch: 100 },
+      head: 4,
+      left: true,
+    });
+    const at = (id: string) => shapes.find((s) => s.id === id) as { x: number; y: number };
+    expect(at('tape-3').x).toBe(0);
+    expect(at('tape-3').y - at('tape-0').y).toBe(100);
+    expect(at('tape-6').y - at('tape-0').y).toBe(200);
+    expect((shapes.find((s) => s.id === 'tape-head') as { x1: number }).x1).toBe(1.5 * 34);
+    expect(at('tape-end').y).toBe(at('tape-0').y - 4);
+    expect(new Set(shapes.map((s) => s.id)).size).toBe(shapes.length);
+    expect(b.w).toBe(3 * 34 + 6);
+    expect(b.h).toBe(200 + 26 + 36);
+    // A head on no row draws none.
+    const none: Shape[] = [];
+    drawTape(none, { x: 0, y: 0, cells: ['a'], to: 1, rows: { width: 3, pitch: 50 }, head: 1 });
+    expect(none.some((s) => s.id === 'tape-head')).toBe(false);
+  });
+
+  it('names cells by a key, and brings new cells in from where they came from', () => {
+    const shapes: Shape[] = [];
+    const uids = [7, 3, 9];
+    drawTape(shapes, {
+      id: 'w',
+      x: 0,
+      y: 0,
+      cells: ['a', 'b', 'c'],
+      to: 3,
+      headRoom: 'none',
+      key: (i) => uids[i]!,
+      enter: (i) => (i === 2 ? { x: 100, y: 50 } : undefined),
+    });
+    const rects = shapes.filter((s) => s.kind === 'rect').map((s) => s.id);
+    expect(rects).toEqual(['w-7', 'w-3', 'w-9']);
+    expect(shapes.find((s) => s.id === 'w-9')!.enterFrom).toEqual({ x: 100, y: 50 });
+    expect(shapes.find((s) => s.id === 'w-9-t')!.enterFrom).toEqual({ x: 117, y: 74 });
+    expect(shapes.find((s) => s.id === 'w-7')!.enterFrom).toBeUndefined();
+  });
 });

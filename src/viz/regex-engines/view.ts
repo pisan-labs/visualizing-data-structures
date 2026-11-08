@@ -264,25 +264,21 @@ function drawWord(shapes: Shape[], s: EngState, p: Plan, roles: Map<string, Mark
     mono: true,
     cls: 'label',
   });
-  for (let r = 0; r < p.rows; r++) {
-    const from = r * p.per;
-    const to = Math.min(cells, from + p.per);
-    if (from >= to) continue;
-    const mine = head !== null && head >= from && head < to ? head : null;
+  // A long word wraps onto rows of p.per cells.
+  if (cells)
     drawTape(shapes, {
       id: 'tape',
       x: p.tape.x,
-      y: p.tape.y + r * (TAPE_H + TAPE_ROW_GAP),
+      y: p.tape.y,
       cells: [...w],
-      from,
-      to,
-      head: mine,
+      to: Math.min(cells, p.rows * p.per),
+      rows: { width: p.per, pitch: TAPE_H + TAPE_ROW_GAP },
+      head,
       headRoom: 'head',
       read,
       roles,
       blank: ' ',
     });
-  }
   if (!n)
     shapes.push({
       kind: 'text',

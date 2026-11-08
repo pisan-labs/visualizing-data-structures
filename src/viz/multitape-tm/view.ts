@@ -311,39 +311,38 @@ export function view(step: Step<MtState, MtExtra>, settings: MtSettings, stage?:
   const win = sim
     ? tapeWindow(sim.head, span, { lo: 0, used: { lo: 0, hi: sim.cells.length - 1 } })
     : { from: 0, to: span };
-  const rows: { from: number; to: number; y: number }[] = [];
-  for (let r = 0; r < nRows; r++) {
-    const from = win.from + r * width;
-    const to = from + width;
-    const head = sim && sim.head >= from && sim.head < to ? sim.head : null;
-    if (r === 0)
-      shapes.push({
-        kind: 'text',
-        id: 'sim-label',
-        x: -10,
-        y: y + HEAD_ROOM + CELL_H / 2 + 5,
-        text: 'S',
-        size: 14,
-        weight: 'bold',
-        anchor: 'end',
-        cls: 'label',
-      });
-    drawTape(shapes, {
-      id: 'sim',
-      x: 0,
-      y,
-      cells: sim?.cells ?? [],
-      from,
-      to,
-      head,
-      headRoom: 'head',
-      index: true,
-      left: from <= 0,
-      roles,
-    });
-    rows.push({ from, to, y });
-    y += HEAD_ROOM + CELL_H + INDEX_H;
-  }
+  const pitch = HEAD_ROOM + CELL_H + INDEX_H;
+  shapes.push({
+    kind: 'text',
+    id: 'sim-label',
+    x: -10,
+    y: y + HEAD_ROOM + CELL_H / 2 + 5,
+    text: 'S',
+    size: 14,
+    weight: 'bold',
+    anchor: 'end',
+    cls: 'label',
+  });
+  drawTape(shapes, {
+    id: 'sim',
+    x: 0,
+    y,
+    cells: sim?.cells ?? [],
+    from: win.from,
+    to: win.to,
+    rows: { width, pitch },
+    head: sim ? sim.head : null,
+    headRoom: 'head',
+    index: true,
+    left: true,
+    roles,
+  });
+  const rows = Array.from({ length: nRows }, (_, r) => ({
+    from: win.from + r * width,
+    to: win.from + (r + 1) * width,
+    y: y + r * pitch,
+  }));
+  y += nRows * pitch;
   if (sim) drawMarks(shapes, sim, rows, settings, roles);
   const sst = simStatus(state, extra);
   shapes.push(statusShape('sim-status', y + 10, sst, roles));

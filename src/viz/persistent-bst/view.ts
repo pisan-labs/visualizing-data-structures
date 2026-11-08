@@ -97,13 +97,14 @@ export function view(
   const left = Math.min(-90, ...[...pos.values()].map((p) => p.x - R));
   const want = s.versions.map((v, i) => ({
     i,
-    x: v.root === null ? Infinity : pos.get(v.root)!.x,
+    x: v.root === null ? -Infinity : pos.get(v.root)!.x,
   }));
   want.sort((a, b) => a.x - b.x || a.i - b.i);
   let next = -Infinity;
-  const lastX = all.length ? pos.get(all.at(-1)!.uid)!.x : 0;
+  // Empty versions go first, left of every node.
+  const firstX = all.length ? pos.get(all[0]!.uid)!.x - P : 0;
   for (const w of want) {
-    const desired = Number.isFinite(w.x) ? w.x : Math.max(lastX + P, next);
+    const desired = Number.isFinite(w.x) ? w.x : Math.max(firstX, next);
     const x = Math.max(desired, next);
     next = x + LBL.w + 4;
     const v = s.versions[w.i]!;

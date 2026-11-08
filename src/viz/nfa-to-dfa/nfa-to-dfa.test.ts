@@ -1,6 +1,8 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { Timeline } from '../../engine/timeline';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 import { EPS, makeAutomaton, subsetConstruction, type Automaton } from '../_automata/automaton';
 import { formatAutomaton } from '../_automata/parse';
 import { nfaToDfa } from '.';
@@ -197,5 +199,14 @@ describe('nfa-to-dfa', () => {
     const { steps } = convert(nthFromEnd(4), { subsets: 'all' });
     expect(steps).toHaveLength(1);
     expect(steps[0]!.say).toMatch(/2\^5 = 32 subsets: too many to draw/);
+  });
+});
+
+describe('drawn text size', () => {
+  // The 16-state DFA of the fourth symbol from the end, with its table: 7.6 px on a laptop and
+  // 4.9 on a phone before the states could move closer together.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(nfaToDfa, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(10);
+    expect(smallestText(nfaToDfa, PHONE_STAGE).px).toBeGreaterThanOrEqual(6.5);
   });
 });

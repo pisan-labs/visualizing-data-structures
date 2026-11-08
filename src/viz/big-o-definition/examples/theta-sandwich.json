@@ -1,0 +1,39 @@
+{
+  "format": 1,
+  "viz": "big-o-definition",
+  "id": "theta-sandwich",
+  "title": "Θ sandwiches f between two multiples of g",
+  "notes": "n²/2 − 3n against n², with Θ: c₁·n² ≤ f(n) ≤ c₂·n². f is negative until n = 6, so n₀ = 1 fails. c₁ = 1/14 and c₂ = 1/2 work from n₀ = 7, and the page finds that 7 is the smallest n₀ for them.",
+  "settings": {
+    "relation": "Theta",
+    "range": "50",
+    "scale": "auto"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "compare",
+      "n^2/2 - 3n ; n^2"
+    ],
+    [
+      "check",
+      "1/14 1/2 1"
+    ],
+    [
+      "check",
+      "1/14 1/2 7"
+    ],
+    [
+      "find",
+      "1/4 1/2"
+    ],
+    [
+      "find",
+      "1/14 1/2"
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

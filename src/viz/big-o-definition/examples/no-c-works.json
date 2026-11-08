@@ -1,0 +1,38 @@
+{
+  "format": 1,
+  "viz": "big-o-definition",
+  "id": "no-c-works",
+  "title": "When no c works",
+  "notes": "n² against n. For c = 10, every n past 10 breaks it. c = 100 holds for every n up to 50, the range checked, and still breaks at n = 101. n²/n = n grows without bound, so no c is big enough: n² is not O(n).",
+  "settings": {
+    "relation": "O",
+    "range": "50",
+    "scale": "auto"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "compare",
+      "n^2 ; n"
+    ],
+    [
+      "check",
+      "10 1"
+    ],
+    [
+      "find",
+      "10"
+    ],
+    [
+      "find",
+      "100"
+    ],
+    [
+      "limit"
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

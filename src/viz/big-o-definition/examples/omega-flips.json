@@ -1,0 +1,38 @@
+{
+  "format": 1,
+  "viz": "big-o-definition",
+  "id": "omega-flips",
+  "title": "Ω flips the inequality",
+  "notes": "n log n against n, with Ω: c·n ≤ n log n. log 1 = 0, so n = 1 always breaks it. With c = 1 it holds from n = 2, with c = 3 from n = 8. n log n is Ω(n), and the limit test shows it is not O(n).",
+  "settings": {
+    "relation": "Omega",
+    "range": "50",
+    "scale": "auto"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "compare",
+      "n log n ; n"
+    ],
+    [
+      "check",
+      "1 1"
+    ],
+    [
+      "find",
+      "1"
+    ],
+    [
+      "find",
+      "3"
+    ],
+    [
+      "limit"
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

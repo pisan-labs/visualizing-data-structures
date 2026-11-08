@@ -73,6 +73,49 @@ describe('trie layout', () => {
     );
   });
 
+  it('sideways: never overlaps, keeps children in order top to bottom, labels on their rows', () => {
+    fc.assert(
+      fc.property(treeArb, ({ kids, labels, ends }) => {
+        const r = 10;
+        const half = (u: number) => (ends[u] ? r + 4 : r);
+        const layout = layoutTrie<number>(0, (u) => kids[u]!, {
+          label: (u) => labels[u]!,
+          halfWidth: half,
+          radius: r,
+          sideways: true,
+        });
+        const boxes: { id: string; b: Bounds }[] = [];
+        for (const n of layout.nodes.values()) {
+          const h = half(n.id);
+          boxes.push({ id: `node ${n.id}`, b: { x: n.x - h, y: n.y - h, w: 2 * h, h: 2 * h } });
+          if (n.label) {
+            boxes.push({ id: `label ${n.id}`, b: n.label });
+            // The label sits on its child's row, between the parent's column and the child.
+            const p = layout.nodes.get(n.parent!)!;
+            expect(n.label.y + n.label.h / 2).toBeCloseTo(n.y, 6);
+            expect(n.label.x).toBeGreaterThan(p.x + half(p.id));
+            expect(n.label.x + n.label.w).toBeLessThan(n.x - half(n.id));
+          }
+          const ys = kids[n.id]!.map((k) => layout.nodes.get(k)!.y);
+          for (let i = 1; i < ys.length; i++) expect(ys[i]!).toBeGreaterThan(ys[i - 1]!);
+        }
+        for (let i = 0; i < boxes.length; i++)
+          for (let j = i + 1; j < boxes.length; j++)
+            expect(overlap(boxes[i]!.b, boxes[j]!.b), `${boxes[i]!.id} and ${boxes[j]!.id}`).toBe(
+              false,
+            );
+        const B = layout.bounds;
+        for (const { b } of boxes) {
+          expect(b.x).toBeGreaterThanOrEqual(B.x - 1e-6);
+          expect(b.x + b.w).toBeLessThanOrEqual(B.x + B.w + 1e-6);
+          expect(b.y).toBeGreaterThanOrEqual(B.y - 1e-6);
+          expect(b.y + b.h).toBeLessThanOrEqual(B.y + B.h + 1e-6);
+        }
+      }),
+      { numRuns: 300 },
+    );
+  });
+
   it('draws every node, ring, edge and label with ids keyed by node', () => {
     const kids = [[1, 2], [3], [], []];
     const layout = layoutTrie<number>(0, (u) => kids[u]!, {

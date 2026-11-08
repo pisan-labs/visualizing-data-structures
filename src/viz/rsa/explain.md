@@ -55,7 +55,7 @@ RSA refuses some inputs, and the page does too:
 
 ## φ(n) or λ(n)
 
-CLRS uses φ(n). Real RSA (the PKCS #1 standard) uses λ(n) = lcm(p − 1, q − 1), the Carmichael function. λ(n) divides φ(n), and e · d ≡ 1 (mod λ(n)) is already enough for decryption to work, so the d it gives is smaller. Set **Find d modulo** to λ(n) and compare: for 61 and 53, d drops from 1783 to 223. [λ(n) instead of φ(n)](#example:carmichael-lambda)
+CLRS uses φ(n). Real RSA (the PKCS #1 standard) uses λ(n) = lcm(p − 1, q − 1), the Carmichael function. λ(n) divides φ(n), and e · d ≡ 1 (mod λ(n)) is already enough for decryption to work, so d is often smaller. Set **Find d modulo** to λ(n) and compare: for 61 and 53, d drops from 1783 to 223. [λ(n) instead of φ(n)](#example:carmichael-lambda)
 
 Real keys also fix e = 65537 instead of searching. It is prime, and 10000000000000001 in binary, so encrypting takes only about 17 multiplications. Here 65537 is far bigger than φ, so try [e = 17](#example:public-exponent-17) instead.
 

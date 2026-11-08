@@ -228,7 +228,7 @@ const keysOp: Op = {
       st,
       t === 'euler'
         ? `φ(n) = (p − 1)(q − 1) = ${p - 1}·${q - 1} = ${phi}: how many numbers below n share no factor with it. Only someone who knows p and q can compute it.`
-        : `λ(n) = lcm(p − 1, q − 1) = lcm(${p - 1}, ${q - 1}) = ${phi}. It divides φ(n) = ${(p - 1) * (q - 1)}, so it gives a smaller d that works just as well.`,
+        : `λ(n) = lcm(p − 1, q − 1) = lcm(${p - 1}, ${q - 1}) = ${phi}. It divides φ(n) = ${(p - 1) * (q - 1)}, so d can come out smaller, and it works just as well.`,
       ['phi'],
       2,
       [['key-phi', 'new']],

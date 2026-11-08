@@ -77,7 +77,7 @@ Q: Why can a deleted inner node always be replaced by a leaf on level 1?
 
 Use an AA tree when you want guaranteed O(log n) and you want to write it from memory. It's a good first balanced tree to code, and the rotations are the same ones AVL and red-black trees use. The height is at most about 2 log₂ n, the same bound as a red-black tree.
 
-It does a few more rotations than a red-black tree, since a red-black tree may lean either way and an AA tree may not. Standard libraries use red-black trees (C++ `std::map`, Java `TreeMap`) for that reason. If you need to store a level, you need a small int per node, where red-black needs a single bit.
+It does a few more rotations than a red-black tree, since a red-black tree may lean either way and an AA tree may not. Standard libraries mostly use red-black trees (C++ `std::map`, Java `TreeMap`); fewer rotations is probably part of it, along with history and decades of tuning. If you need to store a level, you need a small int per node, where red-black needs a single bit.
 
 ## Common mistakes
 

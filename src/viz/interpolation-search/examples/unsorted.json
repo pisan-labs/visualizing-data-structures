@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "interpolation-search",
+  "id": "unsorted",
+  "title": "Unsorted values: the guess means nothing",
+  "notes": "The line from A[lo] to A[hi] says nothing about where x is when the values do not climb. The search refuses; Sort A fixes the input, and then the search runs.",
+  "settings": {
+    "guide": true,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "42 8 63 17 35 24 50"], ["search", 35], ["sort"], ["search", 35]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

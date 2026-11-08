@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "interpolation-search",
+  "id": "not-there",
+  "title": "Not there: x falls out of the window",
+  "notes": "50 is not in A. The first guess, A[5] = 46, is too small. The window becomes A[6..11], but 50 is below A[6] = 55, so the loop stops after one probe.",
+  "settings": {
+    "guide": true,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "5 13 21 30 38 46 55 63 71 80 88 96"],
+    ["search", 50]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

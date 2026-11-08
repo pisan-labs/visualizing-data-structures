@@ -37,7 +37,7 @@ export function partPractice(def: () => Def): PracticeKind[] {
           prompt: `Lectures ${list(ls)}. A lecture may start in a room the moment another ends there. How many rooms do they need?`,
           setup,
           answer: { kind: 'number', value: Number(end.vars?.rooms) },
-          explain: `At time ${end.extra!.depth!.at}, ${end.extra!.depth!.depth} lectures are on at once, so at least that many rooms; greedy by start time uses exactly ${String(end.vars?.rooms)}.`,
+          explain: `At time ${end.extra!.depth!.at}, ${end.extra!.depth!.depth === 1 ? '1 lecture is' : `${end.extra!.depth!.depth} lectures are`} on at once, so at least that many rooms; greedy by start time uses exactly ${String(end.vars?.rooms)}.`,
           watch: [['schedule']],
         };
       },

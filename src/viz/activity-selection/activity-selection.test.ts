@@ -80,6 +80,11 @@ describe('activity selection', { timeout: 60_000 }, () => {
     );
   });
 
+  it('keeps the concept page to half-open times: at or after, never strictly after', () => {
+    expect(activitySelection.explain).not.toMatch(/starts after (the last one taken|b|a) finish/);
+    expect(activitySelection.explain).toContain('at or after the finish of the last one taken');
+  });
+
   it('reads activities, and refuses what it cannot use', () => {
     expect(parseActs('1-4, 3-5')).toBe('1-4 3-5');
     expect(parseActs('4-4')).toBeInstanceOf(Error);

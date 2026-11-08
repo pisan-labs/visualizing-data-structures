@@ -23,7 +23,8 @@ export function exponentialPractice(def: () => ArrayDef): PracticeKind[] {
         const steps = stepsOf(def(), {}, [...setup, ['search', x]]);
         const looked = steps
           .filter((s) => s.lines.includes('double'))
-          .map((s) => String(s.vars?.bound));
+          // A 'double' step has already doubled bound: it looked at the bound before, half this.
+          .map((s) => String(Number(s.vars?.bound) / 2));
         const stop = steps.find((s) => s.lines.includes('bs'))!;
         const bound = Number(stop.vars?.bound);
         if (bound < vs.length) looked.push(String(bound));

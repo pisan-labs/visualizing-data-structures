@@ -103,6 +103,12 @@ describe('matrix-chain order practice', () => {
   }
   const dimsOf = (q: PracticeQuestion) => String(q.setup[0]![1]).split(' ').map(Number);
 
+  it('never says "length 1 to 1"', () => {
+    const qs = questions('cell');
+    for (const q of qs) expect(q.prompt).not.toMatch(/length 1 to 1 /);
+    expect(qs.some((q) => q.prompt.includes('Chains of length 1 are filled'))).toBe(true);
+  });
+
   it('expects the brute-force cost and a cheapest order', () => {
     for (const q of questions('cell')) {
       const [, i, j] = /What is m\[(\d+)\]\[(\d+)\]/.exec(q.prompt)!.map(Number);

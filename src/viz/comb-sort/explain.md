@@ -34,7 +34,7 @@ Stephen Lacey and Richard Box tried lots of shrink factors on lots of random arr
 - **2 is too fast.** It skips gaps the turtles needed, and gap-1 passes are left to do the work. Worse, for 16 values it gives gaps 8, 4 and 2, all even, so no pass ever compares an even slot with an odd one. [Shrink by 2](#example:halving) puts small values in the even slots and big ones in the odd slots: nothing moves until gap 1, then 11 passes and 154 comparisons. With 1.3 it is 8 passes and 90.
 - **1.1 is too slow.** Each pass costs about n comparisons, and you make a lot of them.
 
-This page works out the gap in whole numbers (gap × 10 / 13). Dividing by 1.3 in floating point gives 13 / 1.3 = 9.999999..., which rounds down to 9. Argh.
+This page works out the gap in whole numbers (gap × 10 / 13 for 1.3, gap × 10 / 11 for 1.1). Floating point can bite here. Dividing by 1.1 gives 33 / 1.1 = 29.999999999999996, which rounds down to 29, not 30. Argh.
 
 ```check
 Q: n = 20. What are the first three gaps with shrink factor 1.3?

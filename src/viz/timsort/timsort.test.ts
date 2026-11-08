@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { practiceSet } from '../../engine/practice';
 import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { smallestText } from '../../render/text-size';
 import { checkSort, counters, repeatsArb, valuesArb } from '../_sorting/check';
@@ -115,5 +116,19 @@ describe('drawn text size', () => {
   it('stays readable on a laptop and on a phone', () => {
     expect(smallestText(timsort, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
     expect(smallestText(timsort, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
+  });
+});
+
+describe('timsort practice', () => {
+  it('names the runs X, Y and Z in capitals when it explains a stack merge', () => {
+    let seen = 0;
+    for (let seed = 1; seed < 100; seed++) {
+      for (const { kind, question: q } of practiceSet(timsort, seed, 4)) {
+        if (kind.id !== 'stack' || !q.explain.includes('shorter of X and Z')) continue;
+        seen++;
+        expect(q.explain).toMatch(/: merge (Y and X|Z and Y)\.$/);
+      }
+    }
+    expect(seen).toBeGreaterThan(3);
   });
 });

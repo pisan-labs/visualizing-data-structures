@@ -66,6 +66,14 @@ describe('interval partitioning', { timeout: 60_000 }, () => {
     expect(end.vars).toMatchObject({ rooms: 3, depth: 3 });
   });
 
+  it('says "1 lecture (L1) is on", not "are on"', () => {
+    const t = new Timeline(intervalPartitioning, { touch: 'share' }, 1, [
+      ['load', '9-10 10-11 11-12'],
+      ['schedule'],
+    ]);
+    expect(t.entries.at(-1)!.steps.at(-1)!.say).toContain('1 lecture (L1) is on at once');
+  });
+
   it('reads lectures, and refuses what it cannot use', () => {
     expect(parseLectures('9-11, 9-13')).toBe('9-11 9-13');
     expect(parseLectures('9-9')).toBeInstanceOf(Error);

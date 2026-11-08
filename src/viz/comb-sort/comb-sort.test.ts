@@ -74,6 +74,13 @@ describe('comb sort', { timeout: 60_000 }, () => {
     expect(nextGap(20, '1.3')).toBe(15);
     expect(nextGap(8, '2')).toBe(4);
     expect(nextGap(10, '1.1')).toBe(9);
+    // The concept page's floating-point warning must be true: 13 / 1.3 is exactly 10 in
+    // doubles, but 33 / 1.1 is 29.999...
+    expect(Math.floor(13 / 1.3)).toBe(10);
+    expect(Math.floor(33 / 1.1)).toBe(29);
+    expect(nextGap(33, '1.1')).toBe(30);
+    expect(combSort.explain).toContain('33 / 1.1 = 29.999999999999996');
+    expect(combSort.explain).not.toContain('13 / 1.3 = 9.99');
   });
 
   it('beats bubble sort on a turtle, and matches the concept page', () => {

@@ -43,7 +43,7 @@ export function chainPractice(def: () => Def): PracticeKind[] {
         const v = end.m[i - 1]![j - 1]!;
         const k = end.s[i - 1]![j - 1]!;
         return {
-          prompt: `${dimsText(p)}. Chains of length 1 to ${done} are filled. What is m[${i}][${j}], the fewest multiplications for A${i}…A${j}?`,
+          prompt: `${dimsText(p)}. ${done === 1 ? 'Chains of length 1 are' : `Chains of length 1 to ${done} are`} filled. What is m[${i}][${j}], the fewest multiplications for A${i}…A${j}?`,
           setup,
           answer: { kind: 'number', value: v },
           explain: `Try every split k from ${i} to ${j - 1}: m[${i}][k] + m[k + 1][${j}] + p${i - 1}·pk·p${j}. The best is k = ${k}: ${end.m[i - 1]![k - 1]} + ${end.m[k]![j - 1]} + ${p[i - 1]}·${p[k]}·${p[j]} = ${v}.`,

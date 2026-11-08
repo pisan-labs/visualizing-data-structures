@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { practiceSet } from '../../engine/practice';
 import { Timeline } from '../../engine/timeline';
 import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { smallestText } from '../../render/text-size';
@@ -94,5 +95,29 @@ describe('drawn text size', () => {
   it('stays readable on a laptop and on a phone', () => {
     expect(smallestText(exponentialSearch, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
     expect(smallestText(exponentialSearch, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
+  });
+});
+
+describe('exponential search practice', () => {
+  it('lists the indices phase 1 looks at: 1, 2, 4, ... while they are inside A', () => {
+    let seen = 0;
+    for (let seed = 1; seed < 200; seed++) {
+      for (const { kind, question: q } of practiceSet(exponentialSearch, seed, 4)) {
+        if (kind.id !== 'jumps') continue;
+        seen++;
+        const a = String(q.setup[0]![1]).split(' ').map(Number);
+        const x = Number(/search\((-?\d+)\)/.exec(q.prompt)![1]);
+        const looked: string[] = [];
+        for (let bound = 1; bound < a.length; bound *= 2) {
+          looked.push(String(bound));
+          if (a[bound]! >= x) break;
+        }
+        expect(q.answer, q.prompt).toEqual({
+          kind: 'sequence',
+          value: looked.length ? looked : ['none'],
+        });
+      }
+    }
+    expect(seen).toBeGreaterThan(5);
   });
 });

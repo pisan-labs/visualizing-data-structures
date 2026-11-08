@@ -6,7 +6,7 @@ One room, many requests. Each activity wants the room from its start time to its
 
 | Operation | What it does | Cost |
 |---|---|---|
-| Select | Sort by finish time, then take each activity that starts after the last one taken finishes | Θ(n log n), Θ(n) if already sorted |
+| Select | Sort by finish time, then take each activity that starts at or after the finish of the last one taken | Θ(n log n), Θ(n) if already sorted |
 
 Take the activity that finishes first. Throw away everything that overlaps it. Repeat with what is left. Because the activities are sorted by finish time, "overlaps nothing taken" is a single comparison: does it start at or after the finish of the last one taken? [Show me](#play:eleven)
 
@@ -16,9 +16,9 @@ Times are half-open, [s, f): an activity can start the moment another finishes. 
 
 Greedy algorithms are easy to write and easy to get wrong, so this one needs an argument. It is an exchange argument.
 
-Let a be the activity that finishes first, and take any best schedule S (a largest set with no overlaps). Let b be the activity in S that finishes first. If b = a, fine. If not, swap b out of S and put a in. Does anything break? a finishes no later than b, because a finishes first of all. Every other activity in S starts after b finishes, so it also starts after a finishes. No new overlaps, and S has the same size. So some best schedule starts with a.
+Let a be the activity that finishes first, and take any best schedule S (a largest set with no overlaps). Let b be the activity in S that finishes first. If b = a, fine. If not, swap b out of S and put a in. Does anything break? a finishes no later than b, because a finishes first of all. Every other activity in S starts at or after b's finish, so it also starts at or after a's finish. No new overlaps, and S has the same size. So some best schedule starts with a.
 
-Now the rest of the problem is the same problem on the activities that start after a finishes, and the same argument applies again. Every choice greedy makes can be swapped into a best schedule, so greedy ends up with a best schedule.
+Now the rest of the problem is the same problem on the activities that start at or after a's finish, and the same argument applies again. Every choice greedy makes can be swapped into a best schedule, so greedy ends up with a best schedule.
 
 ```check
 Q: The exchange argument swaps the first activity of a best schedule for the activity that finishes first. Why does the swap never cause an overlap?

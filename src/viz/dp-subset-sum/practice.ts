@@ -80,8 +80,8 @@ export function subsetPractice(def: () => Def): PracticeKind[] {
           setup,
           answer: { kind: 'choice', options: [yes, no], correct: taken ? 0 : 1 },
           explain: taken
-            ? `S[${i - 1}][${t}] = F: the first ${i - 1} numbers cannot make ${t} alone, so x${i} must be in.`
-            : `S[${i - 1}][${t}] = T: the first ${i - 1} numbers already make ${t}, so the walk leaves x${i} out.`,
+            ? `S[${i - 1}][${t}] = F: ${i - 1 === 0 ? `no numbers make ${t}` : i - 1 === 1 ? `the first number cannot make ${t} alone` : `the first ${i - 1} numbers cannot make ${t} alone`}, so x${i} must be in.`
+            : `S[${i - 1}][${t}] = T: ${i - 1 === 1 ? 'the first number already makes' : `the first ${i - 1} numbers already make`} ${t}, so the walk leaves x${i} out.`,
           watch: [['trace']],
         };
       },
@@ -100,7 +100,10 @@ export function subsetPractice(def: () => Def): PracticeKind[] {
           prompt: `Numbers ${andList(xs)}, target ${T}. The table is filled. Walk back from S[${xs.length}][${T}], leaving a number out whenever the row above already reaches the sum. Type the numbers it takes, in their order in the list.`,
           setup,
           answer: { kind: 'sequence', value: subset },
-          explain: `The walk takes ${andList(subset)}, which add up to ${T}.`,
+          explain:
+            subset.length === 1
+              ? `The walk takes only ${subset[0]}, which is ${T} on its own.`
+              : `The walk takes ${andList(subset)}, which add up to ${T}.`,
           watch: [['trace']],
         };
       },

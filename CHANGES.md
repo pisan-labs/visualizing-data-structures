@@ -341,3 +341,5 @@
 2026-11-08 [code] Merged wave 7D: d-ary-heap, min-max-heap, pairing-heap, rope, merkle-tree (heap.ts drawHeapTree parent option); wave 7 complete, 62 pages
 
 2026-11-08 [code] Test fixes after wave 7: catalog thumbnails count the Trees family's live pages (was a fixed 10); regex-to-nfa compares positions to 0.1 unit; closest-pair checks O(n log n) comparisons, not "below n(n-1)/2" (false at n=4: 7 vs 6)
+
+2026-11-08 [decision] Default taken (asked 21:25, no answer by 21:40): review wave 7 before it goes live; four reviewers (16, 16, 18 and 12 pages) check correctness, narration vs drawing, voice, code and practice; segment-intersection keeps the CLRS default (asked 20:47)

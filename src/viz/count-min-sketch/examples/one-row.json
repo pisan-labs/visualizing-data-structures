@@ -1,0 +1,32 @@
+{
+  "format": 1,
+  "viz": "count-min-sketch",
+  "id": "one-row",
+  "title": "One row is not enough",
+  "notes": "With a single row, an item is stuck with whoever shares its one counter: 9 is estimated at 2. Compare with Estimates are never too low, where the minimum over three rows has more chances to find a clean counter.",
+  "settings": {
+    "d": 1,
+    "w": 8,
+    "update": "standard",
+    "phi": "0.2"
+  },
+  "seed": 1,
+  "ops": [
+    ["add", 42],
+    ["add", 17],
+    ["add", 42],
+    ["add", 5],
+    ["add", 9],
+    ["add", 42],
+    ["add", 23],
+    ["add", 17],
+    ["add", 61],
+    ["estimate", 42],
+    ["estimate", 9],
+    ["estimate", 50]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

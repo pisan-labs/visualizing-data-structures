@@ -61,7 +61,7 @@ export function timPractice(def: () => ArrayDef): PracticeKind[] {
           setup: [],
           answer: ordered(options, right),
           explain: zBad
-            ? `|Z| = ${z} ≤ |Y| + |X| = ${y + x}, so Y merges with the shorter of X and Z: ${right.toLowerCase()}.`
+            ? `|Z| = ${z} ≤ |Y| + |X| = ${y + x}, so Y merges with the shorter of X and Z: ${right[0]!.toLowerCase()}${right.slice(1)}.`
             : yBad
               ? `|Z| > |Y| + |X|, but |Y| = ${y} ≤ |X| = ${x}, so Y and X merge.`
               : `|Z| = ${z} > ${y + x} = |Y| + |X| and |Y| > |X|: both rules hold, so nothing merges until the next run arrives.`,

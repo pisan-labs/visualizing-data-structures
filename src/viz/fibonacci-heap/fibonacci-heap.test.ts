@@ -14,6 +14,8 @@ import {
   type FibSettings,
   type FibState,
 } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: CLRS's Fibonacci heap with the same list conventions (new roots go left of H.min,
@@ -392,5 +394,13 @@ describe('Fibonacci heap practice', () => {
         }
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // The degree under each node was 11 units and the consolidation slots' numbers 12: now 13.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(fibonacciHeap, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(fibonacciHeap, PHONE_STAGE).px).toBeGreaterThanOrEqual(9.5);
   });
 });

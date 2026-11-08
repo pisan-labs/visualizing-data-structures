@@ -107,6 +107,13 @@ describe('euler path', () => {
     const two = parseGraph('A-B, B-C, A-C, D-E, E-F, D-F') as Graph;
     expect(runOf(two, 'follow').steps.at(-1)!.say).toContain('2 separate pieces');
   });
+
+  it('writes a negative balance with a real minus sign, like the pseudocode', () => {
+    const g = parseGraph('A>B, B>C, C>A, A>D, C>E, E>C') as Graph;
+    const say = runOf(g, 'follow').steps[0]!.say;
+    expect(say).toContain('D −1');
+    expect(say).not.toContain('-1');
+  });
 });
 
 describe('drawn text size', () => {

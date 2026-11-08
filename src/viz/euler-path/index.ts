@@ -81,7 +81,7 @@ export const eulerPath: VizDef<EulerState, EulerSettings, EulerExtra> = {
       preset('Random directed Euler circuit', (rng, n) => eulerianGraph(rng, n, false, true)),
       preset('Random graph (often no path)', (rng, n) => randomGraph(rng, n, { density: 0.3 })),
       preset('Cycle', (_rng, n) => cycleGraph(n)),
-      preset('Grid (odd corners)', (_rng, n) => gridGraph(n)),
+      preset('Grid', (_rng, n) => gridGraph(n)),
     ],
     sizes: [5, 8, 10, 12],
   },

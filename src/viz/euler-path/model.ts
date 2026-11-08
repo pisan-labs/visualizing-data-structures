@@ -194,7 +194,7 @@ export function verdict(w: Walk): {
     : { kind: 'circuit', start: withEdges[0], bad: odd, pieces };
 }
 
-const signed = (n: number) => (n > 0 ? `+${n}` : String(n));
+const signed = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `−${-n}` : '0');
 
 const piecesWhy = (pieces: string[][]) =>
   `The edges are in ${pieces.length} separate pieces (${pieces.map((p) => `{${p.join(', ')}}`).join(' and ')}), and one walk cannot jump between them.`;

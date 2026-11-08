@@ -10,7 +10,7 @@
  *
  * Text is monospace, so its width is predictable (0.6 em per character).
  */
-import type { MarkRole } from '../../engine/types';
+import type { MarkRole, StageSize } from '../../engine/types';
 import { unionBounds } from '../../layouts/calls';
 import type { Bounds, RectShape, Shape, TextShape } from '../../render/scene';
 
@@ -323,3 +323,26 @@ export function dropPart(p: Part, dy: number): Part {
 
 /** A placed group as a part, to nest one arrangement in another. */
 export const asPart = (p: Placed): Part => part(p.shapes, p.bounds);
+
+/**
+ * The arrangement whose smallest text is drawn largest on `stage` (`font` is that text's size in
+ * scene units); with no stage, the first. A challenger must beat the leader by 3%.
+ */
+export function pickReadable<T extends { bounds: Bounds; font: number }>(
+  stage: StageSize | undefined,
+  options: readonly T[],
+): T {
+  let best = options[0]!;
+  if (!stage) return best;
+  const score = (o: T) =>
+    o.font * Math.min(stage.w / (o.bounds.w + 24), stage.h / (o.bounds.h + 24));
+  let top = score(best);
+  for (const o of options.slice(1)) {
+    const v = score(o);
+    if (v > top * 1.03) {
+      best = o;
+      top = v;
+    }
+  }
+  return best;
+}

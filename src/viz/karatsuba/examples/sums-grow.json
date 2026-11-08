@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "karatsuba",
+  "id": "sums-grow",
+  "title": "The sums grow a digit",
+  "notes": "9999·9999: a + b = 99 + 99 = 198 has three digits, so the third product is bigger than the halves and needs more splitting. 28 calls, the most for four-digit numbers.",
+  "settings": {
+    "split": "three"
+  },
+  "seed": 1,
+  "ops": [["multiply", 9999, 9999]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

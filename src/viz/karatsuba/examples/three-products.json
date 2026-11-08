@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "karatsuba",
+  "id": "three-products",
+  "title": "Three products instead of four",
+  "notes": "1234·5678 splits into a = 12, b = 34, c = 56, d = 78. Karatsuba multiplies a·c, b·d and (a+b)(c+d), and gets the middle term a·d + b·c by subtracting: 6164 − 672 − 2652 = 2840.",
+  "settings": {
+    "split": "three"
+  },
+  "seed": 1,
+  "ops": [["multiply", 1234, 5678]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

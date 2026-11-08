@@ -343,7 +343,9 @@ describe('Mealy and Moore page', () => {
   it('runs and converts random machines, step by step, as the reference does', () => {
     fc.assert(
       fc.property(
-        machineArb(),
+        // Only machines the page loads: Load refuses one whose conversion needs more than
+        // MAX_RESULT states (a 5-state Mealy machine with 3 outputs can need 13).
+        machineArb().filter((m) => sizeProblem(m) === null),
         fc.constantFrom<First>('write', 'skip'),
         fc.integer({ min: 0, max: 1_000 }),
         (m, first, salt) => {

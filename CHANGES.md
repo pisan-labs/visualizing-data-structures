@@ -243,3 +243,5 @@
 2026-11-08 [code] Merged big-o-definition (wave 6): f against c*g with c and n0 as handles, the smallest n0 for a c, O, Omega and Theta, the limit test; exact checks over the named range, hand-worked algebra for the menu pairs past it
 
 2026-11-08 [code] Merged amortized-analysis (wave 6): dynamic array (x2, x1.5, +4) and binary counter by aggregate, accounting (coins, the moment the bank goes short) and potential; opens on 16 appends with coins; the dynamic array page links to it
+
+2026-11-08 [code] mealy-moore property test: generate only machines the page loads; it failed about 1 run in 6 when a random 5-state Mealy machine needed a 13-state Moore machine and Load rightly refused it

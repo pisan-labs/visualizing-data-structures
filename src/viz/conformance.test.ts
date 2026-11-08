@@ -12,6 +12,7 @@ import { makeRng } from '../engine/rng';
 import { Timeline } from '../engine/timeline';
 import type { AnyVizDef, OpCall, Settings, StageSize, Value } from '../engine/types';
 import type { Shape } from '../render/scene';
+import { TYPICAL_STAGES } from '../render/stage';
 import { families } from './catalog';
 import { vizPaths, vizzes } from './all';
 
@@ -51,8 +52,8 @@ function callArb(def: AnyVizDef): fc.Arbitrary<OpCall> {
  */
 const LEFTOVER = /\{(?![A-Za-z0-9_]{1,6}\})[\w.]+\}|\bundefined\b|\bNaN\b|\[object Object\]/;
 
-/** A 1366 x 768 laptop's stage and a phone's, in pixels, as views receive them. */
-const STAGES: (StageSize | undefined)[] = [undefined, { w: 880, h: 384 }, { w: 360, h: 536 }];
+/** No stage, a 1366 x 768 laptop's and a phone's (src/render/stage.ts), as views receive them. */
+const STAGES: (StageSize | undefined)[] = [undefined, ...TYPICAL_STAGES];
 
 function checkTimeline(
   def: AnyVizDef,

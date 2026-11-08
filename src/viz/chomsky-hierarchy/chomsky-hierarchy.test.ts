@@ -20,6 +20,7 @@ import { LANGUAGES, findLanguage } from './languages';
 import { LEVEL_REGION, REGIONS, checkLevels, inside, type RegionId } from './levels';
 import { defaults, regionId, tokenId, type ChSettings } from './model';
 import { randomGrammar } from './practice';
+import { LAPTOP_STAGE, PHONE_STAGE, TYPICAL_STAGES } from '../../render/stage';
 
 const run = (calls: OpCall[], settings: ChSettings = defaults) =>
   new Timeline(chomskyHierarchy, settings, 1, calls);
@@ -340,7 +341,7 @@ describe('chomsky-hierarchy: the code tabs', () => {
 // ---------------------------------------------------------------------------------------------
 // The drawing
 
-const STAGES: (StageSize | undefined)[] = [undefined, { w: 880, h: 384 }, { w: 360, h: 536 }];
+const STAGES: (StageSize | undefined)[] = [undefined, ...TYPICAL_STAGES];
 
 const contains = (o: Bounds, i: Bounds, slack = 0.5) =>
   i.x >= o.x - slack &&
@@ -425,7 +426,7 @@ describe('chomsky-hierarchy: the map', () => {
       };
       return title.x > map.x + map.w ? 'beside' : title.y > map.y + map.h ? 'under' : 'on';
     };
-    expect(at({ w: 880, h: 384 })).toBe('beside');
-    expect(at({ w: 360, h: 536 })).toBe('under');
+    expect(at(LAPTOP_STAGE)).toBe('beside');
+    expect(at(PHONE_STAGE)).toBe('under');
   });
 });

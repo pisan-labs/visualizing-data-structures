@@ -17,6 +17,7 @@ import { randomPda } from '../_automata/pda-random';
 import { pda } from '.';
 import { MACHINES } from './machines';
 import type { PdaExtra, PdaSettings, PdaShow } from './model';
+import { TYPICAL_STAGES } from '../../render/stage';
 
 const settings = (s: Partial<PdaSettings> = {}): PdaSettings =>
   ({ ...pda.defaults, ...s }) as PdaSettings;
@@ -60,7 +61,7 @@ const show = (s: Steps[number]): PdaShow => s.extra!.run!;
 const lastRun = (t: Timeline<unknown, PdaSettings, PdaExtra>, k: number) =>
   show(t.entries[k]!.steps.at(-1)!);
 
-const STAGES: (StageSize | undefined)[] = [undefined, { w: 880, h: 384 }, { w: 360, h: 536 }];
+const STAGES: (StageSize | undefined)[] = [undefined, ...TYPICAL_STAGES];
 
 describe('PDA page', () => {
   it('runs each named machine on its language, in both views of the search', () => {

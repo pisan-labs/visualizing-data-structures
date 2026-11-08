@@ -10,6 +10,7 @@ import { LOOPY } from './practice';
 import type { TmSettings } from './model';
 import { fitLine } from '../../layouts/trace';
 import { arrowLabel, diagramOf, view } from './view';
+import { LAPTOP_STAGE, PHONE_STAGE, TYPICAL_STAGES } from '../../render/stage';
 
 const settings = (s: Partial<TmSettings> = {}): TmSettings =>
   ({ ...turingMachine.defaults, ...s }) as TmSettings;
@@ -260,9 +261,9 @@ describe('Turing machine page', () => {
       };
     };
     // Everything the copy touches fits a wide stage's window: it never moves.
-    expect(shifts(COPY, '0110', { w: 880, h: 384 }).shifts).toBe(0);
+    expect(shifts(COPY, '0110', LAPTOP_STAGE).shifts).toBe(0);
     // A machine that walks off the window moves it half a window at a time.
-    const walk = shifts('q0 0,1,_ -> q0 R', '01', { w: 360, h: 536 });
+    const walk = shifts('q0 0,1,_ -> q0 R', '01', PHONE_STAGE);
     expect(walk.shifts).toBeGreaterThan(0);
     expect(walk.shifts).toBeLessThanOrEqual(walk.moves / 5 + 1);
   });
@@ -279,8 +280,8 @@ describe('Turing machine page', () => {
       const status = s.find((x) => x.id === 'status') as { y: number };
       return { beside: title.x > 200, under: title.y > status.y };
     };
-    expect(at({ w: 880, h: 384 })).toEqual({ beside: true, under: false });
-    expect(at({ w: 360, h: 536 })).toEqual({ beside: false, under: true });
+    expect(at(LAPTOP_STAGE)).toEqual({ beside: true, under: false });
+    expect(at(PHONE_STAGE)).toEqual({ beside: false, under: true });
   });
 
   it("labels the diagram's arrows as Sipser does", () => {
@@ -314,7 +315,7 @@ describe('Turing machine page', () => {
           ['run', word],
         ]);
         for (let i = 0; i < t.length; i += 7)
-          for (const stage of [undefined, { w: 880, h: 384 }, { w: 360, h: 536 }]) {
+          for (const stage of [undefined, ...TYPICAL_STAGES]) {
             const { step } = t.at(i);
             const ids = new Set(view(step, st, stage).shapes.map((s) => s.id));
             for (const m of step.marks) expect(ids, `${rules} ${word}: ${m.id}`).toContain(m.id);

@@ -18,6 +18,7 @@ import {
 } from './model';
 import { PAIRS } from './pairs';
 import { samples, statuses } from './view';
+import { PHONE_STAGE, TYPICAL_STAGES } from '../../render/stage';
 
 // ----- A reference, written separately from expr.ts: each menu pair by hand, in bigints. -----
 
@@ -422,7 +423,7 @@ describe('big-o definition', () => {
             if (relation === 'Omega') expect(v.c).toBe(st.lo ?? '—');
             if (relation === 'Theta')
               expect([v['c₁'], v['c₂']]).toEqual([st.lo ?? '—', st.hi ?? '—']);
-            inFrame(bigODefinition.view(step, s, { w: 360, h: 536 }));
+            inFrame(bigODefinition.view(step, s, PHONE_STAGE));
           }
         },
       ),
@@ -439,7 +440,7 @@ describe('big-o definition', () => {
             ['check', '1 1'],
             ['limit'],
           ]);
-          for (const stage of [undefined, { w: 880, h: 384 }, { w: 360, h: 536 }])
+          for (const stage of [undefined, ...TYPICAL_STAGES])
             inFrame(bigODefinition.view(t.at(t.length - 1).step, s, stage));
         }
   });

@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { drawCircular } from '../layouts/circular-array';
 import { clearOfButtons } from '../layouts/graph';
 import { shapesBounds } from './scene';
-import { ZOOM_CORNER, ZOOM_STRIP, zoomCorner } from './stage';
+import { LAPTOP_STAGE, PHONE_STAGE, ZOOM_CORNER, ZOOM_STRIP, zoomCorner } from './stage';
 
-const laptop = { w: 880, h: 384 };
-const phone = { w: 360, h: 536, strip: true };
+const laptop = LAPTOP_STAGE;
+const phone = PHONE_STAGE;
 
 describe('the zoom buttons', () => {
   it('cover 118 x 42 px of a laptop drawing and none of a phone drawing', () => {

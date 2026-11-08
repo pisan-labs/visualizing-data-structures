@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { StageSize } from '../engine/types';
 import type { Bounds, Shape } from '../render/scene';
 import { fitScore, padBounds, placePanels, unionBounds } from './graph';
+import { LAPTOP_STAGE } from '../render/stage';
 
 const block = (w: number, h: number) => (out: Shape[], x: number, y: number) => {
   out.push({ kind: 'rect', id: 'p', x, y, w, h });
@@ -18,7 +19,7 @@ function corner(graph: Bounds, b: Bounds, stage: StageSize) {
 
 describe('panels beside a picture', () => {
   it('keep clear of the zoom buttons in pixels, at any scale', () => {
-    const laptop = { w: 880, h: 384 };
+    const laptop = LAPTOP_STAGE;
     for (const k of [0.5, 1, 2, 4]) {
       const graph = { x: 0, y: 0, w: 400 * k, h: 300 * k };
       const b = placePanels([], graph, laptop, block(260 * k, 120 * k));
@@ -34,7 +35,7 @@ describe('panels beside a picture', () => {
   it('start at the top when the buttons are not in the way', () => {
     // A tall picture on a wide stage is centered, with room on both sides of it.
     const graph = { x: 0, y: 0, w: 120, h: 500 };
-    const b = placePanels([], graph, { w: 880, h: 384 }, block(100, 100));
+    const b = placePanels([], graph, LAPTOP_STAGE, block(100, 100));
     expect(b.x).toBeGreaterThan(graph.w);
     expect(b.y).toBe(0);
   });

@@ -5,6 +5,9 @@ import type { OpCall, Value } from '../../engine/types';
 import { parseListValue, queueList } from '.';
 import { items } from './model';
 import { view } from './view';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import textSizeDef from './index';
 
 const run = (calls: OpCall[]) => new Timeline(queueList, {}, 1, calls);
 const lastStep = (t: ReturnType<typeof run>, k: number) => t.entries[k]!.steps.at(-1)!;
@@ -85,5 +88,13 @@ describe('queue (linked list)', () => {
     expect(parseListValue('42')).toBe(42);
     expect(parseListValue('cat')).toBe('cat');
     expect(parseListValue('')).toBeInstanceOf(Error);
+  });
+});
+
+describe('drawn text size', () => {
+  // Four nodes to a row made a long queue three rows tall (9.2 px on a laptop); a laptop now draws six to a row, a phone three.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(textSizeDef, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(textSizeDef, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

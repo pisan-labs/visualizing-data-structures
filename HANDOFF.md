@@ -3,102 +3,94 @@
 The rolling handoff for the StepWise cloud sessions (the session-relay skill). Each handover
 rewrites this file; it never gets a dated copy. Times are Europe/Berlin.
 
-Last written: Saturday 7 November 2026, about 21:20. No handover today: at the 15:56 check the
-context was about 18% (after a compaction), so the current session carries on. This file is
-kept current for the next handover.
+Last written: Sunday 8 November 2026, about 08:40, for the handover Yusuf asked for at about
+08:12 ("merge next to main and deploy, and then do handoff"). The previous session starts the
+next one at once, so the 16:52 session-start run (which looks only for a marker made since
+15:30) finds nothing to do.
 
 ## What is live
 
-- `main` is at `381c171`, live on Netlify (site `stepwise-pisan-labs`, `stepwise.pisan.me`),
-  deployed at 20:00 on Yusuf's "deploy": 122 pages. The live bundle matched a local build of
-  `381c171` and every page returned 200.
-- `next` is ahead of `main` by: the halting-problem, multitape-tm and regex-engines pages, the
-  allow rule in `.claude/settings.json` (below), the conformance fix for `sizes: []`, and logs.
-  125 pages. The daily deploy routine fast-forwards `main` to `next` at 17:27 if CI on `next`'s
-  head is green.
-- Checks on `next`: lint, svelte-check and 2902 unit tests passed on `e18d7ed`; the full local
-  e2e on `a7fbdac` passed (2041, 5 skipped); a full e2e with regex-engines was running at 21:20.
+- `main` is at `1d91418`, live on Netlify (site `stepwise-pisan-labs`, `stepwise.pisan.me`),
+  deployed at 08:26 on Yusuf's word after CI run 98 passed: 129 pages. The live bundle matched a
+  local build of `1d91418`, and every page returned 200.
+- `next` is ahead of `main` by two cleanups and their logs: the layout chooser and table strip
+  moved into `src/layouts` (`ad5bac1`; no scene changed on any page), and one definition of the
+  typical stages and a thumbnail stage in `src/render/stage.ts` (`38f65a4`; 5 thumbnails better,
+  none worse). The daily deploy at 17:27 fast-forwards `main` to `next` if CI on `next`'s head is
+  green.
+- Checks: on `38f65a4`, lint, svelte-check and 3016 unit tests passed; the full local e2e on
+  `1d91418` had 2166 passed, 1 failed (the factorial axe scan, intermittent, register item 11),
+  5 skipped.
 
-## Merged today (Saturday 7 November), on `next` unless marked
+## Merged since the last handover (7 November, 08:00), on `next` unless marked
 
-- 08:05 and 08:44, `main`: all 108 pages live; a taller desktop stage, with views given the
-  stage's size (`StageSize`, `view(step, settings, stage?)`) and graph pages laying out for it.
-- 08:49, automata groundwork (`src/viz/_automata/`, `src/layouts/automaton.ts`, `tape.ts`, curved
-  arrows). 08:52, CI on `next`. 09:00, the deploy rule (`PLAN.md` decision 34).
-- 09:39 to 09:56, wave 5A: dfa, nfa, nfa-to-dfa, dfa-minimization, regex-to-nfa, turing-machine.
-- 13:54 to 15:19, wave 5B: cfg-derivation, cyk (`src/viz/_grammar/`), pda, chomsky-hierarchy;
-  14:02, 15 more pages arrange their parts for the stage; 14:15, consolidated automata code.
-- 14:42, `main`: Yusuf merged PR #1 (catalog thumbnails, from `session_015Hhm4gYmBnZQozfDqkFdPy`);
-  15:51, `main` merged into `next`, with previews for the new pages.
-- 17:27: the daily deploy was blocked by the session's auto-mode permission check (production
-  deploy). 18:45, `main`: deployed on Yusuf's "deploy" (120 pages).
-- 18:00 to 20:20, wave 5C: dfa-to-regex, product-construction, mealy-moore, pumping-lemma,
-  halting-problem, multitape-tm; 21:10, regex-engines. All 17 automata pages are on `next`.
-- 19:14: `VizDef.opening`, an example a page runs on arrival when the link has none; the
-  Chomsky hierarchy opens on the whole map (default taken at 19:03; Yusuf can undo it by saying
-  "empty map back"). The halting problem and regex engines pages use it too.
-- 19:24, Yusuf's yes: `.claude/settings.json` allows exactly `git push origin origin/next:main`,
-  so the daily deploy routine can push. Not yet tested by the routine.
-- 20:00, `main`: deployed on Yusuf's "deploy" (122 pages).
-- 20:50: the conformance check runs presets at size 5 for pages with `sizes: []`.
+- 7 November: waves 5A, 5B and 5C, the 17 automata and computability pages (09:39 to 21:10);
+  catalog thumbnails from PR #1 (Yusuf, `main`, 14:42) merged into `next`; `VizDef.opening`
+  (pages that open on an example); the allow rule in `.claude/settings.json` for the daily
+  deploy's push; e2e count checks that wait for the drawing to settle. Deploys at 18:45 and 20:00.
+- 8 November:
+  - 01:58, `main`: deployed (125 pages).
+  - 03:57 to 06:24, wave 6, understanding Big-O (`PLAN.md` section 14, decisions 35 to 37):
+    loop-counting, big-o-definition, amortized-analysis (linked from the dynamic array page),
+    doubling-experiment.
+  - 06:16, the Mealy and Moore property test generates only machines the page loads (it failed
+    about 1 run in 6; `0de5f99` was pushed red because a check was piped through grep).
+  - 06:26 onwards, the shared-code cleanup (`PLAN.md` section 15): the debt register; one
+    measured `textWidth` and `wrapText` (`src/layouts/text.ts`) used by layouts and four pages;
+    `settled()` waits for playback to finish; one source for the zoom buttons' room
+    (`src/render/stage.ts`, `StageSize.strip`; three phone copies counted the buttons twice);
+    the layout chooser and table strip in `src/layouts`; the typical stages and a thumbnail
+    stage in `src/render/stage.ts`.
+  - 08:26, `main`: deployed (129 pages).
 
 ## Branches still unmerged
 
-None with unmerged content. `next` is ahead of `main`; `main` is an ancestor of `next`.
+None with unmerged content. Agent worktree branches (`worktree-agent-*`) are all merged.
 
 ## Next, in order
 
-1. Watch the 17:27 deploy on 8 November: the first test of the allow rule. If the permission
-   check still blocks it, tell Yusuf (he can say "deploy").
-2. Shared-code recommendations from the wave 5 agents, smallest first:
-   - `STAGES` in `src/layouts/graph.ts` (and its header comment) still holds the old 884×305
-     desktop stage, and `fitScore` falls back to it when a view gets no stage (thumbnails,
-     prerender, tests); the desktop stage is now 387 px tall. A code change: check framing;
-   - a floor on the tag size in `calls.ts`;
-   - plainer wording for the reasons `classify()` gives in `src/viz/_grammar/grammar.ts`;
-   - move `construct`, `pictures`, `pairKey`, `randomRegex`, `randomWord` from
-     `src/viz/regex-to-nfa/` into `src/viz/_automata/` (regex-engines imports them); a shared
-     `readWord`;
-   - one word-wrap helper in `src/layouts` (dfa-to-regex, halting-problem and pumping-lemma each
-     have their own); `drawTape` with rows and identity-based cell ids; `tableScene` with a
-     separated extra row and column;
-   - `drawAutomaton`: multi-line and custom move labels, output inside a state (mealy-moore has
-     a local `draw.ts`), a diagonal start arrow, a layer-gap option for `layoutFromLayers`;
-   - `page.ts`: a `parse` option for `loadOp`; `wordProblem`'s hint mentions a Test button some
-     pages lack; a shared two-machine input parser;
-   - `matches` in `regex.ts` is exponential on deeply nested concatenations (memoize by node
-     and position); `parseRegex` stops at 40 characters;
-   - one chooser for layouts in `src/layouts` (today `pickLayout`, `bestPlacement`, the
-     chomsky-hierarchy chooser and per-page `placePanels`/`fitScore` column pickers);
-   - `textWidth` factors for DejaVu (CI's font); Learn-panel tables that scroll sideways;
-   - move `src/viz/_stage/arrange.ts` and `src/viz/_dp/strip.ts` into `src/layouts`;
-   - wrap options for node-chain, align, bars and columns; an "auto" arrangement for
-     graph-representations and stack-array.
-3. Pages still small (option 3): the Master theorem's smallest text is about 8 px on a laptop
-   and 4 px on a phone, and some other pages are still small on a phone. Measure again before
-   choosing which to fix.
-4. Older items from 6 November: the wider input pushes buttons to a second row on some pages;
-   a three-value button's error reads "needs l and r and an amount"; `src/viz/_paths/overlap.ts`
-   could become a shared test; Master theorem presets could return to fixed recurrences;
-   code-tab coverage for the master-theorem and memory-model drivers (random scripts give them
-   nothing); unify `src/layouts/node-chain.ts` with `linked.ts`; the "All colliding keys" preset
-   on the hashing pages could become plain inserts.
+1. Watch the 17:27 deploy on 8 November: `next` has the two cleanups after `1d91418`. It is the
+   first daily run since the allow rule; if the permission check still blocks the push, tell
+   Yusuf (he can say "deploy").
+2. The rest of the cleanup register, `PLAN.md` section 15.1:
+   - item 8, one chart layout in `src/layouts/chart.ts` for the three local charts
+     (big-o-definition on exact fractions, doubling-experiment log-log, amortized-analysis
+     two-lane bars; their reports list what each needs);
+   - item 9, shared code living in page folders (avl for treap, splay and red-black;
+     hash-chaining for four pages; linked-list for three; regex-to-nfa for regex-engines; prim
+     for kruskal; leftist-heap for skew-heap) into kits;
+   - item 10, `matches()` in `_automata/regex.ts` is exponential on nested concatenations;
+   - item 11, the intermittent factorial axe failure (capture the element next time);
+   - from the item 6 report: the floyd-warshall and multitape-tm pickers score like `pickBest`
+     in `_automata/panels.ts`, and the two `acrossFits` are near copies; they could merge if
+     `pickBest` moved into `src/layouts`.
+3. Smaller shared-code requests from the wave 5 and 6 agents: multi-line and custom move labels
+   in `drawAutomaton`; a `parse` option for `loadOp`; a shared two-machine parser; `drawTape`
+   with rows and identity-based cell ids; `gridScene` with an id prefix and no empty headers;
+   `classify()` reason wording; `parseRegex`'s 40-character limit.
+4. Pages still small (option 3): the Master theorem's smallest text is about 8 px on a laptop
+   and 4 px on a phone; measure again before choosing which to fix.
+5. Older items from 6 November: the wider input pushes buttons to a second row on some pages; a
+   three-value button's error reads "needs l and r and an amount"; `src/viz/_paths/overlap.ts`
+   could become a shared test; code-tab coverage for the master-theorem and memory-model drivers;
+   unify `src/layouts/node-chain.ts` with `linked.ts`; the hashing "All colliding keys" preset
+   could become plain inserts.
 
 ## Waiting on Yusuf
 
-- Read the concept pages of the 17 automata pages for voice (not urgent). Every agent invoked
-  `anthropic-skills:write-like-pisan` before its final `explain.md`; nobody has read them against
-  it. Start with chomsky-hierarchy, pda and turing-machine. Send page links only once live.
+- Read some of the new concept pages for voice (not urgent): the 17 automata pages and the four
+  Big-O pages. Every agent invoked `anthropic-skills:write-like-pisan` before its final
+  `explain.md`; nobody has read them against it. Send page links only once they are live.
 
 ## Not verified
 
-- The zoom-button clearance moves side panels on about 25 graph pages. Their tests pass;
-  nobody has looked at screenshots of them.
-- Thumbnails of the 17 automata pages were checked by eye once, on the desktop catalog;
-  regex-to-nfa is the busiest.
+- Whether the 17:27 routine can push to `main` on its own with the allow rule; the two pushes
+  since it was added were on Yusuf's word.
 - regex-engines: the backtracker skips an ε-move back to a state already passed at the same
-  position (so (a*)*b ends), and after 150 visits it shows only the steps where the count
-  doubles. Both are the agent's choices; no one else has reviewed them.
+  position, and after 150 visits shows only the steps where the count doubles; nobody else has
+  reviewed these choices.
+- The factorial axe failure (register item 11): one color-contrast node, once, element not
+  captured.
 
 ## Dated tasks
 
@@ -135,7 +127,7 @@ None with unmerged content. `next` is ahead of `main`; `main` is an ancestor of 
   Run fewer agents at once when usage is high.
 - Agent worktrees start from `main` (the default branch), not `next`: tell every agent to run
   `git reset --hard next` first (seen 7 November).
-- Agents: about four at a time, each in its own worktree with its own `E2E_PORT` (ports up to 4273 have been used; start new ones at 4274), told not to edit shared files, to name e2e
+- Agents: about four at a time, each in its own worktree with its own `E2E_PORT` (ports up to 4298 have been used; start new ones at 4300), told not to edit shared files, to name e2e
   specs after their pages, to use `showMe()` from `tests/e2e/helpers.ts` for "Show me" checks,
   to commit WIP before a limit stop, to add practice sets and a `preview`, to keep rows able to
   wrap for CI's wider font, to poll (`expect.poll`) when measuring the drawing, and not to
@@ -163,11 +155,11 @@ None with unmerged content. `next` is ahead of `main`; `main` is an ancestor of 
 
 ### Scheduling
 
-- Current session: `session_01JyJzMXcc2unSAwN88hsew5` (lineage depth 2, limit 8). It took over
-  on Saturday 7 November at 08:00 from `session_01JyJzMZHCY1tEoov2vYAuJv`. The 15:56 check that
-  day found no handover due (context about 18%). The next session will be at depth 3.
-- Routines, owned by the current session; the next session moves them to itself at takeover,
-  keeping their names exactly:
+- Previous session: `session_01JyJzMXcc2unSAwN88hsew5` (lineage depth 2, limit 8). It took over
+  on Saturday 7 November at 08:00 from `session_01JyJzMZHCY1tEoov2vYAuJv` and hands over on
+  Sunday 8 November at about 08:45, at Yusuf's request (context about 65%). The next session is
+  at depth 3.
+- Routines, to be moved to the next session when it takes over, keeping their names exactly:
   - `trig_01AEsnzySTfQAsgxsS9RCdAA`: "StepWise hourly status report", `46 * * * *`.
   - `trig_016mmp7qgknR6maFcPpcHyn6`: "StepWise handoff check: hand over only when due",
     `CRON_TZ=Europe/Berlin 56 15 * * *`.
@@ -175,6 +167,7 @@ None with unmerged content. `next` is ahead of `main`; `main` is an ancestor of 
     (create_session)", `CRON_TZ=Europe/Berlin 52 16 * * *`.
   - `trig_01PfFMZmwbM2JKpfyhtLRmvn`: "StepWise daily deploy: fast-forward main to next",
     `CRON_TZ=Europe/Berlin 27 17 * * *`. It deploys only when CI on `next`'s head is green, and
-    stops and asks Yusuf if `main` is not an ancestor of `next`.
+    stops and asks Yusuf if `main` is not an ancestor of `next`. `.claude/settings.json` allows
+    its push (`git push origin origin/next:main`).
 - The account's other routines (DSA, Chess TD, Chess Analyzer, Plabs, TPT, product ideas,
   reminders) belong to other projects: never move or change them.

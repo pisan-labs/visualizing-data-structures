@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "lba",
+  "id": "out-of-order",
+  "title": "Right counts, wrong order",
+  "notes": "abcabc has two of each letter, but after the first pass the machine finds an a where only y's and z's may be. A PDA cannot even count two things at once; this machine counts three.",
+  "settings": {
+    "machine": "anbncn"
+  },
+  "seed": 1,
+  "ops": [["run", "abcabc"]]
+}

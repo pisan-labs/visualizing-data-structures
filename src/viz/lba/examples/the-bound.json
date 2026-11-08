@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "lba",
+  "id": "the-bound",
+  "title": "The bound stops a machine that needs more room",
+  "notes": "The doubling machine marks an a and walks right to write a copy after the input. At ⊣ its rule says move right. A Turing machine would; an LBA may not, and stops.",
+  "settings": {
+    "machine": "double"
+  },
+  "seed": 1,
+  "ops": [["run", "aa"]]
+}

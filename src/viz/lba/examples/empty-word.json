@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "lba",
+  "id": "empty-word",
+  "title": "The empty word: two markers and nothing between",
+  "notes": "aⁿbⁿcⁿ with n = 0. The head starts on ⊣, q0 reads it and accepts in one move.",
+  "settings": {
+    "machine": "anbncn"
+  },
+  "seed": 1,
+  "ops": [["run", "eps"]]
+}

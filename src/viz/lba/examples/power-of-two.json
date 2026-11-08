@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "lba",
+  "id": "power-of-two",
+  "title": "Eight a's, halved three times",
+  "notes": "Sipser's machine for a^(2^k), kept between the markers. Each pass crosses off every other a; an odd count above one rejects, a single a left accepts.",
+  "settings": {
+    "machine": "power2"
+  },
+  "seed": 1,
+  "ops": [["run", "aaaaaaaa"]]
+}

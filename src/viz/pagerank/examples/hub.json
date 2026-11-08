@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "pagerank",
+  "id": "hub",
+  "title": "Many links in beats many links out",
+  "notes": "Every page links to H, and H links back to A only. H gets the top rank, and A, H's one choice, comes second. Linking out to lots of pages does nothing for B to G.",
+  "settings": {
+    "damping": "0.85",
+    "dangling": "spread",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>H, B>H, C>H, D>H, E>H, F>H, G>H, B>C, D>E, F>G, H>A"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

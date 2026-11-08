@@ -9,6 +9,8 @@ import {
   frameWidth,
   layoutCallTree,
   returnShapeId,
+  TAG_MIN,
+  type PlacedCall,
   type StackFrame,
   type TreeCall,
 } from './calls';
@@ -65,6 +67,55 @@ describe('call tree layout', () => {
       }),
       { numRuns: 200 },
     );
+  });
+
+  it('grows right without overlaps: a column per level, rows packed apart', () => {
+    fc.assert(
+      fc.property(treeArb, fc.boolean(), (calls, twoLines) => {
+        const gap = 6;
+        const layout = layoutCallTree(calls, { gap, twoLines, direction: 'right' });
+        const byDepth = new Map<number, PlacedCall[]>();
+        for (const n of layout.nodes.values()) {
+          byDepth.set(n.depth, [...(byDepth.get(n.depth) ?? []), n]);
+          if (n.parent !== null) {
+            // A child's box starts right of its parent's box (and badge).
+            const p = layout.nodes.get(n.parent)!;
+            expect(n.x - n.w / 2).toBeGreaterThan(p.x + p.w / 2);
+          }
+        }
+        for (const list of byDepth.values()) {
+          // A level's boxes line up on their left edges and never overlap.
+          const left = list[0]!.x - list[0]!.w / 2;
+          for (const n of list) expect(n.x - n.w / 2).toBeCloseTo(left, 6);
+          list.sort((a, b) => a.y - b.y);
+          for (let i = 1; i < list.length; i++)
+            expect(
+              list[i]!.y - list[i]!.h / 2 - (list[i - 1]!.y + list[i - 1]!.h / 2),
+            ).toBeGreaterThanOrEqual(gap - 1e-6);
+        }
+        // Every box and badge lies inside the bounds.
+        const b = layout.bounds;
+        for (const r of layout.rects) {
+          expect(r.x).toBeGreaterThanOrEqual(b.x - 1e-6);
+          expect(r.y).toBeGreaterThanOrEqual(b.y - 1e-6);
+          expect(r.x + r.w).toBeLessThanOrEqual(b.x + b.w + 1e-6);
+          expect(r.y + r.h).toBeLessThanOrEqual(b.y + b.h + 1e-6);
+        }
+        const shapes = drawCallTree(layout, calls);
+        expect(new Set(shapes.map((s) => s.id)).size).toBe(shapes.length);
+      }),
+      { numRuns: 200 },
+    );
+  });
+
+  it('keeps tag text at least TAG_MIN', () => {
+    const calls: TreeCall[] = [
+      { id: 'a', parent: null, label: 'f(3)', state: 'done' },
+      { id: 'b', parent: 'a', label: 'f(2)', tag: '2nd', state: 'done' },
+    ];
+    const shapes = drawCallTree(layoutCallTree(calls, { size: 9, twoLines: false }), calls);
+    const tag = shapes.find((s) => s.id === 'call-b-tagtext');
+    expect(tag).toMatchObject({ kind: 'text', size: TAG_MIN });
   });
 
   it('draws any moment of the finished tree at the finished positions', () => {

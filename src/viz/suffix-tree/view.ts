@@ -35,7 +35,10 @@ function levelGapFor(height: number): number {
   return height <= 4 ? 60 : Math.max(50, 60 - 3 * (height - 4));
 }
 
-function treeLayout(tr: StTree, src: string) {
+/** Edge label sizes: the usual, then smaller ones a narrow stage (a phone) may draw larger with. */
+const LABEL_SIZES = [15, 13, 12];
+
+function treeLayout(tr: StTree, src: string, labelSize = LABEL_SIZES[0]!) {
   const label = (u: number) => src.slice(tr.nodes[u]!.start, tr.nodes[u]!.end);
   let height = 0;
   const depth = (u: number, d: number): void => {
@@ -46,7 +49,7 @@ function treeLayout(tr: StTree, src: string) {
   return layoutTrie(tr.root, (u) => tr.nodes[u]!.kids, {
     label,
     radius: R,
-    labelSize: 15,
+    labelSize,
     gap: 8,
     labelGap: 8,
     levelGap: levelGapFor(height),
@@ -55,9 +58,13 @@ function treeLayout(tr: StTree, src: string) {
 
 const finished = new Map<string, Bounds>();
 
-/** The box of the finished tree for a text, the same for both builds: the tree is unique. */
-function finishedBox(text: string): Bounds {
-  const hit = finished.get(text);
+/**
+ * The box of the finished tree for a text, with edge labels of this size, the same for both
+ * builds: the tree is unique.
+ */
+function finishedBox(text: string, labelSize: number): Bounds {
+  const key = `${labelSize} ${text}`;
+  const hit = finished.get(key);
   if (hit) return hit;
   const gen = ops.build.run({ text, tree: null }, [], {
     settings: { method: 'naive' },
@@ -66,16 +73,19 @@ function finishedBox(text: string): Bounds {
   let r = gen.next();
   while (!r.done) r = gen.next();
   const tr = r.value.tree;
-  const box = tr ? treeLayout(tr, full(text)).bounds : { x: -R, y: -R, w: 2 * R, h: 2 * R };
-  if (finished.size > 50) finished.clear();
-  finished.set(text, box);
+  const box = tr
+    ? treeLayout(tr, full(text), labelSize).bounds
+    : { x: -R, y: -R, w: 2 * R, h: 2 * R };
+  if (finished.size > 150) finished.clear();
+  finished.set(key, box);
   return box;
 }
 
 /**
  * Draw a step. T$ and the pattern sit over the tree; on a wide, short stage they move to the
- * tree's left when that draws larger. The choice is made for the finished tree of this text, so
- * it holds while the tree grows and through the searches after.
+ * tree's left when that draws larger, and on a narrow one the edge labels get smaller when the
+ * tree then draws larger. The choice is made for the finished tree of this text, so it holds
+ * while the tree grows and through the searches after.
  */
 export function view(
   step: Step<StState, StExtra>,
@@ -88,6 +98,45 @@ export function view(
   const shapes: Shape[] = [];
   const boxes: Bounds[] = [];
   const src = full(s.text);
+  const x0 = -(src.length * PITCH) / 2;
+
+  // T$ (and the pattern) over the tree, or left of its top: decided for the finished tree and
+  // the widest argument this text can have, so it holds while the tree grows.
+  const argRoom = Math.max(
+    argWidth({ name: `suffix ${src.length - 1}`, text: src, at: 0 }),
+    argWidth({ name: 'P', text: 'x'.repeat(MAX_TEXT), at: 0 }),
+    argWidth({ name: 'P', text: 'x'.repeat(16), at: 0, bad: true }),
+  );
+  const textBox: Bounds = {
+    x: x0 - 34,
+    y: TEXT_Y - 18,
+    w: src.length * PITCH + 34,
+    h: CELL_H + 18,
+  };
+  const over = unionBounds(textBox, {
+    x: -argRoom / 2,
+    y: ARG_Y - CELL_H / 2,
+    w: argRoom,
+    h: CELL_H,
+  });
+  const places = (stage ? LABEL_SIZES : LABEL_SIZES.slice(0, 1)).flatMap((labelSize) => {
+    const done = finishedBox(s.text, labelSize);
+    const sideDx = done.x - 30 - (over.x + over.w);
+    const sideDy = -R - 4 - over.y;
+    return [
+      { labelSize, dx: 0, dy: 0, bounds: padBounds(unionBounds(done, over), 14) },
+      {
+        labelSize,
+        dx: sideDx,
+        dy: sideDy,
+        bounds: padBounds(
+          unionBounds(done, { ...over, x: over.x + sideDx, y: over.y + sideDy }),
+          14,
+        ),
+      },
+    ];
+  });
+  const place = pickLayout(stage, places);
 
   // The tree, or a lone root before the build.
   const tr = s.tree ?? {
@@ -95,7 +144,7 @@ export function view(
     root: 0,
     next: 1,
   };
-  const layout = treeLayout(tr, src);
+  const layout = treeLayout(tr, src, place.labelSize);
   const path = new Set(extra.path ?? []);
   const counted = new Set(extra.counted ?? []);
   const active = extra.active;
@@ -130,7 +179,7 @@ export function view(
       x: n.x,
       y: n.y + 4,
       text: String(leaf),
-      size: leaf > 9 ? 10 : 12,
+      size: 12,
       anchor: 'middle',
       weight: 'bold',
       mono: true,
@@ -186,7 +235,6 @@ export function view(
   // T$ with positions, centered over the root.
   const block: Shape[] = [];
   const blockBoxes: Bounds[] = [];
-  const x0 = -(src.length * PITCH) / 2;
   const spot = new Map<number, MarkRole>();
   for (const sp of extra.spots ?? [])
     for (let j = sp.from; j < sp.from + sp.len; j++) if (!spot.has(j)) spot.set(j, sp.role);
@@ -234,13 +282,13 @@ export function view(
       x: x + PITCH / 2,
       y: TEXT_Y - 6,
       text: String(j),
-      size: 11,
+      size: 13,
       anchor: 'middle',
       cls: 'label',
       mono: true,
     });
   }
-  blockBoxes.push({ x: x0 - 34, y: TEXT_Y - 18, w: src.length * PITCH + 34, h: CELL_H + 18 });
+  blockBoxes.push(textBox);
 
   // The pattern, or the suffix being inserted.
   if (step.extra !== undefined && extra.arg) {
@@ -264,29 +312,6 @@ export function view(
     boxes.push({ x: -60, y: R + 10, w: 120, h: 20 });
   }
 
-  // T$ (and the pattern) over the tree, or left of its top: decided for the finished tree and
-  // the widest argument this text can have, so it holds while the tree grows.
-  const argRoom = Math.max(
-    argWidth({ name: `suffix ${src.length - 1}`, text: src, at: 0 }),
-    argWidth({ name: 'P', text: 'x'.repeat(MAX_TEXT), at: 0 }),
-    argWidth({ name: 'P', text: 'x'.repeat(16), at: 0, bad: true }),
-  );
-  const over = unionBounds(blockBoxes[0]!, {
-    x: -argRoom / 2,
-    y: ARG_Y - CELL_H / 2,
-    w: argRoom,
-    h: CELL_H,
-  });
-  const done = finishedBox(s.text);
-  const sideDx = done.x - 30 - (over.x + over.w);
-  const sideDy = -R - 4 - over.y;
-  const atTop = { dx: 0, dy: 0, bounds: padBounds(unionBounds(done, over), 14) };
-  const atSide = {
-    dx: sideDx,
-    dy: sideDy,
-    bounds: padBounds(unionBounds(done, { ...over, x: over.x + sideDx, y: over.y + sideDy }), 14),
-  };
-  const place = pickLayout(stage, [atTop, atSide]);
   shapes.push(...translate(block, place.dx, place.dy));
   boxes.push(...blockBoxes.map((b) => ({ ...b, x: b.x + place.dx, y: b.y + place.dy })));
   return { shapes, bounds: padBounds(unionBounds(...boxes), 14), label: describe(s) };

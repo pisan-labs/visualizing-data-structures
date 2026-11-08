@@ -1,14 +1,18 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import {
-  callTreeBounds,
+  callTreeObstacles,
   drawCallTree,
   layoutCallTree,
   padBounds,
   unionBounds,
   type CallState,
+  type CallTreeLayout,
   type CallTreeOptions,
   type TreeCall,
+  type TreeDirection,
 } from '../../layouts/calls';
+import { room } from '../../layouts/room';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { ordinal } from '../_recursion/kit';
 import { describe, isRepeat, type FibCall, type FibSettings, type FibState } from './model';
@@ -16,14 +20,39 @@ import { describe, isRepeat, type FibCall, type FibSettings, type FibState } fro
 /** Up to 15 calls get full boxes with values; bigger trees get compact boxes holding just n. */
 export const FULL_LIMIT = 15;
 const FULL: CallTreeOptions = { size: 12.5, gap: 6, levelGap: 46, twoLines: true };
-const COMPACT: CallTreeOptions = { size: 11, gap: 4, levelGap: 34, twoLines: false, minW: 20 };
+const COMPACT: CallTreeOptions = { size: 11, gap: 3, levelGap: 34, twoLines: false, minW: 18 };
 const CELL = { w: 28, h: 22 };
 const LABEL_W = 50;
+/** Column widths of the table turned to run down: n, and the counts and the memo. */
+const COL_K = 26;
+const COL_W = 38;
+const TITLE_H = 26;
+/** Room between the tree and the table under it; half of it is kept around a table slid in. */
+const TABLE_GAP = 18;
 
 const tagOf = (c: FibCall) =>
   c.kind === 'hit' ? 'memo' : isRepeat(c) ? ordinal(c.occurrence) : undefined;
 
-export function view(step: Step<FibState, undefined>, _settings: FibSettings): Scene {
+/**
+ * Where the parts go: the tree grows down (the usual) or right (a tall phone stage), and the
+ * table of counts sits under the tree, or slides into the room the tree leaves (a Fibonacci
+ * tree leans left, so its bottom right corner is often free). Beside a tree that grows right,
+ * the table is turned to run down.
+ */
+interface Arrangement {
+  layout: CallTreeLayout;
+  dx: number;
+  dy: number;
+  /** The table's top left corner, and whether it runs down. */
+  table: { x: number; y: number; down: boolean };
+  bounds: Bounds;
+}
+
+export function view(
+  step: Step<FibState, undefined>,
+  _settings: FibSettings,
+  stage?: StageSize,
+): Scene {
   const s = step.state;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const shapes: Shape[] = [];
@@ -32,17 +61,14 @@ export function view(step: Step<FibState, undefined>, _settings: FibSettings): S
   const top = s.stack[s.stack.length - 1];
   const onStack = new Set(s.stack);
 
-  const layout = layoutCallTree(
-    s.calls.map((c) => ({
-      id: String(c.id),
-      parent: c.parent === null ? null : String(c.parent),
-      label: label(c),
-      value: compact || c.kind === 'cut' ? undefined : `= ${c.returns}`,
-      tag: tagOf(c),
-      state: 'done',
-    })),
-    compact ? COMPACT : FULL,
-  );
+  const finished: TreeCall[] = s.calls.map((c) => ({
+    id: String(c.id),
+    parent: c.parent === null ? null : String(c.parent),
+    label: label(c),
+    value: compact || c.kind === 'cut' ? undefined : `= ${c.returns}`,
+    tag: tagOf(c),
+    state: 'done',
+  }));
   const stateOf = (c: FibCall): CallState => {
     const st = s.status[c.id];
     if (st === 'cut') return 'cut';
@@ -61,7 +87,67 @@ export function view(step: Step<FibState, undefined>, _settings: FibSettings): S
       state: stateOf(c),
     }));
 
-  const titleH = 26;
+  const n = s.run?.n ?? 0;
+  const memoOn = s.run?.memo === 'memo';
+  const rows: { id: string; label: string; cell: (k: number) => string }[] = [
+    { id: 'k', label: 'n', cell: (k) => String(k) },
+    { id: 'cnt', label: 'calls', cell: (k) => String(s.counts[k] ?? 0) },
+  ];
+  if (memoOn)
+    rows.push({
+      id: 'memo',
+      label: 'memo',
+      cell: (k) => (k <= 1 ? '–' : s.memo[k] === undefined ? '' : String(s.memo[k])),
+    });
+  // The table's size laid across (a row per line, the usual) and turned to run down (a column
+  // per line, under a header row: narrow enough to sit beside a tree that grows right).
+  const across = { w: LABEL_W + (n + 1) * CELL.w, h: s.run ? rows.length * CELL.h : 0 };
+  const colW = rows.map((r) => (r.id === 'k' ? COL_K : COL_W));
+  const down = { w: colW.reduce((a, b) => a + b, 0), h: (n + 2) * CELL.h };
+  const titleBox: Bounds = { x: 0, y: 0, w: 200, h: TITLE_H };
+
+  const arrangements = (direction: TreeDirection): Arrangement[] => {
+    const layout = layoutCallTree(finished, { ...(compact ? COMPACT : FULL), direction });
+    const lb = layout.bounds;
+    const treeW = Math.max(lb.w, across.w, 200);
+    const dx = -lb.x + (treeW - lb.w) / 2;
+    const dy = TITLE_H + 6 - lb.y;
+    const treeBox: Bounds = s.calls.length
+      ? { x: lb.x + dx, y: lb.y + dy, w: lb.w, h: lb.h }
+      : { x: 0, y: TITLE_H, w: treeW, h: 30 };
+    const make = (table: Arrangement['table']): Arrangement => {
+      const parts = [treeBox, titleBox];
+      const size = table.down ? down : across;
+      if (s.run) parts.push({ x: table.x, y: table.y, ...size });
+      return { layout, dx, dy, table, bounds: padBounds(unionBounds(...parts), 12) };
+    };
+    const under = treeBox.y + treeBox.h + TABLE_GAP;
+    const out = [make({ x: (treeW - across.w) / 2, y: under, down: false })];
+    if (!s.run || !s.calls.length) return out;
+    // Slid into the room the tree leaves: up, right-aligned with the tree or sticking out past
+    // it; or, turned to run down, left from beside the tree.
+    const obstacles = callTreeObstacles(layout, dx, dy);
+    for (const k of [0, 0.25, 0.5]) {
+      const x = treeW - across.w * (1 - k);
+      const up = room([{ x, y: under, ...across }], obstacles, 'y', TABLE_GAP / 2);
+      if (up > 0) out.push(make({ x, y: under - up, down: false }));
+    }
+    if (direction === 'right') {
+      const besideX = treeBox.x + treeBox.w + TABLE_GAP;
+      for (const y of [treeBox.y, treeBox.y + treeBox.h - down.h]) {
+        const left = room([{ x: besideX, y, ...down }], obstacles, 'x', TABLE_GAP / 2);
+        out.push(make({ x: besideX - left, y, down: true }));
+      }
+    }
+    return out;
+  };
+  // With no stage the tree grows down, as it always has.
+  const place = pickLayout(stage, [
+    ...arrangements('down'),
+    ...(stage ? arrangements('right') : []),
+  ]);
+  const { layout, dx, dy } = place;
+
   shapes.push({
     kind: 'text',
     id: 'tree-title',
@@ -72,17 +158,12 @@ export function view(step: Step<FibState, undefined>, _settings: FibSettings): S
     cls: 'label',
     mono: true,
   });
-  const n = s.run?.n ?? 0;
-  const tableW = LABEL_W + (n + 1) * CELL.w;
-  const treeW = Math.max(layout.bounds.w, tableW, 200);
-  const dx = -layout.bounds.x + (treeW - layout.bounds.w) / 2;
-  const dy = titleH + 6 - layout.bounds.y;
   if (s.calls.length === 0) {
     shapes.push({
       kind: 'text',
       id: 'tree-empty',
       x: 0,
-      y: titleH + 20,
+      y: TITLE_H + 20,
       text: '(no calls yet)',
       size: 11.5,
       cls: 'label',
@@ -90,48 +171,40 @@ export function view(step: Step<FibState, undefined>, _settings: FibSettings): S
     });
   }
   shapes.push(...drawCallTree(layout, now, { dx, dy, roles }));
-  const treeBox: Bounds =
-    s.calls.length > 0 ? callTreeBounds(layout, dx, dy) : { x: 0, y: titleH, w: treeW, h: 30 };
 
   // How often each fib(k) has been called, and the memo when it is on.
-  const boxes: Bounds[] = [treeBox, { x: 0, y: 0, w: treeW, h: titleH }];
   if (s.run) {
-    const memoOn = s.run.memo === 'memo';
-    const x0 = (treeW - tableW) / 2;
-    const y0 = treeBox.y + treeBox.h + 18;
-    const rows: { id: string; label: string; cell: (k: number) => string }[] = [
-      { id: 'k', label: 'n', cell: (k) => String(k) },
-      { id: 'cnt', label: 'calls', cell: (k) => String(s.counts[k] ?? 0) },
-    ];
-    if (memoOn)
-      rows.push({
-        id: 'memo',
-        label: 'memo',
-        cell: (k) => (k <= 1 ? '–' : s.memo[k] === undefined ? '' : String(s.memo[k])),
-      });
+    const { x: x0, y: y0, down: turned } = place.table;
+    // Where line r's label goes, and its cell for k (top left corner and width).
+    const colX = colW.map((_, r) => colW.slice(0, r).reduce((a, b) => a + b, 0));
+    const cellAt = (r: number, k: number) =>
+      turned
+        ? { x: x0 + colX[r]!, y: y0 + (k + 1) * CELL.h, w: colW[r]! }
+        : { x: x0 + LABEL_W + k * CELL.w, y: y0 + r * CELL.h, w: CELL.w };
     rows.forEach((row, r) => {
-      const y = y0 + r * CELL.h;
       shapes.push({
         kind: 'text',
         id: `${row.id}-label`,
-        x: x0,
-        y: y + CELL.h / 2 + 4.5,
+        x: turned ? x0 + colX[r]! + colW[r]! / 2 : x0,
+        y: (turned ? y0 : y0 + r * CELL.h) + CELL.h / 2 + 4.5,
         text: row.label,
         size: 12,
+        anchor: turned ? 'middle' : undefined,
         cls: 'label',
         mono: true,
       });
       for (let k = 0; k <= n; k++) {
         const id = `${row.id}-${k}`;
+        const c = cellAt(r, k);
         // A subproblem computed more than once (k >= 2) gets an orange box.
         const hot = !memoOn && row.id === 'cnt' && k >= 2 && (s.counts[k] ?? 0) > 1;
         if (row.id !== 'k') {
           shapes.push({
             kind: 'rect',
             id: `${id}-box`,
-            x: x0 + LABEL_W + k * CELL.w,
-            y,
-            w: CELL.w,
+            x: c.x,
+            y: c.y,
+            w: c.w,
             h: CELL.h,
             r: 0,
             cls: 'live',
@@ -143,8 +216,8 @@ export function view(step: Step<FibState, undefined>, _settings: FibSettings): S
         shapes.push({
           kind: 'text',
           id,
-          x: x0 + LABEL_W + k * CELL.w + CELL.w / 2,
-          y: y + CELL.h / 2 + 4.5,
+          x: c.x + c.w / 2,
+          y: c.y + CELL.h / 2 + 4.5,
           text,
           size: row.id === 'k' ? 11 : 12.5,
           anchor: 'middle',
@@ -155,8 +228,7 @@ export function view(step: Step<FibState, undefined>, _settings: FibSettings): S
         });
       }
     });
-    boxes.push({ x: x0, y: y0, w: tableW, h: rows.length * CELL.h });
   }
 
-  return { shapes, bounds: padBounds(unionBounds(...boxes), 12), label: describe(s) };
+  return { shapes, bounds: place.bounds, label: describe(s) };
 }

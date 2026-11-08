@@ -5,6 +5,8 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { fibonacciCalls } from '.';
 import type { FibSettings, Memo } from './model';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 const settings = (memo: Memo): FibSettings => ({ ...fibonacciCalls.defaults, memo }) as FibSettings;
 
@@ -155,5 +157,13 @@ describe('fibonacci-calls practice', () => {
         }
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // fib(8) draws its badges at 3.9 px on a phone growing down; growing right, at 7.3.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(fibonacciCalls, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(fibonacciCalls, PHONE_STAGE).px).toBeGreaterThanOrEqual(7);
   });
 });

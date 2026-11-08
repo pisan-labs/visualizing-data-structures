@@ -5,6 +5,8 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeQuestion } from '../../engine/types';
 import { dpKnapsack, parseKnapsack } from '.';
 import { itemsText, MAX_CAPACITY, type Item } from './model';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 /** The reference: plain recursion with a memo. */
 function refBest(items: Item[]) {
@@ -198,5 +200,13 @@ describe('0/1 knapsack practice', () => {
       const { items, W } = problemOf(q);
       expect(q.answer).toEqual({ kind: 'number', value: refGreedy(items, W) });
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // Capacity 12 made 13 columns of 54 units: 6.5 px link labels on a phone. Narrower cells fix that.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(dpKnapsack, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(13);
+    expect(smallestText(dpKnapsack, PHONE_STAGE).px).toBeGreaterThanOrEqual(9.5);
   });
 });

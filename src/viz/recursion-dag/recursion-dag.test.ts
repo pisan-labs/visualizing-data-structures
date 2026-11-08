@@ -4,6 +4,8 @@ import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import { parseNumbers, recursionDag } from '.';
 import { readArgs, type DagSettings, type Problem } from './model';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 const settings = (problem: Problem): DagSettings =>
   ({ ...recursionDag.defaults, problem }) as DagSettings;
@@ -180,5 +182,13 @@ describe('recursion-dag practice', () => {
         }
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // fib(8)'s tree drew its badges at 3.9 px on a phone growing down; growing right, at 6.6.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(recursionDag, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(10);
+    expect(smallestText(recursionDag, PHONE_STAGE).px).toBeGreaterThanOrEqual(6.5);
   });
 });

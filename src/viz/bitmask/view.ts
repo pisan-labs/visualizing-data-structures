@@ -20,21 +20,33 @@ const MAX_ROWS = 3;
 /** Two tall columns rather than four wide ones, so the drawing stays legible on a phone. */
 const LIST_COLS = 2;
 const LIST_ROWS = (1 << MAX_LISTED_BITS) / LIST_COLS;
-const LIST_PITCH = 22;
-const LIST_SIZE = 12.5;
+const LIST_PITCH = 21;
+const LIST_SIZE = 13;
 /** Room for "= 255" right of a row, and the returned value's box past it. */
 const DEC_W = 70;
 const OUT_GAP = 90;
+/** With each row's name above it (a narrow stage), the rows start here and are this far apart. */
+const X0_ABOVE = 44;
+const NAME_H = 16;
 
 /**
  * Where the parts go. usual: the returned value right of the rows, the list of subsets under
- * them. beside (a wide, short stage): the list right of everything. under (a narrow stage):
- * the returned value under the rows, so the drawing is only as wide as the rows.
+ * them. beside (a wide, short stage): the list right of everything. under: the returned value
+ * under the rows, so the drawing is only as wide as the rows. above (a narrow stage): as under,
+ * with each row's name above it instead of left of it, so the drawing is narrower still.
+ *
+ * An operation that lists subsets returns nothing, and the others list nothing, so a frame
+ * keeps room for the list only while one is shown and for the returned value otherwise. That
+ * holds for a whole operation; the framing changes only from one operation to the next.
  */
-type Arrangement = 'usual' | 'beside' | 'under';
+type Arrangement = 'usual' | 'beside' | 'under' | 'above';
 
 interface Frame {
   arr: Arrangement;
+  /** The rows' left edge, the first row under x, and the pitch of the rows. */
+  x0: number;
+  rowsTop: number;
+  row: number;
   out: { x: number; y: number };
   list: { x: number; y: number };
   bounds: Bounds;
@@ -42,37 +54,56 @@ interface Frame {
 
 function frameFor(state: BitState, arr: Arrangement): Frame {
   const w = state.width;
-  const right = X0 + w * CELL;
-  const rowsTop = TOP + CELL + 34;
-  const rowsBottom = rowsTop + MAX_ROWS * ROW;
-  const listTop = rowsBottom + 16;
-  const listH = 24 + LIST_ROWS * LIST_PITCH;
-  const listW = LIST_COLS * colWidth(state);
+  const above = arr === 'above';
+  const x0 = above ? X0_ABOVE : X0;
+  const row = above ? ROW + NAME_H : ROW;
+  const right = x0 + w * CELL;
+  const rowsTop = TOP + CELL + 34 + (above ? NAME_H : 0);
+  const rowsBottom = rowsTop + MAX_ROWS * row;
+  const listed = state.listOf !== null;
+  const listH = listed ? 24 + LIST_ROWS * LIST_PITCH : 0;
+  const listW = listed ? LIST_COLS * colWidth(state) : 0;
+  const base = { arr, x0, rowsTop, row };
   if (arr === 'beside') {
-    const lx = right + OUT_GAP + 64 + 40;
+    const lx = right + (listed ? 40 : OUT_GAP + 64 + 40);
     const ly = TOP + 4;
     return {
-      arr,
+      ...base,
       out: { x: right + OUT_GAP, y: TOP },
       list: { x: lx, y: ly },
-      bounds: { x: 0, y: 0, w: lx + listW, h: Math.max(rowsBottom, ly + listH) },
+      bounds: {
+        x: 0,
+        y: 0,
+        w: listed ? lx + listW : right + OUT_GAP + 64 + 20,
+        h: Math.max(rowsBottom, ly + listH),
+      },
     };
   }
-  if (arr === 'under') {
+  if (arr === 'under' || above) {
     const oy = rowsBottom + 14;
-    const ly = oy + CELL + 30;
+    const ly = listed ? rowsBottom + 16 : oy + CELL + 30;
     return {
-      arr,
+      ...base,
       out: { x: right - 64, y: oy },
       list: { x: 20, y: ly },
-      bounds: { x: 0, y: 0, w: Math.max(right + DEC_W, 20 + listW), h: ly + listH },
+      bounds: {
+        x: 0,
+        y: 0,
+        w: Math.max(right + DEC_W, 20 + listW),
+        h: listed ? ly + listH : oy + CELL + 14,
+      },
     };
   }
   return {
-    arr,
+    ...base,
     out: { x: right + OUT_GAP, y: TOP },
-    list: { x: 20, y: listTop },
-    bounds: { x: 0, y: 0, w: Math.max(right + 170, 20 + listW), h: listTop + listH },
+    list: { x: 20, y: rowsBottom + 16 },
+    bounds: {
+      x: 0,
+      y: 0,
+      w: Math.max(right + (listed ? DEC_W : 170), 20 + listW),
+      h: listed ? rowsBottom + 16 + listH : rowsBottom + 14,
+    },
   };
 }
 
@@ -92,7 +123,7 @@ export function view(
   _settings?: BitSettings,
   stage?: StageSize,
 ): Scene {
-  const options: Arrangement[] = stage ? ['usual', 'beside', 'under'] : ['usual'];
+  const options: Arrangement[] = stage ? ['usual', 'beside', 'under', 'above'] : ['usual'];
   const frame = pickLayout(
     stage,
     options.map((a) => frameFor(step.state, a)),
@@ -106,8 +137,10 @@ function draw(step: Step<BitState, BitExtra>, frame: Frame): Scene {
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const focus = new Set(extra.focus ?? []);
   const shapes: Shape[] = [];
-  const colX = (i: number) => X0 + (w - 1 - i) * CELL;
-  const right = X0 + w * CELL;
+  const x0 = frame.x0;
+  const above = frame.arr === 'above';
+  const colX = (i: number) => x0 + (w - 1 - i) * CELL;
+  const right = x0 + w * CELL;
 
   for (let i = 0; i < w; i++) {
     shapes.push({
@@ -126,7 +159,7 @@ function draw(step: Step<BitState, BitExtra>, frame: Frame): Scene {
   shapes.push({
     kind: 'text',
     id: 'idx-title',
-    x: X0 - 12,
+    x: x0 - 12,
     y: TOP - 12,
     text: 'bit',
     size: 13,
@@ -134,16 +167,18 @@ function draw(step: Step<BitState, BitExtra>, frame: Frame): Scene {
     cls: 'label',
   });
 
+  // A row's name is left of it, or above it (except x's, which is short).
   const drawRow = (key: string, y: number, label: string, value: number, live: boolean) => {
     const bits = bin(value, w);
+    const over = above && key !== 'x';
     shapes.push({
       kind: 'text',
       id: `${key}-label`,
-      x: X0 - 12,
-      y: y + CELL / 2 + 5,
+      x: over ? x0 : x0 - 12,
+      y: over ? y - 6 : y + CELL / 2 + 5,
       text: label,
       size: 13,
-      anchor: 'end',
+      anchor: over ? 'start' : 'end',
       mono: true,
       cls: 'label',
     });
@@ -188,16 +223,15 @@ function draw(step: Step<BitState, BitExtra>, frame: Frame): Scene {
   shapes.push({
     kind: 'text',
     id: 'x-set',
-    x: X0,
+    x: x0,
     y: TOP + CELL + 20,
     text: `set ${setText(state.x)}`,
     size: 13,
     mono: true,
     cls: 'label',
   });
-  const rowsTop = TOP + CELL + 34;
   (extra.rows ?? []).slice(0, MAX_ROWS).forEach((r, k) => {
-    drawRow(`row${k}`, rowsTop + k * ROW, r.label, r.value, false);
+    drawRow(`row${k}`, frame.rowsTop + k * frame.row, r.label, r.value, false);
   });
 
   if (extra.out !== undefined) {
@@ -219,7 +253,7 @@ function draw(step: Step<BitState, BitExtra>, frame: Frame): Scene {
       x: ox + 32,
       y: oy - 8,
       text: 'returns',
-      size: 12,
+      size: 13,
       anchor: 'middle',
       cls: 'label',
     });

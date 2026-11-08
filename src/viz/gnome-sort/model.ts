@@ -86,10 +86,13 @@ const sort: Op = {
     const forward = (from: number): { say: string; level: 1 | 2 } => {
       const fresh = pos > reached;
       reached = Math.max(reached, pos);
+      const jumped = jump && pos !== from + 1;
       const where =
         pos >= n
-          ? 'pos = n: the gnome has walked off the end.'
-          : jump && pos !== from + 1
+          ? jumped
+            ? `Jump back to where it left off: pos = far = ${pos} = n, past the end. Done.`
+            : 'pos = n: the gnome has walked off the end.'
+          : jumped
             ? `Jump back to where it left off: pos = far = ${pos}.`
             : `Step forward: pos = ${pos}.`;
       return {

@@ -72,6 +72,14 @@ describe('gnome sort', { timeout: 60_000 }, () => {
     expect(run({}, [60, 50, 40, 30, 20, 10])).toMatchObject({ swaps: 15 });
   });
 
+  it('says so when the gnome jumps back past the end', () => {
+    // [20 30 40 50 60 5] with jumps: after carrying 5 home, pos = 0 jumps to far = 6 = n.
+    const steps = checkSort(gnomeSort, settings({ jump: true }), [20, 30, 40, 50, 60, 5]);
+    const last = steps.filter((s) => s.lines.includes('fwd')).at(-1)!;
+    expect(last.say).toContain('Jump back');
+    expect(last.say).toContain('= n');
+  });
+
   it('follows the setting in its pseudocode', () => {
     const text = (s: Partial<GnomeSettings>) =>
       gnomeSort.pseudocode(settings(s))[0]!.lines.map((l) => l.text);

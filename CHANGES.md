@@ -333,3 +333,5 @@
 2026-11-08 [code] Merged wave 7I: euclid, mod-pow, sieve, rsa, karatsuba, fft, fisher-yates, reservoir-sampling (new _numbers/draw.ts)
 
 2026-11-08 [code] Merged wave 7J: cfg-to-cnf, ll1-parsing, lr0-parsing, lba, rice-theorem (no kit changes)
+
+2026-11-08 [code] Merged wave 7G: euler-path, graph-coloring, bidirectional-search, boruvka, johnson, lca, pagerank (no kit changes)

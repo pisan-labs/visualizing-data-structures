@@ -44,6 +44,7 @@
  */
 import type { MarkRole } from '../engine/types';
 import type { Bounds, Shape } from '../render/scene';
+import { textWidth } from './text';
 
 export type BarsMode = 'bars' | 'cells';
 
@@ -161,10 +162,8 @@ export function pitchFor(slots: number): number {
   return Math.max(38, Math.min(64, Math.floor(760 / (slots + 1))));
 }
 
-/** Rough width of a label in scene units (digits and lowercase letters of a system font). */
-export function textWidth(text: string, size: number): number {
-  return text.length * size * 0.58;
-}
+/** Width of a label in scene units; see `text.ts` for the measured factors. */
+export { textWidth };
 
 interface RowGeometry {
   top: number;

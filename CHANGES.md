@@ -249,3 +249,5 @@
 2026-11-08 [code] Merged doubling-experiment (wave 6): six instrumented algorithms measured at n, 2n, 4n, ...; T(n), ratio and b beside a log-log plot with the fitted model and a checked prediction; seeded noise and fit options; wave 6 is done
 
 2026-11-08 [plan] Shared-code cleanup: debt register in PLAN.md section 15 (10 items ranked by interest, risk and leverage against principal, and what to keep)
+
+2026-11-08 [code] src/layouts/text.ts: one textWidth with measured factors (regular 0.58, bold 0.64, mono 0.6: the widest of the site font, DejaVu Sans and monospace in Chromium) and wrapText; layouts/graph.ts and bars.ts re-export it, same numbers

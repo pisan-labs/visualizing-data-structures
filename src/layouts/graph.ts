@@ -66,6 +66,7 @@
 import { makeRng } from '../engine/rng';
 import type { MarkRole, SettingSpec, StageSize } from '../engine/types';
 import type { Bounds, Shape } from '../render/scene';
+import { textWidth } from './text';
 
 export interface GraphLike {
   directed: boolean;
@@ -150,9 +151,8 @@ export const below = (b: Bounds, gap = 18): number => b.y + b.h + gap;
 /** The x just right of a box, with a gap. */
 export const beside = (b: Bounds, gap = 26): number => b.x + b.w + gap;
 
-/** Rough text width for a font size (glyphs average about 0.6 of the size). */
-export const textWidth = (text: string, size: number, mono = false): number =>
-  text.length * size * (mono ? 0.6 : 0.58);
+/** Text width for a font size; see `text.ts` for the measured factors. */
+export { textWidth };
 
 /** A 32-bit FNV-1a hash, for seeds that come from a graph. */
 function hash(s: string): number {

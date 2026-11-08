@@ -102,6 +102,14 @@ export const START = "E -> TE'; E' -> +TE' | eps; T -> FT'; T' -> *FT' | eps; F 
 export const RULES = 'r';
 export const MAX_WORD = 10;
 export const CAP = 40;
+/** The deepest level of the parse tree the stage draws (a guess on left recursion grows on). */
+export const TREE_DEPTH = 6;
+
+export function depthOf(tree: ParseTree, id: number): number {
+  let d = 0;
+  for (let k = tree[id]!.parent; k >= 0; k = tree[k]!.parent) d++;
+  return d;
+}
 
 const mark = (id: string, role: MarkRole): Mark => ({ id, role });
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
@@ -563,7 +571,9 @@ const parse: Op = {
             mark(cellId(cell.A, cell.a), many ? 'error' : 'active'),
             mark(rid(r), 'active'),
             mark(inputId(run.pos), 'active'),
-            ...m.kids!.map((id) => mark(tree[id]!.sym === EPS ? `t-t${id}` : nodeId(id), 'new')),
+            ...m
+              .kids!.filter((id) => depthOf(tree, id) <= TREE_DEPTH)
+              .map((id) => mark(tree[id]!.sym === EPS ? `t-t${id}` : nodeId(id), 'new')),
           ],
           say: `${cell.A} is on top and the next input is ${showSym(cell.a)}: M[${cell.A}, ${cell.a}] says ${ruleText(r)}${many ? ', the first of two rules there: a guess' : ''}. Pop ${cell.A} and push ${r.rhs.length ? `${formText(r.rhs)}, its first symbol on top` : 'nothing'}.`,
           lines: ['parse.top', 'parse.expand'],

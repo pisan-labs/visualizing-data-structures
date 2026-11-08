@@ -147,7 +147,7 @@ export const ll1Parsing: VizDef<Ll1State, Ll1Settings, Ll1Extra> = {
       },
       average: {
         cost: 'Θ(n)',
-        why: 'One table lookup per move and O(n) moves: a + a * a takes 26 moves for 5 symbols.',
+        why: 'One table lookup per move and O(n) moves: a+a*a takes 16 moves for 5 symbols.',
         example: 'balanced',
       },
       worst: {

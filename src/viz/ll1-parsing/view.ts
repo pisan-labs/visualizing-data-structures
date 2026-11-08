@@ -35,6 +35,7 @@ import {
   followId,
   setText,
   stackId,
+  TREE_DEPTH,
   type Ll1Extra,
   type Ll1Settings,
   type Ll1State,
@@ -267,7 +268,6 @@ function drawParse(out: Shape[], s: Ll1State, roles: ReadonlyMap<string, MarkRol
 
 /** Deepest level of the tree drawn; a parse that keeps expanding (a guess on left recursion)
  * grows below it unseen. */
-const TREE_DEPTH = 6;
 
 const pruned = new WeakMap<ParseTree, { tree: ParseTree; deep: boolean }>();
 /** The tree cut at TREE_DEPTH: deeper nodes stay in the list but no parent points at them. */

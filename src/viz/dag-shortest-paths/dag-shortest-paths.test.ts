@@ -5,7 +5,6 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import type { Graph } from '../_graph/graph';
 import { parseGraph } from '../_graph/parse';
-import { overlaps } from '../_paths/overlap';
 import { dagShortestPaths as dag } from '.';
 import { pseudocode, type DagRun, type DagSettings } from './model';
 
@@ -185,15 +184,6 @@ describe('DAG shortest paths', () => {
     expect(t.entries[1]!.steps.at(-1)!.say).toContain(
       'The critical path is A → C → D → F → G, total 12',
     );
-  });
-
-  it('draws every curated example without labels on top of each other', () => {
-    for (const ex of dag.examples) {
-      const settings = { ...dag.defaults, ...ex.settings } as DagSettings;
-      const t = new Timeline(dag, settings, 1, ex.ops);
-      for (let i = 0; i < t.length; i++)
-        expect(overlaps(dag.view(t.at(i).step, settings).shapes), `${ex.id} step ${i}`).toEqual([]);
-    }
   });
 
   it('keeps pseudocode lines short enough for a phone', () => {

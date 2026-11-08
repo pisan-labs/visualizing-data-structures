@@ -8,6 +8,7 @@ import { pumpingLemma as def, gameCalls, parseInput, splitInput } from '.';
 import { MAX_I, PROVER_TRIES, readSplit, splits } from './game';
 import { LANGUAGES, MAX_S, findLanguage, inClass, type LangId, type Lemma } from './languages';
 import { defaults, type PumpExtra, type PumpSettings, type PumpState } from './model';
+import { TYPICAL_STAGES } from '../../render/stage';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: membership, splits and pumping written from the definitions, apart from the model.
@@ -103,7 +104,7 @@ function allWords(symbols: string[], n: number): string[] {
 // ---------------------------------------------------------------------------------------------
 // Invariants on every step
 
-const STAGES: (StageSize | undefined)[] = [undefined, { w: 880, h: 384 }, { w: 360, h: 536 }];
+const STAGES: (StageSize | undefined)[] = [undefined, ...TYPICAL_STAGES];
 
 function checkSteps(t: Timeline<PumpState, PumpSettings, PumpExtra>) {
   const { settings } = t;

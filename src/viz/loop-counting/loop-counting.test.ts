@@ -4,6 +4,7 @@ import { Timeline } from '../../engine/timeline';
 import { loopCounting, parseN } from '.';
 import { MAX_N, ratioText, type LcSettings } from './model';
 import { PATTERN, PATTERNS, isqrt, lg, type Found, type PatternId } from './patterns';
+import { TYPICAL_STAGES } from '../../render/stage';
 
 const FOUNDS: Found[] = ['first', 'middle', 'missing'];
 /** Patterns with one loop: each run of the body is a level 2 step. */
@@ -105,7 +106,7 @@ describe('loop counting', () => {
             if (step.vars?.count !== undefined) expect(step.vars.count).toBe(r.count);
             prev = r.count;
             // Every mark points at a shape the view draws, on a laptop and on a phone.
-            for (const stage of [undefined, { w: 880, h: 384 }, { w: 360, h: 536 }]) {
+            for (const stage of [undefined, ...TYPICAL_STAGES]) {
               const ids = new Set(
                 loopCounting.view(step, t.settings, stage).shapes.map((x) => x.id),
               );

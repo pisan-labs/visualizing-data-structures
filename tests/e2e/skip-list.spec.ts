@@ -106,9 +106,10 @@ test('drawing the list down keeps a long list readable', async ({ page, isMobile
       return Number(h) > Number(w);
     })
     .toBe(true);
-  // The down layout is for phones. On a 1366x768 laptop the stage is about 305 px tall, so 20
-  // stacked keys sit right at 9 px and the result depends on the font (CI's DejaVu Sans measured
-  // 8.99994); laptops use the layout across instead.
+  // The down layout is for phones; laptops use the layout across instead. On a laptop the
+  // stage's height limits 20 stacked keys (384 px at 1366x768, 480 on the e2e desktop), so their
+  // size depends on the window and the font: when the stage was 305 px tall they sat right at
+  // 9 px, and CI's DejaVu Sans measured 8.99994.
   if (isMobile) await expect.poll(() => smallestKey(page)).toBeGreaterThanOrEqual(9);
 });
 

@@ -30,6 +30,7 @@ import { ADD, COPY_COMPARE, MULTIPLY, PALINDROME, WALK } from './machines';
 import type { MtSettings, MtState } from './model';
 import { LOOPY } from './practice';
 import { ruleLine, view } from './view';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 const settings = (s: Partial<MtSettings> = {}): MtSettings =>
   ({ ...multitapeTm.defaults, ...s }) as MtSettings;
@@ -457,8 +458,8 @@ describe('Multi-tape Turing machine page', () => {
 });
 
 describe('the drawing', () => {
-  const wide: StageSize = { w: 880, h: 384 };
-  const phone: StageSize = { w: 360, h: 536 };
+  const wide: StageSize = LAPTOP_STAGE;
+  const phone: StageSize = PHONE_STAGE;
   const shapesOf = (calls: OpCall[], s: Partial<MtSettings> = {}, stage?: StageSize) => {
     const t = timeline(calls, s);
     return view(t.at(t.length - 1).step, settings(s), stage).shapes;

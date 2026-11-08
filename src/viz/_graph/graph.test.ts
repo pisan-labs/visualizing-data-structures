@@ -42,6 +42,7 @@ import {
   starGraph,
   twoComponents,
 } from './presets';
+import { LAPTOP_STAGE, PHONE_STAGE, TYPICAL_STAGES } from '../../render/stage';
 
 const g = (text: string) => parseGraph(text) as Exclude<ReturnType<typeof parseGraph>, Error>;
 
@@ -260,7 +261,14 @@ describe('layouts', () => {
     const side: Shape[] = [];
     const b = placePanels(side, { x: 0, y: 0, w: 160, h: 120 }, undefined, block(140, 330));
     expect(b.x).toBeGreaterThan(160);
-    expect(fitScore({ x: 0, y: 0, w: 884, h: 305 })).toBeCloseTo(362 / 884);
+    // With no stage a scene is scored on the smaller of the two typical stages: a wide one on
+    // the phone (its width limits it), a tall one on the laptop (its height does).
+    const wide = { x: 0, y: 0, w: 884, h: 305 };
+    const tall = { x: 0, y: 0, w: 300, h: 600 };
+    expect(fitScore(wide)).toBeCloseTo(PHONE_STAGE.w / wide.w);
+    expect(fitScore(tall)).toBeCloseTo(LAPTOP_STAGE.h / tall.h);
+    for (const box of [wide, tall])
+      expect(fitScore(box)).toBe(Math.min(...TYPICAL_STAGES.map((s) => fitScore(box, s))));
   });
 
   it('puts panels where they fit the stage the view draws for', () => {
@@ -270,8 +278,8 @@ describe('layouts', () => {
       return { x, y, w: 300, h: 200 };
     };
     // A wide, short laptop stage puts the block beside the graph; a phone puts it under.
-    expect(placePanels([], graph, { w: 880, h: 384 }, block).x).toBeGreaterThan(graph.w);
-    expect(placePanels([], graph, { w: 360, h: 536 }, block).y).toBeGreaterThan(graph.h);
-    expect(fitScore({ x: 0, y: 0, w: 880, h: 384 }, { w: 880, h: 384 })).toBeCloseTo(1);
+    expect(placePanels([], graph, LAPTOP_STAGE, block).x).toBeGreaterThan(graph.w);
+    expect(placePanels([], graph, PHONE_STAGE, block).y).toBeGreaterThan(graph.h);
+    expect(fitScore({ x: 0, y: 0, ...LAPTOP_STAGE }, LAPTOP_STAGE)).toBeCloseTo(1);
   });
 });

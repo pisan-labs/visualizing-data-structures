@@ -19,11 +19,12 @@ import regexToNfa, { parseInput } from '.';
 import { construct, pending, type Construction } from './construct';
 import { pictures } from './layout';
 import { drawn, readWord, type RxSettings } from './model';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 const parse = (text: string, union: UnionSign) => readRegex(text, { union });
 
-const LAPTOP: StageSize = { w: 880, h: 384 };
-const PHONE: StageSize = { w: 360, h: 536 };
+const LAPTOP: StageSize = LAPTOP_STAGE;
+const PHONE: StageSize = PHONE_STAGE;
 
 /** Random expressions over {a, b}, written with the given union sign. */
 function regexArb(sign: UnionSign): fc.Arbitrary<Regex> {

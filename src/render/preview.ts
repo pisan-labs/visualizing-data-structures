@@ -1,7 +1,8 @@
 import { normalizeSettings } from '../engine/example';
 import { Timeline } from '../engine/timeline';
-import type { AnyVizDef } from '../engine/types';
+import type { AnyVizDef, StageSize } from '../engine/types';
 import { shapesBounds, type Bounds, type Shape } from './scene';
+import { THUMBNAIL_STAGE } from './stage';
 
 /**
  * A small looping animation for the catalog: the steps of one curated example, stripped to bare
@@ -51,7 +52,19 @@ function sample<T>(items: T[], n: number): T[] {
   );
 }
 
-/** The preview a page asks for with `preview`, or null if it asks for none. */
+/**
+ * How large a preview is drawn in the catalog's thumbnail box, in pixels per scene unit (the
+ * box has THUMBNAIL_STAGE's shape).
+ */
+const inBox = (b: Bounds) => Math.min(THUMBNAIL_STAGE.w / b.w, THUMBNAIL_STAGE.h / b.h);
+
+/**
+ * The preview a page asks for with `preview`, or null if it asks for none. It is drawn twice:
+ * with no stage (the view lays out for both a laptop and a phone) and on THUMBNAIL_STAGE (a wide
+ * box), and keeps the one drawn clearly larger in the thumbnail box. Neither wins everywhere:
+ * some views lay out for a whole page on a stage, leaving room for text a thumbnail drops or
+ * stretching a row to the stage's width.
+ */
 export function makePreview(def: AnyVizDef): Preview | null {
   const spec = def.preview;
   if (!spec) return null;
@@ -60,33 +73,39 @@ export function makePreview(def: AnyVizDef): Preview | null {
   const settings = normalizeSettings(def.settings, def.defaults, ex.settings);
   const tl = new Timeline(def, settings, ex.seed, ex.ops);
   const level = spec.level ?? 1;
-  const steps = [];
+  const steps: ReturnType<typeof tl.at>['step'][] = [];
   for (let i = 0; i < tl.length; i++) {
     const step = tl.at(i).step;
     if (step.level <= level) steps.push(step);
   }
-  const frames = sample(steps, MAX_FRAMES)
-    .map((step) => strip(def.view(step, settings).shapes, [...DEFAULT_HIDE, ...(spec.hide ?? [])]))
-    // Keep the drawing on screen from the first frame: an empty start shows nothing.
-    .filter((shapes, i, all) => shapes.length > 0 || i === all.length - 1);
-  const boxes = frames.map((f) => shapesBounds(f, 0)).filter((b): b is Bounds => b !== null);
-  if (boxes.length === 0) throw new Error(`${def.id}: preview draws nothing`);
-  const x1 = Math.min(...boxes.map((b) => b.x));
-  const y1 = Math.min(...boxes.map((b) => b.y));
-  const x2 = Math.max(...boxes.map((b) => b.x + b.w));
-  const y2 = Math.max(...boxes.map((b) => b.y + b.h));
-  const pad = Math.max(x2 - x1, y2 - y1) * 0.04;
-  const bounds = {
-    x: round(x1 - pad),
-    y: round(y1 - pad),
-    w: round(x2 - x1 + 2 * pad),
-    h: round(y2 - y1 + 2 * pad),
+  const hide = [...DEFAULT_HIDE, ...(spec.hide ?? [])];
+  const draw = (stage: StageSize | undefined): Preview => {
+    const frames = sample(steps, MAX_FRAMES)
+      .map((step) => strip(def.view(step, settings, stage).shapes, hide))
+      // Keep the drawing on screen from the first frame: an empty start shows nothing.
+      .filter((shapes, i, all) => shapes.length > 0 || i === all.length - 1);
+    const boxes = frames.map((f) => shapesBounds(f, 0)).filter((b): b is Bounds => b !== null);
+    if (boxes.length === 0) throw new Error(`${def.id}: preview draws nothing`);
+    const x1 = Math.min(...boxes.map((b) => b.x));
+    const y1 = Math.min(...boxes.map((b) => b.y));
+    const x2 = Math.max(...boxes.map((b) => b.x + b.w));
+    const y2 = Math.max(...boxes.map((b) => b.y + b.h));
+    const pad = Math.max(x2 - x1, y2 - y1) * 0.04;
+    const bounds = {
+      x: round(x1 - pad),
+      y: round(y1 - pad),
+      w: round(x2 - x1 + 2 * pad),
+      h: round(y2 - y1 + 2 * pad),
+    };
+    let poster = 0;
+    frames.forEach((f, i) => {
+      if (f.length >= frames[poster]!.length) poster = i;
+    });
+    return { bounds, frames, poster };
   };
-  let poster = 0;
-  frames.forEach((f, i) => {
-    if (f.length >= frames[poster]!.length) poster = i;
-  });
-  return { bounds, frames, poster };
+  const plain = draw(undefined);
+  const wide = draw(THUMBNAIL_STAGE);
+  return inBox(wide.bounds) > inBox(plain.bounds) * 1.05 ? wide : plain;
 }
 
 /**

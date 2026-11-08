@@ -17,6 +17,7 @@ import {
   type ProdState,
 } from './model';
 import { OPS, SET_OPS, type SetOp } from './product';
+import { TYPICAL_STAGES } from '../../render/stage';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: runs and the set operations written from the definitions, apart from the model.
@@ -259,7 +260,7 @@ describe('product-construction', () => {
   });
 
   it('places each pair where its A state’s column meets its B state’s row, on every stage', () => {
-    const stages = [undefined, { w: 880, h: 384 }, { w: 360, h: 536 }];
+    const stages = [undefined, ...TYPICAL_STAGES];
     for (const ex of def.examples) {
       const t = new Timeline(def, { ...def.defaults, ...ex.settings }, 1, ex.ops) as T;
       for (let i = 0; i < t.length; i++) {
@@ -300,7 +301,7 @@ describe('product-construction', () => {
   });
 
   it('draws every step of random sessions on every stage, marks on real shapes', () => {
-    const stages = [undefined, { w: 880, h: 384 }, { w: 360, h: 536 }];
+    const stages = [undefined, ...TYPICAL_STAGES];
     const callArb = fc.oneof(
       fc.constant<OpCall>(['build']),
       fc.constant<OpCall>(['complementA']),

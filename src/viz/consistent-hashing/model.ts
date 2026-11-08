@@ -279,6 +279,8 @@ function* membership(s0: S, raw: Value, adding: boolean): Generator<RStep, S, vo
     );
   }
 
+  const N0 = s0.servers.length;
+  const N1 = after.servers.length;
   // Which keys change hands?
   const moved = s0.keys.filter((x) => ownerOf(s0, x.key) !== ownerOf(after, x.key));
   const naive = s0.keys.filter(
@@ -289,11 +291,13 @@ function* membership(s0: S, raw: Value, adding: boolean): Generator<RStep, S, vo
   c.extra.moved = moved.map((x) => x.uid);
   c.vars.moved = moved.length;
   c.vars['mod-N moved'] = naive;
-  const where = adding
-    ? `They were in the arcs just counter-clockwise of ${sv}'s ${v === 1 ? 'node' : 'nodes'}, and now belong to ${sv}`
-    : `Each goes to the next node clockwise, which belongs to ${list([...new Set(moved.map((x) => ownerOf(after, x.key)!))].sort())}`;
-  const N0 = s0.servers.length;
-  const N1 = after.servers.length;
+  const where = !N1
+    ? `No server is left, so they have nowhere to go until a server is added`
+    : adding && !N0
+      ? `No server held them before; now they all belong to ${sv}`
+      : adding
+        ? `They were in the arcs just counter-clockwise of ${sv}'s ${v === 1 ? 'node' : 'nodes'}, and now belong to ${sv}`
+        : `Each goes to the next node clockwise, which belongs to ${list([...new Set(moved.map((x) => ownerOf(after, x.key)!))].sort())}`;
   const cmp =
     s0.keys.length && N0 && N1
       ? ` With h(k) mod N instead, going from ${N0} to ${N1} servers would move ${naive} of the ${s0.keys.length}.`
@@ -301,7 +305,7 @@ function* membership(s0: S, raw: Value, adding: boolean): Generator<RStep, S, vo
   yield step(
     c,
     moved.length
-      ? `${plural(moved.length, 'key')} of ${s0.keys.length} change server: ${list(moved.map((x) => x.key))}. ${where}; every other key stays put.${cmp}`
+      ? `${plural(moved.length, 'key')} of ${s0.keys.length} ${moved.length === 1 ? 'changes' : 'change'} server: ${list(moved.map((x) => x.key))}. ${where}${moved.length < s0.keys.length ? '; every other key stays put' : ''}.${cmp}`
       : `No key changes server${s0.keys.length ? '' : ' (there are no keys yet)'}.${cmp}`,
     [adding ? 'add.move' : 'rem.move'],
     1,

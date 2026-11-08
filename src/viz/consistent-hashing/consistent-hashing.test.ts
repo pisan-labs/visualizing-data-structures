@@ -41,6 +41,20 @@ describe('consistent hashing', () => {
     expect(last.vars!.server).toBe('B');
   });
 
+  it('says where keys go when the last server leaves and the first one joins', () => {
+    const t = run([
+      ['addServer', 'A'],
+      ['addKey', 5],
+      ['removeServer', 'A'],
+      ['addServer', 'B'],
+    ]);
+    const end = (i: number) => t.entries[i]!.steps.at(-1)!.say;
+    expect(end(2)).toContain('1 key of 1 changes server: 5. No server is left');
+    expect(end(2)).not.toContain('belongs to ;');
+    expect(end(3)).toContain('No server held them before; now they all belong to B.');
+    expect(end(3)).not.toContain('counter-clockwise');
+  });
+
   it('moves far fewer keys than mod N when a server joins', () => {
     const ex = consistentHashing.examples.find((e) => e.id === 'add-a-server')!;
     const t = run(ex.ops);

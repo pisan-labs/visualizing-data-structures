@@ -17,9 +17,9 @@ import {
 } from './model';
 
 const MARGIN = 14;
-const R = 130;
+const R = 120;
 /** Room around the ring for node boxes and the 0/90/180/270 labels. */
-const PAD = 46;
+const PAD = 58;
 const RING_W = 2 * (R + PAD);
 const NODE_W = 34;
 const NODE_H = 24;
@@ -42,7 +42,7 @@ function ring(state: RingState, extra: RingExtra, roles: Map<string, MarkRole>):
   const cy = R + PAD;
   const out: Shape[] = [{ kind: 'circle', id: 'ring', x: cx, y: cy, r: R, cls: 'ring' }];
   for (const p of [0, 90, 180, 270]) {
-    const q = at(p, R + 34, cx, cy);
+    const q = at(p, R + 46, cx, cy);
     out.push({
       kind: 'text',
       id: `tick-${p}`,
@@ -70,7 +70,7 @@ function ring(state: RingState, extra: RingExtra, roles: Map<string, MarkRole>):
       role: roles.get(id) ?? (owner ? serverRole(owner) : undefined),
     });
     if (roles.has(id) || extra.moved?.includes(uid)) {
-      const t = at(p, R - 22, cx, cy);
+      const t = at(p, R - 28, cx, cy);
       out.push({
         kind: 'text',
         id: `kl-${uid}`,
@@ -84,8 +84,13 @@ function ring(state: RingState, extra: RingExtra, roles: Map<string, MarkRole>):
     }
   }
   const all: RingNode[] = [...nodes(state.servers, state.v), ...(extra.pending ?? [])];
+  // A node close to the one before it moves out from the ring, so the boxes do not overlap.
+  all.sort((a, b) => a.pos - b.pos || (a.label < b.label ? -1 : 1));
+  let prev: { pos: number; outside: boolean } | null = null;
   for (const n of all) {
-    const q = at(n.pos, R, cx, cy);
+    const outside = !!prev && !prev.outside && n.pos - prev.pos < 12;
+    prev = { pos: n.pos, outside };
+    const q = at(n.pos, outside ? R + 28 : R, cx, cy);
     const id = nodeId(n.label);
     out.push({
       kind: 'rect',

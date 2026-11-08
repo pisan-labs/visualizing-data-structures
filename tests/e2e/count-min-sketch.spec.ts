@@ -76,8 +76,8 @@ test('"Show me" links load an example and play it', async ({ page }) => {
 });
 
 test('a practice question is graded and Show me plays the answer', async ({ page }) => {
-  await page.goto('/count-min-sketch/#practice=24680&n=4');
-  await expect(page.locator('.question')).toHaveCount(4);
+  await page.goto('/count-min-sketch/#practice=24680&n=5');
+  await expect(page.locator('.question')).toHaveCount(5);
   const first = await answerFirst(page);
   await showMe(page, first.getByRole('button', { name: 'Show me' }));
 });

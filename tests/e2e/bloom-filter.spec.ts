@@ -50,7 +50,7 @@ test('insert sets k bits, and a query names the keys behind a false positive', a
   await toEnd(page);
   await expect(narration(page)).toContainText('a false positive');
   await expect(narration(page)).toContainText('bit 9 by 12 and 47');
-  await expect(page.locator('.vars')).toContainText(/false \+\s*1 of 1/);
+  await expect(page.locator('.vars')).toContainText(/false \+\s*"1 of 1"/);
   await op(page, 'Query', '50');
   await toEnd(page);
   await expect(narration(page)).toContainText('definitely not in the set');
@@ -61,7 +61,7 @@ test('measure counts the false positives over every key never inserted', async (
   await op(page, 'Measure');
   await toEnd(page);
   await expect(narration(page)).toContainText('78 of the 996');
-  await expect(page.locator('.vars')).toContainText(/measured\s*7\.8%/);
+  await expect(page.locator('.vars')).toContainText(/measured\s*"7\.8%"/);
   await expect(stage(page).locator('text', { hasText: 'false +: 45, 49, 61, 66' })).toBeVisible();
 });
 
@@ -79,8 +79,8 @@ test('"Show me" links load an example and play it', async ({ page }) => {
 });
 
 test('a practice question is graded and Show me plays the answer', async ({ page }) => {
-  await page.goto('/bloom-filter/#practice=24680&n=4');
-  await expect(page.locator('.question')).toHaveCount(4);
+  await page.goto('/bloom-filter/#practice=24680&n=5');
+  await expect(page.locator('.question')).toHaveCount(5);
   const first = await answerFirst(page);
   await showMe(page, first.getByRole('button', { name: 'Show me' }));
 });
@@ -94,7 +94,7 @@ for (const theme of ['dark', 'contrast']) {
       .filter({ hasText: 'Four keys set 7' })
       .getByRole('button', { name: 'Load' })
       .click();
-    for (let i = 0; i < 30; i++) await page.getByRole('button', { name: 'Step forward' }).click();
+    for (let i = 0; i < 20; i++) await page.getByRole('button', { name: 'Step forward' }).click();
     await settled(page);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])

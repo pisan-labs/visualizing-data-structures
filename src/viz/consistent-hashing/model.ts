@@ -305,10 +305,7 @@ function* membership(s0: S, raw: Value, adding: boolean): Generator<RStep, S, vo
       : `No key changes server${s0.keys.length ? '' : ' (there are no keys yet)'}.${cmp}`,
     [adding ? 'add.move' : 'rem.move'],
     1,
-    [
-      ...moved.map((x) => mark(`v${x.uid}`, 'new')),
-      ...(adding ? tokens.map((t) => mark(nodeId(t.label), 'done')) : []),
-    ],
+    [...moved.map((x) => mark(`v${x.uid}`, 'new'))],
   );
   return after;
 }

@@ -5,6 +5,8 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { nQueens } from '.';
 import { type Goal, type QueenSettings, type QueenState } from './model';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 const settings = (n: number, goal: Goal = 'first'): QueenSettings =>
   ({ ...nQueens.defaults, n, goal }) as QueenSettings;
@@ -194,5 +196,13 @@ describe('n-queens practice', () => {
         }
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // The tried marks drew at 7.6 px on a laptop, with the solutions under the 8 x 8 board.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(nQueens, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(12);
+    expect(smallestText(nQueens, PHONE_STAGE).px).toBeGreaterThanOrEqual(11);
   });
 });

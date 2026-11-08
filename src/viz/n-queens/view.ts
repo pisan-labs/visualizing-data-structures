@@ -1,5 +1,7 @@
-import type { MarkRole, Step } from '../../engine/types';
-import type { Scene, Shape } from '../../render/scene';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
+import type { Bounds, Scene, Shape } from '../../render/scene';
+import { ZOOM_DROP, zoomCorner } from '../../render/stage';
 import {
   advance,
   attacker,
@@ -32,7 +34,11 @@ function totalSolutions(n: number): number {
   return totals.get(n)!;
 }
 
-export function view(step: Step<QueenState, QueenExtra>, settings: QueenSettings): Scene {
+export function view(
+  step: Step<QueenState, QueenExtra>,
+  settings: QueenSettings,
+  stage?: StageSize,
+): Scene {
   const s = step.state;
   const n = s.n;
   const extra = step.extra ?? {};
@@ -104,7 +110,7 @@ export function view(step: Step<QueenState, QueenExtra>, settings: QueenSettings
           x: cx(c),
           y: cy(r) + 3,
           text: 'tried',
-          size: 8.5,
+          size: 10,
           anchor: 'middle',
           cls: 'label',
           mono: true,
@@ -239,19 +245,39 @@ export function view(step: Step<QueenState, QueenExtra>, settings: QueenSettings
   }
 
   const boardH = y0 + n * CELL;
-  let bottom = boardH + 8;
-  let width = x0 + n * CELL + 8;
+  const boardW = x0 + n * CELL + 8;
+  let bounds: Bounds = { x: -6, y: -4, w: boardW + 12, h: boardH + 18 };
 
-  // When counting every solution, the ones found so far, as small boards under the big one.
+  // When counting every solution, the ones found so far, as small boards under the big one, or
+  // beside it on a wide stage (in fewer columns, so the strip is not wider than it needs).
   if (settings.goal === 'all') {
     const keep = Math.min(KEEP, totalSolutions(n));
     const miniW = n * MINI + 8;
-    const rows = Math.ceil(keep / STRIP_COLS);
-    const top = boardH + 14;
+    const strip = (cols: number, left: number, top: number) => {
+      const rows = Math.ceil(keep / cols);
+      return {
+        cols,
+        left,
+        top,
+        bounds: {
+          x: -6,
+          y: -4,
+          w: Math.max(boardW, left + Math.min(keep, cols) * miniW) + 12,
+          h: Math.max(boardH + 8, top + 18 + rows * (n * MINI + 8)) + 10,
+        },
+      };
+    };
+    const drop = stage && zoomCorner(stage) ? ZOOM_DROP : 0;
+    const place = pickLayout(stage, [
+      strip(STRIP_COLS, x0, boardH + 14),
+      ...[2, 3, 4, 6].map((cols) => strip(cols, boardW + 16, y0 + drop)),
+    ]);
+    const { cols, left, top } = place;
+    bounds = place.bounds;
     shapes.push({
       kind: 'text',
       id: 'found-title',
-      x: x0,
+      x: left,
       y: top + 10,
       text: `solutions found: ${s.solutions}`,
       size: 12,
@@ -259,8 +285,8 @@ export function view(step: Step<QueenState, QueenExtra>, settings: QueenSettings
       mono: true,
     });
     s.found.forEach((sol, k) => {
-      const bx = x0 + (k % STRIP_COLS) * miniW;
-      const by = top + 18 + Math.floor(k / STRIP_COLS) * (n * MINI + 8);
+      const bx = left + (k % cols) * miniW;
+      const by = top + 18 + Math.floor(k / cols) * (n * MINI + 8);
       shapes.push({
         kind: 'rect',
         id: `mini-${k}`,
@@ -284,9 +310,7 @@ export function view(step: Step<QueenState, QueenExtra>, settings: QueenSettings
         });
       });
     });
-    bottom = top + 18 + rows * (n * MINI + 8);
-    width = Math.max(width, x0 + Math.min(keep, STRIP_COLS) * miniW);
   }
 
-  return { shapes, bounds: { x: -6, y: -4, w: width + 12, h: bottom + 10 }, label: describe(s) };
+  return { shapes, bounds, label: describe(s) };
 }

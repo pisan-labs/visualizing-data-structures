@@ -94,6 +94,35 @@ describe('Robin Hood hashing', () => {
     expect(keysOf(d.endState()).slice(0, 6)).toEqual([22, 44, 1, null, 4, 5]);
   });
 
+  it('backward-shift delete leaves every key findable (m = 5: insert 1, 0, 5, delete 0)', () => {
+    const calls: OpCall[] = [
+      ['insert', 1],
+      ['insert', 0],
+      ['insert', 5],
+      ['delete', 0],
+    ];
+    const t = run(calls, { m: 5, policy: 'robin' });
+    expect(keysOf(t.entries[2]!.end)).toEqual([0, 5, 1, null, null]);
+    // 5 and 1 each shift back one slot; nothing is left behind a hole.
+    expect(keysOf(t.endState())).toEqual([5, 1, null, null, null]);
+    const del = t.entries[3]!.steps;
+    expect(del.at(-1)!.vars!.shifts).toBe(2);
+    for (const k of [5, 1]) {
+      const found = run([...calls, ['search', k]], { m: 5, policy: 'robin' });
+      expect(found.entries[4]!.steps.at(-1)!.vars!.found).toBe(true);
+    }
+    expect(run([...calls, ['search', 0]], { m: 5 }).entries[4]!.steps.at(-1)!.vars!.found).toBe(
+      false,
+    );
+    // The hole moves along during the shift, so a mid-shift step may show a gap; the steps
+    // outside the shift never do.
+    for (const st of del.filter((x) => !x.lines.includes('del.shift')))
+      st.state.slots.forEach((c, j) => {
+        if (!c) return;
+        for (let q = c.key % 5; q !== j; q = (q + 1) % 5) expect(st.state.slots[q]).not.toBeNull();
+      });
+  });
+
   it('matches a reference table and keeps every key findable', () => {
     const key = fc.integer({ min: 0, max: 60 });
     const call: fc.Arbitrary<OpCall> = fc.oneof(

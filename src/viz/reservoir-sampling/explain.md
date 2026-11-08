@@ -64,9 +64,10 @@ Use it whenever the data comes as a stream, or is too big to load: sampling a hu
 Common mistakes:
 
 - Keeping item i with probability 1/i when k > 1. That is right for k = 1 only.
-- Drawing j from 1 to i, keeping the item if j ≤ k, but then replacing a different random slot with a second random number. That works too, but wastes a random number: j is already a uniform slot when j ≤ k.
 - Drawing j from 0 to i (or 1 to i − 1). Off by one, and the sample is no longer uniform.
 - Taking the first k items of the stream "because it is random anyway". Streams are rarely in random order: logs are sorted by time.
+
+One variant looks like a mistake but isn't: draw j from 1 to i, keep the item if j ≤ k, then pick the slot to replace with a second random number. The sample is still uniform. It just wastes a random number, since j is already a uniform slot when j ≤ k.
 
 ## Try this
 

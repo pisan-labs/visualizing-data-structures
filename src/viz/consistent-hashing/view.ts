@@ -88,7 +88,7 @@ function ring(state: RingState, extra: RingExtra, roles: Map<string, MarkRole>):
   all.sort((a, b) => a.pos - b.pos || (a.label < b.label ? -1 : 1));
   let prev: { pos: number; outside: boolean } | null = null;
   for (const n of all) {
-    const outside = !!prev && !prev.outside && n.pos - prev.pos < 12;
+    const outside: boolean = !!prev && !prev.outside && n.pos - prev.pos < 12;
     prev = { pos: n.pos, outside };
     const q = at(n.pos, outside ? R + 28 : R, cx, cy);
     const id = nodeId(n.label);

@@ -170,7 +170,7 @@ const schedule: Op = {
     yield {
       state: end,
       marks: at.map((l) => mark(lectId(l.id), 'compare')),
-      say: `${plural(rooms, 'room')}. At time ${d.at}, ${plural(d.depth, 'lecture')} (${andList(at.map((l) => name(l.id)))}) are on at once, so no schedule can use fewer: the depth is ${d.depth}, and greedy meets it.`,
+      say: `${plural(rooms, 'room')}. At time ${d.at}, ${plural(d.depth, 'lecture')} (${andList(at.map((l) => name(l.id)))}) ${d.depth === 1 ? 'is' : 'are'} on at once, so no schedule can use fewer: the depth is ${d.depth}, and greedy meets it.`,
       lines: ['p.ret'],
       vars: { ...vars(), depth: d.depth },
       level: 1,

@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bidirectional-search",
+  "id": "directed",
+  "title": "Directed: the t side walks arcs backwards",
+  "notes": "The search from F follows arcs into each vertex, not out of it. E>F lets F's side reach E, and D>B is no use to either side on the way from A.",
+  "settings": {
+    "side": "alternate",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A>B, A>C, B>D, C>D, D>B, D>E, C>G, E>F, G>E"],
+    ["run", "A", "F"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

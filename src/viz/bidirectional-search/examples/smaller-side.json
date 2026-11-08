@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bidirectional-search",
+  "id": "smaller-side",
+  "title": "Expand the smaller frontier",
+  "notes": "A has six neighbours and J has one. Taking turns would expand A's big layer early. Expanding the smaller side lets J's thin chain do the walking.",
+  "settings": {
+    "side": "smaller",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, A-D, A-E, A-F, A-G, B-H, C-H, D-H, E-I, F-I, G-I, H-K, K-L, L-J"],
+    ["run", "A", "J"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

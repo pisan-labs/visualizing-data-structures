@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "bidirectional-search",
+  "id": "bushy",
+  "title": "Two small balls instead of one big one",
+  "notes": "Every vertex near A and near M branches out. Plain BFS from A has to sweep most of the graph before it reaches M. The two searches each go two steps and meet.",
+  "settings": {
+    "side": "alternate",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, A-D, B-E, B-F, C-G, C-H, D-I, E-J, F-J, G-K, I-L, J-M, K-M, L-M, H-N, N-O"],
+    ["run", "A", "M"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

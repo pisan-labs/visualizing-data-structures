@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "bidirectional-search",
+  "id": "grid",
+  "title": "Corner to corner on a grid",
+  "notes": "A 4 by 4 grid, from A in one corner to P in the other. Each side sweeps a diagonal band of the grid, and they meet on the middle diagonal.",
+  "settings": {
+    "side": "alternate",
+    "layout": "grid"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "A-B, B-C, C-D, E-F, F-G, G-H, I-J, J-K, K-L, M-N, N-O, O-P, A-E, E-I, I-M, B-F, F-J, J-N, C-G, G-K, K-O, D-H, H-L, L-P"
+    ],
+    ["run", "A", "P"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

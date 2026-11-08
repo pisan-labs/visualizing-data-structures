@@ -79,6 +79,17 @@ describe('segment intersection', () => {
     );
   });
 
+  it('does not tell one segment to swap with nobody when the other one ends there', () => {
+    const t = new Timeline(segmentIntersection, { mode: 'all' }, 1, [
+      ['load', '1,2 9,8 2,10 10,3 0,6 5,5 6,1 11,2'],
+      ['sweep'],
+    ]);
+    const says = t.entries.at(-1)!.steps.map((st) => st.say);
+    expect(says).toContain('Sweep to (5, 5): the right end of C, and A passes through it.');
+    expect(says.some((x) => x.includes('Swap A:'))).toBe(false);
+    expect(says.some((x) => x.startsWith('Remove C, which ends here. A goes on.'))).toBe(true);
+  });
+
   it('parses segments and refuses vertical ones', () => {
     expect(parseInput('1,2 5,6')).toBe('1,2 5,6');
     expect(parseInput('5,6 1,2')).toBe('1,2 5,6');

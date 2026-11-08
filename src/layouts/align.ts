@@ -140,6 +140,8 @@ export interface AlignGeometry {
   aboveTop: number;
   /** Top of the pointer lane. */
   pointerTop: number;
+  /** Baseline of the text's indices (a pointer's arrow ends 15 units above it). */
+  indexY: number;
   /** Center of the text row, for centering a table over it. */
   centerX: number;
   /** Rows shown at once. */
@@ -273,6 +275,7 @@ export function alignGeometry(frame: AlignFrame): AlignGeometry {
     rowTop: (k) => rowsTop + k * slotH,
     aboveTop,
     pointerTop,
+    indexY: textTop - lanes * FOUND_LANE - 8,
     centerX: x0 + gridW / 2,
     slots,
   };
@@ -331,7 +334,7 @@ export function alignScene(
     mono: true,
     cls: 'label',
   });
-  const indexY = g.textTop - lanes * FOUND_LANE - 8;
+  const indexY = g.indexY;
   const every = frame.indexEvery ?? 1;
   [...content.text].forEach((ch, i) => {
     const id = `${tid}-${i}`;

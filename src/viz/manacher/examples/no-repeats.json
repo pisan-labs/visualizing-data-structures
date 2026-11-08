@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "manacher",
+  "id": "no-repeats",
+  "title": "Nothing longer than one letter",
+  "notes": "abcdefgh has no palindrome longer than a single letter. Each letter cell gets P = 1 (its two # neighbors match) and each # cell gets 0.",
+  "settings": {
+    "method": "mirror"
+  },
+  "seed": 1,
+  "ops": [["load", "abcdefgh"], ["build"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

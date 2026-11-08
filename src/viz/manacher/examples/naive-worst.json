@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "manacher",
+  "id": "naive-worst",
+  "title": "Without the mirror: all the same letter",
+  "notes": "The same word with the mirror off. Every center expands from scratch, 100 comparisons where the mirror needed 19.",
+  "settings": {
+    "method": "naive"
+  },
+  "seed": 1,
+  "ops": [["load", "aaaaaaaaaa"], ["build"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

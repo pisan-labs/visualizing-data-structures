@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "burrows-wheeler",
+  "id": "invert-banana",
+  "title": "Getting banana back from annb$aa",
+  "notes": "Only L = annb$aa is kept. Sort it to get F, number the copies, and walk from the row that starts with $: each step puts one more character in front.",
+  "settings": {
+    "end": "sentinel"
+  },
+  "seed": 1,
+  "ops": [["load", "banana"], ["transform"], ["invert"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

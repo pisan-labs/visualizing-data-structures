@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "aho-corasick",
+  "id": "output-sets",
+  "title": "The same with output sets",
+  "notes": "Instead of output links, every node keeps the full list of patterns that end at it, merged from its failure node while the links are built. The scan reports the same matches without following any chain.",
+  "settings": {
+    "patterns": "a ab bab bc bca c caa",
+    "outputs": "sets"
+  },
+  "seed": 1,
+  "ops": [["search", "abccab"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

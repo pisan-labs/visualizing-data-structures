@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "aho-corasick",
+  "id": "add-pattern",
+  "title": "Adding a pattern clears the links",
+  "notes": "Add is to he, she, his and hers. The root has no i edge (the i of his sits under h), so two nodes are made. The old links are cleared, and the search rebuilds them before scanning thisishers.",
+  "settings": {
+    "patterns": "he she his hers",
+    "outputs": "links"
+  },
+  "seed": 1,
+  "ops": [["build"], ["add", "is"], ["search", "thisishers"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

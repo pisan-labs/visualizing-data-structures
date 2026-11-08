@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "viz": "manacher",
+  "id": "one-at-a-time",
+  "title": "One center at a time",
+  "notes": "Next center fills one value of P per press. Before each press, say whether i is inside the palindrome around C and what its mirror gives.",
+  "settings": {
+    "method": "mirror"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "racecar"],
+    ["next"],
+    ["next"],
+    ["next"],
+    ["next"],
+    ["next"],
+    ["next"],
+    ["next"],
+    ["next"],
+    ["next"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

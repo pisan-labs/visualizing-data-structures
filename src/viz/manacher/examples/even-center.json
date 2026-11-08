@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "manacher",
+  "id": "even-center",
+  "title": "Even length: the center is a separator",
+  "notes": "In babbac the longest palindrome is abba. Its center falls between the two b's, which is a # cell in T. Without the separators you would need a second pass for even lengths.",
+  "settings": {
+    "method": "mirror"
+  },
+  "seed": 1,
+  "ops": [["load", "babbac"], ["build"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

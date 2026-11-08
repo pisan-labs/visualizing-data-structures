@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "z-algorithm",
+  "id": "one-at-a-time",
+  "title": "One position at a time",
+  "notes": "Next position fills one Z value per press. Predict each value, and whether it comes from the box, before you press.",
+  "settings": {
+    "method": "box"
+  },
+  "seed": 1,
+  "ops": [["load", "ABABCABABA"], ["next"], ["next"], ["next"], ["next"], ["next"], ["next"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

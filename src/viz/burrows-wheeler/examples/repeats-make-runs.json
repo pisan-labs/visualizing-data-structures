@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "burrows-wheeler",
+  "id": "repeats-make-runs",
+  "title": "Repeats make runs",
+  "notes": "abcabcabc repeats abc three times. Every a is preceded by a c (or the start), every b by an a, every c by a b, so L comes out in long runs: 4 runs in 10 characters, where the word has 10.",
+  "settings": {
+    "end": "sentinel"
+  },
+  "seed": 1,
+  "ops": [["load", "abcabcabc"], ["transform"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

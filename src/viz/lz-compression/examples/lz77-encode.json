@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "lz-compression",
+  "id": "lz77-encode",
+  "title": "LZ77: pointers back into the window",
+  "notes": "abababcababc. After a and b go out as plain characters, (2,4,c) copies abab from 2 back and (5,4,c) copies abab from 5 back: 4 triples for 12 characters. Watch the window (shaded) and the lookahead slide.",
+  "settings": {
+    "method": "lz77",
+    "window": 8,
+    "lookahead": 6
+  },
+  "seed": 1,
+  "ops": [["load", "abababcababc"], ["encode"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

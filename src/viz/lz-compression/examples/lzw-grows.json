@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "lz-compression",
+  "id": "lzw-grows",
+  "title": "LZW: the dictionary grows as it reads",
+  "notes": "abababababab. Each code teaches the dictionary a string one character longer: ab, ba, aba, abab... Decoding meets a code it has not made yet and works it out as the previous string plus its own first letter.",
+  "settings": {
+    "method": "lzw",
+    "window": 8,
+    "lookahead": 6
+  },
+  "seed": 1,
+  "ops": [["load", "abababababab"], ["encode"], ["decode"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

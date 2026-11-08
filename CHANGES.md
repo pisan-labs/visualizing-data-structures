@@ -305,3 +305,5 @@
 2026-11-08 [doc] README: hintwise.org DNS is at Cloudflare (CNAME, DNS only); a push to main publishes
 
 2026-11-08 [plan] Yusuf: fix the remaining small-text pages too; four agents by layout family (automata, recursion and analysis, strings/DP/arrays, graphs/lists/trees)
+
+2026-11-08 [plan] Wave 7 (PLAN.md section 16): 62 pages for the standard topics no page covered, Yusuf said "All"; catalog entries added (planned until built); ten agent families, four at a time

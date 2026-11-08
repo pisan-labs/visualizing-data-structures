@@ -791,6 +791,36 @@ CI), leverage (what fixing it unblocks). Priority = interest + risk + leverage â
 Highest priority first, one item per commit, each with the full checks and screenshots before
 and after when a drawing can change: 1, 2, 3, 4, 5, 6, 7, then 8 and 9 (larger).
 
+## 16. Wave 7: the topics the surveys did not cover (planned 2026-11-08)
+
+Yusuf (8 November, about 16:10): "All" to the list of standard topics none of our pages covered.
+62 pages, all in `src/viz/catalog.ts` (they show as planned until built). Every page meets the
+definition of done in `CLAUDE.md` (examples, concept page in Yusuf's voice, code tabs in three
+languages, practice, preview, property test), lays out for the stage (smallest text at least
+11 px on a laptop and 9 px on a phone, checked with `smallestText`), and reuses the kits.
+
+### 16.1 Families and agents
+
+| Agent | Pages | Kits to reuse |
+|---|---|---|
+| 7A Searching and sorting | interpolation-search, exponential-search, ternary-search, comb-sort, gnome-sort, introsort, timsort, bitonic-sort | `_sorting`, bars |
+| 7B Balanced and augmented trees | cartesian-tree, scapegoat-tree, aa-tree, interval-tree, persistent-bst | `_bst`, binary-tree layout |
+| 7C Spatial and geometry | kd-tree, quadtree, closest-pair, segment-intersection, delaunay | plane layout, geometry pages |
+| 7D Heaps and odd trees | d-ary-heap, min-max-heap, pairing-heap, rope, merkle-tree | heap, forest, binary-tree layouts, `_meld` |
+| 7E Hashing and sketches | bloom-filter, cuckoo-hashing, robin-hood-hashing, consistent-hashing, count-min-sketch, hyperloglog | `_hashing` |
+| 7F Strings | z-algorithm, aho-corasick, manacher, burrows-wheeler, lz-compression | `_strings`, align, trie layouts |
+| 7G Graphs | euler-path, graph-coloring, bidirectional-search, boruvka, johnson, lca, pagerank | `_graph`, graph layout |
+| 7H Dynamic programming and greedy | dp-lis, dp-rod-cutting, dp-subset-sum, dp-matrix-chain, dp-palindrome, activity-selection, interval-partitioning, fractional-knapsack | `_dp`, table layouts |
+| 7I Numbers, divide and conquer, randomized | euclid, mod-pow, sieve, rsa, karatsuba, fft, fisher-yates, reservoir-sampling | table, bars, calls layouts |
+| 7J Computation | cfg-to-cnf, ll1-parsing, lr0-parsing, lba, rice-theorem | `_grammar`, `_automata`, `_turing` |
+
+### 16.2 Order
+
+Four agents at a time (the machine slows past that), after the small-text agents of 8 November
+finish: 7A, 7E, 7G, 7H; then 7B, 7F, 7I, 7J; then 7C, 7D. The lead merges each family with
+`--no-ff`, runs conformance 10 times on its pages, the full suites, and pushes `next`; the daily
+deploy publishes.
+
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 
 | Page | Controls |

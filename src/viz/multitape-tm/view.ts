@@ -12,7 +12,8 @@
  * grows; a longer tape shows the window around S's head.
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
-import { fitScore, padBounds, placePanels, textWidth, unionBounds } from '../../layouts/graph';
+import { pickBest } from '../../layouts/arrange';
+import { padBounds, placePanels, textWidth, unionBounds } from '../../layouts/graph';
 import { CELL_H, CELL_W, drawTape, tapeWindow } from '../../layouts/tape';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import {
@@ -350,17 +351,17 @@ export function view(step: Step<MtState, MtExtra>, settings: MtSettings, stage?:
   y += 16;
   const main: Bounds = { x: -LABEL_W, y: 0, w: tapeW + LABEL_W, h: y };
 
-  // The rules, beside or under, in the number of columns that draws everything largest.
-  let best: { shapes: Shape[]; at: Bounds; score: number } | null = null;
+  // The rules in 1 to 3 columns, beside or under: fewer columns unless more draw clearly larger.
+  const candidates: { shapes: Shape[]; bounds: Bounds }[] = [];
   for (let cols = 1; cols <= Math.min(3, m.lines.length); cols++) {
     const scratch: Shape[] = [];
     const at = placePanels(scratch, main, stage, (out, x, yy) =>
       drawRules(out, m, x, yy, roles, cols),
     );
-    const score = fitScore(padBounds(unionBounds(main, at), 14), stage);
-    if (!best || score > best.score * 1.05) best = { shapes: scratch, at, score };
+    candidates.push({ shapes: scratch, bounds: unionBounds(main, at) });
   }
-  shapes.push(...best!.shapes);
+  const best = pickBest(candidates, stage);
+  shapes.push(...best.shapes);
   const label = `${describe(state)}${c ? ` Status: ${st.text}. Single tape: ${sst.text}.` : ''}`;
-  return { shapes, bounds: padBounds(unionBounds(main, best!.at), 14), label };
+  return { shapes, bounds: padBounds(best.bounds, 14), label };
 }

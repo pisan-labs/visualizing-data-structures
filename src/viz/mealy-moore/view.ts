@@ -14,12 +14,13 @@
  * placePanels finds room, whichever draws largest (pickBest). Every frame comes from the
  * loaded machine, its conversion and the word's length, so it holds still through an operation.
  */
+import { pickBest } from '../../layouts/arrange';
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { layers, layoutFromLayers, layoutStates, type StateLayout } from '../../layouts/automaton';
 import { below, beside, padBounds, placePanels, translate, unionBounds } from '../../layouts/graph';
 import { CELL_H, CELL_W, tapeWindow } from '../../layouts/tape';
 import type { Bounds, Scene, Shape } from '../../render/scene';
-import { TAPE_CELLS, drawInputTape, pickBest, tapeCells } from '../_automata/panels';
+import { TAPE_CELLS, drawInputTape, tapeCells } from '../_automata/panels';
 import { drawMachine, drawOutputTape, OUT_CAPTION } from './draw';
 import {
   convert,

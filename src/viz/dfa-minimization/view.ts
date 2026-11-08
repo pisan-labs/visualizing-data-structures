@@ -14,6 +14,7 @@
  * DFA sit side by side or one under the other, under or beside the DFA, whichever draws
  * largest on the stage. The choice is made from the finished sizes, so it holds through a run.
  */
+import { pickBest } from '../../layouts/arrange';
 import { groupRole, type MarkRole, type StageSize, type Step } from '../../engine/types';
 import {
   drawAutomaton,
@@ -41,7 +42,7 @@ import {
   type Automaton,
 } from '../_automata/automaton';
 import { automatonKey } from '../_automata/page';
-import { drawGrid, gridWidths, pickBest } from '../_automata/panels';
+import { drawGrid, gridWidths } from '../_automata/panels';
 import {
   MIN_PREFIX,
   describe,

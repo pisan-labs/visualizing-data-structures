@@ -12,6 +12,7 @@
  * it or under it, whichever draws largest on the stage. The choice and the table's room are
  * worked out from the whole run (every step's diagram and table), so nothing jumps during it.
  */
+import { pickBest } from '../../layouts/arrange';
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { makeRng } from '../../engine/rng';
 import {
@@ -33,7 +34,6 @@ import {
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import type { Automaton } from '../_automata/automaton';
 import { automatonKey } from '../_automata/page';
-import { pickBest } from '../_automata/panels';
 import { endNames, type Gnfa } from './gnfa';
 import {
   arrowKey,

@@ -7,12 +7,12 @@
  * and lists the path under the matrices. A plain state draws just the graph.
  */
 import type { MarkRole, Step, StageSize } from '../../engine/types';
+import { pickBest } from '../../layouts/arrange';
 import {
   below,
   beside,
   drawGraph,
   drawRow,
-  fitScore,
   layoutGraph,
   padBounds,
   placePanels,
@@ -209,15 +209,17 @@ export function view(step: Step<FwState, FwExtra>, settings: FwSettings, stage?:
         }
         return unionBounds(...parts);
       };
-    let best: { score: number; shapes: Shape[]; bounds: Bounds } | null = null;
-    for (const stacked of [false, true]) {
-      const out: Shape[] = [];
-      const bounds = placePanels(out, drawn.bounds, stage, block(stacked));
-      const score = fitScore(padBounds(unionBounds(drawn.bounds, bounds), 14), stage);
-      if (!best || score > best.score * 1.05) best = { score, shapes: out, bounds };
-    }
-    shapes.push(...best!.shapes);
-    boxes.push(best!.bounds);
+    // The matrices side by side, or D over Π if that draws clearly larger.
+    const best = pickBest(
+      [false, true].map((stacked) => {
+        const out: Shape[] = [];
+        const at = placePanels(out, drawn.bounds, stage, block(stacked));
+        return { shapes: out, at, bounds: unionBounds(drawn.bounds, at) };
+      }),
+      stage,
+    );
+    shapes.push(...best.shapes);
+    boxes.push(best.at);
   }
   const label = r ? `${describe(state)} ${describeRun(g, r, p)}` : describe(state);
   return { shapes, bounds: padBounds(unionBounds(...boxes), 14), label };

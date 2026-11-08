@@ -27,6 +27,10 @@
  * Free drawings: `drawNode`, `drawLink`, `straightLink` and `pointerLabel` draw the same parts at
  * positions the caller chooses (a cycle drawn as a ring, the levels of a skip list).
  *
+ * Shared parts: `fieldOffsets` (where a node's fields start, for any field sizes), `nullText`
+ * and `pointerText`. node-chain.ts, the simpler chain for the stack, queue and deque pages,
+ * draws its nodes with them at its own sizes.
+ *
  * Shape ids, for marks (pass the step's marks in as `roles`):
  * - node box `id`, value text `${id}.v`;
  * - the link out of field f of node id: `${id}.${f}`, for example `n7.next`. That is the
@@ -149,9 +153,82 @@ const Z_DOT = 1.6;
 export const pointerId = (name: string) => `p:${name}`;
 export const linkId = (node: string, field: Field) => `${node}.${field}`;
 
-export function nodeWidth(kind: NodeKind): number {
-  const s = NODE[kind];
-  return kind === 'double' ? s.value + 2 * s.field : s.value + s.field;
+/** Field widths of a node: `value` for the value field, `field` for each pointer field. */
+export interface FieldSizes {
+  value: number;
+  field: number;
+}
+
+/** A node's width; `size` defaults to this layout's (node-chain.ts passes its own). */
+export function nodeWidth(kind: NodeKind, size: FieldSizes = NODE[kind]): number {
+  return kind === 'double' ? size.value + 2 * size.field : size.value + size.field;
+}
+
+/**
+ * Where a node's fields start, measured from its left edge: [value | next] (`single`),
+ * [prev | value | next] (`double`) or the value alone (`plain`), with the pointer fields
+ * swapped when `flipped`. A field the node lacks is null; `dividers` are the lines between
+ * fields. node-chain.ts uses it with its own sizes.
+ */
+export function fieldOffsets(
+  kind: NodeKind,
+  size: FieldSizes = NODE[kind],
+  flipped = false,
+): { value: number; next: number | null; prev: number | null; dividers: number[] } {
+  if (kind === 'plain') return { value: 0, next: null, prev: null, dividers: [] };
+  if (kind === 'single') {
+    const value = flipped ? size.field : 0;
+    return {
+      value,
+      next: flipped ? 0 : size.value,
+      prev: null,
+      dividers: [flipped ? size.field : size.value],
+    };
+  }
+  const right = size.field + size.value;
+  return {
+    value: size.field,
+    next: flipped ? 0 : right,
+    prev: flipped ? right : 0,
+    dividers: [size.field, right],
+  };
+}
+
+/** The word "null" centred at (cx, cy), where a null named pointer points. */
+export function nullText(id: string, cx: number, cy: number, role?: MarkRole): Shape {
+  return {
+    kind: 'text',
+    id,
+    x: cx,
+    y: cy + 5,
+    text: 'null',
+    size: 14,
+    anchor: 'middle',
+    mono: true,
+    cls: 'label',
+    role,
+  };
+}
+
+/** A named pointer's label, its baseline at y. */
+export function pointerText(
+  id: string,
+  name: string,
+  x: number,
+  y: number,
+  role?: MarkRole,
+): Shape {
+  return {
+    kind: 'text',
+    id,
+    x,
+    y,
+    text: name,
+    size: LABEL_SIZE,
+    anchor: 'middle',
+    mono: true,
+    role,
+  };
 }
 
 /** Font size for a value, so up to five characters fit in the value field. */
@@ -160,20 +237,8 @@ export function valueFontSize(text: string): number {
 }
 
 /** Left edge of a field inside its node, or null if the node has no such field. */
-function fieldLeft(kind: NodeKind, flipped: boolean, field: Field): number | null {
-  const s = NODE[kind];
-  if (kind === 'plain') return null;
-  if (kind === 'single') return field === 'prev' ? null : flipped ? 0 : s.value;
-  const right = s.field + s.value;
-  if (field === 'next') return flipped ? 0 : right;
-  return flipped ? right : 0;
-}
-
-/** Left edge of the value field inside its node. */
-function valueLeft(kind: NodeKind, flipped: boolean): number {
-  if (kind === 'single') return flipped ? NODE.single.field : 0;
-  return kind === 'double' ? NODE.double.field : 0;
-}
+const fieldLeft = (kind: NodeKind, flipped: boolean, field: Field): number | null =>
+  fieldOffsets(kind, NODE[kind], flipped)[field];
 
 /**
  * Where an arrow leaves a field (the dot) and which way it naturally goes. In doubly linked
@@ -212,12 +277,7 @@ export function drawNode(node: ChainNode, box: Box, kind: NodeKind, roles: Roles
       opacity: faded,
     },
   ];
-  const dividers =
-    kind === 'single'
-      ? [flipped ? s.field : s.value]
-      : kind === 'double'
-        ? [s.field, s.field + s.value]
-        : [];
+  const { value: valueLeft, dividers } = fieldOffsets(kind, s, flipped);
   dividers.forEach((dx, i) =>
     shapes.push({
       kind: 'arrow',
@@ -232,7 +292,7 @@ export function drawNode(node: ChainNode, box: Box, kind: NodeKind, roles: Roles
       z: 1.2,
     }),
   );
-  const vx = box.x + valueLeft(kind, flipped) + s.value / 2;
+  const vx = box.x + valueLeft + s.value / 2;
   shapes.push({
     kind: 'text',
     id: `${node.id}.v`,
@@ -366,17 +426,7 @@ export function pointerLabel(name: string, at: Pt, target: Pt, roles: Roles): Sh
   const labelBox = { x: at.x - w / 2 - 3, y: at.y - 13, w: w + 6, h: 18 };
   const from = boxExit(labelBox, target);
   return [
-    {
-      kind: 'text',
-      id: pointerId(name),
-      x: at.x,
-      y: at.y,
-      text: name,
-      size: LABEL_SIZE,
-      anchor: 'middle',
-      mono: true,
-      role,
-    },
+    pointerText(pointerId(name), name, at.x, at.y, role),
     {
       kind: 'arrow',
       id: `${pointerId(name)}:a`,
@@ -608,36 +658,15 @@ export function drawChain(spec: ChainSpec, roles: Roles): ChainScene {
     g.names.push(ptr.name);
     groups.set(`${key}|${ptr.side}`, g);
   }
-  for (const [key, b] of nullSpots) {
-    shapes.push({
-      kind: 'text',
-      id: key,
-      x: b.x + b.w / 2,
-      y: b.y + b.h / 2 + 5,
-      text: 'null',
-      size: 14,
-      anchor: 'middle',
-      mono: true,
-      cls: 'label',
-    });
-  }
+  for (const [key, b] of nullSpots) shapes.push(nullText(key, b.x + b.w / 2, b.y + b.h / 2));
   for (const g of groups.values()) {
     const above = g.side === 'above';
     const cx = g.target.x + g.target.w / 2;
     const edge = above ? g.target.y - 1 : g.target.y + g.target.h + 1;
     const textY = above ? g.target.y - 22 : g.target.y + g.target.h + 33;
     const arrowY = above ? g.target.y - 18 : g.target.y + g.target.h + 19;
-    const label = (name: string, x: number, y: number): Shape => ({
-      kind: 'text',
-      id: pointerId(name),
-      x,
-      y,
-      text: name,
-      size: LABEL_SIZE,
-      anchor: 'middle',
-      mono: true,
-      role: roles.get(pointerId(name)),
-    });
+    const label = (name: string, x: number, y: number): Shape =>
+      pointerText(pointerId(name), name, x, y, roles.get(pointerId(name)));
     const arrow = (name: string, x1: number, x2: number, role?: MarkRole): Shape => ({
       kind: 'arrow',
       id: `${pointerId(name)}:a`,

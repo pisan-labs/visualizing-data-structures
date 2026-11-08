@@ -250,6 +250,17 @@ export function barsGeometry(frame: BarsFrame): BarsGeometry {
   };
 }
 
+/**
+ * The y of the top of a bar of value v in a row (bars mode), for views that draw over the bars.
+ * Uses the same scale as `barsScene`.
+ */
+export function barTop(g: BarsGeometry, max: number, v: number, row = 'a'): number {
+  const m = Math.max(1, max);
+  return (
+    g.row(row).bottom - (MIN_BAR + (Math.max(0, Math.min(v, m)) / m) * (g.barHeight - MIN_BAR))
+  );
+}
+
 /** Assign labels to the first lane where they do not overlap; returns the lane per label. */
 function placeLabels(spans: { x: number; w: number }[], lanes: number): number[] {
   const used: [number, number][][] = Array.from({ length: Math.max(1, lanes) }, () => []);

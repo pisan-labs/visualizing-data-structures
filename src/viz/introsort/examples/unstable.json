@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "introsort",
+  "id": "unstable",
+  "title": "Equal values can change order",
+  "notes": "Two 40s. Partitioning swaps values across long distances, so equal values can pass each other. Introsort is not stable.",
+  "settings": {
+    "pivot": "median3",
+    "depth": "twice",
+    "small": 3,
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [["load", "40 70 40 10 60 20 90"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

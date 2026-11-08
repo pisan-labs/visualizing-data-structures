@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "timsort",
+  "id": "short-runs",
+  "title": "Random values: short runs grow to minrun",
+  "notes": "Random values make runs of two or three. Each is extended to minrun = 4 with binary insertion sort, then the stack decides when to merge.",
+  "settings": {
+    "minrun": 4,
+    "gallop": true,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "57 12 88 34 71 5 46 93 21 64 39 80 27 50 16 75"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

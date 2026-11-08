@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "bitonic-sort",
+  "id": "sorted",
+  "title": "Sorted input: every comparator still runs",
+  "notes": "The network is fixed, so sorted input costs exactly as much as any other: 24 comparisons, no swaps. That is what makes it easy to build in hardware.",
+  "settings": {
+    "network": "flip"
+  },
+  "seed": 1,
+  "ops": [["load", "5 11 17 23 29 35 41 47"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

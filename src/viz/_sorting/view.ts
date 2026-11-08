@@ -3,8 +3,14 @@
  * call stack and held value, drawn with the bars layout (src/layouts/bars.ts).
  */
 import type { MarkRole } from '../../engine/types';
-import { barsScene, type BarsFrame, type BarsRow } from '../../layouts/bars';
-import type { Scene } from '../../render/scene';
+import {
+  barsGeometry,
+  barsScene,
+  type BarsFrame,
+  type BarsGeometry,
+  type BarsRow,
+} from '../../layouts/bars';
+import type { Scene, Shape } from '../../render/scene';
 import type { ArrayState, ArrayStep, Draw, Item } from './kit';
 
 /** Lanes a page reserves, so the frame stays the same for every step. */
@@ -25,7 +31,18 @@ const live = (x: Item | null | undefined): x is Item => !!x && !x.stale;
 const ghostsOf = (items: readonly (Item | null)[]) =>
   items.flatMap((x, index) => (x && x.stale ? [{ index, value: x.value }] : []));
 
-export function arrayView(step: ArrayStep, draw: Draw, layout: PageLayout = {}): Scene {
+/**
+ * Shapes a page draws over the array (interpolation search's straight line), placed with the
+ * same geometry and frame as the bars. Optional; pages without one draw exactly as before.
+ */
+export type Overlay = (g: BarsGeometry, frame: BarsFrame) => Shape[];
+
+export function arrayView(
+  step: ArrayStep,
+  draw: Draw,
+  layout: PageLayout = {},
+  overlay?: Overlay,
+): Scene {
   const { state, extra = {} } = step;
   const n = state.a.length;
   const slots = n + (layout.sentinel ? 1 : 0);
@@ -74,7 +91,8 @@ export function arrayView(step: ArrayStep, draw: Draw, layout: PageLayout = {}):
     faded: extra.faded,
     roles,
   });
-  return { shapes, bounds, label: describeStep(step) };
+  const more = overlay ? overlay(barsGeometry(frame), frame) : [];
+  return { shapes: [...shapes, ...more], bounds, label: describeStep(step) };
 }
 
 /** Screen-reader summary of the array. */

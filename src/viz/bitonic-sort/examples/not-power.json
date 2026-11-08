@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "bitonic-sort",
+  "id": "not-power",
+  "title": "Six values: not a power of two",
+  "notes": "The network only exists for 2, 4, 8, 16 wires. Load 8 values, or pad with big values that sink to the end.",
+  "settings": {
+    "network": "flip"
+  },
+  "seed": 1,
+  "ops": [["load", "42 17 63 8 35 24"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

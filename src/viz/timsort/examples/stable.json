@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "timsort",
+  "id": "stable",
+  "title": "Equal values keep their order",
+  "notes": "Three 5s and two 8s. Falling runs are reversed only when they strictly fall, and tmp wins ties in a merge, so equal values never pass each other.",
+  "settings": {
+    "minrun": 4,
+    "gallop": true,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "8 5 9 5 2 8 7 5 1 6"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

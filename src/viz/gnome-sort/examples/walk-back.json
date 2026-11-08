@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "gnome-sort",
+  "id": "walk-back",
+  "title": "A small value walks home, then the gnome walks back",
+  "notes": "5 starts at the end and is swapped all the way to the front. Then the gnome walks forward again over the sorted part, comparing every pair a second time.",
+  "settings": {
+    "jump": false,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "20 30 40 50 60 5"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

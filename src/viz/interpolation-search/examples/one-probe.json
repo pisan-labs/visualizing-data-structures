@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "interpolation-search",
+  "id": "one-probe",
+  "title": "Evenly spread values: one probe",
+  "notes": "55 sits about halfway between 5 and 96, so the first guess is A[6], and that is 55. Binary search needs 3 probes for the same value.",
+  "settings": {
+    "guide": true,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "5 13 21 30 38 46 55 63 71 80 88 96"],
+    ["search", 55]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

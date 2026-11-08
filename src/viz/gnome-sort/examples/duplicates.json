@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "gnome-sort",
+  "id": "duplicates",
+  "title": "Equal values stay in order",
+  "notes": "Two 31s and two 18s. The gnome swaps only when the left pot is strictly bigger, so equal values never pass each other. Gnome sort is stable.",
+  "settings": {
+    "jump": false,
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [["load", "31 18 44 31 7 18"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

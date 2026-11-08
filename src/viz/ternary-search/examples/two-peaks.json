@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "ternary-search",
+  "id": "two-peaks",
+  "title": "Two peaks: no single answer",
+  "notes": "These values rise, fall and rise again. Comparing two points can no longer say which side the highest peak is on, so the page refuses and points at the second climb.",
+  "settings": {
+    "goal": "max",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "10 40 25 15 50 80 30"], ["max"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

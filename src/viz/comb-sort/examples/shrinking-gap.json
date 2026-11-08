@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "comb-sort",
+  "id": "shrinking-gap",
+  "title": "Gaps of 9, 6, 4, 3, 2, 1",
+  "notes": "Twelve values. The gap shrinks by 1.3 each pass; once it reaches 1, plain bubble passes finish the job.",
+  "settings": {
+    "shrink": "1.3",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "57 12 88 34 71 5 46 93 21 64 39 80"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

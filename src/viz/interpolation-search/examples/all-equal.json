@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "interpolation-search",
+  "id": "all-equal",
+  "title": "Every value the same",
+  "notes": "When A[lo] = A[hi] the formula would divide by zero. The check before it sees that the whole window is one value, so x is that value.",
+  "settings": {
+    "guide": true,
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "7 7 7 7 7 7"],
+    ["search", 7]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

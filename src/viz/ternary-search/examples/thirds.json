@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "ternary-search",
+  "id": "thirds",
+  "title": "Two points, three thirds",
+  "notes": "Each round looks at m1 and m2, a third and two thirds of the way across, and keeps one third of the window. 58 takes the middle third, then the right third, and then one value is left.",
+  "settings": {
+    "goal": "value",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "4 9 15 22 27 33 40 46 51 58 64 71 77 85 92"],
+    ["search", 58]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

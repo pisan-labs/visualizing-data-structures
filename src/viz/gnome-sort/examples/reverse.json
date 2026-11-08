@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "gnome-sort",
+  "id": "reverse",
+  "title": "Reverse sorted: every pot walks home",
+  "notes": "The worst case. Each new value is the smallest so far and is swapped all the way to the front: n(n - 1)/2 swaps, and the gnome walks back over every one of them.",
+  "settings": {
+    "jump": false,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "60 50 40 30 20 10"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

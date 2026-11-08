@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "timsort",
+  "id": "sorted",
+  "title": "Sorted input: one run, no merges",
+  "notes": "The best case. The whole array is one natural run: n - 1 comparisons and done.",
+  "settings": {
+    "minrun": 4,
+    "gallop": true,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "4 9 15 22 27 33 40 46 51 58 64 71 77 85 92"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

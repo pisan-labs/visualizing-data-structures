@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "interpolation-search",
+  "id": "just-short",
+  "title": "A guess just short",
+  "notes": "The straight line from 5 to 96 puts 71 at 7.98, which rounds down to A[7] = 63. The window shrinks to A[8..11], and the second guess lands right on 71.",
+  "settings": {
+    "guide": true,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "5 13 21 30 38 46 55 63 71 80 88 96"],
+    ["search", 71]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

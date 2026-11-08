@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "introsort",
+  "id": "typical",
+  "title": "Random values: quicksort does all the work",
+  "notes": "Twelve values in random order. Median-of-3 pivots split them well, the calls stay far within the budget of 6, and insertion sort finishes the small parts. Heap sort never runs.",
+  "settings": {
+    "pivot": "median3",
+    "depth": "twice",
+    "small": 3,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "57 12 88 34 71 5 46 93 21 64 39 80"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

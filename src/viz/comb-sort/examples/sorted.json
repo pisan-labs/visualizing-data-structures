@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "comb-sort",
+  "id": "sorted",
+  "title": "Sorted input still pays for every gap",
+  "notes": "No swaps at all, but comb sort cannot know that until it has run a pass for every gap down to 1. Bubble sort stops after one pass.",
+  "settings": {
+    "shrink": "1.3",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "11 23 35 47 59 71 83 95"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

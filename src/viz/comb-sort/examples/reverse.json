@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "comb-sort",
+  "id": "reverse",
+  "title": "Reverse sorted: the big gaps do most of the work",
+  "notes": "Bubble sort needs a swap for every one of the 45 out-of-order pairs. Comb sort's long swaps fix many pairs at once.",
+  "settings": {
+    "shrink": "1.3",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "90 80 70 60 50 40 30 20 10 5"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

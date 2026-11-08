@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "ternary-search",
+  "id": "peak-at-end",
+  "title": "Only rising: the peak is the last value",
+  "notes": "A sorted array is unimodal too, with its peak at the end. Every round sees A[m1] < A[m2] and drops the left third.",
+  "settings": {
+    "goal": "max",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "3 8 14 20 27 35 44 52 61 70"], ["max"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

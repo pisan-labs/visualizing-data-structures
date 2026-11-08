@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "comb-sort",
+  "id": "halving",
+  "title": "Shrink by 2: even gaps never mix the halves",
+  "notes": "Small values sit in the even slots and big ones in the odd slots. Halving gives gaps 8, 4 and 2, all even, so no pass compares an even slot with an odd one and nothing moves. Gap-1 passes then do all the work: 11 passes and 154 comparisons. Shrinking by 1.3 takes 8 passes and 90.",
+  "settings": {
+    "shrink": "2",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "10 55 15 60 20 65 25 70 30 75 35 80 40 85 45 90"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "gnome-sort",
+  "id": "sorted",
+  "title": "Sorted input: one walk, n - 1 comparisons",
+  "notes": "The best case. Every pot is in order, so the gnome walks straight to the end.",
+  "settings": {
+    "jump": false,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "11 23 35 47 59 71 83"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -18,6 +18,7 @@
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { fitScore, padBounds, unionBounds } from '../../layouts/graph';
+import { textWidth, wrapText } from '../../layouts/text';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { BUTTONS_DROP, drawRules, ruleRows } from '../_grammar/draw';
 import { LANGUAGE, type LangId } from './languages';
@@ -69,28 +70,6 @@ const PANEL_W = [330, 270];
 const PANEL_MIN = 300;
 const PANEL_MAX = 460;
 
-/**
- * Text width, a little wider than the shared estimate: CI's font (DejaVu Sans) is wide, and a
- * label that spills out of its band would cross the region's edge. Nothing on the map is placed
- * right after a text, so a narrower font only leaves more room.
- */
-const tw = (text: string, size: number, bold = false) => text.length * size * (bold ? 0.66 : 0.61);
-
-/** Words wrapped into lines no wider than maxW. */
-function wrap(text: string, maxW: number, size: number, bold = false): string[] {
-  const lines: string[] = [];
-  let line = '';
-  for (const word of text.split(' ')) {
-    const next = line ? `${line} ${word}` : word;
-    if (line && tw(next, size, bold) > maxW) {
-      lines.push(line);
-      line = word;
-    } else line = next;
-  }
-  if (line) lines.push(line);
-  return lines;
-}
-
 // ---------------------------------------------------------------------------------------------
 // The map
 
@@ -123,7 +102,12 @@ interface MapGeom {
   bounds: Bounds;
 }
 
-const tokenW = (label: string) => Math.max(36, tw(label, TOKEN_SIZE, true) + 14);
+/**
+ * A token's pill. Short labels of wide letters run past the bold estimate in DejaVu Sans ("ww"
+ * 0.92 of the size, "HALT" 0.69, against 0.64): the 14 of padding and the 36 minimum keep them
+ * inside, with 5 to spare on each side.
+ */
+const tokenW = (label: string) => Math.max(36, textWidth(label, TOKEN_SIZE, false, true) + 14);
 const GRAMMAR_LABEL = 'L(G)';
 /** Each grammar level's region has a slot for L(G); the token itself has one id. */
 const grammarSlot = (r: RegionId) => `${GRAMMAR_TOKEN}@${r}`;
@@ -175,7 +159,10 @@ function packRows(slots: readonly Slot[], maxW: number): Slot[][] {
 function oneLineWidth(list: Band[]): number {
   return Math.max(
     ...list.map((b, depth) => {
-      const head = Math.max(tw(b.title, TITLE_SIZE, true), tw(b.detail, DETAIL_SIZE));
+      const head = Math.max(
+        textWidth(b.title, TITLE_SIZE, false, true),
+        textWidth(b.detail, DETAIL_SIZE),
+      );
       const toks = depth === 0 ? 0 : rowWidth(b.slots);
       return 2 * depth * INSET + 2 * PAD + head + (toks ? GAP + toks : 0);
     }),
@@ -186,8 +173,9 @@ function oneLineWidth(list: Band[]): number {
 function minWidth(list: Band[]): number {
   return Math.max(
     ...list.map((b, depth) => {
-      const words = b.detail.split(' ').map((w) => tw(w, DETAIL_SIZE));
-      const widest = Math.max(tw(b.title, TITLE_SIZE, true), ...words, ...b.slots.map((s) => s.w));
+      const words = b.detail.split(' ').map((w) => textWidth(w, DETAIL_SIZE));
+      const title = textWidth(b.title, TITLE_SIZE, false, true);
+      const widest = Math.max(title, ...words, ...b.slots.map((s) => s.w));
       return 2 * depth * INSET + 2 * PAD + widest;
     }),
   );
@@ -217,11 +205,14 @@ function layoutMap(list: Band[], W: number): MapGeom {
     const avail = right - left;
     const top = y + 4;
     const outer = depth === 0;
-    const titleW = tw(band.title, TITLE_SIZE, true);
+    const titleW = textWidth(band.title, TITLE_SIZE, false, true);
     const toks = rowWidth(band.slots);
-    const lines = (maxW: number) => (band.detail ? wrap(band.detail, maxW, DETAIL_SIZE) : []);
+    const lines = (maxW: number) => (band.detail ? wrapText(band.detail, maxW, DETAIL_SIZE) : []);
     const headH = (n: number) => TITLE_LINE + n * DETAIL_LINE;
-    const widest = Math.max(titleW, ...band.detail.split(' ').map((t) => tw(t, DETAIL_SIZE)));
+    const widest = Math.max(
+      titleW,
+      ...band.detail.split(' ').map((t) => textWidth(t, DETAIL_SIZE)),
+    );
     // Tokens beside the name (the detail wrapping short of them), or in rows under it, whichever
     // is shorter. The outer box keeps its tokens for a row at the bottom.
     let detail = lines(avail);
@@ -333,7 +324,7 @@ function checkLines(
   const longest = Math.max(
     ...heads
       .flatMap((h) => [h.final, h.checking])
-      .map((t) => wrap(t, width, HEAD_SIZE, true).length),
+      .map((t) => wrapText(t, width, HEAD_SIZE, { bold: true }).length),
   );
   g.result.checks.forEach((c, k) => {
     if (compact && k !== g.at) return;
@@ -344,8 +335,8 @@ function checkLines(
     // Room for the longer of the two, so the panel keeps its size as the check ends.
     const room = compact
       ? Array.from({ length: longest })
-      : wrap(head.length > final.length ? head : final, width, HEAD_SIZE, true);
-    const drawn = wrap(head, width, HEAD_SIZE, true);
+      : wrapText(head.length > final.length ? head : final, width, HEAD_SIZE, { bold: true });
+    const drawn = wrapText(head, width, HEAD_SIZE, { bold: true });
     room.forEach((_, i) => {
       out.push({
         id: i === 0 ? checkId(k) : `${checkId(k)}-${i}`,
@@ -361,7 +352,7 @@ function checkLines(
     });
     const reason = fits ? '' : c.short;
     if (reason && !compact) {
-      for (const [i, line] of wrap(reason, width - 16, BODY_SIZE).entries()) {
+      for (const [i, line] of wrapText(reason, width - 16, BODY_SIZE).entries()) {
         out.push({
           id: `${checkId(k)}-why-${i}`,
           dx: 16,
@@ -395,7 +386,7 @@ function claimLines(
   const lang = LANGUAGE.get(id)!;
   const out: PanelText[] = [];
   let dy = 0;
-  wrap(lang.title, width, HEAD_SIZE + 1, true).forEach((line, i) => {
+  wrapText(lang.title, width, HEAD_SIZE + 1, { bold: true }).forEach((line, i) => {
     out.push({
       id: i === 0 ? 'lang-title' : `lang-title-${i}`,
       dx: 0,
@@ -423,7 +414,7 @@ function claimLines(
     });
     dy += BODY_LINE + 2;
     if (!compact) {
-      for (const [i, line] of wrap(c.short, width - 16, BODY_SIZE).entries()) {
+      for (const [i, line] of wrapText(c.short, width - 16, BODY_SIZE).entries()) {
         out.push({
           id: `${claimId(k)}-why-${i}`,
           dx: 16,
@@ -441,7 +432,7 @@ function claimLines(
   const out1 = lang.claims.find((c) => c.kind === 'out');
   const home = lang.home === 'all' ? 'outside every level' : lower(lang.home, settings);
   const not = out1 && lang.home !== 'all' ? `, not ${lower(out1.region, settings)}` : '';
-  wrap(`So: ${home}${not}`, width, HEAD_SIZE, true).forEach((line, i) => {
+  wrapText(`So: ${home}${not}`, width, HEAD_SIZE, { bold: true }).forEach((line, i) => {
     out.push({
       id: i === 0 ? 'lang-verdict' : `lang-verdict-${i}`,
       dx: 0,
@@ -465,7 +456,7 @@ interface Panel {
 }
 
 function textPanel(lines: PanelText[], roles: ReadonlyMap<string, MarkRole>): Panel {
-  const w = Math.max(...lines.map((l) => l.dx + tw(l.text, l.size, l.bold)), 0);
+  const w = Math.max(...lines.map((l) => l.dx + textWidth(l.text, l.size, false, l.bold)), 0);
   const h = Math.max(...lines.map((l) => l.dy + l.size * 0.35), 0);
   return {
     w,

@@ -191,6 +191,16 @@ export function configurations(m: MachineDef, n: number): number {
 
 const big = (x: number) => (x < 1e6 ? String(x) : x.toExponential(1).replace('e+', '×10^'));
 
+/**
+ * What to say when a run hits the move cap. CAP moves pass through CAP + 1 configurations, so
+ * one must repeat only when the word allows at most CAP of them.
+ */
+export function capSay(count: number): string {
+  return count <= CAP
+    ? `Still running after ${CAP} moves. This word allows only ${count} configurations (see Variables), and ${CAP} moves pass through ${CAP + 1}, so one repeats: it loops, and we can say so.`
+    : `Still running after ${CAP} moves, so we stop and reject. That proves nothing yet: this word allows ${big(count)} configurations (see Variables), so only a run longer than that must repeat one.`;
+}
+
 export function vars(s: S): Record<string, Scalar> {
   const m = machineOf(s);
   if (s.word === null) return { states: m.states.length, 'tape symbols': m.symbols.length + 2 };
@@ -334,7 +344,7 @@ const run: Op = {
           state,
           marks: [mark('status', 'error'), mark('tape-head', 'error')],
           say: capped
-            ? `Still running after ${CAP} moves. An LBA has only so many configurations, so a run this long must repeat one: it loops, and we can say so.`
+            ? capSay(configurations(m, n))
             : `${prev.q} reads ${sym(a)} and there is no rule for that: reject ${w || 'ε'} after ${plural(prev.moves, 'move')}.`,
           lines: ['run.none'],
           vars: vars(state),

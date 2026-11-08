@@ -1,5 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
@@ -348,5 +350,13 @@ describe('huffman practice', () => {
         expect(q.watch!.length).toBeGreaterThan(0);
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // The table's headers were 12 units (10.3 px on a laptop): now 13.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(huffman, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(huffman, PHONE_STAGE).px).toBeGreaterThanOrEqual(11);
   });
 });

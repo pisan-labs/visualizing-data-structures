@@ -7,6 +7,8 @@ import { parseGraph } from '../_graph/parse';
 import type { Graph } from '../_graph/graph';
 import { bfs } from '.';
 import { pseudocode, type BfsRun, type BfsSettings } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: a plain BFS over sorted adjacency lists, written independently of the page.
@@ -223,5 +225,13 @@ describe('BFS practice', () => {
         }
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // A path's spring layout runs across: 6.7 px on a phone, until it could turn to run down.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(bfs, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(bfs, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

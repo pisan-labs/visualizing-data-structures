@@ -12,12 +12,15 @@ import {
   drawRow,
   drawTable,
   layoutGraph,
+  layoutsFor,
   padBounds,
   placePanels,
   unionBounds,
   vertexId,
   type VertexLook,
+  type GraphLayout,
 } from '../../layouts/graph';
+import { pickLayout } from '../../layouts/arrange';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import type { Graph } from '../_graph/graph';
 import {
@@ -57,6 +60,19 @@ function look(r: CcRun, v: string): VertexLook | undefined {
 }
 
 export function view(step: Step<CcState, CcExtra>, settings: CcSettings, stage?: StageSize): Scene {
+  const layout = layoutGraph(step.state.graph, settings.layout);
+  return pickLayout(
+    stage,
+    layoutsFor(layout, settings.layout, stage).map((l) => draw(step, settings, l, stage)),
+  );
+}
+
+function draw(
+  step: Step<CcState, CcExtra>,
+  settings: CcSettings,
+  layout: GraphLayout,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const r = extra.run;
@@ -75,7 +91,6 @@ export function view(step: Step<CcState, CcExtra>, settings: CcSettings, stage?:
   }
   for (const [id, role] of marks) roles.set(id, role);
 
-  const layout = layoutGraph(g, settings.layout);
   const drawn = drawGraph(g, layout, {
     roles,
     vertex: r && ((v) => look(r, v)),

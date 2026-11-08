@@ -597,6 +597,30 @@ export function scaleLayout(layout: GraphLayout, k: number): GraphLayout {
   return { pos, r: layout.r, bounds: boxOf(Object.values(pos), layout.r) };
 }
 
+/** The same layout turned on its side: x and y swap, so a row of vertices becomes a column. */
+export function turnLayout(layout: GraphLayout): GraphLayout {
+  const pos: Record<string, Pt> = {};
+  for (const [v, p] of Object.entries(layout.pos)) pos[v] = { x: p.y, y: p.x };
+  return { pos, r: layout.r, bounds: boxOf(Object.values(pos), layout.r) };
+}
+
+/**
+ * The layouts a view may draw a graph with on this stage: the layout, and for a spring layout
+ * (whose direction means nothing) that is clearly longer one way than the other, the same layout
+ * turned on its side. A long path drawn across a laptop then runs down a phone. With no stage,
+ * only the layout, so thumbnails and practice pictures stay as they are. The view draws each
+ * and keeps the one drawn largest (pickLayout in arrange.ts).
+ */
+export function layoutsFor(
+  layout: GraphLayout,
+  template: GraphTemplate,
+  stage?: StageSize,
+): GraphLayout[] {
+  if (!stage || template !== 'force') return [layout];
+  const { w, h } = layout.bounds;
+  return Math.max(w, h) > 1.3 * Math.min(w, h) ? [layout, turnLayout(layout)] : [layout];
+}
+
 // ---------------------------------------------------------------------------------------------
 // Drawing the graph
 
@@ -1440,7 +1464,7 @@ export function drawRow(shapes: Shape[], o: RowOptions): Bounds {
         x: x0 + (k % perRow) * pitch + w / 2,
         y: o.y + Math.floor(k / perRow) * linePitch + CELL_H + 13,
         text,
-        size: 12,
+        size: 13,
         anchor: 'middle',
         cls: 'label',
       });

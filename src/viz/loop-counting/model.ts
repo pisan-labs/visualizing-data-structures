@@ -145,7 +145,7 @@ const run: Op = {
       );
       return s;
     }
-    const frame = p.frame(n);
+    const frame = p.frame(n, f);
     const at = (r: RunState): S => ({ run: r, grow: null });
     let st: RunState = { n, lit: [], count: 0, phase: 'run', found: null };
     yield {
@@ -317,7 +317,7 @@ export function describe(state: S, settings: LcSettings = defaults): string {
   }
   if (state.run) {
     const r = state.run;
-    const frame = p.frame(r.n);
+    const frame = p.frame(r.n, f);
     const cells = frame.slices * frame.rows * frame.cols;
     const formula = r.phase === 'formula' || r.phase === 'bigO' ? ` T(n) = ${p.formula(f)}.` : '';
     const order = r.phase === 'bigO' ? ` ${bigO(p.order(f))}.` : '';

@@ -204,7 +204,21 @@ function oneGrid(
       cls: 'index',
     });
   }
-  return { shapes: pre ? prefixIds(out, pre) : out, w: bounds.w, h: bounds.h };
+  let h = bounds.h;
+  if (frame.caption) {
+    out.push({
+      kind: 'text',
+      id: 'caption',
+      x: geometry.gridLeft,
+      y: geometry.gridBottom + 26,
+      text: frame.caption,
+      size: 15,
+      mono: true,
+      weight: 'bold',
+    });
+    h += 30;
+  }
+  return { shapes: pre ? prefixIds(out, pre) : out, w: bounds.w, h };
 }
 
 const TITLE = 22;
@@ -229,7 +243,7 @@ function spaceBlock(
       kind: 'text',
       id: title,
       x: x + g.w / 2 + 13,
-      y: y + 16,
+      y: y + 24,
       text: frame.sliceNames?.[s] ?? '',
       size: 14,
       anchor: 'middle',
@@ -405,7 +419,7 @@ export function view(
 
   if (s.run) {
     const r = s.run;
-    const frame = p.frame(r.n);
+    const frame = p.frame(r.n, f);
     const all = runRows(p, r.n, f, p.exact(r.n, f));
     const now = runRows(p, r.n, f, r.count).filter((row) => RUN_SHOWS[r.phase](row.id));
     const panel = panelBlock(all, now, roles);

@@ -55,6 +55,8 @@ export interface Frame {
   sliceNames?: string[];
   /** Text inside the cells of the one row: the array of the early-exit search. */
   values?: string[];
+  /** A line under the drawing: what the early-exit search looks for. */
+  caption?: string;
   /** What the drawing shows, for the first step of a run. */
   describe: string;
 }
@@ -92,7 +94,7 @@ export interface Pattern {
   card: string[];
   /** Ids of the counted lines. */
   counted: string[];
-  frame(n: number): Frame;
+  frame(n: number, found: Found): Frame;
   walk(n: number, found: Found): Walk;
   /** T(n) in closed form. */
   exact(n: number, found: Found): number;
@@ -277,7 +279,7 @@ const nested: Pattern = {
   },
   exact: (n) => n * n,
   formula: () => 'n²',
-  plug: (n) => `${n} · ${n}`,
+  plug: (n) => `${n}·${n}`,
   why: () => 'The inner loop runs n times for each of the n values of i: T(n) = n · n = n².',
   expand: () => null,
   drop: () => 'T(n) = n² has nothing to drop.',
@@ -716,7 +718,7 @@ const geometric: Pattern = {
   expand: () => '< 2n',
   drop: () =>
     'Since 2ᵏ ≤ n, T(n) is less than 2n: drop the factor 2. Two nested loops, and still only linear, because the last row does half the work.',
-  dropShort: () => 'below 2n: drop the 2',
+  dropShort: () => 'drop the factor 2',
   order: () => 'n',
 };
 
@@ -735,9 +737,10 @@ const search: Pattern = {
   ],
   card: ['outer', 'body', 'test', 'found'],
   counted: ['body'],
-  frame: (n) => ({
+  frame: (n, found) => ({
     ...row1(n, 'i', 'A', ''),
     values: VALUES.slice(0, n).map(String),
+    caption: `x = ${targetValue(n, found)}${found === 'missing' ? ', not in A' : ''}`,
     describe: `The row is the array A, ${n} items long; the loop looks for x.`,
   }),
   *walk(n, found): Walk {

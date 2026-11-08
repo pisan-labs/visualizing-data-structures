@@ -30,7 +30,7 @@ import {
   type TreeExtra,
   type TreeNode,
   type TreeState,
-} from '../avl/tree-kit';
+} from '../_bst/tree-kit';
 
 export type SplayState = TreeState<TreeNode>;
 

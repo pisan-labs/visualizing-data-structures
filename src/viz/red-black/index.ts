@@ -8,7 +8,7 @@ import {
   treeHeight,
   treeSize,
   zigzagOrderOf,
-} from '../avl/tree-kit';
+} from '../_bst/tree-kit';
 import cppSource from './code/cpp/red_black.hpp?raw';
 import javaSource from './code/java/RedBlackTree.java?raw';
 import pythonSource from './code/python/red_black.py?raw';

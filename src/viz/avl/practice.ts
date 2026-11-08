@@ -2,22 +2,10 @@ import type { Rng } from '../../engine/rng';
 import { Timeline, runOp } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
 import { defaults, type AVLExtra, type AVLSettings, type AVLState } from './model';
-import { inorderKeys, preorderKeys, treeHeight } from './tree-kit';
+import { call, calls, distinct, pick } from '../_bst/practice-kit';
+import { inorderKeys, preorderKeys, treeHeight } from '../_bst/tree-kit';
 
 type Def = VizDef<AVLState, AVLSettings, AVLExtra>;
-
-export const call = ([op, ...args]: OpCall) => `\`${op}(${args.join(', ')})\``;
-export const calls = (cs: OpCall[]) => cs.map(call).join(', ');
-
-export function distinct(rng: Rng, n: number, lo = 1, hi = 99): number[] {
-  const out = new Set<number>();
-  while (out.size < n) out.add(rng.int(lo, hi));
-  return [...out];
-}
-
-export function pick<T>(rng: Rng, xs: T[]): T {
-  return xs[rng.int(0, xs.length - 1)]!;
-}
 
 const CASES = [
   ['none', 'No rotation'],

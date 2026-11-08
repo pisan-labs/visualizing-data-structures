@@ -1,7 +1,7 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, SavedExample, Settings, VizDef } from '../../engine/types';
-import { ascending, distinctKeys, treeHeight, treeSize } from '../avl/tree-kit';
+import { ascending, distinctKeys, treeHeight, treeSize } from '../_bst/tree-kit';
 import cppSource from './code/cpp/treap.hpp?raw';
 import javaSource from './code/java/Treap.java?raw';
 import pythonSource from './code/python/treap.py?raw';

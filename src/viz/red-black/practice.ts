@@ -1,8 +1,8 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline, runOp } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
-import { call, calls, distinct, pick } from '../avl/practice';
-import { inorderKeys } from '../avl/tree-kit';
+import { call, calls, distinct, pick } from '../_bst/practice-kit';
+import { inorderKeys } from '../_bst/tree-kit';
 import { defaults, treeBlackHeight, type RBExtra, type RBSettings, type RBState } from './model';
 
 type Def = VizDef<RBState, RBSettings, RBExtra>;

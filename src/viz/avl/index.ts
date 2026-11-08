@@ -35,7 +35,7 @@ import {
   treeHeight,
   treeSize,
   zigzagOrderOf,
-} from './tree-kit';
+} from '../_bst/tree-kit';
 import { view } from './view';
 
 /** Nodes in the sparsest AVL tree of height h: N(h) = N(h-1) + N(h-2) + 1. */

@@ -9,7 +9,7 @@ import {
   preorderKeys,
   treeHeight,
   treeSize,
-} from '../avl/tree-kit';
+} from '../_bst/tree-kit';
 import cppSource from './code/cpp/splay.hpp?raw';
 import javaSource from './code/java/SplayTree.java?raw';
 import pythonSource from './code/python/splay.py?raw';

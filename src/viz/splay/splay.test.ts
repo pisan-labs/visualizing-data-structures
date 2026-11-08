@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
-import { inorderKeys, shapeText, treeHeight } from '../avl/tree-kit';
+import { inorderKeys, shapeText, treeHeight } from '../_bst/tree-kit';
 import { splayTree } from '.';
 import type { SplaySettings, SplayState } from './model';
 

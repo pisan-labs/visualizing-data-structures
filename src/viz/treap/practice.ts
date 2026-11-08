@@ -1,8 +1,8 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline, runOp } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
-import { call, calls, distinct } from '../avl/practice';
-import { preorderKeys } from '../avl/tree-kit';
+import { call, calls, distinct } from '../_bst/practice-kit';
+import { preorderKeys } from '../_bst/tree-kit';
 import { defaults, type TreapExtra, type TreapSettings, type TreapState } from './model';
 
 type Def = VizDef<TreapState, TreapSettings, TreapExtra>;

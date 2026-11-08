@@ -2,7 +2,7 @@ import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
-import { inorderKeys, shapeText, treeHeight } from '../avl/tree-kit';
+import { inorderKeys, shapeText, treeHeight } from '../_bst/tree-kit';
 import { treap } from '.';
 import { above, parseTreapInput, type TreapSettings, type TreapState } from './model';
 

@@ -6,7 +6,7 @@ import {
   unionBounds,
 } from '../../layouts/binary-tree';
 import type { Scene, Shape } from '../../render/scene';
-import { treeHeight } from '../avl/tree-kit';
+import { treeHeight } from '../_bst/tree-kit';
 import {
   R,
   argCenter,
@@ -20,7 +20,7 @@ import {
   levelGapFor,
   markPath,
   rolesOf,
-} from '../avl/view-kit';
+} from '../_bst/view-kit';
 import { describe, type SplayExtra, type SplaySettings, type SplayState } from './model';
 
 export function view(step: Step<SplayState, SplayExtra>, _settings: SplaySettings): Scene {

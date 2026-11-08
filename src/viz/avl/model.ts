@@ -34,7 +34,7 @@ import {
   type TreeExtra,
   type TreeNode,
   type TreeState,
-} from './tree-kit';
+} from '../_bst/tree-kit';
 
 export interface AVLNode extends TreeNode {
   /** Height in edges (a leaf is 0), as the algorithm last stored it. */

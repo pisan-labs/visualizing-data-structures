@@ -17,7 +17,7 @@ import {
   type AVLSettings,
   type AVLState,
 } from './model';
-import { treeHeight } from './tree-kit';
+import { treeHeight } from '../_bst/tree-kit';
 import {
   R,
   argCenter,
@@ -32,7 +32,7 @@ import {
   levelGapFor,
   markPath,
   rolesOf,
-} from './view-kit';
+} from '../_bst/view-kit';
 
 /** Room on each side of a node for its height (left) and balance factor (right). */
 const SLOT = 21;

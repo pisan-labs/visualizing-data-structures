@@ -5,7 +5,7 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { avl, fibNodes, sparsestOrder } from '.';
 import { shownHeight, type AVLSettings, type AVLState } from './model';
-import { inorderKeys, shapeText, treeHeight, zigzagOrderOf } from './tree-kit';
+import { inorderKeys, shapeText, treeHeight, zigzagOrderOf } from '../_bst/tree-kit';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: the textbook recursive AVL tree (Weiss style), written independently. Delete copies

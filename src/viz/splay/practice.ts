@@ -1,8 +1,8 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline, runOp } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
-import { call, distinct, pick } from '../avl/practice';
-import { inorderKeys, preorderKeys, treeHeight } from '../avl/tree-kit';
+import { call, distinct, pick } from '../_bst/practice-kit';
+import { inorderKeys, preorderKeys, treeHeight } from '../_bst/tree-kit';
 import { defaults, type SplayExtra, type SplaySettings, type SplayState } from './model';
 
 type Def = VizDef<SplayState, SplaySettings, SplayExtra>;

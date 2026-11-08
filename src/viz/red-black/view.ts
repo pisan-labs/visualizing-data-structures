@@ -8,7 +8,7 @@ import {
   unionBounds,
 } from '../../layouts/binary-tree';
 import type { Scene, Shape } from '../../render/scene';
-import { treeHeight } from '../avl/tree-kit';
+import { treeHeight } from '../_bst/tree-kit';
 import {
   R,
   argCenter,
@@ -23,7 +23,7 @@ import {
   levelGapFor,
   markPath,
   rolesOf,
-} from '../avl/view-kit';
+} from '../_bst/view-kit';
 import { blackHeights, describe, type RBExtra, type RBSettings, type RBState } from './model';
 
 /** Room on each side of a node for its black-height. */

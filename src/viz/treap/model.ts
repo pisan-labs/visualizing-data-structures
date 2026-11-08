@@ -29,7 +29,7 @@ import {
   type TreeExtra,
   type TreeNode,
   type TreeState,
-} from '../avl/tree-kit';
+} from '../_bst/tree-kit';
 
 export interface TreapNode extends TreeNode {
   priority: number;

@@ -59,7 +59,7 @@ Q: A rope holds 1,000,000 characters in a balanced tree. You insert one word in 
 
 **Longest leaf** sets how long the pieces are when you build. Real ropes use leaves of hundreds of bytes, so that the tree is small and each leaf is a cache-friendly flat array. Tiny leaves here keep the picture readable.
 
-Because nodes never change after they are made, two ropes can share subtrees. That makes undo cheap: keep the old root. Editors use relatives of this idea, such as piece tables and gap buffers, and some, like the Xi editor, used ropes directly.
+Because nodes never change after they are made, two ropes can share subtrees. That makes undo cheap: keep the old root. Editors also use other structures for the same job, such as piece tables and gap buffers, and some, like the Xi editor, used ropes directly.
 
 ## When to use one, and when not to
 

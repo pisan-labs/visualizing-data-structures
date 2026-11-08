@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "comb-sort",
+  "id": "turtle",
+  "title": "Two turtles at the end jump home",
+  "notes": "3 and 5 sit at the end, turtles: bubble sort moves them one slot per pass and needs 15 passes. Comb sort's first gap is 12, so 3 jumps 12 slots left in one swap. It takes 8 passes and 90 comparisons to bubble sort's 120.",
+  "settings": {
+    "shrink": "1.3",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "12 18 24 30 36 42 48 54 60 66 72 78 84 90 3 5"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "comb-sort",
+  "id": "unstable",
+  "title": "Long swaps jump over equal values",
+  "notes": "Two 30s. The first pass, with gap 3, swaps the first 30 with the 20 at the end, carrying it past the second 30. Comb sort is not stable.",
+  "settings": {
+    "shrink": "1.3",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "30 30 10 20"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

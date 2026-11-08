@@ -1,4 +1,5 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import type { Scene, Shape } from '../../render/scene';
 import {
   boxRow,
@@ -12,27 +13,54 @@ import { describe, type KnapExtra, type KnapSettings, type KnapState } from './m
 const STRIP_H = 38;
 const STRIP_GAP = 10;
 const PITCH = 64;
+/**
+ * Narrower cells a narrow stage (a phone in portrait) may draw larger with. They keep a height
+ * of at least CELL_H_MIN, so a one-digit value (28 units) still has room above and below, and
+ * two-digit values still get 21 units.
+ */
+const NARROW = [44, 40, 36, 32];
+const CELL_H_MIN = 36;
 
 /**
  * The K table: one row per item (its weight and value beside it), one column per capacity.
  * A cell reads the cell above (skip the item) and, if the item fits, the cell one row up and
  * w columns left (take it, +v). The walk back climbs one row per item; the items it takes,
  * and what greedy by value per weight would take, line up under the table.
+ *
+ * A large capacity makes the table wide; on a narrow stage the cells get narrower when that
+ * draws the table larger. Their values stay large (valueSize fits them to the cell).
  */
-export function view(step: Step<KnapState, KnapExtra>, _settings: KnapSettings): Scene {
+export function view(
+  step: Step<KnapState, KnapExtra>,
+  _settings: KnapSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const n = state.items.length;
   const W = state.W;
   const roles = new Map<string, MarkRole>(step.marks.map((mk) => [mk.id, mk.role]));
   const tracing = extra.taken !== undefined;
-  const frame: TableFrame = {
+  const frameFor = (cellW: number | undefined, strips: boolean): TableFrame => ({
     rows: n + 1,
     cols: W + 1,
     colHeads: 2,
     rowHeads: [30, 40, 44],
     // The strips only exist while tracing back, a separate operation; filling gets the room.
-    below: tracing ? 2 * STRIP_H + STRIP_GAP + 4 : 0,
-  };
+    below: strips ? 2 * STRIP_H + STRIP_GAP + 4 : 0,
+    cellW,
+    cellH: cellW && Math.max(CELL_H_MIN, Math.round(cellW * 0.8)),
+  });
+  // The usual cells first (with no stage, or a wide one, they are what is drawn), then
+  // narrower ones, judged with the strips, so filling and tracing back draw the same cells.
+  const narrow = stage && stage.w < stage.h ? NARROW : [];
+  const cellW = pickLayout(
+    stage,
+    [undefined, ...narrow].map((w) => {
+      const g = tableGeometry(frameFor(w, true));
+      return { w, bounds: { x: 0, y: 0, w: g.width, h: g.height } };
+    }),
+  ).w;
+  const frame = frameFor(cellW, tracing);
   const g = tableGeometry(frame);
   const links: TableLink[] = (extra.reads ?? []).map((r) => ({
     id: r.take ? 'take' : 'skip',
@@ -61,7 +89,11 @@ export function view(step: Step<KnapState, KnapExtra>, _settings: KnapSettings):
   });
   const out: Shape[] = shapes;
   if (tracing) {
-    const pitch = Math.min(PITCH, g.cellW + 10);
+    // As wide as the table lets the boxes be: narrow cells need not mean narrow item boxes.
+    const pitch = Math.min(
+      PITCH,
+      Math.max(g.cellW + 10, Math.floor((g.gridRight - g.gridLeft) / Math.max(1, n))),
+    );
     const x = (k: number) => g.gridLeft + (k + 0.5) * pitch;
     const box = (k: number) => {
       const it = state.items[k - 1]!;

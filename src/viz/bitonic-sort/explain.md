@@ -1,0 +1,1 @@
+stub [x](#example:eight)

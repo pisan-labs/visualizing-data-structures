@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "bitonic-sort",
+  "id": "sixteen",
+  "title": "Sixteen wires, ten columns",
+  "notes": "The full network on 16 values: 4 stages, 10 columns and 80 comparators. A machine with 8 comparators working at once would finish in 10 steps.",
+  "settings": {
+    "network": "flip"
+  },
+  "seed": 1,
+  "ops": [["load", "57 12 88 34 71 5 46 93 21 64 39 80 27 50 16 75"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

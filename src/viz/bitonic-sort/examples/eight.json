@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "bitonic-sort",
+  "id": "eight",
+  "title": "Eight wires, six columns",
+  "notes": "Three stages: blocks of 2, then 4, then 8. Each stage starts with a flip and continues with half-cleaners. 24 comparators in 6 columns.",
+  "settings": {
+    "network": "flip"
+  },
+  "seed": 1,
+  "ops": [["load", "42 17 63 8 35 24 91 5"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

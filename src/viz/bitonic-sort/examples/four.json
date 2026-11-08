@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "bitonic-sort",
+  "id": "four",
+  "title": "Four wires: the smallest interesting network",
+  "notes": "Two stages and 3 columns. Follow one value through every comparator it meets.",
+  "settings": {
+    "network": "flip"
+  },
+  "seed": 1,
+  "ops": [["load", "30 10 40 20"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

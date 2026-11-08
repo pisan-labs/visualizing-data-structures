@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "bitonic-sort",
+  "id": "alternating",
+  "title": "Batcher's version: blocks sorted up and down",
+  "notes": "The same values with alternating directions. Some comparators point up: they sort a block downward, so that it and its neighbor form a bitonic sequence for the next stage.",
+  "settings": {
+    "network": "alternating"
+  },
+  "seed": 1,
+  "ops": [["load", "42 17 63 8 35 24 91 5"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "euler-path",
+  "id": "envelope",
+  "title": "Draw the house without lifting the pen",
+  "notes": "The house with a roof (an envelope). D and E have odd degree, so every Euler path runs from one to the other. Hierholzer starts at D and walks all 8 edges in one go.",
+  "settings": {
+    "arrows": "follow",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-C, B-D, B-E, C-D, C-E, D-E"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

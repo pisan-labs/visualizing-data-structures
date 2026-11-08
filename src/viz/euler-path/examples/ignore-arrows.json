@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "euler-path",
+  "id": "ignore-arrows",
+  "title": "The same square, arrows ignored",
+  "notes": "Following the arrows, A has two arcs out and D two in: no Euler path. With the arrows ignored (see the options), every vertex has degree 2 and the square is one circuit.",
+  "settings": {
+    "arrows": "ignore",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B, A>C, B>D, C>D"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

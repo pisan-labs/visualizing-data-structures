@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "euler-path",
+  "id": "directed",
+  "title": "Directed: one extra out, one extra in",
+  "notes": "A has two arcs out and one in (+1); D has one in and none out (−1). Every other vertex is balanced, so there is an Euler path from A to D.",
+  "settings": {
+    "arrows": "follow",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A>B, B>C, C>A, A>D, C>E, E>C"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

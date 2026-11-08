@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "euler-path",
+  "id": "two-detours",
+  "title": "Two detours from two places",
+  "notes": "A triangle A, B, C with a loop hanging off C and another off B. The first walk closes the triangle and gets stuck. The stack backs up to C for one detour, then to B for the other.",
+  "settings": {
+    "arrows": "follow",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-C, C-D, D-E, C-E, B-F, F-G, B-G"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

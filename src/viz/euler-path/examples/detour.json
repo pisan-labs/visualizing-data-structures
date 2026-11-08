@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "euler-path",
+  "id": "detour",
+  "title": "Stuck early, then a detour is spliced in",
+  "notes": "Two triangles share C. The walk goes A, B, C and back to A, and gets stuck with C-D-E unused. Popping back to C, it walks the detour C, D, E, C, which lands in the circuit right after C.",
+  "settings": {
+    "arrows": "follow",
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-C, C-D, C-E, D-E"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -327,3 +327,5 @@
 2026-11-08 [code] Merged wave 7F: z-algorithm, aho-corasick, manacher, burrows-wheeler, lz-compression (align indexY, _strings/overlay.ts)
 
 2026-11-08 [note] Gap found by 7H: a curated example whose op is refused (input over a limit) passes conformance silently; worth a check
+
+2026-11-08 [decision] No conformance check for refused ops in curated examples: refusals are only narration, a text heuristic flagged 34 intended cases and 0 real ones; a real check needs a refused flag on Step that every page sets

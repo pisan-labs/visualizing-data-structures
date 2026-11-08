@@ -20,7 +20,7 @@
 import type { Mark, OpSpec, PseudoBlock, Scalar, Step } from '../../engine/types';
 import { moveId, stateId } from '../../layouts/automaton';
 import type { Move } from '../_automata/automaton';
-import { looksLikeMachine, plural, wordText, words } from '../_automata/page';
+import { loadOp, looksLikeMachine, plural, wordText, words } from '../_automata/page';
 import { parseWord } from '../_automata/parse';
 import {
   convert,
@@ -130,34 +130,18 @@ function fail(s: S, say: string, lines: string[]): MmStep {
   return { state: s, marks: [], say, lines, level: 1, vars: machineVars(s.machine) };
 }
 
-const load: Op = {
-  label: 'Load',
-  arity: 1,
-  *run(s, [arg]) {
-    const text = String(arg ?? '').trim();
-    const m = parseMachine(text);
-    const problem =
-      m instanceof Error
-        ? text && !looksLike(text)
-          ? `"${text}" is not a machine. Type moves such as "q0 a -> q1 / 1"; to run a word, press Run.`
-          : m.message
-        : sizeProblem(m);
-    if (problem || m instanceof Error) {
-      yield fail(s, `Nothing loaded. ${problem} The machine stays as it was.`, []);
-      return s;
-    }
-    const next: S = { machine: m };
-    yield {
-      state: next,
-      marks: [],
-      say: `Loaded ${describeMachine(m)} Type a word and press Run, or press Convert to build the equivalent ${kindName(otherKind(m.kind))} machine.`,
-      lines: [],
-      level: 1,
-      vars: machineVars(m),
-    };
-    return next;
-  },
-};
+const load = loadOp<S, MmSettings, X, Machine>({
+  parse: parseMachine,
+  describe: describeMachine,
+  looksLike,
+  example: 'q0 a -> q1 / 1',
+  words: true,
+  check: sizeProblem,
+  make: (m) => ({ machine: m }),
+  ready: (m) =>
+    `Type a word and press Run, or press Convert to build the equivalent ${kindName(otherKind(m.kind))} machine.`,
+  vars: (s) => machineVars(s.machine),
+});
 
 // ---------------------------------------------------------------------------------------------
 // Run

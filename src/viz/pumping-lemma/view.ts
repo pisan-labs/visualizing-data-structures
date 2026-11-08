@@ -259,17 +259,16 @@ function layout(
         S_PITCH,
       );
     }
-    for (let r = 0; r < sRows; r++)
-      drawTape(out, {
-        id: 's',
-        x: x0,
-        y: sTop + r * S_PITCH + BAR_ROOM,
-        cells: [...s],
-        from: r * W,
-        to: Math.min(n, (r + 1) * W),
-        headRoom: 'none',
-        roles: cellRoles,
-      });
+    drawTape(out, {
+      id: 's',
+      x: x0,
+      y: sTop + BAR_ROOM,
+      cells: [...s],
+      to: n,
+      rows: { width: W, pitch: S_PITCH },
+      headRoom: 'none',
+      roles: cellRoles,
+    });
   }
 
   // The ruler: the p symbols that x and y (or v, x and y) must lie in.
@@ -332,7 +331,7 @@ function layout(
   if (s !== null && st.parts && shownI !== null) {
     const ps = st.parts;
     const at = starts(ps);
-    const cells: { id: string; sym: string; k: number; src: number }[] = [];
+    const cells: { id: string; key: string; sym: string; k: number; src: number }[] = [];
     const pcs: Piece[] = [];
     const pumped = PUMPED[lemma];
     ps.forEach((len, k) => {
@@ -340,36 +339,33 @@ function layout(
       for (let c = 0; c < copies; c++) {
         pcs.push({ k, copy: c, from: cells.length, to: cells.length + len });
         for (let j = 0; j < len; j++)
-          cells.push({ id: `w-${k}-${c}-${j}`, sym: s[at[k]! + j]!, k, src: at[k]! + j });
+          cells.push({
+            id: `w-${k}-${c}-${j}`,
+            key: `${k}-${c}-${j}`,
+            sym: s[at[k]! + j]!,
+            k,
+            src: at[k]! + j,
+          });
       }
     });
     drawBars(out, 'wbar', pcs, names, roles, x0, wTop, W, ROW_PITCH);
-    cells.forEach((c, idx) => {
-      const cx = x0 + (idx % W) * CELL_W;
-      const cy = wTop + Math.floor(idx / W) * ROW_PITCH + BAR_ROOM;
-      const sx = x0 + (c.src % W) * CELL_W;
-      const sy = sTop + Math.floor(c.src / W) * S_PITCH + BAR_ROOM;
-      out.push({
-        kind: 'rect',
-        id: c.id,
-        x: cx,
-        y: cy,
-        w: CELL_W,
-        h: CELL_H,
-        role: roles[c.k],
-        enterFrom: { x: sx, y: sy },
-      });
-      out.push({
-        kind: 'text',
-        id: `${c.id}-t`,
-        x: cx + CELL_W / 2,
-        y: cy + CELL_H / 2 + 6,
-        text: c.sym,
-        size: 18,
-        anchor: 'middle',
-        mono: true,
-        enterFrom: { x: sx + CELL_W / 2, y: sy + CELL_H / 2 + 6 },
-      });
+    // Each cell is keyed by the piece, copy and place it came from, and slides in from its
+    // symbol in s, so pumping shows the copies coming out of the string.
+    const cellRoles = new Map(cells.map((c) => [c.id, roles[c.k]!]));
+    drawTape(out, {
+      id: 'w',
+      x: x0,
+      y: wTop + BAR_ROOM,
+      cells: cells.map((c) => c.sym),
+      to: cells.length,
+      rows: { width: W, pitch: ROW_PITCH },
+      headRoom: 'none',
+      roles: cellRoles,
+      key: (i) => cells[i]!.key,
+      enter: (i) => {
+        const src = cells[i]!.src;
+        return { x: x0 + (src % W) * CELL_W, y: sTop + Math.floor(src / W) * S_PITCH + BAR_ROOM };
+      },
     });
   }
   y = wTop + wRows * ROW_PITCH + GAP;

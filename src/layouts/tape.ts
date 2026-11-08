@@ -21,8 +21,17 @@
  *     left      draw the left end as a wall (Sipser's one-way tape starts at cell 0)
  *     roles     marks by shape id
  *     blank     how a blank cell looks (default "␣")
+ *     rows      { width, pitch }: wrap the window onto rows of `width` cells, each row `pitch`
+ *               below the one before (a long word, or one tape on several lines). Each row
+ *               keeps its own head room; the head and its label sit on the head's row (none
+ *               when the head is outside the window), and the wall on the row with cell 0.
+ *     key       the cell's key in its shape ids (default its cell number i). A key that follows
+ *               a symbol's identity (a uid, or the piece and copy it came from) makes the
+ *               animation follow the symbol when it moves to another cell.
+ *     enter     where a new cell comes in from: the top left of a cell, such as the cell it was
+ *               copied from (default: it fades in where it is)
  *
- * Shape ids: `${id}-<i>` the cell, `${id}-<i>-t` its symbol, `${id}-<i>-n` its number,
+ * Shape ids: `${id}-<key>` the cell, `${id}-<key>-t` its symbol, `${id}-<key>-n` its number,
  * `${id}-head` the head arrow, `${id}-head-t` its label, `${id}-end` the wall. Cells keep their
  * ids as the window moves, so a symbol stays with its cell.
  *
@@ -52,6 +61,9 @@ export interface TapeOptions {
   left?: boolean;
   roles?: ReadonlyMap<string, MarkRole>;
   blank?: string;
+  rows?: { width: number; pitch: number };
+  key?: (i: number) => string | number;
+  enter?: (i: number) => { x: number; y: number } | undefined;
 }
 
 export interface WindowOptions {
@@ -106,20 +118,53 @@ export function tapeWindow(
 export function drawTape(shapes: Shape[], o: TapeOptions): Bounds {
   const id = o.id ?? 'tape';
   const from = o.from ?? 0;
+  const room = o.headRoom ?? (o.headLabel !== undefined ? 'label' : 'head');
+  const headH = room === 'label' ? 46 : room === 'head' ? 26 : 0;
+  const width = o.rows?.width ?? Math.max(1, o.to - from);
+  const pitch = o.rows?.pitch ?? 0;
+  const nRows = Math.max(1, Math.ceil((o.to - from) / width));
+  for (let r = 0; r < nRows; r++) {
+    const rowFrom = from + r * width;
+    const rowTo = Math.min(o.to, rowFrom + width);
+    const head = o.head != null && o.head >= rowFrom && o.head < rowTo ? o.head : null;
+    const wall = o.left && rowFrom <= 0 && (r === nRows - 1 || rowFrom + width > 0);
+    // Without rows the head is drawn wherever it is; with rows, only on a row that holds it.
+    drawRow(shapes, o, id, rowFrom, rowTo, o.y + r * pitch, headH, o.rows ? head : o.head, wall);
+  }
+  const w = Math.min(width, o.to - from) * CELL_W;
+  return {
+    x: o.x - (o.left ? 6 : 0),
+    y: o.y,
+    w: w + (o.left ? 6 : 0),
+    h: (nRows - 1) * pitch + headH + CELL_H + (o.index ? 20 : 0),
+  };
+}
+
+/** One row of cells, [from, to), with its top at y, then its wall and the head if they are on it. */
+function drawRow(
+  shapes: Shape[],
+  o: TapeOptions,
+  id: string,
+  from: number,
+  to: number,
+  y: number,
+  headH: number,
+  head: number | null | undefined,
+  wall: boolean | undefined,
+): void {
   const first = o.first ?? 0;
   const roles = o.roles ?? new Map<string, MarkRole>();
   const blank = o.blank ?? BLANK;
-  const room = o.headRoom ?? (o.headLabel !== undefined ? 'label' : 'head');
-  const headH = room === 'label' ? 46 : room === 'head' ? 26 : 0;
-  const top = o.y + headH;
-  for (let i = from; i < o.to; i++) {
+  const top = y + headH;
+  for (let i = from; i < to; i++) {
     const x = o.x + (i - from) * CELL_W;
-    const cid = `${id}-${i}`;
+    const cid = `${id}-${o.key ? o.key(i) : i}`;
     const k = i - first;
     const sym = k >= 0 && k < o.cells.length ? o.cells[k]! : '';
     const shown = sym === '' || sym === '_' ? blank : sym;
     const done = o.read !== undefined && i < o.read;
     const role = roles.get(cid) ?? (o.head === i ? 'active' : undefined);
+    const enter = o.enter?.(i);
     shapes.push({
       kind: 'rect',
       id: cid,
@@ -130,6 +175,7 @@ export function drawTape(shapes: Shape[], o: TapeOptions): Bounds {
       role,
       cls: done ? 'read' : undefined,
       opacity: done ? 0.5 : undefined,
+      enterFrom: enter,
     });
     shapes.push({
       kind: 'text',
@@ -142,6 +188,7 @@ export function drawTape(shapes: Shape[], o: TapeOptions): Bounds {
       mono: true,
       role: roles.get(`${cid}-t`) ?? (role === 'active' ? 'active' : undefined),
       opacity: done ? 0.45 : shown === blank ? 0.55 : undefined,
+      enterFrom: enter && { x: enter.x + CELL_W / 2, y: enter.y + CELL_H / 2 + 6 },
     });
     if (o.index)
       shapes.push({
@@ -156,7 +203,7 @@ export function drawTape(shapes: Shape[], o: TapeOptions): Bounds {
         cls: 'index',
       });
   }
-  if (o.left && from <= 0) {
+  if (wall) {
     const x = o.x + (0 - from) * CELL_W;
     shapes.push({
       kind: 'rect',
@@ -168,8 +215,8 @@ export function drawTape(shapes: Shape[], o: TapeOptions): Bounds {
       cls: 'wall',
     });
   }
-  if (o.head != null) {
-    const x = o.x + (o.head - from + 0.5) * CELL_W;
+  if (head != null) {
+    const x = o.x + (head - from + 0.5) * CELL_W;
     shapes.push({
       kind: 'arrow',
       id: `${id}-head`,
@@ -193,10 +240,4 @@ export function drawTape(shapes: Shape[], o: TapeOptions): Bounds {
         role: roles.get(`${id}-head-t`) ?? 'active',
       });
   }
-  return {
-    x: o.x - (o.left ? 6 : 0),
-    y: o.y,
-    w: (o.to - from) * CELL_W + (o.left ? 6 : 0),
-    h: headH + CELL_H + (o.index ? 20 : 0),
-  };
 }

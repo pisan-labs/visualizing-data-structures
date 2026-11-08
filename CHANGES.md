@@ -233,3 +233,5 @@
 2026-11-07 [code] The 25 e2e specs that count drawn labels now wait for settled() first; all 422 tests in them pass that way, so none relied on a mid-animation frame
 
 2026-11-08 [note] Deployed at 01:58 on Yusuf's "merge next to main and deploy": main fast-forwarded 381c171..65a9e38 (CI run 87 green); live bundle matched the local build, all 125 pages return 200; all 17 automata pages are live
+
+2026-11-08 [plan] Wave 6, understanding Big-O (PLAN.md section 14): big-o-definition, loop-counting, doubling-experiment, amortized-analysis in Foundations; then the shared-code cleanup

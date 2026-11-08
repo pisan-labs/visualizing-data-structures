@@ -145,6 +145,10 @@ export const families: Family[] = [
     items: [
       { id: 'memory-model', title: 'Memory model: values, references, aliasing', added: true },
       { id: 'big-o-lab', title: 'Big-O growth lab', added: true },
+      { id: 'big-o-definition', title: 'Big-O, Ω and Θ by definition', added: true },
+      { id: 'loop-counting', title: 'Counting steps in loops', added: true },
+      { id: 'doubling-experiment', title: 'Doubling experiments', added: true },
+      { id: 'amortized-analysis', title: 'Amortized analysis', added: true },
       { id: 'master-theorem', title: 'Recurrences and the Master theorem', added: true },
       { id: 'bitmask', title: 'Bitmasks and subsets', added: true, advanced: true },
     ],

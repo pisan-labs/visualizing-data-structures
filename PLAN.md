@@ -704,6 +704,49 @@ Every page meets the definition of done in `CLAUDE.md`:
 6. Commit the stage work, then start 5A with agents, and keep fitting pages to the stage
    between merges? Recommend yes.
 
+## 14. Wave 6: understanding Big-O (planned 2026-11-08)
+
+Yusuf asked (8 November): are there exercises and visualizations for Big-O understanding;
+research and implement what is found.
+
+### 14.1 What exists
+
+- On StepWise: the Big-O growth lab (seven functions side by side, doubling n, linear or log
+  bars, time at a given speed), recurrences and the Master theorem, the dynamic array (amortized
+  O(1) explained in prose only), and a Big-O self-test on every page.
+- Elsewhere (surveyed 2026-11-08):
+  - growth visualizers comparing O(1) to O(n²) on a log scale (csvisualizer.netlify.app), and an
+    interactive guide where readers edit code and watch operation counts (Bondaryev, dev.to);
+  - GeoGebra worksheets comparing two functions; none found shows c and n₀ as handles;
+  - loop-pattern practice questions (Educative: nested, sequential, dependent, halving and
+    doubling loops, early breaks); answer keys found online are sometimes wrong;
+  - amortized analysis demos with the potential Φ = 2n − capacity, the accounting method and a
+    binary counter (instantcube, Axiom Academy, a VSB-TUO teaching server; Cornell CS 3110);
+  - Sedgewick and Wayne's doubling test: T(n) = a·nᵇ, b ≈ log₂ of the time ratio, and a
+    log-log plot whose slope is b; it cannot see log factors.
+
+### 14.2 Pages (Foundations family)
+
+1. **`big-o-definition`:** f(n) against c·g(n), with c and n₀ as the handles: find witnesses,
+   see where the inequality fails, Ω flips it, Θ sandwiches f between c₁·g and c₂·g; the ratio
+   f/g settling (the limit test). Practice: is f = O(g)? find n₀ for this c.
+2. **`loop-counting`:** code patterns (single, nested, triangular, halving, doubling inner,
+   sequential, √n, early exit) run for a chosen n; the iteration space lit cell by cell, the
+   exact count T(n), and the Big-O it simplifies to. Practice: count for this n; Big-O of this
+   code.
+3. **`doubling-experiment`:** run counted algorithms at n, 2n, 4n, ...; a table of T(n), the
+   ratio and b = log₂ ratio; a log-log plot whose slope is b; where it misleads (n log n looks
+   like n^1.1; noise in real timings).
+4. **`amortized-analysis`:** the three methods (aggregate, accounting with coins, potential)
+   on the dynamic array (doubling against growing by a constant) and the binary counter; actual
+   against amortized cost per operation.
+
+### 14.3 Order
+
+Two agents at a time: `big-o-definition` and `loop-counting` first, then
+`doubling-experiment` and `amortized-analysis`. Then the shared-code cleanup (HANDOFF.md, next in
+order).
+
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 
 | Page | Controls |

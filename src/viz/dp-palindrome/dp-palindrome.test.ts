@@ -83,6 +83,13 @@ describe('longest palindromic subsequence', { timeout: 60_000 }, () => {
     expect(l.vars).toMatchObject({ length: 7, palindrome: 'BABCBAB' });
   });
 
+  it('says "1 character", not "1 characters"', () => {
+    const end = run([['load', 'ABCDEF'], ['fill'], ['trace']])
+      .entries.at(-1)!
+      .steps.at(-1)!;
+    expect(end.say).toContain("'F', 1 character.");
+  });
+
   it('refuses what it cannot use', () => {
     const t = run([['load', 'TOOLONGSTRING'], ['load', 'a-b'], ['trace']]);
     for (const e of t.entries) expect(e.end).toBe(t.initial.state);

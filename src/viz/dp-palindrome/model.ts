@@ -1,6 +1,6 @@
 import type { OpSpec, PseudoBlock, PseudoLine, Scalar, Step } from '../../engine/types';
 import type { Cell } from '../../layouts/table';
-import { cellId, mark, wordFromArg } from '../_dp/kit';
+import { cellId, mark, plural, wordFromArg } from '../_dp/kit';
 
 export const MAX_LEN = 10;
 
@@ -269,7 +269,7 @@ const trace: Op = {
     yield {
       state: st,
       marks: [mark(cellId(0, n - 1), 'found')],
-      say: `The longest palindromic subsequence is ${q(pal)}, ${length} characters. It reads the same both ways.`,
+      say: `The longest palindromic subsequence is ${q(pal)}, ${plural(length, 'character')}. It reads the same both ways.`,
       lines: ['t.ret'],
       vars: { length, palindrome: pal },
       level: 1,

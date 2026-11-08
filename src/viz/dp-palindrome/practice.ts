@@ -79,7 +79,7 @@ export function palPractice(def: () => Def): PracticeKind[] {
           prompt: `The table for ${w} is full. Walk in from both ends: take matching ends, and otherwise drop the left end unless the cell to the left is strictly larger. Type the palindrome you find.`,
           setup,
           answer: { kind: 'sequence', value: [pal] },
-          explain: `The walk finds ${pal}, ${pal.length} characters.`,
+          explain: `The walk finds ${pal}, ${pal.length === 1 ? '1 character' : `${pal.length} characters`}.`,
           watch: [['trace']],
         };
       },

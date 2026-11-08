@@ -108,8 +108,10 @@ function drawDiagram(
       move: (m) => edges.has(`${m.from.slice(1)} ${m.on}`),
     },
   });
-  out.push(...translate(d.shapes, -d.bounds.x, -d.bounds.y));
-  return { x: 0, y: 0, w: d.bounds.w, h: d.bounds.h };
+  // Frame the finished diagram, so nothing moves as states arrive.
+  const b = drawAutomaton(whole, layoutStates(whole, across)).bounds;
+  out.push(...translate(d.shapes, -b.x, -b.y));
+  return { x: 0, y: 0, w: b.w, h: b.h };
 }
 
 function drawItems(

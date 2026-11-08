@@ -42,9 +42,31 @@ function valuePool(def: AnyVizDef): Value[] {
   return candidates.map((c) => parse(c)).filter((v): v is Value => !(v instanceof Error));
 }
 
+/**
+ * A random script for a page whose input is not a single value (a statement, a recurrence, a
+ * graph): the page's own random and preset generators, mixed with its other buttons.
+ */
+function generatedScript(def: AnyVizDef, seed: number, chunks: number): OpCall[] {
+  const rng = makeRng(seed);
+  const { random, presets = [], sizes = [5, 8, 12], buttons } = def.controls;
+  const makers = [
+    ...(random ? [(r: typeof rng) => random.make(r)] : []),
+    ...presets.map((p) => (r: typeof rng) => p.make(r, sizes[r.int(0, sizes.length - 1)] ?? 5)),
+  ];
+  const plain = buttons.filter((b) => !b.usesInput);
+  return Array.from({ length: chunks }, () =>
+    plain.length > 0 && rng.int(0, 2) === 0
+      ? [[plain[rng.int(0, plain.length - 1)]!.op] as OpCall]
+      : makers[rng.int(0, makers.length - 1)]!(rng),
+  ).flat();
+}
+
 function randomScript(def: AnyVizDef, seed: number, length: number): OpCall[] {
   const rng = makeRng(seed);
   const pool = valuePool(def);
+  const generators = Boolean(def.controls.random) || (def.controls.presets?.length ?? 0) > 0;
+  if (pool.length === 0 && generators && def.controls.buttons.some((b) => b.usesInput))
+    return generatedScript(def, seed, Math.ceil(length / 6));
   const buttons = def.controls.buttons.filter((b) => !b.usesInput || pool.length > 0);
   return Array.from({ length }, () => {
     const b = buttons[rng.int(0, buttons.length - 1)]!;

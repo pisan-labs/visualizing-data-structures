@@ -476,7 +476,7 @@ const clear: Op = {
 };
 
 // ---------------------------------------------------------------------------------------------
-// fill: the "all colliding keys" preset, which needs m to pick its keys
+// The "All colliding keys" preset: keys that share a home slot for the current m
 
 export function collidingKeys(rng: Rng, m: number, count: number): number[] {
   const home = rng.int(0, m - 1);
@@ -485,6 +485,7 @@ export function collidingKeys(rng: Rng, m: number, count: number): number[] {
   return shuffle(rng.next, pool).slice(0, Math.min(count, m));
 }
 
+/** The preset used to run as this one operation; it stays so links saved with it still open. */
 const fill: Op = {
   label: 'Fill',
   arity: 2,

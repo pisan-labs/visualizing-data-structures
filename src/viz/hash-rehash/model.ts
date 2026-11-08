@@ -437,7 +437,7 @@ const clear: Op = {
 };
 
 // ---------------------------------------------------------------------------------------------
-// fill: the "all colliding keys" preset. Keys collide in the table they meet when they arrive.
+// The "All colliding keys" preset. Keys collide in the table they meet when they arrive.
 
 export function collidingKeys(rng: Rng, settings: RehashSettings, count: number): number[] {
   // Every table size the first `count` inserts will see, so the keys can share a remainder.
@@ -455,6 +455,7 @@ export function collidingKeys(rng: Rng, settings: RehashSettings, count: number)
   return shuffle(rng.next, pool).slice(0, count);
 }
 
+/** The preset used to run as this one operation; it stays so links saved with it still open. */
 const fill: Op = {
   label: 'Fill',
   arity: 2,

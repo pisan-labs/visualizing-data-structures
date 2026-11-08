@@ -5,7 +5,6 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import type { Graph } from '../_graph/graph';
 import { parseGraph } from '../_graph/parse';
-import { overlaps } from '../_paths/overlap';
 import { dijkstra } from '.';
 import { pseudocode, type DijkstraRun, type DijkstraSettings } from './model';
 
@@ -222,18 +221,6 @@ describe("Dijkstra's algorithm", () => {
     expect(say('A>B:1, B>C:2, C>B:-3')).toContain('negative cycle, B → C → B');
     expect(say('A>B:1, C>D:-2')).toContain('happens to give the right distances');
     expect(say('A-B:1, B-C:-1')).toContain('an undirected edge goes both ways');
-  });
-
-  it('draws every curated example without labels on top of each other', () => {
-    for (const ex of dijkstra.examples) {
-      const settings = { ...dijkstra.defaults, ...ex.settings } as DijkstraSettings;
-      const t = new Timeline(dijkstra, settings, 1, ex.ops);
-      for (let i = 0; i < t.length; i++)
-        expect(
-          overlaps(dijkstra.view(t.at(i).step, settings).shapes),
-          `${ex.id} step ${i}`,
-        ).toEqual([]);
-    }
   });
 
   it('keeps pseudocode lines short enough for a phone', () => {

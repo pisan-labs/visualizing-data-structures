@@ -472,7 +472,7 @@ const clear: Op = {
 };
 
 // ---------------------------------------------------------------------------------------------
-// fill: the "all colliding keys" preset, which needs the settings to pick its keys
+// The "All colliding keys" preset: keys that share a bucket under the current settings
 
 /** Keys that all land in one bucket under these settings. */
 export function collidingKeys(
@@ -514,6 +514,7 @@ function anagrams(letters: string[]): string[] {
   );
 }
 
+/** The preset used to run as this one operation; it stays so links saved with it still open. */
 const fill: Op = {
   label: 'Fill',
   arity: 2,

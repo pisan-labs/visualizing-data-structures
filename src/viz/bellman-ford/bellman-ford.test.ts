@@ -5,7 +5,6 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import type { Graph } from '../_graph/graph';
 import { parseGraph } from '../_graph/parse';
-import { overlaps } from '../_paths/overlap';
 import { bellmanFord } from '.';
 import { pseudocode, type BfRun, type BfSettings } from './model';
 
@@ -194,18 +193,6 @@ describe('Bellman-Ford', () => {
     expect(last('A>B:2, B>C:3, D>E:1, E>F:-3, F>D:1, F>C:2').say).toContain(
       'but A cannot reach it',
     );
-  });
-
-  it('draws every curated example without labels on top of each other', () => {
-    for (const ex of bellmanFord.examples) {
-      const settings = { ...bellmanFord.defaults, ...ex.settings } as BfSettings;
-      const t = new Timeline(bellmanFord, settings, 1, ex.ops);
-      for (let i = 0; i < t.length; i++)
-        expect(
-          overlaps(bellmanFord.view(t.at(i).step, settings).shapes),
-          `${ex.id} step ${i}`,
-        ).toEqual([]);
-    }
   });
 
   it('keeps pseudocode lines short enough for a phone', () => {

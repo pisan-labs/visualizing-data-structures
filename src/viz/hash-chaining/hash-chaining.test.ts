@@ -117,7 +117,12 @@ describe('separate chaining', () => {
         const { keys, bucket } = collidingKeys(makeRng(m), st, 8);
         expect(keys.length).toBe(8);
         for (const k of keys) expect(hashOf(k, m, hash).index).toBe(bucket);
-        const t = new Timeline(hashChaining, st, 1, [['fill', 'collide', 8]]);
+        const preset = hashChaining.controls.presets!.find(
+          (p) => p.label === 'All colliding keys',
+        )!;
+        const calls = preset.make(makeRng(m), 8, st);
+        expect(calls.every(([op]) => op === 'insert')).toBe(true);
+        const t = new Timeline(hashChaining, st, 1, calls);
         expect(longestOf(t.endState()), `${hash}, m = ${m}`).toBe(8);
       }
     }

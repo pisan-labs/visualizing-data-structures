@@ -13,6 +13,7 @@ import tombstones from './examples/tombstones.json';
 import triangular from './examples/triangular.json';
 import explain from './explain.md?raw';
 import {
+  collidingKeys,
   defaults,
   describe,
   init,
@@ -88,7 +89,10 @@ export const hashOpen: VizDef<OpenState, OpenSettings, OpenExtra> = {
     random: { label: 'Insert random', make: (rng) => [['insert', rng.int(1, 99)]] },
     presets: [
       { label: 'Random keys', make: (rng, n) => inserts(distinctKeys(rng, n)) },
-      { label: 'All colliding keys', make: (_rng, n) => [['fill', 'collide', n]] },
+      {
+        label: 'All colliding keys',
+        make: (rng, n, s) => inserts(collidingKeys(rng, Number(s?.m ?? defaults.m), n)),
+      },
       {
         label: 'Sequential keys',
         make: (rng, n) => {

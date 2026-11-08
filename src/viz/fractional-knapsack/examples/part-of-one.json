@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "fractional-knapsack",
+  "id": "part-of-one",
+  "title": "Take part of the last item",
+  "notes": "Items 1:6, 2:10 and 3:12, capacity 5. Best ratio first takes items 1 and 2 whole and 2/3 of item 3: 6 + 10 + 8 = 24. With whole items only, the best is 22.",
+  "settings": {
+    "mode": "fractional"
+  },
+  "seed": 1,
+  "ops": [["items", "1:6 2:10 3:12"], ["capacity", 5], ["fill"]],
+  "at": {
+    "op": 2,
+    "step": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "fractional-knapsack",
+  "id": "equal-ratio",
+  "title": "Equal value per weight",
+  "notes": "Every item is worth 2 per unit, so the order does not matter: any way of filling the knapsack is worth 2 × 5 = 10.",
+  "settings": {
+    "mode": "fractional"
+  },
+  "seed": 1,
+  "ops": [["items", "2:4 3:6 4:8"], ["capacity", 5], ["fill"]],
+  "at": {
+    "op": 2,
+    "step": 0
+  }
+}

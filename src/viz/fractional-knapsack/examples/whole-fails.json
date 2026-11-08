@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "fractional-knapsack",
+  "id": "whole-fails",
+  "title": "Whole items only: greedy is wrong",
+  "notes": "The same items, but nothing can be cut. Greedy takes items 1 and 2, item 3 no longer fits, and it gets 16. The 0/1 knapsack table takes items 2 and 3 for 22.",
+  "settings": {
+    "mode": "whole"
+  },
+  "seed": 1,
+  "ops": [["items", "1:6 2:10 3:12"], ["capacity", 5], ["fill"]],
+  "at": {
+    "op": 2,
+    "step": 0
+  }
+}

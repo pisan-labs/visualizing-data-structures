@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "euclid",
+  "id": "no-inverse",
+  "title": "No inverse when the gcd is not 1",
+  "notes": "6 has no inverse mod 15: gcd(6, 15) = 3, and every multiple of 6 leaves a remainder of 0, 3, 6, 9 or 12, never 1.",
+  "settings": {
+    "version": "extended"
+  },
+  "seed": 1,
+  "ops": [["inverse", 6, 15]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

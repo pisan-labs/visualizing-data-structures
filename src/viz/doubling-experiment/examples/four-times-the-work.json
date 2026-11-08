@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "doubling-experiment",
+  "id": "four-times-the-work",
+  "title": "Double n, four times the comparisons",
+  "notes": "Insertion sort on random input, n = 100 to 12,800. Every ratio is close to 4, so b is close to 2: 1.86 at first, then 2.03, 2.02, 1.98 and so on to 1.99.",
+  "settings": {
+    "algo": "insertion",
+    "noise": "off",
+    "fit": "last"
+  },
+  "seed": 1,
+  "ops": [["run", 100]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

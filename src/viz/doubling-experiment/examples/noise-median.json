@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "doubling-experiment",
+  "id": "noise-median",
+  "title": "The median of five steadies b",
+  "notes": "The same inputs and the same noise, but each size keeps the median of five runs. b goes 1.76, 1.91, 1.79, 2.01, 2.18, 1.90, 2.00, and the guess at n = 20,000 is within 0.1%.",
+  "settings": {
+    "algo": "insertion",
+    "noise": "median",
+    "fit": "last"
+  },
+  "seed": 8,
+  "ops": [
+    ["run", 10],
+    ["predict", 20000]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

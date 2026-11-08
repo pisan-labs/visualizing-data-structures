@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "doubling-experiment",
+  "id": "noise-one-run",
+  "title": "Noise: one timed run per size",
+  "notes": "Timing noise on, one run per size, from n = 10. b jumps: 0.69, 1.74, 2.66, 1.30, 2.46, then settles toward 2 as the runs get longer. The model's guess at n = 20,000 is 30% low.",
+  "settings": {
+    "algo": "insertion",
+    "noise": "one",
+    "fit": "last"
+  },
+  "seed": 8,
+  "ops": [
+    ["run", 10],
+    ["predict", 20000]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

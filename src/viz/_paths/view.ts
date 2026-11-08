@@ -144,7 +144,7 @@ export function drawKeyed(shapes: Shape[], o: KeyedOptions): Bounds {
       x: x0 + w / 2,
       y: o.y + KEYED_H + 14,
       text: o.first,
-      size: 12,
+      size: 13,
       anchor: 'middle',
       cls: 'label',
     });
@@ -264,7 +264,7 @@ export function drawSplit(shapes: Shape[], o: SplitOptions): Bounds {
         x: p.x + o.cellW / 2,
         y: p.y + KEYED_H + 14,
         text: 'min',
-        size: 12,
+        size: 13,
         anchor: 'middle',
         cls: 'label',
       });

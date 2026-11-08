@@ -15,11 +15,14 @@ import {
   below,
   drawGraph,
   layoutGraph,
+  layoutsFor,
   padBounds,
   placePanels,
   unionBounds,
+  type GraphLayout,
   type VertexLook,
 } from '../../layouts/graph';
+import { pickLayout } from '../../layouts/arrange';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { edgeKey } from '../_graph/graph';
 import { dist } from '../_paths/kit';
@@ -55,16 +58,35 @@ function queueCellWidth(g: DijkstraState['graph']): number {
   ]);
 }
 
+/**
+ * Drawn on a stage, the graph may turn on its side (layoutsFor), and the panels may wrap
+ * shorter rows (a phone has height to spare and little width): the arrangement drawn largest
+ * wins.
+ */
 export function view(
   step: Step<DijkstraState, DijkstraExtra>,
   settings: DijkstraSettings,
+  stage?: StageSize,
+): Scene {
+  const layout = layoutGraph(step.state.graph, settings.layout);
+  const layouts = layoutsFor(layout, settings.layout, stage);
+  const rows = stage && step.extra?.run ? [9, 6] : [9];
+  return pickLayout(
+    stage,
+    layouts.flatMap((l) => rows.map((perRow) => draw(step, l, perRow, stage))),
+  );
+}
+
+function draw(
+  step: Step<DijkstraState, DijkstraExtra>,
+  layout: GraphLayout,
+  perRow: number,
   stage?: StageSize,
 ): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const r = extra.run;
-  const layout = layoutGraph(g, settings.layout);
   // The current π edges, by edge key, with the end each was found from.
   const tree = new Map<string, string>();
   if (r) for (const v of g.vertices) if (r.pi[v]) tree.set(edgeKey(g, r.pi[v]!, v), r.pi[v]!);
@@ -112,6 +134,7 @@ export function view(
           roles,
           cellW: queueCellWidth(g),
           room: r.room,
+          perRow,
         });
         const table = distTable(out, {
           id: 'tbl',
@@ -122,6 +145,7 @@ export function view(
           pi: r.pi,
           roles,
           final: (v) => settled.has(v),
+          perRow: perRow + 1,
         });
         return unionBounds(split, table);
       }),

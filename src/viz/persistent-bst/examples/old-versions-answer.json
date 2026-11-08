@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "persistent-bst",
+  "id": "old-versions-answer",
+  "title": "Old versions still answer",
+  "notes": "30 is deleted in v4, but v3 was never touched. View v3 and search for 30: it is still there, found exactly as it was before the delete.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 30],
+    ["insert", 70],
+    ["delete", 30],
+    ["view", 3],
+    ["search", 30]
+  ]
+}

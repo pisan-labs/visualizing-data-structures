@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "persistent-bst",
+  "id": "sorted-copies-more",
+  "title": "Deep paths copy more",
+  "notes": "Rising keys make a chain, so each insert copies the whole chain: 1, 2, 3, then 4 new nodes. Path copying costs one node per level, which is why persistent trees are built on balanced trees in practice.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40]
+  ]
+}

@@ -265,3 +265,5 @@
 2026-11-08 [code] One definition of the typical stages (laptop 888x384, phone 360x536 with the strip) and a thumbnail stage in src/render/stage.ts; graph.ts and the conformance check use them; thumbnails pick the larger of no stage and the thumbnail stage (5 better, none worse)
 
 2026-11-08 [note] Deployed at 08:26 on Yusuf's "merge next to main and deploy": main fast-forwarded 65a9e38..1d91418 (CI run 98 green): the four Big-O pages and the settled, zoom and text-width cleanups
+
+2026-11-08 [note] Handover at Yusuf's request (about 08:45; context about 70%): HANDOFF.md rewritten and fact-checked; the next session starts at once

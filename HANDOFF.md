@@ -19,8 +19,9 @@ next one at once, so the 16:52 session-start run (which looks only for a marker 
   none worse). The daily deploy at 17:27 fast-forwards `main` to `next` if CI on `next`'s head is
   green.
 - Checks: on `38f65a4`, lint, svelte-check and 3016 unit tests passed; the full local e2e on
-  `1d91418` had 2166 passed, 1 failed (the factorial axe scan, intermittent, register item 11),
-  5 skipped.
+  `4cb8f93` (the same code as `1d91418`, which only adds log lines) had 2166 passed, 1 failed
+  (the factorial axe scan, intermittent, register item 11), 5 skipped. At 08:45 CI was still
+  running on `next` (runs 99 and 101) and on `main` (run 100).
 
 ## Merged since the last handover (7 November, 08:00), on `next` unless marked
 
@@ -30,11 +31,12 @@ next one at once, so the 16:52 session-start run (which looks only for a marker 
   deploy's push; e2e count checks that wait for the drawing to settle. Deploys at 18:45 and 20:00.
 - 8 November:
   - 01:58, `main`: deployed (125 pages).
-  - 03:57 to 06:24, wave 6, understanding Big-O (`PLAN.md` section 14, decisions 35 to 37):
+  - 03:57 to 06:24, wave 6, understanding Big-O (`PLAN.md` section 14; decisions 35 to 37 in section 11):
     loop-counting, big-o-definition, amortized-analysis (linked from the dynamic array page),
     doubling-experiment.
   - 06:16, the Mealy and Moore property test generates only machines the page loads (it failed
-    about 1 run in 6; `0de5f99` was pushed red because a check was piped through grep).
+    about 1 run in 6; `0de5f99` was pushed with that failure in the local check, hidden by a pipe through
+    grep; CI run 93 on it passed).
   - 06:26 onwards, the shared-code cleanup (`PLAN.md` section 15): the debt register; one
     measured `textWidth` and `wrapText` (`src/layouts/text.ts`) used by layouts and four pages;
     `settled()` waits for playback to finish; one source for the zoom buttons' room
@@ -45,7 +47,10 @@ next one at once, so the 16:52 session-start run (which looks only for a marker 
 
 ## Branches still unmerged
 
-None with unmerged content. Agent worktree branches (`worktree-agent-*`) are all merged.
+No branch of this session's is unmerged. Seven `worktree-agent-*` WIP copies from 5 and 6
+November are on origin and are not ancestors of `next` (`git cherry` finds commits in five of
+them with no match); earlier handoffs judged them superseded, their content being on `main`, but
+that was not re-checked on 8 November. Leave them; they are not an owner action.
 
 ## Next, in order
 
@@ -62,7 +67,8 @@ None with unmerged content. Agent worktree branches (`worktree-agent-*`) are all
    - item 10, `matches()` in `_automata/regex.ts` is exponential on nested concatenations;
    - item 11, the intermittent factorial axe failure (capture the element next time);
    - from the item 6 report: the floyd-warshall and multitape-tm pickers score like `pickBest`
-     in `_automata/panels.ts`, and the two `acrossFits` are near copies; they could merge if
+     in `_automata/panels.ts`, and the `acrossFits` in `_automata/panels.ts` and `pda/view.ts` are near copies; they
+     could merge if
      `pickBest` moved into `src/layouts`.
 3. Smaller shared-code requests from the wave 5 and 6 agents: multi-line and custom move labels
    in `drawAutomaton`; a `parse` option for `loadOp`; a shared two-machine parser; `drawTape`
@@ -84,8 +90,8 @@ None with unmerged content. Agent worktree branches (`worktree-agent-*`) are all
 
 ## Not verified
 
-- Whether the 17:27 routine can push to `main` on its own with the allow rule; the two pushes
-  since it was added were on Yusuf's word.
+- Whether the 17:27 routine can push to `main` on its own with the allow rule; the three pushes
+  to `main` since it was added (20:00, 01:58 and 08:26) were all on Yusuf's word.
 - regex-engines: the backtracker skips an ε-move back to a state already passed at the same
   position, and after 150 visits shows only the steps where the count doubles; nobody else has
   reviewed these choices.
@@ -157,7 +163,7 @@ None with unmerged content. Agent worktree branches (`worktree-agent-*`) are all
 
 - Previous session: `session_01JyJzMXcc2unSAwN88hsew5` (lineage depth 2, limit 8). It took over
   on Saturday 7 November at 08:00 from `session_01JyJzMZHCY1tEoov2vYAuJv` and hands over on
-  Sunday 8 November at about 08:45, at Yusuf's request (context about 65%). The next session is
+  Sunday 8 November at about 08:45, at Yusuf's request (context about 70%). The next session is
   at depth 3.
 - Routines, to be moved to the next session when it takes over, keeping their names exactly:
   - `trig_01AEsnzySTfQAsgxsS9RCdAA`: "StepWise hourly status report", `46 * * * *`.

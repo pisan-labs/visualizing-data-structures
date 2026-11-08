@@ -345,3 +345,5 @@
 2026-11-08 [decision] Default taken (asked 21:25, no answer by 21:40): review wave 7 before it goes live; four reviewers (16, 16, 18 and 12 pages) check correctness, narration vs drawing, voice, code and practice; segment-intersection keeps the CLRS default (asked 20:47)
 
 2026-11-09 [code] Wave 7 review merged for 50 pages: sorting/DP/greedy (9 fixed), strings/numbers/computation (10 fixed), hashing/trees/heaps (10 fixed): wrong practice answers, false claims in concept pages and narration, grammar; each bug has a regression test
+
+2026-11-09 [code] Wave 7 review merged for graphs and geometry (8 of 12 fixed: odd-cycle colouring bound, pagerank iteration-limit message and float ties, practice questions with two right answers on kd-tree and delaunay, Bentley-Ottmann narration); review complete: 37 of 62 pages fixed

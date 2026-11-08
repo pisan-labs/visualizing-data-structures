@@ -6,6 +6,8 @@ import { formatGraph, parseGraph } from '../_graph/parse';
 import { kruskal } from '.';
 import type { KruskalRun, KruskalSettings } from './model';
 import { MST_TEXT } from '../_graph/mst';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 // A reference written independently of the page: sort, then join with a label array.
 function reference(g: Graph): { weight: number; tree: string[] } {
@@ -117,5 +119,13 @@ describe('kruskal', () => {
   it('refuses a directed graph', () => {
     const t = new Timeline(kruskal, kruskal.defaults, 1, [['load', 'A>B:1, B>C:2'], ['run']]);
     expect(t.entries[1]!.steps.at(-1)!.say).toContain('needs an undirected graph');
+  });
+});
+
+describe('drawn text size', () => {
+  // The ranks beside the union-find roots were 11 units (7.6 px on a phone): now 13.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(kruskal, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(13);
+    expect(smallestText(kruskal, PHONE_STAGE).px).toBeGreaterThanOrEqual(8.9);
   });
 });

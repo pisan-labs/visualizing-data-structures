@@ -72,7 +72,7 @@ function drawUnionFind(
     if (r.p[v] === v) roots.push(i);
     else kids.get(index.get(r.p[v]!)!)!.push(i);
   });
-  const opts = { radius: R, gap: GAP, treeGap: 16, levelGap: LEVEL, maxWidth, rowGap: 34 };
+  const opts = { radius: R, gap: GAP, treeGap: 20, levelGap: LEVEL, maxWidth, rowGap: 34 };
   const layout = layoutForest(roots, (i) => kids.get(i) ?? [], opts);
   const top = y + 26 + R;
   const left = x - layout.bounds.x;
@@ -94,7 +94,7 @@ function drawUnionFind(
         x: at.x + R + 1,
         y: at.y - R + 3,
         text: `r${r.rank[v]}`,
-        size: 11,
+        size: 13,
         mono: true,
         cls: 'label',
       });

@@ -7,10 +7,15 @@ const trees = (page: Page) =>
 const thumb = (page: Page, title: string) =>
   trees(page).getByRole('link', { name: title, exact: true }).locator('svg.thumb');
 const drawing = (page: Page, title: string) => thumb(page, title).innerHTML();
+/** Live pages in the Trees family (at least the 10 of wave 2; later waves add more). */
+async function liveTrees(page: Page): Promise<number> {
+  await expect.poll(() => trees(page).locator('li.live').count()).toBeGreaterThanOrEqual(10);
+  return trees(page).locator('li.live').count();
+}
 
 test('every page has a thumbnail, hidden from screen readers', async ({ page }) => {
   await page.goto('/');
-  await expect(trees(page).locator('svg.thumb')).toHaveCount(10);
+  await expect(trees(page).locator('svg.thumb')).toHaveCount(await liveTrees(page));
   await expect(page.locator('li.live svg.thumb')).toHaveCount(
     await page.locator('li.live').count(),
   );
@@ -57,7 +62,7 @@ test('thumbnails stay still when the reader asks for reduced motion', async ({ p
 
 test('the catalog with thumbnails has no axe violations', async ({ page }) => {
   await page.goto('/');
-  await expect(trees(page).locator('svg.thumb')).toHaveCount(10);
+  await expect(trees(page).locator('svg.thumb')).toHaveCount(await liveTrees(page));
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();

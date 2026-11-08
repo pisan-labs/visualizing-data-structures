@@ -337,3 +337,7 @@
 2026-11-08 [code] Merged wave 7G: euler-path, graph-coloring, bidirectional-search, boruvka, johnson, lca, pagerank (no kit changes)
 
 2026-11-08 [code] Merged wave 7C: kd-tree, quadtree, closest-pair, segment-intersection (CLRS any-intersection default, Bentley-Ottmann setting), delaunay with Voronoi toggle (new _spatial kit)
+
+2026-11-08 [code] Merged wave 7D: d-ary-heap, min-max-heap, pairing-heap, rope, merkle-tree (heap.ts drawHeapTree parent option); wave 7 complete, 62 pages
+
+2026-11-08 [code] Test fixes after wave 7: catalog thumbnails count the Trees family's live pages (was a fixed 10); regex-to-nfa compares positions to 0.1 unit; closest-pair checks O(n log n) comparisons, not "below n(n-1)/2" (false at n=4: 7 vs 6)

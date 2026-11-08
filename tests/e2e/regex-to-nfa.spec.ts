@@ -49,7 +49,11 @@ const circle = (page: Page, q: string) =>
       (els, name) =>
         els
           .filter((e) => e.textContent === name)
-          .map((e) => `${e.getAttribute('x')},${e.getAttribute('y')}`)
+          // To a tenth of a unit: layouts may differ in the last float digits between steps.
+          .map(
+            (e) =>
+              `${Number(e.getAttribute('x')).toFixed(1)},${Number(e.getAttribute('y')).toFixed(1)}`,
+          )
           .join(' '),
       q,
     );

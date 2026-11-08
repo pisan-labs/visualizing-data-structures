@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "exponential-search",
+  "id": "unsorted",
+  "title": "Unsorted values: a jump can skip x",
+  "notes": "The search refuses: on unsorted values A[bound] < x says nothing about where x is. Sort A, then search.",
+  "settings": {
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [["load", "42 8 63 17 35 24 50"], ["search", 17], ["sort"], ["search", 17]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

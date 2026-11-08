@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "exponential-search",
+  "id": "doubling",
+  "title": "Doubling, then binary search",
+  "notes": "Jumps to A[1], A[2], A[4] and A[8]; A[8] = 41 is bigger than 26, so 26 must be in A[4..8]. Binary search finds it there.",
+  "settings": {
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "3 7 12 18 21 26 30 35 41 47 52 58 64 71 79 83 88 91 95 98"],
+    ["search", 26]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "exponential-search",
+  "id": "past-the-end",
+  "title": "Bigger than everything: the jumps run off the end",
+  "notes": "99 is bigger than every value. bound goes 1, 2, 4, 8, 16, 32; 32 is past the end, so binary search looks at A[16..19] and finds nothing.",
+  "settings": {
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "3 7 12 18 21 26 30 35 41 47 52 58 64 71 79 83 88 91 95 98"],
+    ["search", 99]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

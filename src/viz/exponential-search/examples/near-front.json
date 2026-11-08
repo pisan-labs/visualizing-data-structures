@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "exponential-search",
+  "id": "near-front",
+  "title": "Near the front: two probes",
+  "notes": "3 is in A[0]. A[1] = 7 is already bigger, so the jumps stop at once and binary search only has A[0..1] to look at. Binary search on all 20 values takes 4 probes.",
+  "settings": {
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "3 7 12 18 21 26 30 35 41 47 52 58 64 71 79 83 88 91 95 98"],
+    ["search", 3]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

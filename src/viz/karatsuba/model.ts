@@ -230,7 +230,7 @@ function* run(x: number, y: number, split: Split): Generator<KStep, S, void> {
   s.done = true;
   const products = calls.filter((c) => c.m === 0).length;
   yield step(
-    `${x}·${y} = ${x * y}. ${calls.length} ${calls.length === 1 ? 'call' : 'calls'}, ${products} base-case ${products === 1 ? 'product' : 'products'}, ${s.digitMults} digit products; the schoolbook method takes ${schoolbook(x, y)}.`,
+    `${x}·${y} = ${x * y}. ${calls.length} ${calls.length === 1 ? 'call' : 'calls'}, ${products} base-case ${products === 1 ? 'product' : 'products'}, ${s.digitMults} digit ${s.digitMults === 1 ? 'product' : 'products'}; the schoolbook method takes ${schoolbook(x, y)}.`,
     [],
     1,
     [[box(1), 'found']],

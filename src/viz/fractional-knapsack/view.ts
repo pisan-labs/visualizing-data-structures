@@ -77,7 +77,7 @@ export function view(
   state.order.forEach((id, k) => {
     const it = state.items[id - 1]!;
     const y = top + k * row;
-    const t = state.taken[id - 1];
+    const t = state.taken[id - 1] ?? null;
     const role = roles.get(itemId(id));
     const mid = y + row / 2 + TEXT * 0.36;
     out.push(

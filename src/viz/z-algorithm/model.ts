@@ -215,7 +215,7 @@ function* position(run: Run, settings: ZSettings): Generator<ZStep, void, void> 
     st.z[i] = k;
     const why =
       zm < room
-        ? `Z[${mirror}] = ${zm} is less than r − i + 1 = ${room}, so Z[${i}] starts at ${k}.`
+        ? `Z[${mirror}] = ${zm} is less than r − i + 1 = ${room}, so Z[${i}] starts at ${k}, and the next comparison only confirms it: the character just past it differs here, as it does at Z[${mirror}].`
         : `Z[${mirror}] = ${zm}, but only r − i + 1 = ${room} of that is inside the box, so Z[${i}] starts at ${k}; past r we must compare.`;
     yield run.step(
       `i = ${i} is inside the box [${st.l}, ${st.r}]. S[${st.l}..${st.r}] matches S[0..${st.r - st.l}], so S[${i}..${st.r}] is a copy of S[${mirror}..${st.r - st.l}]. ${why}`,

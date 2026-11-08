@@ -103,6 +103,18 @@ describe('Z-algorithm', { timeout: 60_000 }, () => {
     expect(copy.extra?.copy).toEqual({ from: 1, to: 5 });
   });
 
+  it('says the comparison after a value that fits in the box only confirms it', () => {
+    const steps = run([['load', 'aabcaabxaaz'], ['build']]).entries[1]!.steps;
+    let seen = 0;
+    steps.forEach((s, n) => {
+      if (!s.say.includes('is less than r − i + 1')) return;
+      seen++;
+      expect(s.say).toMatch(/the next comparison only confirms it/);
+      expect(steps[n + 1]!.say).toMatch(/they differ/);
+    });
+    expect(seen).toBeGreaterThan(0);
+  });
+
   it('explains input it cannot use', () => {
     const t = run([
       ['load', 'A$B / A'],

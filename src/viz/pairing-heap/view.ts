@@ -3,6 +3,7 @@ import { pickLayout } from '../../layouts/arrange';
 import { labelSize, padBounds, unionBounds } from '../../layouts/binary-tree';
 import { drawForest, layoutForest } from '../../layouts/forest';
 import type { Bounds, Scene, Shape } from '../../render/scene';
+import { ZOOM_BUTTONS } from '../../render/stage';
 import { count, describe, type PairExtra, type PairSettings, type PairState } from './model';
 
 const R = 17;
@@ -17,12 +18,20 @@ export function view(
   settings: PairSettings,
   stage?: StageSize,
 ): Scene {
-  const one = draw(step, settings, Infinity);
+  // On a laptop the zoom buttons cover the top right corner, where a second tree (a new key, H2,
+  // a cut subtree) stands level with the root: keep a band clear above the roots.
+  const head = stage && !stage.strip ? ZOOM_BUTTONS.size + 12 : 0;
+  const one = draw(step, settings, Infinity, head);
   if (!stage || step.state.roots.length < 2) return one;
-  return pickLayout(stage, [one, draw(step, settings, 420), draw(step, settings, 280)]);
+  return pickLayout(stage, [one, draw(step, settings, 420, head), draw(step, settings, 280, head)]);
 }
 
-function draw(step: Step<PairState, PairExtra>, settings: PairSettings, maxWidth: number): Scene {
+function draw(
+  step: Step<PairState, PairExtra>,
+  settings: PairSettings,
+  maxWidth: number,
+  head = 0,
+): Scene {
   const { state: s, extra } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const pointers = settings.draw === 'pointers';
@@ -56,6 +65,7 @@ function draw(step: Step<PairState, PairExtra>, settings: PairSettings, maxWidth
     });
     boxes.push({ x: 0, y: -R, w: 88, h: 2 * R });
   } else boxes.push(layout.bounds);
+  if (head) boxes.push({ x: 0, y: -R - head, w: 1, h: head });
 
   // Labels over roots: "H2" for the heap waiting to be melded.
   for (const [u, text] of Object.entries(extra?.tags ?? {})) {

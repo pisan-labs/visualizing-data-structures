@@ -99,7 +99,7 @@ describe('pairing heap', () => {
 });
 
 describe('drawn text size', () => {
-  // 22 px on a laptop; 10.5 on a phone, where a flat root with nine children is widest.
+  // 19 px on a laptop; 10.5 on a phone, where a flat root with nine children is widest.
   it('stays readable on a laptop and on a phone', () => {
     expect(smallestText(pairingHeap, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(14);
     expect(smallestText(pairingHeap, PHONE_STAGE).px).toBeGreaterThanOrEqual(10);

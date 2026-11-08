@@ -19,6 +19,12 @@ async function loadExample(page: Page, title: string) {
     .click();
 }
 
+/** Step forward up to n times, stopping at the last step shown at this detail level. */
+async function stepForward(page: Page, n: number) {
+  const fwd = page.getByRole('button', { name: 'Step forward' });
+  for (let i = 0; i < n && !(await fwd.isDisabled()); i++) await fwd.click();
+}
+
 test.beforeEach(async ({ page }) => {
   await page.goto('/closest-pair/');
   await expect(page.getByRole('heading', { name: 'Closest pair of points' })).toBeVisible();
@@ -50,7 +56,7 @@ test('bad input is explained', async ({ page }) => {
 
 test('the strip and the calls are drawn', async ({ page }) => {
   await loadExample(page, 'Sixteen points, divided and conquered');
-  for (let i = 0; i < 30; i++) await page.getByRole('button', { name: 'Step forward' }).click();
+  await stepForward(page, 30);
   await expect(stage(page).locator('text', { hasText: 'calls (outermost first)' })).toBeVisible();
   await expect
     .poll(async () => {
@@ -80,7 +86,7 @@ for (const theme of ['dark', 'contrast']) {
   test(`no axe violations during a strip check (${theme})`, async ({ page }) => {
     await page.getByRole('combobox', { name: 'Theme' }).selectOption(theme);
     await loadExample(page, 'The closest pair crosses the line');
-    for (let i = 0; i < 24; i++) await page.getByRole('button', { name: 'Step forward' }).click();
+    await stepForward(page, 24);
     await settled(page);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])

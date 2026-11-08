@@ -26,6 +26,12 @@ async function loadExample(page: Page, title: string) {
     .click();
 }
 
+/** Step forward up to n times, stopping at the last step shown at this detail level. */
+async function stepForward(page: Page, n: number) {
+  const fwd = page.getByRole('button', { name: 'Step forward' });
+  for (let i = 0; i < n && !(await fwd.isDisabled()); i++) await fwd.click();
+}
+
 test.beforeEach(async ({ page }) => {
   await page.goto('/delaunay/');
   await expect(
@@ -84,7 +90,7 @@ for (const theme of ['dark', 'contrast']) {
   test(`no axe violations while a point goes in (${theme})`, async ({ page }) => {
     await page.getByRole('combobox', { name: 'Theme' }).selectOption(theme);
     await loadExample(page, 'Ten points, one at a time');
-    for (let i = 0; i < 40; i++) await page.getByRole('button', { name: 'Step forward' }).click();
+    await stepForward(page, 40);
     await settled(page);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])

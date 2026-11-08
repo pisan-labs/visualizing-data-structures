@@ -26,9 +26,15 @@ async function loadExample(page: Page, title: string) {
     .click();
 }
 
+/** Step forward up to n times, stopping at the last step shown at this detail level. */
+async function stepForward(page: Page, n: number) {
+  const fwd = page.getByRole('button', { name: 'Step forward' });
+  for (let i = 0; i < n && !(await fwd.isDisabled()); i++) await fwd.click();
+}
+
 test.beforeEach(async ({ page }) => {
   await page.goto('/quadtree/');
-  await expect(page.getByRole('heading', { name: 'Quadtree' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Quadtree', exact: true })).toBeVisible();
   await page.getByRole('combobox', { name: 'Speed' }).selectOption('4');
 });
 
@@ -93,7 +99,7 @@ for (const theme of ['dark', 'contrast']) {
   test(`no axe violations during a range query (${theme})`, async ({ page }) => {
     await page.getByRole('combobox', { name: 'Theme' }).selectOption(theme);
     await loadExample(page, 'A range query skips whole squares');
-    for (let i = 0; i < 28; i++) await page.getByRole('button', { name: 'Step forward' }).click();
+    await stepForward(page, 28);
     await settled(page);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])

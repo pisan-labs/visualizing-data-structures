@@ -26,6 +26,12 @@ async function loadExample(page: Page, title: string) {
     .click();
 }
 
+/** Step forward up to n times, stopping at the last step shown at this detail level. */
+async function stepForward(page: Page, n: number) {
+  const fwd = page.getByRole('button', { name: 'Step forward' });
+  for (let i = 0; i < n && !(await fwd.isDisabled()); i++) await fwd.click();
+}
+
 test.beforeEach(async ({ page }) => {
   await page.goto('/kd-tree/');
   await expect(page.getByRole('heading', { name: 'k-d tree' })).toBeVisible();
@@ -97,7 +103,7 @@ for (const theme of ['dark', 'contrast']) {
   test(`no axe violations during a nearest search (${theme})`, async ({ page }) => {
     await page.getByRole('combobox', { name: 'Theme' }).selectOption(theme);
     await loadExample(page, 'Nearest neighbour skips whole subtrees');
-    for (let i = 0; i < 30; i++) await page.getByRole('button', { name: 'Step forward' }).click();
+    await stepForward(page, 30);
     await settled(page);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])

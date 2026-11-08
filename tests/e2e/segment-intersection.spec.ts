@@ -24,6 +24,12 @@ async function load(page: Page, segs: string) {
   await page.getByRole('button', { name: 'Load segments', exact: true }).click();
 }
 
+/** Step forward up to n times, stopping at the last step shown at this detail level. */
+async function stepForward(page: Page, n: number) {
+  const fwd = page.getByRole('button', { name: 'Step forward' });
+  for (let i = 0; i < n && !(await fwd.isDisabled()); i++) await fwd.click();
+}
+
 test.beforeEach(async ({ page }) => {
   await page.goto('/segment-intersection/');
   await expect(
@@ -55,7 +61,7 @@ test('vertical segments are refused with a reason', async ({ page }) => {
 
 test('the status and the event queue are drawn', async ({ page }) => {
   await loadExample(page, 'Three segments through one point');
-  for (let i = 0; i < 12; i++) await page.getByRole('button', { name: 'Step forward' }).click();
+  await stepForward(page, 12);
   await expect(stage(page).locator('text', { hasText: 'event queue' })).toBeVisible();
   await expect
     .poll(async () => {
@@ -85,7 +91,7 @@ for (const theme of ['dark', 'contrast']) {
   test(`no axe violations during the sweep (${theme})`, async ({ page }) => {
     await page.getByRole('combobox', { name: 'Theme' }).selectOption(theme);
     await loadExample(page, 'Report every crossing');
-    for (let i = 0; i < 16; i++) await page.getByRole('button', { name: 'Step forward' }).click();
+    await stepForward(page, 16);
     await settled(page);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])

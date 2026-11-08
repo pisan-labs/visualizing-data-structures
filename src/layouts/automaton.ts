@@ -697,7 +697,8 @@ export function drawAutomaton(
         opacity,
         cls: 'ring',
       });
-    const size = q.length > 3 ? 12 : 15;
+    // Longer names get smaller type, to stay inside the circle.
+    const size = q.length <= 3 ? 15 : q.length === 4 ? 14 : q.length === 5 ? 13 : 12;
     shapes.push({
       kind: 'text',
       id: `${id}-t`,

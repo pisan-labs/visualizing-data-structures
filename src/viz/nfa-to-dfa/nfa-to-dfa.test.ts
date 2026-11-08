@@ -203,10 +203,11 @@ describe('nfa-to-dfa', () => {
 });
 
 describe('drawn text size', () => {
-  // The 16-state DFA of the fourth symbol from the end, with its table: 7.6 px on a laptop and
-  // 4.9 on a phone before the states could move closer together.
+  // The 16-state DFA of the fourth symbol from the end, with its NFA and its 16-row table: 4.9 px
+  // on a phone before the states could move closer together, 7.3 now. Packing the DFA tighter
+  // still draws its labels over its arrows, so a phone stays under 9 px here.
   it('stays readable on a laptop and on a phone', () => {
-    expect(smallestText(nfaToDfa, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(10);
-    expect(smallestText(nfaToDfa, PHONE_STAGE).px).toBeGreaterThanOrEqual(6.5);
+    expect(smallestText(nfaToDfa, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(nfaToDfa, PHONE_STAGE).px).toBeGreaterThanOrEqual(7.2);
   });
 });

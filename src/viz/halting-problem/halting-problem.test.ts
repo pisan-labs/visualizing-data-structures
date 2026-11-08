@@ -28,6 +28,8 @@ import {
   runProgram,
   type Instr,
 } from './toy';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 type Simple = 'accept' | 'reject' | 'loop';
 
@@ -313,5 +315,13 @@ describe('input and presets', () => {
           const t = new Timeline(def, s, 1, calls);
           for (const e of t.entries) expect(e.steps.length, p.label).toBeGreaterThan(1);
         }
+  });
+});
+
+describe('drawn text size', () => {
+  // The smallest text is the tape's cell numbers, at 14.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(def, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(def, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

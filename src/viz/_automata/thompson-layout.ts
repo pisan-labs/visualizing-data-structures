@@ -17,9 +17,12 @@
  *
  * Three shapes of picture come out of it, and the view picks the one that fits the stage:
  *   rows 1      the whole NFA left to right
- *   rows 2, 3   the top-level concatenation wrapped onto 2 or 3 rows; the arrow from the end of
- *               one row runs back under it to the start of the next
+ *   rows 2-4    the top-level concatenation wrapped onto 2 to 4 rows; the arrow from the end of
+ *               one row runs back under it to the start of the next (views offer 4 rows only
+ *               when they know the stage, for a long expression on a phone)
  *   down        the one-row picture turned to read top to bottom (x and y swapped)
+ * `pictures(frags, how, key, TIGHT)` lays them out with the states closer together along the
+ * flow, for a long expression on a small stage.
  */
 import { STATE_R, labelBeside, labelSize } from '../../layouts/automaton';
 import {
@@ -46,6 +49,10 @@ import type { Construction, Frag } from './thompson-construct';
 
 /** Between two states joined by an arrow, along the flow. */
 export const GAP = 80;
+/** A tighter gap, for a long expression on a small stage: pictures(..., TIGHT). */
+export const TIGHT = 64;
+/** The gap the picture being laid out uses: GAP, or less for a tighter picture (pictures()). */
+let gap = GAP;
 /** Between the boxes of the two parts of a union. */
 const VGAP = 20;
 /** Between wrapped rows; the arrow from one row to the next runs along its middle. */
@@ -77,7 +84,7 @@ export interface Picture {
   bounds: Bounds;
   /** The start arrow comes from the left (true) or from above. */
   across: boolean;
-  /** 1, 2 or 3 rows, or 0 for the picture turned to read down. */
+  /** 1 to 4 rows, or 0 for the picture turned to read down. */
   rows: number;
   /** The rows' extents in y (one band unless wrapped), for framing a piece row by row. */
   bands: { y1: number; y2: number }[];
@@ -235,7 +242,7 @@ const maxX = (l: Local) => Math.max(...Object.values(l.pos).map((p) => p.x));
 const after = (part: Local, x: number) => Math.max(x, STATE_R + 16 - part.box.x1);
 
 /** Where the second part of a concatenation starts, right of the first. */
-const nextX = (a: Local, b: Local) => Math.max(maxX(a) + GAP, a.box.x2 - b.box.x1 + 14);
+const nextX = (a: Local, b: Local) => Math.max(maxX(a) + gap, a.box.x2 - b.box.x1 + 14);
 
 /** Lay out one fragment from its children's layouts. */
 function layoutOne(f: Frag, kids: Local[], kidFrags: Frag[], how: Construction): Local {
@@ -254,7 +261,7 @@ function layoutOne(f: Frag, kids: Local[], kidFrags: Frag[], how: Construction):
       if (f.fresh.length === 2)
         at(
           f.fresh.find((q) => q !== f.start)!,
-          GAP,
+          gap,
         );
       break;
     case 'concat':
@@ -268,15 +275,15 @@ function layoutOne(f: Frag, kids: Local[], kidFrags: Frag[], how: Construction):
         const wa = a!.pos[accept(fa!)]!.x;
         const wb = b!.pos[accept(fb!)]!.x;
         const w = Math.max(wa, wb);
-        const xa = after(a!, GAP + (w - wa) / 2);
-        const xb = after(b!, GAP + (w - wb) / 2);
+        const xa = after(a!, gap + (w - wa) / 2);
+        const xb = after(b!, gap + (w - wb) / 2);
         put(local, a!, { x: xa, y: ya });
         put(local, b!, { x: xb, y: yb });
         const right = Math.max(xa + a!.box.x2, xb + b!.box.x2);
-        at(accept(f), Math.max(GAP + w + GAP, right + STATE_R + 16));
+        at(accept(f), Math.max(gap + w + gap, right + STATE_R + 16));
       } else {
-        put(local, a!, { x: after(a!, GAP), y: ya });
-        put(local, b!, { x: after(b!, GAP), y: yb });
+        put(local, a!, { x: after(a!, gap), y: ya });
+        put(local, b!, { x: after(b!, gap), y: yb });
       }
       break;
     }
@@ -286,9 +293,9 @@ function layoutOne(f: Frag, kids: Local[], kidFrags: Frag[], how: Construction):
       // Thompson's R? is a star without the arrow that repeats it.
       if (how === 'thompson') {
         at(f.start, 0);
-        const xa = after(a!, GAP);
+        const xa = after(a!, gap);
         put(local, a!, { x: xa, y: 0 });
-        at(accept(f), Math.max(maxX(local) + GAP, xa + a!.box.x2 + STATE_R + 16));
+        at(accept(f), Math.max(maxX(local) + gap, xa + a!.box.x2 + STATE_R + 16));
         routing = f.added.map((move) => {
           if (move.from === accept(fa!) && move.to === fa!.start)
             return { move, hint: 'up', force: true };
@@ -299,10 +306,10 @@ function layoutOne(f: Frag, kids: Local[], kidFrags: Frag[], how: Construction):
       } else if (f.kind === 'opt') {
         // Sipser's R?: a new accepting start, then R.
         at(f.start, 0);
-        put(local, a!, { x: after(a!, GAP), y: 0 });
+        put(local, a!, { x: after(a!, gap), y: 0 });
       } else {
         if (f.kind === 'star') at(f.start, 0);
-        put(local, a!, { x: f.kind === 'star' ? after(a!, GAP) : 0, y: 0 });
+        put(local, a!, { x: f.kind === 'star' ? after(a!, gap) : 0, y: 0 });
         routing = f.added.map((move) =>
           move.to === fa!.start && move.from !== f.start
             ? { move, hint: local.pos[move.from]!.y > 0 ? 'down' : 'up', force: true }
@@ -434,9 +441,12 @@ function wrapped(
       best = breaks;
     }
   };
-  if (rows === 1) tryBreaks([]);
-  else if (rows === 2) for (let i = 1; i < n; i++) tryBreaks([i]);
-  else for (let i = 1; i < n; i++) for (let j = i + 1; j < n; j++) tryBreaks([i, j]);
+  // Every way to break the factors into `rows` rows (few factors, so trying them all is cheap).
+  const breaksFrom = (from: number, left: number, breaks: number[]): void => {
+    if (!left) return tryBreaks(breaks);
+    for (let i = from; i <= n - left; i++) breaksFrom(i + 1, left - 1, [...breaks, i]);
+  };
+  breaksFrom(1, rows - 1, []);
   const edges = [0, ...best, n];
   const out: Local = { pos: {}, paths: {}, box: { x1: 0, y1: 0, x2: 0, y2: 0 } };
   const rowStarts = new Set<number>();
@@ -514,20 +524,35 @@ const cache = new Map<string, Picture[]>();
  * The pictures to choose from for these fragments: one row, two and three rows when the
  * expression is a concatenation, and the one row turned to read down.
  */
-export function pictures(frags: readonly Frag[], how: Construction, key: string): Picture[] {
-  const hit = cache.get(`${how}|${key}`);
+export function pictures(
+  frags: readonly Frag[],
+  how: Construction,
+  key: string,
+  tight = GAP,
+): Picture[] {
+  const full = `${how}|${tight}|${key}`;
+  const hit = cache.get(full);
   if (hit) return hit;
+  gap = tight;
+  try {
+    return picturesNow(frags, how, full);
+  } finally {
+    gap = GAP;
+  }
+}
+
+function picturesNow(frags: readonly Frag[], how: Construction, full: string): Picture[] {
   const locals = layoutFrags(frags, how);
   const top = frags[frags.length - 1]!;
   const one = locals[locals.length - 1]!;
   const out = [finish(one, top.start, true, 1)];
-  for (const rows of [2, 3]) {
+  for (const rows of [2, 3, 4]) {
     const w = top.kind === 'concat' ? wrapped(frags, locals, rows) : null;
     if (w) out.push(finish(w.local, top.start, true, rows, w.bands));
   }
   out.push(finish(transpose(one), top.start, false, 0));
   if (cache.size > 100) cache.clear();
-  cache.set(`${how}|${key}`, out);
+  cache.set(full, out);
   return out;
 }
 

@@ -88,6 +88,9 @@ describe('Robin Hood hashing', () => {
     expect(last.vars!.probes).toBe(4);
     const d = run([...base, ['delete', 33]]);
     expect(d.entries.at(-1)!.steps.at(-1)!.vars!.shifts).toBe(2);
+    // 22 did not move, so only the moved keys got closer to home.
+    expect(d.entries.at(-1)!.steps.at(-1)!.say).toContain('each key that moved is one closer');
+    expect(d.entries.at(-1)!.steps.at(-1)!.say).not.toContain('every distance');
     expect(keysOf(d.endState()).slice(0, 6)).toEqual([22, 44, 1, null, 4, 5]);
   });
 
@@ -117,7 +120,10 @@ describe('Robin Hood hashing', () => {
             expect(keysOf(t.entries[i]!.end)).toEqual(ref.t);
           });
           for (let i = 0; i < t.length; i++) {
-            const s = t.at(i).step.state;
+            const st = t.at(i).step;
+            // Mid-delete, the hole is still moving along, so a gap is expected there.
+            if (st.lines.includes('del.shift') || st.lines.includes('del.scan')) continue;
+            const s = st.state;
             s.slots.forEach((c, j) => {
               if (!c) return;
               // No empty slot between a key and its home.

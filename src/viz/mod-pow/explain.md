@@ -7,7 +7,7 @@ The trick is the binary form of b. 13 is 1101 in binary, so a^13 = a^8 · a^4 ·
 | | Multiplications |
 |---|---|
 | naive: a · a · ... · a | b − 1 |
-| square-and-multiply | one squaring per bit of b, plus one multiply per 1 bit: at most 2 log₂ b |
+| square-and-multiply | one squaring per bit of b, plus one multiply per 1 bit: at most two per bit, about 2 log₂ b |
 
 ## Bits from the left
 

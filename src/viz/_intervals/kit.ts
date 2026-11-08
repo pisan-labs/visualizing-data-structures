@@ -76,9 +76,15 @@ export interface Axis {
   unit: number;
   /** Last time on the axis. */
   T: number;
+  /** First time on the axis, drawn at x0. Default 0. */
+  t0?: number;
 }
 
-export const xAt = (ax: Axis, t: number) => ax.x0 + t * ax.unit;
+export const xAt = (ax: Axis, t: number) => ax.x0 + (t - (ax.t0 ?? 0)) * ax.unit;
+
+/** The first time to draw: the earliest start, rounded down to an even number. */
+export const axisStart = (ivs: { s: number }[]) =>
+  2 * Math.floor(Math.min(...ivs.map((iv) => iv.s)) / 2);
 
 /** The last time to draw: the latest finish, rounded up to an even number, at least 8. */
 export const axisEnd = (ivs: { f: number }[]) =>
@@ -92,7 +98,7 @@ export function timeAxis(ax: Axis, y: number): Shape[] {
     {
       kind: 'arrow',
       id: 'axis',
-      x1: xAt(ax, 0),
+      x1: xAt(ax, ax.t0 ?? 0),
       y1: y,
       x2: xAt(ax, ax.T),
       y2: y,
@@ -101,7 +107,7 @@ export function timeAxis(ax: Axis, y: number): Shape[] {
     },
   ];
   const every = ax.unit >= 30 ? 1 : 2;
-  for (let t = 0; t <= ax.T; t++) {
+  for (let t = ax.t0 ?? 0; t <= ax.T; t++) {
     out.push({
       kind: 'arrow',
       id: `tick-${t}`,

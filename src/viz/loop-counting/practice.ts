@@ -92,7 +92,7 @@ export function loopPractice(def: () => Def): PracticeKind[] {
       id: 'big-o',
       title: 'What is the Big-O?',
       make(rng) {
-        const { settings, p, found, where } = setup(rng);
+        const { settings, p, where } = setup(rng);
         const n = Math.min(8, p.maxN);
         const end = last(settings, [['run', n]]);
         const right = read(end.vars, 'Big-O');

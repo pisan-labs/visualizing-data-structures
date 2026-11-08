@@ -68,7 +68,7 @@ export const bigO = (o: Order) => `O(${o})`;
 // ----- Shape ids, shared with the view -----
 
 /** Prefix of a slice's shapes when the run draws one grid per i. */
-export const slicePrefix = (frame: Frame, s: number) => (frame.slices > 1 ? `s${s}-` : '');
+export const slicePrefix = (frame: Frame, s: number) => (frame.sliceNames ? `s${s}-` : '');
 
 export const cellId = (frame: Frame, [s, r, c]: Cell) => `${slicePrefix(frame, s)}cell-${r}-${c}`;
 

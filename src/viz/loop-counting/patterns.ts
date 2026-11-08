@@ -51,7 +51,7 @@ export interface Frame {
   colNames: string[];
   /** Names the header lanes, in the top left corner: "i", "i\j". */
   corner: string;
-  /** One title per slice ("i = 1"), when there is more than one. */
+  /** The triple loop draws one grid per i, even for n = 1: a title for each ("i = 1"). */
   sliceNames?: string[];
   /** Text inside the cells of the one row: the array of the early-exit search. */
   values?: string[];

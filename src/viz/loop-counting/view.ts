@@ -6,7 +6,6 @@ import type { Bounds, Scene, Shape } from '../../render/scene';
 import { pickLayout, translate } from '../_stage/arrange';
 import {
   bigO,
-  cellId,
   commas,
   describe,
   patternOf,
@@ -154,7 +153,7 @@ function panelBlock(all: Row[], shown: Row[], roles: ReadonlyMap<string, MarkRol
 
 /** Cell size: big for small n, smaller so 16 columns (or 16 rows) still fit a phone. */
 function cellSize(frame: Frame): number {
-  if (frame.slices > 1) return Math.max(16, Math.min(28, Math.floor(156 / frame.cols)));
+  if (frame.sliceNames) return Math.max(16, Math.min(28, Math.floor(156 / frame.cols)));
   return Math.max(18, Math.min(40, Math.floor(420 / frame.cols), Math.floor(320 / frame.rows)));
 }
 
@@ -168,7 +167,7 @@ function oneGrid(
   const cell = cellSize(frame);
   const lit = new Set(run.lit.filter((c) => c[0] === s).map((c) => `${c[1]},${c[2]}`));
   const found = run.found && run.found[0] === s ? `${run.found[1]},${run.found[2]}` : null;
-  const pre = frame.slices > 1 ? `s${s}-` : '';
+  const pre = frame.sliceNames ? `s${s}-` : '';
   // gridScene looks marks up by its own ids: strip this slice's prefix.
   const local = new Map<string, MarkRole>();
   for (const [id, role] of roles) if (id.startsWith(pre)) local.set(id.slice(pre.length), role);
@@ -230,7 +229,7 @@ function spaceBlock(
   roles: ReadonlyMap<string, MarkRole>,
   perRow: number,
 ): Block {
-  if (frame.slices === 1) return oneGrid(frame, 0, run, roles);
+  if (!frame.sliceNames) return oneGrid(frame, 0, run, roles);
   const shapes: Shape[] = [];
   let w = 0;
   let h = 0;
@@ -423,10 +422,9 @@ export function view(
     const all = runRows(p, r.n, f, p.exact(r.n, f));
     const now = runRows(p, r.n, f, r.count).filter((row) => RUN_SHOWS[r.phase](row.id));
     const panel = panelBlock(all, now, roles);
-    const perRows =
-      frame.slices > 1
-        ? [...new Set([Math.min(3, frame.slices), ...(stage ? [frame.slices, 2] : [])])]
-        : [1];
+    const perRows = frame.sliceNames
+      ? [...new Set([Math.min(3, frame.slices), ...(stage ? [frame.slices, 2] : [])])]
+      : [1];
     const options: Placed[] = [];
     for (const perRow of perRows) {
       const main = spaceBlock(frame, r, roles, perRow);

@@ -104,6 +104,14 @@ describe('loop counting', () => {
             expect(r.count).toBeGreaterThanOrEqual(prev);
             if (step.vars?.count !== undefined) expect(step.vars.count).toBe(r.count);
             prev = r.count;
+            // Every mark points at a shape the view draws, on a laptop and on a phone.
+            for (const stage of [undefined, { w: 880, h: 384 }, { w: 360, h: 536 }]) {
+              const ids = new Set(
+                loopCounting.view(step, t.settings, stage).shapes.map((x) => x.id),
+              );
+              for (const m of step.marks)
+                expect(ids.has(m.id), `${id} n = ${n}: ${m.id}`).toBe(true);
+            }
             // Every lit cell is inside the frame, and lit only once.
             const [s, row, c] = r.lit.at(-1) ?? [0, 0, 0];
             expect(s).toBeLessThan(frame.slices);

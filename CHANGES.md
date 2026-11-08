@@ -329,3 +329,7 @@
 2026-11-08 [note] Gap found by 7H: a curated example whose op is refused (input over a limit) passes conformance silently; worth a check
 
 2026-11-08 [decision] No conformance check for refused ops in curated examples: refusals are only narration, a text heuristic flagged 34 intended cases and 0 real ones; a real check needs a refused flag on Step that every page sets
+
+2026-11-08 [code] Merged wave 7I: euclid, mod-pow, sieve, rsa, karatsuba, fft, fisher-yates, reservoir-sampling (new _numbers/draw.ts)
+
+2026-11-08 [code] Merged wave 7J: cfg-to-cnf, ll1-parsing, lr0-parsing, lba, rice-theorem (no kit changes)

@@ -358,8 +358,8 @@ export function view(step: Step<MtState, MtExtra>, settings: MtSettings, stage?:
     }));
     y += nRows * pitch;
     if (sim) drawMarks(out, sim, rows, settings, roles);
-    out.push(statusShape('sim-status', y + 10, sst, roles));
-    y += 16;
+    out.push(statusShape('sim-status', y + (index ? 14 : 10), sst, roles));
+    y += index ? 20 : 16;
     const main: Bounds = { x: -LABEL_W, y: 0, w: Math.max(tapeW, perRow * CELL_W) + LABEL_W, h: y };
 
     // The rules in 1 to 3 columns, beside or under: fewer columns unless more draw clearly larger.

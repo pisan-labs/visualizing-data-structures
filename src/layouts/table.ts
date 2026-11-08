@@ -6,7 +6,8 @@
  * Call `tableScene(frame, content)` from a view and wrap the result in a Scene with a label.
  * Pages that draw more under the table (an alignment, the chosen items, call frames) reserve
  * room with `frame.below` and place their shapes with `tableGeometry(frame)`; `boxRow` draws a
- * row of labeled boxes there.
+ * row of labeled boxes there. `placeStrip` (table-strip.ts) moves that room beside the grid
+ * when the stage is wide and that draws larger.
  *
  * - `frame` fixes the framing. Keep it the same for every step of an operation, so the camera
  *   stays still while cells fill: the grid size, the header lanes, the arc lanes and the room

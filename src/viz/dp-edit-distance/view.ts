@@ -8,7 +8,7 @@ import {
   type TableFrame,
   type TableLink,
 } from '../../layouts/table';
-import { placeStrip } from '../_dp/strip';
+import { placeStrip } from '../../layouts/table-strip';
 import { describe, type EditExtra, type EditSettings, type EditState } from './model';
 
 const BOX_H = 34;

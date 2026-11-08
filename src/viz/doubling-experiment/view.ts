@@ -16,8 +16,8 @@
  * "t-guess", "t-check"); "p-..." the plot (see the chart section).
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout, translate } from '../../layouts/arrange';
 import type { Bounds, Scene, Shape } from '../../render/scene';
-import { pickLayout, translate } from '../_stage/arrange';
 import { sup } from '../big-o-definition/expr';
 import {
   bOf,

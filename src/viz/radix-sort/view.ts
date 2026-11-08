@@ -1,8 +1,8 @@
 import type { MarkRole, StageSize } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import { barsScene, type BarsFrame } from '../../layouts/bars';
 import type { Scene, Shape } from '../../render/scene';
 import type { Item } from '../_sorting/kit';
-import { pickLayout } from '../_stage/arrange';
 import { describeArray } from '../_sorting/view';
 import { digitOf, digitText, type RadixSettings, type RadixStep } from './model';
 

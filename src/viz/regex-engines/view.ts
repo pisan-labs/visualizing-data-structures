@@ -20,12 +20,12 @@
  * "stk-h" and "stk-n" under it; "ch-..." the chart: "ch-bt-<n>" and "ch-nfa-<n>" the bars.
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import { drawAutomaton, fixedLayout, type StateLook } from '../../layouts/automaton';
 import { clearOfButtons, padBounds, textWidth, unionBounds } from '../../layouts/graph';
 import { CELL_W, drawTape } from '../../layouts/tape';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { drawGrid, gridWidths, GRID_ROW } from '../_automata/panels';
-import { pickLayout } from '../_stage/arrange';
 import { pairKey, pictures, type Picture } from '../regex-to-nfa/layout';
 import { CAP } from './engines';
 import {

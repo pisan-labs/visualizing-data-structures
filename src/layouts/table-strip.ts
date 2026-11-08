@@ -4,10 +4,10 @@
  * place), or right of the grid, centered on it, when the stage is wide and short and that draws
  * larger. The frame and the strip's size are fixed for an operation, so the choice holds.
  */
-import type { StageSize } from '../../engine/types';
-import { tableGeometry, type TableFrame, type TableGeometry } from '../../layouts/table';
-import type { Bounds } from '../../render/scene';
-import { pickLayout } from '../_stage/arrange';
+import type { StageSize } from '../engine/types';
+import type { Bounds } from '../render/scene';
+import { pickLayout } from './arrange';
+import { tableGeometry, type TableFrame, type TableGeometry } from './table';
 
 export interface StripPlace {
   /** The frame to draw the table with: room under the grid only when the strip goes there. */

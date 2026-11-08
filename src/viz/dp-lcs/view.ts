@@ -8,7 +8,7 @@ import {
   type TableFrame,
   type TableLink,
 } from '../../layouts/table';
-import { placeStrip } from '../_dp/strip';
+import { placeStrip } from '../../layouts/table-strip';
 import { describe, type LcsExtra, type LcsSettings, type LcsState } from './model';
 
 const STRIP_H = 42;

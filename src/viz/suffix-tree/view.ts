@@ -7,10 +7,10 @@
  */
 import { makeRng } from '../../engine/rng';
 import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout, translate } from '../../layouts/arrange';
 import { padBounds, unionBounds } from '../../layouts/binary-tree';
 import { drawTrie, layoutTrie } from '../../layouts/trie';
 import type { Bounds, Scene, Shape } from '../../render/scene';
-import { pickLayout, translate } from '../_stage/arrange';
 import { argWidth, drawArg } from '../_trie/draw';
 import {
   MAX_TEXT,

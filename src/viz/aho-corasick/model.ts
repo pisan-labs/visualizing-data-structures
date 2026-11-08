@@ -345,7 +345,7 @@ function* buildSteps(st: AcState, settings: AcSettings): Generator<AcStep, void,
     const why =
       target === ROOT
         ? `no proper suffix of ${q(name)} is in the trie, so it fails to the root`
-        : `${q(spell(nodes, target))} is the longest proper suffix of ${q(name)} in the trie: ${nodeName(nodes, f)} has a ${q(c)} edge`;
+        : `${q(spell(nodes, target))} is the longest proper suffix of ${q(name)} in the trie: ${nodeName(nodes, f)} has an edge for ${q(c)}`;
     const outputs = sets
       ? node.out.length
         ? ` Its output set: ${andList(node.out.map(q))}.`

@@ -137,7 +137,11 @@ export function* powSteps(
   });
 
   yield step(
-    `${a}^${b} mod ${m}. In binary ${b} is ${bits.join('')}: ${bits.length} ${bits.length === 1 ? 'bit' : 'bits'}, so about ${bits.length} squarings instead of ${naive(b)} multiplications.`,
+    `${a}^${b} mod ${m}. In binary ${b} is ${bits.join('')}: ${bits.length} ${bits.length === 1 ? 'bit' : 'bits'}, ${
+      bits.length < naive(b)
+        ? `so about ${bits.length} squarings instead of ${naive(b)} multiplications.`
+        : `so about ${bits.length} ${bits.length === 1 ? 'squaring' : 'squarings'}. Multiplying by ${a} directly takes ${naive(b)} ${naive(b) === 1 ? 'multiplication' : 'multiplications'}, so for an exponent this small squaring saves nothing; it pays off as b grows.`
+    }`,
     ['init'],
     2,
     bits.map((_, j) => [bitId(k - j), 'visit'] as [string, MarkRole]),

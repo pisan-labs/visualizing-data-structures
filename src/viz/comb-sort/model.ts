@@ -5,7 +5,8 @@
  *
  * Bubble sort's problem is turtles: small values near the end crawl left one slot per pass.
  * A big gap carries them most of the way in a few swaps. The gap is computed in whole numbers
- * (gap · 10 / 13 for 1.3), so 13 / 1.3 is 10 here and in the code tabs, not 9.999...
+ * (gap · 10 / 13 for 1.3, gap · 10 / 11 for 1.1), so 33 / 1.1 is 30 here, not the 29.999...
+ * that floating point gives.
  */
 import type { OpSpec, PseudoBlock, PseudoLine, Scalar } from '../../engine/types';
 import {

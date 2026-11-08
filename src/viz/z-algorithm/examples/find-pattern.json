@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "z-algorithm",
+  "id": "find-pattern",
+  "title": "Finding ABAB through P$T",
+  "notes": "S = ABAB$ABABAABABAB. Z[i] = 4 marks each match: shifts 0, 5 and 7 in T, two of them overlapping. Watch the box carry values forward, so many positions start above zero.",
+  "settings": {
+    "method": "box"
+  },
+  "seed": 1,
+  "ops": [["load", "ABABAABABAB / ABAB"], ["build"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

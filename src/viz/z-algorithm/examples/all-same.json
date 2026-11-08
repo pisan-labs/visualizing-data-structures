@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "z-algorithm",
+  "id": "all-same",
+  "title": "All the same letter",
+  "notes": "AAAAAAAAAAAAAAAA. Z[1] = 15 makes the box cover the whole string, so every later value is copied and nothing is left to compare. 15 comparisons in all, under 2n = 32.",
+  "settings": {
+    "method": "box"
+  },
+  "seed": 1,
+  "ops": [["load", "AAAAAAAAAAAAAAAA"], ["build"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

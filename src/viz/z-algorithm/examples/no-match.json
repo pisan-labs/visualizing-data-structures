@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "z-algorithm",
+  "id": "no-match",
+  "title": "No match: nothing reaches m",
+  "notes": "T = ABCABCABCAB and P = ABD. Z climbs to 2 at every AB, but the D never matches, so no value reaches m = 3.",
+  "settings": {
+    "method": "box"
+  },
+  "seed": 1,
+  "ops": [["load", "ABCABCABCAB / ABD"], ["build"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

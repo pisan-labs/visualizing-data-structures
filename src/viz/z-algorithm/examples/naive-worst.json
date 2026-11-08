@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "z-algorithm",
+  "id": "naive-worst",
+  "title": "Without the box: all the same letter",
+  "notes": "The same string with the box off. Every Z[i] is compared from scratch: 15 + 14 + ... + 1 = 120 comparisons, where the box needed 15.",
+  "settings": {
+    "method": "naive"
+  },
+  "seed": 1,
+  "ops": [["load", "AAAAAAAAAAAAAAAA"], ["build"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

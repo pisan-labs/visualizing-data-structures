@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "introsort",
+  "id": "killer",
+  "title": "A median-of-3 killer runs out the budget",
+  "notes": "These 20 values were built by McIlroy's adversary against this exact quicksort: every partition peels off only two values. At depth 8 the budget of 2 × ⌊log₂ 20⌋ = 8 is gone, and heap sort takes over what is left.",
+  "settings": {
+    "pivot": "median3",
+    "depth": "twice",
+    "small": 3,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "4 54 14 99 24 64 34 84 44 9 19 29 39 49 59 69 79 89 94 74"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

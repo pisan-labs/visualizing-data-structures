@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "introsort",
+  "id": "small-parts",
+  "title": "Bigger small parts for insertion sort",
+  "notes": "With the cutoff at 6, quicksort stops splitting sooner and insertion sort does more of the work. Real libraries use 16: insertion sort is fast on a handful of values.",
+  "settings": {
+    "pivot": "median3",
+    "depth": "twice",
+    "small": 6,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "57 12 88 34 71 5 46 93 21 64 39 80 27 50"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "introsort",
+  "id": "sorted-last",
+  "title": "Sorted input with the last value as pivot",
+  "notes": "Plain quicksort's worst case: each partition peels off one value. Here the calls only get 8 deep before heap sort finishes the job, so the cost stays O(n log n).",
+  "settings": {
+    "pivot": "last",
+    "depth": "twice",
+    "small": 3,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "5 11 17 23 29 35 41 47 53 59 65 71 77 83 89 95"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

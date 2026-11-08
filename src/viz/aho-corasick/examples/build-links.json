@@ -9,11 +9,7 @@
     "outputs": "links"
   },
   "seed": 1,
-  "ops": [
-    [
-      "build"
-    ]
-  ],
+  "ops": [["build"]],
   "at": {
     "op": 0,
     "step": 0

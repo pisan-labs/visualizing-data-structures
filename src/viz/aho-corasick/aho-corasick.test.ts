@@ -15,7 +15,8 @@ const run = (ops: OpCall[], s: Partial<AcSettings> = {}) =>
 function brute(patterns: readonly string[], text: string): string[] {
   const out: string[] = [];
   for (const w of patterns)
-    for (let s = 0; s + w.length <= text.length; s++) if (text.startsWith(w, s)) out.push(`${s}:${w}`);
+    for (let s = 0; s + w.length <= text.length; s++)
+      if (text.startsWith(w, s)) out.push(`${s}:${w}`);
   return out.sort();
 }
 
@@ -36,7 +37,10 @@ describe('Aho-Corasick', { timeout: 60_000 }, () => {
       fc.property(
         fc.constantFrom(...SETS),
         fc.constantFrom('links' as const, 'sets' as const),
-        fc.array(fc.constantFrom('a', 'b', 'c', 'e', 'h', 'i', 'r', 's', 'A', 'C', 'G', 'T'), { minLength: 1, maxLength: 16 }),
+        fc.array(fc.constantFrom('a', 'b', 'c', 'e', 'h', 'i', 'r', 's', 'A', 'C', 'G', 'T'), {
+          minLength: 1,
+          maxLength: 16,
+        }),
         (patterns, outputs, chars) => {
           const text = chars.join('');
           const t = run([['search', text]], { patterns, outputs });

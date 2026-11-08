@@ -101,7 +101,8 @@ export const child = (nodes: readonly AcNode[], u: number, c: string): number | 
 
 export function spell(nodes: readonly AcNode[], u: number): string {
   let s = '';
-  for (let v: number | null = u; v !== null && v !== ROOT; v = nodes[v]!.parent) s = nodes[v]!.ch + s;
+  for (let v: number | null = u; v !== null && v !== ROOT; v = nodes[v]!.parent)
+    s = nodes[v]!.ch + s;
   return s;
 }
 
@@ -158,7 +159,11 @@ export function bfs(nodes: readonly AcNode[]): number[] {
 
 // ----- Input -----
 
-export function parseWord(raw: Value | undefined, max: number, what: string): string | { error: string } {
+export function parseWord(
+  raw: Value | undefined,
+  max: number,
+  what: string,
+): string | { error: string } {
   const t = String(raw ?? '').trim();
   if (!t) return { error: `Type ${what}.` };
   if (/\s/.test(t)) return { error: `Type ${what} with no spaces.` };
@@ -196,7 +201,11 @@ function vars(st: AcState, more: Record<string, Scalar> = {}): Record<string, Sc
     patterns: st.patterns.length,
     nodes: st.nodes.length,
     ...(st.scanning || st.text
-      ? { state: st.cur === ROOT ? 'root' : spell(st.nodes, st.cur), matches: st.matches.length, 'fail hops': st.hops }
+      ? {
+          state: st.cur === ROOT ? 'root' : spell(st.nodes, st.cur),
+          matches: st.matches.length,
+          'fail hops': st.hops,
+        }
       : {}),
   };
 }
@@ -210,7 +219,15 @@ function step(
   more: Record<string, Scalar> = {},
   extra?: AcExtra,
 ): AcStep {
-  return { state: structuredClone(st), marks, say, lines, level, vars: vars(st, more), ...(extra ? { extra } : {}) };
+  return {
+    state: structuredClone(st),
+    marks,
+    say,
+    lines,
+    level,
+    vars: vars(st, more),
+    ...(extra ? { extra } : {}),
+  };
 }
 
 const clearLinks = (st: AcState) => {
@@ -227,7 +244,8 @@ const add: Op = {
   arity: 1,
   *run(s, [arg]) {
     const w = parseWord(arg, MAX_PATTERN, 'a pattern');
-    const fail = (msg: string): AcStep => step(s, `Nothing added. ${msg}`, [], 1, [mk(trieNodeId(ROOT), 'error')]);
+    const fail = (msg: string): AcStep =>
+      step(s, `Nothing added. ${msg}`, [], 1, [mk(trieNodeId(ROOT), 'error')]);
     if (typeof w !== 'string') {
       yield fail(w.error);
       return s;
@@ -340,7 +358,11 @@ function* buildSteps(st: AcState, settings: AcSettings): Generator<AcStep, void,
       `${nodeName(nodes, v)}: ${why}.${outputs}`,
       ['b.loop', 'b.set', sets ? 'b.out' : 'b.dict'],
       2,
-      [mk(trieNodeId(v), 'active'), mk(failId(v), 'active'), ...(node.dict !== null && !sets ? [mk(dictId(v), 'found')] : [])],
+      [
+        mk(trieNodeId(v), 'active'),
+        mk(failId(v), 'active'),
+        ...(node.dict !== null && !sets ? [mk(dictId(v), 'found')] : []),
+      ],
     );
   }
   st.built = true;
@@ -379,7 +401,12 @@ const search: Op = {
     if (!st.built) yield* buildSteps(st, settings);
     st.scanning = true;
     const nodes = st.nodes;
-    yield step(st, `Scan T = ${q(w)} from the root, one character at a time. The text pointer never moves back.`, ['s.init'], 2);
+    yield step(
+      st,
+      `Scan T = ${q(w)} from the root, one character at a time. The text pointer never moves back.`,
+      ['s.init'],
+      2,
+    );
     for (let i = 0; i < w.length; i++) {
       const c = w[i]!;
       while (st.cur !== ROOT && child(nodes, st.cur, c) === undefined) {
@@ -412,13 +439,12 @@ const search: Op = {
       const report = found.length
         ? ` Match: ${andList(found.map((m) => `${q(m.word)} at ${m.at}`))}.`
         : '';
-      yield step(
-        st,
-        moved + report,
-        ['s.loop', 's.go', ...(found.length ? ['s.out'] : [])],
-        2,
-        [mk(trieNodeId(st.cur), found.length ? 'found' : 'active'), mk(textId(i), 'active'), ...(g !== undefined ? [mk(trieEdgeId(st.cur), 'active')] : []), ...found.map((_, k) => mk(matchId(st.matches.length - found.length + k), 'new'))],
-      );
+      yield step(st, moved + report, ['s.loop', 's.go', ...(found.length ? ['s.out'] : [])], 2, [
+        mk(trieNodeId(st.cur), found.length ? 'found' : 'active'),
+        mk(textId(i), 'active'),
+        ...(g !== undefined ? [mk(trieEdgeId(st.cur), 'active')] : []),
+        ...found.map((_, k) => mk(matchId(st.matches.length - found.length + k), 'new')),
+      ]);
       if (!sets) {
         let prev = st.cur;
         for (let d = node.dict; d !== null; d = nodes[d]!.dict) {
@@ -457,25 +483,69 @@ export function pseudocode(settings: AcSettings): PseudoBlock[] {
   const buildLines = [
     L('b.sig', 0, 'buildLinks(trie)', 'To set every failure link:'),
     L('b.root', 1, 'root.fail = root', 'The root fails to itself.'),
-    L('b.depth1', 1, 'for each child v of root: v.fail = root', 'Single characters fail to the root.'),
-    L('b.loop', 1, 'for each node v = u.child[c] in BFS order', 'Then, level by level, for each node v reached from u by c:'),
-    L('b.up', 2, 'f = u.fail; while f ≠ root and f has no c edge: f = f.fail', 'walk down u’s failure chain until some node has a c edge,'),
-    L('b.set', 2, 'v.fail = f.child[c] if it exists and ≠ v, else root', 'and link v to that child (or to the root).'),
+    L(
+      'b.depth1',
+      1,
+      'for each child v of root: v.fail = root',
+      'Single characters fail to the root.',
+    ),
+    L(
+      'b.loop',
+      1,
+      'for each node v = u.child[c] in BFS order',
+      'Then, level by level, for each node v reached from u by c:',
+    ),
+    L(
+      'b.up',
+      2,
+      'f = u.fail; while f ≠ root and f has no c edge: f = f.fail',
+      'walk down u’s failure chain until some node has a c edge,',
+    ),
+    L(
+      'b.set',
+      2,
+      'v.fail = f.child[c] if it exists and ≠ v, else root',
+      'and link v to that child (or to the root).',
+    ),
     sets
-      ? L('b.out', 2, 'v.out = v.out ∪ v.fail.out', 'Patterns ending at the failure node end at v too.')
-      : L('b.dict', 2, 'v.dict = v.fail if v.fail ends a pattern, else v.fail.dict', 'The output link skips to the nearest node down the chain that ends a pattern.'),
+      ? L(
+          'b.out',
+          2,
+          'v.out = v.out ∪ v.fail.out',
+          'Patterns ending at the failure node end at v too.',
+        )
+      : L(
+          'b.dict',
+          2,
+          'v.dict = v.fail if v.fail ends a pattern, else v.fail.dict',
+          'The output link skips to the nearest node down the chain that ends a pattern.',
+        ),
     L('b.ret', 1, 'return', 'Every node is linked.'),
   ];
   const searchLines = [
     L('s.sig', 0, 'search(T)', 'To find every pattern in T:'),
     L('s.init', 1, 'v = root', 'Start at the root.'),
     L('s.loop', 1, 'for i = 0 to n − 1', 'For each character of the text,'),
-    L('s.fail', 2, 'while v ≠ root and v has no T[i] edge: v = v.fail', 'follow failure links until the character can be read,'),
+    L(
+      's.fail',
+      2,
+      'while v ≠ root and v has no T[i] edge: v = v.fail',
+      'follow failure links until the character can be read,',
+    ),
     L('s.go', 2, 'v = v.child[T[i]] if it exists, else root', 'then take its edge.'),
     sets
       ? L('s.out', 2, 'report every word in v.out', 'Every pattern in the node’s set ends here.')
       : L('s.out', 2, 'if v ends a word: report it', 'If the node ends a pattern, report it,'),
-    ...(sets ? [] : [L('s.dict', 2, 'for d = v.dict; d ≠ null; d = d.dict: report d.word', 'and every pattern down the output links.')]),
+    ...(sets
+      ? []
+      : [
+          L(
+            's.dict',
+            2,
+            'for d = v.dict; d ≠ null; d = d.dict: report d.word',
+            'and every pattern down the output links.',
+          ),
+        ]),
     L('s.ret', 1, 'return the matches', 'Hand back every match.'),
   ];
   const addLines = [
@@ -495,15 +565,20 @@ export function initialSay(st: AcState): string {
   return `The patterns ${andList(st.patterns.map(q))} are in a trie. Press Build links to add the failure links, or type a text and press Search text to scan it for every pattern at once.`;
 }
 
-export const initialVars = (st: AcState) => ({ patterns: st.patterns.length, nodes: st.nodes.length });
+export const initialVars = (st: AcState) => ({
+  patterns: st.patterns.length,
+  nodes: st.nodes.length,
+});
 
 export function describe(st: AcState): string {
   const head = `Patterns ${st.patterns.join(', ')}; a trie of ${st.nodes.length} nodes.`;
   const links = st.built
-    ? ` Failure links: ${st.nodes
-        .filter((n) => n.id !== ROOT && n.fail !== null && n.fail !== ROOT)
-        .map((n) => `${spell(st.nodes, n.id)} to ${spell(st.nodes, n.fail!)}`)
-        .join(', ') || 'all to the root'}.`
+    ? ` Failure links: ${
+        st.nodes
+          .filter((n) => n.id !== ROOT && n.fail !== null && n.fail !== ROOT)
+          .map((n) => `${spell(st.nodes, n.id)} to ${spell(st.nodes, n.fail!)}`)
+          .join(', ') || 'all to the root'
+      }.`
     : ' Failure links not built.';
   const scan = st.text
     ? ` Text ${st.text}, ${st.pos} read, at ${st.cur === ROOT ? 'the root' : spell(st.nodes, st.cur)}. Matches: ${st.matches.map((m) => `${m.word} at ${m.at}`).join(', ') || 'none'}.`

@@ -89,7 +89,13 @@ export const ahoCorasick: VizDef<AcState, AcSettings, AcExtra> = {
       {
         label: 'The patterns, run together',
         make: (_rng, n, s) => [
-          ['search', String(s?.patterns ?? defaults.patterns).replaceAll(' ', '').repeat(4).slice(0, n)],
+          [
+            'search',
+            String(s?.patterns ?? defaults.patterns)
+              .replaceAll(' ', '')
+              .repeat(4)
+              .slice(0, n),
+          ],
         ],
       },
       {
@@ -107,7 +113,10 @@ export const ahoCorasick: VizDef<AcState, AcSettings, AcExtra> = {
   complexity: [
     {
       op: 'build the trie and links',
-      best: { cost: 'O(m)', why: 'm is the total length of the patterns: one node per character, one link each.' },
+      best: {
+        cost: 'O(m)',
+        why: 'm is the total length of the patterns: one node per character, one link each.',
+      },
       average: {
         cost: 'O(m)',
         why: 'Each failure walk is paid for by the depth gained along that pattern, as in KMP.',
@@ -147,12 +156,21 @@ export const ahoCorasick: VizDef<AcState, AcSettings, AcExtra> = {
         const st = e.end;
         if (e.call[0] !== 'search' || !st.text) continue;
         input.push(`search ${st.patterns.join(',')} ${st.text}`);
-        expected.push(st.matches.length ? st.matches.map((m) => `${m.at}:${m.word}`).join(' ') : 'none');
+        expected.push(
+          st.matches.length ? st.matches.map((m) => `${m.at}:${m.word}`).join(' ') : 'none',
+        );
       }
       return { input, expected };
     },
   },
-  examples: [ushers, buildLinks, outputLinks, outputSets, dna, addPattern] as unknown as SavedExample[],
+  examples: [
+    ushers,
+    buildLinks,
+    outputLinks,
+    outputSets,
+    dna,
+    addPattern,
+  ] as unknown as SavedExample[],
   practice: acPractice(() => ahoCorasick),
   preview: { example: 'build-links', level: 2, hide: ['m-', 'legend-'] },
 };

@@ -23,7 +23,9 @@ function text(rng: Rng, patterns: readonly string[], n: number): string {
   let t = '';
   while (t.length < n) {
     const p = patterns[rng.int(0, patterns.length - 1)]!;
-    t += rng.int(0, 2) ? p.slice(rng.int(0, p.length - 1)) : letters[rng.int(0, letters.length - 1)]!;
+    t += rng.int(0, 2)
+      ? p.slice(rng.int(0, p.length - 1))
+      : letters[rng.int(0, letters.length - 1)]!;
   }
   return t.slice(0, n);
 }
@@ -34,8 +36,12 @@ function text(rng: Rng, patterns: readonly string[], n: number): string {
  */
 export function acPractice(def: () => Def): PracticeKind[] {
   const run = (ops: OpCall[], s: AcSettings) => new Timeline(def(), s, 1, ops);
-  const pick = (rng: Rng): AcSettings => ({ ...defaults, patterns: SETS[rng.int(0, SETS.length - 1)]! });
-  const names = (st: AcState) => st.nodes.map((n) => (n.id === ROOT ? 'the root' : spell(st.nodes, n.id)));
+  const pick = (rng: Rng): AcSettings => ({
+    ...defaults,
+    patterns: SETS[rng.int(0, SETS.length - 1)]!,
+  });
+  const names = (st: AcState) =>
+    st.nodes.map((n) => (n.id === ROOT ? 'the root' : spell(st.nodes, n.id)));
 
   return [
     {
@@ -54,7 +60,12 @@ export function acPractice(def: () => Def): PracticeKind[] {
           prompt: `Patterns ${PATTERN_SETS[s.patterns]}. Where does the failure link of the node for \`${word}\` point?`,
           settings: s,
           setup: [],
-          answer: choice(rng, right, [...suffixes, 'the root', word.slice(0, -1) || 'the root', ...all.slice(1, 4)]),
+          answer: choice(rng, right, [
+            ...suffixes,
+            'the root',
+            word.slice(0, -1) || 'the root',
+            ...all.slice(1, 4),
+          ]),
           explain:
             v.fail === ROOT
               ? `No proper suffix of \`${word}\` is a node of the trie, so the link goes to the root.`
@@ -97,7 +108,13 @@ export function acPractice(def: () => Def): PracticeKind[] {
           prompt: `Patterns ${PATTERN_SETS[s.patterns]}. After scanning \`${t}\`, which node is the automaton at? (Name a node by the string it spells.)`,
           settings: s,
           setup: [['build']],
-          answer: choice(rng, right, [...shuffle(rng, all.filter((x) => x !== right)).slice(0, 3), 'the root']),
+          answer: choice(rng, right, [
+            ...shuffle(
+              rng,
+              all.filter((x) => x !== right),
+            ).slice(0, 3),
+            'the root',
+          ]),
           explain: `The node is the longest suffix of \`${t}\` that is a node of the trie: ${right === 'the root' ? 'none, so the root' : `\`${right}\``}.`,
           watch: [['search', t]],
         };

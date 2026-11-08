@@ -22,10 +22,15 @@ export async function showMe(page: Page, trigger: Locator): Promise<void> {
 }
 
 /**
- * Wait until the drawing stops moving: no CSS transitions running and the stage markup unchanged
- * for a few frames. Axe measures colors as drawn, so a shape caught mid-fade can fail contrast.
- * The viewBox counts too: the camera tweens to a new framing, and it is an attribute of the svg
- * element, outside its innerHTML.
+ * Wait until the drawing stops moving: playback finished, no CSS transitions running, and the
+ * stage markup unchanged for a few frames. Axe measures colors as drawn, so a shape caught
+ * mid-fade can fail contrast. The viewBox counts too: the camera tweens to a new framing, and it
+ * is an attribute of the svg element, outside its innerHTML.
+ *
+ * Playback matters because an operation plays its steps one by one on a timer, and each step's
+ * tween is shorter than the timer: between two steps nothing moves for a moment, and a check
+ * made then sees a step that is about to change. While playing, the transport's play button
+ * reads "Pause".
  */
 export async function settled(page: Page): Promise<void> {
   await page.waitForFunction(
@@ -39,7 +44,8 @@ export async function settled(page: Page): Promise<void> {
         let frames = 0;
         const tick = () => {
           if (++frames < 8) return requestAnimationFrame(tick);
-          done(document.getAnimations().length === 0 && snap() === before);
+          const playing = document.querySelector('button[aria-label="Pause"]') !== null;
+          done(!playing && document.getAnimations().length === 0 && snap() === before);
         };
         requestAnimationFrame(tick);
       }),

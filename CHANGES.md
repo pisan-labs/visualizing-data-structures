@@ -251,3 +251,5 @@
 2026-11-08 [plan] Shared-code cleanup: debt register in PLAN.md section 15 (10 items ranked by interest, risk and leverage against principal, and what to keep)
 
 2026-11-08 [code] src/layouts/text.ts: one textWidth with measured factors (regular 0.58, bold 0.64, mono 0.6: the widest of the site font, DejaVu Sans and monospace in Chromium) and wrapText; layouts/graph.ts and bars.ts re-export it, same numbers
+
+2026-11-08 [code] settled() in tests/e2e/helpers.ts also waits for playback to finish (no "Pause" button); it could return in the pause between two steps; full e2e 2167 passed, 5 skipped with it

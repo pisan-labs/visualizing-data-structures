@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { Timeline } from '../../engine/timeline';
 import { suffixTree } from '.';
 import { bracket, full, parseText, preorder, spell, type StSettings, type StState } from './model';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 const settings = (method: StSettings['method'] = 'naive'): StSettings => ({ method });
 
@@ -128,5 +130,13 @@ describe('suffix tree', () => {
     const t = new Timeline(suffixTree, settings(), 1, [['search', 'NA']]);
     expect(t.endState().tree).not.toBeNull();
     expect(t.entries[0]!.steps.at(-1)!.vars!.found).toBe('2 4');
+  });
+});
+
+describe('drawn text size', () => {
+  // mississippi's leaf numbers drew at 5.2 px on a phone. Smaller edge labels there narrow the tree.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(suffixTree, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(12);
+    expect(smallestText(suffixTree, PHONE_STAGE).px).toBeGreaterThanOrEqual(7);
   });
 });

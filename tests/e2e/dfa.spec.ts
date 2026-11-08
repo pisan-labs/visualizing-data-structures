@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { settled, showMe } from './helpers';
+import { axeFindings, settled, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -169,10 +169,10 @@ test('a stuck run and a test table pass axe', async ({ page }) => {
   await toEnd(page);
   await settled(page);
   const scan = () => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
-  expect((await scan()).violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
+  expect(axeFindings(await scan())).toEqual([]);
   await op(page, 'Load', BUGGY);
   await op(page, 'Test', '+ab +aab -ba -eps');
   await toEnd(page);
   await settled(page);
-  expect((await scan()).violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
+  expect(axeFindings(await scan())).toEqual([]);
 });

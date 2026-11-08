@@ -9,7 +9,7 @@
  */
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { settled, showMe } from './helpers';
+import { axeFindings, settled, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -222,11 +222,11 @@ for (const theme of ['dark', 'contrast']) {
     let results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
       .analyze();
-    expect(results.violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
+    expect(axeFindings(results)).toEqual([]);
     await op(page, 'Predict T(n)', '20000');
     await toEnd(page);
     await settled(page);
     results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
-    expect(results.violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
+    expect(axeFindings(results)).toEqual([]);
   });
 }

@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { settled, showMe } from './helpers';
+import { axeFindings, settled, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -209,10 +209,10 @@ test('a run with dying branches, the stack and the badge pass axe', async ({ pag
   await toEnd(page);
   const scan = () => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
   await settled(page);
-  expect((await scan()).violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
+  expect(axeFindings(await scan())).toEqual([]);
   // Back to a move where two branches die.
   for (let i = 0; i < 11; i++) await page.getByRole('button', { name: 'Step back' }).click();
   await expect(narration(page)).toContainText('2 branches die');
   await settled(page);
-  expect((await scan()).violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
+  expect(axeFindings(await scan())).toEqual([]);
 });

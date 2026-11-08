@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { settled, showMe } from './helpers';
+import { axeFindings, settled, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 
@@ -86,6 +86,6 @@ for (const theme of ['dark', 'contrast']) {
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
       .analyze();
-    expect(results.violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
+    expect(axeFindings(results)).toEqual([]);
   });
 }

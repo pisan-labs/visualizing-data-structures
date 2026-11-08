@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { settled } from './helpers';
+import { axeFindings, settled } from './helpers';
 
 const sides = (page: Page) => page.locator('.sides > .side');
 const stageOf = (page: Page, i: number) => sides(page).nth(i).locator('.stage > svg');
@@ -96,7 +96,7 @@ test('a comparison fits the screen and has no axe violations', async ({ page }) 
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();
-  expect(results.violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
+  expect(axeFindings(results)).toEqual([]);
   await page.addStyleTag({
     content: ":root { --font: 'DejaVu Sans', Verdana, sans-serif !important; }",
   });

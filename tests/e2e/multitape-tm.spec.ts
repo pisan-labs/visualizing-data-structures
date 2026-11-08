@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { settled, showMe } from './helpers';
+import { axeFindings, settled, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -187,9 +187,9 @@ for (const theme of ['light', 'dark', 'contrast']) {
     await backTo(page, 'right puts it on a #');
     await settled(page);
     const scan = async () =>
-      (
-        await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()
-      ).violations.map((v) => `${v.id}: ${v.nodes.length}`);
+      axeFindings(
+        await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze(),
+      );
     expect(await scan()).toEqual([]);
   });
 }

@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { settled } from './helpers';
+import { axeFindings, settled } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -71,5 +71,5 @@ test('the one-node dequeue step has no axe violations in high contrast', async (
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();
-  expect(results.violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
+  expect(axeFindings(results)).toEqual([]);
 });

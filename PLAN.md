@@ -772,7 +772,7 @@ CI), leverage (what fixing it unblocks). Priority = interest + risk + leverage â
 | 9 | Shared code living in page folders, imported by siblings: avl (treap, splay, red-black), hash-chaining (4 pages), linked-list (3), regex-to-nfa (regex-engines), prim (kruskal), leftist-heap (skew-heap) | 2 | 3 | 1 | 2 | 2 | those folders |
 | 10 | Done 8 November (memoized by subexpression and start; a 20-deep test that hung now takes milliseconds): `matches()` in `_automata/regex.ts` is exponential on deeply nested concatenations | 1 | 2 | 2 | 1 | 2 | `src/viz/_automata/regex.ts` |
 
-| 11 | Intermittent: the factorial page's axe scan "deep in the recursion" (dark, desktop) found one color-contrast node once in a full run on 8 November, then passed 32 runs of 32; the element was not captured | 1 | 2 | 2 | 1 | 2 | `tests/e2e/factorial.spec.ts` |
+| 11 | Capture in place 8 November (every axe check prints each failing element through `axeFindings` in `tests/e2e/helpers.ts`); the cause waits for the next failure. Intermittent: the factorial page's axe scan "deep in the recursion" (dark, desktop) found one color-contrast node once in a full run on 8 November, then passed 32 runs of 32; the element was not captured | 1 | 2 | 2 | 1 | 2 | `tests/e2e/factorial.spec.ts` |
 
 ### 15.2 Debt to keep
 

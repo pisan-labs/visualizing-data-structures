@@ -53,3 +53,23 @@ export async function settled(page: Page): Promise<void> {
     { polling: 100, timeout: 10_000 },
   );
 }
+
+interface AxeNode {
+  target: unknown[];
+  html: string;
+  failureSummary?: string;
+}
+
+/**
+ * What an axe scan found, one line per failing element: the rule, the element's selector, its
+ * HTML and axe's reason (for color contrast, the two colors and the ratio). Expect it to equal
+ * []. A count alone hid which element failed when a scan failed once and never again.
+ */
+export function axeFindings(results: { violations: { id: string; nodes: AxeNode[] }[] }): string[] {
+  return results.violations.flatMap((v) =>
+    v.nodes.map(
+      (n) =>
+        `${v.id}: ${n.target.join(' ')} ${n.html.slice(0, 160)} ${(n.failureSummary ?? '').replace(/\s+/g, ' ')}`,
+    ),
+  );
+}

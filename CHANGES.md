@@ -271,3 +271,5 @@
 2026-11-08 [code] src/layouts/chart.ts: axes, rules, tick labels, segment clipping, powers of ten and fitSize shared by big-o-definition, doubling-experiment and amortized-analysis; sup moved to src/layouts/text.ts; 100,064 scenes hashed before and after, identical
 
 2026-11-08 [code] matches() in src/viz/_automata/regex.ts remembers each subexpression's ends per start (register item 10); a 20-deep nested a* concatenation that ran for over a minute now passes at once
+
+2026-11-08 [code] axeFindings() in tests/e2e/helpers.ts: all 65 specs with axe scans now list each failing element (rule, selector, HTML, axe's reason) instead of a count, so the intermittent factorial failure (register item 11) names its element next time

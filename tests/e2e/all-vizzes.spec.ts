@@ -6,7 +6,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
-import { settled } from './helpers';
+import { axeFindings, settled } from './helpers';
 
 const root = path.resolve('src/viz');
 const ids = fs
@@ -64,7 +64,7 @@ for (const id of ids) {
       const results = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
         .analyze();
-      expect(results.violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
+      expect(axeFindings(results)).toEqual([]);
       // Text widths depend on the fonts a device has, and the default font differs between
       // machines (CI resolves it to DejaVu Sans, which is wide). Check with a wide font too.
       await page.addStyleTag({

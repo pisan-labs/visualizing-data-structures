@@ -791,7 +791,7 @@ CI), leverage (what fixing it unblocks). Priority = interest + risk + leverage â
 Highest priority first, one item per commit, each with the full checks and screenshots before
 and after when a drawing can change: 1, 2, 3, 4, 5, 6, 7, then 8 and 9 (larger).
 
-## 16. Wave 7: the topics the surveys did not cover (planned 2026-11-08)
+## 16. Wave 7: the topics the surveys did not cover (planned and built 2026-11-08)
 
 Yusuf (8 November, about 16:10): "All" to the list of standard topics none of our pages covered.
 62 pages, all in `src/viz/catalog.ts` (they show as planned until built). Every page meets the
@@ -821,6 +821,12 @@ Yusuf (8 November, about 16:50): everything gets implemented. Running since 16:4
 7B, 7F, 7I, 7J, 7C, 7D. The lead merges each family with `--no-ff`, runs conformance 10 times
 on its pages, the full suites, and pushes `next`; the daily deploy publishes. A family not
 finished at a handover is restarted by the next session from its committed WIP, never dropped.
+
+### 16.3 Done
+
+All ten families merged into `next` on 8 November between 19:40 and 21:20: 62 pages, 191 live
+in all. Each passed conformance (10 runs by its agent, 2 or 3 by the lead), its own tests, code
+tabs, previews and e2e; the full unit suite passed on the merged tree.
 
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 

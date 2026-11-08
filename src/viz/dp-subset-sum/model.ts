@@ -1,6 +1,6 @@
 import type { OpSpec, PseudoBlock, PseudoLine, Scalar, Step, Value } from '../../engine/types';
 import type { Cell } from '../../layouts/table';
-import { andList, cellId, mark, plural, wholeFromArg } from '../_dp/kit';
+import { andList, cellId, mark, wholeFromArg } from '../_dp/kit';
 
 export const MAX_ITEMS = 6;
 export const MAX_X = 15;
@@ -131,7 +131,7 @@ function* fillRows(s: S, last: number): Gen {
       const rowDone = t === T;
       if (rowDone) {
         const sums = tab[i]!.flatMap((v, k) => (v ? [k] : []));
-        say += ` Row ${i} is done: the first ${plural(i, 'number')} can make ${andList(sums)}.`;
+        say += ` Row ${i} is done: ${i === 1 ? 'the first number' : `the first ${i} numbers`} can make ${andList(sums)}.`;
       }
       yield {
         state: state(),
@@ -246,7 +246,13 @@ const trace: Op = {
       let say: string;
       const marks = [];
       if (above) {
-        say = `S[${i - 1}][${t}] = T: the first ${plural(i - 1, 'number')} already make ${t}, so leave x${i} = ${x} out. Move up.`;
+        const why =
+          t === 0
+            ? 'nothing is left to make'
+            : i - 1 === 1
+              ? `the first number already makes ${t}`
+              : `the first ${i - 1} numbers already make ${t}`;
+        say = `S[${i - 1}][${t}] = T: ${why}, so leave x${i} = ${x} out. Move up.`;
         marks.push(mark(cellId(i, t), 'visit'));
       } else {
         taken.push(i);

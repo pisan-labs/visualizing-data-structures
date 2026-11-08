@@ -76,6 +76,13 @@ describe('subset sum', { timeout: 60_000 }, () => {
     expect(end.say).toBe('4 + 5 = 9.');
   });
 
+  it('narrates the walk back in plain words, never "the first 0 numbers"', () => {
+    const t = run([['numbers', '3 4 5 2'], ['target', 9], ['fill'], ['trace']]);
+    const says = t.entries.flatMap((e) => e.steps.map((s) => s.say));
+    for (const say of says) expect(say).not.toMatch(/the first [01] numbers?/);
+    expect(says).toContain('S[0][0] = T: nothing is left to make, so leave x1 = 3 out. Move up.');
+  });
+
   it('reads numbers and targets, and refuses what it cannot use', () => {
     expect(parseSubset('9')).toBe(9);
     expect(parseSubset('3, 4 5')).toBe('3 4 5');
@@ -100,6 +107,14 @@ describe('subset sum practice', () => {
   const problem = (q: PracticeQuestion) => ({
     xs: String(q.setup[0]![1]).split(' ').map(Number),
     T: Number(q.setup[1]![1]),
+  });
+
+  it('explains in plain grammar, with one number or several', () => {
+    for (const q of [...questions('take'), ...questions('subset')]) {
+      expect(q.explain).not.toMatch(/first 1 numbers|first 0 numbers/);
+      const taken = (q.answer as { value?: string[] }).value;
+      if (taken?.length === 1) expect(q.explain).not.toMatch(/add up/);
+    }
   });
 
   it('expects the brute-force answer', () => {

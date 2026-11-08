@@ -83,4 +83,4 @@ Avoid a large d when you extract a lot: heap sort with d = 8 does more compariso
 - [Inserts climb only a few levels](#example:insert-climbs). Now set d = 2 in the options and run it again. How many comparisons does the last insert make now?
 - [Extract pays d comparisons a level](#example:extract-costs-d). Predict the counter before each extract finishes.
 - [Decrease-key climbs a short path](#example:decrease-key). Before each swap, say which key is the parent.
-- Pick **Ascending, one insert at a time** with 13 keys, once with d = 2 and once with d = 5. Which one ends taller, and which one's last insert costs more?
+- Pick **Ascending inserts** with 13 keys, once with d = 2 and once with d = 5. Which one ends taller, and which one's last insert costs more?

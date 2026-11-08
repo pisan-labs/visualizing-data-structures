@@ -68,12 +68,12 @@ test('a real proof is accepted and a forged claim rejected', async ({ page }) =>
   await op(page, 'Check a claim', '1 x');
   await toEnd(page);
   await expect(narration(page)).toContainText('rejected');
-  await expect(vars(page)).toContainText(/verified\s*no/);
+  await expect(vars(page)).toContainText(/verified\s*"no"/);
 });
 
 test('a practice set grades an answer and shows it on the tree', async ({ page }) => {
-  await page.goto('/merkle-tree/#practice=27182&n=4');
-  await expect(page.locator('.question')).toHaveCount(4);
+  await page.goto('/merkle-tree/#practice=27182&n=5');
+  await expect(page.locator('.question')).toHaveCount(5);
   const first = page.locator('.question').first();
   await first.getByRole('button', { name: 'Check' }).click();
   const feedback = first.locator('.feedback');

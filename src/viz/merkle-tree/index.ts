@@ -107,7 +107,7 @@ export const merkleTree: VizDef<MerkleState, MerkleSettings, MerkleExtra> = {
     presets: [
       { label: 'Random blocks', make: (rng, n) => [['build', blocksOf(rng, n).join(' ')]] },
       {
-        label: 'Random blocks, then change one',
+        label: 'Random, then change one',
         make: (rng, n) => {
           const b = blocksOf(rng, n);
           return [
@@ -117,7 +117,7 @@ export const merkleTree: VizDef<MerkleState, MerkleSettings, MerkleExtra> = {
         },
       },
       {
-        label: 'Random blocks, then prove one',
+        label: 'Random, then prove one',
         make: (rng, n) => {
           const b = blocksOf(rng, n);
           return [

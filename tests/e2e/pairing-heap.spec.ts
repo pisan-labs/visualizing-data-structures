@@ -77,8 +77,8 @@ test('the stored form draws first-child and next-sibling pointers', async ({ pag
 });
 
 test('a practice set grades an answer and shows it on the heap', async ({ page }) => {
-  await page.goto('/pairing-heap/#practice=27182&n=4');
-  await expect(page.locator('.question')).toHaveCount(4);
+  await page.goto('/pairing-heap/#practice=27182&n=5');
+  await expect(page.locator('.question')).toHaveCount(5);
   const first = page.locator('.question').first();
   await first.getByRole('button', { name: 'Check' }).click();
   const feedback = first.locator('.feedback');

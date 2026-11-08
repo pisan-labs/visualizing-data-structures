@@ -78,4 +78,4 @@ Avoid it when you need a hard bound on every single operation; one deleteMin can
 - [Ascending inserts make a flat root](#example:flat-root). Count the links in the first deleteMin, then in the second.
 - [deleteMin in two passes](#example:two-pass-delete). Before each link in pass 1, say which root wins.
 - [Decrease-key by cutting](#example:decrease-by-cut). What would a binary heap do instead?
-- Pick **Descending** with 12 keys and delete the minimum. Why is it so cheap?
+- Pick **Descending (a chain)** with 12 keys and delete the minimum. Why is it so cheap?

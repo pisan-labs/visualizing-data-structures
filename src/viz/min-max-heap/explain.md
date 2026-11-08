@@ -77,4 +77,4 @@ Use it when you need both the smallest and the largest, over and over: a bounded
 - [Take from both ends](#example:both-ends). Before each extract, find the answer in the drawing.
 - [A new minimum climbs by grandparents](#example:grandparent-climb). Count the comparisons for the last insert, then check the counter.
 - [Trickle down with a fix on the way](#example:trickle-fix). Predict which grandchild wins before each round.
-- Pick **Random, one insert at a time** with 15 keys, then switch the root level to max and do it again.
+- Pick **Random inserts** with 15 keys, then switch the root level to max and do it again.

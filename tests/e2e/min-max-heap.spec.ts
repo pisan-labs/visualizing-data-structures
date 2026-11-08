@@ -65,8 +65,8 @@ test('a grandchild swap is followed by a fix with the parent', async ({ page }) 
 });
 
 test('a practice set grades an answer and shows it on the heap', async ({ page }) => {
-  await page.goto('/min-max-heap/#practice=27182&n=4');
-  await expect(page.locator('.question')).toHaveCount(4);
+  await page.goto('/min-max-heap/#practice=27182&n=5');
+  await expect(page.locator('.question')).toHaveCount(5);
   const first = page.locator('.question').first();
   await first.getByRole('button', { name: 'Check' }).click();
   const feedback = first.locator('.feedback');

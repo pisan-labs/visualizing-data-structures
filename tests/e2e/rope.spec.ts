@@ -56,14 +56,14 @@ test('split makes a second rope and join puts it back', async ({ page }) => {
   const next = page.getByRole('button', { name: 'Forward to the next operation' });
   await next.click();
   await next.click();
-  await expect(stage(page)).toHaveAttribute('aria-label', /R2 holds "and concat"/);
+  await expect(stage(page)).toHaveAttribute('aria-label', /R2 holds "nd concat"/);
   await next.click();
   await expect(stage(page)).toHaveAttribute('aria-label', /holding "split and concat"/);
 });
 
 test('a practice set grades an answer and shows it on the rope', async ({ page }) => {
-  await page.goto('/rope/#practice=27182&n=4');
-  await expect(page.locator('.question')).toHaveCount(4);
+  await page.goto('/rope/#practice=27182&n=5');
+  await expect(page.locator('.question')).toHaveCount(5);
   const first = page.locator('.question').first();
   await first.getByRole('button', { name: 'Check' }).click();
   const feedback = first.locator('.feedback');

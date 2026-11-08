@@ -61,8 +61,8 @@ test('decrease-key in a 4-ary min-heap climbs to the root', async ({ page }) => 
 });
 
 test('a practice set grades an answer and shows it on the heap', async ({ page }) => {
-  await page.goto('/d-ary-heap/#practice=27182&n=4');
-  await expect(page.locator('.question')).toHaveCount(4);
+  await page.goto('/d-ary-heap/#practice=27182&n=5');
+  await expect(page.locator('.question')).toHaveCount(5);
   const first = page.locator('.question').first();
   await first.getByRole('button', { name: 'Check' }).click();
   const feedback = first.locator('.feedback');

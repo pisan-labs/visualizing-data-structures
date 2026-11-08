@@ -93,7 +93,7 @@ export const rope: VizDef<RopeState, RopeSettings, RopeExtra> = {
     presets: [
       { label: 'Random words', make: (rng, n) => [['load', randomText(rng, n)]] },
       {
-        label: 'Built by appends (a lopsided tree)',
+        label: 'Built by appends',
         make: (rng, n) =>
           Array.from({ length: Math.max(2, Math.round(n / 4)) }, () => [
             'append',
@@ -101,7 +101,7 @@ export const rope: VizDef<RopeState, RopeSettings, RopeExtra> = {
           ]),
       },
       {
-        label: 'Random words, then an edit in the middle',
+        label: 'Random, then an insert',
         make: (rng, n) => {
           const t = randomText(rng, n);
           return [
@@ -111,7 +111,7 @@ export const rope: VizDef<RopeState, RopeSettings, RopeExtra> = {
         },
       },
       {
-        label: 'Random words, then split in half',
+        label: 'Random, then a split',
         make: (rng, n) => {
           const t = randomText(rng, Math.max(n, 4));
           return [

@@ -109,11 +109,11 @@ export const pairingHeap: VizDef<PairState, PairSettings, PairExtra> = {
     presets: [
       { label: 'Random keys', make: (rng, n) => inserts(distinctKeys(rng, n)) },
       {
-        label: 'Ascending (a flat root with many children)',
+        label: 'Ascending (flat root)',
         make: (rng, n) => inserts(asc(distinctKeys(rng, n))),
       },
       {
-        label: 'Descending (a long chain)',
+        label: 'Descending (a chain)',
         make: (rng, n) => inserts(asc(distinctKeys(rng, n)).reverse()),
       },
       {

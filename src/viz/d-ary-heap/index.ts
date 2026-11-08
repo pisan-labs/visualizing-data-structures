@@ -116,11 +116,11 @@ export const dAryHeap: VizDef<DHeapState, DHeapSettings, DHeapExtra> = {
     presets: [
       { label: 'Random keys', make: (rng, n) => buildOf(distinctKeys(rng, n)) },
       {
-        label: 'Ascending, one insert at a time (every key climbs)',
+        label: 'Ascending inserts',
         make: (rng, n) => asc(distinctKeys(rng, n)).map((k) => ['insert', k] as OpCall),
       },
       {
-        label: 'Descending, one insert at a time (no key climbs)',
+        label: 'Descending inserts',
         make: (rng, n) =>
           asc(distinctKeys(rng, n))
             .reverse()

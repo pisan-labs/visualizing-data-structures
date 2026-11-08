@@ -101,15 +101,15 @@ export const minMaxHeap: VizDef<MMState, MMSettings, MMExtra> = {
     presets: [
       { label: 'Random keys', make: (rng, n) => buildOf(distinctKeys(rng, n)) },
       {
-        label: 'Random, one insert at a time',
+        label: 'Random inserts',
         make: (rng, n) => distinctKeys(rng, n).map((k) => ['insert', k] as OpCall),
       },
       {
-        label: 'Ascending, one insert at a time',
+        label: 'Ascending inserts',
         make: (rng, n) => asc(distinctKeys(rng, n)).map((k) => ['insert', k] as OpCall),
       },
       {
-        label: 'Descending, one insert at a time',
+        label: 'Descending inserts',
         make: (rng, n) =>
           asc(distinctKeys(rng, n))
             .reverse()
@@ -120,7 +120,7 @@ export const minMaxHeap: VizDef<MMState, MMSettings, MMExtra> = {
         make: (rng, n) => buildOf(Array.from({ length: n }, () => 10 * rng.int(1, 4))),
       },
       {
-        label: 'Random, then take from both ends',
+        label: 'Random, then both ends',
         make: (rng, n) => [...buildOf(distinctKeys(rng, n)), ['extractMin'], ['extractMax']],
       },
     ],

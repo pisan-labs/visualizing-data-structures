@@ -19,12 +19,14 @@
  *   scaleLayout(layout, k) moves the vertices k times as far apart (circles keep their size),
  *   for a page where the drawing shares the stage with bigger panels.
  *
- * Fitting a laptop and a phone: the stage is about 884 x 305 pixels on a 1366 x 768 laptop
- * and 362 x 585 on a phone in portrait. A scene of about 500 x 420 units keeps 15-unit text
- * near 11 pixels on both; wider scenes shrink on a phone and taller ones on a laptop. Views
- * cannot see the screen, so `placePanels` puts the panels under the graph or beside it,
- * whichever keeps the smaller of the two pictures larger (`fitScore`). Keep panels compact,
- * and reserve room for what grows (a queue, a stack) so the choice holds through a run.
+ * Fitting a laptop and a phone: the stage gives a view about 888 x 384 pixels on a 1366 x 768
+ * laptop and 360 x 536 on a phone in portrait (LAPTOP_STAGE and PHONE_STAGE in
+ * src/render/stage.ts). A scene of about 500 x 530 units keeps 15-unit text near 11 pixels on
+ * both; wider scenes shrink on a phone and taller ones on a laptop. `placePanels` puts the
+ * panels under the graph or beside it, whichever keeps the picture larger on the stage the view
+ * is given, or with none (thumbnails, practice pictures, tests) the smaller of the two pictures
+ * (`fitScore`). Keep panels compact, and reserve room for what grows (a queue, a stack) so the
+ * choice holds through a run.
  *
  * Drawing: drawGraph(g, layout, options) -> { shapes, bounds }
  *   Vertices are circles with their names; edges are lines (undirected) or arrows (directed),
@@ -66,7 +68,7 @@
 import { makeRng } from '../engine/rng';
 import type { MarkRole, SettingSpec, StageSize } from '../engine/types';
 import type { Bounds, Shape } from '../render/scene';
-import { ZOOM_DROP, zoomCorner } from '../render/stage';
+import { TYPICAL_STAGES, ZOOM_DROP, zoomCorner } from '../render/stage';
 import { textWidth } from './text';
 
 export interface GraphLike {
@@ -1035,20 +1037,12 @@ export function drawGraph(
 // Arranging panels around the graph
 
 /**
- * The stages a picture has to read on: a 1366 x 768 laptop (wide and short) and a phone in
- * portrait (narrow and tall), in pixels.
- */
-const STAGES = [
-  { w: 884, h: 305 },
-  { w: 362, h: 585 },
-];
-
-/**
  * How large a scene of this size is drawn, in pixels per unit: on `stage` when the view knows
- * the screen it draws for, else on the smaller of the two typical stages.
+ * the screen it draws for, else on the smaller of the two typical stages, a 1366 x 768 laptop
+ * and a phone in portrait (TYPICAL_STAGES in src/render/stage.ts).
  */
 export function fitScore(b: Bounds, stage?: StageSize): number {
-  return Math.min(...(stage ? [stage] : STAGES).map((s) => Math.min(s.w / b.w, s.h / b.h)));
+  return Math.min(...(stage ? [stage] : TYPICAL_STAGES).map((s) => Math.min(s.w / b.w, s.h / b.h)));
 }
 
 /** Move shapes by (dx, dy). Where they slide in from stays put: it is a place in the scene. */

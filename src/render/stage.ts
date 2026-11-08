@@ -1,8 +1,30 @@
 /**
  * The stage's zoom buttons, in CSS pixels: the one place their size is set. src/ui/Stage.svelte
  * draws them from these numbers, and layouts read the same numbers to keep drawings clear of them.
+ * Also the two typical stages, the room a view gets on a laptop and on a phone.
  */
 import type { StageSize } from '../engine/types';
+
+/**
+ * The room src/ui/Stage.svelte reports to views on a 1366 x 768 laptop (wide and short), in CSS
+ * pixels, as measured on the built site on 8 November. The drawing is 884 x 387; the stage
+ * rounds to 8. Pages with a second row of controls get less height (336, or 312 for the
+ * NP reductions); a taller window gets more (480 at 1366 x 860, the e2e desktop).
+ */
+export const LAPTOP_STAGE = { w: 888, h: 384 } as const satisfies StageSize;
+
+/**
+ * The room on a phone in portrait (a Pixel 7, 412 x 839, as the e2e phone project uses), measured
+ * the same way: the drawing is 362 x 537, and the zoom buttons have a strip of their own.
+ */
+export const PHONE_STAGE = { w: 360, h: 536, strip: true } as const satisfies StageSize;
+
+/**
+ * The stages a picture has to read on when a view is given none (catalog thumbnails, practice
+ * pictures, tests): `fitScore` in src/layouts/graph.ts scores a scene on the smaller of the two,
+ * and src/viz/conformance.test.ts draws every step on each.
+ */
+export const TYPICAL_STAGES: readonly StageSize[] = [LAPTOP_STAGE, PHONE_STAGE];
 
 /** Three square buttons in a row, `gap` apart. */
 export const ZOOM_BUTTONS = {

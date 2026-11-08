@@ -277,3 +277,13 @@
 2026-11-08 [code] Shared code out of page folders (register item 9): avl kits to _bst, hashing to _hashing, list helpers to _lists, meld to _meld, prim/mst to _graph/mst.ts, Thompson construction, layout and random regexes to _automata; imports only
 
 2026-11-08 [code] One acrossFits in src/viz/_automata/panels.ts for the finite automata and the PDA (pda/view.ts had a near copy); scenes of nine automata pages hashed before and after, identical
+
+2026-11-08 [decision] Yusuf (about 10:50): no usage limit, implement every open handoff item, then deploy; five agents, then two more for graph label overlaps and small text
+
+2026-11-08 [code] Merged: _paths overlap check on every graph page (KNOWN table of real overlaps), code-tab random scripts for pages whose input is not one value, plain-insert "All colliding keys" presets
+
+2026-11-08 [code] Merged: pickBest and onStage in src/layouts/arrange.ts (floyd-warshall and multitape-tm use it), node-chain shares linked.ts's field geometry; scene hashes unchanged
+
+2026-11-08 [code] Merged: drawTape rows, key and enter options, gridScene prefix and no empty headers, automata loadOp parse/describe (pda, mealy-moore); scene hashes unchanged
+
+2026-11-08 [code] Merged: input box sized from the sample (33 pages wrapped buttons at 1366, now 9), "needs l, r and an amount", Master theorem lays out for the stage (smallest text 7.7/3.9 px to 11.4/9.0 px)

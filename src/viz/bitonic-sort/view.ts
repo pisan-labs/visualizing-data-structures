@@ -16,7 +16,9 @@ import type { ArrayStep } from '../_sorting/kit';
 import { network, type BitonicExtra, type BitonicSettings } from './model';
 
 const ROW = 36;
-const PITCH = 62;
+const SLOT = 40;
+const LANE = 14;
+const COLPAD = 16;
 const GAP = 26;
 const TOKEN_W = 46;
 const TOKEN_H = 28;
@@ -41,16 +43,36 @@ function build(step: ArrayStep, settings: BitonicSettings, vertical: boolean): B
 
   // u along the wires, v across them.
   const v = (i: number) => headRoom + TOKEN_H / 2 + i * ROW;
+  // Comparators in a column that would overlap go side by side, in lanes.
+  const lanes = cols.map((col) => {
+    const ends: number[] = [];
+    return col.comparators.map((cmp) => {
+      const top = Math.min(cmp.min, cmp.max);
+      const bottom = Math.max(cmp.min, cmp.max);
+      let lane = ends.findIndex((e) => e < top);
+      if (lane < 0) lane = ends.length;
+      ends[lane] = bottom;
+      return lane;
+    });
+  });
+  // Along u: a slot for the values, then a column, a slot, a column, ... and a last slot.
   const u0 = labelRoom + TOKEN_W / 2 + 8;
-  const colU = (c: number) => u0 + TOKEN_W / 2 + PITCH / 2 + c * PITCH + GAP * (cols[c]!.stage - 1);
-  const slotU = (p: number) =>
-    D === 0
-      ? u0
-      : p === 0
-        ? u0
-        : p === D
-          ? colU(D - 1) + PITCH / 2 + TOKEN_W / 2 - 8
-          : (colU(p - 1) + colU(p)) / 2;
+  const slots: number[] = [u0];
+  const colStart: number[] = [];
+  const colWidth: number[] = [];
+  let cursor = u0 + SLOT / 2;
+  cols.forEach((col, c) => {
+    if (c > 0 && col.stage !== cols[c - 1]!.stage) cursor += GAP;
+    const w = (Math.max(...lanes[c]!, 0) + 1) * LANE + COLPAD;
+    colStart.push(cursor);
+    colWidth.push(w);
+    cursor += w;
+    slots.push(cursor + SLOT / 2);
+    cursor += SLOT;
+  });
+  const colU = (c: number) => colStart[c]! + colWidth[c]! / 2;
+  const laneU = (c: number, k: number) => colStart[c]! + COLPAD / 2 + (lanes[c]![k]! + 0.5) * LANE;
+  const slotU = (p: number) => slots[Math.max(0, Math.min(D, p))]!;
   const uEnd = slotU(D) + TOKEN_W / 2 + 8;
 
   const P = (uu: number, vv: number) => (vertical ? { x: vv, y: uu } : { x: uu, y: vv });
@@ -95,7 +117,7 @@ function build(step: ArrayStep, settings: BitonicSettings, vertical: boolean): B
       'col-active',
       colU(extra.active),
       (v(0) + v(n - 1)) / 2,
-      PITCH - 14,
+      colWidth[extra.active]!,
       (n - 1) * ROW + TOKEN_H,
       {
         r: 8,
@@ -147,13 +169,13 @@ function build(step: ArrayStep, settings: BitonicSettings, vertical: boolean): B
       const id = `cmp-${c}-${k}`;
       const done = extra.done !== undefined && c < extra.done;
       const role = roles.get(id);
-      line(id, colU(c), v(cmp.min), colU(c), v(cmp.max), {
+      line(id, laneU(c, k), v(cmp.min), laneU(c, k), v(cmp.max), {
         head: 'end',
         role,
         opacity: role ? 1 : done ? 0.55 : 1,
         z: 0.5,
       });
-      const d = P(colU(c), v(cmp.min));
+      const d = P(laneU(c, k), v(cmp.min));
       shapes.push({ kind: 'circle', id: `dot-${c}-${k}`, x: d.x, y: d.y, r: 5, role, z: 0.6 });
     });
   });

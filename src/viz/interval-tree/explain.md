@@ -87,6 +87,6 @@ Q: Why can't a node just store its own interval, and the search use the low ends
 ## Try this
 
 - [Insert raises max on the way down](#example:insert-raises-max): before each insert, predict which maxes change.
-- Run `overlap 22,25` and then `all 22,25` on the same tree. How many nodes does each look at?
+- Run `overlap 22-25` and then `all 22-25` on the same tree. How many nodes does each look at?
 - In [Delete fixes max on the way up](#example:delete-fixes-max), which nodes' max goes down, and why not the others?
 - Pick **Long intervals (many overlaps)** with 12 intervals and run `all 50`. How much does max prune when nearly everything overlaps?

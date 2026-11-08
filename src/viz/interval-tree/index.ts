@@ -43,7 +43,7 @@ export function randomIntervals(rng: Rng, n: number, width = 12): [number, numbe
   return out;
 }
 
-const ins = (xs: [number, number][]): OpCall[] => xs.map(([a, b]) => ['insert', `${a},${b}`]);
+const ins = (xs: [number, number][]): OpCall[] => xs.map(([a, b]) => ['insert', `${a}-${b}`]);
 
 export const intervalTree: VizDef<IntervalState, IntervalSettings, IntervalExtra> = {
   id: 'interval-tree',
@@ -63,9 +63,9 @@ export const intervalTree: VizDef<IntervalState, IntervalSettings, IntervalExtra
   controls: {
     input: {
       label: 'Interval',
-      placeholder: 'e.g. 15,23 (or one number for a point)',
+      placeholder: 'e.g. 15-23, or one number for a point',
       maxLength: 200,
-      sample: '15,23',
+      sample: '15-23',
       parse: parseIntervalInput,
     },
     buttons: [

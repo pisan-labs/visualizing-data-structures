@@ -62,7 +62,7 @@ export function init(): S {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Intervals: "15,23", "15-23", "[15, 23]", or one number for a point
+// Intervals: "15-23", "15,23", "[15,23]", or one number for a point
 
 export type Interval = [number, number];
 
@@ -73,21 +73,21 @@ export function parseInterval(raw: Value): Interval | Error {
     .trim();
   const m = /^(\d+)\s*(?:[,\-–]\s*(\d+))?$/.exec(text);
   const bad = new Error(
-    `Type an interval as low,high with whole numbers from 0 to ${MAX_END}, such as 15,23 (or one number for a point).`,
+    `Type an interval as low-high with whole numbers from 0 to ${MAX_END}, such as 15-23 (or one number for a point).`,
   );
   if (!m) return bad;
   const lo = Number(m[1]);
   const hi = m[2] === undefined ? lo : Number(m[2]);
   if (lo > MAX_END || hi > MAX_END) return bad;
   if (lo > hi)
-    return new Error(`The low end comes first: ${lo} is bigger than ${hi}. Try ${hi},${lo}.`);
+    return new Error(`The low end comes first: ${lo} is bigger than ${hi}. Try ${hi}-${lo}.`);
   return [lo, hi];
 }
 
-/** For the input box: keeps "15,23" as one value. */
+/** For the input box: "15-23" (the box splits a list on spaces and commas). */
 export function parseIntervalInput(token: string): Value | Error {
   const a = parseInterval(token);
-  return a instanceof Error ? a : `${a[0]},${a[1]}`;
+  return a instanceof Error ? a : `${a[0]}-${a[1]}`;
 }
 
 export const show = (a: Interval) => `[${a[0]}, ${a[1]}]`;
@@ -609,7 +609,7 @@ export function pseudocode(): PseudoBlock[] {
 // Text
 
 export function initialSay(): string {
-  return 'An empty interval tree. Insert intervals such as 15,23 8,9 25,30 then ask which ones overlap 22,25.';
+  return 'An empty interval tree. Insert intervals such as 15-23 8-9 25-30, then ask which ones overlap 22-25.';
 }
 
 export function initialVars(s: S): Record<string, Scalar> {

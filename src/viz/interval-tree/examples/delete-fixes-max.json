@@ -7,14 +7,14 @@
   "settings": {},
   "seed": 1,
   "ops": [
-    ["insert", "16,22"],
-    ["insert", "8,10"],
-    ["insert", "25,30"],
-    ["insert", "5,9"],
-    ["insert", "12,15"],
-    ["insert", "20,27"],
-    ["insert", "28,29"],
-    ["insert", "1,4"],
-    ["delete", "25,30"]
+    ["insert", "16-22"],
+    ["insert", "8-10"],
+    ["insert", "25-30"],
+    ["insert", "5-9"],
+    ["insert", "12-15"],
+    ["insert", "20-27"],
+    ["insert", "28-29"],
+    ["insert", "1-4"],
+    ["delete", "25-30"]
   ]
 }

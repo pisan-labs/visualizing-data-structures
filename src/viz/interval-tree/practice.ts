@@ -21,7 +21,7 @@ function intervals(rng: Rng, n: number): [number, number][] {
   return out;
 }
 
-const ins = (xs: [number, number][]): OpCall[] => xs.map(([a, b]) => ['insert', `${a},${b}`]);
+const ins = (xs: [number, number][]): OpCall[] => xs.map(([a, b]) => ['insert', `${a}-${b}`]);
 const text = (lo: number, hi: number) => `[${lo}, ${hi}]`;
 
 /**
@@ -43,7 +43,7 @@ export function intervalPractice(def: () => Def): PracticeKind[] {
         const xs = intervals(rng, rng.int(6, 8));
         const setup = ins(xs);
         const lo = rng.int(0, 55);
-        const q = `${lo},${lo + rng.int(0, 5)}`;
+        const q = `${lo}-${lo + rng.int(0, 5)}`;
         const e = after(setup, ['overlap', q]);
         const s = e.end;
         const f = e.steps.at(-1)!.extra?.found?.[0];
@@ -57,7 +57,7 @@ export function intervalPractice(def: () => Def): PracticeKind[] {
           answer: { kind: 'choice', options, correct: options.indexOf(answer) },
           explain:
             f === undefined
-              ? `The search follows max down one path and falls off the tree: nothing overlaps [${q.replace(',', ', ')}].`
+              ? `The search follows max down one path and falls off the tree: nothing overlaps [${q.replace('-', ', ')}].`
               : `The search stops at the first node on its path that overlaps: ${answer}. Another interval may overlap too, but the search returns the first one it meets.`,
           watch: [['overlap', q]],
         };
@@ -70,7 +70,7 @@ export function intervalPractice(def: () => Def): PracticeKind[] {
         const xs = intervals(rng, rng.int(6, 8));
         const setup = ins(xs);
         const lo = rng.int(0, 50);
-        const q = `${lo},${lo + rng.int(0, 8)}`;
+        const q = `${lo}-${lo + rng.int(0, 8)}`;
         const e = after(setup, ['all', q]);
         const visited = Number(e.steps.at(-1)!.vars!.visited);
         return {
@@ -109,7 +109,7 @@ export function intervalPractice(def: () => Def): PracticeKind[] {
         const s0 = run(setup).endState();
         // Delete the interval with the largest high end, which sets the root's max.
         const top = Object.values(s0.nodes).reduce((a, b) => (b.hi > a.hi ? b : a));
-        const c: OpCall = ['delete', `${top.lo},${top.hi}`];
+        const c: OpCall = ['delete', `${top.lo}-${top.hi}`];
         const e = after(setup, c);
         const max = e.end.nodes[e.end.root!]!.max;
         return {

@@ -83,7 +83,7 @@ function checkMax(s: IntervalState) {
 
 const ivArb = fc
   .tuple(fc.integer({ min: 0, max: 30 }), fc.integer({ min: 0, max: 8 }))
-  .map(([a, w]) => `${a},${a + w}`);
+  .map(([a, w]) => `${a}-${a + w}`);
 const callArb: fc.Arbitrary<OpCall> = fc.oneof(
   { weight: 6, arbitrary: ivArb.map((v) => ['insert', v] as OpCall) },
   { weight: 3, arbitrary: ivArb.map((v) => ['delete', v] as OpCall) },
@@ -133,11 +133,11 @@ describe('interval tree', () => {
   });
 
   it('reads intervals in several forms', () => {
-    expect(parseIntervalInput('15,23')).toBe('15,23');
-    expect(parseIntervalInput('[15, 23]')).toBe('15,23');
-    expect(parseIntervalInput('15-23')).toBe('15,23');
-    expect(parseIntervalInput('7')).toBe('7,7');
-    expect(parseIntervalInput('23,15')).toBeInstanceOf(Error);
+    expect(parseIntervalInput('15,23')).toBe('15-23');
+    expect(parseIntervalInput('[15, 23]')).toBe('15-23');
+    expect(parseIntervalInput('15-23')).toBe('15-23');
+    expect(parseIntervalInput('7')).toBe('7-7');
+    expect(parseIntervalInput('23-15')).toBeInstanceOf(Error);
     expect(parseIntervalInput('5,100')).toBeInstanceOf(Error);
     expect(parseIntervalInput('cat')).toBeInstanceOf(Error);
   });

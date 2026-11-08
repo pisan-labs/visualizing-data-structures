@@ -44,8 +44,8 @@ test('an old version still answers after a delete', async ({ page }) => {
 });
 
 test('a practice set loads and plays an answer', async ({ page }) => {
-  await page.goto('/persistent-bst/#practice=1357&n=4');
-  await expect(page.locator('.question')).toHaveCount(4);
+  await page.goto('/persistent-bst/#practice=1357&n=5');
+  await expect(page.locator('.question')).toHaveCount(5);
   const first = page.locator('.question').first();
   await first.getByRole('button', { name: 'Check' }).click();
   await expect(first.locator('.feedback')).toContainText('Not quite. The answer is');

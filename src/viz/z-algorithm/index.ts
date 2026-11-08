@@ -92,7 +92,7 @@ export const zAlgorithm: VizDef<ZState, ZSettings, ZExtra> = {
         },
       },
       {
-        label: 'One letter repeated (the box’s best case, brute force’s worst)',
+        label: 'One letter repeated: AAAA…',
         make: (_rng, n) => [['load', 'A'.repeat(Math.min(n, MAX_S))]],
       },
       {

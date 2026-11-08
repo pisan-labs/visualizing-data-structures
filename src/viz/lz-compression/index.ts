@@ -96,7 +96,7 @@ export const lzCompression: VizDef<LzState, LzSettings, LzExtra> = {
         make: (_rng, n) => [['load', 'abc'.repeat(n).slice(0, n)]],
       },
       {
-        label: 'One letter repeated (the best case)',
+        label: 'One letter repeated: aaaa…',
         make: (_rng, n) => [['load', 'a'.repeat(n)]],
       },
       {

@@ -88,7 +88,7 @@ export const manacher: VizDef<ManacherState, ManacherSettings, ManacherExtra> = 
         },
       },
       {
-        label: 'One letter repeated (the mirror’s best case)',
+        label: 'One letter repeated: aaaa…',
         make: (_rng, n) => [['load', 'a'.repeat(n)]],
       },
       {

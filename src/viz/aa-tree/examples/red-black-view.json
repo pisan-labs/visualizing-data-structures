@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "aa-tree",
+  "id": "red-black-view",
+  "title": "The same tree as a red-black tree",
+  "notes": "The rising keys again, drawn as a binary tree. A node on its parent's level is red; every other node is black. Red children only ever hang on the right, which is what makes AA trees simpler than red-black trees.",
+  "settings": {
+    "draw": "redblack"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["insert", 80]
+  ]
+}

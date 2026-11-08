@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "aa-tree",
+  "id": "rising-splits",
+  "title": "Rising keys: split after split",
+  "notes": "Each new key lands on the far right, on level 1. Three in a row on one level is too many, so split lifts the middle one. Lifting can make a run on the level above, and the split repeats there.",
+  "settings": {
+    "draw": "levels"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70]
+  ]
+}

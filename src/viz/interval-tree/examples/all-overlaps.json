@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "interval-tree",
+  "id": "all-overlaps",
+  "title": "Every overlap, pruning with max",
+  "notes": "To list all intervals that overlap [9, 21], the search visits a subtree only if it can hold one: left if the left max reaches 9, right if the node starts by 21. The faded subtrees were skipped without looking inside.",
+  "settings": {},
+  "seed": 1,
+  "ops": [
+    ["insert", "16-22"],
+    ["insert", "8-10"],
+    ["insert", "25-30"],
+    ["insert", "5-9"],
+    ["insert", "12-15"],
+    ["insert", "20-27"],
+    ["insert", "28-29"],
+    ["insert", "1-4"],
+    ["all", "9-21"],
+    ["all", "2-3"]
+  ]
+}

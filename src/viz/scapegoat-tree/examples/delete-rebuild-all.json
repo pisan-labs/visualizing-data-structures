@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "scapegoat-tree",
+  "id": "delete-rebuild-all",
+  "title": "Enough deletes rebuild the whole tree",
+  "notes": "Deletes never look for a scapegoat. They only count: max N is 7, and once N drops below 2/3 × 7 = 4.67, the whole tree is rebuilt and max N starts again at 4.",
+  "settings": {
+    "alpha": "2/3"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 40],
+    ["insert", 20],
+    ["insert", 60],
+    ["insert", 10],
+    ["insert", 30],
+    ["insert", 50],
+    ["insert", 70],
+    ["delete", 10],
+    ["delete", 20],
+    ["delete", 30]
+  ]
+}

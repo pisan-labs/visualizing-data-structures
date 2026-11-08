@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "amortized-analysis",
+  "id": "counter-one-coin",
+  "title": "One coin per increment is not enough",
+  "notes": "Increments charged 1 coin each. That pays for setting a bit, and nothing is left for resetting it: the second increment resets bit 0 and the bank goes to −1.",
+  "settings": {
+    "structure": "counter",
+    "growth": "2",
+    "charge": "1",
+    "method": "accounting"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "run",
+      4
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "amortized-analysis",
+  "id": "counter-coins",
+  "title": "A coin on every 1 bit",
+  "notes": "Sixteen increments charged 2 coins each. One coin pays for setting a bit to 1 and the other waits on that bit until a later increment resets it. Every 1 bit carries its own coin, so the bank never goes negative.",
+  "settings": {
+    "structure": "counter",
+    "growth": "2",
+    "charge": "auto",
+    "method": "accounting"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "run",
+      16
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

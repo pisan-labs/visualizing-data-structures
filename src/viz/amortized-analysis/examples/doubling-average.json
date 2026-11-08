@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "amortized-analysis",
+  "id": "doubling-average",
+  "title": "Doubling keeps the average under 3",
+  "notes": "Thirty-two appends with doubling, counted the plain way: add up the actual costs and divide. The expensive appends stand out as spikes, and the average jumps at each one but never reaches 3.",
+  "settings": {
+    "structure": "array",
+    "growth": "2",
+    "charge": "auto",
+    "method": "aggregate"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "run",
+      32
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

@@ -120,7 +120,7 @@ export function view(
     if (k !== undefined && settings.algorithm !== 'jarvis' && !dropped.has(p.id)) {
       const c = plane.at(p);
       shapes.push(
-        text(`ord-${p.id}`, { x: c.x + 8, y: c.y + 17 }, String(k), { size: 10, opacity: 0.9 }),
+        text(`ord-${p.id}`, { x: c.x + 8, y: c.y + 17 }, String(k), { size: 13, opacity: 0.9 }),
       );
     }
   }

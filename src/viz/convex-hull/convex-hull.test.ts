@@ -4,6 +4,8 @@ import { Timeline } from '../../engine/timeline';
 import { orient, writePoints, type Vec } from '../../layouts/plane';
 import { convexHull, parsePoints } from '.';
 import { normalizedHull, type Algorithm, type HullSettings } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 const settings = (algorithm: Algorithm): HullSettings => ({ algorithm });
 
@@ -141,5 +143,13 @@ describe('convex hull', () => {
     expect(parsePoints('1,2 13,4')).toBeInstanceOf(Error);
     expect(parsePoints('1.5,2')).toBeInstanceOf(Error);
     expect(parsePoints('cat')).toBeInstanceOf(Error);
+  });
+});
+
+describe('drawn text size', () => {
+  // Axis numbers were 11 units (and the hull's sort order 10): now 13.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(convexHull, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(convexHull, PHONE_STAGE).px).toBeGreaterThanOrEqual(10);
   });
 });

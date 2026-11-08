@@ -4,6 +4,8 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { coordinates2d, parseCoordinate } from '.';
 import { fixed2, type CoordSettings } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 const run = (calls: OpCall[], form: CoordSettings['form'] = 'affine') =>
   new Timeline(coordinates2d, { form }, 1, calls).endState();
@@ -104,5 +106,13 @@ describe('2D change of coordinates', () => {
     expect(parseCoordinate('-3')).toBe(-3);
     expect(parseCoordinate('2.25')).toBeInstanceOf(Error);
     expect(parseCoordinate('400')).toBeInstanceOf(Error);
+  });
+});
+
+describe('drawn text size', () => {
+  // Axis numbers were 11 units: now 13.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(coordinates2d, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(12);
+    expect(smallestText(coordinates2d, PHONE_STAGE).px).toBeGreaterThanOrEqual(10.5);
   });
 });

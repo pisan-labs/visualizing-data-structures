@@ -5,5 +5,10 @@ import type { TimSettings } from './model';
 
 export function view(step: ArrayStep, settings: TimSettings): Scene {
   // The runs on the stack are labeled bands (X on top, then Y, Z, W); tmp is the second row.
-  return arrayView(step, settings.draw, { aux: true, regionLanes: 2, pointerLanes: 2 });
+  return arrayView(step, settings.draw, {
+    aux: true,
+    regionLanes: 2,
+    pointerLanes: 2,
+    barHeight: 96,
+  });
 }

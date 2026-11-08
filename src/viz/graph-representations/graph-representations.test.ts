@@ -7,6 +7,8 @@ import { compareNames, type Graph } from '../_graph/graph';
 import { parseGraph } from '../_graph/parse';
 import { graphRepresentations as def } from '.';
 import { defaults, pseudocode, type RepState } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: a graph as a set of arcs, written independently of the page.
@@ -248,5 +250,13 @@ describe('graph representations practice', () => {
         }
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // Fit the screen (the default) stacks the parts on a phone: 5.7 px side by side, 9 stacked.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(def, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(def, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

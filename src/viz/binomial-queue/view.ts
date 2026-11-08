@@ -73,7 +73,7 @@ export function view(step: Step<BinState, BinExtra>, settings: BinSettings): Sce
           x: n.x + R + 3,
           y: n.y + R + 4,
           text: String(s.nodes[n.id]!.degree),
-          size: 11,
+          size: 13,
           cls: 'label',
           mono: true,
         });

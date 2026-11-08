@@ -39,22 +39,37 @@ import {
   type SubsetMode,
 } from './model';
 
-const CAPTION = 13;
+const CAPTION = 15;
+/**
+ * A DFA this large may also be drawn with its states closer together, when that draws the
+ * text larger on the stage (a 16-state DFA and its table on a laptop).
+ */
+const TIGHT_FROM = 8;
+const TIGHT = 0.72;
 
 /** The DFA's layout: breadth-first layers, or (all subsets) one layer per subset size. */
-function dfaLayout(nfa: Automaton, dfa: Automaton, mode: SubsetMode, across: boolean): StateLayout {
-  if (mode === 'reachable') return layoutStates(dfa, across);
+function dfaLayout(
+  nfa: Automaton,
+  dfa: Automaton,
+  mode: SubsetMode,
+  across: boolean,
+  tight = 1,
+): StateLayout {
+  if (mode === 'reachable') return layoutStates(dfa, across, tight);
   // The DFA's states are A, B, C, ... in the order allSubsets lists the subsets.
   const bySize: string[][] = [];
   allSubsets(nfa.states).forEach((s, i) => (bySize[s.length] ??= []).push(stateLetter(i)));
   return layoutFromLayers(
     bySize.filter((l) => l.length),
     across,
+    tight,
   );
 }
 
 interface Frame {
   across: boolean;
+  /** Both diagrams' spacing (layoutFromLayers). */
+  tight: number;
   /** Where the DFA's shapes move to. */
   dx: number;
   dy: number;
@@ -89,46 +104,49 @@ function arrange(nfa: Automaton, mode: SubsetMode, stage?: StageSize): Frame {
   const { dfa, sets } = finalDfa(nfa, mode);
   const widths = tableColumns(nfa, dfa, sets);
   const candidates: Frame[] = [];
-  for (const across of [true, false]) {
-    const nb = captioned(drawAutomaton(nfa, layoutStates(nfa, across)).bounds);
-    const db = captioned(
-      drawAutomaton(dfa, dfaLayout(nfa, dfa, mode, across), { prefix: DFA_PREFIX }).bounds,
-    );
-    for (const under of [false, true]) {
-      const dx = under ? nb.x - db.x : beside(nb, 40) - db.x;
-      const dy = under ? below(nb, 24) - db.y : nb.y - db.y;
-      const diagrams = unionBounds(nb, { ...db, x: db.x + dx, y: db.y + dy });
-      const table = placePanels([], diagrams, stage, (out, x, y) =>
-        drawGrid(out, {
-          id: 'tbl',
-          x,
-          y,
-          cols: [],
-          head: [],
-          widths,
-          rows: [],
-          reserve: dfa.states.length,
-        }),
+  const tights = dfa.states.length >= TIGHT_FROM ? [1, TIGHT] : [1];
+  for (const tight of tights)
+    for (const across of [true, false]) {
+      const nb = captioned(drawAutomaton(nfa, layoutStates(nfa, across, tight)).bounds);
+      const db = captioned(
+        drawAutomaton(dfa, dfaLayout(nfa, dfa, mode, across, tight), { prefix: DFA_PREFIX }).bounds,
       );
-      candidates.push({
-        across,
-        dx,
-        dy,
-        tx: table.x,
-        ty: table.y,
-        widths,
-        bounds: unionBounds(diagrams, table),
-      });
+      for (const under of [false, true]) {
+        const dx = under ? nb.x - db.x : beside(nb, 40) - db.x;
+        const dy = under ? below(nb, 24) - db.y : nb.y - db.y;
+        const diagrams = unionBounds(nb, { ...db, x: db.x + dx, y: db.y + dy });
+        const table = placePanels([], diagrams, stage, (out, x, y) =>
+          drawGrid(out, {
+            id: 'tbl',
+            x,
+            y,
+            cols: [],
+            head: [],
+            widths,
+            rows: [],
+            reserve: dfa.states.length,
+          }),
+        );
+        candidates.push({
+          across,
+          tight,
+          dx,
+          dy,
+          tx: table.x,
+          ty: table.y,
+          widths,
+          bounds: unionBounds(diagrams, table),
+        });
+      }
     }
-  }
   const best = pickBest(candidates, stage);
   if (frames.size > 300) frames.clear();
   frames.set(key, best);
   return best;
 }
 
-function drawNfa(nfa: Automaton, across: boolean, roles: Map<string, MarkRole>) {
-  return drawAutomaton(nfa, layoutStates(nfa, across), { roles });
+function drawNfa(nfa: Automaton, f: Frame, roles: Map<string, MarkRole>) {
+  return drawAutomaton(nfa, layoutStates(nfa, f.across, f.tight), { roles });
 }
 
 export function view(
@@ -142,20 +160,20 @@ export function view(
   if (!r) {
     // The NFA runs the way a run would draw it, so its states stay put when Convert starts.
     const mode = settings.subsets === 'all' && nfa.states.length <= MAX_ALL ? 'all' : 'reachable';
-    const d = drawNfa(nfa, arrange(nfa, mode, stage).across, roles);
+    const d = drawNfa(nfa, arrange(nfa, mode, stage), roles);
     return { shapes: d.shapes, bounds: padBounds(d.bounds, 14), label: describe(step.state) };
   }
   const mode = r.mode;
   const f = arrange(nfa, mode, stage);
   const shapes: Shape[] = [];
 
-  const n = drawNfa(nfa, f.across, roles);
+  const n = drawNfa(nfa, f, roles);
   shapes.push(...n.shapes);
   caption(shapes, 'cap-nfa', 'NFA', n.bounds);
 
-  shapes.push(...translate(drawDfa(nfa, r, f.across, roles), f.dx, f.dy));
+  shapes.push(...translate(drawDfa(nfa, r, f, roles), f.dx, f.dy));
   const { dfa } = finalDfa(nfa, mode);
-  const db = drawAutomaton(dfa, dfaLayout(nfa, dfa, mode, f.across), {
+  const db = drawAutomaton(dfa, dfaLayout(nfa, dfa, mode, f.across, f.tight), {
     prefix: DFA_PREFIX,
   }).bounds;
   caption(shapes, 'cap-dfa', 'DFA', { ...db, x: db.x + f.dx, y: db.y + f.dy });
@@ -196,24 +214,24 @@ export function view(
  * The DFA so far: the finished DFA, drawing only the states and moves found, each where it is
  * in the finished drawing.
  */
-function drawDfa(
-  nfa: Automaton,
-  r: ConvRun,
-  across: boolean,
-  roles: Map<string, MarkRole>,
-): Shape[] {
+function drawDfa(nfa: Automaton, r: ConvRun, f: Frame, roles: Map<string, MarkRole>): Shape[] {
   const { dfa, sets } = finalDfa(nfa, r.mode);
   const known = new Set(r.rows.map((row) => row.name));
   const found = new Set(r.moves.map((m) => `${m.from} ${m.on} ${m.to}`));
-  return drawAutomaton({ ...dfa, accept: r.accept }, dfaLayout(nfa, dfa, r.mode, across), {
-    prefix: DFA_PREFIX,
-    roles,
-    look: (q) => (sets[q]?.length === 0 ? 'dead' : r.unreachable?.includes(q) ? 'dim' : undefined),
-    edge: (p) => (r.unreachable?.includes(p) ? 'dim' : undefined),
-    show: {
-      state: (q) => known.has(q),
-      move: (m) => found.has(`${m.from} ${m.on} ${m.to}`),
-      start: r.start !== undefined,
+  return drawAutomaton(
+    { ...dfa, accept: r.accept },
+    dfaLayout(nfa, dfa, r.mode, f.across, f.tight),
+    {
+      prefix: DFA_PREFIX,
+      roles,
+      look: (q) =>
+        sets[q]?.length === 0 ? 'dead' : r.unreachable?.includes(q) ? 'dim' : undefined,
+      edge: (p) => (r.unreachable?.includes(p) ? 'dim' : undefined),
+      show: {
+        state: (q) => known.has(q),
+        move: (m) => found.has(`${m.from} ${m.on} ${m.to}`),
+        start: r.start !== undefined,
+      },
     },
-  }).shapes;
+  ).shapes;
 }

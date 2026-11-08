@@ -414,7 +414,7 @@ function drawStack(
     text: depth
       ? `${depth} ${depth === 1 ? 'choice' : 'choices'}${lo > 0 ? `, top ${shown.length} shown` : ''}`
       : 'empty',
-    size: 13,
+    size: 14,
     cls: 'label',
   });
 }
@@ -443,7 +443,7 @@ function drawChart(
       x: x + 20,
       y: at.y + 16,
       text,
-      size: 13,
+      size: 14,
       cls: 'label',
     });
   };
@@ -472,7 +472,7 @@ function drawChart(
       x: x0 - 6,
       y: y + 4,
       text: DECADE_TEXT[k] ?? `1e${k}`,
-      size: 11,
+      size: 14,
       anchor: 'end',
       mono: true,
       cls: 'label',
@@ -484,7 +484,7 @@ function drawChart(
     x: right + 4,
     y: y0 - PLOT_H + 4,
     text: 'cap',
-    size: 12,
+    size: 14,
     cls: 'label',
   });
   shapes.push({ kind: 'arrow', id: 'ch-axis-x', x1: x0, y1: y0, x2: right, y2: y0, head: 'none' });
@@ -504,7 +504,7 @@ function drawChart(
       x: x0 + (n - 0.5) * SLOT,
       y: y0 + 15,
       text: String(n),
-      size: 11,
+      size: 14,
       anchor: 'middle',
       mono: true,
       cls: 'label',
@@ -515,7 +515,7 @@ function drawChart(
     x: x0,
     y: y0 + 34,
     text: `steps (log scale) for ${g.unit.length > 1 ? `(${g.unit})` : g.unit}ⁿ`,
-    size: 12,
+    size: 14,
     cls: 'label',
   });
   for (const r of g.rows) {

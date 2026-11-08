@@ -186,7 +186,7 @@ export function drawGrid(shapes: Shape[], plane: Plane, g: GridOptions): void {
       shapes.push(
         text(`${g.id}-tx${k}`, { x: p.x, y: p.y + 15 }, fmtNum(x), {
           anchor: 'middle',
-          size: 11,
+          size: 13,
         }),
       );
     }
@@ -197,7 +197,7 @@ export function drawGrid(shapes: Shape[], plane: Plane, g: GridOptions): void {
       shapes.push(
         text(`${g.id}-ty${k}`, { x: p.x - 5, y: p.y + 4 }, fmtNum(y), {
           anchor: 'end',
-          size: 11,
+          size: 13,
         }),
       );
     }
@@ -205,7 +205,7 @@ export function drawGrid(shapes: Shape[], plane: Plane, g: GridOptions): void {
     shapes.push(
       text(`${g.id}-t0`, { x: o.x - 5, y: o.y + 15 }, ay === 0 && ax === 0 ? '0' : '', {
         anchor: 'end',
-        size: 11,
+        size: 13,
       }),
     );
   }

@@ -123,7 +123,7 @@ export function meldView(variant: Variant) {
             x: n.x,
             y: n.y + R + 13,
             text: String(K.npl(s.nodes[n.id]!)),
-            size: 12,
+            size: 13,
             anchor: 'middle',
             cls: 'label',
             mono: true,

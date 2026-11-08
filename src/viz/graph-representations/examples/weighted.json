@@ -6,7 +6,7 @@
   "notes": "With weights, each list entry carries its weight and each matrix cell holds one. An empty cell means no edge, so a weight of 0 still shows.",
   "settings": {
     "layout": "force",
-    "arrange": "wide"
+    "arrange": "fit"
   },
   "seed": 1,
   "ops": [

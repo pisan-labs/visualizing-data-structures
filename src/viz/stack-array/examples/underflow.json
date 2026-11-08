@@ -4,7 +4,7 @@
   "id": "underflow",
   "title": "Underflow on an empty stack",
   "notes": "One push, then two pops. The second pop finds the stack empty.",
-  "settings": { "capacity": 8, "top": "count", "layout": "vertical" },
+  "settings": { "capacity": 8, "top": "count", "layout": "fit" },
   "seed": 1,
   "ops": [["push", 7], ["pop"], ["pop"]],
   "at": { "op": -1, "step": 0 }

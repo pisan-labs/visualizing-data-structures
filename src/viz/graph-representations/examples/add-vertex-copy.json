@@ -6,7 +6,7 @@
   "notes": "Adding I costs the list one new empty list. The matrix has no spare row or column, so it copies all 64 cells into a 9 by 9 matrix.",
   "settings": {
     "layout": "force",
-    "arrange": "wide"
+    "arrange": "fit"
   },
   "seed": 1,
   "ops": [

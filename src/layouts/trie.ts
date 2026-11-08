@@ -24,7 +24,8 @@
  *                  halfWidth(id)  half a node's drawn width, e.g. radius + 4 for a node drawn
  *                                 with an end-of-word ring. Default radius.
  *                  radius (11), labelSize (14, monospace), gap (10, between outlines),
- *                  labelGap (4, between two edge labels), levelGap (52).
+ *                  labelGap (4, between two edge labels), levelGap (52), sideways (false:
+ *                  true grows the tree to the right, one column per level, for a phone).
  *     Returns node centers (root at x = 0, y = 0), the box of every edge label, the height
  *     (edges on the longest root-to-leaf path) and the tight bounds of everything drawn.
  *
@@ -60,6 +61,15 @@ export interface TrieLayoutOptions<Id extends TrieId> {
   labelGap?: number;
   /** Vertical distance between levels, center to center. Default 52. */
   levelGap?: number;
+  /**
+   * Grow the tree to the right instead of down: the root on the left, each level a column, and
+   * siblings stacked top to bottom. Each edge fans out from its parent, then runs level to its
+   * child with the label on that level piece, so labels sit on their child's row and never
+   * cross another edge. The columns are spread so that the longest label between two of them
+   * fits, so long labels (a suffix tree's) widen the tree once per level instead of once per
+   * leaf. For a tall, narrow stage. Default false.
+   */
+  sideways?: boolean;
 }
 
 export interface PlacedTrieNode<Id extends TrieId> {
@@ -83,6 +93,8 @@ export interface TrieLayout<Id extends TrieId> {
   labelSize: number;
   levelGap: number;
   halfWidth(id: Id): number;
+  /** Grown to the right (TrieLayoutOptions.sideways). */
+  sideways?: boolean;
 }
 
 interface Outline {
@@ -99,6 +111,10 @@ export function trieLabelWidth(text: string, size = 14): number {
 
 const labelHeight = (size: number) => size * 1.15;
 
+/** Sideways: the room a parent's edges fan out in, and the room kept right of a label. */
+const FAN = 22;
+const SIDE_PAD = 6;
+
 export function layoutTrie<Id extends TrieId>(
   root: Id,
   children: (id: Id) => Id[],
@@ -110,7 +126,11 @@ export function layoutTrie<Id extends TrieId>(
   const labelGap = options.labelGap ?? 4;
   const levelGap = options.levelGap ?? 52;
   const half = (id: Id) => options.halfWidth?.(id) ?? radius;
-  const lw = (id: Id) => trieLabelWidth(options.label(id), labelSize);
+  const sideways = options.sideways ?? false;
+  const textW = (id: Id) => trieLabelWidth(options.label(id), labelSize);
+  // How much room a label takes across the tree: its width, or sideways its height.
+  // Sideways, a label sits on its child's row, which the nodes already keep apart.
+  const lw = sideways ? () => 0 : textW;
 
   // Offsets of each node's children from its center, filled in bottom-up.
   const offsets = new Map<Id, number[]>();
@@ -177,6 +197,8 @@ export function layoutTrie<Id extends TrieId>(
   let height = 0;
   const lh = labelHeight(labelSize);
 
+  if (sideways) return sidewaysPlace();
+
   const place = (id: Id, x: number, depth: number, parent: PlacedTrieNode<Id> | null) => {
     const y = depth * levelGap;
     let label: PlacedTrieNode<Id>['label'] = null;
@@ -210,6 +232,56 @@ export function layoutTrie<Id extends TrieId>(
     levelGap,
     halfWidth: half,
   };
+
+  /** Sideways: the offsets run down the page, and each level is a column. */
+  function sidewaysPlace(): TrieLayout<Id> {
+    // The widest label into each level, then the columns far enough apart for it.
+    const widest: number[] = [0];
+    const measure = (id: Id, depth: number) =>
+      children(id).forEach((k) => {
+        widest[depth + 1] = Math.max(widest[depth + 1] ?? 0, textW(k));
+        measure(k, depth + 1);
+      });
+    measure(root, 0);
+    const cols = [0];
+    for (let d = 1; d < widest.length; d++) {
+      const room = (widest[d] ?? 0) + 2 * radius + 2 * RING + FAN + SIDE_PAD;
+      cols.push(cols[d - 1]! + Math.max(levelGap, room));
+    }
+    let minY = Infinity;
+    const put = (id: Id, y: number, depth: number, parent: PlacedTrieNode<Id> | null) => {
+      const x = cols[depth]!;
+      let label: PlacedTrieNode<Id>['label'] = null;
+      if (parent) {
+        const text = options.label(id);
+        const w = textW(id);
+        label = { x: parent.x + half(parent.id) + FAN, y: y - lh / 2, w, h: lh, text };
+        minY = Math.min(minY, label.y);
+        maxY = Math.max(maxY, label.y + lh);
+      }
+      const node: PlacedTrieNode<Id> = { id, x, y, depth, parent: parent?.id ?? null, label };
+      nodes.set(id, node);
+      height = Math.max(height, depth);
+      const h = Math.max(radius, half(id));
+      minX = Math.min(minX, x - h);
+      maxX = Math.max(maxX, x + h);
+      minY = Math.min(minY, y - half(id));
+      maxY = Math.max(maxY, y + half(id));
+      const offs = offsets.get(id)!;
+      children(id).forEach((k, i) => put(k, y + offs[i]!, depth + 1, node));
+    };
+    put(root, 0, 0, null);
+    return {
+      nodes,
+      height,
+      bounds: { x: minX, y: minY, w: maxX - minX, h: maxY - minY },
+      radius,
+      labelSize,
+      levelGap,
+      halfWidth: half,
+      sideways: true,
+    };
+  }
 }
 
 export const trieNodeId = (id: TrieId) => `tn-${id}`;
@@ -278,6 +350,19 @@ export function drawTrie<Id extends TrieId>(
         x2: n.x - ux * outer(n.id),
         y2: n.y - uy * outer(n.id),
       };
+      if (layout.sideways) {
+        // Fan out from the parent to the label's left end, then run level to the child.
+        const fx = n.label.x - 2;
+        const len2 = Math.hypot(fx - p.x, cy - p.y) || 1;
+        a.x1 = p.x + ((fx - p.x) / len2) * outer(p.id);
+        a.y1 = p.y + ((cy - p.y) / len2) * outer(p.id);
+        a.x2 = fx;
+        a.y2 = cy;
+        b.x1 = n.label.x + n.label.w + 2;
+        b.y1 = cy;
+        b.x2 = n.x - outer(n.id);
+        b.y2 = n.y;
+      }
       for (const [id, seg] of [
         [edgeId, a],
         [`${edgeId}-low`, b],

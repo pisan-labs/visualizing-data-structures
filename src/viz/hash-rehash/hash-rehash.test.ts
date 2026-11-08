@@ -13,6 +13,8 @@ import {
   type Table,
   type Threshold,
 } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 type T = Timeline<RehashState, RehashSettings, RehashExtra>;
 
@@ -166,5 +168,13 @@ describe('rehashing', () => {
       ),
       { numRuns: 250 },
     );
+  });
+});
+
+describe('drawn text size', () => {
+  // A laptop takes 12 slots a row, so the old and new tables fit its height: 8.3 px before.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(hashRehash, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(12);
+    expect(smallestText(hashRehash, PHONE_STAGE).px).toBeGreaterThanOrEqual(9.5);
   });
 });

@@ -7,6 +7,8 @@ import type { Graph } from '../_graph/graph';
 import { parseGraph } from '../_graph/parse';
 import { bellmanFord } from '.';
 import { pseudocode, type BfRun, type BfSettings } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 // ---------------------------------------------------------------------------------------------
 // A reference written independently of the page. Arcs in the page's order: by tail, then head
@@ -236,5 +238,13 @@ describe('Bellman-Ford practice', () => {
         }
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // A long spring layout may turn on its side on a phone: 7.1 px before, 8.5 after.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(bellmanFord, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(bellmanFord, PHONE_STAGE).px).toBeGreaterThanOrEqual(8.5);
   });
 });

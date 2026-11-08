@@ -5,6 +5,8 @@ import type { OpCall } from '../../engine/types';
 import type { Vec } from '../../layouts/plane';
 import { parseNumber, rotateTranslate2d } from '.';
 import { R, SHAPES, fixed2, type RtSettings } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 const settings = (s: Partial<RtSettings> = {}): RtSettings =>
   ({ ...rotateTranslate2d.defaults, ...s }) as RtSettings;
@@ -156,5 +158,13 @@ describe('2D rotation and translation', () => {
     expect(fixed2(2.5)).toBe('2.50');
     expect(parseNumber('1.5')).toBe(1.5);
     expect(parseNumber('1.25')).toBeInstanceOf(Error);
+  });
+});
+
+describe('drawn text size', () => {
+  // Axis numbers were 11 units: now 13.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(rotateTranslate2d, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(rotateTranslate2d, PHONE_STAGE).px).toBeGreaterThanOrEqual(9.5);
   });
 });

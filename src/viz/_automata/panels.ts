@@ -312,7 +312,7 @@ export function drawGrid(shapes: Shape[], o: GridOptions): Bounds {
       x: xs[k]! + o.widths[k]! / 2,
       y: o.y + HEAD_H - 7,
       text: o.head[k]!,
-      size: 13,
+      size: 14,
       anchor: 'middle',
       cls: 'label',
       role: roles.get(`${o.id}--h-${c}`),

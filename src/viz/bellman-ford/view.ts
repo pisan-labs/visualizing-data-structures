@@ -17,11 +17,14 @@ import {
   drawRow,
   drawTable,
   layoutGraph,
+  layoutsFor,
   padBounds,
   placePanels,
   unionBounds,
   type VertexLook,
+  type GraphLayout,
 } from '../../layouts/graph';
+import { pickLayout } from '../../layouts/arrange';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { edgeKey } from '../_graph/graph';
 import { arcKey, arcs } from '../_paths/kit';
@@ -42,11 +45,23 @@ function look(r: BfRun, v: string): VertexLook | undefined {
 }
 
 export function view(step: Step<BfState, BfExtra>, settings: BfSettings, stage?: StageSize): Scene {
+  const layout = layoutGraph(step.state.graph, settings.layout);
+  return pickLayout(
+    stage,
+    layoutsFor(layout, settings.layout, stage).map((l) => draw(step, settings, l, stage)),
+  );
+}
+
+function draw(
+  step: Step<BfState, BfExtra>,
+  settings: BfSettings,
+  layout: GraphLayout,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const r = extra.run;
-  const layout = layoutGraph(g, settings.layout);
   // The current π edges, by edge key, with the end each was found from.
   const tree = new Map<string, string>();
   if (r) for (const v of g.vertices) if (r.pi[v]) tree.set(edgeKey(g, r.pi[v]!, v), r.pi[v]!);

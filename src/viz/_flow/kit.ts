@@ -22,6 +22,7 @@ import type {
   OpSpec,
   Scalar,
   SettingSpec,
+  StageSize,
   Step,
   Value,
 } from '../../engine/types';
@@ -31,6 +32,7 @@ import {
   edgeId,
   layoutGraph,
   scaleLayout,
+  turnLayout,
   type GraphLayout,
   type GraphTemplate,
   type Pt,
@@ -40,6 +42,7 @@ import {
   weightId,
 } from '../../layouts/graph';
 import type { Bounds, Shape } from '../../render/scene';
+import { overlaps } from '../_paths/overlap';
 import { compareNames, keyOf, makeGraph, type Graph } from '../_graph/graph';
 import {
   MAX_ARCS,
@@ -231,6 +234,51 @@ export function networkLayout(net: Network, template: FlowTemplate, spread = 1):
   if (template === 'lr') return columns(net, spread);
   const base = layoutGraph(net.graph, template);
   return spread === 1 ? base : scaleLayout(base, spread);
+}
+
+/**
+ * The layouts a view may draw the network with on this stage: networkLayout, and when it is
+ * clearly longer one way, the same turned on its side (s on top, t at the bottom, for 'lr'),
+ * which a phone may draw larger. Spring layouts turn too; the circle and grid keep their
+ * shape. With no stage, only networkLayout, so thumbnails stay.
+ */
+const TURN_WIDEN = 1.4;
+
+export function networkLayouts(
+  net: Network,
+  template: FlowTemplate,
+  stage?: StageSize,
+  spread = 1,
+): GraphLayout[] {
+  const layout = networkLayout(net, template, spread);
+  if (!stage || (template !== 'lr' && template !== 'force')) return [layout];
+  const { w, h } = layout.bounds;
+  if (Math.max(w, h) <= 1.3 * Math.min(w, h)) return [layout];
+  // Turned, a column of vertices becomes a row, and their arcs' labels need more room across
+  // than the column had down: widen it (a phone has width to spare when height is short).
+  const turned = turnLayout(layout);
+  const pos: Record<string, Pt> = {};
+  for (const [v, p] of Object.entries(turned.pos)) pos[v] = { x: p.x * TURN_WIDEN, y: p.y };
+  const xs = Object.values(pos).map((p) => p.x);
+  const r = turned.r;
+  const bounds = {
+    x: Math.min(...xs) - r,
+    y: turned.bounds.y,
+    w: Math.max(...xs) - Math.min(...xs) + 2 * r,
+    h: turned.bounds.h,
+  };
+  const side: GraphLayout = { pos, r, bounds };
+  // Only when its labels stay clear at their longest (every arc full, costs shown), drawn as
+  // flow or as the residual network, so the choice holds through a run.
+  const full: Flow = Object.fromEntries(net.graph.edges.map((e) => [keyOf(e), e.w ?? 1]));
+  const clear = [false, true].every((residual) =>
+    [false, true].every(
+      (costs) =>
+        overlaps(drawNetwork(net, side, { roles: new Map(), flow: full, residual, costs }).shapes)
+          .length === 0,
+    ),
+  );
+  return clear ? [layout, side] : [layout];
 }
 
 // ---------------------------------------------------------------------------------------------

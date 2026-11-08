@@ -38,7 +38,7 @@ function levelGapFor(height: number): number {
 /** Edge label sizes: the usual, then smaller ones a narrow stage (a phone) may draw larger with. */
 const LABEL_SIZES = [15, 13, 12];
 
-function treeLayout(tr: StTree, src: string, labelSize = LABEL_SIZES[0]!) {
+function treeLayout(tr: StTree, src: string, labelSize = LABEL_SIZES[0]!, sideways = false) {
   const label = (u: number) => src.slice(tr.nodes[u]!.start, tr.nodes[u]!.end);
   let height = 0;
   const depth = (u: number, d: number): void => {
@@ -53,6 +53,7 @@ function treeLayout(tr: StTree, src: string, labelSize = LABEL_SIZES[0]!) {
     gap: 8,
     labelGap: 8,
     levelGap: levelGapFor(height),
+    sideways,
   });
 }
 
@@ -62,8 +63,8 @@ const finished = new Map<string, Bounds>();
  * The box of the finished tree for a text, with edge labels of this size, the same for both
  * builds: the tree is unique.
  */
-function finishedBox(text: string, labelSize: number): Bounds {
-  const key = `${labelSize} ${text}`;
+function finishedBox(text: string, labelSize: number, sideways: boolean): Bounds {
+  const key = `${labelSize} ${sideways} ${text}`;
   const hit = finished.get(key);
   if (hit) return hit;
   const gen = ops.build.run({ text, tree: null }, [], {
@@ -74,7 +75,7 @@ function finishedBox(text: string, labelSize: number): Bounds {
   while (!r.done) r = gen.next();
   const tr = r.value.tree;
   const box = tr
-    ? treeLayout(tr, full(text), labelSize).bounds
+    ? treeLayout(tr, full(text), labelSize, sideways).bounds
     : { x: -R, y: -R, w: 2 * R, h: 2 * R };
   if (finished.size > 150) finished.clear();
   finished.set(key, box);
@@ -120,13 +121,32 @@ export function view(
     h: CELL_H,
   });
   const places = (stage ? LABEL_SIZES : LABEL_SIZES.slice(0, 1)).flatMap((labelSize) => {
-    const done = finishedBox(s.text, labelSize);
+    const done = finishedBox(s.text, labelSize, false);
     const sideDx = done.x - 30 - (over.x + over.w);
     const sideDy = -R - 4 - over.y;
+    // The tree growing to the right, under T$ and the pattern (for a phone).
+    const right = finishedBox(s.text, labelSize, true);
+    const rightDx = right.x - over.x;
+    const rightDy = right.y - 24 - (over.y + over.h);
     return [
-      { labelSize, dx: 0, dy: 0, bounds: padBounds(unionBounds(done, over), 14) },
+      { labelSize, sideways: false, dx: 0, dy: 0, bounds: padBounds(unionBounds(done, over), 14) },
+      ...(stage
+        ? [
+            {
+              labelSize,
+              sideways: true,
+              dx: rightDx,
+              dy: rightDy,
+              bounds: padBounds(
+                unionBounds(right, { ...over, x: over.x + rightDx, y: over.y + rightDy }),
+                14,
+              ),
+            },
+          ]
+        : []),
       {
         labelSize,
+        sideways: false,
         dx: sideDx,
         dy: sideDy,
         bounds: padBounds(
@@ -144,7 +164,7 @@ export function view(
     root: 0,
     next: 1,
   };
-  const layout = treeLayout(tr, src, place.labelSize);
+  const layout = treeLayout(tr, src, place.labelSize, place.sideways);
   const path = new Set(extra.path ?? []);
   const counted = new Set(extra.counted ?? []);
   const active = extra.active;

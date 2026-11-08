@@ -4,6 +4,8 @@ import { Timeline } from '../../engine/timeline';
 import { orient, writePoints, type Vec } from '../../layouts/plane';
 import { parsePolygonInput, polygon } from '.';
 import { isSimple, type PolySettings, type PolyState } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 const ray: PolySettings = { inside: 'ray' };
 const winding: PolySettings = { inside: 'winding' };
@@ -126,5 +128,13 @@ describe('polygon algorithms', () => {
     expect(parsePolygonInput('7')).toBe(7);
     expect(parsePolygonInput('13')).toBeInstanceOf(Error);
     expect(parsePolygonInput('a,b')).toBeInstanceOf(Error);
+  });
+});
+
+describe('drawn text size', () => {
+  // Axis numbers were 11 units (8.8 px on a laptop): now 13.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(polygon, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(9.5);
+    expect(smallestText(polygon, PHONE_STAGE).px).toBeGreaterThanOrEqual(9.5);
   });
 });

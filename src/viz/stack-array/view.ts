@@ -1,4 +1,5 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import type { Scene, Shape } from '../../render/scene';
 import { describe, topOf, type StackExtra, type StackSettings, type StackState } from './model';
 
@@ -79,10 +80,24 @@ function horizontal(cap: number): Geometry {
   };
 }
 
-export function view(step: Step<StackState, StackExtra>, settings: StackSettings): Scene {
+/**
+ * The array's geometry. 'fit' draws it whichever way is larger on the stage (across a wide
+ * laptop stage, up a tall phone one), and vertically with no stage (thumbnails, practice).
+ */
+function geometry(cap: number, layout: StackSettings['layout'], stage?: StageSize): Geometry {
+  if (layout === 'horizontal') return horizontal(cap);
+  if (layout === 'vertical') return vertical(cap);
+  return pickLayout(stage, [vertical(cap), horizontal(cap)]);
+}
+
+export function view(
+  step: Step<StackState, StackExtra>,
+  settings: StackSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const cap = state.capacity;
-  const g = settings.layout === 'horizontal' ? horizontal(cap) : vertical(cap);
+  const g = geometry(cap, settings.layout, stage);
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const shapes: Shape[] = [];
 

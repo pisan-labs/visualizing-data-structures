@@ -117,7 +117,7 @@ export function view(
           x: n.x + R + 4,
           y: n.y + R + 5,
           text: String(s.nodes[n.id]!.children.length),
-          size: 11,
+          size: 13,
           cls: 'label',
           mono: true,
         });
@@ -310,7 +310,7 @@ export function view(
         x: x + CELL.w / 2,
         y: y0 + CELL.h + 14,
         text: String(d),
-        size: 12,
+        size: 13,
         anchor: 'middle',
         cls: 'index',
         mono: true,

@@ -18,6 +18,8 @@ import {
   type EngSettings,
   type EngState,
 } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 const machineFor = (text: string, order: Order = 'greedy'): Machine => {
   const p = readRegex(text);
@@ -287,5 +289,14 @@ describe('regex engines page', () => {
       'a*a*a*b': 'polynomial',
       '(a|b)*a*c': 'polynomial',
     });
+  });
+});
+
+describe('drawn text size', () => {
+  // The chart's axis labels were 11 units (8.4 px on a laptop, 5.6 on a phone); now 14.
+  // On a phone the NFA of (a|aa)*c is what keeps the scale down.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(def, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(10.5);
+    expect(smallestText(def, PHONE_STAGE).px).toBeGreaterThanOrEqual(7);
   });
 });

@@ -1,4 +1,4 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
 import type { Scene, Shape } from '../../render/scene';
 import {
   ARG_BAND,
@@ -23,16 +23,27 @@ const MARGIN = 14;
 const MIN_W = 420;
 const TITLE = 22;
 const GAP = 14;
+/**
+ * Slots per row. A wide, short stage (a laptop) takes 12, so the old table and the new one
+ * (23 slots after 11) fit its height; a phone and the thumbnails keep the usual 8. Decided
+ * from the stage alone, so the old table keeps its rows when the new one appears.
+ */
+const colsFor = (stage?: StageSize): number => (stage && stage.w > 1.6 * stage.h ? 12 : 8);
 
 /**
  * The table, as rows of slots. While a rehash runs, the new table T' sits below the old one
  * and keys slide down into it one at a time.
  */
-export function view(step: Step<RehashState, RehashExtra>, _settings: RehashSettings): Scene {
+export function view(
+  step: Step<RehashState, RehashExtra>,
+  _settings: RehashSettings,
+  stage?: StageSize,
+): Scene {
+  const cols = colsFor(stage);
   const { state, extra = {} } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const tables = [state.table, ...(state.fresh ? [state.fresh] : [])];
-  const W = Math.max(MIN_W, 2 * MARGIN + Math.max(...tables.map((t) => gridWidth(t.m))));
+  const W = Math.max(MIN_W, 2 * MARGIN + Math.max(...tables.map((t) => gridWidth(t.m, cols))));
   const shapes: Shape[] = [];
   let y = ARG_BAND;
 
@@ -43,7 +54,7 @@ export function view(step: Step<RehashState, RehashExtra>, _settings: RehashSett
     shapes.push({
       kind: 'text',
       id: labelId,
-      x: (W - gridWidth(t.m)) / 2,
+      x: (W - gridWidth(t.m, cols)) / 2,
       y: y + 15,
       text: fresh ? `T': the new table, m = ${t.m}` : `T: m = ${t.m}`,
       size: 14,
@@ -51,7 +62,7 @@ export function view(step: Step<RehashState, RehashExtra>, _settings: RehashSett
       cls: roles.get(labelId) ? undefined : 'label',
       role: roles.get(labelId),
     });
-    const g = slotGrid(t.m, (W - gridWidth(t.m)) / 2, y + TITLE);
+    const g = slotGrid(t.m, (W - gridWidth(t.m, cols)) / 2, y + TITLE, cols);
     const probed =
       (extra.probing ?? 'table') === (fresh ? 'fresh' : 'table') ? extra.probed : undefined;
     for (let j = 0; j < t.m; j++) {

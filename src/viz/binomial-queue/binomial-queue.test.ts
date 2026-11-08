@@ -13,6 +13,8 @@ import {
   type BinSettings,
   type BinState,
 } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: a sorted multiset. A binomial queue holds the same keys as any priority queue.
@@ -277,5 +279,13 @@ describe('binomial queue practice', () => {
         }
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // The degree under each node (pointers view) was 11 units: now 13.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(binomialQueue, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(10);
+    expect(smallestText(binomialQueue, PHONE_STAGE).px).toBeGreaterThanOrEqual(8.5);
   });
 });

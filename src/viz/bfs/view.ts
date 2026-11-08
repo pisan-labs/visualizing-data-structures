@@ -13,12 +13,15 @@ import {
   drawRow,
   drawTable,
   layoutGraph,
+  layoutsFor,
   padBounds,
   placePanels,
   unionBounds,
+  type GraphLayout,
   type VertexLook,
 } from '../../layouts/graph';
 import type { Bounds, Scene, Shape } from '../../render/scene';
+import { pickLayout } from '../../layouts/arrange';
 import {
   describe,
   describeRun,
@@ -43,11 +46,27 @@ export function view(
   settings: BfsSettings,
   stage?: StageSize,
 ): Scene {
+  const layouts = layoutsFor(
+    layoutGraph(step.state.graph, settings.layout),
+    settings.layout,
+    stage,
+  );
+  return pickLayout(
+    stage,
+    layouts.map((layout) => draw(step, settings, layout, stage)),
+  );
+}
+
+function draw(
+  step: Step<BfsState, BfsExtra>,
+  settings: BfsSettings,
+  layout: GraphLayout,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const r = extra.run;
-  const layout = layoutGraph(g, settings.layout);
   const drawn = drawGraph(g, layout, {
     roles,
     vertex: r && ((v) => look(r, v)),

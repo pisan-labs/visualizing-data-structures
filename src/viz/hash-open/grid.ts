@@ -76,7 +76,7 @@ export function noteLabel(box: Box, id: string, text: string): Shape {
     x: box.x + box.w / 2,
     y: box.y + box.h + 14,
     text,
-    size: 12,
+    size: 13,
     anchor: 'middle',
     cls: 'label',
     mono: true,

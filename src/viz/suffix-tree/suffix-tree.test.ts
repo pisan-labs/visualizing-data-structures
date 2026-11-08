@@ -140,3 +140,11 @@ describe('drawn text size', () => {
     expect(smallestText(suffixTree, PHONE_STAGE).px).toBeGreaterThanOrEqual(7);
   });
 });
+
+describe('drawn text size', () => {
+  // mississippi's leaves in one row drew its labels at 7.3 px on a phone; growing right, 10.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(suffixTree, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(12);
+    expect(smallestText(suffixTree, PHONE_STAGE).px).toBeGreaterThanOrEqual(10);
+  });
+});

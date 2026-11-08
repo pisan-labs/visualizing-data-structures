@@ -14,9 +14,11 @@ import {
   textWidth,
   unionBounds,
   type VertexLook,
+  type GraphLayout,
 } from '../../layouts/graph';
+import { pickLayout } from '../../layouts/arrange';
 import type { Bounds, Scene, Shape } from '../../render/scene';
-import { drawNetwork, networkLayout } from '../_flow/kit';
+import { drawNetwork, networkLayouts } from '../_flow/kit';
 import { order, type Network } from '../_flow/network';
 import {
   describe,
@@ -105,7 +107,7 @@ function panels(
       x,
       y: yy + 12,
       text: `the last ${SHOWN} of ${r.paths.length} paths`,
-      size: 12,
+      size: 13,
       cls: 'label',
     });
     parts.push({ x, y: yy, w: 160, h: 16 });
@@ -116,11 +118,24 @@ function panels(
 }
 
 export function view(step: Step<McState, McExtra>, settings: McSettings, stage?: StageSize): Scene {
+  return pickLayout(
+    stage,
+    networkLayouts(step.state.net, settings.layout, stage, 1.25).map((layout) =>
+      draw(step, settings, layout, stage),
+    ),
+  );
+}
+
+function draw(
+  step: Step<McState, McExtra>,
+  settings: McSettings,
+  layout: GraphLayout,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const net = state.net;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const r = extra.run;
-  const layout = networkLayout(net, settings.layout, 1.25);
   const named = (v: string | null, name: string) => (v && v !== name ? [{ name, at: v }] : []);
   const drawn = drawNetwork(net, layout, {
     roles,

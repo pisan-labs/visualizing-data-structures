@@ -7,6 +7,8 @@ import type { Graph } from '../_graph/graph';
 import { parseGraph } from '../_graph/parse';
 import { connectedComponents as cc } from '.';
 import { pseudocode, type CcRun, type CcSettings, type Method } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: label pieces by repeatedly spreading a number until nothing changes (no queue,
@@ -197,5 +199,13 @@ describe('connected components practice', () => {
         }
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // A long spring layout may turn on its side on a phone: 7.7 px before, 10.4 after.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(cc, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(cc, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

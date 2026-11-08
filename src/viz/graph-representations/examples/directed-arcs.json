@@ -6,7 +6,7 @@
   "notes": "A>C is an edge but C>A is not. Adj[A] lists only where A points, and row A of the matrix is not column A.",
   "settings": {
     "layout": "force",
-    "arrange": "wide"
+    "arrange": "fit"
   },
   "seed": 1,
   "ops": [

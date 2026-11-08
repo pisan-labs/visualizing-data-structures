@@ -113,25 +113,32 @@ export function layers(a: Automaton): string[][] {
 /**
  * A layout from layers a page chooses: layers LAYER_GAP apart, states in a layer ROW_GAP apart,
  * each layer centered on the widest. Across, layers run left to right; down, top to bottom.
+ * `tight` (0 to 1) scales both gaps down, for a large automaton that must fit a small stage.
  */
-export function layoutFromLayers(ls: readonly (readonly string[])[], across = true): StateLayout {
+export function layoutFromLayers(
+  ls: readonly (readonly string[])[],
+  across = true,
+  tight = 1,
+): StateLayout {
+  const layerGap = LAYER_GAP * tight;
+  const rowGap = ROW_GAP * tight;
   const widest = Math.max(1, ...ls.map((l) => l.length));
   const pos: Record<string, Pt> = {};
   ls.forEach((layer, i) =>
     layer.forEach((q, j) => {
-      const along = i * LAYER_GAP;
-      const off = (j - (layer.length - 1) / 2) * ROW_GAP + ((widest - 1) / 2) * ROW_GAP;
+      const along = i * layerGap;
+      const off = (j - (layer.length - 1) / 2) * rowGap + ((widest - 1) / 2) * rowGap;
       pos[q] = across ? { x: along, y: off } : { x: off, y: along };
     }),
   );
   return fixedLayout(pos, across);
 }
 
-export function layoutStates(a: Automaton, across = true): StateLayout {
-  const key = `${across}|${a.start}|${a.states.join(',')}|${a.moves.map((m) => `${m.from}>${m.to}`).join(',')}`;
+export function layoutStates(a: Automaton, across = true, tight = 1): StateLayout {
+  const key = `${across}|${tight}|${a.start}|${a.states.join(',')}|${a.moves.map((m) => `${m.from}>${m.to}`).join(',')}`;
   const hit = cache.get(key);
   if (hit) return hit;
-  const out = layoutFromLayers(layers(a), across);
+  const out = layoutFromLayers(layers(a), across, tight);
   if (cache.size > 200) cache.clear();
   cache.set(key, out);
   return out;

@@ -58,6 +58,7 @@ export const stackArray: VizDef<StackState, StackSettings, StackExtra> = {
       key: 'layout',
       label: 'Draw the array',
       options: [
+        { value: 'fit', label: 'To fit the screen: across a laptop, up a phone' },
         { value: 'vertical', label: 'Vertically (bottom to top)' },
         { value: 'horizontal', label: 'Horizontally (left to right)' },
       ],

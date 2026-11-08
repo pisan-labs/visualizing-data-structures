@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "ll1-parsing",
+  "id": "expressions",
+  "title": "a+a*a, top down",
+  "notes": "The expression grammar without left recursion is LL(1). Each move either expands the variable on top by the table, or matches a terminal. The tree grows from the root, its leaves left to right.",
+  "settings": {
+    "conflicts": "refuse"
+  },
+  "seed": 1,
+  "ops": [["parse", "a+a*a"]]
+}

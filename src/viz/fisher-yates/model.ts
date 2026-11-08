@@ -181,7 +181,7 @@ const shuffleOp: Op = {
     yield makeStep(
       st,
       naive
-        ? `Shuffle ${items(st)} the naive way: for every position, swap with any position at all. ${n}^${n} = ${n ** n} equally likely runs for ${factorial(n)} orders, which cannot come out even.`
+        ? `Shuffle ${items(st)} the naive way: for every position, swap with any position at all. ${n}^${n} = ${n ** n} equally likely runs for ${factorial(n)} ${n === 1 ? 'order' : 'orders'}${n <= 2 ? ', which happens to come out even for so few; from 3 items up it cannot' : ', which cannot come out even'}.`
         : `Shuffle ${items(st)}. ${forward ? 'Going left to right' : 'Going right to left'}, each step picks a random item from the unshuffled part and moves it into place.`,
       ['loop'],
       2,

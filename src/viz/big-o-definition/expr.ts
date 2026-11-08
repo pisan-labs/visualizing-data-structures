@@ -79,7 +79,7 @@ export const lgR = (a: Rat): number => (a.n === 0n ? -Infinity : lg10(babs(a.n))
 
 /** Whether d has no prime factors but 2 and 5, so k/d ends as a decimal. */
 function decimalDen(d: bigint): number | null {
-  for (let k = 0; k <= 6; k++) if ((10n ** BigInt(k)) % d === 0n) return k;
+  for (let k = 0; k <= 6; k++) if (10n ** BigInt(k) % d === 0n) return k;
   return null;
 }
 
@@ -167,7 +167,8 @@ export function parseConst(token: string, what = 'c'): Const | Error {
   } else if (frac) {
     if (BigInt(frac[2]!) === 0n) return new Error(`${what} = ${t} divides by zero.`);
     r = rat(BigInt(frac[1]!), BigInt(frac[2]!));
-    if (r.d > BigInt(DEN_MAX)) return new Error(`Keep the bottom of ${what} to ${DEN_MAX} or less.`);
+    if (r.d > BigInt(DEN_MAX))
+      return new Error(`Keep the bottom of ${what} to ${DEN_MAX} or less.`);
     text = r.d === 1n ? String(r.n) : `${r.n}/${r.d}`;
   } else {
     return new Error(`${what} must be a positive number, such as 4, 3.1 or 1/14.`);
@@ -238,7 +239,8 @@ function termText(t: Term, ascii: boolean): string {
   if (!mono) return k.d === 1n ? String(k.n) : `${k.n}/${k.d}`;
   const lead = k.n === 1n ? '' : String(k.n);
   // "3n log n" reads fine; "3 2ⁿ" does not, so a number before 2ⁿ or n! gets a dot.
-  const joiner = lead && (mono.startsWith('2') || mono.startsWith('n!')) ? (ascii ? ' * ' : '·') : '';
+  const joiner =
+    lead && (mono.startsWith('2') || mono.startsWith('n!')) ? (ascii ? ' * ' : '·') : '';
   return `${lead}${joiner}${mono}${k.d === 1n ? '' : `/${k.d}`}`;
 }
 
@@ -287,7 +289,8 @@ function normalize(src: string): string {
 
 function tokenize(src: string): Tok[] | Error {
   const s = normalize(src);
-  if (/\bln\b/.test(s)) return new Error('Use log n: here log means ⌊log₂ n⌋, and the base does not matter for Big-O.');
+  if (/\bln\b/.test(s))
+    return new Error('Use log n: here log means ⌊log₂ n⌋, and the base does not matter for Big-O.');
   if (!ALLOWED.test(s))
     return new Error('Use numbers, n, n^2, log n, 2^n, n!, +, −, * and / by a number.');
   const out: Tok[] = [];
@@ -303,7 +306,11 @@ function tokenize(src: string): Tok[] | Error {
       const [whole, frac = ''] = num[0].split('.');
       if (whole!.length > 7 || frac.length > 3)
         return new Error(`${num[0]} is too long: use up to 7 digits and 3 decimals.`);
-      out.push({ t: 'num', v: rat(BigInt(whole! + frac), 10n ** BigInt(frac.length)), raw: num[0] });
+      out.push({
+        t: 'num',
+        v: rat(BigInt(whole! + frac), 10n ** BigInt(frac.length)),
+        raw: num[0],
+      });
       i += num[0].length;
       continue;
     }

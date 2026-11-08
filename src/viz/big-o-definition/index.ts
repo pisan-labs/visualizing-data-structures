@@ -193,7 +193,7 @@ export const bigODefinition: VizDef<DefState, DefSettings, DefExtra> = {
     logStartsAtZero,
     limitTest,
   ] as unknown as SavedExample[],
-  preview: { example: 'bigger-c', level: 2, hide: ['r-', 'v-key'] },
+  preview: { example: 'bigger-c', level: 2, hide: ['r-', 'v-key', 'v-cur'] },
   opening: 'bigger-c',
 };
 

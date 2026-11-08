@@ -11,22 +11,10 @@
   },
   "seed": 1,
   "ops": [
-    [
-      "compare",
-      "n log n + n ; n log n"
-    ],
-    [
-      "check",
-      "2 1"
-    ],
-    [
-      "find",
-      "2"
-    ],
-    [
-      "find",
-      "1.5"
-    ]
+    ["compare", "n log n + n ; n log n"],
+    ["check", "2 1"],
+    ["find", "2"],
+    ["find", "1.5"]
   ],
   "at": {
     "op": -1,

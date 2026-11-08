@@ -10,19 +10,7 @@
     "scale": "auto"
   },
   "seed": 1,
-  "ops": [
-    [
-      "compare",
-      "2^n ; n^10"
-    ],
-    [
-      "check",
-      "1 2"
-    ],
-    [
-      "limit"
-    ]
-  ],
+  "ops": [["compare", "2^n ; n^10"], ["check", "1 2"], ["limit"]],
   "at": {
     "op": -1,
     "step": 0

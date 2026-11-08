@@ -89,8 +89,7 @@ const keyOf = (f: Expr, g: Expr) => `${f.ascii} ; ${g.ascii}`;
 const MENU = new Map(PAIRS.map((p) => [keyOf(exprOf(p.f), exprOf(p.g)), p]));
 
 /** The menu pair these functions are, if any (typed ones count when they match). */
-export const menuPair = (s: S): MenuPair | undefined =>
-  MENU.get(keyOf(exprOf(s.f), exprOf(s.g)));
+export const menuPair = (s: S): MenuPair | undefined => MENU.get(keyOf(exprOf(s.f), exprOf(s.g)));
 
 // ----- Checking -----
 
@@ -119,9 +118,7 @@ export function boundsOf(s: S, rel: Relation): Bound[] | null {
 /** upper: 0 ≤ f ≤ c·g. lower: 0 ≤ c·g ≤ f. */
 export function holdsSide(fv: Rat, gv: Rat, b: { side: Side; c: Rat }): boolean {
   const cg = mulR(b.c, gv);
-  return b.side === 'upper'
-    ? fv.n >= 0n && cmpR(fv, cg) <= 0
-    : cg.n >= 0n && cmpR(cg, fv) <= 0;
+  return b.side === 'upper' ? fv.n >= 0n && cmpR(fv, cg) <= 0 : cg.n >= 0n && cmpR(cg, fv) <= 0;
 }
 
 export const holds = (fv: Rat, gv: Rat, bounds: readonly { side: Side; c: Rat }[]) =>
@@ -214,9 +211,7 @@ function firstFlip(test: (n: bigint) => boolean, start: bigint, want: boolean): 
 /** Θ's two reasons, each named after its constant. */
 function labelled(bounds: Bound[], whys: string[]): string {
   if (bounds.length < 2) return whys.join(' ');
-  return whys
-    .map((w, i) => `${bounds[i]!.side === 'lower' ? 'For c₁' : 'For c₂'}: ${w}`)
-    .join(' ');
+  return whys.map((w, i) => `${bounds[i]!.side === 'lower' ? 'For c₁' : 'For c₂'}: ${w}`).join(' ');
 }
 
 function algebraOf(p: MenuPair, b: Bound): SideAlgebra {
@@ -305,7 +300,13 @@ export function beyondRange(f: Expr, g: Expr, bounds: Bound[], N: number): Beyon
     if (fails.length) return fails.reduce((a, b) => (a.n <= b.n ? a : b));
     const open = sides.find((s) => s.kind === 'open');
     if (open) return open;
-    return { kind: 'proved', why: labelled(bounds, sides.map((s) => s.why)) };
+    return {
+      kind: 'proved',
+      why: labelled(
+        bounds,
+        sides.map((s) => s.why),
+      ),
+    };
   }
   const lim = limitOf(f, g);
   const evs = bounds.map((b) => eventually(lim, b));
@@ -366,8 +367,7 @@ export function smallestN0Past(f: Expr, g: Expr, bounds: Bound[], N: number): Fa
     let n0 = 1n;
     for (const b of bounds) {
       const k = sideN0(f, g, p, b, N);
-      if (k === null)
-        return { kind: 'none', why: algebraOf(p, b).why(b.c) };
+      if (k === null) return { kind: 'none', why: algebraOf(p, b).why(b.c) };
       if (k > n0) n0 = k;
     }
     return { kind: 'n0', n0, why: whys };
@@ -406,8 +406,7 @@ export function atText(f: Expr, g: Expr, bounds: readonly Bound[], n: bigint): s
   for (const b of bounds) {
     if (holdsSide(fv, gv, b)) continue;
     const v = mulR(b.c, gv);
-    if (b.side === 'upper')
-      return fv.n < 0n ? `${fs} is negative` : `${fs} > ${cg(b)}`;
+    if (b.side === 'upper') return fv.n < 0n ? `${fs} is negative` : `${fs} > ${cg(b)}`;
     return v.n < 0n ? `${cg(b)} is negative` : `${fs} < ${cg(b)}`;
   }
   const lower = bounds.find((b) => b.side === 'lower');
@@ -429,9 +428,7 @@ function mustText(bounds: readonly Bound[]): string {
   if (bounds.length === 2)
     return `stay between ${bounds[0]!.text}·g(n) and ${bounds[1]!.text}·g(n)`;
   const b = bounds[0]!;
-  return b.side === 'upper'
-    ? `stay at or under ${b.text}·g(n)`
-    : `stay at or over ${b.text}·g(n)`;
+  return b.side === 'upper' ? `stay at or under ${b.text}·g(n)` : `stay at or over ${b.text}·g(n)`;
 }
 
 const RELATION_OF: Record<Relation, string> = {
@@ -478,7 +475,11 @@ function pastText(
 
 // ----- Values and readouts -----
 
-function vars(s: S, settings: DefSettings, more: Record<string, Scalar> = {}): Record<string, Scalar> {
+function vars(
+  s: S,
+  settings: DefSettings,
+  more: Record<string, Scalar> = {},
+): Record<string, Scalar> {
   const out: Record<string, Scalar> = { 'n checked': `1 to ${rangeOf(settings)}` };
   if (settings.relation === 'Theta') {
     out['c₁'] = s.lo ?? '—';
@@ -619,7 +620,11 @@ const check: Op = {
     const tokens = numbersIn(raw);
     const want = rel === 'Theta' ? 3 : 2;
     if (tokens.length !== want) {
-      yield reject(s, settings, `${REL[rel]} needs ${want} numbers: ${usage(rel, false)}. Nothing changed.`);
+      yield reject(
+        s,
+        settings,
+        `${REL[rel]} needs ${want} numbers: ${usage(rel, false)}. Nothing changed.`,
+      );
       return s;
     }
     const cs = readBounds(tokens, rel);
@@ -702,7 +707,16 @@ const check: Op = {
     }
     yield {
       state: next,
-      marks: [mark('v-n0', first === null ? 'found' : 'error')],
+      marks: [
+        mark(
+          'v-n0',
+          first !== null || past !== 'proved'
+            ? past === 'cannot tell'
+              ? 'active'
+              : 'error'
+            : 'found',
+        ),
+      ],
       say,
       lines: first === null ? ['chk.pass', 'chk.past'] : ['chk.fail'],
       vars: vars(next, settings, { 'first failure': first ?? 'none', [`past ${N}`]: past }),
@@ -815,7 +829,15 @@ const find: Op = {
     }
     yield {
       state: next,
-      marks: found === null ? [] : [mark('v-n0', 'found')],
+      marks:
+        found === null
+          ? []
+          : [
+              mark(
+                'v-n0',
+                past === 'proved' ? 'found' : past === 'cannot tell' ? 'active' : 'error',
+              ),
+            ],
       say,
       lines: found === null ? ['find.none'] : found === 1 ? ['find.all'] : ['find.ret'],
       vars: vars(next, settings, {
@@ -922,33 +944,68 @@ export function pseudocode(settings: DefSettings): PseudoBlock[] {
     {
       op: 'check',
       lines: [
-        L('chk.sig', 0, `check(${cs}, n₀):`, `Test a witness: ${rel === 'Theta' ? 'two constants' : 'a constant c'} and a starting point n₀.`),
+        L(
+          'chk.sig',
+          0,
+          `check(${cs}, n₀):`,
+          `Test a witness: ${rel === 'Theta' ? 'two constants' : 'a constant c'} and a starting point n₀.`,
+        ),
         L('chk.loop', 1, 'for n = n₀ to N:', 'Look at every n from n₀ to the end of the range.'),
         L('chk.test', 2, t.text, t.plain),
-        L('chk.fail', 3, 'return n   // a counterexample', 'Then n breaks it: this is not a witness.'),
+        L(
+          'chk.fail',
+          3,
+          'return n   // a counterexample',
+          'Then n breaks it: this is not a witness.',
+        ),
         L('chk.pass', 1, 'return "holds up to N"', 'No n in the range breaks it.'),
-        L('chk.past', 1, '// past N: only algebra can tell', 'The page cannot try every n. Past N it needs a proof.'),
+        L(
+          'chk.past',
+          1,
+          '// past N: only algebra can tell',
+          'The page cannot try every n. Past N it needs a proof.',
+        ),
       ],
     },
     {
       op: 'find',
       lines: [
-        L('find.sig', 0, `smallest_n0(${cs}):`, 'Find the earliest n₀ that works for these constants.'),
+        L(
+          'find.sig',
+          0,
+          `smallest_n0(${cs}):`,
+          'Find the earliest n₀ that works for these constants.',
+        ),
         L('find.loop', 1, 'for n = N down to 1:', 'Walk down from the end of the range.'),
         L('find.test', 2, t.text, t.plain),
         L('find.ret', 3, 'return n + 1', 'n₀ must start just past the last n that breaks it.'),
         L('find.all', 1, 'return 1', 'Nothing in the range breaks it: n₀ = 1.'),
-        L('find.none', 1, '// n = N broke it: no n₀ ≤ N', 'If n = N itself breaks it, no n₀ in the range works.'),
+        L(
+          'find.none',
+          1,
+          '// n = N broke it: no n₀ ≤ N',
+          'If n = N itself breaks it, no n₀ in the range works.',
+        ),
       ],
     },
     {
       op: 'limit',
       lines: [
-        L('lim.sig', 0, 'L = lim f(n)/g(n) as n → ∞', 'Divide f by g and see where the ratio goes.'),
+        L(
+          'lim.sig',
+          0,
+          'L = lim f(n)/g(n) as n → ∞',
+          'Divide f by g and see where the ratio goes.',
+        ),
         L('lim.ratio', 1, 'r(n) = f(n)/g(n)', 'Work out the ratio at bigger and bigger n.'),
         L('lim.zero', 1, 'L = 0: f = o(g): O(g), not Ω(g)', 'Ratio to 0: f is O(g) but not Ω(g).'),
         L('lim.const', 1, '0 < L < ∞: f = Θ(g)', 'Ratio to a positive number: f is Θ(g).'),
-        L('lim.inf', 1, 'L = ∞: f = ω(g): Ω(g), not O(g)', 'Ratio without bound: f is Ω(g) but not O(g).'),
+        L(
+          'lim.inf',
+          1,
+          'L = ∞: f = ω(g): Ω(g), not O(g)',
+          'Ratio without bound: f is Ω(g) but not O(g).',
+        ),
       ],
     },
     {

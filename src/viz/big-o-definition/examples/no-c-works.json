@@ -10,27 +10,7 @@
     "scale": "auto"
   },
   "seed": 1,
-  "ops": [
-    [
-      "compare",
-      "n^2 ; n"
-    ],
-    [
-      "check",
-      "10 1"
-    ],
-    [
-      "find",
-      "10"
-    ],
-    [
-      "find",
-      "100"
-    ],
-    [
-      "limit"
-    ]
-  ],
+  "ops": [["compare", "n^2 ; n"], ["check", "10 1"], ["find", "10"], ["find", "100"], ["limit"]],
   "at": {
     "op": -1,
     "step": 0

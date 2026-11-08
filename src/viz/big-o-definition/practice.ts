@@ -3,7 +3,14 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, Scalar, VizDef } from '../../engine/types';
 import { choice, ordered, shuffle } from '../_recursion/kit';
 import { exprOf } from './expr';
-import { defaults, REL, type DefExtra, type DefSettings, type DefState, type Relation } from './model';
+import {
+  defaults,
+  REL,
+  type DefExtra,
+  type DefSettings,
+  type DefState,
+  type Relation,
+} from './model';
 import { PAIRS } from './pairs';
 
 type Def = VizDef<DefState, DefSettings, DefExtra>;
@@ -36,7 +43,8 @@ const pick = <T>(rng: Rng, xs: readonly T[]): T => xs[rng.int(0, xs.length - 1)]
 export function definitionPractice(def: () => Def): PracticeKind[] {
   const settingsFor = (relation: Relation): DefSettings => ({ ...defaults, relation });
   const run = (cs: OpCall[], settings: DefSettings) => new Timeline(def(), settings, 1, cs);
-  const last = (cs: OpCall[], settings: DefSettings) => run(cs, settings).entries.at(-1)!.steps.at(-1)!;
+  const last = (cs: OpCall[], settings: DefSettings) =>
+    run(cs, settings).entries.at(-1)!.steps.at(-1)!;
   const varOf = (cs: OpCall[], settings: DefSettings, key: string): Scalar | undefined =>
     last(cs, settings).vars?.[key];
 
@@ -52,7 +60,11 @@ export function definitionPractice(def: () => Def): PracticeKind[] {
         const watch: OpCall[] = [['limit']];
         const lim = String(varOf([...setup, ...watch], settings, 'f/g →'));
         const holds =
-          relation === 'O' ? lim !== '∞' : relation === 'Omega' ? lim !== '0' : lim !== '0' && lim !== '∞';
+          relation === 'O'
+            ? lim !== '∞'
+            : relation === 'Omega'
+              ? lim !== '0'
+              : lim !== '0' && lim !== '∞';
         const { f, g } = show(pair);
         return {
           prompt: `Is ${f} = ${REL[relation]}(${g})?`,
@@ -104,7 +116,11 @@ export function definitionPractice(def: () => Def): PracticeKind[] {
       make(rng) {
         // Each case: a pair, the relation it satisfies, and constants to try as c and n₀.
         const cases: [string, Relation, string[]][] = [
-          ['3n^2 + 10n + 5 ; n^2', 'O', ['3 1', '3 20', '4 1', '4 10', '4 11', '18 1', '4 50', '5 8', '5 7']],
+          [
+            '3n^2 + 10n + 5 ; n^2',
+            'O',
+            ['3 1', '3 20', '4 1', '4 10', '4 11', '18 1', '4 50', '5 8', '5 7'],
+          ],
           ['100n ; n^2', 'O', ['1 1', '1 99', '1 100', '2 50', '2 49', '100 1', '50 2', '50 1']],
           ['n log n ; n', 'Omega', ['1 1', '1 2', '2 3', '2 4', '3 8', '3 7', '1/2 2']],
           ['2^n ; n!', 'O', ['1 1', '1 3', '1 4', '2 1', '1/2 1', '1/2 5', '1/2 6']],

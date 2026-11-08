@@ -54,7 +54,7 @@ import {
 /** Chart width, plot left and right. */
 const W = 440;
 const PX0 = 62;
-const PX1 = 426;
+const PX1 = 418;
 const GAP = 26;
 /** Values chart: plot top and bottom, the strip, the n₀ label, the two expression lines. */
 const V = { py0: 48, py1: 232, strip: 258, stripH: 11, n0: 292, f: 318, g: 340, h: 352 };
@@ -98,7 +98,9 @@ function niceRat(v: Rat): Rat {
   const x = approx(v);
   if (!Number.isFinite(x) || x > 1e15) return v;
   const n = niceCeil(x);
-  return n >= 1 ? rat(BigInt(Math.round(n * 1000)), 1000n) : rat(BigInt(Math.round(n * 1e6)), 1000000n);
+  return n >= 1
+    ? rat(BigInt(Math.round(n * 1000)), 1000n)
+    : rat(BigInt(Math.round(n * 1e6)), 1000000n);
 }
 
 const maxR = (vs: Rat[]) => vs.reduce((a, b) => (cmpR(a, b) >= 0 ? a : b));
@@ -111,8 +113,7 @@ function makeAxis(vs: Rat[], scale: DefSettings['scale'], spread: number): Axis 
   const bottom = vs.length ? minR(vs) : rat(0n);
   const span = pos.length ? lgR(maxR(pos)) - lgR(minR(pos)) : 0;
   const log =
-    pos.length > 0 &&
-    (scale === 'log' || (scale === 'auto' && span > spread && bottom.n > 0n));
+    pos.length > 0 && (scale === 'log' || (scale === 'auto' && span > spread && bottom.n > 0n));
   if (log) {
     let llo = Math.floor(lgR(minR(pos)));
     let lhi = Math.ceil(lgR(maxR(pos)));
@@ -121,7 +122,10 @@ function makeAxis(vs: Rat[], scale: DefSettings['scale'], spread: number): Axis 
     return { log: true, lo: rat(0n), hi: rat(1n), llo, lhi };
   }
   const hi = top.n > 0n ? niceRat(top) : rat(1n);
-  const lo = bottom.n < 0n ? rat(-niceRat(rat(-bottom.n, bottom.d)).n, niceRat(rat(-bottom.n, bottom.d)).d) : rat(0n);
+  const lo =
+    bottom.n < 0n
+      ? rat(-niceRat(rat(-bottom.n, bottom.d)).n, niceRat(rat(-bottom.n, bottom.d)).d)
+      : rat(0n);
   return { log: false, lo, hi, llo: 0, lhi: 1 };
 }
 
@@ -255,19 +259,21 @@ function frame(shapes: Shape[], pre: string, axis: Axis, N: number, plot: Plot) 
     size: TICK + 1,
     cls: 'label',
   });
-  // y ticks: 0, the middle and the top (and the bottom when it is negative); powers of ten on a log axis.
+  // y ticks: the top, 0, the middle when there is room, the bottom when it is negative and
+  // clear of 0; on a log axis, powers of ten counted down from the top.
   const ys: { p: number; text: string }[] = [];
   if (axis.log) {
     const span = axis.lhi - axis.llo;
     const step = Math.max(1, Math.ceil(span / 3));
-    for (let k = axis.llo; k <= axis.lhi; k += step)
+    for (let k = axis.lhi; k >= axis.llo; k -= step)
       ys.push({ p: (k - axis.llo) / span, text: powerText(k) });
   } else {
     const lo = approx(axis.lo);
     const hi = approx(axis.hi);
     const at = (v: number) => (v - lo) / (hi - lo);
-    ys.push({ p: at(0), text: '0' }, { p: at(hi / 2), text: tickText(hi / 2) }, { p: 1, text: tickText(hi) });
-    if (lo < 0) ys.push({ p: 0, text: tickText(lo) });
+    ys.push({ p: 1, text: tickText(hi) }, { p: at(0), text: '0' });
+    if (1 - at(0) >= 0.4) ys.push({ p: at(hi / 2), text: tickText(hi / 2) });
+    if (lo < 0 && at(0) >= 0.12) ys.push({ p: 0, text: tickText(lo) });
   }
   ys.forEach((t, i) => {
     const y = yOf(t.p, plot);
@@ -333,11 +339,7 @@ function runs<T>(xs: T[]): [number, number, T][] {
 const boundName = (b: Bound, all: Bound[]) =>
   all.length === 2 ? (b.side === 'lower' ? 'c₁·g(n)' : 'c₂·g(n)') : `${b.text}·g(n)`;
 
-function valuesChart(
-  step: Step<DefState, DefExtra>,
-  settings: DefSettings,
-  roles: Roles,
-): Shape[] {
+function valuesChart(step: Step<DefState, DefExtra>, settings: DefSettings, roles: Roles): Shape[] {
   const { state } = step;
   const extra = step.extra ?? {};
   const shapes: Shape[] = [];
@@ -350,8 +352,7 @@ function valuesChart(
   const plot = { py0: V.py0, py1: V.py1 };
   const bounds = boundsOf(state, settings.relation);
   const st = statuses(state, settings);
-  const shown = (n: number) =>
-    !extra.shown || (n >= extra.shown[0] && n <= extra.shown[1]);
+  const shown = (n: number) => !extra.shown || (n >= extra.shown[0] && n <= extra.shown[1]);
   const half = (PX1 - PX0) / Math.max(1, N - 1) / 2;
   const left = (n: number) => Math.max(PX0, xOf(n, N) - half);
   const right = (n: number) => Math.min(PX1, xOf(n, N) + half);
@@ -360,7 +361,9 @@ function valuesChart(
 
   // Bands: gray before n₀, red over failing n (only those checked so far).
   if (st) {
-    for (const [a, b, s] of runs(st.map((x, i) => (x === 'fail' && !shown(i + 1) ? 'hidden' : x)))) {
+    for (const [a, b, s] of runs(
+      st.map((x, i) => (x === 'fail' && !shown(i + 1) ? 'hidden' : x)),
+    )) {
       if (s !== 'skip' && s !== 'fail') continue;
       shapes.push({
         kind: 'polygon',
@@ -416,7 +419,13 @@ function valuesChart(
         const id = i === 0 ? 'v-b' : 'v-b2';
         const role = b.side === 'lower' && bounds.length === 2 ? 'g6' : 'g2';
         curve(shapes, id, pts(gv, b.c), N, plot, () => role);
-        x = key(shapes, `${id === 'v-b' ? 'v-key-b' : 'v-key-b2'}`, x, boundName(b, bounds), roles.get(id === 'v-b' ? 'v-key-b' : 'v-key-b2') ?? role);
+        x = key(
+          shapes,
+          `${id === 'v-b' ? 'v-key-b' : 'v-key-b2'}`,
+          x,
+          boundName(b, bounds),
+          roles.get(id === 'v-b' ? 'v-key-b' : 'v-key-b2') ?? role,
+        );
       });
     }
   }
@@ -486,11 +495,7 @@ function valuesChart(
   return shapes;
 }
 
-function ratioChart(
-  step: Step<DefState, DefExtra>,
-  settings: DefSettings,
-  roles: Roles,
-): Shape[] {
+function ratioChart(step: Step<DefState, DefExtra>, settings: DefSettings, roles: Roles): Shape[] {
   const { state } = step;
   const extra = step.extra ?? {};
   const shapes: Shape[] = [];
@@ -514,12 +519,38 @@ function ratioChart(
   frame(shapes, 'r', axis, N, plot);
   key(shapes, 'r-key', PX0 - 40, 'f(n)/g(n)', roles.get('r-key') ?? 'g1');
 
-  // A line at each c: f ≤ c·g is f/g ≤ c where g(n) > 0.
+  // A line at each c: f ≤ c·g is f/g ≤ c where g(n) > 0. Each label goes where the ratio
+  // curve leaves room: left or right, above or below its line.
+  const curveY = ratios.map((r) =>
+    r === null ? null : yOf(Math.max(0, Math.min(1, place(axis, r))), plot),
+  );
+  const taken: Bounds[] = [];
+  const clear = (box: Bounds) => {
+    if (box.y < plot.py0 - 2 || box.y + box.h > plot.py1 + 2) return false;
+    if (
+      taken.some(
+        (t) => t.x < box.x + box.w && box.x < t.x + t.w && t.y < box.y + box.h && box.y < t.y + t.h,
+      )
+    )
+      return false;
+    let above = false;
+    let below = false;
+    for (let n = 1; n <= N; n++) {
+      const x = xOf(n, N);
+      const y = curveY[n - 1];
+      if (y === null || y === undefined || x < box.x - 6 || x > box.x + box.w + 6) continue;
+      if (y >= box.y - 3 && y <= box.y + box.h + 3) return false;
+      if (y < box.y) above = true;
+      else below = true;
+    }
+    return !(above && below);
+  };
   if (bounds) {
     for (const b of bounds) {
       const id = b.side === 'lower' ? 'r-c-lo' : 'r-c-hi';
       const p = place(axis, b.c);
       const name = bounds.length === 2 ? (b.side === 'lower' ? 'c₁' : 'c₂') : 'c';
+      const role = b.side === 'lower' && bounds.length === 2 ? 'g6' : 'g2';
       if (p < 0 || p > 1) {
         shapes.push({
           kind: 'text',
@@ -533,13 +564,20 @@ function ratioChart(
         continue;
       }
       const y = yOf(p, plot);
-      shapes.push({ kind: 'arrow', id, x1: PX0, y1: y, x2: PX1, y2: y, head: 'none', role: b.side === 'lower' && bounds.length === 2 ? 'g6' : 'g2' });
+      shapes.push({ kind: 'arrow', id, x1: PX0, y1: y, x2: PX1, y2: y, head: 'none', role });
+      const text = `${name} = ${b.text}`;
+      const w = text.length * TICK * 0.6;
+      const spots: Bounds[] = [];
+      for (const x of [PX0 + 6, PX1 - 6 - w, (PX0 + PX1 - w) / 2])
+        for (const top of [y - 17, y + 4]) spots.push({ x, y: top, w, h: 14 });
+      const spot = spots.find(clear) ?? spots[0]!;
+      taken.push(spot);
       shapes.push({
         kind: 'text',
         id: `${id}-l`,
-        x: PX0 + 6,
-        y: b.side === 'lower' && bounds.length === 2 ? y + 16 : y - 6,
-        text: `${name} = ${b.text}`,
+        x: spot.x,
+        y: spot.y + 11,
+        text,
         size: TICK,
         weight: 'bold',
       });
@@ -557,7 +595,8 @@ function ratioChart(
 
   if (state.limit) {
     if (lim.kind !== 'inf') {
-      const p = lim.kind === 'zero' ? (axis.log ? -1 : place(axis, rat(0n))) : place(axis, lim.value);
+      const p =
+        lim.kind === 'zero' ? (axis.log ? -1 : place(axis, rat(0n))) : place(axis, lim.value);
       if (p >= 0 && p <= 1) {
         const y = yOf(p, plot);
         shapes.push({

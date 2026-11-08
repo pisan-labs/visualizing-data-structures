@@ -11,34 +11,14 @@
   },
   "seed": 1,
   "ops": [
-    [
-      "compare",
-      "100n ; n^2"
-    ],
-    [
-      "limit"
-    ],
-    [
-      "compare",
-      "3n^2 + 10n + 5 ; n^2"
-    ],
-    [
-      "limit"
-    ],
-    [
-      "compare",
-      "n log n ; n"
-    ],
-    [
-      "limit"
-    ],
-    [
-      "compare",
-      "2^n ; n!"
-    ],
-    [
-      "limit"
-    ]
+    ["compare", "100n ; n^2"],
+    ["limit"],
+    ["compare", "3n^2 + 10n + 5 ; n^2"],
+    ["limit"],
+    ["compare", "n log n ; n"],
+    ["limit"],
+    ["compare", "2^n ; n!"],
+    ["limit"]
   ],
   "at": {
     "op": -1,

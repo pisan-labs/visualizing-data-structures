@@ -61,11 +61,23 @@ const V = { py0: 48, py1: 232, strip: 258, stripH: 11, n0: 292, f: 318, g: 340, 
 /** Ratio chart. */
 const R = { py0: 48, py1: 194, caption: 236, h: 248 };
 const TICK = 13;
+const HINT = 'f(n) ≤ c·g(n) is f(n)/g(n) ≤ c, where g(n) > 0';
 const KEY = 15;
 /** Most curve segments per curve. */
 const SEGMENTS = 60;
 
 type Roles = Map<string, MarkRole>;
+
+/**
+ * Width of a text in scene units, generous enough for wide fonts (CI's DejaVu Sans), so
+ * nothing sized with it runs off the drawing.
+ */
+const textW = (text: string, size: number, bold = false) =>
+  [...text].length * size * (bold ? 0.7 : 0.66);
+
+/** The size, at most `max`, at which a text fits in `room`. */
+const fitSize = (text: string, max: number, room: number, bold = false) =>
+  Math.min(max, Math.floor((room / textW(text, 1, bold)) * 2) / 2);
 
 interface Axis {
   log: boolean;
@@ -311,7 +323,7 @@ function key(
 ): number {
   shapes.push({ kind: 'arrow', id, x1: x, y1: 18, x2: x + 22, y2: 18, head: 'none', role, dashed });
   shapes.push({ kind: 'text', id: `${id}-l`, x: x + 28, y: 23, text, size: KEY });
-  return x + 28 + text.length * KEY * 0.58 + 18;
+  return x + 28 + textW(text, KEY) + 14;
 }
 
 /** Status of each n: before n₀, holds, fails; null when no constants are set. */
@@ -446,7 +458,7 @@ function valuesChart(step: Step<DefState, DefExtra>, settings: DefSettings, role
       role: roles.get('v-n0') ?? 'active',
     });
     const label = `n₀ = ${state.n0}`;
-    const w = label.length * TICK * 0.6;
+    const w = textW(label, TICK + 1, true);
     shapes.push({
       kind: 'text',
       id: 'v-n0-l',
@@ -485,7 +497,7 @@ function valuesChart(step: Step<DefState, DefExtra>, settings: DefSettings, role
   }
 
   // The functions, written out.
-  const fit = (text: string) => Math.min(KEY, (W - 8) / (text.length * 0.58));
+  const fit = (text: string) => fitSize(text, KEY, W - 8);
   for (const [id, y, text] of [
     ['v-def-f', V.f, `f(n) = ${f.text}`],
     ['v-def-g', V.g, `g(n) = ${g.text}`],
@@ -566,7 +578,7 @@ function ratioChart(step: Step<DefState, DefExtra>, settings: DefSettings, roles
       const y = yOf(p, plot);
       shapes.push({ kind: 'arrow', id, x1: PX0, y1: y, x2: PX1, y2: y, head: 'none', role });
       const text = `${name} = ${b.text}`;
-      const w = text.length * TICK * 0.6;
+      const w = textW(text, TICK, true);
       const spots: Bounds[] = [];
       for (const x of [PX0 + 6, PX1 - 6 - w, (PX0 + PX1 - w) / 2])
         for (const top of [y - 17, y + 4]) spots.push({ x, y: top, w, h: 14 });
@@ -612,13 +624,14 @@ function ratioChart(step: Step<DefState, DefExtra>, settings: DefSettings, roles
         });
       }
     }
+    const caption = `f(n)/g(n) → ${limitText(lim)} as n grows${lim.kind === 'zero' && axis.log ? ' (0 is off a log scale)' : ''}`;
     shapes.push({
       kind: 'text',
       id: 'r-lim',
       x: 4,
       y: R.caption,
-      text: `f(n)/g(n) → ${limitText(lim)} as n grows${lim.kind === 'zero' && axis.log ? ' (0 is off a log scale)' : ''}`,
-      size: KEY,
+      text: caption,
+      size: fitSize(caption, KEY, W - 8, true),
       weight: 'bold',
       role: roles.get('r-lim') ?? 'found',
     });
@@ -628,8 +641,8 @@ function ratioChart(step: Step<DefState, DefExtra>, settings: DefSettings, roles
       id: 'r-hint',
       x: 4,
       y: R.caption,
-      text: 'f(n) ≤ c·g(n) is f(n)/g(n) ≤ c, where g(n) > 0',
-      size: TICK + 1,
+      text: HINT,
+      size: fitSize(HINT, TICK + 1, W - 8),
       cls: 'label',
     });
   }

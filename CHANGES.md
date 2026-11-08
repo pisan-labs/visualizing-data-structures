@@ -239,3 +239,5 @@
 2026-11-08 [decision] Wave 6 defaults taken at 04:13 with no answer (PLAN.md decisions 35 to 37): amortized analysis its own page; doubling experiments on step counts with a noise setting; the four pages in Foundations
 
 2026-11-08 [code] Merged loop-counting (wave 6): 11 loop patterns lit cell by cell, the exact T(n) checked against the run and simplified to Big-O, Grow reads the doubling ratios; opens on the triangle
+
+2026-11-08 [code] Merged big-o-definition (wave 6): f against c*g with c and n0 as handles, the smallest n0 for a c, O, Omega and Theta, the limit test; exact checks over the named range, hand-worked algebra for the menu pairs past it

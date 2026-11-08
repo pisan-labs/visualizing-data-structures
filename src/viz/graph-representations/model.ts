@@ -43,10 +43,10 @@ export interface RepSettings {
   [key: string]: Scalar;
   layout: GraphTemplate;
   /** Three columns side by side, or stacked for a phone in portrait. */
-  arrange: 'wide' | 'tall';
+  arrange: 'fit' | 'wide' | 'tall';
 }
 
-export const defaults: RepSettings = { layout: 'force', arrange: 'wide' };
+export const defaults: RepSettings = { layout: 'force', arrange: 'fit' };
 
 /** Running costs of the current operation, per representation. */
 export interface Costs {

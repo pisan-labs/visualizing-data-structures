@@ -7,10 +7,13 @@
  *   too, a little small.
  * - 'tall': the drawing on top, the list and matrix under it, then the edge list. For a phone in
  *   portrait, where height is cheap and width is not.
+ * - 'fit' (the default): whichever of the two draws larger on the stage; with no stage
+ *   (thumbnails, practice pictures), 'wide'.
  *
  * A plain state (no step data) draws the same thing unmarked.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import {
   below,
   beside,
@@ -29,12 +32,28 @@ import { describe, type RepExtra, type RepSettings, type RepState } from './mode
 /** Width of one edge-list column, cell plus gap (see drawEdgeList). */
 const EDGE_COL = 58;
 
-export function view(step: Step<RepState, RepExtra>, settings: RepSettings): Scene {
+export function view(
+  step: Step<RepState, RepExtra>,
+  settings: RepSettings,
+  stage?: StageSize,
+): Scene {
+  if (settings.arrange !== 'fit') return arranged(step, settings.layout, settings.arrange);
+  return pickLayout(stage, [
+    arranged(step, settings.layout, 'wide'),
+    arranged(step, settings.layout, 'tall'),
+  ]);
+}
+
+function arranged(
+  step: Step<RepState, RepExtra>,
+  layoutKind: RepSettings['layout'],
+  arrange: 'wide' | 'tall',
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   // The drawing is the smallest part here: the representations are the point.
-  const layout = scaleLayout(layoutGraph(g, settings.layout), 0.82);
+  const layout = scaleLayout(layoutGraph(g, layoutKind), 0.82);
   const drawn = drawGraph(g, layout, {
     roles,
     fade: (v) => (v === extra.leaving ? 0.45 : undefined),
@@ -43,7 +62,7 @@ export function view(step: Step<RepState, RepExtra>, settings: RepSettings): Sce
   const gb = drawn.bounds;
   const E = g.edges.length;
   let all;
-  if (settings.arrange === 'tall') {
+  if (arrange === 'tall') {
     const list = drawAdjList(shapes, g, {
       id: 'al',
       x: gb.x,

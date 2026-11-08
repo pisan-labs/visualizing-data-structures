@@ -47,6 +47,7 @@ export const graphRepresentations: VizDef<RepState, RepSettings, RepExtra> = {
       key: 'arrange',
       label: 'Arrange',
       options: [
+        { value: 'fit', label: 'Fit the screen: side by side on a laptop, stacked on a phone' },
         { value: 'wide', label: 'Side by side: for a laptop or a projector' },
         { value: 'tall', label: 'Stacked: for a phone held upright' },
       ],

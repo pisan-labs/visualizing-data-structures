@@ -131,11 +131,11 @@ export const amortizedAnalysis: VizDef<AmState, AmSettings, AmExtra> = {
         make: (_rng, size) => Array.from({ length: size }, () => ['once'] as OpCall),
       },
       {
-        label: 'Ending on the most expensive one (worst case)',
+        label: 'Ending on the worst case',
         make: (_rng, size, st) => [['run', endingOn('worst', size + 1, st)]],
       },
       {
-        label: 'Ending on a cheap one (best case)',
+        label: 'Ending on the best case',
         make: (_rng, size, st) => [['run', endingOn('best', size, st)]],
       },
       { label: 'A random number of operations', make: (rng) => [['run', rng.int(2, MAX_OPS)]] },
@@ -222,7 +222,7 @@ export const amortizedAnalysis: VizDef<AmState, AmSettings, AmExtra> = {
     counterFlips,
     counterPotential,
   ] as unknown as SavedExample[],
-  preview: { example: 'doubling-coins', level: 2 },
+  preview: { example: 'doubling-coins', hide: ['cell-', 'coin-'] },
   opening: 'doubling-coins',
 };
 

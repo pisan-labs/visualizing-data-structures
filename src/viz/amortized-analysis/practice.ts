@@ -7,6 +7,7 @@ import {
   defaults,
   firstShort,
   growText,
+  num,
   sum,
   type AmExtra,
   type AmSettings,
@@ -37,7 +38,7 @@ export function amortizedPractice(def: () => Def): PracticeKind[] {
         const ask: OpCall[] = [['run', n]];
         const s = end(settings, ask);
         const copies = sum(s.costs) - n;
-        const grows = s.costs.filter((c, j) => c > 1 && j > 0).map((c) => c - 1);
+        const grows = s.costs.filter((c) => c > 1).map((c) => c - 1);
         return {
           prompt: `An empty dynamic array doubles when it is full, starting with 1 slot. How many items have been copied in all after ${n} appends?`,
           setup: [],
@@ -67,7 +68,7 @@ export function amortizedPractice(def: () => Def): PracticeKind[] {
         const s = end(settings, ask);
         const first = firstShort(s);
         const what = counter
-          ? `A ${BITS}-bit counter starts at 0, and each increment is charged ${charge} ${charge === 1 ? 'coin' : 'coins'}`
+          ? `An ${BITS}-bit counter starts at 0, and each increment is charged ${charge} ${charge === 1 ? 'coin' : 'coins'}`
           : `An empty dynamic array ${GROWTH_NAME[growth]}, and each append is charged ${charge} coins`;
         const word = counter ? 'increment' : 'append';
         return {
@@ -77,8 +78,8 @@ export function amortizedPractice(def: () => Def): PracticeKind[] {
           answer: ordered(['Yes', 'No'], first === null ? 'Yes' : 'No'),
           explain:
             first === null
-              ? `Yes. The bank never goes below zero; its lowest point is ${Math.min(...s.banks)} and it ends at ${s.banks.at(-1)}.`
-              : `No. ${word === 'append' ? 'Append' : 'Increment'} ${first} costs ${s.costs[first - 1]} and leaves the bank at ${s.banks[first - 1]}.`,
+              ? `Yes. The bank never goes below zero; its lowest point is ${num(Math.min(...s.banks))} and it ends at ${num(s.banks.at(-1)!)}.`
+              : `No. ${word === 'append' ? 'Append' : 'Increment'} ${first} costs ${s.costs[first - 1]} and leaves the bank at ${num(s.banks[first - 1]!)}.`,
           watch: ask,
         };
       },

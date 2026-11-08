@@ -1,4 +1,4 @@
-import type { Mark, OpSpec, PseudoBlock, PseudoLine, Scalar, Step, Value } from '../../engine/types';
+import type { OpSpec, PseudoBlock, PseudoLine, Scalar, Step, Value } from '../../engine/types';
 import { L, mark, plural, wholeArg } from '../_recursion/kit';
 
 /** The most operations one session runs: enough for a charge of 4 to run out at +4 growth. */
@@ -81,8 +81,6 @@ export interface AmExtra {
   work?: number;
   /** The bank had no coin for this step's work. */
   short?: boolean;
-  /** Φ before the operation, for the potential method's readout. */
-  phiBefore?: number;
 }
 
 type S = AmState;
@@ -128,13 +126,16 @@ export function phiOf(
 /** Φ worked out: "2·9 − 16 = 2". */
 export function phiWorked(s: Pick<S, 'size' | 'capacity' | 'bits'>, settings: AmSettings) {
   const phi = phiOf(s, settings);
-  if (settings.structure === 'counter') return `${phi}`;
+  if (settings.structure === 'counter') return num(phi);
   return settings.growth === '1.5'
-    ? `3·${s.size} − 2·${s.capacity} = ${phi}`
-    : `2·${s.size} − ${s.capacity} = ${phi}`;
+    ? `3·${s.size} − 2·${s.capacity} = ${num(phi)}`
+    : `2·${s.size} − ${s.capacity} = ${num(phi)}`;
 }
 
 export const sum = (xs: readonly number[]) => xs.reduce((a, b) => a + b, 0);
+
+/** A number with a real minus sign: −2, not -2. */
+export const num = (v: number) => (v < 0 ? `−${-v}` : String(v));
 
 /** 2.78, 3, 1.5: at most two decimals. */
 export function avgText(total: number, n: number): string {
@@ -311,7 +312,7 @@ function settle(p: Purse, at: number) {
   const coins = p.coins.map((c) => c);
   coins[at] = [...(coins[at] ?? []), ...keep];
   const spent = [write, ...rest.slice(0, repay)].filter((u): u is number => u !== undefined);
-  return { coins, debt: p.debt - repay, spent, repay, keep: keep.length };
+  return { coins, debt: p.debt - repay, spent, repay, keep: keep.length, left: p.hand.length };
 }
 
 const coinWord = (n: number) => plural(n, 'coin');
@@ -352,38 +353,39 @@ function verdict(
     const c = chargeOf(settings);
     if (bank < 0) {
       const first = firstShort(done) === n;
-      return `${coinNote}The bank is at ${bank}${first ? `: a charge of ${c} per ${word} is too small` : ', still short'}.`;
+      return `${coinNote}The bank is at ${num(bank)}${first ? `: a charge of ${c} per ${word} is too small` : ', still short'}.`;
     }
     return `${coinNote}Bank: ${coinWord(bank)}.`;
   }
   const phi = done.phis[n - 1]!;
   const d = phi - phiBefore;
   const am = cost + d;
-  const dText = d < 0 ? `(${d})` : String(d);
+  const dText = d < 0 ? `(${num(d)})` : String(d);
   const below =
     phi < 0
       ? ` Φ is now below its start, 0, so the amortized costs no longer cover the actual ones.`
       : '';
-  return `Φ goes from ${phiBefore} to ${phi}, so the amortized cost is ${cost} + ${dText} = ${am}.${below}`;
+  return `Φ goes from ${num(phiBefore)} to ${num(phi)}, so the amortized cost is ${cost} + ${dText} = ${num(am)}.${below}`;
 }
 
 /** The accounting sentence about where the charge's coins went. */
 function coinStory(
   settings: AmSettings,
   at: string,
-  repay: number,
-  keep: number,
   c: number,
+  coins: { used: number; repay: number; keep: number },
 ): string {
-  const what = settings.structure === 'array' ? 'the write' : 'setting the bit';
-  const parts = [`1 of the ${coinWord(c)} paid for ${what}`];
-  if (repay) parts.push(`${repay} paid back the bank`);
-  if (keep) parts.push(`${keep} ${keep === 1 ? 'sits' : 'sit'} on ${at}`);
-  const list =
-    parts.length === 1
-      ? parts[0]!
-      : `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]!}`;
-  return c === 1 && !repay ? `The 1 coin paid for ${what}. ` : `${list}. `;
+  const array = settings.structure === 'array';
+  const parts: string[] = [];
+  if (coins.used) {
+    const work = array ? ['a copy', 'copies'] : ['a reset', 'resets'];
+    parts.push(`${coins.used} paid for ${coins.used === 1 ? work[0] : work[1]}`);
+  }
+  parts.push(`1 paid for ${array ? 'the write' : 'setting the bit'}`);
+  if (coins.repay) parts.push(`${coins.repay} paid down the bank's debt`);
+  if (coins.keep) parts.push(`${coins.keep} ${coins.keep === 1 ? 'sits' : 'sit'} on ${at}`);
+  if (parts.length === 1) return `Its 1 coin paid for ${array ? 'the write' : 'setting the bit'}. `;
+  return `Of its ${coinWord(c)}, ${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]!}. `;
 }
 
 function* append(s: S, settings: AmSettings, note: string): Generator<AmStep, S, void> {
@@ -404,7 +406,7 @@ function* append(s: S, settings: AmSettings, note: string): Generator<AmStep, S,
     purse.hand = Array.from({ length: c }, (_, k) => s.nextCoin + k);
     st = { ...st, nextCoin: s.nextCoin + c };
   }
-  const base: X = { target: at, phiBefore };
+  const base: X = { target: at };
   const pays = acct ? ` It pays its charge of ${coinWord(c)} into the bank.` : '';
   yield {
     state: st,
@@ -413,7 +415,7 @@ function* append(s: S, settings: AmSettings, note: string): Generator<AmStep, S,
       mark('rd-cap', full ? 'error' : 'active'),
       ...purse.hand.map((u) => mark(`coin-${u}`, 'new')),
     ],
-    say: `${note}Append ${j}: size = ${s.size} and capacity = ${s.capacity}, so ${full ? 'the array is full' : 'there is room'}.${pays}`,
+    say: `${note}Append ${j}: size = ${s.size} and capacity = ${s.capacity}, so ${s.capacity === 0 ? 'there are no slots yet' : full ? 'the array is full' : 'there is room'}.${pays}`,
     lines: ['append.pre', 'append.full'],
     vars: vars(st, settings, { x: j }),
     level: 2,
@@ -437,7 +439,7 @@ function* append(s: S, settings: AmSettings, note: string): Generator<AmStep, S,
       say:
         s.capacity === 0
           ? `Allocate the first array, with ${plural(capacity, 'slot')}. There is nothing to copy yet.`
-          : `Allocate a new array of ${growText(s.capacity, settings.growth)} = ${capacity} slots. Copying the ${s.size} items across will cost ${s.size}.`,
+          : `Allocate a new array of ${growText(s.capacity, settings.growth)} = ${capacity} slots. Copying ${s.size === 1 ? 'the 1 item' : `the ${s.size} items`} across will cost ${s.size}.`,
       lines: s.size === 0 ? ['append.grow', 'append.swap'] : ['append.grow'],
       vars: vars(st, settings, { x: j }),
       level: 2,
@@ -451,7 +453,11 @@ function* append(s: S, settings: AmSettings, note: string): Generator<AmStep, S,
       const last = k === copies - 1;
       const short = paid?.source === 'short';
       const copied = `Copy item ${k + 1} across: cost 1${last ? '' : `, ${k + 1} so far`}.`;
-      const end = last ? ` All ${s.size} items are in the new array: ${s.size} units of work.` : '';
+      const end = !last
+        ? ''
+        : s.size === 1
+          ? ' The item is in the new array.'
+          : ` All ${s.size} items are in the new array: ${s.size} units of work.`;
       yield {
         state: st,
         marks: [
@@ -489,7 +495,13 @@ function* append(s: S, settings: AmSettings, note: string): Generator<AmStep, S,
     phis: [...s.phis, phi],
     cur: null,
   };
-  const story = settled ? coinStory(settings, `A[${at}]`, settled.repay, settled.keep, c) : '';
+  const story = settled
+    ? coinStory(settings, `A[${at}]`, c, {
+        used: c - settled.left,
+        repay: settled.repay,
+        keep: settled.keep,
+      })
+    : '';
   const parts = copies ? ` (${plural(copies, 'copy', 'copies')} and 1 write)` : '';
   yield {
     state: done,
@@ -532,7 +544,7 @@ function* increment(s: S, settings: AmSettings, note: string): Generator<AmStep,
     st = { ...st, nextCoin: s.nextCoin + c };
   }
   const target = Math.min(t, BITS - 1);
-  const base: X = { target, phiBefore };
+  const base: X = { target };
   const pays = acct ? ` It pays its charge of ${coinWord(c)} into the bank.` : '';
   yield {
     state: st,
@@ -585,7 +597,13 @@ function* increment(s: S, settings: AmSettings, note: string): Generator<AmStep,
     phis: [...s.phis, phi],
     cur: null,
   };
-  const story = settled ? coinStory(settings, `bit ${t}`, settled.repay, settled.keep, c) : '';
+  const story = settled
+    ? coinStory(settings, `bit ${t}`, c, {
+        used: c - settled.left,
+        repay: settled.repay,
+        keep: settled.keep,
+      })
+    : '';
   const parts = t ? ` (${plural(t, 'reset')} and 1 set)` : '';
   yield {
     state: done,
@@ -618,7 +636,10 @@ function summary(st: S, settings: AmSettings, k: number): AmStep {
   let say: string;
   let line: string;
   if (settings.method === 'aggregate') {
-    say = `${head} Over all ${nouns(settings, n)} so far: ${total}, which is ${avgText(total, n)} per ${word}.`;
+    say =
+      n === k
+        ? head
+        : `${head} Over all ${nouns(settings, n)} so far: ${total}, which is ${avgText(total, n)} per ${word}.`;
     line = settings.structure === 'array' ? 'append.post' : 'inc.post';
   } else if (settings.method === 'accounting') {
     const c = chargeOf(settings);
@@ -631,13 +652,13 @@ function summary(st: S, settings: AmSettings, k: number): AmStep {
     say = `${head} Charged ${c} each, ${c * n} in all, against an actual ${total}. ${tail}`;
     line = 'run.loop';
   } else {
-    const am = sum(amortized(st));
+    const am = num(sum(amortized(st)));
     const low = firstBelow(st);
     const tail =
       low === null
         ? `Φ never went below its start, so the actual total is at most the amortized total.`
-        : `Φ went below its start at ${word} ${low}, so the amortized total says nothing about the actual one.`;
-    say = `${head} The amortized costs add up to ${am}, against an actual ${total}, and Φ ended at ${st.phis[n - 1]}. ${tail}`;
+        : `Φ went below its start at ${word} ${low}, where the amortized costs added up to ${num(sum(amortized(st).slice(0, low)))} against an actual ${sum(st.costs.slice(0, low))}: this Φ does not bound the actual cost.`;
+    say = `${head} The amortized costs add up to ${am}, against an actual ${total}, and Φ ended at ${num(st.phis[n - 1]!)}. ${tail}`;
     line = 'run.loop';
   }
   return {
@@ -807,7 +828,7 @@ export function initialSay(_state: S, settings: AmSettings): string {
   const array = settings.structure === 'array';
   const what = array
     ? 'An empty dynamic array, with no slots yet. Each append costs 1 for the write plus 1 for every item a grow copies.'
-    : `A ${BITS}-bit binary counter at 0. Each increment costs 1 for every bit it flips.`;
+    : `An ${BITS}-bit binary counter at 0. Each increment costs 1 for every bit it flips.`;
   const how =
     settings.method === 'aggregate'
       ? 'The chart keeps the running average.'

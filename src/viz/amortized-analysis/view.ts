@@ -9,6 +9,7 @@ import {
   binary,
   chargeOf,
   describe,
+  num,
   phiFormula,
   phiOf,
   phiWorked,
@@ -33,12 +34,15 @@ const CW = 26;
 const CH = 30;
 const BW = 46;
 const BH = 46;
+/** The lane for the charge's coins, and the room for coins over a cell or bit (accounting). */
 const HAND = 30;
-const STACK = 40;
-const ROW = STACK + CH + 8;
-const COIN_R = 6;
-const COIN_PITCH = 8;
-const MAX_STACK = 4;
+/** Coins sit side by side over their cell or bit, in up to two rows. */
+const STACK = 32;
+/** The other methods draw no coins: only a little air over the cells. */
+const AIR = 8;
+const COIN_R = 5;
+const COIN_PITCH = 12;
+const COIN_ROWS = 2;
 
 // The chart: actual cost per operation above, the running readout (average, bank, Φ) below.
 const CHART_W = PER_ROW * CW;
@@ -66,26 +70,41 @@ const coin = (uid: number, x: number, y: number, role?: MarkRole): Shape => ({
 // ----- The structure -----
 
 interface Place {
-  /** Center of position p's top edge, where its coin stack starts. */
+  /** Center of position p's top edge, where its coins start. */
   top(p: number): { x: number; y: number };
+  /** Coins side by side over one position. */
+  across: number;
+}
+
+/** Where the k-th coin on a position goes: rows from the bottom, each row centered. */
+function coinAt(place: Place, p: number, k: number, count: number) {
+  const t = place.top(p);
+  const row = Math.floor(k / place.across);
+  const inRow = Math.min(place.across, count - row * place.across);
+  const col = k % place.across;
+  return { x: t.x + (col - (inRow - 1) / 2) * COIN_PITCH, y: t.y - 8 - row * COIN_PITCH };
 }
 
 /** Coin stacks, the waiting charge, and the coins being spent, over any row of positions. */
 function coinShapes(state: AmState, extra: AmExtra, place: Place, roles: Roles, w: number) {
   const shapes: Shape[] = [];
+  const most = place.across * COIN_ROWS;
   state.coins.forEach((pile, p) => {
-    const t = place.top(p);
-    pile.slice(0, MAX_STACK).forEach((uid, k) => {
-      shapes.push(coin(uid, t.x, t.y - 8 - k * COIN_PITCH, roles.get(`coin-${uid}`)));
+    const shown = pile.slice(0, most);
+    shown.forEach((uid, k) => {
+      const at = coinAt(place, p, k, shown.length);
+      shapes.push(coin(uid, at.x, at.y, roles.get(`coin-${uid}`)));
     });
-    if (pile.length > MAX_STACK) {
+    if (pile.length > most) {
+      const t = place.top(p);
       shapes.push({
         kind: 'text',
         id: `more-${p}`,
-        x: t.x + COIN_R + 3,
-        y: t.y - 8 - (MAX_STACK - 1) * COIN_PITCH + 4,
-        text: `+${pile.length - MAX_STACK}`,
+        x: t.x,
+        y: t.y - 8 - COIN_ROWS * COIN_PITCH,
+        text: `+${pile.length - most}`,
         size: 11,
+        anchor: 'middle',
         cls: 'label',
         mono: true,
       });
@@ -94,9 +113,11 @@ function coinShapes(state: AmState, extra: AmExtra, place: Place, roles: Roles, 
   const hand = extra.hand ?? [];
   if (hand.length && extra.target !== undefined) {
     const cx = place.top(extra.target).x;
-    const span = (hand.length - 1) * 15;
+    const span = (hand.length - 1) * COIN_PITCH;
     const x0 = Math.max(COIN_R + 2, Math.min(w - COIN_R - 2 - span, cx - span / 2));
-    hand.forEach((uid, k) => shapes.push(coin(uid, x0 + k * 15, 14, roles.get(`coin-${uid}`))));
+    hand.forEach((uid, k) =>
+      shapes.push(coin(uid, x0 + k * COIN_PITCH, 14, roles.get(`coin-${uid}`))),
+    );
   }
   for (const s of extra.spent ?? []) {
     const t = place.top(s.at);
@@ -113,23 +134,29 @@ function methodText(state: AmState, settings: AmSettings): string {
     return n ? `total = ${total}, ${avgText(total, n)} per operation` : 'total = 0';
   if (settings.method === 'accounting') {
     const bank = bankOf(state);
-    return `bank = ${bank}${bank < 0 ? ' (short)' : ''}, charge = ${chargeOf(settings)}`;
+    return `bank = ${num(bank)}${bank < 0 ? ' (short)' : ''}, charge = ${chargeOf(settings)}`;
   }
   if (state.cur) {
     const word = settings.structure === 'array' ? 'append' : 'increment';
-    return `Φ = ${state.phis.at(-1) ?? 0} before this ${word}`;
+    return `Φ = ${num(state.phis.at(-1) ?? 0)} before this ${word}`;
   }
   return settings.structure === 'counter'
-    ? `Φ = number of 1 bits = ${phiOf(state, settings)}`
+    ? `Φ = number of 1 bits = ${num(phiOf(state, settings))}`
     : `Φ = ${phiFormula(settings)} = ${phiWorked(state, settings)}`;
 }
 
+/** The coin lanes' heights: the charge's lane, and the room over each cell or bit. */
+const lanes = (settings: AmSettings) =>
+  settings.method === 'accounting' ? { hand: HAND, stack: STACK } : { hand: 0, stack: AIR };
+
 function arrayBlock(state: AmState, settings: AmSettings, extra: AmExtra, roles: Roles): Block {
   const shapes: Shape[] = [];
+  const { hand, stack } = lanes(settings);
+  const row = stack + CH + 8;
   const rows = Math.max(1, Math.ceil(Math.max(state.room, state.capacity) / PER_ROW));
   const cell = (i: number) => ({
     x: (i % PER_ROW) * CW,
-    y: HAND + Math.floor(i / PER_ROW) * ROW + STACK,
+    y: hand + Math.floor(i / PER_ROW) * row + stack,
   });
   const fresh = extra.grownFrom;
   for (let i = 0; i < state.capacity; i++) {
@@ -166,9 +193,10 @@ function arrayBlock(state: AmState, settings: AmSettings, extra: AmExtra, roles:
       const c = cell(p);
       return { x: c.x + CW / 2, y: c.y };
     },
+    across: 2,
   };
   shapes.push(...coinShapes(state, extra, place, roles, CHART_W));
-  const y = HAND + rows * ROW + 14;
+  const y = hand + rows * row + 14;
   shapes.push(
     readout('rd-size', 0, y, `size = ${state.size}`, roles),
     readout('rd-cap', 120, y, `capacity = ${state.capacity}`, roles),
@@ -179,7 +207,8 @@ function arrayBlock(state: AmState, settings: AmSettings, extra: AmExtra, roles:
 
 function counterBlock(state: AmState, settings: AmSettings, extra: AmExtra, roles: Roles): Block {
   const shapes: Shape[] = [];
-  const y = HAND + STACK;
+  const { hand, stack } = lanes(settings);
+  const y = hand + stack;
   const x = (p: number) => (BITS - 1 - p) * BW;
   for (let p = 0; p < BITS; p++) {
     const id = `bit-${p}`;
@@ -204,7 +233,8 @@ function counterBlock(state: AmState, settings: AmSettings, extra: AmExtra, role
       anchor: 'middle',
       weight: one ? 'bold' : 'normal',
       mono: true,
-      role: roles.get(`b-${p}`) ?? (one ? undefined : 'stale'),
+      cls: one ? undefined : 'label',
+      role: roles.get(`b-${p}`),
     });
     shapes.push({
       kind: 'text',
@@ -218,7 +248,7 @@ function counterBlock(state: AmState, settings: AmSettings, extra: AmExtra, role
       mono: true,
     });
   }
-  const place: Place = { top: (p) => ({ x: x(p) + BW / 2, y }) };
+  const place: Place = { top: (p) => ({ x: x(p) + BW / 2, y }), across: 3 };
   const w = BITS * BW;
   shapes.push(...coinShapes(state, extra, place, roles, w));
   const ry = y + BH + 42;
@@ -235,8 +265,8 @@ function readout(id: string, x: number, y: number, text: string, roles: Roles): 
 
 // ----- The chart -----
 
-/** A round top for a scale: 4, 8, then multiples of 8. */
-const nice = (v: number) => (v <= 4 ? 4 : v <= 8 ? 8 : Math.ceil(v / 8) * 8);
+/** A round top for a scale: a multiple of 4, at least 4. */
+const nice = (v: number) => Math.max(4, Math.ceil(v / 4) * 4);
 
 /** Running average after each operation. */
 const averages = (costs: readonly number[]) => {
@@ -270,7 +300,11 @@ function chartBlock(state: AmState, settings: AmSettings, roles: Roles): Block {
   const am = pot ? amortized(plan) : [];
   const max1 = nice(Math.max(...plan.costs, acct ? c : 0, ...am, 1));
   const y1 = (v: number) => base1 - (Math.max(0, Math.min(v, max1)) / max1) * H1;
-  const title1 = pot ? `actual (bars) and amortized (ticks) per ${word}` : `actual cost of each ${word}`;
+  const title1 = pot
+    ? 'actual cost (bars), amortized (ticks)'
+    : acct
+      ? 'actual cost (bars), charge (dashed)'
+      : `actual cost of each ${word}`;
   shapes.push(label('l1-title', GUTTER, 12, title1));
   shapes.push(scale('l1-max', top1 + 4, String(max1)), scale('l1-zero', base1 + 4, '0'));
   shapes.push(line('l1-axis', base1, false));
@@ -292,17 +326,9 @@ function chartBlock(state: AmState, settings: AmSettings, roles: Roles): Block {
   });
   if (acct) {
     shapes.push({ ...line('ref-1', y1(c), true), role: 'found' });
-    shapes.push({
-      kind: 'text',
-      id: 'ref-1-label',
-      x: GUTTER + CHART_W,
-      y: y1(c) - 5,
-      text: `charge ${c}`,
-      size: 12,
-      anchor: 'end',
-      cls: 'label',
-      mono: true,
-    });
+    // Its value in the gutter, unless it would sit on the 0 or the top label.
+    if (base1 - y1(c) > 12 && y1(c) - top1 > 12)
+      shapes.push(scale('ref-1-label', y1(c) + 4, String(c)));
   }
   if (pot) {
     amortized(state).forEach((v, k) => {
@@ -332,13 +358,13 @@ function chartBlock(state: AmState, settings: AmSettings, roles: Roles): Block {
   const y2 = (v: number) => zero - v * unit;
   const title2 =
     settings.method === 'aggregate'
-      ? `average cost so far`
+      ? `average cost so far, ${ref} dashed`
       : acct
         ? `bank after each ${word}`
         : `Φ after each ${word}`;
   shapes.push(label('l2-title', GUTTER, top2 - 10, title2));
   shapes.push(scale('l2-max', top2 + 4, String(hi)), scale('l2-zero', zero + 4, '0'));
-  if (lo < 0) shapes.push(scale('l2-min', top2 + H2 + 4, String(lo)));
+  if (lo < 0) shapes.push(scale('l2-min', top2 + H2 + 4, num(lo)));
   shapes.push(line('l2-axis', zero, false));
   values.forEach((v, k) => {
     const j = k + 1;
@@ -358,17 +384,8 @@ function chartBlock(state: AmState, settings: AmSettings, roles: Roles): Block {
   });
   if (ref) {
     shapes.push({ ...line('ref-2', y2(ref), true), role: 'found' });
-    shapes.push({
-      kind: 'text',
-      id: 'ref-2-label',
-      x: GUTTER + CHART_W,
-      y: y2(ref) - 5,
-      text: `${ref}`,
-      size: 12,
-      anchor: 'end',
-      cls: 'label',
-      mono: true,
-    });
+    if (zero - y2(ref) > 12 && y2(ref) - top2 > 12)
+      shapes.push(scale('ref-2-label', y2(ref) + 4, String(ref)));
   }
 
   // Operation numbers under the chart.
@@ -449,11 +466,7 @@ function arrange(main: Block, chart: Block, beside: boolean): Placed {
  * Every size here holds for a whole run (the array's room and the chart's columns and scales
  * come from the run's plan), so the arrangement picked for the stage holds for the run too.
  */
-export function view(
-  step: Step<AmState, AmExtra>,
-  settings: AmSettings,
-  stage?: StageSize,
-): Scene {
+export function view(step: Step<AmState, AmExtra>, settings: AmSettings, stage?: StageSize): Scene {
   const { state, extra = {} } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const main =

@@ -5,6 +5,8 @@ import { keyOf } from '../_graph/graph';
 import { costOf, formatNetwork, parseNetwork, type Network } from '../_flow/network';
 import { minCostFlow } from '.';
 import { PARSE, pseudocode, type McRun, type McSettings } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 // ---------------------------------------------------------------------------------------------
 // References written independently of the page: the maximum flow value as the minimum cut over
@@ -127,5 +129,13 @@ describe('min-cost-flow', () => {
         for (const block of pseudocode({ ...minCostFlow.defaults, method, target }))
           for (const l of block.lines)
             expect(2 * l.indent + l.text.length, `${l.id}: ${l.text}`).toBeLessThanOrEqual(34);
+  });
+});
+
+describe('drawn text size', () => {
+  // A left-to-right network may turn to run top to bottom on a phone: 7.1 px before, 8.8 after.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(minCostFlow, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11.5);
+    expect(smallestText(minCostFlow, PHONE_STAGE).px).toBeGreaterThanOrEqual(8.5);
   });
 });

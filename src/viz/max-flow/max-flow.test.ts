@@ -5,6 +5,8 @@ import { keyOf } from '../_graph/graph';
 import { formatNetwork, parseNetwork, residual, type Network } from '../_flow/network';
 import { maxFlow } from '.';
 import { pseudocode, type MfRun, type MfSettings } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 // ---------------------------------------------------------------------------------------------
 // References written independently of the page: the minimum cut by trying every s side, and
@@ -139,5 +141,13 @@ describe('max-flow', () => {
       for (const block of pseudocode({ ...maxFlow.defaults, method }))
         for (const l of block.lines)
           expect(2 * l.indent + l.text.length, `${l.id}: ${l.text}`).toBeLessThanOrEqual(34);
+  });
+});
+
+describe('drawn text size', () => {
+  // A left-to-right network may turn to run top to bottom on a phone: 6.8 px before, 8.1 after.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(maxFlow, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(12.5);
+    expect(smallestText(maxFlow, PHONE_STAGE).px).toBeGreaterThanOrEqual(8);
   });
 });

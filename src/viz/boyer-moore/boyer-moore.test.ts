@@ -1,5 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { practiceSet } from '../../engine/practice';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeQuestion } from '../../engine/types';
@@ -198,5 +200,13 @@ describe('Boyer-Moore practice', () => {
             : 'Both give the same shift',
       );
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // 16 text cells at 45 units drew labels at 7.2 px on a phone; narrower cells on a phone: 9.7.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(boyerMoore, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(boyerMoore, PHONE_STAGE).px).toBeGreaterThanOrEqual(9.5);
   });
 });

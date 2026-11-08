@@ -10,7 +10,9 @@
  *   doubly linked one. A pointer field that is set sends an arrow to its neighbour; a null
  *   field has a slash through it.
  * - Nodes sit in slots, four to a row so values stay readable on a phone, and a row ends by
- *   routing the link down to the start of the next row.
+ *   routing the link down to the start of the next row. On a known stage, `chainCols` picks
+ *   how many to a row instead (more on a wide laptop, fewer for a doubly linked list on a
+ *   phone), the same for every step so nodes do not jump.
  * - Named pointers (top, head, tail) are labels with an arrow, above or below their node. A null
  *   named pointer points at the word "null": before the first node if it is drawn above, after
  *   the last if below.
@@ -21,7 +23,8 @@
  * with the arrowhead), null slash `n<uid>-next-null` / `n<uid>-prev-null`, named pointer label
  * `<name>` and its arrow `<name>-arrow`, returned value `out`.
  */
-import type { MarkRole, Value } from '../engine/types';
+import type { MarkRole, StageSize, Value } from '../engine/types';
+import { pickLayout } from './arrange';
 import type { Bounds, Shape } from '../render/scene';
 import { fieldOffsets, nodeWidth, nullText, pointerText, type NodeStatus } from './linked';
 
@@ -53,9 +56,11 @@ export interface ChainDrawing {
   roles: Map<string, MarkRole>;
   /** A value on its way out of the node in slot `from`. */
   out?: { value: Value; from: number; label: string };
+  /** Nodes to a row. Default 4. */
+  cols?: number;
 }
 
-const COLS = 4;
+const DEFAULT_COLS = 4;
 /** Rows kept even when empty, so the camera holds still for short lists. */
 const MIN_ROWS = 2;
 const H = 42;
@@ -80,7 +85,27 @@ const SIZES = {
 
 const valueSize = (text: string) => (text.length <= 3 ? 20 : text.length <= 5 ? 16 : 13);
 
+/** The drawing's size with `cols` nodes to a row and `rows` rows. */
+function chainSize(kind: ChainKind, cols: number, rows: number): Bounds {
+  const W = nodeWidth(kind, SIZES[kind]);
+  return { x: 0, y: 0, w: X0 + (cols - 1) * (W + GAP) + W + 40, h: TOP + rows * ROW_H - LANE };
+}
+
+/**
+ * Nodes to a row on this stage: whichever of 4 (the default, and the choice with no stage), 3,
+ * 5 or 6 draws a list of 9 nodes largest. A typical list, not the current one, so the choice
+ * holds for a whole run.
+ */
+export function chainCols(kind: ChainKind, stage?: StageSize): number {
+  const options = [DEFAULT_COLS, 3, 5, 6].map((cols) => ({
+    cols,
+    bounds: chainSize(kind, cols, Math.max(MIN_ROWS, Math.ceil(10 / cols))),
+  }));
+  return pickLayout(stage, options).cols;
+}
+
 export function drawChain(d: ChainDrawing): { shapes: Shape[]; bounds: Bounds } {
+  const cols = d.cols ?? DEFAULT_COLS;
   const size = SIZES[d.kind];
   const { field, value: vw } = size;
   const double = d.kind === 'double';
@@ -90,17 +115,17 @@ export function drawChain(d: ChainDrawing): { shapes: Shape[]; bounds: Bounds } 
   const prevAt = off.prev ?? 0;
   const pitch = W + GAP;
   const role = (id: string) => d.roles.get(id);
-  const rows = Math.max(MIN_ROWS, Math.ceil((d.nodes.length + 1) / COLS));
+  const rows = Math.max(MIN_ROWS, Math.ceil((d.nodes.length + 1) / cols));
   const shapes: Shape[] = [];
 
   const slot = (k: number) => {
-    const row = Math.floor(k / COLS);
-    const x = X0 + (k % COLS) * pitch;
+    const row = Math.floor(k / cols);
+    const x = X0 + (k % cols) * pitch;
     const y = TOP + ABOVE + row * ROW_H;
     return { x, y, cy: y + H / 2, row };
   };
   const laneY = (row: number) => TOP + ABOVE + row * ROW_H + H + BELOW + LANE / 2;
-  const right = X0 + (COLS - 1) * pitch + W;
+  const right = X0 + (cols - 1) * pitch + W;
 
   const line = (
     id: string,
@@ -327,5 +352,5 @@ export function drawChain(d: ChainDrawing): { shapes: Shape[]; bounds: Bounds } 
     );
   }
 
-  return { shapes, bounds: { x: 0, y: 0, w: right + 40, h: TOP + rows * ROW_H - LANE } };
+  return { shapes, bounds: chainSize(d.kind, cols, rows) };
 }

@@ -4,7 +4,8 @@ import { Timeline } from '../../engine/timeline';
 import { loopCounting, parseN } from '.';
 import { MAX_N, ratioText, type LcSettings } from './model';
 import { PATTERN, PATTERNS, isqrt, lg, type Found, type PatternId } from './patterns';
-import { TYPICAL_STAGES } from '../../render/stage';
+import { LAPTOP_STAGE, PHONE_STAGE, TYPICAL_STAGES } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 const FOUNDS: Found[] = ['first', 'middle', 'missing'];
 /** Patterns with one loop: each run of the body is a level 2 step. */
@@ -217,5 +218,13 @@ describe('loop counting', () => {
       expect(hl.length, id).toBe(PATTERN[id].counted.length);
       expect(scene.shapes.every((s) => s.id.startsWith('code-'))).toBe(true);
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // The grid corner drew at 8.6 px on a phone; at 13, at 9.3.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(loopCounting, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(loopCounting, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

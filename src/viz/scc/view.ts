@@ -18,14 +18,17 @@ import {
   drawRow,
   drawTable,
   layoutGraph,
+  layoutsFor,
   padBounds,
   placePanels,
   translate,
+  turnLayout,
   unionBounds,
   type EdgeLook,
   type GraphLayout,
   type VertexLook,
 } from '../../layouts/graph';
+import { pickLayout } from '../../layouts/arrange';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import type { Graph } from '../_graph/graph';
 import {
@@ -97,13 +100,11 @@ function drawCondensation(
   y: number,
 ): Bounds {
   const cond = condensation(g, final);
-  // Layers left to right instead of top to bottom, so the picture stays short.
+  // Layers left to right instead of top to bottom, so the picture stays short. Components with
+  // no arcs between them sit side by side as they are.
   const tall = layoutGraph(cond, 'layered');
-  const layout: GraphLayout = {
-    r: tall.r,
-    pos: Object.fromEntries(Object.entries(tall.pos).map(([v, p]) => [v, { x: p.y, y: p.x }])),
-    bounds: { x: tall.bounds.y, y: tall.bounds.x, w: tall.bounds.h, h: tall.bounds.w },
-  };
+  const turned = turnLayout(tall);
+  const layout: GraphLayout = turned.bounds.h <= tall.bounds.h ? turned : tall;
   const roles = new Map<string, MarkRole>(cond.vertices.map((v, k) => [`vx-${v}`, compRole(k)]));
   const known = (v: string) => Number(v) <= found;
   const drawn = drawGraph(cond, layout, {
@@ -138,6 +139,19 @@ export function view(
   settings: SccSettings,
   stage?: StageSize,
 ): Scene {
+  const layout = layoutGraph(step.state.graph, settings.layout);
+  return pickLayout(
+    stage,
+    layoutsFor(layout, settings.layout, stage).map((l) => draw(step, settings, l, stage)),
+  );
+}
+
+function draw(
+  step: Step<SccState, SccExtra>,
+  settings: SccSettings,
+  layout: GraphLayout,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const r = extra.run;
@@ -146,7 +160,6 @@ export function view(
   if (r)
     for (const v of g.vertices) if (r.comp[v] !== null) roles.set(`vx-${v}`, compRole(r.comp[v]!));
   for (const [id, role] of marks) roles.set(id, role);
-  const layout = layoutGraph(g, settings.layout);
   const flipped = r && (r.phase === 'transpose' || r.phase === 'second');
   const shown = flipped ? transpose(g) : g;
   const tarjan = r?.algorithm === 'tarjan';

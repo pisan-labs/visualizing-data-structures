@@ -16,11 +16,14 @@ import {
   drawGraph,
   drawRow,
   layoutGraph,
+  layoutsFor,
   padBounds,
   placePanels,
   unionBounds,
   type VertexLook,
+  type GraphLayout,
 } from '../../layouts/graph';
+import { pickLayout } from '../../layouts/arrange';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { edgeKey } from '../_graph/graph';
 import { distTable } from '../_paths/view';
@@ -49,11 +52,23 @@ export function view(
   settings: DagSettings,
   stage?: StageSize,
 ): Scene {
+  const layout = layoutGraph(step.state.graph, settings.layout);
+  return pickLayout(
+    stage,
+    layoutsFor(layout, settings.layout, stage).map((l) => draw(step, settings, l, stage)),
+  );
+}
+
+function draw(
+  step: Step<DagState, DagExtra>,
+  settings: DagSettings,
+  layout: GraphLayout,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const r = extra.run;
-  const layout = layoutGraph(g, settings.layout);
   const relaxing = r && (r.phase === 'relax' || r.phase === 'done');
   // The current π edges, by edge key, with the end each was found from.
   const tree = new Map<string, string>();

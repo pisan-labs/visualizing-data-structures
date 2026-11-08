@@ -17,9 +17,10 @@ import {
 } from '../_automata/regex';
 import regexToNfa, { parseInput } from '.';
 import { construct, pending, type Construction } from '../_automata/thompson-construct';
-import { pictures } from '../_automata/thompson-layout';
+import { TIGHT, pictures } from '../_automata/thompson-layout';
 import { drawn, readWord, type RxSettings } from './model';
 import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 const parse = (text: string, union: UnionSign) => readRegex(text, { union });
 
@@ -276,7 +277,8 @@ describe('layout', () => {
       fc.property(caseArb, ({ r, how }) => {
         const p = parsed(r);
         const { nfa, frags } = construct(p, how);
-        for (const pic of pictures(frags, how, `|${p.text}`)) {
+        const key = `|${p.text}`;
+        for (const pic of [...pictures(frags, how, key), ...pictures(frags, how, key, TIGHT)]) {
           const pts = nfa.states.map((q) => ({ q, ...pic.pos[q]! }));
           for (let i = 0; i < pts.length; i++)
             for (let j = i + 1; j < pts.length; j++)
@@ -362,5 +364,13 @@ describe('layout', () => {
       return Math.max(...ys) - Math.min(...ys);
     };
     expect(span(PHONE)).toBeGreaterThan(span(LAPTOP) + 100);
+  });
+});
+
+describe('drawn text size', () => {
+  // Five (a|b) factors on two rows reach 10.3 px on a laptop: the rows are taller than the stage.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(regexToNfa, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(10.2);
+    expect(smallestText(regexToNfa, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

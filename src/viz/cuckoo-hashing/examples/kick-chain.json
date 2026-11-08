@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "cuckoo-hashing",
+  "id": "kick-chain",
+  "title": "A chain of kicks",
+  "notes": "61 and 4 find empty nests. 26 and 125 both want T1[4]: each takes the slot and pushes the key there over to T2. Then 37 wants T1[4] too. It kicks out 125, which kicks 4 out of T2[0], which goes back to T1[4] and kicks out 37 itself. 37 settles in its T2 nest: three kicks.",
+  "settings": {
+    "m": 11
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 61],
+    ["insert", 4],
+    ["insert", 26],
+    ["insert", 125],
+    ["insert", 37]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

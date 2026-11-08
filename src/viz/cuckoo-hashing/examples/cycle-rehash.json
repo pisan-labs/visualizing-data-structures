@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "cuckoo-hashing",
+  "id": "cycle-rehash",
+  "title": "A cycle forces a rehash",
+  "notes": "5, 126 and 247 all have h1 = 5 and h2 = 0: three keys and only two nests between them. Inserting 247 kicks back and forth until 247 is homeless a third time, a sure sign of a cycle. The tables grow to 13 and every key goes back in.",
+  "settings": {
+    "m": 11
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 5],
+    ["insert", 126],
+    ["insert", 247]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

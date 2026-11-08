@@ -1,0 +1,33 @@
+{
+  "format": 1,
+  "viz": "consistent-hashing",
+  "id": "virtual-nodes",
+  "title": "Virtual nodes even out the load",
+  "notes": "The same servers and keys, with three virtual nodes per server. Each server owns several smaller arcs scattered round the ring, so the loads come out closer to equal, and a new server takes a few keys from each of the others.",
+  "settings": {
+    "vnodes": 3
+  },
+  "seed": 1,
+  "ops": [
+    ["addServer", "A"],
+    ["addServer", "B"],
+    ["addServer", "C"],
+    ["addKey", 12],
+    ["addKey", 25],
+    ["addKey", 37],
+    ["addKey", 41],
+    ["addKey", 58],
+    ["addKey", 63],
+    ["addKey", 77],
+    ["addKey", 84],
+    ["addKey", 90],
+    ["addKey", 106],
+    ["addKey", 119],
+    ["addKey", 133],
+    ["addServer", "D"]
+  ],
+  "at": {
+    "op": 14,
+    "step": 100
+  }
+}

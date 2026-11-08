@@ -319,3 +319,11 @@
 2026-11-08 [code] Merged wave 7E: bloom-filter, count-min-sketch, hyperloglog, cuckoo-hashing, robin-hood-hashing, consistent-hashing (new _hashing/family.ts)
 
 2026-11-08 [code] Merged wave 7B: cartesian-tree, scapegoat-tree, aa-tree, interval-tree, persistent-bst (no kit changes)
+
+2026-11-08 [code] Merged wave 7H: dp-lis, dp-rod-cutting, dp-subset-sum, dp-matrix-chain, dp-palindrome, activity-selection, interval-partitioning, fractional-knapsack (new _intervals kit)
+
+2026-11-08 [code] Merged wave 7A: interpolation-search, exponential-search, ternary-search, comb-sort, gnome-sort, introsort, timsort, bitonic-sort (_sorting/search.ts, arrayView overlay, barTop)
+
+2026-11-08 [code] Merged wave 7F: z-algorithm, aho-corasick, manacher, burrows-wheeler, lz-compression (align indexY, _strings/overlay.ts)
+
+2026-11-08 [note] Gap found by 7H: a curated example whose op is refused (input over a limit) passes conformance silently; worth a check

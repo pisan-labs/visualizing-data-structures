@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "lr0-parsing",
+  "id": "slr-fixes-it",
+  "title": "SLR(1) looks at FOLLOW",
+  "notes": "The same grammar with SLR(1): E → T• reduces only under FOLLOW(E) = { +, ), $ }, which leaves * to the shift. No conflicts, and a+a*a parses with * binding tighter.",
+  "settings": {
+    "method": "slr1"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "E -> E+T | T; T -> T*F | F; F -> (E) | a"],
+    ["parse", "a+a*a"]
+  ]
+}

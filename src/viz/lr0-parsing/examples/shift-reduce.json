@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "lr0-parsing",
+  "id": "shift-reduce",
+  "title": "Precedence makes LR(0) conflicts",
+  "notes": "With T → T*F, the state with E → T• and T → T•*F must choose: reduce to E, or shift the *? LR(0) reduces under every symbol, so ACTION gets both. Shift-reduce conflicts.",
+  "settings": {
+    "method": "lr0"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "E -> E+T | T; T -> T*F | F; F -> (E) | a"],
+    ["parse", "a+a*a"]
+  ]
+}

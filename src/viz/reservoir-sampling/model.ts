@@ -259,7 +259,7 @@ const trialsOp: Op = {
     }
     yield makeStep(
       st,
-      `${t} trials: ${st.counts.join(', ')}. Item 1 had to survive ${TRIAL_N - k} chances of being replaced and item ${TRIAL_N} had only one chance to get in, yet the counts even out near ${Math.round(even)}.`,
+      `${t} trials: ${st.counts.join(', ')}. Item 1 had to survive ${TRIAL_N - k} chances of being replaced and item ${TRIAL_N} had only one chance to get in, ${t >= 500 ? `yet the counts even out near ${Math.round(even)}` : `yet each expects the same ${Math.round(even * 10) / 10}; with this few trials, chance still shows`}.`,
       [],
       1,
     );

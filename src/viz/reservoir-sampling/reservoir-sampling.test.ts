@@ -56,6 +56,13 @@ describe('reservoir sampling', () => {
       expect(counts.reduce((a, b) => a + b, 0)).toBe(4000 * k);
     }
   });
+
+  it('does not claim a handful of trials evens out', () => {
+    const t = new Timeline(reservoirSampling, { k: 2 }, 3, [['trials', 3]]);
+    const say = t.entries[0]!.steps.at(-1)!.say;
+    expect(say).not.toMatch(/even out/);
+    expect(say).toMatch(/chance still shows/);
+  });
 });
 
 describe('drawn text size', () => {

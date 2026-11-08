@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "rice-theorem",
+  "id": "the-argument",
+  "title": "The whole argument, step by step",
+  "notes": "M4 accepts words that start with A, loops on G, and rejects the rest. On ⟨M2⟩ = G1 it loops, so a decider for P would have to say no. Press Decide to see why such a decider would decide halting.",
+  "settings": {
+    "property": "accepts-A"
+  },
+  "seed": 1,
+  "ops": [["build", 4, 2], ["decide"]]
+}

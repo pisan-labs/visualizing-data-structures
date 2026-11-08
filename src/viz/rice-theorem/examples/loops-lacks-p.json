@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "rice-theorem",
+  "id": "loops-lacks-p",
+  "title": "M loops on w, so L(M′) is empty",
+  "notes": "⟨M1⟩ = A has one symbol, and M3 loops on odd lengths. Line 1 never finishes, whatever the input: M′ accepts nothing, so it lacks P.",
+  "settings": {
+    "property": "accepts-A"
+  },
+  "seed": 1,
+  "ops": [["build", 3, 1], ["test", "A"], ["test", "eps"], ["decide"]]
+}

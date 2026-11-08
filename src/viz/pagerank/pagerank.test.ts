@@ -6,7 +6,7 @@ import { smallestText } from '../../render/text-size';
 import type { Graph } from '../_graph/graph';
 import { formatGraph, parseGraph } from '../_graph/parse';
 import { pagerank } from '.';
-import { MAX_ITER, TOLERANCE, type Dangling, type PrRun, type PrSettings } from './model';
+import { MAX_ITER, ranking, TOLERANCE, type Dangling, type PrRun, type PrSettings } from './model';
 
 const letters = 'ABCDEFGH'.split('');
 const graphArb = fc
@@ -102,6 +102,27 @@ describe('pagerank', () => {
     const r = runOf(slosh, { damping: '1' }).r;
     expect(r.converged).toBeFalsy();
     expect(r.iter).toBe(MAX_ITER);
+  });
+
+  it('does not blame d = 1 when a run with d < 1 hits the limit', () => {
+    const slow = parseGraph('A>B, B>C, C>B') as Graph;
+    const { r, steps } = runOf(slow, { damping: '0.95' });
+    expect(r.converged).toBeFalsy();
+    const say = steps.at(-1)!.say;
+    expect(say).not.toContain('With d = 1');
+    expect(say).toContain('With d = 0.95 the random jump is rare');
+  });
+
+  it('breaks ties in name order even when the floats differ in the last bit', () => {
+    const g = parseGraph('A>B, B>A') as Graph;
+    expect(ranking(g, { A: 0.1 + 0.2, B: 0.3 })).toEqual(['A', 'B']);
+    expect(ranking(g, { A: 0.3, B: 0.1 + 0.2 })).toEqual(['A', 'B']);
+  });
+
+  it('runs the trap out of iterations at d = 0.95, as Try this asks about', () => {
+    const trap = parseGraph('A>B, B>C, C>A, C>D, D>E, E>F, F>E') as Graph;
+    expect(runOf(trap, { damping: '0.5' }).r.converged).toBe(true);
+    expect(runOf(trap, { damping: '0.95' }).r.converged).toBeFalsy();
   });
 });
 

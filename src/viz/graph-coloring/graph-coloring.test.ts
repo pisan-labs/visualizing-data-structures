@@ -126,6 +126,14 @@ describe('graph coloring', () => {
     expect(runOf(crown, 'dsatur').r.colors).toBe(2);
     expect(runOf(crown, 'given').steps.at(-1)!.say).toContain('2 colors are enough');
   });
+
+  it('knows an odd cycle needs 3, so 3 colors on it is optimal', () => {
+    const c5 = parseGraph('A-B, B-C, C-D, D-E, A-E') as Graph;
+    const say = runOf(c5, 'given').steps.at(-1)!.say;
+    expect(say).toContain('odd cycle');
+    expect(say).toContain('as good as it gets');
+    expect(say).not.toContain('Maybe fewer');
+  });
 });
 
 describe('drawn text size', () => {

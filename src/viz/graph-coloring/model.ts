@@ -364,12 +364,18 @@ export function finalWords(g: Graph, r: ColoringRun): string {
         : `But the graph has no odd cycle (it is bipartite), so 2 colors are enough: this order cost ${k - 2} extra.`,
     );
   } else if (q.length > 1) {
-    const exact = k === q.length;
+    // Not bipartite (the branch above), so there is an odd cycle: at least 3 colors.
+    const odd = q.length < 3;
+    const need = Math.max(q.length, 3);
     parts.push(
-      `${listWords(q)} are all joined to each other (a clique), so any coloring needs at least ${q.length}. ${
-        exact
+      `${listWords(q)} are all joined to each other (a clique), so any coloring needs at least ${q.length}.${
+        odd
+          ? ' But the graph also has an odd cycle, and colors cannot alternate around it, so it needs at least 3.'
+          : ''
+      } ${
+        k === need
           ? `Greedy used exactly ${k}, so this coloring is as good as it gets.`
-          : `Greedy used ${k}. Maybe fewer would do, maybe not: the clique only proves ${q.length} is needed.`
+          : `Greedy used ${k}. Maybe fewer would do, maybe not: the ${odd ? 'odd cycle' : 'clique'} only proves ${need} are needed.`
       }`,
     );
   } else if (g.edges.length === 0) {

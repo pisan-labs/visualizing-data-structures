@@ -133,9 +133,10 @@ describe('min-cost-flow', () => {
 });
 
 describe('drawn text size', () => {
-  // A left-to-right network may turn to run top to bottom on a phone: 7.1 px before, 8.8 after.
+  // A left-to-right network may turn to run top to bottom on a phone: 7.1 px before, 8.8 after,
+  // and 10.3 once the turned network may come shorter from s to t.
   it('stays readable on a laptop and on a phone', () => {
     expect(smallestText(minCostFlow, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11.5);
-    expect(smallestText(minCostFlow, PHONE_STAGE).px).toBeGreaterThanOrEqual(8.5);
+    expect(smallestText(minCostFlow, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

@@ -4,6 +4,9 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { npReductions } from '.';
 import { parseFormula, parseGraphInstance, type NpSettings, type UGraph } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import textSizeDef from './index';
 
 const settings = (check: NpSettings['check'] = 'witness'): NpSettings => ({ check });
 
@@ -193,5 +196,13 @@ describe('NP reductions', () => {
     const t = new Timeline(npReductions, settings(), 1, [['toVc'], ['toSc'], ['toClique']]);
     for (const e of t.entries) expect(e.end.inst.problem).toBe('3sat');
     expect(t.entries[0]!.steps.at(-1)!.say).toMatch(/starts from INDEPENDENT-SET and CLIQUE/);
+  });
+});
+
+describe('drawn text size', () => {
+  // The map ran 556 units across (8.4 px on a phone); a phone turns it to run top to bottom.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(textSizeDef, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(textSizeDef, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

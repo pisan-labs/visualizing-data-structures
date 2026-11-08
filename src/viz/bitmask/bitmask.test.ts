@@ -4,6 +4,8 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { bitmask, parseBits } from '.';
 import { bin, type BitSettings } from './model';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 const settings = (s: Partial<BitSettings> = {}): BitSettings =>
   ({ ...bitmask.defaults, ...s }) as BitSettings;
@@ -134,5 +136,13 @@ describe('bitmask', () => {
     expect(parseBits('-1')).toBeInstanceOf(Error);
     expect(parseBits('cat')).toBeInstanceOf(Error);
     expect(parseBits('5000')).toBeInstanceOf(Error);
+  });
+});
+
+describe('drawn text size', () => {
+  // The "returns" label drew at 8.1 px on a phone; with room for the list only while one is shown, and row names above the rows on a phone, at 9.4.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(bitmask, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(bitmask, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

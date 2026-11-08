@@ -1,4 +1,5 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import { labelSize, padBounds, trimmedLine, unionBounds } from '../../layouts/binary-tree';
 import { drawForest, layoutForest, shiftForest, type ForestLayout } from '../../layouts/forest';
 import type { Bounds, Scene, Shape } from '../../render/scene';
@@ -23,7 +24,40 @@ const BOX_W = 56;
 
 export const rootListId = (u: number) => `rlist-${u}`;
 
-export function view(step: Step<BinState, BinExtra>, settings: BinSettings): Scene {
+/** How the picture is arranged: the second root list beside the first, and a tighter spacing. */
+interface Arrangement {
+  beside: boolean;
+  tight: boolean;
+}
+
+/**
+ * On a stage, the root list waiting for union may sit beside the first instead of under it (a
+ * laptop), and the trees may sit closer (a phone): the arrangement drawn largest wins.
+ */
+export function view(
+  step: Step<BinState, BinExtra>,
+  settings: BinSettings,
+  stage?: StageSize,
+): Scene {
+  const usual = draw(step, settings, { beside: false, tight: false });
+  if (!stage) return usual;
+  const others = [
+    { beside: false, tight: true },
+    ...(step.state.other !== null
+      ? [
+          { beside: true, tight: false },
+          { beside: true, tight: true },
+        ]
+      : []),
+  ];
+  return pickLayout(stage, [usual, ...others.map((a) => draw(step, settings, a))]);
+}
+
+function draw(
+  step: Step<BinState, BinExtra>,
+  settings: BinSettings,
+  { beside, tight }: Arrangement,
+): Scene {
   const { state: s } = step;
   const extra = step.extra;
   const internal = settings.view === 'internal';
@@ -32,8 +66,8 @@ export function view(step: Step<BinState, BinExtra>, settings: BinSettings): Sce
   // The internal view spaces siblings apart so the sibling pointers between them show.
   const opts = {
     radius: R,
-    gap: internal ? 26 : 8,
-    treeGap: internal ? 36 : 28,
+    gap: internal ? (tight ? 20 : 26) : 8,
+    treeGap: internal ? (tight ? 26 : 36) : tight ? 20 : 28,
     levelGap: internal ? 62 : 54,
   };
   const shapes: Shape[] = [];
@@ -136,24 +170,30 @@ export function view(step: Step<BinState, BinExtra>, settings: BinSettings): Sce
     boxes.push({ x: firstRoot.x - R - 80, y: -10, w: 80, h: 20 });
   }
 
-  // A second root list, waiting for union, under the first.
+  // A second root list, waiting for union, under the first, or beside it past the end of the
+  // row above (N in binary and a key's box, about 300 units).
   if (s.other !== null) {
-    const top =
-      (s.head === null ? R : main.bounds.y + main.bounds.h + (internal ? 14 : 0)) - NAME_Y + 40;
-    const other = shiftForest(layoutForest(listFrom(s.nodes, s.other), kids, opts), 0, top);
+    const top = beside
+      ? 0
+      : (s.head === null ? R : main.bounds.y + main.bounds.h + (internal ? 14 : 0)) - NAME_Y + 40;
+    const left = beside
+      ? Math.max(300, (s.head === null ? 88 : main.bounds.x + main.bounds.w) + 50)
+      : 0;
+    const laid = layoutForest(listFrom(s.nodes, s.other), kids, opts);
+    const other = shiftForest(laid, left - (beside ? laid.bounds.x : 0), top);
     drawList(other, s.other, 'o');
     const n2 = countFrom(s.nodes, s.other);
     shapes.push({
       kind: 'text',
       id: 'other-label',
-      x: 0,
+      x: left,
       y: top + N_Y + 12,
       text: `${extra?.otherLabel ?? 'H2'}: N₂ = ${n2} = ${binary(n2)}`,
       size: 14,
       cls: 'label',
       mono: true,
     });
-    boxes.push({ x: 0, y: top + N_Y, w: 200, h: 16 });
+    boxes.push({ x: left, y: top + N_Y, w: 200, h: 16 });
   }
 
   // Pointer names over the roots they point at: prev, x and next during union, x and y in scans.

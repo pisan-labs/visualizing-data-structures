@@ -89,6 +89,16 @@ describe('boruvka', () => {
     expect(r.round).toBe(2);
   });
 
+  it('says why it stops when a round of a forest finds no picks', () => {
+    const { r, steps } = runOf(
+      parseGraph('A-B:3, A-C:1, B-C:2, C-D:4, E-F:2, F-G:1, E-G:5') as Graph,
+    );
+    expect(r.round).toBe(1);
+    expect(steps.at(-1)!.say).toMatch(
+      /^No edge leaves any component, so round 2 adds nothing\. Done after 1 round\./,
+    );
+  });
+
   it('refuses a directed graph', () => {
     const t = new Timeline(boruvka, boruvka.defaults, 1, [['load', 'A>B:1, B>C:2'], ['run']]);
     expect(t.entries[1]!.steps.at(-1)!.say).toContain('needs an undirected graph');

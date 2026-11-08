@@ -6,6 +6,7 @@ import {
   defaults,
   r3,
   ranking,
+  TIE,
   type PrExtra,
   type PrRun,
   type PrSettings,
@@ -34,6 +35,7 @@ export function pagerankPractice(def: () => Def): PracticeKind[] {
       return { g, ops, r, order, watch: [['run']] as OpCall[] };
     }
   }
+  const near = (diff: number) => diff > TIE && diff < 0.001;
   const all = (g: { vertices: string[] }, r: PrRun) =>
     g.vertices.map((v) => `${v} ${r3(r.rank[v]!)}`).join(', ');
 
@@ -60,7 +62,10 @@ export function pagerankPractice(def: () => Def): PracticeKind[] {
       id: 'ranking',
       title: 'Put them in order',
       make(rng) {
-        const { g, ops, r, order, watch } = setup(rng);
+        let { g, ops, r, order, watch } = setup(rng);
+        // Skip ranks that differ by less than the 3 decimals shown, but are not a tie.
+        while (order.some((v, i) => i > 0 && near(r.rank[order[i - 1]!]! - r.rank[v]!)))
+          ({ g, ops, r, order, watch } = setup(rng));
         return {
           prompt:
             'Run PageRank with d = 0.85. Type the vertices from highest rank to lowest (ties in name order), such as C A B.',

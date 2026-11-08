@@ -216,7 +216,7 @@ const insert: Op = {
       yield {
         state: s,
         marks: [mark(ptId(p.id), 'active'), ...s.bad.map((id) => mark(triId(id), 'error'))],
-        say: `${s.bad.length} bad triangle${s.bad.length === 1 ? '' : 's'}. Together they form a hole around ${p.name} with ${hole.length} edges on its boundary.`,
+        say: `${s.bad.length} bad triangle${s.bad.length === 1 ? '' : 's'}. ${s.bad.length === 1 ? 'It forms' : 'Together they form'} a hole around ${p.name} with ${hole.length} edges on its boundary.`,
         lines: ['dt.bad'],
         vars: vars(s, { bad: s.bad.length }),
         level: 2,

@@ -136,11 +136,15 @@ export function pagerankPlain(g: Graph, d: number, dangling: Dangling) {
   return { rank, iter, change, top, converged: change < TOLERANCE };
 }
 
+/** Ranks closer than this are a tie: equal pages can differ in the last bits of a float. */
+export const TIE = 1e-9;
+
 /** Vertices by rank, highest first (ties in name order). */
 export const ranking = (g: Graph, rank: Record<string, number>) =>
-  [...g.vertices].sort(
-    (a, b) => rank[b]! - rank[a]! || g.vertices.indexOf(a) - g.vertices.indexOf(b),
-  );
+  [...g.vertices].sort((a, b) => {
+    const diff = rank[b]! - rank[a]!;
+    return Math.abs(diff) > TIE ? diff : g.vertices.indexOf(a) - g.vertices.indexOf(b);
+  });
 
 function clone(r: PrRun): PrRun {
   return { ...r, rank: { ...r.rank }, prev: r.prev && { ...r.prev }, dangling: [...r.dangling] };
@@ -249,7 +253,7 @@ const run: Op = {
       `${
         r.converged
           ? `Converged after ${plural(r.iter, 'iteration')}: the last one moved the ranks by only ${r.change!.toFixed(5)}.`
-          : `Stopped after ${MAX_ITER} iterations without settling (the last change was ${r.change!.toFixed(5)}). With d = 1 there is no random jump, and the ranks can slosh back and forth forever.`
+          : `Stopped after ${MAX_ITER} iterations without settling (the last change was ${r.change!.toFixed(5)}). ${d === 1 ? 'With d = 1 there is no random jump, and the ranks can slosh back and forth forever.' : `With d = ${d} the random jump is rare, so the ranks settle slowly.`}`
       } Ranking: ${order.map((v) => `${v} ${r3(r.rank[v]!)}`).join(', ')}.${
         settings.dangling === 'drop' && r.dangling.length
           ? ` The ranks add up to ${round3(sum(r.rank))}: the dangling rank leaked away.`

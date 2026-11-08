@@ -14,7 +14,7 @@ m is the number of points reported.
 
 ## Insert: a BST walk that changes its mind
 
-To insert p, start at the root. At depth 0 compare p.x with the node's x; at depth 1 compare p.y with the node's y; keep alternating. When the child you want is missing, p goes there and draws its line, but only inside the cell it landed in. That is why the lines on the left get shorter as the tree gets deeper: each one splits a piece of a piece. [Show me](#play:build-and-split)
+To insert p, start at the root. At depth 0 compare p.x with the node's x; at depth 1 compare p.y with the node's y; keep alternating. When the child you want is missing, p goes there and draws its line, but only inside the cell it landed in. That is why the lines in the plane get shorter as the tree gets deeper: each one splits a piece of a piece. [Show me](#play:build-and-split)
 
 ```check
 Q: The root is (6, 5) and its left child is (3, 8). Where does (4, 9) go?

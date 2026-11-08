@@ -387,7 +387,7 @@ const run: Op = {
     yield {
       state: r.s,
       marks: [mark(ptId(a), 'found'), mark(ptId(b), 'found')],
-      say: `The closest pair is ${at(p)} and ${at(q)}, at distance ${rootText(r.s.d2!)}. ${r.s.comparisons} comparisons; brute force needs ${pairs(n)}.`,
+      say: `The closest pair is ${at(p)} and ${at(q)}, at distance ${rootText(r.s.d2!)}. ${settings.method === 'brute' ? `${r.s.comparisons} comparisons, one for every pair.` : `${r.s.comparisons} comparisons; brute force needs ${pairs(n)}.`}`,
       lines: [settings.method === 'brute' ? 'bf.ret' : 'cp.ret'],
       vars: vars(r.s),
       level: 1,

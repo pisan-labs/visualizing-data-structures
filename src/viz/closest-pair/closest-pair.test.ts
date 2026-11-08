@@ -24,6 +24,16 @@ describe('closest pair', () => {
     expect(s.comparisons).toBeLessThan(pairs(8));
   });
 
+  it('does not compare brute force with itself at the end', () => {
+    const t = new Timeline(closestPair, { method: 'brute' }, 1, [
+      ['load', '1,1 3,9 2,5 5,6'],
+      ['closest'],
+    ]);
+    const say = t.at(t.length - 1).step.say;
+    expect(say).toContain('6 comparisons, one for every pair.');
+    expect(say).not.toContain('brute force needs');
+  });
+
   it('matches brute force, checks at most 7 points above each strip point, and stays within O(n log n)', () => {
     fc.assert(
       fc.property(

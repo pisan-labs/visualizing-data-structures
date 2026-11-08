@@ -28,6 +28,14 @@ function neighbours(s: DState, p: number): string[] {
   return [...out].sort();
 }
 
+/** Some point lies exactly on a triangle's circle: the triangulation is not unique. */
+export function cocircular(s: DState): boolean {
+  return realTris(s).some((t) => {
+    const [a, b, c] = t.v.map((v) => vertex(s, v));
+    return s.points.some((q) => !t.v.includes(q.id) && inCircle(a!, b!, c!, q) === 0);
+  });
+}
+
 /** Points on the hull: corners of a triangle that touches the super triangle. */
 function hullPoints(s: DState): number[] {
   const out = new Set<number>();
@@ -99,8 +107,13 @@ export function delaunayPractice(def: () => Def): PracticeKind[] {
       id: 'neighbours',
       title: 'Who are the neighbours?',
       make(rng) {
-        const setup = setupOf(rng, 6, 9);
-        const end = run(setup).endState();
+        let setup = setupOf(rng, 6, 9);
+        let end = run(setup).endState();
+        // Four points on one circle allow either diagonal, so the edges would not be unique.
+        while (realTris(end).length === 0 || cocircular(end)) {
+          setup = setupOf(rng, 6, 9);
+          end = run(setup).endState();
+        }
         const p = end.points[rng.int(0, end.points.length - 1)]!;
         const names = neighbours(end, p.id);
         return {

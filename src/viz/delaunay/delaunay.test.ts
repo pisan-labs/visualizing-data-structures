@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import { orient, writePoints, type Vec } from '../../layouts/plane';
 import { smallestText } from '../../render/text-size';
@@ -7,6 +8,7 @@ import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { inCircle } from '../_spatial/kit';
 import { delaunay, parseInput } from '.';
 import { realTris, triangleList, vertex } from './model';
+import { cocircular } from './practice';
 
 const pointArb = fc.record({
   x: fc.integer({ min: 0, max: 12 }),
@@ -67,9 +69,29 @@ describe('Delaunay triangulation', () => {
     );
   });
 
+  it('says "it" for one bad triangle, "together they" for several', () => {
+    const t = new Timeline(delaunay, delaunay.defaults, 1, [['insert', '2,2 10,1 6,10']]);
+    const says = t.entries[0]!.steps.map((st) => st.say);
+    expect(says).toContain(
+      '1 bad triangle. It forms a hole around A with 3 edges on its boundary.',
+    );
+    expect(says.some((x) => x.includes('1 bad triangle. Together'))).toBe(false);
+  });
+
   it('parses points', () => {
     expect(parseInput('1,2 3,4')).toBe('1,2 3,4');
     expect(parseInput('1,13')).toBeInstanceOf(Error);
+  });
+});
+
+describe('practice', () => {
+  it('asks for neighbours only when the triangulation is unique', () => {
+    const kind = delaunay.practice!.find((k) => k.id === 'neighbours')!;
+    for (let seed = 0; seed < 300; seed++) {
+      const q = kind.make(makeRng(seed));
+      const end = new Timeline(delaunay, delaunay.defaults, 1, q.setup).endState();
+      expect(cocircular(end), `seed ${seed}`).toBe(false);
+    }
   });
 });
 

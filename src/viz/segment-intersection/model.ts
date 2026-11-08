@@ -451,7 +451,11 @@ function* allSweep(run: Run): Generator<IStep, void, void> {
     const what = [
       e.starts.length ? `the left end of ${names(run.s, e.starts)}` : '',
       e.ends.length ? `the right end of ${names(run.s, e.ends)}` : '',
-      inner.length ? `a crossing of ${names(run.s, inner)}` : '',
+      inner.length > 1
+        ? `a crossing of ${names(run.s, inner)}`
+        : inner.length
+          ? `and ${names(run.s, inner)} passes through it`
+          : '',
     ]
       .filter(Boolean)
       .join(', ');
@@ -496,7 +500,7 @@ function* allSweep(run: Run): Generator<IStep, void, void> {
         ...block.map((id) => mark(segId(id), 'new')),
         ...ends.map((id) => mark(segId(id), 'stale')),
       ],
-      say: `${ends.length ? `Remove ${names(run.s, ends)}, which ${ends.length === 1 ? 'ends' : 'end'} here. ` : ''}${inner.length ? `Swap ${names(run.s, inner)}: past the crossing, their order flips. ` : ''}${e.starts.length ? `Insert ${names(run.s, e.starts)}. ` : ''}Status, bottom to top: ${run.s.status.length ? run.s.status.map((id) => byId(run.s, id).name).join(', ') : 'empty'}.`,
+      say: `${ends.length ? `Remove ${names(run.s, ends)}, which ${ends.length === 1 ? 'ends' : 'end'} here. ` : ''}${inner.length > 1 ? `Swap ${names(run.s, inner)}: past the crossing, their order flips. ` : inner.length ? `${names(run.s, inner)} goes on. ` : ''}${e.starts.length ? `Insert ${names(run.s, e.starts)}. ` : ''}Status, bottom to top: ${run.s.status.length ? run.s.status.map((id) => byId(run.s, id).name).join(', ') : 'empty'}.`,
       lines: ['bo.update'],
       vars: vars(run.s),
       level: 2,

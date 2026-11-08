@@ -67,5 +67,5 @@ It is not a measure of quality or relevance to a query. Search engines mix it wi
 
 - [A ring](#example:ring): why is 1/N already the answer?
 - [Rank flows along the links](#example:few-pages): add `F>C` so F is no longer dangling. Who gains?
-- Run [the trap](#example:trap) with d = 0.5 and with d = 0.95. What happens to E and F?
+- Run [the trap](#example:trap) with d = 0.5 and with d = 0.95. What happens to E and F? Why does 0.95 run out of iterations?
 - Load an undirected star, such as the Star preset. Who wins, and by how much?

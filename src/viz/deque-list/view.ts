@@ -1,9 +1,13 @@
-import type { MarkRole, Step } from '../../engine/types';
-import { drawChain, type ChainNode } from '../../layouts/node-chain';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { chainCols, drawChain, type ChainNode } from '../../layouts/node-chain';
 import type { Scene } from '../../render/scene';
 import { describe, type DequeListExtra, type DequeListState, type End } from './model';
 
-export function view(step: Step<DequeListState, DequeListExtra>): Scene {
+export function view(
+  step: Step<DequeListState, DequeListExtra>,
+  _settings?: unknown,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const n = state.nodes.length;
@@ -53,6 +57,7 @@ export function view(step: Step<DequeListState, DequeListExtra>): Scene {
   const tail = extra.ptr?.tail !== undefined ? extra.ptr.tail : n ? offset + n - 1 : null;
   const { shapes, bounds } = drawChain({
     kind: 'double',
+    cols: chainCols('double', stage),
     nodes,
     pointers: [
       { name: 'head', to: head, side: 'above' },

@@ -19,7 +19,10 @@ const BAR = 56;
 const TOP = 96;
 const BASE = 340;
 /** From one row of bars to the next, when a narrow stage wraps the chart. */
-const ROW_PITCH = BASE + 56 - (TOP - 44);
+const ROW_PITCH = BASE + 46 - (TOP - 44);
+/** Axis names left of the bars, and the captions under them. */
+const AXIS_SIZE = 13;
+const CAPTION_SIZE = 12.5;
 
 /**
  * Draw a step: one row of bars, or on a narrow stage (a phone) the same bars wrapped into
@@ -87,7 +90,7 @@ function draw(step: Step<LabState, undefined>, settings: LabSettings, perRow: nu
     text: log
       ? 'bar height: log scale (each step up is ×10)'
       : 'bar height: linear, the tallest bar fills the chart',
-    size: 12.5,
+    size: 13,
     cls: 'label',
   });
   for (let r = 0; r < rows; r++) {
@@ -108,7 +111,7 @@ function draw(step: Step<LabState, undefined>, settings: LabSettings, perRow: nu
       x: X0 - 22,
       y: BASE + dy + 22,
       text: 'steps',
-      size: 12,
+      size: AXIS_SIZE,
       anchor: 'end',
       cls: 'label',
     });
@@ -118,7 +121,7 @@ function draw(step: Step<LabState, undefined>, settings: LabSettings, perRow: nu
       x: X0 - 22,
       y: BASE + dy + 42,
       text: 'time',
-      size: 12,
+      size: AXIS_SIZE,
       anchor: 'end',
       cls: 'label',
     });
@@ -129,7 +132,7 @@ function draw(step: Step<LabState, undefined>, settings: LabSettings, perRow: nu
         x: X0 - 22,
         y: TOP + dy - 24,
         text: 'growth',
-        size: 12,
+        size: AXIS_SIZE,
         anchor: 'end',
         cls: 'label',
       });
@@ -194,7 +197,7 @@ function draw(step: Step<LabState, undefined>, settings: LabSettings, perRow: nu
       x: cx,
       y: base + 42,
       text: timeText(c, speed),
-      size: 12,
+      size: CAPTION_SIZE,
       anchor: 'middle',
       cls: 'label',
     });

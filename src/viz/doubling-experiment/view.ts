@@ -81,8 +81,21 @@ const COL_X = T.cols.reduce<number[]>((xs, c, i) => {
   return xs;
 }, []);
 const TW = COL_X[3]! + T.pad;
+/** A title drawn smaller than this breaks onto two lines instead, this far apart. */
+const TITLE_MIN = 13.5;
+const TITLE_LINE = 18;
 
-function tableBlock(state: DxState, settings: DxSettings, roles: Roles): Block {
+/**
+ * The table. Its title gets `titleRoom` units: on one line at 14 when it fits, or else broken
+ * after its comma onto two lines (beside the chart the table is narrow, and a smaller title
+ * would be the smallest text on the page).
+ */
+function tableBlock(
+  state: DxState,
+  settings: DxSettings,
+  roles: Roles,
+  titleRoom = TW - 2 * T.pad,
+): Block {
   const shapes: Shape[] = [];
   const text = (
     id: string,
@@ -98,26 +111,35 @@ function tableBlock(state: DxState, settings: DxSettings, roles: Roles): Block {
       : settings.noise === 'one'
         ? 'T(n): one timed run per size, with noise'
         : 'T(n): the median of 5 timed runs, with noise';
-  text('t-title', T.pad, T.title, title, {
-    mono: false,
-    size: fitSize(title, 14, TW - 2 * T.pad, PROP),
-    cls: 'label',
-  });
+  const comma = title.lastIndexOf(', ');
+  const lines =
+    fitSize(title, 14, titleRoom, PROP) >= TITLE_MIN || comma < 0
+      ? [title]
+      : [title.slice(0, comma + 1), title.slice(comma + 2)];
+  const size = Math.min(...lines.map((l) => fitSize(l, 14, titleRoom, PROP)));
+  lines.forEach((l, i) =>
+    text(i ? `t-title-${i + 1}` : 't-title', T.pad, T.title + i * TITLE_LINE, l, {
+      mono: false,
+      size,
+      cls: 'label',
+    }),
+  );
+  const dy = (lines.length - 1) * TITLE_LINE;
   ['n', 'T(n)', 'ratio', 'b'].forEach((h, i) =>
-    text(`t-h-${i}`, COL_X[i]!, T.head, h, { anchor: 'end', weight: 'bold' }),
+    text(`t-h-${i}`, COL_X[i]!, T.head + dy, h, { anchor: 'end', weight: 'bold' }),
   );
   shapes.push({
     kind: 'arrow',
     id: 't-rule',
     x1: T.pad / 2,
-    y1: T.rule,
+    y1: T.rule + dy,
     x2: TW - T.pad / 2,
-    y2: T.rule,
+    y2: T.rule + dy,
     head: 'none',
     opacity: 0.6,
   });
 
-  const top = (k: number) => T.rule + k * T.pitch;
+  const top = (k: number) => T.rule + dy + k * T.pitch;
   const base = (k: number) => top(k) + T.pitch / 2 + T.size * 0.36;
   state.sizes.forEach((n, k) => {
     const row = state.rows[k];
@@ -451,10 +473,9 @@ interface Placed {
   bounds: Bounds;
 }
 
+/** Beside: the table left of the chart. Under: the table under the chart, at its left edge. */
 function place(table: Block, chart: Block, beside: boolean): Placed {
-  const [tx, ty, cx, cy] = beside
-    ? [M, M, M + table.w + GAP, M]
-    : [M + Math.max(0, (chart.w - table.w) / 2), M + chart.h + GAP / 2, M, M];
+  const [tx, ty, cx, cy] = beside ? [M, M, M + table.w + GAP, M] : [M, M + chart.h + GAP / 2, M, M];
   const w = beside ? table.w + GAP + chart.w : Math.max(table.w, chart.w);
   const h = beside ? Math.max(table.h, chart.h) : chart.h + GAP / 2 + table.h;
   return {
@@ -469,8 +490,12 @@ export function view(
   stage?: StageSize,
 ): Scene {
   const roles: Roles = new Map(step.marks.map((m) => [m.id, m.role]));
-  const table = tableBlock(step.state, settings, roles);
   const chart = chartBlock(step.state, roles);
-  const pick = pickLayout(stage, [place(table, chart, true), place(table, chart, false)]);
+  // Under the chart, the table's title may run as wide as the chart.
+  const wide = Math.max(TW, chart.w) - 2 * T.pad;
+  const pick = pickLayout(stage, [
+    place(tableBlock(step.state, settings, roles), chart, true),
+    place(tableBlock(step.state, settings, roles, wide), chart, false),
+  ]);
   return { ...pick, label: describe(step.state, settings) };
 }

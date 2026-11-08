@@ -77,6 +77,8 @@ function prefixView(step: Step<RQState, RQExtra>): Scene {
     top: pTop,
     text: (k) => (s.p[k] === null || s.p[k] === undefined ? null : String(s.p[k])),
     cellClass: (k) => (s.p[k] === null ? 'cell' : 'live'),
+    // Sums reach three digits: let them use more of the cell, so they stay large on a phone.
+    valuePad: 6,
     roles,
     name: 'P',
     nameX,

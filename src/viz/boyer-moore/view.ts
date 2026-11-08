@@ -1,9 +1,16 @@
-import type { MarkRole, Step } from '../../engine/types';
-import { pitchFor, type AlignGeometry } from '../../layouts/align';
-import type { TableFrame } from '../../layouts/table';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
+import type { AlignGeometry } from '../../layouts/align';
+import { headSize, type TableFrame } from '../../layouts/table';
 import type { Scene, Shape } from '../../render/scene';
 import { q, type MatchExtra, type MatchState } from '../_strings/kit';
-import { colsOf, describeMatch, matchShapes, tableAt, tableSize } from '../_strings/view';
+import {
+  colsOf,
+  describeMatch,
+  matchShapes,
+  tableAt,
+  tableSize,
+  type MatchViewOptions,
+} from '../_strings/view';
 import { type BmPre, type BmSettings } from './model';
 
 /** The bad-character table's columns: characters in the order they first appear in P. */
@@ -31,12 +38,25 @@ const BESIDE = 24 + 56;
  * right end of P; a shift's label says how far P slid and, with both rules, which one chose it
  * (bc: bad character, gs: good suffix). The table entries a slide reads light up.
  */
-export function view(step: Step<MatchState<BmPre>, MatchExtra>, settings: BmSettings): Scene {
+export function view(
+  step: Step<MatchState<BmPre>, MatchExtra>,
+  settings: BmSettings,
+  stage?: StageSize,
+): Scene {
   const { state } = step;
   const full = settings.rules === 'full';
-  const m = state.pattern.length;
-  const pitch = pitchFor(colsOf(state));
   const keys = keysOf(state.pattern, full);
+  const { shapes, bounds } = matchShapes(step, (pitch) => optsOf(state, keys, full, pitch), stage);
+  return { shapes, bounds, label: label(step, full) };
+}
+
+function optsOf(
+  state: MatchState<BmPre>,
+  keys: string[],
+  full: boolean,
+  pitch: number,
+): MatchViewOptions {
+  const m = state.pattern.length;
   const pre = state.pre;
   const bad = frameOf(keys.length + 1, 1, pitch);
   const gs = frameOf(m + 1, 2, pitch);
@@ -101,11 +121,9 @@ export function view(step: Step<MatchState<BmPre>, MatchExtra>, settings: BmSett
     return out;
   };
 
-  const { shapes, bounds } = matchShapes(step, {
-    frame: { rows: full ? 3 : 4, above, aboveWidth },
-    above: tables,
-  });
-  return { shapes, bounds, label: label(step, full) };
+  // The good-suffix table's label lane ends in "all", the widest header.
+  const fonts = full ? [headSize('all', pitch)] : [];
+  return { frame: { rows: full ? 3 : 4, above, aboveWidth, fonts }, above: tables };
 }
 
 function label(step: Step<MatchState<BmPre>, MatchExtra>, full: boolean): string {

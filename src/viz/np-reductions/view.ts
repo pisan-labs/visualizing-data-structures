@@ -18,6 +18,7 @@ import {
   type GraphLayout,
   type GraphLike,
 } from '../../layouts/graph';
+import { pickLayout } from '../../layouts/arrange';
 import { shapesBounds, type Bounds, type Scene, type Shape } from '../../render/scene';
 import {
   ARCS,
@@ -41,9 +42,24 @@ const ROW = 74;
 const BOX_H = 30;
 const MAP_TEXT = 14;
 
-function drawMap(s: NpState, roles: Map<string, MarkRole>, extra: NpExtra): Scene {
+/** The map turned on its side, for a tall stage: its rows become columns this far apart. */
+const TURNED_COL = 150;
+const TURNED_ROW = 84;
+
+/**
+ * The map of reductions: columns left to right, or with `turned` top to bottom (a phone draws
+ * it larger that way).
+ */
+function drawMap(s: NpState, roles: Map<string, MarkRole>, extra: NpExtra, turned = false): Scene {
   const shapes: Shape[] = [];
-  const at = new Map(MAP.map((p) => [p.id, { x: p.col * COL, y: p.row * ROW }]));
+  const at = new Map(
+    MAP.map((p) => [
+      p.id,
+      turned
+        ? { x: p.row * TURNED_COL, y: p.col * TURNED_ROW }
+        : { x: p.col * COL, y: p.row * ROW },
+    ]),
+  );
   const width = (name: string) => textWidth(name, MAP_TEXT, true) + 18;
   const half = new Map(MAP.map((p) => [p.id, { w: width(p.name) / 2, h: BOX_H / 2 }]));
   const here = s.inst.problem;
@@ -108,9 +124,14 @@ function drawMap(s: NpState, roles: Map<string, MarkRole>, extra: NpExtra): Scen
     });
   }
   const maxW = Math.max(...MAP.map((p) => width(p.name)));
-  const cols = Math.max(...MAP.map((p) => p.col));
-  const rows = Math.max(...MAP.map((p) => p.row));
-  const top: Bounds = { x: -maxW / 2, y: -BOX_H / 2, w: cols * COL + maxW, h: rows * ROW + BOX_H };
+  const xs = [...at.values()].map((c) => c.x);
+  const ys = [...at.values()].map((c) => c.y);
+  const top: Bounds = {
+    x: Math.min(...xs) - maxW / 2,
+    y: Math.min(...ys) - BOX_H / 2,
+    w: Math.max(...xs) - Math.min(...xs) + maxW,
+    h: Math.max(...ys) - Math.min(...ys) + BOX_H,
+  };
   const legend = drawLegend(shapes, {
     id: 'key',
     items: ['A → B: A reduces to B', 'solid: step through it here', 'dashed: on the map only'],
@@ -153,7 +174,10 @@ export function view(
   const s = step.state;
   const extra = step.extra ?? {};
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
-  if (s.show === 'map') return drawMap(s, roles, extra);
+  if (s.show === 'map')
+    return stage
+      ? pickLayout(stage, [drawMap(s, roles, extra), drawMap(s, roles, extra, true)])
+      : drawMap(s, roles, extra);
 
   const i = s.inst;
   const shapes: Shape[] = [];

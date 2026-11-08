@@ -13,9 +13,11 @@
  * once per stage size, so the drawing holds still through an operation.
  *
  * Arrangement: the table (or tape) goes beside the grid or under it, whichever draws larger on
- * the stage (placePanels).
+ * the stage (placePanels). On a stage the grid may also be spaced tighter (SPACINGS), when
+ * that draws the picture clearly larger.
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import { drawAutomaton, fixedLayout, type Pt, type StateLayout } from '../../layouts/automaton';
 import { CELL_W } from '../../layouts/tape';
 import { padBounds, placePanels, textWidth, unionBounds } from '../../layouts/graph';
@@ -46,8 +48,11 @@ import {
 } from './model';
 import { OPS, deadOf, full, lineOrder, pairName, productOf, type SetOp } from './product';
 
-/** Grid spacing: the room a state and its arrows' labels need, as between diagram layers. */
-const G = 130;
+/**
+ * Grid spacing: the room a state and its arrows' labels need, as between diagram layers. A
+ * small stage may take the tighter spacing, when that draws the picture clearly larger.
+ */
+const SPACINGS = [130, 112];
 /** Room between the machines and the grid. */
 const GAP = 12;
 const CAPTION = 13;
@@ -111,11 +116,25 @@ function emptyTable(A: Automaton, B: Automaton, op: SetOp) {
 const RUN_W = (room: number) => Math.max(tapeCells(room) * CELL_W, 96);
 
 function arrange(s: ProdState, op: SetOp, mode: Mode, room: number, stage?: StageSize): Frame {
+  return pickLayout(
+    stage,
+    (stage ? SPACINGS : SPACINGS.slice(0, 1)).map((g) => arrangeAt(s, op, mode, room, g, stage)),
+  );
+}
+
+function arrangeAt(
+  s: ProdState,
+  op: SetOp,
+  mode: Mode,
+  room: number,
+  G: number,
+  stage?: StageSize,
+): Frame {
   const A = full(s.a);
   const B = full(s.b);
   const ka = `${A.states.join(',')}/${A.moves.map((m) => `${m.from}${m.on}${m.to}`).join(',')}`;
   const kb = `${B.states.join(',')}/${B.moves.map((m) => `${m.from}${m.on}${m.to}`).join(',')}`;
-  const key = `${ka}|${kb}|${op}|${mode}|${room}|${stage ? `${stage.w}x${stage.h}` : '-'}`;
+  const key = `${ka}|${kb}|${op}|${mode}|${room}|${G}|${stage ? `${stage.w}x${stage.h}` : '-'}`;
   const hit = frames.get(key);
   if (hit) return hit;
   const cols = lineOrder(s.a);
@@ -193,17 +212,19 @@ function arrange(s: ProdState, op: SetOp, mode: Mode, room: number, stage?: Stag
 
 /**
  * A product state's name is its pair, "p0,q1". It goes on two lines in its circle, p over q,
- * so even a pair such as "dead,q1" fits inside the accept ring.
+ * so even a pair such as "dead,q1" fits inside the accept ring; short names get larger type.
  */
 function pairLabels(shapes: Shape[], prefix: string): Shape[] {
   return shapes.flatMap((sh): Shape[] => {
     if (sh.kind !== 'text' || !sh.id.startsWith(`${prefix}s-`) || !sh.id.endsWith('-t'))
       return [sh];
     const [p, q] = sh.text.split(',') as [string, string];
-    const size = Math.max(p.length, q.length) >= 5 ? 10 : 12;
+    const longest = Math.max(p.length, q.length);
+    const size = longest <= 2 ? 14 : longest <= 4 ? 13 : 10;
+    const half = size / 2;
     const cy = sh.y - (sh.size ?? 15) * 0.35;
-    const top: TextShape = { ...sh, text: p, size, y: cy - 6.5 + size * 0.35 };
-    return [top, { ...top, id: `${sh.id}2`, text: q, y: cy + 6.5 + size * 0.35 }];
+    const top: TextShape = { ...sh, text: p, size, y: cy - half + size * 0.35 };
+    return [top, { ...top, id: `${sh.id}2`, text: q, y: cy + half + size * 0.35 }];
   });
 }
 

@@ -290,15 +290,15 @@ function layout(
   if (segs.length) {
     const sg = segs[0]!;
     const text = lemma === 'regular' ? `|xy| ≤ p = ${st.p}` : `|vxy| ≤ p = ${st.p}`;
-    const w = textWidth(text, 12);
+    const w = textWidth(text, 13);
     const mid = x0 + ((sg.a + sg.b) / 2) * CELL_W;
     out.push({
       kind: 'text',
       id: 'ruler-t',
       x: Math.max(x0, Math.min(mid - w / 2, x0 + width - w)),
-      y: rulerY(sg.row) + 15,
+      y: rulerY(sg.row) + 16,
       text,
-      size: 12,
+      size: 13,
       cls: 'label',
     });
   }
@@ -392,7 +392,7 @@ function layout(
       x: tx + TRY_W / 2,
       y: y + 12,
       text: String(i),
-      size: 12,
+      size: 13,
       anchor: 'middle',
       cls: 'label',
       mono: true,

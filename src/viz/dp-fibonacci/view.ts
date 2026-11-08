@@ -1,4 +1,5 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import type { Scene, Shape } from '../../render/scene';
 import {
   boxRow,
@@ -10,16 +11,24 @@ import {
 import { describe, frameId, type FibExtra, type FibSettings, type FibState } from './model';
 
 const FRAMES_H = 44;
+/** The narrowest cell the table draws (src/layouts/table.ts), for a phone. */
+const NARROW_CELL = 44;
 
 /**
  * One row, F[0..n], with the indices under it and arcs over it from the two cells a value
- * reads. Top-down, the calls on the stack sit in a row below, each under its own cell.
+ * reads. Top-down, the calls on the stack sit in a row below, each under its own cell. On a
+ * narrow stage (a phone) the cells are narrower, the narrowest the table allows, so the row is
+ * drawn larger.
  */
-export function view(step: Step<FibState, FibExtra>, settings: FibSettings): Scene {
+export function view(
+  step: Step<FibState, FibExtra>,
+  settings: FibSettings,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const memo = settings.style === 'memo';
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
-  const frame: TableFrame = {
+  const frameFor = (cellW?: number): TableFrame => ({
     rows: 1,
     cols: state.n + 1,
     colHeads: 1,
@@ -27,7 +36,15 @@ export function view(step: Step<FibState, FibExtra>, settings: FibSettings): Sce
     rowHeads: [memo ? 70 : 48],
     arcLanes: 2,
     below: memo ? FRAMES_H + 4 : 0,
-  };
+    cellW,
+  });
+  const frame = pickLayout(
+    stage,
+    [frameFor(), frameFor(NARROW_CELL)].map((f) => {
+      const t = tableGeometry(f);
+      return { f, bounds: { x: 0, y: 0, w: t.width, h: t.height } };
+    }),
+  ).f;
   const g = tableGeometry(frame);
   const links: TableLink[] = (extra.reads ?? []).map((from, k) => ({
     id: `read-${k}`,

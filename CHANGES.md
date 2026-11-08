@@ -307,3 +307,11 @@
 2026-11-08 [plan] Yusuf: fix the remaining small-text pages too; four agents by layout family (automata, recursion and analysis, strings/DP/arrays, graphs/lists/trees)
 
 2026-11-08 [plan] Wave 7 (PLAN.md section 16): 62 pages for the standard topics no page covered, Yusuf said "All"; catalog entries added (planned until built); ten agent families, four at a time
+
+2026-11-08 [code] Merged: readable text on 11 automata and tape pages (tape numbers 14, state names 13-14, automaton tables 15, tight Thompson pictures on a stage); short on a phone: nfa-to-dfa 7.3, multitape-tm 8.8, dfa-to-regex 8.9; regex-to-nfa laptop 10.3
+
+2026-11-08 [code] Merged: readable text on 16 string, DP, array, range and geometry pages (table fitCellW, align fitOn), 13 recursion and analysis pages (calls.ts boxH/padX/tagMin), 21 graph, list, grid and tree pages (turned layered layouts, chainCols, flow label fix); all meet 11/9 px
+
+2026-11-08 [note] Daily deploy at 18:47 (late: CI on 8109abe finished green at 17:58 inside the 30-minute window, the watch read it a moment early, then a worker restart): main 18e1bb5..8109abe, live bundle matches, 129 pages 200
+
+2026-11-08 [note] All eight wave 7 agents stopped at the 5-hour usage limit around 17:30 and were resumed at 18:50

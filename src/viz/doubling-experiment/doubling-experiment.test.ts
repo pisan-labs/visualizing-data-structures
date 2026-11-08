@@ -37,6 +37,8 @@ import {
   type DxState,
 } from './model';
 import { nShort } from './view';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 const settings = (s: Partial<DxSettings> = {}): DxSettings =>
   ({ ...def.defaults, ...s }) as DxSettings;
@@ -521,5 +523,13 @@ describe('text', () => {
     expect(errorText(330, 100)).toBe('3.3 times too high');
     expect(errorText(100, 100)).toBe('spot on');
     expect(fix2(-0.25)).toBe('−0.25');
+  });
+});
+
+describe('drawn text size', () => {
+  // The table title shrank to 8.4 px on a phone; on two lines (or as wide as the chart), at 9.1.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(def, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(def, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

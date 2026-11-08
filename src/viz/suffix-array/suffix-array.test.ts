@@ -118,9 +118,10 @@ describe('suffix array', () => {
 });
 
 describe('drawn text size', () => {
-  // Position and row numbers were 12 and 13 units, column heads 13: now 14.
+  // Position and row numbers were 12 and 13 units, column heads 13, then 14 (8.5 px on a
+  // phone): now 16.
   it('stays readable on a laptop and on a phone', () => {
-    expect(smallestText(suffixArray, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(10.5);
-    expect(smallestText(suffixArray, PHONE_STAGE).px).toBeGreaterThanOrEqual(8.4);
+    expect(smallestText(suffixArray, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(suffixArray, PHONE_STAGE).px).toBeGreaterThanOrEqual(9.5);
   });
 });

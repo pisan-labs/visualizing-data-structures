@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "segment-intersection",
+  "id": "crossing-found",
+  "title": "The sweep stops at the first crossing",
+  "notes": "Do any two segments intersect? The sweep inserts each segment at its left end and tests it against its neighbours. The first time two neighbours meet, the answer is yes and the rest is never looked at.",
+  "settings": {
+    "mode": "any"
+  },
+  "seed": 1,
+  "ops": [["load", "1,2 9,8 2,10 10,3 0,6 5,5 6,1 11,2"], ["sweep"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

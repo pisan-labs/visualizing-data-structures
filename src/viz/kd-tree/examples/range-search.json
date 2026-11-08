@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "kd-tree",
+  "id": "range-search",
+  "title": "Search a rectangle",
+  "notes": "Report the points in a rectangle. A subtree is skipped when the rectangle lies entirely on one side of its node's line.",
+  "settings": {
+    "prune": true
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", "6,5 3,8 9,2 2,3 8,9 4,1 10,6 1,10"],
+    ["range", "2,2 7,9"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

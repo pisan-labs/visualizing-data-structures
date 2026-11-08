@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "closest-pair",
+  "id": "across-the-line",
+  "title": "The closest pair crosses the line",
+  "notes": "Each half's best pair is far apart, but two points sit on either side of the dividing line, one step apart. Only the strip check finds them.",
+  "settings": {
+    "method": "divide"
+  },
+  "seed": 1,
+  "ops": [["load", "1,1 3,9 2,5 5,6 6,6 10,2 9,10 11,6"], ["closest"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

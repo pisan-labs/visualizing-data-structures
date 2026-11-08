@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "delaunay",
+  "id": "ten-points",
+  "title": "Ten points, one at a time",
+  "notes": "Watch each new point find its bad triangles, cut a hole and fill it. No triangle ever has another point inside its circle.",
+  "settings": {
+    "voronoi": false
+  },
+  "seed": 1,
+  "ops": [["insert", "2,2 10,1 6,10 6,5 1,8 11,7 4,4 8,3 9,10 3,11"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

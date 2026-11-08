@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "delaunay",
+  "id": "four-on-a-circle",
+  "title": "Four points on one circle",
+  "notes": "The corners of a square are cocircular. Either diagonal gives a valid Delaunay triangulation; the check shows the fourth point sitting exactly on the circle.",
+  "settings": {
+    "voronoi": false
+  },
+  "seed": 1,
+  "ops": [["insert", "3,3 9,3 9,9 3,9"], ["check"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

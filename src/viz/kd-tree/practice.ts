@@ -53,10 +53,15 @@ export function kdPractice(def: () => Def): PracticeKind[] {
       id: 'nearest',
       title: 'Nearest neighbour',
       make(rng) {
-        const setup = setupOf(rng, 6, 9);
-        const before = run(setup).endState();
-        const q = freePoint(rng, before);
-        const end = run([...setup, ['nearest', `${q.x},${q.y}`]]).endState();
+        let setup: OpCall[];
+        let q: { x: number; y: number };
+        let end: KdState;
+        // Two points equally near q would make two right answers: try again.
+        do {
+          setup = setupOf(rng, 6, 9);
+          q = freePoint(rng, run(setup).endState());
+          end = run([...setup, ['nearest', `${q.x},${q.y}`]]).endState();
+        } while (end.nodes.filter((n) => dist2(n, q) === end.bestD2).length > 1);
         const best = byId(end, end.best!);
         const others = shuffled(
           rng,

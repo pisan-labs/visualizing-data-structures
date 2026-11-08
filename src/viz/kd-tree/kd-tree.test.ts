@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { writePoints } from '../../layouts/plane';
@@ -94,6 +95,18 @@ describe('k-d tree', () => {
     expect(parseInput('7')).toBe(7);
     expect(parseInput('1,2 13,4')).toBeInstanceOf(Error);
     expect(parseInput('99')).toBeInstanceOf(Error);
+  });
+});
+
+describe('practice', () => {
+  it('asks for the nearest point only when exactly one point is nearest', () => {
+    const kind = kdTree.practice!.find((k) => k.id === 'nearest')!;
+    for (let seed = 0; seed < 200; seed++) {
+      const q = kind.make(makeRng(seed));
+      const end = new Timeline(kdTree, kdTree.defaults, 1, [...q.setup, ...q.watch!]).endState();
+      const ds = end.nodes.map((n) => dist2(n, end.query!));
+      expect(ds.filter((d) => d === Math.min(...ds)).length, `seed ${seed}`).toBe(1);
+    }
   });
 });
 

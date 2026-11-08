@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "cartesian-tree",
+  "id": "max-on-top",
+  "title": "Largest value on top",
+  "notes": "The same array as the build example, with the largest value on top. Now the stack pops values smaller than the new one, and a walk down answers range maximums.",
+  "settings": {
+    "heap": "max"
+  },
+  "seed": 1,
+  "ops": [
+    ["append", 5],
+    ["append", 2],
+    ["append", 8],
+    ["append", 6],
+    ["append", 9],
+    ["append", 1],
+    ["append", 7],
+    ["append", 3],
+    ["rmq", 0, 3]
+  ]
+}

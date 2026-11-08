@@ -26,7 +26,7 @@ import { clearOfButtons, padBounds, textWidth, unionBounds } from '../../layouts
 import { CELL_W, drawTape } from '../../layouts/tape';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { drawGrid, gridWidths, GRID_ROW } from '../_automata/panels';
-import { pairKey, pictures, type Picture } from '../_automata/thompson-layout';
+import { TIGHT, pairKey, pictures, type Picture } from '../_automata/thompson-layout';
 import { CAP } from './engines';
 import {
   describe,
@@ -172,9 +172,15 @@ function plan(
   };
 }
 
-/** The arrangement drawn largest on this stage; with no stage, the first (one row, panels right). */
+/**
+ * The arrangement drawn largest on this stage; with no stage, the first (one row, panels right).
+ */
 function choose(s: EngState, stage?: StageSize): Plan {
-  const pics = pictures(s.frags, 'thompson', `|${s.text}`);
+  // On a stage the NFA may also be drawn tighter (TIGHT), for a long expression.
+  const key = `|${s.text}`;
+  const pics = stage
+    ? [...pictures(s.frags, 'thompson', key), ...pictures(s.frags, 'thompson', key, TIGHT)]
+    : pictures(s.frags, 'thompson', key).filter((p) => p.rows < 4);
   const cells = tapeCells(s);
   const tapes = cells > 9 ? [1, 2] : [1];
   const sides: [Side, Flow][] = partsOf(s).length
@@ -403,7 +409,7 @@ function drawStack(
     x: at.x,
     y: bottom + 20,
     text: 'stack (q, i)',
-    size: 14,
+    size: 15,
     cls: 'label',
   });
   shapes.push({
@@ -414,7 +420,7 @@ function drawStack(
     text: depth
       ? `${depth} ${depth === 1 ? 'choice' : 'choices'}${lo > 0 ? `, top ${shown.length} shown` : ''}`
       : 'empty',
-    size: 14,
+    size: 15,
     cls: 'label',
   });
 }
@@ -443,7 +449,7 @@ function drawChart(
       x: x + 20,
       y: at.y + 16,
       text,
-      size: 14,
+      size: 15,
       cls: 'label',
     });
   };
@@ -472,7 +478,7 @@ function drawChart(
       x: x0 - 6,
       y: y + 4,
       text: DECADE_TEXT[k] ?? `1e${k}`,
-      size: 14,
+      size: 15,
       anchor: 'end',
       mono: true,
       cls: 'label',
@@ -484,7 +490,7 @@ function drawChart(
     x: right + 4,
     y: y0 - PLOT_H + 4,
     text: 'cap',
-    size: 14,
+    size: 15,
     cls: 'label',
   });
   shapes.push({ kind: 'arrow', id: 'ch-axis-x', x1: x0, y1: y0, x2: right, y2: y0, head: 'none' });
@@ -504,7 +510,7 @@ function drawChart(
       x: x0 + (n - 0.5) * SLOT,
       y: y0 + 15,
       text: String(n),
-      size: 14,
+      size: 15,
       anchor: 'middle',
       mono: true,
       cls: 'label',
@@ -515,7 +521,7 @@ function drawChart(
     x: x0,
     y: y0 + 34,
     text: `steps (log scale) for ${g.unit.length > 1 ? `(${g.unit})` : g.unit}ⁿ`,
-    size: 14,
+    size: 15,
     cls: 'label',
   });
   for (const r of g.rows) {

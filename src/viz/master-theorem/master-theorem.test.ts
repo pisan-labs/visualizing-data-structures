@@ -4,6 +4,8 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { masterTheorem, parseRecurrence } from '.';
 import { classify, readRec, unroll, type MtSettings, type Rec } from './model';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 const settings = (s: Partial<MtSettings> = {}): MtSettings =>
   ({ ...masterTheorem.defaults, ...s }) as MtSettings;
@@ -103,5 +105,13 @@ describe('master theorem', () => {
       }),
       { numRuns: 300 },
     );
+  });
+});
+
+describe('drawn text size', () => {
+  // The tree's values drew at 9 px on a phone; at the tree font 13, at 9.4.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(masterTheorem, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(masterTheorem, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

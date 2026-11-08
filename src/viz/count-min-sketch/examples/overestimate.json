@@ -1,0 +1,32 @@
+{
+  "format": 1,
+  "viz": "count-min-sketch",
+  "id": "overestimate",
+  "title": "Estimates are never too low",
+  "notes": "Nine adds of six items. Every estimate is at least the true count. 42 has a counter to itself in one row, so its estimate is exact. 9 was added once but is estimated at 2: in every row it shares a counter with another item. 50 was never added and is still estimated at 1.",
+  "settings": {
+    "d": 3,
+    "w": 8,
+    "update": "standard",
+    "phi": "0.2"
+  },
+  "seed": 1,
+  "ops": [
+    ["add", 42],
+    ["add", 17],
+    ["add", 42],
+    ["add", 5],
+    ["add", 9],
+    ["add", 42],
+    ["add", 23],
+    ["add", 17],
+    ["add", 61],
+    ["estimate", 42],
+    ["estimate", 9],
+    ["estimate", 50]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

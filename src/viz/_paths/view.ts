@@ -129,7 +129,7 @@ export function drawKeyed(shapes: Shape[], o: KeyedOptions): Bounds {
       x: x + w / 2,
       y: y + 35,
       text: c.value,
-      size: c.value.length <= 3 ? 14 : 12.5,
+      size: c.value.length <= 3 ? 14 : 13,
       anchor: 'middle',
       mono: true,
       role: textRole(`${rid}-t`),
@@ -144,7 +144,7 @@ export function drawKeyed(shapes: Shape[], o: KeyedOptions): Bounds {
       x: x0 + w / 2,
       y: o.y + KEYED_H + 14,
       text: o.first,
-      size: 12,
+      size: 13,
       anchor: 'middle',
       cls: 'label',
     });
@@ -264,7 +264,7 @@ export function drawSplit(shapes: Shape[], o: SplitOptions): Bounds {
         x: p.x + o.cellW / 2,
         y: p.y + KEYED_H + 14,
         text: 'min',
-        size: 12,
+        size: 13,
         anchor: 'middle',
         cls: 'label',
       });

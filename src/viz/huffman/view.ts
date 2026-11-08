@@ -206,7 +206,7 @@ function drawTable(
       x: x0 + (i === 0 ? symW / 2 : symW + codeW / 2),
       y: y0 + 14,
       text: h,
-      size: 12,
+      size: 13,
       anchor: 'middle',
       cls: 'label',
     });

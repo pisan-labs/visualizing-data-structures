@@ -2,9 +2,10 @@
  * Shared drawing for the string-matching pages: a state and a step become the alignment rows
  * of src/layouts/align.ts. Each page adds what is its own (a table, a hash lane) and a label.
  */
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
 import {
   alignScene,
+  fitOn,
   placeTable,
   prefixIds,
   type AlignContent,
@@ -79,14 +80,24 @@ export interface MatchViewOptions {
 /** The columns a frame needs: the longer of the text and the pattern. */
 export const colsOf = (state: MatchState) => Math.max(state.text.length, state.pattern.length, 1);
 
+/**
+ * The step drawn as alignment rows. `optsOf(pitch)` gives the options for a column pitch (a
+ * table above the text is as wide as its columns); the pitch is the one that draws the frame
+ * largest on `stage` (fitOn), or the usual one with no stage.
+ */
 export function matchShapes(
   step: Step<MatchState, MatchExtra>,
-  opts: MatchViewOptions,
+  optsOf: MatchViewOptions | ((pitch: number) => MatchViewOptions),
+  stage?: StageSize,
 ): { shapes: Shape[]; bounds: Bounds; geometry: AlignGeometry } {
   const { state } = step;
   const extra = step.extra ?? {};
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
-  const frame: AlignFrame = { ...opts.frame, cols: colsOf(state) };
+  const cols = colsOf(state);
+  const at = (p: number) => (typeof optsOf === 'function' ? optsOf(p) : optsOf);
+  const fit = fitOn(stage, (p) => ({ ...at(p).frame, cols }));
+  const opts = at(fit.pitch);
+  const frame: AlignFrame = { ...opts.frame, cols, ...fit };
   const self = extra.self;
   const content: AlignContent = self
     ? {
@@ -108,8 +119,8 @@ export function matchShapes(
         ...(opts.values ? { values: opts.values } : {}),
       };
   if (!self) {
-    const at = extra.pointer?.at ?? opts.pointerOf?.(state);
-    if (at !== undefined) content.pointer = { name: extra.pointer?.name ?? 'i', at };
+    const ptr = extra.pointer?.at ?? opts.pointerOf?.(state);
+    if (ptr !== undefined) content.pointer = { name: extra.pointer?.name ?? 'i', at: ptr };
     if (extra.pair) content.pair = { ...extra.pair, row: currentRow(state) };
   }
   const out = alignScene(frame, content);

@@ -4,6 +4,8 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { memoryModel, parseStatement } from '.';
 import { mainText, readStmt, type MemSettings, type MemState } from './model';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 const settings = (s: Partial<MemSettings> = {}): MemSettings =>
   ({ ...memoryModel.defaults, ...s }) as MemSettings;
@@ -162,3 +164,11 @@ function checkInvariants(s: MemState) {
   for (const o of s.heap) if (o.garbage) expect(reached.has(o.id)).toBe(false);
   expect(s.frames[0]!.title).toBe('main');
 }
+
+describe('drawn text size', () => {
+  // The heap's tags drew at 8.8 px on a phone; at 13, at 9.2.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(memoryModel, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(memoryModel, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
+  });
+});

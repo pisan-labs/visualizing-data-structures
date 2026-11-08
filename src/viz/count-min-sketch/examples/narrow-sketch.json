@@ -1,0 +1,32 @@
+{
+  "format": 1,
+  "viz": "count-min-sketch",
+  "id": "narrow-sketch",
+  "title": "Too few counters per row",
+  "notes": "The stream of Estimates are never too low, in rows of 4 counters instead of 8. Every counter is shared by several items, so the estimate of 9 is 3 instead of 1. The error bound εN = (e/w)·N doubles when w halves.",
+  "settings": {
+    "d": 3,
+    "w": 4,
+    "update": "standard",
+    "phi": "0.2"
+  },
+  "seed": 1,
+  "ops": [
+    ["add", 42],
+    ["add", 17],
+    ["add", 42],
+    ["add", 5],
+    ["add", 9],
+    ["add", 42],
+    ["add", 23],
+    ["add", 17],
+    ["add", 61],
+    ["estimate", 42],
+    ["estimate", 9],
+    ["estimate", 50]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

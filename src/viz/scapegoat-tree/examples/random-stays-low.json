@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "scapegoat-tree",
+  "id": "random-stays-low",
+  "title": "A good order needs no rebuilds",
+  "notes": "Keys that arrive in a balanced order never land too deep, so a scapegoat tree behaves exactly like a plain BST: no rotations, no rebuilds, no extra fields in the nodes.",
+  "settings": {
+    "alpha": "2/3"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 25],
+    ["insert", 75],
+    ["insert", 12],
+    ["insert", 37],
+    ["insert", 62],
+    ["insert", 87],
+    ["insert", 6],
+    ["insert", 30],
+    ["insert", 90]
+  ]
+}

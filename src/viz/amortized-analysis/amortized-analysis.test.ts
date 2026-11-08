@@ -19,6 +19,8 @@ import {
   type Growth,
   type Structure,
 } from './model';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { smallestText } from '../../render/text-size';
 
 const settings = (s: Partial<AmSettings> = {}): AmSettings =>
   ({ ...amortizedAnalysis.defaults, ...s }) as AmSettings;
@@ -284,5 +286,13 @@ describe('amortized analysis', () => {
     expect(lines(settings({ structure: 'counter', method: 'aggregate' }))).toContain(
       'cost = cost + 1',
     );
+  });
+});
+
+describe('drawn text size', () => {
+  // The scale labels drew at 8.4 px on a phone; at 12, at 9.1.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(amortizedAnalysis, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(amortizedAnalysis, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

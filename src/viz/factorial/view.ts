@@ -1,4 +1,5 @@
-import type { MarkRole, Step } from '../../engine/types';
+import type { MarkRole, StageSize, Step } from '../../engine/types';
+import { pickLayout } from '../../layouts/arrange';
 import {
   callStackHeight,
   callTreeBounds,
@@ -24,8 +25,13 @@ import {
 } from './model';
 
 const SIZE = 12.5;
-/** A long chain packs its boxes closer, so it is no taller than the stack beside it. */
-const tree = (calls: number) => ({ size: 11, levelGap: calls > 6 ? 31 : 36, gap: 10 });
+/**
+ * The chain's boxes, at the stack's font. Two lines (the value under the call) keep the chain
+ * narrow for a phone; one line (the value after it) keeps a long chain no taller than the stack
+ * beside it, for a wide, short laptop stage.
+ */
+const TWO_LINES = (calls: number) => ({ size: SIZE, levelGap: calls > 6 ? 40 : 44, gap: 10 });
+const ONE_LINE = { size: SIZE, levelGap: 30, gap: 10, twoLines: false };
 const GAP = 26;
 /** Keep at least this many stack slots, so a short run is not blown up to fill the stage. */
 const MIN_ROOM = 5;
@@ -96,7 +102,11 @@ function frameSize(s: FactState, st: FactSettings) {
   return frameWidth(heads, lines, tokenLines, SIZE);
 }
 
-export function view(step: Step<FactState, undefined>, settings: FactSettings): Scene {
+export function view(
+  step: Step<FactState, undefined>,
+  settings: FactSettings,
+  stage?: StageSize,
+): Scene {
   const s = step.state;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const shapes: Shape[] = [];
@@ -104,16 +114,13 @@ export function view(step: Step<FactState, undefined>, settings: FactSettings): 
   const top = s.stack[s.stack.length - 1]?.call;
 
   // The call tree, for factorial a chain, laid out finished so it never moves as it grows.
-  const layout = layoutCallTree(
-    s.calls.map((c) => ({
-      id: String(c.id),
-      parent: c.parent === null ? null : String(c.parent),
-      label: treeLabel(c),
-      value: c.returns === null ? undefined : `= ${c.returns}`,
-      state: 'done',
-    })),
-    tree(s.calls.length),
-  );
+  const finished: TreeCall[] = s.calls.map((c) => ({
+    id: String(c.id),
+    parent: c.parent === null ? null : String(c.parent),
+    label: treeLabel(c),
+    value: c.returns === null ? undefined : `= ${c.returns}`,
+    state: 'done',
+  }));
   const stateOf = (c: FactCall): CallState => {
     if (s.phase[c.id] === 'failed') return 'error';
     if (c.id === top) return 'current';
@@ -126,10 +133,36 @@ export function view(step: Step<FactState, undefined>, settings: FactSettings): 
     value: s.result[c.id] === undefined ? undefined : `= ${s.result[c.id]}`,
     state: stateOf(c),
   }));
-  const treeW = Math.max(96, layout.bounds.w);
   const treeTop = 30;
-  const dx = -layout.bounds.x + (treeW - layout.bounds.w) / 2;
-  const dy = treeTop - layout.bounds.y;
+  const { width, lineX } = frameSize(s, settings);
+  const run = s.run;
+  const room = Math.max(MIN_ROOM, run?.room ?? 0);
+  // Decided from the finished chain and the reserved stack, so it holds for the whole run.
+  // The stack sits beside the chain or, for a narrow phone stage, under it.
+  const arrangement = (opts: Parameters<typeof layoutCallTree>[1], under = false) => {
+    const layout = layoutCallTree(finished, opts);
+    const treeW = Math.max(96, layout.bounds.w);
+    const dx = -layout.bounds.x + (treeW - layout.bounds.w) / 2;
+    const dy = treeTop - layout.bounds.y;
+    const treeBox: Bounds =
+      s.calls.length > 0 ? callTreeBounds(layout, dx, dy) : { x: 0, y: treeTop, w: treeW, h: 24 };
+    const stackX = under ? 0 : treeW + GAP;
+    const stackY = under ? treeBox.y + treeBox.h + GAP : 0;
+    const bounds = padBounds(
+      unionBounds(
+        treeBox,
+        { x: 0, y: 0, w: treeW, h: 30 },
+        { x: stackX, y: stackY, w: width, h: callStackHeight(room, SIZE) },
+      ),
+      12,
+    );
+    return { layout, dx, dy, stackX, stackY, bounds };
+  };
+  const { layout, dx, dy, stackX, stackY, bounds } = pickLayout(stage, [
+    arrangement(TWO_LINES(s.calls.length)),
+    arrangement(ONE_LINE),
+    arrangement(TWO_LINES(s.calls.length), true),
+  ]);
   shapes.push({
     kind: 'text',
     id: 'tree-title',
@@ -153,11 +186,8 @@ export function view(step: Step<FactState, undefined>, settings: FactSettings): 
     });
   }
   shapes.push(...drawCallTree(layout, now, { dx, dy, roles }));
-  const treeBox: Bounds =
-    s.calls.length > 0 ? callTreeBounds(layout, dx, dy) : { x: 0, y: treeTop, w: treeW, h: 24 };
 
   // The call stack, main at the bottom and the newest frame on top.
-  const run = s.run;
   const frames: StackFrame[] = [
     {
       id: 'main',
@@ -195,14 +225,11 @@ export function view(step: Step<FactState, undefined>, settings: FactSettings): 
           : undefined,
     });
   }
-  const { width, lineX } = frameSize(s, settings);
-  const room = Math.max(MIN_ROOM, run?.room ?? 0);
-  const stackX = treeW + GAP;
   // Before the first call main sits right under the title (so a still picture is tight); the
   // framing keeps the room either way.
   const stack = drawCallStack(frames, {
     x: stackX,
-    y: 0,
+    y: stackY,
     width,
     room: run ? room : 1,
     lineX,
@@ -210,14 +237,5 @@ export function view(step: Step<FactState, undefined>, settings: FactSettings): 
     roles,
   });
   shapes.push(...stack.shapes);
-
-  const bounds = padBounds(
-    unionBounds(
-      treeBox,
-      { x: 0, y: 0, w: treeW, h: 30 },
-      { x: stackX, y: 0, w: width, h: callStackHeight(room, SIZE) },
-    ),
-    12,
-  );
   return { shapes, bounds, label: describe(s) };
 }

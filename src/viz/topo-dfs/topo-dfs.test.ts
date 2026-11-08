@@ -7,6 +7,9 @@ import { isAcyclic, type Graph } from '../_graph/graph';
 import { parseGraph } from '../_graph/parse';
 import { topoDfs } from '.';
 import { cycleEdges, pseudocode, type OnCycle, type TopoRun, type TopoSettings } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import textSizeDef from './index';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: a plain recursive DFS over sorted out-lists, written independently of the page.
@@ -153,5 +156,13 @@ describe('topological sort practice', () => {
         }
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // Layered examples stood 466 units tall (10.7 px on a laptop); turned on their side they read at 13.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(textSizeDef, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(textSizeDef, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

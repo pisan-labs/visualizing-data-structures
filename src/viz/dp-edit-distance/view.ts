@@ -88,6 +88,7 @@ export function view(
       label,
       labelX: x(0) - pitch / 2 - 8,
       size: Math.min(22, pitch - 14),
+      labelSize: 20,
     });
     const y = place.top;
     out.push(...boxRow('al-a', y, top, opts('from')));

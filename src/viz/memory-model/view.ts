@@ -228,7 +228,7 @@ export function view(step: Step<MemState, undefined>, settings: MemSettings): Sc
         x: heapX + w / 2,
         y: oy + 20,
         text: 'empty',
-        size: 12,
+        size: 13,
         anchor: 'middle',
         cls: 'label',
       });
@@ -238,7 +238,7 @@ export function view(step: Step<MemState, undefined>, settings: MemSettings): Sc
       x: heapX + w + 10,
       y: oy + BOX_H / 2 + 5,
       text: o.garbage ? 'garbage' : 'list',
-      size: 12.5,
+      size: 13,
       cls: 'label',
       role: o.garbage ? 'stale' : undefined,
     });
@@ -279,7 +279,7 @@ function cells(
       x: x + k * w + w / 2,
       y: y + h / 2 + 5,
       text: t,
-      size: t.length > 2 ? 12 : 14,
+      size: t.length > 2 ? 13 : 14,
       anchor: 'middle',
       mono: true,
       weight: 'bold',

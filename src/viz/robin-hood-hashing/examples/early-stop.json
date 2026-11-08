@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "robin-hood-hashing",
+  "id": "early-stop",
+  "title": "Search stops early",
+  "notes": "search(55) starts at slot 0. At slot 3 it finds 1, only 2 from its home, while 55 would be 3 from home there. Had 55 been inserted, it would have taken that slot, so the search stops without reaching an empty slot.",
+  "settings": {
+    "m": 11,
+    "policy": "robin"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 22],
+    ["insert", 33],
+    ["insert", 1],
+    ["insert", 44],
+    ["insert", 4],
+    ["insert", 5],
+    ["search", 55],
+    ["search", 44]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

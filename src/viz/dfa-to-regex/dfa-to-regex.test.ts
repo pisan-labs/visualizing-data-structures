@@ -24,6 +24,8 @@ import {
 import { MAX_TEXT, dry, loadCheck, type DrRun, type DrSettings } from './model';
 import { allWords } from './practice';
 import { countA, endsWith, startsWith } from './presets';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 
 const SETTINGS: DrSettings[] = (['name', 'fewest'] as Order[]).flatMap((order) =>
   (['identities', 'none'] as Simplify[]).map((simplify) => ({ order, simplify })),
@@ -337,5 +339,13 @@ describe('dfa-to-regex', () => {
         toRegex(dfaOf(f), { order: 'fewest', simplify: 'identities' }).order,
       );
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // On a phone the GNFA runs down with the table beside it, its labels wrapped shorter: 8.9 px.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(dfaToRegex, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(dfaToRegex, PHONE_STAGE).px).toBeGreaterThanOrEqual(8.8);
   });
 });

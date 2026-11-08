@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "cartesian-tree",
+  "id": "new-minimum",
+  "title": "A new minimum empties the stack",
+  "notes": "Rising values never pop anything, so the right spine grows into a chain. Then 1 arrives, smaller than everything: it pops all five nodes and becomes the root, with the whole chain as its left subtree. One expensive append, paid for by five cheap ones.",
+  "settings": {
+    "heap": "min"
+  },
+  "seed": 1,
+  "ops": [
+    ["append", 3],
+    ["append", 5],
+    ["append", 7],
+    ["append", 9],
+    ["append", 11],
+    ["append", 1]
+  ]
+}

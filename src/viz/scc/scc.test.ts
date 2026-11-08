@@ -7,6 +7,9 @@ import type { Graph } from '../_graph/graph';
 import { parseGraph } from '../_graph/parse';
 import { scc } from '.';
 import { condensation, pseudocode, type Algorithm, type SccRun, type SccSettings } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import textSizeDef from './index';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: who reaches whom, by a search from every vertex. Two vertices share a component
@@ -210,5 +213,13 @@ describe('SCC practice', () => {
         }
       }
     }
+  });
+});
+
+describe('drawn text size', () => {
+  // The component graph of an undirected graph stood its components in a column (11.0 px on a laptop); side by side, 11.4.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(textSizeDef, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(textSizeDef, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

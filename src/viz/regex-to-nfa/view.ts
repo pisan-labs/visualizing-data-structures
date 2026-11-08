@@ -20,7 +20,7 @@ import { CELL_H, CELL_W, drawTape } from '../../layouts/tape';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { EPS } from '../_automata/automaton';
 import { pending } from '../_automata/thompson-construct';
-import { boxAround, pairKey, pictures, type Picture } from '../_automata/thompson-layout';
+import { TIGHT, boxAround, pairKey, pictures, type Picture } from '../_automata/thompson-layout';
 import { describe, drawn, type RxExtra, type RxSettings, type RxState } from './model';
 
 const RX_W = 26;
@@ -40,9 +40,15 @@ interface Frame {
   tapeAt: { x: number; y: number };
 }
 
-function frameFor(pic: Picture, text: string): Frame {
+/**
+ * The frame for a picture: the expression over the NFA, and the word's tape under the NFA, or
+ * (`top`) right of the expression, its cells level with the expression's first row.
+ */
+function frameFor(pic: Picture, text: string, top = false): Frame {
   const b = pic.bounds;
-  const per = Math.max(10, Math.floor((b.w - LABEL_W) / RX_W));
+  // Beside the expression, the tape takes room from its rows.
+  const tape = top ? 30 + LABEL_W + TAPE_RESERVE * CELL_W + RESULT_W : 0;
+  const per = Math.max(10, Math.floor((b.w - LABEL_W - tape) / RX_W));
   const lines = Math.ceil(text.length / per);
   const rowH = lines * RX_H + (lines - 1) * 6;
   const rowBox = {
@@ -51,7 +57,10 @@ function frameFor(pic: Picture, text: string): Frame {
     w: LABEL_W + Math.min(per, text.length) * RX_W,
     h: rowH,
   };
-  return { pic, per, rowBox, tapeAt: { x: b.x + LABEL_W, y: b.y + b.h + 16 } };
+  const tapeAt = top
+    ? { x: rowBox.x + rowBox.w + 30 + LABEL_W, y: rowBox.y + RX_H / 2 - 26 - CELL_H / 2 }
+    : { x: b.x + LABEL_W, y: b.y + b.h + 16 };
+  return { pic, per, rowBox, tapeAt };
 }
 
 /** The empty word is written out instead of drawn as a tape. */
@@ -64,9 +73,20 @@ const tapeBox = (f: Frame, cells: number): Bounds => ({
   h: 26 + CELL_H + 4,
 });
 
-/** The picture that draws largest on this stage (or on both a laptop and a phone). */
+/**
+ * The picture that draws largest on this stage (or on both a laptop and a phone). On a stage,
+ * the states may also sit closer together (TIGHT), for a long expression, and the tape may go
+ * beside the expression instead of under the NFA.
+ */
 function choose(s: RxState, stage?: StageSize): Frame {
-  const frames = pictures(s.frags, s.how, `${s.sign}|${s.text}`).map((p) => frameFor(p, s.text));
+  const key = `${s.sign}|${s.text}`;
+  const pics = stage
+    ? [...pictures(s.frags, s.how, key), ...pictures(s.frags, s.how, key, TIGHT)]
+    : pictures(s.frags, s.how, key).filter((p) => p.rows < 4);
+  const frames = [
+    ...pics.map((p) => frameFor(p, s.text)),
+    ...(stage ? pics.map((p) => frameFor(p, s.text, true)) : []),
+  ];
   const score = (f: Frame) =>
     fitScore(padBounds(unionBounds(f.pic.bounds, f.rowBox, tapeBox(f, TAPE_RESERVE)), 12), stage);
   // Prefer fewer rows unless more rows draw clearly larger.

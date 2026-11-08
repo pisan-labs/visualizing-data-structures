@@ -80,7 +80,7 @@ function draw(
       to: column3(s.m, j),
       role: roles.get(id),
       label: `Me${'₁₂₃'[j]}`,
-      size: 12,
+      size: 14,
       opacity: roles.has(id) ? 1 : 0.75,
     }),
   );
@@ -95,7 +95,7 @@ function draw(
         to: column3(m, j),
         role: 'active',
         label: `${extra.op!.name}e${'₁₂₃'[j]}`,
-        size: 12,
+        size: 14,
       }),
     );
   }
@@ -126,7 +126,7 @@ function draw(
   if (extra.compare) {
     panel.push(
       text('xy', { x: x0, y: below + 4 }, 'dashed blue: about x, then about y', {
-        size: 12,
+        size: 14,
         bold: true,
         role: roles.get('xy') ?? 'active',
       }),
@@ -134,7 +134,7 @@ function draw(
     if (extra.compare.yx.length)
       panel.push(
         text('yx', { x: x0, y: below + 22 }, 'dashed red: about y, then about x', {
-          size: 12,
+          size: 14,
           bold: true,
           role: roles.get('yx') ?? 'error',
         }),
@@ -183,7 +183,7 @@ function draw(
       'conv',
       { x: x0, y: yb },
       `${transpose ? "row vectors: p' = p M" : "column vectors: p' = M p"} · ${iso ? 'isometric' : 'oblique'} view`,
-      { size: 13 },
+      { size: 14 },
     ),
   );
 

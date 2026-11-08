@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "scapegoat-tree",
+  "id": "scapegoat-halfway",
+  "title": "The scapegoat is partway up",
+  "notes": "A perfect tree of seven keys, then a run of rising keys down the right edge. 97 lands at depth 6 with a limit of 5. Walking up, 95 and 90 are balanced enough, but 85's right child holds 3 of its 4 nodes, more than 2/3. Only 85's subtree is rebuilt; the rest of the tree is left alone.",
+  "settings": {
+    "alpha": "2/3"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 50],
+    ["insert", 30],
+    ["insert", 70],
+    ["insert", 20],
+    ["insert", 40],
+    ["insert", 60],
+    ["insert", 80],
+    ["insert", 85],
+    ["insert", 90],
+    ["insert", 95],
+    ["insert", 97]
+  ]
+}

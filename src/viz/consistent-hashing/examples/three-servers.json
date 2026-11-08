@@ -1,0 +1,32 @@
+{
+  "format": 1,
+  "viz": "consistent-hashing",
+  "id": "three-servers",
+  "title": "Three servers on a ring",
+  "notes": "Servers A, B and C each take one place on the ring, and twelve keys go to the first server clockwise from them. The arcs are uneven, so the loads are too.",
+  "settings": {
+    "vnodes": 1
+  },
+  "seed": 1,
+  "ops": [
+    ["addServer", "A"],
+    ["addServer", "B"],
+    ["addServer", "C"],
+    ["addKey", 12],
+    ["addKey", 25],
+    ["addKey", 37],
+    ["addKey", 41],
+    ["addKey", 58],
+    ["addKey", 63],
+    ["addKey", 77],
+    ["addKey", 84],
+    ["addKey", 90],
+    ["addKey", 106],
+    ["addKey", 119],
+    ["addKey", 133]
+  ],
+  "at": {
+    "op": 14,
+    "step": 100
+  }
+}

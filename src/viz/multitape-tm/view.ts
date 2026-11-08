@@ -7,12 +7,14 @@
  * picture largest.
  *
  * Every tape is the shared tape (src/layouts/tape.ts): a window of 12 cells (10 on a phone)
- * per tape, held still while the touched cells fit. The single tape wraps onto up to three
- * rows of that width, as many as the run will need (`room`), so it keeps its size while it
- * grows; a longer tape shows the window around S's head.
+ * per tape, held still while the touched cells fit. The single tape wraps onto rows of that
+ * width (on a laptop, of 18 or 24 cells when fewer, longer rows draw larger), up to three
+ * windows' worth, as many as the run will need (`room`), so it keeps its size while it grows;
+ * a longer tape shows the window around S's head. Its cell numbers are left out on a phone,
+ * and on a laptop when keeping them would draw the rules under 11 px.
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
-import { pickBest } from '../../layouts/arrange';
+import { onStage, pickBest } from '../../layouts/arrange';
 import { padBounds, placePanels, textWidth, unionBounds } from '../../layouts/graph';
 import { CELL_H, CELL_W, drawTape, tapeWindow } from '../../layouts/tape';
 import type { Bounds, Scene, Shape } from '../../render/scene';
@@ -30,19 +32,20 @@ import { TAPE_ROLES, describe, type MtExtra, type MtSettings, type MtState } fro
 const LABEL_W = 22;
 const HEAD_ROOM = 26;
 const TAPE_GAP = 6;
-const INDEX_H = 20;
+const INDEX_H = 24;
 const MAX_ROWS = 3;
 const COUNT_SIZE = 14;
-const STATUS_SIZE = 13;
+const STATUS_SIZE = 14;
+const TITLE_SIZE = 14;
 
 /** Cells per tape window: wide stages get more. */
 export function cellsWide(stage?: StageSize): number {
   return !stage || stage.w >= 1.4 * stage.h ? 12 : 10;
 }
 
-/** Rows the single tape takes: enough for `room` cells, at most three. */
-export const simRows = (room: number, width: number) =>
-  Math.max(1, Math.min(MAX_ROWS, Math.ceil(room / width)));
+/** Rows of `width` cells the single tape takes: enough for `room` cells, or for `most`. */
+export const simRows = (room: number, width: number, most = MAX_ROWS * width) =>
+  Math.max(1, Math.ceil(Math.min(room, most) / width));
 
 const count = (n: number) => n.toLocaleString('en-US');
 const plural = (n: number, w: string) => `${count(n)} ${w}${n === 1 ? '' : 's'}`;
@@ -128,9 +131,9 @@ export function ruleLine(line: string): string {
   return [w[0], sym(w[1]!), '→', rest[0], ...rest.slice(1, -1).map(sym), rest.at(-1)].join(' ');
 }
 
-const RULE_SIZE = 12;
-const RULE_H = 20;
-const RULE_GAP = 3;
+const RULE_SIZE = 13;
+const RULE_H = 21;
+const RULE_GAP = 2;
 
 /** The rules as written, in `cols` columns (down the first, then the next), the one in use lit. */
 function drawRules(
@@ -146,16 +149,16 @@ function drawRules(
     kind: 'text',
     id: 'rule-title',
     x,
-    y: y + 13,
+    y: y + 14,
     text: title,
-    size: 13,
+    size: TITLE_SIZE,
     cls: 'label',
     role: roles.get('rule-title'),
   });
   const texts = m.lines.map(ruleLine);
   const colW = Math.max(...texts.map((t) => textWidth(t, RULE_SIZE, true))) + 14;
   const per = Math.ceil(texts.length / cols);
-  const top = y + 24;
+  const top = y + 25;
   texts.forEach((t, j) => {
     const cx = x + Math.floor(j / per) * (colW + 10);
     const cy = top + (j % per) * (RULE_H + RULE_GAP);
@@ -177,8 +180,8 @@ function drawRules(
   return {
     x,
     y,
-    w: Math.max(w, textWidth(title, 13)),
-    h: 24 + per * (RULE_H + RULE_GAP) - RULE_GAP,
+    w: Math.max(w, textWidth(title, TITLE_SIZE)),
+    h: 25 + per * (RULE_H + RULE_GAP) - RULE_GAP,
   };
 }
 
@@ -295,72 +298,102 @@ export function view(step: Step<MtState, MtExtra>, settings: MtSettings, stage?:
   shapes.push(statusShape('status', y + 12, st, roles));
   y += 26;
 
-  // The single tape, on as many rows as the run needs.
-  shapes.push({
-    kind: 'text',
-    id: 'sim-title',
-    x: 0,
-    y: y + 13,
-    text: `S, on one tape: ${settings.mark === 'dot' ? 'a dot' : 'a line'} marks each head`,
-    size: 13,
-    cls: 'label',
-    role: roles.get('sim-title'),
-  });
-  y += 20;
-  const nRows = simRows(Math.max(state.room, sim?.cells.length ?? 0), width);
-  const span = nRows * width;
-  const win = sim
-    ? tapeWindow(sim.head, span, { lo: 0, used: { lo: 0, hi: sim.cells.length - 1 } })
-    : { from: 0, to: span };
-  const pitch = HEAD_ROOM + CELL_H + INDEX_H;
-  shapes.push({
-    kind: 'text',
-    id: 'sim-label',
-    x: -10,
-    y: y + HEAD_ROOM + CELL_H / 2 + 5,
-    text: 'S',
-    size: 14,
-    weight: 'bold',
-    anchor: 'end',
-    cls: 'label',
-  });
-  drawTape(shapes, {
-    id: 'sim',
-    x: 0,
-    y,
-    cells: sim?.cells ?? [],
-    from: win.from,
-    to: win.to,
-    rows: { width, pitch },
-    head: sim ? sim.head : null,
-    headRoom: 'head',
-    index: true,
-    left: true,
-    roles,
-  });
-  const rows = Array.from({ length: nRows }, (_, r) => ({
-    from: win.from + r * width,
-    to: win.from + (r + 1) * width,
-    y: y + r * pitch,
-  }));
-  y += nRows * pitch;
-  if (sim) drawMarks(shapes, sim, rows, settings, roles);
+  const top = y;
   const sst = simStatus(state, extra);
-  shapes.push(statusShape('sim-status', y + 10, sst, roles));
-  y += 16;
-  const main: Bounds = { x: -LABEL_W, y: 0, w: tapeW + LABEL_W, h: y };
+  const room = Math.max(state.room, sim?.cells.length ?? 0);
+  const wide = width === 12;
+  /**
+   * The single tape, `perRow` cells a row on as many rows as the run needs, with or without its
+   * cell numbers, and the rules.
+   */
+  const arrange = (perRow: number, index = true) => {
+    const out = [...shapes];
+    let y = top;
+    out.push({
+      kind: 'text',
+      id: 'sim-title',
+      x: 0,
+      y: y + 14,
+      text: `S, on one tape: ${settings.mark === 'dot' ? 'a dot' : 'a line'} marks each head`,
+      size: TITLE_SIZE,
+      cls: 'label',
+      role: roles.get('sim-title'),
+    });
+    y += 20;
+    const nRows = simRows(room, perRow, MAX_ROWS * width);
+    const span = nRows * perRow;
+    const win = sim
+      ? tapeWindow(sim.head, span, { lo: 0, used: { lo: 0, hi: sim.cells.length - 1 } })
+      : { from: 0, to: span };
+    const pitch = HEAD_ROOM + CELL_H + (index ? INDEX_H : 4);
+    out.push({
+      kind: 'text',
+      id: 'sim-label',
+      x: -10,
+      y: y + HEAD_ROOM + CELL_H / 2 + 5,
+      text: 'S',
+      size: 14,
+      weight: 'bold',
+      anchor: 'end',
+      cls: 'label',
+    });
+    drawTape(out, {
+      id: 'sim',
+      x: 0,
+      y,
+      cells: sim?.cells ?? [],
+      from: win.from,
+      to: win.to,
+      rows: { width: perRow, pitch },
+      head: sim ? sim.head : null,
+      headRoom: 'head',
+      index,
+      left: true,
+      roles,
+    });
+    const rows = Array.from({ length: nRows }, (_, r) => ({
+      from: win.from + r * perRow,
+      to: win.from + (r + 1) * perRow,
+      y: y + r * pitch,
+    }));
+    y += nRows * pitch;
+    if (sim) drawMarks(out, sim, rows, settings, roles);
+    out.push(statusShape('sim-status', y + (index ? 14 : 10), sst, roles));
+    y += index ? 20 : 16;
+    const main: Bounds = { x: -LABEL_W, y: 0, w: Math.max(tapeW, perRow * CELL_W) + LABEL_W, h: y };
 
-  // The rules in 1 to 3 columns, beside or under: fewer columns unless more draw clearly larger.
-  const candidates: { shapes: Shape[]; bounds: Bounds }[] = [];
-  for (let cols = 1; cols <= Math.min(3, m.lines.length); cols++) {
-    const scratch: Shape[] = [];
-    const at = placePanels(scratch, main, stage, (out, x, yy) =>
-      drawRules(out, m, x, yy, roles, cols),
+    // The rules in 1 to 3 columns, beside or under: fewer columns unless more draw clearly larger.
+    const candidates: { shapes: Shape[]; bounds: Bounds }[] = [];
+    for (let cols = 1; cols <= Math.min(3, m.lines.length); cols++) {
+      const scratch: Shape[] = [];
+      const at = placePanels(scratch, main, stage, (o, x, yy) =>
+        drawRules(o, m, x, yy, roles, cols),
+      );
+      candidates.push({ shapes: [...out, ...scratch], bounds: unionBounds(main, at) });
+    }
+    return pickBest(candidates, stage);
+  };
+  // On a wide stage the single tape may take longer rows (fewer of them) when that draws the
+  // picture clearly larger, and leaves out its cell numbers when the rules would otherwise be
+  // drawn under 11 px. On a phone the numbers are left out: the room goes to larger text.
+  const rows = [12, 18, 24];
+  const numbered =
+    stage &&
+    wide &&
+    pickBest(
+      rows.map((n) => arrange(n)),
+      stage,
     );
-    candidates.push({ shapes: scratch, bounds: unionBounds(main, at) });
-  }
-  const best = pickBest(candidates, stage);
-  shapes.push(...best.shapes);
+  const best = !stage
+    ? arrange(width)
+    : !wide
+      ? arrange(width, false)
+      : numbered && RULE_SIZE * onStage(numbered.bounds, stage) >= 11
+        ? numbered
+        : pickBest(
+            rows.map((n) => arrange(n, false)),
+            stage,
+          );
   const label = `${describe(state)}${c ? ` Status: ${st.text}. Single tape: ${sst.text}.` : ''}`;
-  return { shapes, bounds: padBounds(best.bounds, 14), label };
+  return { shapes: best.shapes, bounds: padBounds(best.bounds, 14), label };
 }

@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "viz": "hyperloglog",
+  "id": "duplicates",
+  "title": "Repeats do not count",
+  "notes": "Three items added four times each. A repeat hashes to the same register with the same ρ, so the registers, and the estimate, stay where they were after the first round.",
+  "settings": {
+    "b": 4,
+    "small": true
+  },
+  "seed": 1,
+  "ops": [
+    ["add", 42],
+    ["add", 7],
+    ["add", 300],
+    ["add", 42],
+    ["add", 7],
+    ["add", 300],
+    ["add", 42],
+    ["add", 7],
+    ["add", 300],
+    ["add", 42],
+    ["add", 7],
+    ["add", 300],
+    ["estimate"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

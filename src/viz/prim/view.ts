@@ -16,11 +16,14 @@ import {
   drawGraph,
   drawTable,
   layoutGraph,
+  layoutsFor,
   padBounds,
   placePanels,
   unionBounds,
   type VertexLook,
+  type GraphLayout,
 } from '../../layouts/graph';
+import { pickLayout } from '../../layouts/arrange';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { edgeKey, type Graph } from '../_graph/graph';
 import { drawSplit, keyedCellWidth } from '../_paths/view';
@@ -60,11 +63,29 @@ export function view(
   settings: PrimSettings,
   stage?: StageSize,
 ): Scene {
+  const layout = layoutGraph(step.state.graph, settings.layout);
+  return pickLayout(
+    stage,
+    // On a stage the queue may also wrap shorter lines: a phone has height to spare.
+    layoutsFor(layout, settings.layout, stage).flatMap((l) =>
+      (stage && step.extra?.run ? [9, 6] : [9]).map((perRow) =>
+        draw(step, settings, l, perRow, stage),
+      ),
+    ),
+  );
+}
+
+function draw(
+  step: Step<PrimState, PrimExtra>,
+  settings: PrimSettings,
+  layout: GraphLayout,
+  perRow: number,
+  stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const g = state.graph;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const r = extra.run;
-  const layout = layoutGraph(g, settings.layout);
   const tree = new Map<string, string>();
   const inTree = new Set(r?.T ?? []);
   if (r)
@@ -115,6 +136,7 @@ export function view(
           roles,
           cellW: Math.max(cellWidth(g), keyedCellWidth([{ name: '', value: 'root' }])),
           room: r.room,
+          perRow,
         });
         // The tree is T here, not S.
         for (const sh of out) if (sh.id === 'pq-s' && sh.kind === 'text') sh.text = 'T';

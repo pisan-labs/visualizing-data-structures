@@ -292,9 +292,10 @@ describe('leftist heap practice', () => {
 });
 
 describe('drawn text size', () => {
-  // The npl under each node was 12 units (8.5 px on a laptop for a chain of nine): now 13.
+  // The npl under each node was 12 units (8.5 px on a laptop for a chain of nine): now 13. The
+  // call list under the trees left 9.2; beside them on a laptop, with deep levels closer, 11.5.
   it('stays readable on a laptop and on a phone', () => {
-    expect(smallestText(leftistHeap, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(9);
+    expect(smallestText(leftistHeap, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
     expect(smallestText(leftistHeap, PHONE_STAGE).px).toBeGreaterThanOrEqual(11);
   });
 });

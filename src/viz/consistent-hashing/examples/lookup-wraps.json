@@ -1,0 +1,34 @@
+{
+  "format": 1,
+  "viz": "consistent-hashing",
+  "id": "lookup-wraps",
+  "title": "A lookup that wraps past 0",
+  "notes": "90 hashes to 341, past the last node (C at 260). There is no node between 341 and 359, so the walk carries on from 0 to B at 59. 5 hashes to 0 and goes to B as well.",
+  "settings": {
+    "vnodes": 1
+  },
+  "seed": 1,
+  "ops": [
+    ["addServer", "A"],
+    ["addServer", "B"],
+    ["addServer", "C"],
+    ["addKey", 12],
+    ["addKey", 25],
+    ["addKey", 37],
+    ["addKey", 41],
+    ["addKey", 58],
+    ["addKey", 63],
+    ["addKey", 77],
+    ["addKey", 84],
+    ["addKey", 90],
+    ["addKey", 106],
+    ["addKey", 119],
+    ["addKey", 133],
+    ["lookup", 90],
+    ["lookup", 5]
+  ],
+  "at": {
+    "op": 14,
+    "step": 100
+  }
+}

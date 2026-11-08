@@ -186,9 +186,10 @@ describe('recursion-dag practice', () => {
 });
 
 describe('drawn text size', () => {
-  // fib(8)'s tree drew its badges at 3.9 px on a phone growing down; growing right, at 6.6.
+  // fib(8)'s tree drew its badges at 3.9 px on a phone growing down, and at 6.6 growing right
+  // with the DAG beside it; with lower rows and the DAG turned to run under it, at 9.
   it('stays readable on a laptop and on a phone', () => {
-    expect(smallestText(recursionDag, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(10);
-    expect(smallestText(recursionDag, PHONE_STAGE).px).toBeGreaterThanOrEqual(6.5);
+    expect(smallestText(recursionDag, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(recursionDag, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

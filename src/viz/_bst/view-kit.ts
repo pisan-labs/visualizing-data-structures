@@ -191,7 +191,7 @@ export function drawNil(
     x: spot.x + (nil.side === 'left' ? -size / 2 - 3 : size / 2 + 3),
     y: spot.y + 4,
     text: 'nil',
-    size: 12,
+    size: 13,
     anchor: nil.side === 'left' ? 'end' : 'start',
     mono: true,
     cls: 'label',

@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "cartesian-tree",
+  "id": "range-minimum",
+  "title": "A range minimum is a common ancestor",
+  "notes": "Build the tree once, then ask for minimums. Each query walks down from the root, going right while the node is left of the range and left while it is right of it. The first node inside the range holds the smallest value in it.",
+  "settings": {
+    "heap": "min"
+  },
+  "seed": 1,
+  "ops": [
+    ["append", 7],
+    ["append", 3],
+    ["append", 9],
+    ["append", 5],
+    ["append", 8],
+    ["append", 2],
+    ["append", 6],
+    ["append", 4],
+    ["rmq", 2, 4],
+    ["rmq", 3, 7],
+    ["rmq", 6, 7]
+  ]
+}

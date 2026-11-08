@@ -1,5 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { parseNumber, sortedArray } from '.';
@@ -187,5 +189,13 @@ describe('sorted vs unsorted array', () => {
     expect(parseNumber('2.5')).toBeInstanceOf(Error);
     expect(parseNumber('cat')).toBeInstanceOf(Error);
     expect(parseNumber('1000')).toBeInstanceOf(Error);
+  });
+});
+
+describe('drawn text size', () => {
+  // Labels were 14 and 15 units (8.6 px on a phone): now 16.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(sortedArray, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(sortedArray, PHONE_STAGE).px).toBeGreaterThanOrEqual(9.5);
   });
 });

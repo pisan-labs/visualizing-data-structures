@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "aa-tree",
+  "id": "delete-lowers-levels",
+  "title": "A delete lowers levels on the way up",
+  "notes": "Deleting the leaf 10 leaves 20 with nothing on its left, so 20 drops to level 1 and 30 becomes its horizontal partner. Then 40 sits too high above 20, so it drops from level 3 to 2, where 60 becomes its partner. Only levels change here: no skew or split is needed.",
+  "settings": {
+    "draw": "levels"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70],
+    ["delete", 10]
+  ]
+}

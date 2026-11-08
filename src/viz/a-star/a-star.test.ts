@@ -4,6 +4,9 @@ import { Timeline } from '../../engine/timeline';
 import { bfsDistances, targetOf } from '../_grid/grid';
 import { aStar } from '.';
 import { before, type AStarSettings, type Heuristic } from './model';
+import { smallestText } from '../../render/text-size';
+import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import textSizeDef from './index';
 
 const settings = (s: Partial<AStarSettings> = {}): AStarSettings =>
   ({ ...aStar.defaults, ...s }) as AStarSettings;
@@ -143,5 +146,13 @@ describe('A*', () => {
       }),
       { numRuns: 250 },
     );
+  });
+});
+
+describe('drawn text size', () => {
+  // With the open set under the grid: 10.5 px on a laptop, 8.3 on a phone. Beside it on a laptop, and with smaller cells and shorter lines on a phone, 13.2 and 9.2.
+  it('stays readable on a laptop and on a phone', () => {
+    expect(smallestText(textSizeDef, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
+    expect(smallestText(textSizeDef, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

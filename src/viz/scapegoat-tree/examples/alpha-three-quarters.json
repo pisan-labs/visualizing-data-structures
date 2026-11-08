@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "scapegoat-tree",
+  "id": "alpha-three-quarters",
+  "title": "A looser α allows taller trees",
+  "notes": "The same rising keys with α = 0.75. The depth limit is log base 4/3 of N, which grows faster, so the chain gets longer before the first rebuild. Fewer rebuilds, taller tree: that is the trade.",
+  "settings": {
+    "alpha": "0.75"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70]
+  ]
+}

@@ -309,3 +309,5 @@
 2026-11-08 [plan] Wave 7 (PLAN.md section 16): 62 pages for the standard topics no page covered, Yusuf said "All"; catalog entries added (planned until built); ten agent families, four at a time
 
 2026-11-08 [code] Merged: readable text on 11 automata and tape pages (tape numbers 14, state names 13-14, automaton tables 15, tight Thompson pictures on a stage); short on a phone: nfa-to-dfa 7.3, multitape-tm 8.8, dfa-to-regex 8.9; regex-to-nfa laptop 10.3
+
+2026-11-08 [code] Merged: readable text on 16 string, DP, array, range and geometry pages (table fitCellW, align fitOn), 13 recursion and analysis pages (calls.ts boxH/padX/tagMin), 21 graph, list, grid and tree pages (turned layered layouts, chainCols, flow label fix); all meet 11/9 px

@@ -41,7 +41,7 @@ Q: Running the sieve up to 50, which is the first number p = 7 crosses out?
 
 **Stop at √n.** If k ≤ n is composite, k = a·b with a ≤ b, so a ≤ √k ≤ √n. So every composite number up to n has a prime factor no bigger than √n, and is crossed out by the time p passes √n. Set **Stop** to p = n and watch the primes past √n cross out nothing at all. [Going past the square root](#example:no-stop-at-root)
 
-Neither shortcut changes the answer. Both change the work. Starting at 2p, the prime 3 crosses out 6, 12, 18 and every other even number a second time.
+Neither shortcut changes the answer. Both change the work. Starting at 2p, the prime 3 crosses out 6, 12, 18 and every other multiple of 6 a second time.
 
 ## Why n log log n
 
@@ -53,7 +53,7 @@ Q: Up to 100, the sieve makes 104 cross-outs but only 74 numbers are crossed out
 * Some numbers, like 12 = 2²·3, are crossed out by more than one prime
 - The primes cross themselves out
 - Numbers below p² are crossed out twice
-= 12 is crossed out by 2 (at 12) and again by 3 (from 9: 9, 12). Every composite with more than one prime factor up to √n gets hit more than once.
+= 12 is crossed out by 2 (at 12) and again by 3 (from 9: 9, 12). A number is hit once for each prime factor p with p² no bigger than the number, so 6 is hit only once: 3 starts at 9.
 ```
 
 ## The linear sieve

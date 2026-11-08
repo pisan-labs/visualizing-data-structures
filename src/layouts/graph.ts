@@ -604,21 +604,38 @@ export function turnLayout(layout: GraphLayout): GraphLayout {
   return { pos, r: layout.r, bounds: boxOf(Object.values(pos), layout.r) };
 }
 
+/** The same layout with every x scaled by kx (the circles stay). */
+function widenLayout(layout: GraphLayout, kx: number): GraphLayout {
+  const pos: Record<string, Pt> = {};
+  for (const [v, p] of Object.entries(layout.pos)) pos[v] = { x: p.x * kx, y: p.y };
+  return { pos, r: layout.r, bounds: boxOf(Object.values(pos), layout.r) };
+}
+
+/**
+ * A layered layout turned on its side has its layers LAYER_GAP apart across, too little for a
+ * weight beside a level edge: it widens by this much.
+ */
+const TURN_WIDEN = 1.45;
+
 /**
  * The layouts a view may draw a graph with on this stage: the layout, and for a spring layout
  * (whose direction means nothing) that is clearly longer one way than the other, the same layout
- * turned on its side. A long path drawn across a laptop then runs down a phone. With no stage,
- * only the layout, so thumbnails and practice pictures stay as they are. The view draws each
- * and keeps the one drawn largest (pickLayout in arrange.ts).
+ * turned on its side. A long path drawn across a laptop then runs down a phone. A layered
+ * layout clearly longer one way turns too: its layers then run left to right, as many books
+ * draw a DAG, widened so weights have room. With no stage, only the layout, so thumbnails and
+ * practice pictures stay as they are. The view draws each and keeps the one drawn largest
+ * (pickLayout in arrange.ts).
  */
 export function layoutsFor(
   layout: GraphLayout,
   template: GraphTemplate,
   stage?: StageSize,
 ): GraphLayout[] {
-  if (!stage || template !== 'force') return [layout];
+  if (!stage || (template !== 'force' && template !== 'layered')) return [layout];
   const { w, h } = layout.bounds;
-  return Math.max(w, h) > 1.3 * Math.min(w, h) ? [layout, turnLayout(layout)] : [layout];
+  if (Math.max(w, h) <= 1.3 * Math.min(w, h)) return [layout];
+  const turned = turnLayout(layout);
+  return [layout, template === 'layered' ? widenLayout(turned, TURN_WIDEN) : turned];
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -918,8 +935,10 @@ function geometry(
     box: (at: Pt) => Bounds,
     blockers: Bounds[],
   ): Pt => {
-    // Only touching a vertex is fine at the middle; elsewhere it counts against a spot.
-    if (clash(box(first), blockers) < 8) return first;
+    // Only touching a vertex is fine at the middle; elsewhere it counts against a spot. So
+    // does lying across another edge.
+    const crossed = segments.some(([p, q, k]) => k !== plan.k && boxHitsSegment(box(first), p, q));
+    if (!crossed && clash(box(first), blockers) < 8) return first;
     const score = (at: Pt, extra: number) => {
       const b = box(at);
       let n = clash(b, blockers) + extra;
@@ -1126,8 +1145,11 @@ export function drawGraph(
         opacity,
       });
     }
+    // A bent edge may reach past the circles' box, its weight too: the bounds take them in.
+    for (const p of r.pts.slice(1, -1)) boxes.push({ x: p.x - 2, y: p.y - 2, w: 4, h: 4 });
     const spot = geo.labels.get(key)!;
     if (showWeights && spot.weight) {
+      boxes.push(weightBox(spot.weight, String(e.w)));
       shapes.push({
         kind: 'text',
         id: weightId(key),

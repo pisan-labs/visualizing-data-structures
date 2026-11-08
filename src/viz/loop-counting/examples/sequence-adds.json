@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "loop-counting",
+  "id": "sequence-adds",
+  "title": "Loops in a row add up",
+  "notes": "Two loops, one after the other: 8 + 8 = 16, not 8 · 8. Loops in a row add, so this is O(n).",
+  "settings": {
+    "pattern": "sequence",
+    "found": "missing"
+  },
+  "seed": 1,
+  "ops": [["run", 8]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

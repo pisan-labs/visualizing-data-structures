@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "loop-counting",
+  "id": "early-exit-worst",
+  "title": "Early exit, worst case: x is missing",
+  "notes": "x is not in A, so every item is compared before the loop gives up: n comparisons, O(n).",
+  "settings": {
+    "pattern": "search",
+    "found": "missing"
+  },
+  "seed": 1,
+  "ops": [["run", 8]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

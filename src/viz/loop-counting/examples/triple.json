@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "loop-counting",
+  "id": "triple",
+  "title": "Three nested loops make a pyramid",
+  "notes": "i ≤ j ≤ k: one triangle per i, each smaller than the one before. 20 cells for n = 4, n(n+1)(n+2)/6, O(n³).",
+  "settings": {
+    "pattern": "triple",
+    "found": "missing"
+  },
+  "seed": 1,
+  "ops": [["run", 4]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

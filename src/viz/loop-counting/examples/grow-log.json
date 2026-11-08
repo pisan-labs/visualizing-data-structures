@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "loop-counting",
+  "id": "grow-log",
+  "title": "Double n and the halving loop adds 1",
+  "notes": "Counts for n = 16, 32, 64 and 128: 4, 5, 6, 7. Each doubling adds one pass: log n.",
+  "settings": {
+    "pattern": "halving",
+    "found": "missing"
+  },
+  "seed": 1,
+  "ops": [["grow", 16]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

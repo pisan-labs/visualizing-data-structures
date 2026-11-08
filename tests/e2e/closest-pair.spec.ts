@@ -44,7 +44,7 @@ test('divide and conquer finds the pair across the line', async ({ page }) => {
 test('brute force compares every pair', async ({ page }) => {
   await loadExample(page, 'Brute force tries every pair');
   await toEnd(page);
-  await expect(narration(page)).toContainText('120 comparisons; brute force needs 120');
+  await expect(narration(page)).toContainText('120 comparisons, one for every pair.');
   await expect(page.locator('.code')).toContainText('BRUTE-CLOSEST(P)');
 });
 

@@ -44,7 +44,8 @@ export function view(
   const { state: s, extra = {} } = step;
   const roles = rolesOf(step.marks);
   const height = treeHeight(s);
-  const gap = levelGapFor(height);
+  // A little tighter than the kit's spacing: a key that lands too deep makes the tree tall.
+  const gap = height <= 4 ? levelGapFor(height) : Math.max(40, 56 - 5 * (height - 4));
   const tree = layoutBinaryTree(
     s.root,
     { left: (u) => s.nodes[u]!.left, right: (u) => s.nodes[u]!.right },
@@ -123,6 +124,7 @@ export function view(
     f.boxes.push({ x: -w / 2, y: HY - R, w, h: 2 * R });
   }
 
+  drawNil(shapes, roles, tree, extra.nil, f);
   if (legend.length) {
     const bottom = Math.max(...f.boxes.map((b) => b.y + b.h));
     drawNote(shapes, f, 'legend', legend, bottom);
@@ -130,7 +132,6 @@ export function view(
   drawArg(shapes, roles, f, extra.arg);
   if (extra.held !== undefined && s.nodes[extra.held])
     drawHeld(shapes, roles, extra.held, String(s.nodes[extra.held]!.key));
-  drawNil(shapes, roles, tree, extra.nil, f);
   drawOutput(shapes, roles, tree, s.nodes, extra.output, f);
   return { shapes, bounds: padBounds(unionBounds(...f.boxes), 14), label: describe(s) };
 }

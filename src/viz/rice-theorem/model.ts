@@ -343,7 +343,7 @@ const test: Op = {
         mark('phase-2', second === 'accept' ? 'found' : 'error'),
         mark(`row-${rows.length - 1}`, second === 'accept' ? 'found' : 'error'),
       ],
-      say: `M_P ${outcomeText(second)} on ${wordText(x)}, so M′ does too. While ${M(m)} halts on ${desc(w)}, M′ behaves exactly like M_P.`,
+      say: `M_P ${second === 'loop' ? 'loops on' : `${second}s`} ${wordText(x)}, so M′ does too. While ${M(m)} halts on ${desc(w)}, M′ behaves exactly like M_P.`,
       lines: ['build.then'],
       vars: vars(state),
       level: 1,

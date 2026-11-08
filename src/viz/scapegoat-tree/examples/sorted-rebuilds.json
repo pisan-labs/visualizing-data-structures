@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "scapegoat-tree",
+  "id": "sorted-rebuilds",
+  "title": "Sorted keys trigger rebuilds",
+  "notes": "Rising keys make a plain BST a chain. Here each new key goes down the right side until one lands deeper than the limit. Then the walk up finds a scapegoat and its subtree is rebuilt with the middle key on top. Watch the height stay low.",
+  "settings": {
+    "alpha": "2/3"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["insert", 60],
+    ["insert", 70]
+  ]
+}

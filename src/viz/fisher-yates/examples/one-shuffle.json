@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "fisher-yates",
+  "id": "one-shuffle",
+  "title": "One shuffle, left to right",
+  "notes": "Each step picks a random item from the unshuffled part (outlined) and swaps it into position i, where it stays. Five swaps for six items.",
+  "settings": {
+    "method": "correct",
+    "direction": "forward"
+  },
+  "seed": 1,
+  "ops": [["shuffle"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

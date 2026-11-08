@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "fisher-yates",
+  "id": "two-items",
+  "title": "Two items",
+  "notes": "With two items there is one step: j is 0 or 1, each half the time, so the items swap or stay.",
+  "settings": {
+    "method": "correct",
+    "direction": "forward"
+  },
+  "seed": 1,
+  "ops": [["load", "X Y"], ["shuffle"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

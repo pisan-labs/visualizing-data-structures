@@ -297,3 +297,5 @@
 2026-11-08 [code] Merged: call trees grow right on a phone with badge text at least 10 (fibonacci-calls, recursion-dag, backtracking), n-queens solutions beside the board, suffix-tree and dp-knapsack sizes; smallestText() checks in each page's tests
 
 2026-11-08 [note] Still small after the fixes: fib(8) and permutation trees about 7 px on a phone, suffix-tree 7.3 px on a phone (needs a trie layout change), regex-engines, nfa-to-dfa, graph-representations, bfs not yet measured-and-fixed
+
+2026-11-08 [note] Deployed at 14:16 on Yusuf's "implement everything and then deploy": main 1d91418..18e1bb5 (CI run 112 green, full local e2e 2167 passed); live bundle matches, all 129 pages 200 at stepwise.hintwise.org, canonical links on the new address

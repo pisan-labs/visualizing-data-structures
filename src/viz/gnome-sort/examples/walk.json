@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "gnome-sort",
+  "id": "walk",
+  "title": "One gnome, one index",
+  "notes": "The gnome steps forward while the pot on its left is no bigger, and swaps and steps back when it is. Everything left of pos is always sorted.",
+  "settings": {
+    "jump": false,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "42 17 63 8 35 24"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

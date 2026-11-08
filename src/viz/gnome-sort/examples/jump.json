@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "gnome-sort",
+  "id": "jump",
+  "title": "Jump back: insertion sort with swaps",
+  "notes": "Same values. With jumping on, the gnome remembers far, the farthest it has been, and jumps straight back after carrying 5 home. That saves the walk forward: exactly insertion sort's comparisons.",
+  "settings": {
+    "jump": true,
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "20 30 40 50 60 5"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

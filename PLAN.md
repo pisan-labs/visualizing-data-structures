@@ -770,7 +770,7 @@ CI), leverage (what fixing it unblocks). Priority = interest + risk + leverage â
 | 7 | Done 8 November: `STAGES` in `layouts/graph.ts` still held the old 884Ã—305 desktop stage, the fallback for thumbnails, prerender and tests | 2 | 2 | 2 | 1 | 3 | `src/layouts/graph.ts` |
 | 8 | Done 8 November (the shared parts: axes, grid and reference lines, tick labels, clipping, powers of ten, fit-to-room sizes, in `src/layouts/chart.ts`; each page keeps its own scales): chart code written three times: big-o-definition (exact fractions), doubling-experiment (log-log), amortized-analysis (two-lane bars) | 2 | 4 | 1 | 3 | 2 | those three views |
 | 9 | Shared code living in page folders, imported by siblings: avl (treap, splay, red-black), hash-chaining (4 pages), linked-list (3), regex-to-nfa (regex-engines), prim (kruskal), leftist-heap (skew-heap) | 2 | 3 | 1 | 2 | 2 | those folders |
-| 10 | `matches()` in `_automata/regex.ts` is exponential on deeply nested concatenations | 1 | 2 | 2 | 1 | 2 | `src/viz/_automata/regex.ts` |
+| 10 | Done 8 November (memoized by subexpression and start; a 20-deep test that hung now takes milliseconds): `matches()` in `_automata/regex.ts` is exponential on deeply nested concatenations | 1 | 2 | 2 | 1 | 2 | `src/viz/_automata/regex.ts` |
 
 | 11 | Intermittent: the factorial page's axe scan "deep in the recursion" (dark, desktop) found one color-contrast node once in a full run on 8 November, then passed 32 runs of 32; the element was not captured | 1 | 2 | 2 | 1 | 2 | `tests/e2e/factorial.spec.ts` |
 

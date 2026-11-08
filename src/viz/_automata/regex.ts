@@ -325,9 +325,21 @@ export function thompson(r: Regex): { nfa: Automaton; parts: Fragment[] } {
   return { nfa, parts };
 }
 
-/** Does the expression match the whole word? A direct reference, for tests. */
+/**
+ * Does the expression match the whole word? A direct reference, for tests. The positions each
+ * subexpression can end at from each start are remembered, so nested concatenations cost
+ * O(|r| · |w|²) set work instead of growing exponentially.
+ */
 export function matches(r: Regex, w: string): boolean {
+  const memo = new Map<Regex, Map<number, Set<number>>>();
   const ends = (r: Regex, from: number): Set<number> => {
+    let byStart = memo.get(r);
+    if (!byStart) memo.set(r, (byStart = new Map()));
+    let out = byStart.get(from);
+    if (!out) byStart.set(from, (out = endsOf(r, from)));
+    return out;
+  };
+  const endsOf = (r: Regex, from: number): Set<number> => {
     switch (r.kind) {
       case 'sym':
         return new Set(w[from] === r.c ? [from + 1] : []);

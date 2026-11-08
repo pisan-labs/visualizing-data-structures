@@ -151,6 +151,15 @@ describe('regular expressions', () => {
     );
   });
 
+  it('matches deeply nested concatenations quickly (the reference remembers its ends)', () => {
+    // a*(a*(a*(…))) twenty deep: without memo each level tries every split, about 31²⁰ calls.
+    const aStar = parseRegex('a*') as Regex;
+    let r: Regex = aStar;
+    for (let k = 0; k < 20; k++) r = { kind: 'concat', a: aStar, b: r };
+    expect(matches(r, 'a'.repeat(30))).toBe(true);
+    expect(matches(r, `${'a'.repeat(30)}b`)).toBe(false);
+  });
+
   it('reads + as union when asked, gives each node its span, and eps only as a word', () => {
     expect(showRegex(parseRegex('(a+b)*a?', { union: '+' }) as Regex)).toBe('(a|b)*a?');
     expect((parseRegex('a|b', { union: '+' }) as Error).message).toMatch(/\+ stands for union/);

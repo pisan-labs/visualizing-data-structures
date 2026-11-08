@@ -269,3 +269,5 @@
 2026-11-08 [note] Handover at Yusuf's request (about 08:45; context about 70%): HANDOFF.md rewritten and fact-checked; the next session starts at once
 
 2026-11-08 [code] src/layouts/chart.ts: axes, rules, tick labels, segment clipping, powers of ten and fitSize shared by big-o-definition, doubling-experiment and amortized-analysis; sup moved to src/layouts/text.ts; 100,064 scenes hashed before and after, identical
+
+2026-11-08 [code] matches() in src/viz/_automata/regex.ts remembers each subexpression's ends per start (register item 10); a 20-deep nested a* concatenation that ran for over a minute now passes at once

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "loop-counting",
+  "id": "pairs",
+  "title": "Every pair once: j below i",
+  "notes": "for j = 1 to i − 1 skips the diagonal: 28 cells, n(n−1)/2. The first row does not run at all. Still O(n²).",
+  "settings": {
+    "pattern": "pairs",
+    "found": "missing"
+  },
+  "seed": 1,
+  "ops": [["run", 8]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

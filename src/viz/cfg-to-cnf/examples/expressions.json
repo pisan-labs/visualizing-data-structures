@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "cfg-to-cnf",
+  "id": "expressions",
+  "title": "A chain of unit rules",
+  "notes": "The expression grammar has unit rules E → T and T → F, so E reaches T and F, and T reaches F. UNIT copies F's rules up to T and E, and T's up to E.",
+  "settings": {
+    "order": "term-first"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "E -> E+T | T; T -> T*F | F; F -> (E) | a"],
+    ["derive", "a+a*a"]
+  ]
+}

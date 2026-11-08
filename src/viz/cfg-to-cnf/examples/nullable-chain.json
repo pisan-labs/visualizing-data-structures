@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "cfg-to-cnf",
+  "id": "nullable-chain",
+  "title": "Nullable takes two rounds",
+  "notes": "a*b*: A and B are nullable from their ε-rules, and then S is nullable because S → AB is all nullable variables. So S₀ is nullable too, and keeps S₀ → ε.",
+  "settings": {
+    "order": "term-first"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "S -> AB; A -> aA | eps; B -> bB | eps"],
+    ["derive", "aab"]
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "ll1-parsing",
+  "id": "left-recursion",
+  "title": "Left recursion is never LL(1)",
+  "notes": "E → E+T | T: both rules can start with ( or a, so M[E, (] and M[E, a] each get two rules. A FIRST/FIRST conflict, and the parser refuses.",
+  "settings": {
+    "conflicts": "refuse"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "E -> E+T | T; T -> T*F | F; F -> (E) | a"],
+    ["parse", "a+a"]
+  ]
+}

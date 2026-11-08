@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "lr0-parsing",
+  "id": "parens-sum",
+  "title": "(a+a)+a, shift and reduce",
+  "notes": "The grammar E → E+T | T, T → (E) | a is LR(0). Watch the stack of states: shifts push, reductions pop a whole right side and follow GOTO on its left side.",
+  "settings": {
+    "method": "lr0"
+  },
+  "seed": 1,
+  "ops": [["parse", "(a+a)+a"]]
+}

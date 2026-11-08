@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "rice-theorem",
+  "id": "halts-has-p",
+  "title": "M halts on w, so M′ has the property",
+  "notes": "M3 accepts words of even length, and ⟨M2⟩ = G1 has two symbols, so M3 halts on it. M′ gets past line 1 every time and behaves like M_P, which accepts A. M′ has P.",
+  "settings": {
+    "property": "accepts-A"
+  },
+  "seed": 1,
+  "ops": [["build", 3, 2], ["test", "A"], ["test", "G"], ["decide"]]
+}

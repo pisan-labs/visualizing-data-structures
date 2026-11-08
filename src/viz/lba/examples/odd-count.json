@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "lba",
+  "id": "odd-count",
+  "title": "Six is not a power of two",
+  "notes": "Six a's halve to three, and three is odd: the second pass ends with one a not crossed off and no partner for it.",
+  "settings": {
+    "machine": "power2"
+  },
+  "seed": 1,
+  "ops": [["run", "aaaaaa"]]
+}

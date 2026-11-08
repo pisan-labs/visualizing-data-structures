@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "lr0-parsing",
+  "id": "reduce-reduce",
+  "title": "Two complete items: reduce-reduce",
+  "notes": "S → A | B, A → a, B → a. After a, both A → a• and B → a• are complete, and both reduce under $. Even SLR(1) cannot choose: FOLLOW(A) and FOLLOW(B) are both { $ }.",
+  "settings": {
+    "method": "slr1"
+  },
+  "seed": 1,
+  "ops": [["load", "S -> A | B; A -> a; B -> a"]]
+}

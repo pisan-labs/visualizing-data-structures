@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "ll1-parsing",
+  "id": "balanced",
+  "title": "Balanced parentheses with an ε-rule",
+  "notes": "S → (S)S | ε. FOLLOW(S) is { ), $ }, so S → ε goes under ) and $: the parser drops an S exactly when the next symbol says nothing more can start here.",
+  "settings": {
+    "conflicts": "refuse"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "S -> (S)S | eps"],
+    ["parse", "(())()"]
+  ]
+}

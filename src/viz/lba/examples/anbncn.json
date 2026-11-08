@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "lba",
+  "id": "anbncn",
+  "title": "aabbcc, one a, b and c per pass",
+  "notes": "Each pass crosses off one a (x), one b (y) and one c (z), then walks back to the last x. When no a is left, it checks that only y's and z's remain. The head never leaves the 8 cells.",
+  "settings": {
+    "machine": "anbncn"
+  },
+  "seed": 1,
+  "ops": [["run", "aabbcc"]]
+}

@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "ll1-parsing",
+  "id": "dangling-else",
+  "title": "The dangling else: a FIRST/FOLLOW conflict",
+  "notes": "S → iSE | a, E → eS | ε. After i i a, does the e belong to the inner if or the outer one? e is in FIRST(eS) and in FOLLOW(E), so M[E, e] gets both rules. Taking the first rule gives the usual answer: the nearest if.",
+  "settings": {
+    "conflicts": "first"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "S -> iSE | a; E -> eS | eps"],
+    ["parse", "iiaea"]
+  ]
+}

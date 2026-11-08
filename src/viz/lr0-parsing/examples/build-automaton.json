@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "lr0-parsing",
+  "id": "build-automaton",
+  "title": "Item sets, closure and goto",
+  "notes": "Build the LR(0) automaton from I0 = closure({ E' → •E }). Each goto moves the dot past one symbol; a set seen before gets an arrow back. Then each state becomes a row of the table.",
+  "settings": {
+    "method": "lr0"
+  },
+  "seed": 1,
+  "ops": [["load", "E -> E+T | T; T -> (E) | a"]]
+}

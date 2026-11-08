@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "ll1-parsing",
+  "id": "syntax-error",
+  "title": "A syntax error found at once",
+  "notes": "a+*a: after a+ the parser needs a T, and M[T, *] is empty. An LL(1) parser stops at the first symbol that cannot start what it expects.",
+  "settings": {
+    "conflicts": "refuse"
+  },
+  "seed": 1,
+  "ops": [["parse", "a+*a"]]
+}

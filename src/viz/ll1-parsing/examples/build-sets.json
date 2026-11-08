@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "ll1-parsing",
+  "id": "build-sets",
+  "title": "FIRST, FOLLOW and the table",
+  "notes": "Load the expression grammar and watch FIRST grow round by round, then FOLLOW, then each rule go into its cells. E' and T' can vanish, so their ε-rules go under their FOLLOW sets.",
+  "settings": {
+    "conflicts": "refuse"
+  },
+  "seed": 1,
+  "ops": [["load", "E -> TE'; E' -> +TE' | eps; T -> FT'; T' -> *FT' | eps; F -> (E) | a"]]
+}

@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "lr0-parsing",
+  "id": "syntax-error",
+  "title": "An empty cell is a syntax error",
+  "notes": "a+) : after a+ the parser is in a state that expects ( or a. ACTION has nothing under ), so it rejects there, without reading further.",
+  "settings": {
+    "method": "lr0"
+  },
+  "seed": 1,
+  "ops": [["parse", "a+)"]]
+}

@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "rice-theorem",
+  "id": "nonempty",
+  "title": "Is the language empty? Undecidable too",
+  "notes": "P = \"L(M) ≠ ∅\". M2 loops at once, so M′ loops on every input and its language is empty. The same construction, the same argument.",
+  "settings": {
+    "property": "nonempty"
+  },
+  "seed": 1,
+  "ops": [["build", 2, 1], ["test", "A"], ["decide"]]
+}

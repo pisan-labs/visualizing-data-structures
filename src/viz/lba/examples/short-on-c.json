@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "lba",
+  "id": "short-on-c",
+  "title": "One c short",
+  "notes": "aabbc: the second pass crosses off an a and a b, then looks for a c and finds the right marker. No rule for that: reject.",
+  "settings": {
+    "machine": "anbncn"
+  },
+  "seed": 1,
+  "ops": [["run", "aabbc"]]
+}

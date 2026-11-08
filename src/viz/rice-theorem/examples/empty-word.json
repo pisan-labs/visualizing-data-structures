@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "rice-theorem",
+  "id": "empty-word",
+  "title": "Another property: does M accept ε?",
+  "notes": "With P = \"ε ∈ L(M)\", M_P is E3RA, which accepts only the empty word. M1 halts on anything, so M′ accepts ε, and only ε.",
+  "settings": {
+    "property": "accepts-eps"
+  },
+  "seed": 1,
+  "ops": [["build", 1, 4], ["test", "eps"], ["test", "A"], ["decide"]]
+}

@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "ll1-parsing",
+  "id": "guess-goes-wrong",
+  "title": "Guessing on a conflict loops forever",
+  "notes": "The same left-recursive grammar, with the first rule in each cell taken. E → E+T replaces E with E+T, then E+T+T, and so on, never reading a symbol. The page gives up after 40 moves.",
+  "settings": {
+    "conflicts": "first"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "E -> E+T | T; T -> T*F | F; F -> (E) | a"],
+    ["parse", "a"]
+  ]
+}

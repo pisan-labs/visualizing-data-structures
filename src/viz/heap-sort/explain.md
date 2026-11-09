@@ -39,7 +39,7 @@ heapSize is what keeps the sorted part safe. `maxHeapify` only looks at children
 
 ## O(n log n), whatever the order
 
-The order of the input barely matters. [Reverse sorted](#example:reverse-input) input is a max-heap already, since every value is at least as big as everything after it, so phase 1 makes no swaps at all. Phase 2 doesn't care: 18 comparisons and 11 swaps for 7 values. [Sorted input](#example:sorted-input) is upside down for a max-heap, and every value sinks to a leaf in phase 1. 21 comparisons and 16 swaps. Over all 5,040 orders of seven distinct values, heap sort makes 19.8 comparisons on average, never fewer than 16 and never more than 22.
+The order of the input barely matters. [Reverse sorted](#example:reverse-input) input is a max-heap already, since every value is at least as big as everything after it, so phase 1 makes no swaps at all. Phase 2 doesn't care: the whole sort still takes 18 comparisons and 11 swaps for 7 values. [Sorted input](#example:sorted-input) is upside down for a max-heap, and every value sinks to a leaf in phase 1: 21 comparisons and 16 swaps in all. Over all 5,040 orders of seven distinct values, heap sort makes 19.8 comparisons on average, never fewer than 16 and never more than 22.
 
 That's the selling point: O(n log n) in the worst case, like [merge sort](/merge-sort/), and no extra array, unlike merge sort. Many C++ libraries use it as a safety net: their `std::sort` is introsort, a quicksort that switches to heap sort when the recursion gets too deep.
 

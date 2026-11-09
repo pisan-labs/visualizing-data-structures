@@ -96,8 +96,10 @@ export function allRuns(dfa: Automaton, settings: DrSettings): DrRun[] {
 }
 
 /** Layers sit further apart than the shared LAYER_GAP: an arrow has to hold a label of
- * LABEL_MAX characters. */
+ * LABEL_MAX characters. Down the page, the labels sit beside the arrows, so the layers may sit
+ * closer (DOWN). */
 const ALONG = 150;
+const DOWN = 120;
 const layoutCache = new Map<string, StateLayout>();
 
 /** s, then the DFA's breadth-first layers, then f, each layer centered on the widest. */
@@ -112,7 +114,7 @@ function gnfaLayout(dfa: Automaton, across: boolean): StateLayout {
   ls.forEach((layer, i) =>
     layer.forEach((q, j) => {
       const off = (j - (layer.length - 1) / 2 + (widest - 1) / 2) * ROW_GAP;
-      pos[q] = across ? { x: i * ALONG, y: off } : { x: off, y: i * ALONG };
+      pos[q] = across ? { x: i * ALONG, y: off } : { x: off, y: i * DOWN };
     }),
   );
   const out = fixedLayout(pos, across);

@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { practiceSet } from '../../engine/practice';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { hashBuckets } from '.';
@@ -109,6 +110,13 @@ describe('hashing with buckets', () => {
     );
     expect(lastStep(t, 2).lines).toContain('ins.report');
     expect(sizeOf(t.endState())).toBe(2);
+  });
+
+  // The probes practice said "finds 13 after 1 probes".
+  it('says "1 probe" in practice', () => {
+    for (let seed = 1; seed <= 200; seed++)
+      for (const { question: q } of practiceSet(hashBuckets, seed, 4))
+        expect(q.explain).not.toMatch(/\b1 probes\b/);
   });
 
   it('matches a reference table for any sequence of operations', () => {

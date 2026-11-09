@@ -207,6 +207,10 @@ describe('NP reductions', () => {
     expect(says([['load', 'A-B'], ['toIs']]).at(-1)).toContain(
       'This is already an INDEPENDENT-SET instance.',
     );
+    // Was "and this is a INDEPENDENT-SET instance".
+    expect(says([['load', 'A-B'], ['toSc']]).at(-1)).toContain(
+      'this is an INDEPENDENT-SET instance',
+    );
     // Were "number the edges 1 to 1", "so 1 sets cover U" and "Built. 1 sets cover U exactly
     // when 1 vertices cover every edge" (without the check).
     const chain = says([['load', 'vc: A-B k=1'], ['toSc']]);

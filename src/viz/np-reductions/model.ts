@@ -636,7 +636,7 @@ function* wrongStart(s: S, to: Problem): Gen {
     say:
       here === to
         ? `This is already ${to === 'is' ? 'an' : 'a'} ${NAMES[to]} instance. ${can.length ? `From here you can reduce it to ${listWords(can)}.` : 'Load a formula or a graph to start again.'}`
-        : `The reduction to ${NAMES[to]} on this page starts from ${listWords(from.map((p) => NAMES[p]))}, and this is a ${NAMES[here]} instance. ${can.length ? `From here you can reduce it to ${listWords(can)}.` : 'SET-COVER is the end of the line here: load a formula or a graph to start again.'}`,
+        : `The reduction to ${NAMES[to]} on this page starts from ${listWords(from.map((p) => NAMES[p]))}, and this is ${here === 'is' ? 'an' : 'a'} ${NAMES[here]} instance. ${can.length ? `From here you can reduce it to ${listWords(can)}.` : 'SET-COVER is the end of the line here: load a formula or a graph to start again.'}`,
     lines: [],
     level: 1,
     vars: vars(s),

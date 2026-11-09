@@ -129,8 +129,7 @@ export const suffixArray: VizDef<SuffixState, SuffixSettings, SuffixExtra> = {
       op: 'Build by comparing suffixes (insertion sort)',
       best: {
         cost: 'O(n)',
-        why: 'Already in order, each comparison stops at the first character.',
-        example: 'distinct',
+        why: 'Suffixes already in order (ABCDEF): each insert takes one comparison, settled at the first character.',
       },
       average: {
         cost: 'O(n²)',

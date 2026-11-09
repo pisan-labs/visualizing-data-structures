@@ -118,7 +118,7 @@ export const bellmanFord: VizDef<BfState, BfSettings, BfExtra> = {
       },
       average: {
         cost: 'O(VE)',
-        why: 'It stops after one pass more than the most edges on any shortest path.',
+        why: 'It stops at most one pass after the most edges on any shortest path, often sooner.',
         example: 'passes',
       },
       worst: {
@@ -131,7 +131,7 @@ export const bellmanFord: VizDef<BfState, BfSettings, BfExtra> = {
       op: 'The negative-cycle check',
       best: {
         cost: 'O(1)',
-        why: 'The first edge it checks can still be relaxed.',
+        why: 'An edge near the front of the order can still be relaxed: here the second one.',
         example: 'undirected-negative',
       },
       average: {

@@ -646,14 +646,16 @@ function growSummary(g: Growth, s: S): string {
         : shape === 'polynomial'
           ? `adding a little more with each extra ${g.unit}: polynomial, not exponential`
           : 'too few rows to tell';
-  const lead = done.length
-    ? `From n = ${first.n} to ${done.at(-1)!.n}, the backtracker's steps went from ${fmt(first.bt)} to ${fmt(done.at(-1)!.bt)}, ${how}.`
-    : '';
+  const lead = !done.length
+    ? ''
+    : done.every((r) => r.bt === first.bt)
+      ? `From n = ${first.n} to ${done.at(-1)!.n}, the backtracker took ${fmt(first.bt)} ${first.bt === 1 ? 'step' : 'steps'} every time: every longer word fails at the same place, so it costs no more.`
+      : `From n = ${first.n} to ${done.at(-1)!.n}, the backtracker's steps went from ${fmt(first.bt)} to ${fmt(done.at(-1)!.bt)}, ${how}.`;
   const cap = stopped
     ? ` At n = ${last.n} it passed ${fmt(CAP)} steps and the page stopped it.`
     : '';
   const nfaHow = flat(nfaCounts)
-    ? `stayed at ${fmt(last.nfa)} steps`
+    ? `stayed at ${fmt(last.nfa)} ${last.nfa === 1 ? 'step' : 'steps'}`
     : `went from ${fmt(first.nfa)} to ${fmt(last.nfa)} steps${nfaShape === 'linear' ? `, adding ${fmt(last.nfa - rows.at(-2)!.nfa)} each time` : ''}`;
   const nfa = ` The NFA simulation ${nfaHow}: never more than ${s.nfa.states.length} per position, one for each state.`;
   return `${lead}${cap}${nfa}`.trim();

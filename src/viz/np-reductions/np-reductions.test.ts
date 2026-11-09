@@ -192,6 +192,41 @@ describe('NP reductions', () => {
     );
   });
 
+  it('counts one vertex, one set and one pair in the singular', () => {
+    const says = (calls: OpCall[]) =>
+      new Timeline(npReductions, settings(), 1, calls).entries.flatMap((e) =>
+        e.steps.map((s) => s.say),
+      );
+    // A one-literal formula makes a one-vertex graph; its complement has no pairs.
+    const one = says([['load', '(a)'], ['toIs'], ['toClique'], ['check']]);
+    // Were "That is 1 vertices", "1 vertices have 0 pairs" and "every set of 1 of the 1 vertices".
+    expect(one.some((say) => say.includes('That is 1 vertex, one per triangle'))).toBe(true);
+    expect(one.some((say) => say.includes('1 vertex has 0 pairs'))).toBe(true);
+    expect(one.some((say) => say.includes('try every set of 1 vertex out of 1'))).toBe(true);
+    // Was "This is already a INDEPENDENT-SET instance."
+    expect(says([['load', 'A-B'], ['toIs']]).at(-1)).toContain(
+      'This is already an INDEPENDENT-SET instance.',
+    );
+    // Was "and this is a INDEPENDENT-SET instance".
+    expect(says([['load', 'A-B'], ['toSc']]).at(-1)).toContain(
+      'this is an INDEPENDENT-SET instance',
+    );
+    // Were "number the edges 1 to 1", "so 1 sets cover U" and "Built. 1 sets cover U exactly
+    // when 1 vertices cover every edge" (without the check).
+    const chain = says([['load', 'vc: A-B k=1'], ['toSc']]);
+    expect(chain.some((say) => say.includes('number the one edge 1.'))).toBe(true);
+    expect(chain.some((say) => say.includes('so 1 set covers U.'))).toBe(true);
+    const bare = new Timeline(npReductions, settings('none'), 1, [
+      ['load', 'vc: A-B k=1'],
+      ['toSc'],
+    ]);
+    expect(bare.entries[1]!.steps.at(-1)!.say).toBe(
+      'Built. 1 set covers U exactly when 1 vertex covers every edge.',
+    );
+    const all = [...one, ...chain].join(' ');
+    expect(all).not.toMatch(/\b1 (vertices|sets|pairs)\b/);
+  });
+
   it('says why a reduction cannot start from the current problem', () => {
     const t = new Timeline(npReductions, settings(), 1, [['toVc'], ['toSc'], ['toClique']]);
     for (const e of t.entries) expect(e.end.inst.problem).toBe('3sat');

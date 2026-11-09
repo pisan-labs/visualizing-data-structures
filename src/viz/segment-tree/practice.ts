@@ -76,7 +76,10 @@ export function segmentPractice(def: () => Def): PracticeKind[] {
           setup,
           settings: SUM,
           answer: { kind: 'number', value: whole.length },
-          explain: `${and(whole.map((v) => v.node))}. Together they cover [${l}, ${r}] exactly, and each one is the biggest node that fits where it is.`,
+          explain:
+            whole.length === 1
+              ? `${whole[0]!.node} is a node of its own, so the query takes it whole and needs nothing else.`
+              : `${and(whole.map((v) => v.node))}. Together they cover [${l}, ${r}] exactly, and each one is the biggest node that fits where it is.`,
           watch: [['query', l, r]],
         };
       },

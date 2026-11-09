@@ -355,7 +355,7 @@ function* scan(
       p,
       ids.push,
       top
-        ? `The chain now ends ${top.name} → ${p.name}${run.s.stack.length >= 1 ? ', and every turn along it is a left turn' : ''}.`
+        ? `The chain now ends ${top.name} → ${p.name}${run.s.stack.length >= 2 ? ', and every turn along it is a left turn' : ''}.`
         : `It starts the chain.`,
     );
   }
@@ -363,15 +363,17 @@ function* scan(
 
 function* finish(run: Run, hull: number[], algo: string): Generator<HStep, S, void> {
   run.s = { ...run.s, hull, stack: hull, lower: [] };
-  const names = hull.map((id) => byId(run.s, id).name).join(', ');
+  const names = hull.map((id) => byId(run.s, id).name);
   const n = run.s.points.length;
+  const tests = `${run.s.tests} turn test${run.s.tests === 1 ? '' : 's'}`;
+  const pops = run.s.pops ? ` and ${run.s.pops} pop${run.s.pops === 1 ? '' : 's'}` : '';
   yield {
     state: run.s,
     marks: hull.map((id) => mark(ptId(id), 'done')),
     say:
       hull.length === 2
-        ? `Done. Every point lies on one line, so the "hull" is the segment ${names}. ${algo} used ${run.s.tests} turn tests.`
-        : `Done. The hull has ${hull.length} of the ${n} points as corners, counter-clockwise: ${names}. ${algo} used ${run.s.tests} turn tests${run.s.pops ? ` and ${run.s.pops} pops` : ''}.`,
+        ? `Done. Every point lies on one line, so the "hull" is the segment from ${names[0]} to ${names[1]}. ${algo} used ${tests}${pops}.`
+        : `Done. The hull has ${hull.length} of the ${n} points as corners, counter-clockwise: ${names.join(', ')}. ${algo} used ${tests}${pops}.`,
     lines: ['hull.ret'],
     vars: vars(run.s),
     level: 1,

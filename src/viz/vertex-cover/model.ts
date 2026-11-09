@@ -435,7 +435,9 @@ function* bruteSteps(g: Graph, r: VcRun, step: StepFn, weights: string) {
     r.C = [];
     r.covered = {};
     yield step(
-      `None of the ${plural(count, 'set')} of ${plural(k, 'vertex', 'vertices')} covers every edge${count > shown ? ` (the steps show the first ${shown})` : ''}. Try sets one bigger.`,
+      count === 1
+        ? `The only set of ${plural(k, 'vertex', 'vertices')}, ${setText(vs.filter((_, i) => i < k))}, does not cover every edge. Try sets one bigger.`
+        : `None of the ${count} sets of ${plural(k, 'vertex', 'vertices')} covers every edge${count > shown ? ` (the steps show the first ${shown})` : ''}. Try sets one bigger.`,
       ['b.size'],
       2,
     );

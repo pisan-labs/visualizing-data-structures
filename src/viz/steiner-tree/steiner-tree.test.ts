@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { Graph } from '../_graph/graph';
 import { formatGraph, parseGraph } from '../_graph/parse';
@@ -49,6 +50,45 @@ function floyd(g: Graph): (a: string, b: string) => number {
       for (const b of g.vertices)
         d.set(k(a, b), Math.min(d.get(k(a, b))!, d.get(k(a, m))! + d.get(k(m, b))!));
   return (a, b) => d.get(k(a, b))!;
+}
+
+/**
+ * The metric-closure approximation with every tie broken at random: in Prim over the closure,
+ * between equal shortest paths, and in the spanning tree of the paths. Returns its weight.
+ */
+function randomKmb(g: Graph, T: string[], rnd: () => number): number {
+  const d = floyd(g);
+  const pick = <V>(xs: V[]) => xs[Math.floor(rnd() * xs.length)]!;
+  const inTree = [T[0]!];
+  const used = new Map<string, Graph['edges'][number]>();
+  while (inTree.length < T.length) {
+    const cands = inTree.flatMap((a) => T.filter((b) => !inTree.includes(b)).map((b) => [a, b]));
+    const best = Math.min(...cands.map(([a, b]) => d(a!, b!)));
+    const [a, b] = pick(cands.filter(([x, y]) => d(x!, y!) === best));
+    inTree.push(b!);
+    for (let x = b!; x !== a;) {
+      const steps = g.edges.filter(
+        (e) => (e.u === x || e.v === x) && d(a!, e.u === x ? e.v : e.u) + e.w === d(a!, x),
+      );
+      const e = pick(steps);
+      used.set(`${e.u}-${e.v}`, e);
+      x = e.u === x ? e.v : e.u;
+    }
+  }
+  const up = new Map(g.vertices.map((v) => [v, v]));
+  const find = (v: string): string => (up.get(v) === v ? v : find(up.get(v)!));
+  let tree = [...used.values()]
+    .map((e) => ({ e, r: rnd() }))
+    .sort((p, q) => p.e.w - q.e.w || p.r - q.r)
+    .map((x) => x.e)
+    .filter((e) => find(e.u) !== find(e.v) && (up.set(find(e.u), find(e.v)), true));
+  for (let n = -1; n !== tree.length;) {
+    n = tree.length;
+    const deg = (v: string) => tree.filter((e) => e.u === v || e.v === v).length;
+    const leaf = (v: string) => deg(v) === 1 && !T.includes(v);
+    tree = tree.filter((e) => !leaf(e.u) && !leaf(e.v));
+  }
+  return tree.reduce((w, e) => w + e.w, 0);
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -140,6 +180,35 @@ describe('steiner-tree', () => {
       }),
       { numRuns: 300 },
     );
+  });
+
+  it('asks for an approximate weight only where no tie can change it', () => {
+    // Three of 300 questions had two right answers: equal closure distances or two shortest
+    // paths, broken by name in the model but not in the prompt.
+    const kind = steinerTree.practice!.find((k) => k.id === 'approx')!;
+    for (let seed = 1; seed <= 150; seed++) {
+      const q = kind.make(makeRng(seed));
+      const g = parseGraph(String(q.setup[0]![1])) as Graph;
+      const T = String(q.setup[1]![1]).split(' ');
+      const rng = makeRng(seed + 1000);
+      const rnd = () => rng.int(0, 999_999) / 1_000_000;
+      for (let k = 0; k < 30; k++)
+        expect(randomKmb(g, T, rnd), `seed ${seed}`).toEqual(
+          q.answer.kind === 'number' ? q.answer.value : NaN,
+        );
+    }
+  });
+
+  it('says one distance and one set S in the singular', () => {
+    const says = (method: StMethod, T: string) =>
+      new Timeline(steinerTree, { ...steinerTree.defaults, method }, 1, [
+        ['load', 'A-B:1, B-C:2'],
+        ['terminals', T],
+        ['run'],
+      ]).entries[2]!.steps.map((s) => s.say);
+    // Were "The closure table holds all 1 distances" and "So try all 1 sets S".
+    expect(says('approx', 'A C').join(' ')).toContain('The closure table holds the one distance.');
+    expect(says('exact', 'A B C').join(' ')).toContain('So try the only set S, ∅, and keep');
   });
 
   it('reaches the bound 2 − 2/t on the hidden hub', () => {

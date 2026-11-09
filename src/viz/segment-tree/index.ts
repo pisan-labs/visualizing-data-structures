@@ -104,7 +104,10 @@ export const segmentTree: VizDef<SegState, SegSettings, SegExtra> = {
     {
       op: 'update(i, x)',
       best: { cost: 'O(log n)', why: 'One path from the root to the leaf for i, then back up.' },
-      average: { cost: 'O(log n)', why: 'Every update walks a whole path, ⌈log₂ n⌉ + 1 nodes.' },
+      average: {
+        cost: 'O(log n)',
+        why: 'Every update walks a whole path, up to ⌈log₂ n⌉ + 1 nodes.',
+      },
       worst: {
         cost: 'O(log n)',
         why: 'The same path, plus a tag pushed at each node it passes.',

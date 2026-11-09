@@ -113,6 +113,24 @@ describe('segment tree', () => {
     expect(queried.end.lazy[3]).toBe(0);
     expect(queried.end.val[6]).toBe(17);
     expect(queried.steps.some((s) => s.say.startsWith('Push the tag +3 down first'))).toBe(true);
+    // The example's notes said query(5, 5) pushes "the tags" down; [2, 3] keeps its own.
+    expect(queried.end.lazy[5]).toBe(3);
+  });
+
+  it('words one node taken whole, two values and two tags plainly', () => {
+    const t = run(SUM, [
+      ['build', '5 3 8 1 9 2 7 4'],
+      ['add', 2, 7, 3],
+      ['query', 5, 5],
+    ]);
+    const add = t.entries[1]!.steps;
+    // Was "All 2 of its values" and "2 tags ... pushes the tag down".
+    expect(add.some((s) => s.say.includes('Both of its values go up by 3'))).toBe(true);
+    expect(add.at(-1)!.say).toContain('passes through and pushes them down.');
+    // Was "the sum of the 1 node taken whole, [5, 5]".
+    expect(t.entries[2]!.steps.at(-1)!.say).toContain(
+      'query(5, 5) = 5: one node, [5, 5], is taken whole.',
+    );
   });
 
   it('keeps minimums, where an add moves a node by x and not by x times its length', () => {
@@ -242,6 +260,8 @@ describe('segment tree practice', () => {
           expect(q.answer).toEqual({ kind: 'number', value: scan(a, l, r, min) });
         } else if (k.id === 'full-nodes') {
           expect(q.answer).toEqual({ kind: 'number', value: decompose(n, l, r).length });
+          // Was "[7, 8]. Together they cover [7, 8] exactly" for one node.
+          if (decompose(n, l, r).length === 1) expect(q.explain).not.toContain('Together');
         } else if (k.id === 'which-case') {
           const [, lo, hi] = /reaches node \[(\d+), (\d+)\]/.exec(q.prompt)!.map(Number);
           const want =

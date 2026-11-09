@@ -55,6 +55,14 @@ describe('3D rotation and scale', () => {
     expect(t.endState().pts).toEqual(SHAPES.cube.pts);
   });
 
+  it('refuses the first scale of the too-big example and applies the second', () => {
+    // The second scale was 1.5, which also leaves the drawing: (3, 3, 3) is 5.2 from the origin.
+    const ex = rotateScale3d.examples.find((e) => e.id === 'too-big')!;
+    const t = new Timeline(rotateScale3d, settings(), 1, ex.ops);
+    expect(t.entries[0]!.end).toBe(t.initial.state);
+    expect(t.entries[1]!.end.transforms).toBe(1);
+  });
+
   it('projects with z up in both views', () => {
     for (const kind of ['isometric', 'oblique'] as const) {
       expect(project({ x: 0, y: 0, z: 1 }, kind).y).toBeGreaterThan(0);

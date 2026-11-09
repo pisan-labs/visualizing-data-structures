@@ -1,7 +1,14 @@
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
 import { randomWord } from '../_automata/random';
-import { formatMachine, moveKey, randomMachine, type Kind, type Machine } from './machine';
+import {
+  formatMachine,
+  mealyToMoore,
+  moveKey,
+  randomMachine,
+  type Kind,
+  type Machine,
+} from './machine';
 import { defaults, type MmExtra, type MmSettings, type MmState, type RunView } from './model';
 
 type Def = VizDef<MmState, MmSettings, MmExtra>;
@@ -85,7 +92,12 @@ export function mealyMoorePractice(def: () => Def): PracticeKind[] {
       id: 'converted-output',
       title: 'What does the Moore machine write?',
       make(rng) {
-        const m = randomMachine(rng, 'mealy', rng.int(2, 3));
+        // What the Moore start state writes is fixed only when every move into the start
+        // writes the same symbol. Otherwise any copy of it would do, and the page's pick (the
+        // first copy) is not something the prompt can ask about.
+        let m = randomMachine(rng, 'mealy', rng.int(2, 3));
+        while (mealyToMoore(m).entered[m.fa.start]!.length !== 1)
+          m = randomMachine(rng, 'mealy', rng.int(2, 3));
         const w = randomWord(rng, ['0', '1'], rng.int(3, 5));
         const mealyOut = runOf([loadCall(m), ['run', w]]).tracks[0]!.out;
         const r = runOf([loadCall(m), ['convert'], ['run', w]]);
@@ -95,7 +107,7 @@ export function mealyMoorePractice(def: () => Def): PracticeKind[] {
           prompt: `This Mealy machine writes ${code(mealyOut)} on ${code(w)}. Convert it to a Moore machine and run ${code(w)} on that. What does the Moore machine write? Type it as one word.`,
           setup: [loadCall(m)],
           answer: { kind: 'sequence', value: [moore.out] },
-          explain: `The Moore machine starts in a copy of ${m.fa.start} that writes ${first}, before any input. After that it writes what the Mealy machine writes, one step later: ${first} then ${mealyOut} is ${moore.out}.`,
+          explain: `Every move into ${m.fa.start} writes ${first}, so its one copy, the Moore start state, writes ${first} before any input. After that it writes what the Mealy machine writes, one step later: ${first} then ${mealyOut} is ${moore.out}.`,
           watch: [['convert'], ['run', w]],
         };
       },

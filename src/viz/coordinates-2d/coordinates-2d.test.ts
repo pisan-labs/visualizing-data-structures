@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { coordinates2d, parseCoordinate } from '.';
@@ -106,6 +107,21 @@ describe('2D change of coordinates', () => {
     expect(parseCoordinate('-3')).toBe(-3);
     expect(parseCoordinate('2.25')).toBeInstanceOf(Error);
     expect(parseCoordinate('400')).toBeInstanceOf(Error);
+  });
+});
+
+describe('2D change of coordinates practice', () => {
+  it('calls a perpendicular flip a mirror, not a rotation', () => {
+    const kind = coordinates2d.practice!.find((k) => k.id === 'transpose')!;
+    let mirrors = 0;
+    for (let seed = 1; seed <= 200; seed++) {
+      const q = kind.make(makeRng(seed));
+      if (!q.prompt.includes('u = (0, 1) and v = (1, 0)')) continue;
+      mirrors++;
+      // Was "so M is a rotation and its inverse is its transpose" for u = (0, 1), v = (1, 0).
+      expect(q.explain).toContain('M is a mirror (det M = −1)');
+    }
+    expect(mirrors).toBeGreaterThan(0);
   });
 });
 

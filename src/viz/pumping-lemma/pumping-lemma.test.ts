@@ -357,6 +357,19 @@ describe('pumping-lemma game', () => {
       ).toEqual(d0);
   });
 
+  it('writes the split count as a plain sum for a small p', () => {
+    const kind = def.practice!.find((k) => k.id === 'count-splits')!;
+    for (let seed = 1; seed <= 60; seed++) {
+      const q = kind.make(makeRng(seed));
+      // Was "1 + 2 + … + 2 = 3" and "1 + 2 + … + 3 = 6".
+      expect(q.explain).not.toMatch(/… \+ [1-4] =/);
+    }
+    const small = Array.from({ length: 60 }, (_, k) => kind.make(makeRng(k + 1))).find((q) =>
+      q.prompt.includes('p = 3.'),
+    )!;
+    expect(small.explain).toContain('1 + 2 + 3 = 6');
+  });
+
   it('presets play whole games in either role', () => {
     for (const role of ['prove', 'defend'] as const)
       for (const lemma of ['regular', 'cf'] as const)

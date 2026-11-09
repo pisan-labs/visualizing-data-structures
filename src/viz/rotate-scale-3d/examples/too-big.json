@@ -3,7 +3,7 @@
   "viz": "rotate-scale-3d",
   "id": "too-big",
   "title": "Off the drawing",
-  "notes": "Scaling by 3 would push the cube to 6 on each axis, beyond the drawing, so the step is refused and nothing changes.",
+  "notes": "Scaling by 3 would push the far corner of the cube to (6, 6, 6), beyond the drawing, so the step is refused and nothing changes. A scale by 1.2 fits.",
   "settings": {
     "projection": "isometric",
     "convention": "column",
@@ -12,7 +12,7 @@
   "seed": 1,
   "ops": [
     ["scale", 3, 3, 3],
-    ["scale", 1.5, 1.5, 1.5]
+    ["scale", 1.2, 1.2, 1.2]
   ],
   "at": {
     "op": -1,

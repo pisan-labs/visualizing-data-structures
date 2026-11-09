@@ -144,7 +144,7 @@ export function rangePractice(def: () => Def): PracticeKind[] {
             setup,
             settings,
             answer: { kind: 'number', value: count },
-            explain: `P[k] is the sum of A[0..k − 1], so it includes A[${i}] exactly when k > ${i}: P[${i + 1}] to P[${n}], ${count} entries. Changing A[0] would change all ${n}.`,
+            explain: `P[k] is the sum of A[0..k − 1], so it includes A[${i}] exactly when k > ${i}: ${count === 1 ? `only P[${n}], 1 entry` : `P[${i + 1}] to P[${n}], ${count} entries`}. Changing A[0] would change all ${n}.`,
             watch: [['update', i, x]],
           };
         }

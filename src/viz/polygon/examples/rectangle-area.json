@@ -3,7 +3,7 @@
   "viz": "polygon",
   "id": "rectangle-area",
   "title": "The area of a rectangle",
-  "notes": "An 8 by 7 rectangle, so the answer had better be 56. Watch the two edges that face away from the origin cancel the extra area the other two add.",
+  "notes": "An 8 by 7 rectangle, so the answer had better be 56. The two edges nearest the origin, A → B and D → A, count minus and cancel the extra area the other two add.",
   "settings": {
     "inside": "ray"
   },

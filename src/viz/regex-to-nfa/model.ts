@@ -237,7 +237,7 @@ const build: Op = {
     yield {
       state: next,
       marks: [mark('start', 'active'), ...fin.map((q) => mark(stateId(q), 'found'))],
-      say: `Done: the NFA for ${next.text} has ${plural(next.nfa.states.length, 'state')} and ${plural(next.nfa.moves.length, 'move')}, with start ${next.nfa.start} and ${fin.length === 1 ? `accept state ${fin[0]}` : fin.length ? `accept states ${words(fin)}` : 'no accept state'}. The expression has m = ${next.m} symbols and operators.${twoM}`,
+      say: `Done: the NFA for ${next.text} has ${plural(next.nfa.states.length, 'state')} and ${plural(next.nfa.moves.length, 'move')}, with start ${next.nfa.start} and ${fin.length === 1 ? `accept state ${fin[0]}` : fin.length ? `accept states ${words(fin)}` : 'no accept state'}. The expression has m = ${next.m} ${next.m === 1 ? 'symbol' : 'symbols and operators'}.${twoM}`,
       lines: ['build.return'],
       vars: buildVars(next),
       level: 1,

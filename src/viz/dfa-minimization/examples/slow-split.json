@@ -3,7 +3,7 @@
   "viz": "dfa-minimization",
   "id": "slow-split",
   "title": "At least four symbols: one split per round",
-  "notes": "Each round can only tell apart states one symbol further from the accept state, so this chain takes four rounds to split into five blocks: the most rounds five states can need.",
+  "notes": "Each round can only tell apart states one symbol further from the accept state, so this chain takes three rounds to split into five blocks, and a fourth to see that nothing more splits: the most rounds five states can need.",
   "settings": {
     "method": "moore"
   },

@@ -39,6 +39,29 @@ describe('2D rotation and translation', () => {
     expect(tr[0]!.y).toBeCloseTo(5, 12);
   });
 
+  it('gives the true reason when the two orders agree', () => {
+    const say = (c: OpCall) =>
+      new Timeline(rotateTranslate2d, settings(), 1, [c]).entries[0]!.steps.at(-1)!.say;
+    expect(say(['order', 360, 4, 0])).toContain('a whole number of turns');
+    expect(say(['order', 90, 0, 0])).toContain('A zero slide moves nothing');
+    // A tiny angle matches to two decimals; it was said to be "a whole number of turns".
+    const tiny = say(['order', 0.1, 0.1, 0]);
+    expect(tiny).toContain('The two orders agree here.');
+    expect(tiny).not.toContain('whole number of turns');
+  });
+
+  it('does not write "M = T·M = R = …" in the 2×2 form', () => {
+    const t = new Timeline(rotateTranslate2d, settings({ form: 'affine' }), 1, [
+      ['rotate', 90],
+      ['translate', 2, 2],
+      ['about', 90, 1, 1],
+    ]);
+    const says = t.entries.flatMap((e) => e.steps.map((s) => s.say));
+    expect(says.some((say) => / = R = \[/.test(say))).toBe(false);
+    expect(t.entries[1]!.steps.at(-1)!.say).toContain('M = T·M: R = [0 -1; 1 0], t = (2, 2).');
+    expect(says.some((say) => say.includes('Its offset t is not c'))).toBe(true);
+  });
+
   it('rotating about a point keeps that point fixed', () => {
     const t = new Timeline(rotateTranslate2d, settings(), 1, [['about', 90, 1, 1]]);
     const a = t.endState().pts[0]!;

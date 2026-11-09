@@ -160,6 +160,13 @@ function* buildPrefix(a: number[]): Generator<RQStep, S, void> {
   return copy(w);
 }
 
+/** "Rows k = 1 to 3 will hold every window of 2, 4, … 8 values", for K rows above A. */
+function upperRows(K: number): string {
+  if (K === 1) return 'Row k = 1 will hold every window of 2 values';
+  if (K === 2) return 'Rows k = 1 and 2 will hold every window of 2 and 4 values';
+  return `Rows k = 1 to ${K} will hold every window of 2, 4, … ${2 ** K} values`;
+}
+
 function* buildSparse(a: number[]): Generator<RQStep, S, void> {
   const n = a.length;
   const K = levels(n);
@@ -172,7 +179,7 @@ function* buildSparse(a: number[]): Generator<RQStep, S, void> {
     say:
       K === 0
         ? 'build: A gets 1 value. Row k = 0 of the table is A itself, and one value has no longer windows, so the table is done.'
-        : `build: A gets ${plural(n, 'value')}. Row k = 0 of the table is A itself: a window of one value is its own minimum. Rows k = 1 to ${K} will hold every window of 2, 4, … ${2 ** K} values, the powers of two that fit in n = ${n}.`,
+        : `build: A gets ${plural(n, 'value')}. Row k = 0 of the table is A itself: a window of one value is its own minimum. ${upperRows(K)}, the powers of two that fit in n = ${n}.`,
     lines: ['build.sig', 'sb.base'],
     level: 2,
     vars: vars(w),
@@ -247,11 +254,11 @@ function* queryPrefix(s: S, i: number, j: number): Generator<RQStep, S, void> {
     { to: i, label: `P[${i}] = ${lo}` },
   ];
   const ends = [mark(`p-${j + 1}`, 'active'), mark(`p-${i}`, 'compare')];
-  const before = i === 0 ? 'nothing comes before A[0], so P[0] = 0' : `that is ${span(0, i - 1)}`;
+  const before = i === 0 ? ', which is nothing' : `: that is ${span(0, i - 1)}`;
   yield {
     state: copy(w),
     marks: ends,
-    say: `sum(${i}, ${j}) adds up ${span(i, j)}, both ends included. P[${j + 1}] = ${hi} is the sum of everything up to A[${j}], ${span(0, j)}. P[${i}] = ${lo} is the sum of everything before A[${i}]: ${before}.`,
+    say: `sum(${i}, ${j}) adds up ${span(i, j)}, both ends included. P[${j + 1}] = ${hi} is the sum of everything up to A[${j}], ${span(0, j)}. P[${i}] = ${lo} is the sum of everything before A[${i}]${before}.`,
     lines: ['query.sig'],
     level: 2,
     vars: vars(w, { i, j }),
@@ -390,7 +397,7 @@ function* updatePrefix(s: S, i: number, x: number): Generator<RQStep, S, void> {
   yield {
     state: copy(w),
     marks: Array.from({ length: n - i }, (_, k) => mark(`p-${i + 1 + k}`, 'done')),
-    say: `Done: ${plural(cost, 'entry', 'entries')} of P changed, P[${i + 1}] to P[${n}]. One changed value costs O(n) here. A Fenwick tree or a segment tree makes both updates and sums O(log n).`,
+    say: `Done: ${cost === 1 ? `1 entry of P changed, P[${n}]` : `${cost} entries of P changed, P[${i + 1}] to P[${n}]`}. One changed value costs O(n) here. A Fenwick tree or a segment tree makes both updates and sums O(log n).`,
     lines: [],
     level: 1,
     vars: vars(w, { i, x, d, 'update cost': cost }),

@@ -209,7 +209,7 @@ const area: Op = {
     yield {
       state: s,
       marks: v.map((_, i) => mark(eId(s, i), sum >= 0 ? 'active' : 'error')),
-      say: `Area = |${sum}| / 2 = ${half(sum)}. The triangles outside the polygon cancel out. The sign tells the direction: ${sum > 0 ? 'positive, so the vertices go counter-clockwise' : sum < 0 ? 'negative, so the vertices go clockwise' : 'zero, so the polygon is flat'}.${s.simple ? '' : ' This polygon is not simple, so the parts it wraps twice count twice.'}`,
+      say: `Area = |${sum}| / 2 = ${half(sum)}. The triangles outside the polygon cancel out. The sign tells the direction: ${sum > 0 ? 'positive, so the vertices go counter-clockwise' : sum < 0 ? 'negative, so the vertices go clockwise' : 'zero, so the polygon is flat'}.${s.simple ? '' : ' This polygon is not simple, so each part counts once for every time the boundary winds around it, and a part wound the other way counts minus.'}`,
       lines: ['area.ret'],
       vars: vars(s, { sum, area: Math.abs(sum) / 2 }),
       level: 1,
@@ -413,7 +413,10 @@ const inside: Op = {
         if (right) {
           count += 1;
           hits.push({ edge: i, x: xi, up: b.y > a.y });
-          say = `Edge ${edge} goes from y = ${a.y} to y = ${b.y}, past y = ${y}, and meets the ray at x = ${fmtNum(xi)}, to the right of q. Crossings: ${count}.`;
+          say =
+            a.y === y || b.y === y
+              ? `Edge ${edge} goes from y = ${a.y} to y = ${b.y}. Its end on the ray counts as below it, so the edge crosses the ray, at x = ${fmtNum(xi)}, to the right of q. Crossings: ${count}.`
+              : `Edge ${edge} goes from y = ${a.y} to y = ${b.y}, past y = ${y}, and meets the ray at x = ${fmtNum(xi)}, to the right of q. Crossings: ${count}.`;
         } else if (spans) {
           say = `Edge ${edge} crosses y = ${y} at x = ${fmtNum(xi)}, which is left of q, so the ray misses it.`;
         } else {
@@ -460,7 +463,7 @@ const inside: Op = {
       marks: [mark('q', where === 'inside' ? 'done' : 'error')],
       say: ray
         ? `${count} crossing${count === 1 ? '' : 's'}: ${count % 2 ? 'odd' : 'even'}, so q is ${where}. Every crossing switches between outside and inside.`
-        : `The winding number is ${count}, so q is ${where}.${Math.abs(count) > 1 ? ' The boundary goes around q more than once; the even-odd rule would call it outside.' : ''}`,
+        : `The winding number is ${count}, so q is ${where}.${Math.abs(count) > 1 ? ` The boundary goes around q ${Math.abs(count)} times; the even-odd rule ${count % 2 === 0 ? 'would call it outside' : 'agrees, since that is odd'}.` : ''}`,
       lines: [ray ? 'in.ret' : 'wn.ret'],
       vars: vars(s, ray ? { crossings: count, where } : { winding: count, where }),
       level: 1,

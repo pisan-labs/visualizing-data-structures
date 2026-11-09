@@ -18,6 +18,38 @@ type Def = VizDef<TspState, TspSettings, TspExtra>;
  * Practice for the TSP page. Every answer comes from running the model: tours, lengths and
  * Held-Karp entries are read from its steps.
  */
+/**
+ * Whether the minimum spanning tree is the only one: every pair of cities that is not a tree
+ * edge is longer than the longest tree edge on the path between them. With a tie, another
+ * spanning tree weighs the same, and its walk can give a tour of a different length.
+ */
+function uniqueTree(g: TspState['graph'], tree: TspRun['tree']): boolean {
+  const d = distances(g);
+  const adj = new Map<string, [string, number][]>(g.vertices.map((v) => [v, []]));
+  for (const e of tree ?? []) {
+    adj.get(e.parent)!.push([e.child, e.w]);
+    adj.get(e.child)!.push([e.parent, e.w]);
+  }
+  const heaviest = (from: string, to: string): number => {
+    const go = (v: string, prev: string, most: number): number | null => {
+      if (v === to) return most;
+      for (const [x, w] of adj.get(v)!)
+        if (x !== prev) {
+          const got = go(x, v, Math.max(most, w));
+          if (got !== null) return got;
+        }
+      return null;
+    };
+    return go(from, '', 0)!;
+  };
+  const inTree = new Set(
+    (tree ?? []).flatMap((e) => [`${e.parent}|${e.child}`, `${e.child}|${e.parent}`]),
+  );
+  return g.vertices.every((u, i) =>
+    g.vertices.slice(i + 1).every((v) => inTree.has(`${u}|${v}`) || d(u, v) > heaviest(u, v)),
+  );
+}
+
 export function tspPractice(def: () => Def): PracticeKind[] {
   function setupRun(rng: Rng, n: number, settings: TspSettings) {
     const pts = randomCities(rng, n);
@@ -49,7 +81,10 @@ export function tspPractice(def: () => Def): PracticeKind[] {
       id: 'tree-walk',
       title: 'Length of the tree-walk tour',
       make(rng) {
-        const q = setupRun(rng, rng.int(5, 6), { ...defaults, method: 'mst' });
+        // The prompt does not say how Prim breaks ties, so keep only trees without one.
+        let q = setupRun(rng, rng.int(5, 6), { ...defaults, method: 'mst' });
+        while (!uniqueTree(q.g, q.r.tree))
+          q = setupRun(rng, rng.int(5, 6), { ...defaults, method: 'mst' });
         const w = q.r.tree!.reduce((a, e) => a + e.w, 0);
         return {
           prompt: `APPROX-TSP-TOUR builds a minimum spanning tree from A, walks it in preorder (children in name order) and lists the cities in the order it meets them. The distances are the straight lines, rounded up. How long is the tour it returns?`,

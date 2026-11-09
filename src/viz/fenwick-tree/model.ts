@@ -408,7 +408,10 @@ const prefix: Op = {
         ...r.read.flatMap((d) => tagged(d, 'found')),
         ...Array.from({ length: i0 }, (_, k) => mark(`a-${k + 1}`, 'found')),
       ],
-      say: `i = 0, so stop. prefix(${i0}) = ${r.total}, from ${plural(r.read.length, 'entry', 'entries')} of T: one for each 1 bit of ${i0} = ${bin(i0)}₂. Their ranges fit together into ${span(1, i0)}.`,
+      say:
+        r.read.length === 1
+          ? `i = 0, so stop. prefix(${i0}) = ${r.total}, from 1 entry of T: ${i0} = ${bin(i0)}₂ has one 1 bit, and T[${i0}] covers all of ${span(1, i0)}.`
+          : `i = 0, so stop. prefix(${i0}) = ${r.total}, from ${r.read.length} entries of T: one for each 1 bit of ${i0} = ${bin(i0)}₂. Their ranges fit together into ${span(1, i0)}.`,
       lines: ['pf.ret'],
       level: 1,
       vars: vars(w, { sum: r.total }),

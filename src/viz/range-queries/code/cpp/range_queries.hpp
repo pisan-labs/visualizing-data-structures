@@ -32,8 +32,9 @@ class PrefixSums {
 // Range minimums: m[k][i] is the smallest of A[i .. i + 2^k - 1].
 class SparseTable {
  public:
-  explicit SparseTable(const std::vector<int>& a) : m_{a} {
+  explicit SparseTable(const std::vector<int>& a) : m_{a}, lg_(a.size() + 1, 0) {
     int n = static_cast<int>(a.size());
+    for (int len = 2; len <= n; len++) lg_[len] = lg_[len / 2] + 1;  // floor(log2(len))
     for (int k = 1; (1 << k) <= n; k++) {
       int half = 1 << (k - 1);
       std::vector<int> row(n - (1 << k) + 1);
@@ -46,8 +47,7 @@ class SparseTable {
 
   // The smallest of A[i..j], from two windows that may overlap. O(1).
   int min(int i, int j) const {
-    int k = 0;
-    while ((2 << k) <= j - i + 1) k++;  // k = floor(log2(j - i + 1))
+    int k = lg_[j - i + 1];
     return std::min(m_[k][i], m_[k][j - (1 << k) + 1]);
   }
 
@@ -65,4 +65,5 @@ class SparseTable {
 
  private:
   std::vector<std::vector<int>> m_;
+  std::vector<int> lg_;
 };

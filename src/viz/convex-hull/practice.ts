@@ -85,7 +85,7 @@ export function hullPractice(def: () => Def): PracticeKind[] {
           prompt: `Run Graham scan on these ${n} points. How many times does it pop the stack?`,
           setup,
           answer: { kind: 'number', value: end.pops },
-          explain: `Every point that is pushed is either a corner at the end or popped once. ${n - dropped} points are pushed${dropped ? ` (${dropped} set aside after the sort, for sharing an angle with a farther point)` : ''} and ${h} are corners, so there are ${end.pops} pops.`,
+          explain: `Every point that is pushed is either a corner at the end or popped once. ${n - dropped} points are pushed${dropped ? ` (${dropped} set aside after the sort, for sharing an angle with a farther point)` : ''} and ${h} are corners, so ${end.pops === 1 ? 'there is 1 pop' : `there are ${end.pops} pops`}.`,
           watch: [['hull']],
         };
       },

@@ -5,6 +5,7 @@ import { formatAutomaton } from '../_automata/parse';
 import { words } from '../_automata/page';
 import {
   defaults,
+  delta,
   pairKey,
   type MinExtra,
   type MinRun,
@@ -104,7 +105,17 @@ export function minimizationPractice(def: () => Def): PracticeKind[] {
         for (;;) {
           const { setup: s, r, watch } = setup(rng, settings);
           const Q = r.work.states;
-          const marked = Object.keys(r.marked).filter((k) => r.marked[k] !== 'ε');
+          // Only pairs that one symbol alone can separate: when two symbols both lead to
+          // marked pairs, which one marks the cell depends on the order of the passes.
+          const marked = Object.keys(r.marked).filter((k) => {
+            if (r.marked[k] === 'ε') return false;
+            const [p, q] = k.split('|') as [string, string];
+            const by = r.work.alphabet.filter((c) => {
+              const [x, y] = [delta(r.work, p, c), delta(r.work, q, c)];
+              return x !== y && r.marked[pairKey(Q, x, y)];
+            });
+            return by.length === 1;
+          });
           if (!marked.length) continue;
           const [p, q] = marked[rng.int(0, marked.length - 1)]!.split('|') as [string, string];
           const sym = r.marked[pairKey(Q, p, q)]!;

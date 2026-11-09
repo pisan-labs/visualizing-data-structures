@@ -124,6 +124,18 @@ describe('fenwick tree', () => {
     expect(t.entries[5]!.steps[0]!.say).toContain('would become 107');
   });
 
+  it('says a power of two reads one entry, without "their ranges"', () => {
+    const t = run(LINEAR, [
+      ['build', SIXTEEN],
+      ['prefix', 16],
+    ]);
+    const say = t.entries[1]!.steps.at(-1)!.say;
+    expect(say).toContain(
+      'from 1 entry of T: 16 = 10000₂ has one 1 bit, and T[16] covers all of A[1..16].',
+    );
+    expect(say).not.toContain('Their ranges');
+  });
+
   it('treats prefix(0) as the empty sum', () => {
     const t = run(LINEAR, [['prefix', 0]]);
     expect(t.entries[0]!.steps.at(-1)!.vars?.sum).toBe(0);

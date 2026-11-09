@@ -3,7 +3,7 @@
   "viz": "segment-tree",
   "id": "lazy-tags",
   "title": "Tags wait until a query passes through",
-  "notes": "add(2, 7, 3) changes six values but stops at two nodes, [2, 3] and [4, 7], and tags them. The values under the tags are out of date until query(5, 5) pushes the tags down on its way to the leaf.",
+  "notes": "add(2, 7, 3) changes six values but stops at two nodes, [2, 3] and [4, 7], and tags them. The values under a tag are out of date until a query passes through it: query(5, 5) pushes the tag on [4, 7] down on its way to the leaf, and [2, 3] keeps its tag.",
   "settings": { "combine": "sum" },
   "seed": 1,
   "ops": [

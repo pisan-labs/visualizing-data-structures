@@ -1,7 +1,7 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, Settings, VizDef } from '../../engine/types';
-import { listWords } from '../_graph/graph';
+import { listWords, makeGraph, type Graph } from '../_graph/graph';
 import {
   defaults,
   pairKey,
@@ -21,17 +21,65 @@ type Def = VizDef<StState, StSettings, StExtra>;
  * weights and the optimum are read from its steps.
  */
 export function stPractice(def: () => Def): PracticeKind[] {
+  function runOn(graph: Graph, terminals: string[], method: StMethod) {
+    const calls = setup(graph, terminals);
+    const settings: StSettings = { ...defaults, method };
+    const t = new Timeline(def(), settings, 1, [...calls, ['run']]);
+    const r = t.entries.at(-1)!.steps.at(-1)!.extra?.run as StRun | undefined;
+    return { calls, r, settings: settings as Settings, watch: [['run']] as OpCall[] };
+  }
   function setupRun(rng: Rng, method: StMethod, n: number) {
     for (;;) {
       const { graph, terminals } = randomSteiner(rng, n, 0.25);
       if (terminals.length < 3) terminals.push(graph.vertices.find((v) => !terminals.includes(v))!);
-      const calls = setup(graph, terminals.sort());
-      const settings: StSettings = { ...defaults, method };
-      const t = new Timeline(def(), settings, 1, [...calls, ['run']]);
-      const r = t.entries.at(-1)!.steps.at(-1)!.extra?.run as StRun | undefined;
-      if (!r) continue;
-      return { calls, r, settings: settings as Settings, watch: [['run']] as OpCall[] };
+      const q = runOn(graph, terminals.sort(), method);
+      if (!q.r) continue;
+      return { ...q, r: q.r, graph, terminals };
     }
+  }
+  /**
+   * The approximation breaks ties by name (between equal distances in Prim, and between equal
+   * shortest paths), and a different tie can give a different weight. The prompt cannot spell
+   * that out, so keep only graphs with no such tie: every two terminals have one shortest path
+   * and distances that differ, and the weight stays the same when the names are reversed.
+   */
+  function tieFree(graph: Graph, terminals: string[], weight: number): boolean {
+    const dists: number[] = [];
+    for (const s of terminals) {
+      // Dijkstra that also counts shortest paths (weights are positive).
+      const d = new Map<string, number>([[s, 0]]);
+      const ways = new Map<string, number>([[s, 1]]);
+      const done = new Set<string>();
+      for (;;) {
+        let u: string | undefined;
+        for (const [v, dv] of d) if (!done.has(v) && (u === undefined || dv < d.get(u)!)) u = v;
+        if (u === undefined) break;
+        done.add(u);
+        for (const e of graph.edges) {
+          if (e.u !== u && e.v !== u) continue;
+          const x = e.u === u ? e.v : e.u;
+          const via = d.get(u)! + e.w;
+          if (!d.has(x) || via < d.get(x)!) {
+            d.set(x, via);
+            ways.set(x, ways.get(u)!);
+          } else if (via === d.get(x)! && !done.has(x)) ways.set(x, ways.get(x)! + ways.get(u)!);
+        }
+      }
+      for (const t of terminals) {
+        if (t <= s) continue;
+        if (ways.get(t) !== 1) return false;
+        dists.push(d.get(t)!);
+      }
+    }
+    if (new Set(dists).size !== dists.length) return false;
+    const vs = graph.vertices;
+    const to = new Map(vs.map((v, i) => [v, vs[vs.length - 1 - i]!]));
+    const mirror = makeGraph({
+      ...graph,
+      edges: graph.edges.map((e) => ({ ...e, u: to.get(e.u)!, v: to.get(e.v)! })),
+    });
+    const back = runOn(mirror, terminals.map((v) => to.get(v)!).sort(), 'approx');
+    return back.r?.weight === weight;
   }
   const intro = 'The ringed vertices are the terminals.';
 
@@ -61,7 +109,9 @@ export function stPractice(def: () => Def): PracticeKind[] {
       id: 'approx',
       title: 'The approximate tree',
       make(rng) {
-        const q = setupRun(rng, 'approx', rng.int(6, 7));
+        let q = setupRun(rng, 'approx', rng.int(6, 7));
+        while (!tieFree(q.graph, q.terminals, q.r.weight))
+          q = setupRun(rng, 'approx', rng.int(6, 7));
         const m = q.r.closure;
         return {
           prompt: `${intro} Run the metric-closure approximation: a minimum spanning tree over the terminal-to-terminal distances, each of its edges put back as its path, then a spanning tree of those edges with Steiner leaves cut off. How much does the tree weigh?`,

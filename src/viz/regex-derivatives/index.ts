@@ -182,6 +182,8 @@ export const regexDerivatives: VizDef<RdState, RdSettings, unknown> = {
   ],
   practice: rdPractice(() => regexDerivatives),
   preview: { example: 'abb-dfa', level: 3, hide: ['row', 'panel-title', 'expr'] },
+  // The bare expression says little: open on the DFA of its derivatives.
+  opening: 'abb-dfa',
   code: {
     python: pythonSource,
     java: javaSource,

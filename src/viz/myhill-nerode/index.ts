@@ -177,6 +177,8 @@ export const myhillNerode: VizDef<MnState, MnSettings, unknown> = {
   ],
   practice: mnPractice(() => myhillNerode),
   preview: { example: 'extra-states', level: 2, hide: ['cls-', 'pt-'] },
+  // The bare language says little: open on its classes and minimal DFA.
+  opening: 'ends-in-ab',
   code: {
     python: pythonSource,
     java: javaSource,

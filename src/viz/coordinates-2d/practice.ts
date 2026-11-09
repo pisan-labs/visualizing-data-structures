@@ -123,7 +123,7 @@ export function coordinatesPractice(def: () => Def): PracticeKind[] {
           setup,
           answer: { kind: 'choice', options, correct: yes ? 0 : 1 },
           explain: yes
-            ? 'Yes. u and v are perpendicular and both have length 1, so M is a rotation and its inverse is its transpose.'
+            ? `Yes. u and v are perpendicular and both have length 1, so M is a ${s.u.x * s.v.y - s.v.x * s.u.y < 0 ? 'mirror (det M = −1)' : 'rotation'} and its inverse is its transpose.`
             : 'No. The axes are not perpendicular unit vectors, so the dot products give the wrong numbers. Use (1 / det M) [v.y −v.x; −u.y u.x].',
           watch: [ask],
         };

@@ -104,6 +104,11 @@ describe('memory model', () => {
     expect(t2.endState().heap).toHaveLength(1);
   });
 
+  it('never claims freeing n items costs less than O(n)', () => {
+    const row = memoryModel.complexity!.find((r) => r.op.startsWith('freeing'))!;
+    expect([row.best.cost, row.average.cost]).toEqual(['O(n)', 'O(n)']);
+  });
+
   it('turns down what the language cannot do', () => {
     const refused = (cs: OpCall[], s: Partial<MemSettings> = {}) =>
       new Timeline(memoryModel, settings(s), 1, cs).entries.at(-1)!.steps.at(-1)!.lines;

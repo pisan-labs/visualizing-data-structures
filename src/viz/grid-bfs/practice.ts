@@ -1,7 +1,7 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, Settings, VizDef } from '../../engine/types';
-import { cellName, loadCall, names, randomGrid, targetOf, type Grid } from '../_grid/grid';
+import { cellName, loadCall, names, randomGrid, rc, targetOf, type Grid } from '../_grid/grid';
 import {
   defaults,
   pathTo,
@@ -13,13 +13,47 @@ import {
 
 type Def = VizDef<BfsGridState, BfsGridSettings, BfsGridExtra>;
 
+/** Whether the walls made the path longer than it would be on an open grid. */
+function wallsNote(g: Grid, path: readonly number[], diagonal: boolean, d: number): string {
+  const [r0, c0] = rc(g, path[0]!);
+  const [r1, c1] = rc(g, path.at(-1)!);
+  const dr = Math.abs(r1 - r0);
+  const dc = Math.abs(c1 - c0);
+  const open = diagonal ? Math.max(dr, dc) : dr + dc;
+  return d > open
+    ? `Without the walls it would take ${open}: they force a detour.`
+    : 'The walls cost nothing here: that is as short as it would be on an open grid.';
+}
+
+/**
+ * The grid with T walled in: walls on its 4 sides, or on all 8 cells around it when diagonal
+ * moves are allowed. With 4 moves the corners stay open, and still lead nowhere.
+ */
+function wallIn(g: Grid, diagonal: boolean): Grid {
+  const cells = g.lines.map((line) => [...line]);
+  const [r, c] = rc(g, targetOf(g));
+  for (let dr = -1; dr <= 1; dr++)
+    for (let dc = -1; dc <= 1; dc++) {
+      if (!diagonal && dr !== 0 && dc !== 0) continue;
+      const row = cells[r + dr];
+      if (row && row[c + dc] === '.') row[c + dc] = '#';
+    }
+  return { lines: cells.map((line) => line.join('')) };
+}
+
 /**
  * Practice for grid BFS. Every answer comes from running the model: distances, the path and
  * the order cells leave the queue are read from the run's last step.
  */
 export function gridBfsPractice(def: () => Def): PracticeKind[] {
-  function setupRun(rng: Rng, density = 0.25, moves: '4' | '8' = rng.int(0, 2) ? '4' : '8') {
-    const g: Grid = randomGrid(rng, rng.int(4, 6), rng.int(6, 8), density);
+  function setupRun(
+    rng: Rng,
+    density = 0.25,
+    moves: '4' | '8' = rng.int(0, 2) ? '4' : '8',
+    blocked = false,
+  ) {
+    const made: Grid = randomGrid(rng, rng.int(4, 6), rng.int(6, 8), density);
+    const g = blocked ? wallIn(made, moves === '8') : made;
     const settings: BfsGridSettings = { ...defaults, moves };
     const setup: OpCall[] = [loadCall(g)];
     const t = new Timeline(def(), settings, 1, [...setup, ['run']]);
@@ -45,7 +79,7 @@ export function gridBfsPractice(def: () => Def): PracticeKind[] {
             setup,
             settings,
             answer: { kind: 'number', value: d },
-            explain: `T is ${d} moves from S. One shortest path is ${names(g, r.path).join(' → ')}. Walls force the detour; without them it could be shorter.`,
+            explain: `T is ${d} moves from S. One shortest path is ${names(g, r.path).join(' → ')}. ${wallsNote(g, r.path, settings.moves === '8', d)}`,
             watch,
           };
         }
@@ -76,7 +110,10 @@ export function gridBfsPractice(def: () => Def): PracticeKind[] {
       id: 'reachable',
       title: 'Is there a way through?',
       make(rng) {
-        const { g, settings, setup, r, how, watch } = setupRun(rng, rng.int(0, 1) ? 0.42 : 0.3);
+        // randomGrid looks for a grid where T can be reached, so wall T in half the time.
+        const blocked = rng.int(0, 1) === 0;
+        const density = rng.int(0, 1) ? 0.42 : 0.3;
+        const { g, settings, setup, r, how, watch } = setupRun(rng, density, undefined, blocked);
         const options = ['Yes, T can be reached', 'No, T cannot be reached'];
         const yes = r.end === 'found';
         return {

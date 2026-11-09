@@ -72,7 +72,7 @@ export const gridBfs: VizDef<BfsGridState, BfsGridSettings, BfsGridExtra> = {
       op: 'GRID-BFS on R × C cells',
       best: {
         cost: 'O(1)',
-        why: 'T is next to S: one dequeue finds it, and the next one is T.',
+        why: 'T is next to S: the first dequeue finds it, and T leaves the queue a few cells later.',
         example: 'next-door',
       },
       average: {

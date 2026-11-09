@@ -1,9 +1,11 @@
 /**
  * The trie of patterns (src/layouts/trie.ts), each node that ends a pattern ringed and labeled
- * with it, under its right side (with output sets, the whole set); failure links as dashed curves (links to the root
+ * with it, under its right side, or its left or centre when a link runs there (with output sets,
+ * the whole set); failure links as dashed curves (links to the root
  * are left out unless a step uses one) and output links as colored dashed curves. During a scan
  * the text sits above the trie, and the matches found so far beside or under it, with a legend.
  */
+import './words.css';
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { pickBest, translate } from '../../layouts/arrange';
 import { padBounds, unionBounds } from '../../layouts/binary-tree';
@@ -26,6 +28,22 @@ import {
 const R = 12;
 const WORD = 14;
 const CW = 28;
+
+const overlaps = (a: Bounds, b: Bounds) =>
+  a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+
+/** An arrow (a quadratic through `via`, or straight) as points along it. */
+function curvePoints(sh: Extract<Shape, { kind: 'arrow' }>): { x: number; y: number }[] {
+  const c = sh.via ?? { x: (sh.x1 + sh.x2) / 2, y: (sh.y1 + sh.y2) / 2 };
+  return Array.from({ length: 21 }, (_, i) => {
+    const t = i / 20;
+    const k = 1 - t;
+    return {
+      x: k * k * sh.x1 + 2 * k * t * c.x + t * t * sh.x2,
+      y: k * k * sh.y1 + 2 * k * t * c.y + t * t * sh.y2,
+    };
+  });
+}
 
 export function view(step: Step<AcState, AcExtra>, settings: AcSettings, stage?: StageSize): Scene {
   const st = step.state;
@@ -60,23 +78,6 @@ export function view(step: Step<AcState, AcExtra>, settings: AcSettings, stage?:
     baseRole: (u) => (path.has(u) ? 'visit' : u === st.cur && st.text ? 'active' : undefined),
   });
   const at = (u: number) => layout.nodes.get(u)!;
-  for (const n of nodes) {
-    const text = wordText(n.id, sets ? (n.out.length || !n.word ? n.out : [n.word]) : []);
-    if (!text) continue;
-    const p = at(n.id);
-    shapes.push({
-      kind: 'text',
-      id: `word-${n.id}`,
-      // Below and to the right of the ring: clear of links, which end on the node's sides.
-      x: p.x + 9,
-      y: p.y + R + RING + 14,
-      text,
-      size: WORD,
-      mono: true,
-      cls: 'label',
-    });
-  }
-
   // Links: a curve from u to v, bowed to one side.
   const curve = (
     id: string,
@@ -125,9 +126,82 @@ export function view(step: Step<AcState, AcExtra>, settings: AcSettings, stage?:
       shapes.push(curve(did, n.id, n.dict, -1, roles.get(did) ?? 'found', true));
     }
   }
+  // Word labels go under their node: to the right if that is clear, else to the left or
+  // centred, whichever crosses the fewest links, nodes and labels already placed.
+  const lines = shapes.flatMap((sh) => (sh.kind === 'arrow' ? [curvePoints(sh)] : []));
+  const placed: Bounds[] = [];
+  const order = nodes
+    .map((n) => ({
+      n,
+      text: wordText(n.id, sets ? (n.out.length || !n.word ? n.out : [n.word]) : []),
+    }))
+    .filter((w) => w.text)
+    .sort((a, b) => at(a.n.id).x - at(b.n.id).x);
+  for (const { n, text } of order) {
+    const p = at(n.id);
+    const w = trieLabelWidth(text, WORD);
+    const below = p.y + R + RING + 14;
+    const side = R + RING + 4;
+    let best: {
+      score: number;
+      x: number;
+      y: number;
+      anchor: 'start' | 'middle' | 'end';
+      box: Bounds;
+    } | null = null;
+    for (const [k, anchor, left, y] of [
+      [0, 'start', p.x + 9, below],
+      [1, 'end', p.x - 9 - w, below],
+      [1.5, 'middle', p.x - w / 2, below],
+      [2, 'start', p.x + side, p.y + 5],
+      [2.5, 'end', p.x - side - w, p.y + 5],
+    ] as const) {
+      const box = { x: left - 2, y: y - WORD * 0.85, w: w + 4, h: WORD * 1.1 };
+      const inside = (q: { x: number; y: number }) =>
+        q.x > box.x && q.x < box.x + box.w && q.y > box.y && q.y < box.y + box.h;
+      let score = k;
+      for (const line of lines) if (line.some(inside)) score += 4;
+      for (const o of placed) if (overlaps(o, box)) score += 20;
+      for (const m of nodes) {
+        const c = at(m.id);
+        if (
+          overlaps(box, {
+            x: c.x - R - RING,
+            y: c.y - R - RING,
+            w: 2 * (R + RING),
+            h: 2 * (R + RING),
+          })
+        )
+          score += 20;
+      }
+      if (!best || score < best.score)
+        best = {
+          score,
+          x: anchor === 'start' ? left : anchor === 'end' ? left + w : p.x,
+          y,
+          anchor,
+          box,
+        };
+    }
+    placed.push(best!.box);
+    shapes.push({
+      kind: 'text',
+      id: `word-${n.id}`,
+      x: best!.x,
+      y: best!.y,
+      text,
+      size: WORD,
+      mono: true,
+      // A halo the page's stylesheet draws, so a link passing behind never runs through it.
+      cls: 'label ac-word',
+      ...(best!.anchor === 'start' ? {} : { anchor: best!.anchor }),
+    });
+  }
+
   // The trie's box, with room for the bow of a link: the same on every step of an operation.
   const lb = layout.bounds;
-  const trieBox = { x: lb.x - 18, y: lb.y - 6, w: lb.w + 36, h: lb.h + 12 };
+  // A word label moved to a node's left may stick out past it.
+  const trieBox = unionBounds({ x: lb.x - 18, y: lb.y - 6, w: lb.w + 36, h: lb.h + 12 }, ...placed);
 
   // The text being scanned, as a part placed at (0, 0).
   const text: Shape[] = [];

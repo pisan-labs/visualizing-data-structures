@@ -60,7 +60,7 @@ Q: A splay tree with 1,000 keys is a chain, and you search for the key at the bo
 
 ## When to use one, and when not to
 
-Use a splay tree when some keys are used much more than others, or when recent keys are likely to be used again soon: caches, the symbol table of a compiler, a list of open files. It's also the simplest balanced tree to write. There's no extra field in each node and no case analysis for colors or heights.
+Use a splay tree when some keys are used much more than others, or when recent keys are likely to be used again soon: caches, the symbol table of a compiler, a list of open files. It's also simpler to write than an AVL or red-black tree: there's no extra field in each node and no case analysis for colors or heights.
 
 Avoid it when every single operation has to be fast, as in a real-time system, since one operation can take O(n). Avoid it when many threads read the tree at once: in a splay tree even a search changes the shape. And if your accesses are spread evenly over all the keys, an AVL or red-black tree does the same job without moving things around on every read.
 

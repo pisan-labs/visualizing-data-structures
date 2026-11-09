@@ -13,7 +13,8 @@ import {
 
 const RULES = {
   shell: "Shell's gaps (n/2, then halve until 1)",
-  knuth: "Knuth's gaps (1, 4, 13, 40, ..., each 3h + 1)",
+  knuth:
+    "Knuth's gaps (1, 4, 13, 40, ..., each 3h + 1, starting from the first one that is at least floor(n / 3))",
   ciura: "Ciura's gaps (1, 4, 10, 23, 57, ...)",
 } as const;
 

@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import { checkSort, counters, repeatsArb, valuesArb } from '../_sorting/check';
 import { shellSort } from '.';
@@ -91,6 +92,24 @@ describe('shell sort', { timeout: 60_000 }, () => {
       ['sort'],
     ]);
     expect(t.entries[1]!.steps.at(-1)!.say).toContain('The two 33s ended up in the opposite order');
+  });
+
+  it('says "1 place", not "1 places", when the gap is 1', () => {
+    const t = new Timeline(shellSort, settings(), 1, [
+      ['load', '62 83 18 53 7 17 95 86'],
+      ['sort'],
+    ]);
+    const says = t.entries[1]!.steps.map((s) => s.say);
+    expect(says.some((s) => s.includes('1 place right'))).toBe(true);
+    expect(says.join(' ')).not.toMatch(/\b1 places\b/);
+  });
+
+  it('tells the learner where Knuth\'s gaps start, so the "Which gaps?" answer is the only one', () => {
+    const kind = shellSort.practice!.find((k) => k.id === 'gaps')!;
+    for (let seed = 1; seed <= 60; seed++) {
+      const q = kind.make(makeRng(seed));
+      if (q.settings?.gaps === 'knuth') expect(q.prompt).toContain('at least floor(n / 3)');
+    }
   });
 
   it('follows the setting in its pseudocode', () => {

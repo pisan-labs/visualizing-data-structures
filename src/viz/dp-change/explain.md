@@ -38,7 +38,7 @@ Greedy commits to the largest coin before it looks at what is left. For 6 with c
 
 Greedy can also get stuck. With coins 3 and 5, it pays 11 with 5 + 5 and then has no coin for the last 1, while the table finds 3 + 3 + 5.
 
-For some coin systems greedy is always right; they are called canonical. US coins (1, 5, 10, 25) are canonical, and so are [1, 5 and 10](#example:greedy-works). Add a 6 to those and greedy pays 10 as 6 + 1 + 1 + 1 + 1 instead of 5 + 5. If you are not sure about your coins, use the table.
+For some coin systems greedy is always right; they are called canonical. US coins (1, 5, 10, 25) are canonical, and so are [1, 5 and 10](#example:greedy-works). Swap the 10 for a 6, so the coins are 1, 5 and 6, and greedy pays 10 as 6 + 1 + 1 + 1 + 1 instead of 5 + 5. If you are not sure about your coins, use the table.
 
 ## Counting the ways
 

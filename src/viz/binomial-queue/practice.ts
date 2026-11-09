@@ -83,7 +83,10 @@ export function binomialPractice(def: () => Def): PracticeKind[] {
           prompt: `The queue shown holds ${n} keys. Insert \`${k}\`. How many links does the insert make?`,
           setup,
           answer: { kind: 'number', value: links },
-          explain: `n = ${n} = ${binary(n)}. Adding 1 carries through the 1 bits at the right end, one link for each: ${links}. Afterwards n = ${binary(n + 1)}.`,
+          explain:
+            links === 0
+              ? `n = ${n} = ${binary(n)}. Its last bit is 0, so adding 1 just sets it: no carry and no link. Afterwards n = ${binary(n + 1)}.`
+              : `n = ${n} = ${binary(n)}. Adding 1 carries through the 1 bits at the right end, one link for each: ${links}. Afterwards n = ${binary(n + 1)}.`,
           watch: [['insert', k]],
         };
       },

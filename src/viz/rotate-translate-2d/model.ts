@@ -181,6 +181,9 @@ function compose(s: S, a: Mat3): S {
   };
 }
 
+/** " = " before a 3×3 matrix; ": " before "R = …, t = …", which already has its own "=". */
+const is = (settings: RtSettings) => (settings.form === 'affine' ? ': ' : ' = ');
+
 const composeText = (name: string, settings: RtSettings) =>
   settings.convention === 'row' ? `M = M·${name}` : `M = ${name}·M`;
 
@@ -221,7 +224,7 @@ const rotate: Op = {
     yield {
       state: end,
       marks: [mark('sh', 'active'), mark('m1', 'active'), mark('m2', 'active')],
-      say: `Every vertex turns about the origin, so the whole shape swings around it${s.m[2] || s.m[5] ? ', and so does the offset t' : ''}. Lengths and angles stay the same. ${composeText('R', settings)} = ${matText(end.m, settings)}.`,
+      say: `Every vertex turns about the origin, so the whole shape swings around it${s.m[2] || s.m[5] ? ', and so does the offset t' : ''}. Lengths and angles stay the same. ${composeText('R', settings)}${is(settings)}${matText(end.m, settings)}.`,
       lines: ['rot.apply'],
       vars: vars(end, settings),
       level: 1,
@@ -256,7 +259,7 @@ const translate: Op = {
     yield {
       state: end,
       marks: [mark('sh', 'active')],
-      say: `Every vertex moves by the same ${fmtVec(t)}. Nothing turns. ${composeText('T', settings)} = ${matText(end.m, settings)}.`,
+      say: `Every vertex moves by the same ${fmtVec(t)}. Nothing turns. ${composeText('T', settings)}${is(settings)}${matText(end.m, settings)}.`,
       lines: ['trn.apply'],
       vars: vars(end, settings),
       level: 1,
@@ -307,7 +310,7 @@ const about: Op = {
     yield {
       state: s,
       marks: [mark('op-name', 'active')],
-      say: `Slide back by +${fmtVec(c)}. The three moves multiply into one matrix: A = T(c)·R·T(−c) = ${matText(a, settings)}. Its last column is not c: it is where A sends the origin.`,
+      say: `Slide back by +${fmtVec(c)}. The three moves multiply into one matrix: A = T(c)·R·T(−c)${is(settings)}${matText(a, settings)}. ${settings.form === 'affine' ? 'Its offset t' : 'Its last column'} is not c: it is where A sends the origin.`,
       lines: ['abt.back', 'abt.m'],
       vars: vars(s, settings, { A: matText(a, settings) }),
       level: 2,
@@ -316,7 +319,7 @@ const about: Op = {
     yield {
       state: end,
       marks: [mark('sh', 'active'), mark('c', 'found')],
-      say: `Done: the shape turned about c, and c itself did not move. ${composeText('A', settings)} = ${matText(end.m, settings)}.`,
+      say: `Done: the shape turned about c, and c itself did not move. ${composeText('A', settings)}${is(settings)}${matText(end.m, settings)}.`,
       lines: ['abt.apply'],
       vars: vars(end, settings),
       level: 1,
@@ -398,7 +401,7 @@ const invert: Op = {
     yield {
       state: s,
       marks: [mark('op-name', 'active')],
-      say: `To undo p' = R p + t, solve for p: p = Rᵀ (p' − t) = Rᵀ p' − Rᵀ t. A rotation's inverse is its transpose, so no division is needed: M⁻¹ = ${matText(inv, settings)}${t.x || t.y ? `, whose offset is −Rᵀ t = ${fmtVec(offsetOf(inv))}, not just −t` : ''}.`,
+      say: `To undo p' = R p + t, solve for p: p = Rᵀ (p' − t) = Rᵀ p' − Rᵀ t. A rotation's inverse is its transpose, so no division is needed: M⁻¹${is(settings)}${matText(inv, settings)}${t.x || t.y ? `, whose offset is −Rᵀ t = ${fmtVec(offsetOf(inv))}, not just −t` : ''}.`,
       lines: ['inv.m'],
       vars: vars(s, settings, { 'M⁻¹': matText(inv, settings) }),
       level: 2,

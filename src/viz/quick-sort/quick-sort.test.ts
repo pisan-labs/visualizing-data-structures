@@ -157,6 +157,31 @@ describe('quicksort', { timeout: 60_000 }, () => {
     expect(random).toMatchObject({ comparisons: 15, maxDepth: 4 });
   });
 
+  // The concept page says a value swapped with itself is not counted, unlike selection sort.
+  it('counts only swaps that move a value, so sorted input shows 0 swaps', () => {
+    const sorted = [10, 20, 30, 40, 50, 60, 70, 80];
+    expect(counters(checkSort(quickSort, settings(), sorted)).swaps).toBe(0);
+    const hoare = settings({ partition: 'hoare', pivot: 'first' });
+    expect(counters(checkSort(quickSort, hoare, sorted)).swaps).toBe(0);
+    fc.assert(
+      fc.property(schemes, rules, fc.oneof(valuesArb(), repeatsArb), (partition, pivot, values) => {
+        const t = new Timeline(quickSort, settings({ partition, pivot }), 1, [
+          ['load', values.join(' ')],
+          ['sort'],
+        ]);
+        let order = t.entries[0]!.end.a.map((x) => x.uid).join();
+        let swaps = 0;
+        for (const st of t.entries[1]!.steps) {
+          const now = st.state.a.map((x) => x.uid).join();
+          const count = Number(st.vars?.swaps ?? swaps);
+          if (count > swaps) expect(now).not.toBe(order);
+          [order, swaps] = [now, count];
+        }
+      }),
+      { numRuns: 60 },
+    );
+  });
+
   it('makes each finished partition a milestone and follows the settings in its pseudocode', () => {
     const t = new Timeline(quickSort, settings(), 1, [['load', '5 3 8 1'], ['sort']]);
     const parts = t.entries[1]!.steps.filter((s) => s.say.startsWith('Partition done'));

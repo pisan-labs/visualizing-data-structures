@@ -61,6 +61,12 @@ describe('cfg-derivation', () => {
     expect(t.endState().run).toBeNull();
   });
 
+  it('does not say Java settles the dangling else with a side rule', () => {
+    // Java's grammar resolves it with statements that cannot end in an if without an else.
+    expect(cfgDerivation.explain).not.toContain('C, Java and friends settle it');
+    expect(cfgDerivation.explain).toContain("Java's grammar builds the same rule in");
+  });
+
   it('gives up at the cap and asks CYK', () => {
     const t = run([
       ['load', 'S -> SS | (S) | eps'],

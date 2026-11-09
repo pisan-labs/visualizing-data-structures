@@ -89,7 +89,7 @@ Q: With E → E+E | E*E | (E) | a, which word has two parse trees?
 = a+a has only E → E+E at the root. a+a*a can put either the + or the * at the root.
 ```
 
-The classic ambiguity in real languages is the dangling else. In `if c1 if c2 s1 else s2`, which `if` does the `else` belong to? With i for if, e for else and a for a statement, S → iS | iSeS | a gives iiaea two trees. C, Java and friends settle it with a side rule (the else goes with the nearest if) rather than a cleverer grammar. [The dangling else](#example:dangling-else)
+The classic ambiguity in real languages is the dangling else. In `if c1 if c2 s1 else s2`, which `if` does the `else` belong to? With i for if, e for else and a for a statement, S → iS | iSeS | a gives iiaea two trees. C settles it with a side rule (the else goes with the nearest if) rather than a cleverer grammar. Java's grammar builds the same rule in, with a second kind of statement that never ends in an if without an else. [The dangling else](#example:dangling-else)
 
 Two warnings. First, the Ambiguity button checks one word. Finding one tree for a+a*a says nothing about other words. Second, no algorithm can decide whether an arbitrary grammar is ambiguous. And some languages are inherently ambiguous: every grammar for them is ambiguous. Not every problem has a fix.
 

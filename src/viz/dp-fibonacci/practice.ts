@@ -95,7 +95,7 @@ export function fibPractice(def: () => Def): PracticeKind[] {
           setup: [['fib', n]],
           settings: MEMO,
           answer: { kind: 'number', value },
-          explain: `Each of F(0) to F(${n}) is worked out once: ${calls - found} calls fill a cell. Every call for k ≥ 3 also asks for F(k - 2), which is in the memo by then: ${found} hits. That makes ${calls} calls, 2n - 1 for n = ${n}.`,
+          explain: `Each of F(0) to F(${n}) is worked out once: ${calls - found} calls fill a cell. Every call for k ≥ 3 also asks for F(k - 2), which is in the memo by then: ${found} ${found === 1 ? 'hit' : 'hits'}. That makes ${calls} calls, 2n - 1 for n = ${n}.`,
           watch: [['fib', n]],
         };
       },

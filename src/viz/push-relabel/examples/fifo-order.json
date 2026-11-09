@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "push-relabel",
+  "id": "fifo-order",
+  "title": "Heights carry 23 units downhill",
+  "notes": "The classic six-vertex network. The preflow fills s→a and s→b, then the FIFO queue drains a, b, c and d, and again each one that got more excess. Each vertex rises only as far as it must to push one level down. 15 pushes and 12 relabels give the same 23 that Edmonds-Karp finds with three paths.",
+  "settings": {
+    "rule": "fifo",
+    "residual": false,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [["load", "s>a:16, s>b:13, b>a:4, a>c:12, c>b:9, b>d:14, d>c:7, c>t:20, d>t:4"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

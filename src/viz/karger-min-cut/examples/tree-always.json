@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "karger-min-cut",
+  "id": "tree-always",
+  "title": "A tree: every cut is a minimum",
+  "notes": "In a tree every edge is a bridge, so whichever edge is left at the end, the cut has one edge. Every trial succeeds.",
+  "settings": {
+    "pick": "edge",
+    "trials": 100,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-D, B-E, C-F, E-G"], ["contract"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

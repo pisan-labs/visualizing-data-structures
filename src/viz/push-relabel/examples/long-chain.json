@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "push-relabel",
+  "id": "long-chain",
+  "title": "A narrowing chain: one path, many pushes",
+  "notes": "Edmonds-Karp sees one path with bottleneck 3 and is done. Push-relabel floods 9 into a, and at every narrowing the extra gets stuck, rises and runs back: 10 pushes and 7 relabels for a flow of 3.",
+  "settings": {
+    "rule": "fifo",
+    "residual": false,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [["load", "s>a:9, a>b:7, b>c:5, c>d:3, d>t:8"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

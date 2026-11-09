@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "karger-min-cut",
+  "id": "by-hand",
+  "title": "By hand: parallel edges pile up",
+  "notes": "Contract A-B and then A-C: the super-vertex {A, B, C} now has three edges to D, one from each of its members. Contraction keeps them all, as parallel edges, and that is what makes a big group likely to stay together.",
+  "settings": {
+    "pick": "edge",
+    "trials": 100,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, B-C, B-D, C-D, A-D, D-E, E-F, E-G, F-G, F-H, G-H, E-H"],
+    ["merge", "A-B"],
+    ["merge", "A-C"],
+    ["merge", "E-F"],
+    ["merge", "G-H"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "push-relabel",
+  "id": "back-to-source",
+  "title": "Extra flow climbs back to s",
+  "notes": "s pushes 9 into a, but only 5 can reach t. The other 4 have nowhere to go downhill, so a, b and c keep rising until they stand above s (height 5) and the excess runs back to the source.",
+  "settings": {
+    "rule": "fifo",
+    "residual": false,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [["load", "s>a:9, a>b:4, a>c:5, b>t:3, c>t:2"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

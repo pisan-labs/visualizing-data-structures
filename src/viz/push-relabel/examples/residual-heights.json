@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "push-relabel",
+  "id": "residual-heights",
+  "title": "The residual network, with heights",
+  "notes": "With the residual setting, every arc shows the room left on it, and dashed arcs are reverse arcs: flow that can be pushed back. s sends 11, but c can pass on only 5, so the other 6 climb back up the dashed arcs to s. Every push goes from height k + 1 to height k.",
+  "settings": {
+    "rule": "fifo",
+    "residual": true,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [["load", "s>a:8, s>b:3, a>c:6, b>c:4, c>t:5"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

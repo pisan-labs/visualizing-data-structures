@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "push-relabel",
+  "id": "relabel-to-front",
+  "title": "Relabel-to-front, the CLRS order",
+  "notes": "RELABEL-TO-FRONT keeps the list L = a, b, c, d. It discharges each vertex in turn, and a vertex that rose moves to the front, so the scan starts again right after it. On the classic network it does the same pushes as FIFO, in a different order.",
+  "settings": {
+    "rule": "front",
+    "residual": false,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [["load", "s>a:16, s>b:13, b>a:4, a>c:12, c>b:9, b>d:14, d>c:7, c>t:20, d>t:4"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

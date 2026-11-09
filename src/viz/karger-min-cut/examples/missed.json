@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "karger-min-cut",
+  "id": "missed",
+  "title": "A trial that misses",
+  "notes": "The same graph, another roll of the dice. The very first pick is the bridge D-E, 1 chance in 13, and after that no cut the trial ends with can be as small as one edge. One trial proves nothing: that is why Karger repeats.",
+  "settings": {
+    "pick": "edge",
+    "trials": 100,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, B-C, B-D, C-D, A-D, D-E, E-F, E-G, F-G, F-H, G-H, E-H"],
+    ["contract"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

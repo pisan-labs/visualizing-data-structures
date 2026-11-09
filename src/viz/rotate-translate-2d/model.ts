@@ -373,7 +373,7 @@ const order: Op = {
       state: s,
       marks: [mark('rt', same ? 'found' : 'active'), mark('tr', same ? 'found' : 'error')],
       say: same
-        ? `The two orders agree here. ${tx === 0 && ty === 0 ? 'A zero slide moves nothing, so there is nothing for the rotation to turn.' : 'The rotation is a whole number of turns, so it leaves the slide alone.'}`
+        ? `The two orders agree here. ${tx === 0 && ty === 0 ? 'A zero slide moves nothing, so there is nothing for the rotation to turn.' : deg % 360 === 0 ? 'The rotation is a whole number of turns, so it leaves the slide alone.' : `At least to two decimals: R t = ${fmtVec(turnedT)} is so close to t that the difference does not show.`}`
         : `Different places. Both are turned by ${n(deg)}°, but translate-then-rotate also turns the slide: it moves by R t = ${fmtVec(turnedT)} instead of t = (${n(tx)}, ${n(ty)}).`,
       lines: ['ord.cmp'],
       vars: vars(s, settings, {

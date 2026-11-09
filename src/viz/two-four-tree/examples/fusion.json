@@ -3,7 +3,7 @@
   "viz": "two-four-tree",
   "id": "fusion",
   "title": "Underflow fixed by a fusion",
-  "notes": "Deleting 90 empties its leaf, and its only sibling [70] is a 2-node with nothing to spare. They fuse, and 80 comes down from the parent between them.",
+  "notes": "Deleting 90 empties its leaf, and the sibling next to it, [70], is a 2-node with nothing to spare. They fuse, and 80 comes down from the parent between them.",
   "settings": {
     "swap": "pred"
   },

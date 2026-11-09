@@ -297,6 +297,19 @@ describe('2-4 tree', () => {
     expect(Number(steps.at(-1)!.vars?.fusions) - before).toBe(2);
   });
 
+  // The fusion example's leaf has two siblings but one neighbour; it was "its only sibling".
+  it('calls a lone neighbour "the sibling next to it" unless it is the only sibling', () => {
+    const says = example('fusion')
+      .entries.at(-1)!
+      .steps.map((s) => s.say)
+      .join(' ');
+    expect(says).toContain('The sibling next to it, [70], is a 2-node');
+    const cascade = example('fusion-cascade')
+      .entries.at(-1)!
+      .steps.map((s) => s.say);
+    expect(cascade.join(' ')).toContain('Its only sibling, [80], is a 2-node');
+  });
+
   it('swaps with the successor when asked to', () => {
     const calls: OpCall[] = [...ins([10, 20, 30, 40, 50, 60, 70, 80, 90]), ['delete', 60]];
     const tl = new Timeline(twoFourTree, { swap: 'succ' }, 1, calls);

@@ -381,7 +381,7 @@ function* approxSteps(g: Graph, r: StRun, step: StepFn) {
   r.path = [];
   r.at = undefined;
   yield step(
-    `The closure table holds all ${(T.length * (T.length - 1)) / 2} distances. Step 2: a minimum spanning tree of the closure, with Prim from ${T[0]}.`,
+    `The closure table holds ${T.length === 2 ? 'the one distance' : `all ${(T.length * (T.length - 1)) / 2} distances`}. Step 2: a minimum spanning tree of the closure, with Prim from ${T[0]}.`,
     ['a.dist', 'a.mst'],
     2,
   );
@@ -473,7 +473,7 @@ function* exactSteps(g: Graph, r: StRun, step: StepFn) {
   const others = g.vertices.filter((v) => !T.includes(v));
   const all = subsetsBySize(others);
   yield step(
-    `Brute force: a minimum Steiner tree uses the terminals and some set S of the other ${plural(others.length, 'vertex', 'vertices')}, and it is then a minimum spanning tree of those vertices. So try all ${all.length} sets S, fewest first, and keep the lightest tree.`,
+    `Brute force: a minimum Steiner tree uses the terminals and some set S of the other ${plural(others.length, 'vertex', 'vertices')}, and it is then a minimum spanning tree of those vertices. So try ${all.length === 1 ? 'the only set S, ∅' : `all ${all.length} sets S, fewest first`}, and keep the lightest tree.`,
     ['sig', 'x.init'],
     2,
     T.map((t) => mark(vertexId(t), 'visit')),

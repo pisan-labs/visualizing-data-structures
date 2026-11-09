@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import { orient, writePoints, type Vec } from '../../layouts/plane';
 import { convexHull, parsePoints } from '.';
@@ -143,6 +144,48 @@ describe('convex hull', () => {
     expect(parsePoints('1,2 13,4')).toBeInstanceOf(Error);
     expect(parsePoints('1.5,2')).toBeInstanceOf(Error);
     expect(parsePoints('cat')).toBeInstanceOf(Error);
+  });
+});
+
+describe('convex hull narration', () => {
+  const run = (algorithm: Algorithm, points: string) =>
+    new Timeline(convexHull, settings(algorithm), 1, [['load', points], ['hull']]);
+
+  it('counts one test and one pop in the singular', () => {
+    // Was "Graham scan used 1 turn tests" and "2 turn tests and 1 pops".
+    expect(run('graham', '1,1 5,1 3,4').entries[1]!.steps.at(-1)!.say).toContain(
+      'Graham scan used 1 turn test.',
+    );
+    expect(run('monotone', '1,1 5,1 3,4').entries[1]!.steps.at(-1)!.say).toContain(
+      'used 2 turn tests and 1 pop.',
+    );
+  });
+
+  it('names the segment of a line, and claims no turns on a chain of two', () => {
+    const steps = run('graham', '5,3 1,1 9,5 3,2 11,6 7,4').entries[1]!.steps;
+    expect(steps.at(-1)!.say).toContain('the "hull" is the segment from B to E.');
+    // Was "The chain now ends B → E, and every turn along it is a left turn."
+    expect(steps.find((s) => s.say.startsWith('Push E'))!.say).toBe(
+      'Push E. The chain now ends B → E.',
+    );
+  });
+
+  it('pops both edge points of the collinear-edge example, as its notes say', () => {
+    const ex = convexHull.examples.find((e) => e.id === 'collinear-edge')!;
+    const t = new Timeline(convexHull, settings('graham'), 1, ex.ops);
+    const popped = t.entries[1]!.steps.filter((s) => s.say.startsWith('Pop ')).map((s) => s.say[4]);
+    expect(popped).toEqual(['D', 'F']);
+    expect(ex.notes).toContain('D and F, are popped by collinear turns');
+  });
+
+  it('says "1 pop" in the practice explanation', () => {
+    const pops = convexHull.practice!.find((k) => k.id === 'pops')!;
+    for (let seed = 1; seed <= 150; seed++) {
+      const q = pops.make(makeRng(seed));
+      expect(q.explain).not.toMatch(/\b1 pops\b/);
+      if (q.answer.kind === 'number' && q.answer.value === 1)
+        expect(q.explain).toContain('there is 1 pop.');
+    }
   });
 });
 

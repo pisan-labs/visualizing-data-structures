@@ -3,7 +3,7 @@
   "viz": "convex-hull",
   "id": "collinear-edge",
   "title": "Points on an edge and on a ray",
-  "notes": "A square with extra points on its edges and its diagonal. Points on one ray from p0 are set aside after the sort; the point on the right edge is popped by a collinear turn.",
+  "notes": "A square with extra points on its edges and its diagonal. Points on one ray from p0 are set aside after the sort; the points on the right and top edges, D and F, are popped by collinear turns.",
   "settings": {
     "algorithm": "graham"
   },

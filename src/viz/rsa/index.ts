@@ -166,6 +166,7 @@ export const rsa: VizDef<RsaState, RsaSettings, undefined> = {
     tooBig,
     eNotCoprime,
   ] as unknown as SavedExample[],
+  opening: 'round-trip',
   preview: { example: 'round-trip', level: 1 },
 };
 

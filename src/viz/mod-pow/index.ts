@@ -144,6 +144,7 @@ export const modPow: VizDef<PowState, PowSettings, undefined> = {
     allOnes,
     zeroExponent,
   ] as unknown as SavedExample[],
+  opening: 'square-and-multiply',
   preview: { example: 'square-and-multiply', level: 2 },
 };
 

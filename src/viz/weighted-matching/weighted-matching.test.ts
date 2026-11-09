@@ -56,6 +56,12 @@ describe('weighted matching (Hungarian)', () => {
     expect(parseMatrixInput('1 2 3 4 5 6 7; 1; 1; 1; 1; 1; 1')).toBeInstanceOf(Error);
   });
 
+  it('names a 1 × 1 matrix plainly, not "rows A to A"', () => {
+    const say = solve([[7]], 'min').entries[0]!.steps.at(-1)!.say;
+    expect(say).toContain('row A, column 1.');
+    expect(say).not.toMatch(/A to A/);
+  });
+
   it('keeps a bad load from changing the matrix', () => {
     const t = new Timeline(weightedMatching, settings('min'), 1, [['load', 'cat']]);
     expect(t.endState()).toEqual(t.initial.state);

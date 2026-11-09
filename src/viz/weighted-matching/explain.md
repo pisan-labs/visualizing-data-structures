@@ -8,7 +8,7 @@ Why not try every assignment? With n workers there are n! of them. Six workers m
 |---|---|---|
 | Row and column reduction | Starting potentials u and v | Θ(n²) |
 | One phase | Match one more row | O(n²) with slack, O(n³) as drawn here |
-| Whole run | n phases | O(n³) |
+| Whole run | n phases | O(n³) with slack, O(n⁴) as drawn here |
 
 ## Potentials and tight cells
 

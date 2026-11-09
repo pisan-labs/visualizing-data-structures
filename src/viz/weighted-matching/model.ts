@@ -476,7 +476,7 @@ const load: Op = {
     yield {
       state: next,
       marks: [],
-      say: `Loaded a ${n} × ${n} cost matrix: rows ${rowName(0)} to ${rowName(n - 1)}, columns 1 to ${n}. Press Find the best assignment.`,
+      say: `Loaded a ${n} × ${n} cost matrix: ${n === 1 ? `row ${rowName(0)}, column 1` : `rows ${rowName(0)} to ${rowName(n - 1)}, columns 1 to ${n}`}. Press Find the best assignment.`,
       lines: [],
       level: 1,
       vars: { n },

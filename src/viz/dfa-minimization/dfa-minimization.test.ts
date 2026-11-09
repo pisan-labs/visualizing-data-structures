@@ -1,10 +1,11 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import { makeAutomaton, minimize, type Automaton } from '../_automata/automaton';
 import { formatAutomaton } from '../_automata/parse';
 import { dfaMinimization } from '.';
-import { pairKey, type MinRun, type MinSettings } from './model';
+import { delta, pairKey, type MinRun, type MinSettings } from './model';
 import { chain } from './presets';
 
 // ---------------------------------------------------------------------------------------------
@@ -182,6 +183,24 @@ describe('dfa-minimization', () => {
     expect(says.slice(0, five).some((say) => say.startsWith('Round 4,'))).toBe(false);
     // The notes said "four rounds to split into five blocks".
     expect(ex.notes).toContain('three rounds to split into five blocks, and a fourth');
+  });
+
+  it('asks which symbol marked a pair only when one symbol alone can', () => {
+    // 116 of 200 questions picked a pair two symbols separate; which of them fills the cell
+    // depends on the order the pairs and symbols are tried.
+    const kind = dfaMinimization.practice!.find((k) => k.id === 'separator')!;
+    for (let seed = 1; seed <= 100; seed++) {
+      const q = kind.make(makeRng(seed));
+      const t = new Timeline(dfaMinimization, { method: 'table' }, 1, [...q.setup, ['minimize']]);
+      const r = t.entries.at(-1)!.steps.at(-1)!.extra!.run!;
+      const w = r.work;
+      const [, p, s] = /pair (\S+), (\S+) hold/.exec(q.prompt)!;
+      const by = w.alphabet.filter((c) => {
+        const [x, y] = [delta(w, p!, c), delta(w, s!, c)];
+        return x !== y && r.marked[pairKey(w.states, x, y)];
+      });
+      expect(by, `seed ${seed}`).toHaveLength(1);
+    }
   });
 
   it('refuses an NFA and keeps the DFA it has', () => {

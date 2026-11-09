@@ -211,6 +211,7 @@ export const huffman: VizDef<HuffState, HuffSettings, HuffExtra> = {
     sentence,
     decodeWalk,
   ] as unknown as SavedExample[],
+  opening: 'abracadabra',
   preview: { example: 'abracadabra', level: 2 },
 };
 

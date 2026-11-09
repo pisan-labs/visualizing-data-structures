@@ -179,6 +179,7 @@ export const fibonacciHeap: VizDef<FibState, FibSettings, FibExtra> = {
     deleteNode,
     pointersView,
   ] as unknown as SavedExample[],
+  opening: 'delete-node',
   preview: { example: 'cascading-cut' },
 };
 

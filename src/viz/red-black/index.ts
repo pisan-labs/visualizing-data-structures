@@ -205,6 +205,7 @@ export const redBlack: VizDef<RBState, RBSettings, RBExtra> = {
     deleteCase4,
     deleteThreeRotations,
   ] as unknown as SavedExample[],
+  opening: 'sorted-input',
   preview: { example: 'sorted-input' },
 };
 

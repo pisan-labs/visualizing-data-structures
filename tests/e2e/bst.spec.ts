@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { axeFindings, settled, showMe } from './helpers';
+import { axeFindings, emptyStart, settled, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -31,7 +31,7 @@ async function seven(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/bst/');
+  await page.goto(emptyStart('bst'));
   await expect(page.getByRole('heading', { name: 'Binary search tree' })).toBeVisible();
 });
 

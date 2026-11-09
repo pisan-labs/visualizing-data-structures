@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "sliding-window",
+  "id": "grow-and-shrink",
+  "title": "Grow until it is enough, then shrink",
+  "notes": "The shortest window with sum at least 15. The window grows on the right until the sum reaches 15, then gives up values on the left while it still does. Length 3: 1 + 5 + 9.",
+  "settings": {
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "3 1 4 1 5 9 2 6 5 3"],
+    ["atLeast", 15]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

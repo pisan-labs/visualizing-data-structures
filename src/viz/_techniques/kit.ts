@@ -64,29 +64,31 @@ export interface CellRow {
   tones?: readonly (MarkRole | undefined)[];
 }
 
-/** One box in a stack or deque: the value, and the array index it came from under it. */
+/** One box in a stack, a deque or a list of counts. */
 export interface ListItem {
-  uid: number;
-  value: number;
-  index: number;
+  /** Identity: the shapes are `<row id>-<key>`, so a box keeps its place in the animation. */
+  key: string | number;
+  text: string;
+  /** Small text under the box: the array index it came from, a count. */
+  sub?: string;
+  /** Where the box slides in from when it first appears (its array column). */
+  from?: { x: number; y: number };
 }
 
 export interface ListRow {
-  /** Shape ids: `<id>-<uid>` a box, `<id>-<uid>-t` its value, `<id>-<uid>-i` its index. */
+  /** Shape ids: `<id>-<key>` a box, `<id>-<key>-t` its text, `<id>-<key>-s` the text under it. */
   id: string;
   name: string;
   items: readonly ListItem[];
-  /** Room for this many boxes (the frame), so the row keeps its size while it fills. */
+  /** Empty slots drawn for this many boxes (the frame), so the row keeps its size as it fills. */
   slots: number;
   roles?: ReadonlyMap<string, MarkRole>;
-  /** Labels for the ends: 'bottom'/'top' for a stack, 'front'/'back' for a deque. */
-  ends: [string, string];
 }
 
 export const ROW_H = 46;
-const NAME = 20;
+const NAME = 22;
 const VALUE = 22;
-const INDEX = 18;
+const INDEX = 20;
 const LIST_H = 46;
 /** Height a list row takes: its name, the boxes and the indices under them. */
 export const LIST_ROW_H = 30 + LIST_H + 30;
@@ -148,16 +150,11 @@ export function cellRowShapes(g: BarsGeometry, row: CellRow, y: number): Shape[]
 export const CELL_ROW_H = 30 + ROW_H;
 
 /**
- * A stack or deque drawn as boxes in a row under the array, first end on the left, each box
- * with its value and, under it, the index it came from. Boxes keep their uid, so a value slides
- * when the front pops, and comes in from its array column when pushed (`from`).
+ * A stack, a deque or a list of counts drawn as boxes in a row under the array, from the left,
+ * each with its text and small text under it. Boxes keep their key, so a box slides when the
+ * front of a deque pops, and comes in from its array column when pushed.
  */
-export function listRowShapes(
-  g: BarsGeometry,
-  row: ListRow,
-  y: number,
-  from: (index: number) => { x: number; y: number },
-): Shape[] {
+export function listRowShapes(g: BarsGeometry, row: ListRow, y: number): Shape[] {
   const shapes: Shape[] = [];
   const roles = row.roles ?? new Map<string, MarkRole>();
   const w = g.pitch - 6;
@@ -167,7 +164,7 @@ export function listRowShapes(
     id: `${row.id}-name`,
     x: g.left(0),
     y: y + 20,
-    text: `${row.name}: ${row.ends[0]} on the left, ${row.ends[1]} on the right`,
+    text: row.name,
     size: NAME,
     anchor: 'start',
     cls: 'label',
@@ -186,9 +183,9 @@ export function listRowShapes(
     });
   }
   row.items.forEach((item, k) => {
-    const id = `${row.id}-${item.uid}`;
+    const id = `${row.id}-${item.key}`;
     const role = roles.get(id);
-    const at = from(item.index);
+    const size = Math.min(VALUE, Math.floor((w - 4) / (Math.max(2, item.text.length) * 0.6)));
     shapes.push({
       kind: 'rect',
       id,
@@ -199,31 +196,33 @@ export function listRowShapes(
       r: 6,
       cls: 'cell live',
       role,
-      enterFrom: { x: at.x - w / 2, y: at.y },
+      ...(item.from ? { enterFrom: { x: item.from.x - w / 2, y: item.from.y - LIST_H / 2 } } : {}),
     });
     shapes.push({
       kind: 'text',
       id: `${id}-t`,
       x: g.center(k),
-      y: top + LIST_H / 2 + 8,
-      text: String(item.value),
-      size: VALUE,
+      y: top + LIST_H / 2 + size * 0.36,
+      text: item.text,
+      size,
       anchor: 'middle',
       weight: 'bold',
       role,
-      enterFrom: at,
+      ...(item.from ? { enterFrom: item.from } : {}),
     });
-    shapes.push({
-      kind: 'text',
-      id: `${id}-i`,
-      x: g.center(k),
-      y: top + LIST_H + 21,
-      text: `[${item.index}]`,
-      size: INDEX,
-      anchor: 'middle',
-      mono: true,
-      cls: 'index',
-    });
+    if (item.sub)
+      shapes.push({
+        kind: 'text',
+        id: `${id}-s`,
+        x: g.center(k),
+        y: top + LIST_H + 21,
+        text: item.sub,
+        size: INDEX,
+        anchor: 'middle',
+        mono: true,
+        cls: 'index',
+        role: roles.get(`${id}-s`),
+      });
   });
   return shapes;
 }

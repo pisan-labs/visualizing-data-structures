@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "regex-derivatives",
+  "id": "plus-for-union",
+  "title": "Union written as +",
+  "notes": "Hopcroft and Ullman write union as +. The rules are the same; only the sign changes. The second symbol from the end is b.",
+  "settings": {
+    "similarity": "aci",
+    "union": "+"
+  },
+  "seed": 1,
+  "ops": [["load", "(a+b)*b(a+b)"], ["dfa"], ["match", "abba"]]
+}

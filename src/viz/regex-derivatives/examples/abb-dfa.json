@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "regex-derivatives",
+  "id": "abb-dfa",
+  "title": "The DFA of derivatives: words ending in abb",
+  "notes": "Take derivatives of (a|b)*abb by a and by b, then of those, until nothing new turns up. Four distinct expressions: four states, and the one that matches ε accepts. It is the minimal DFA.",
+  "settings": {
+    "similarity": "aci",
+    "union": "|"
+  },
+  "seed": 1,
+  "ops": [["dfa"]]
+}

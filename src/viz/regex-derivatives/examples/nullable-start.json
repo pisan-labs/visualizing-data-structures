@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "regex-derivatives",
+  "id": "nullable-start",
+  "title": "When the first part can be empty",
+  "notes": "In a*ab the first part, a*, can be empty, so an a can come off it or off ab: d_a(a*ab) = a*ab | b. Both choices stay in the result.",
+  "settings": {
+    "similarity": "aci",
+    "union": "|"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "a*ab"],
+    ["derive", "a"],
+    ["derive", "b"]
+  ]
+}

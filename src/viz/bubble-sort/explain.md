@@ -10,7 +10,7 @@ It is slow. It is also the sort most people can write from memory, which is why 
 |---|---|---|
 | `sort(A)` | Sorts the n values in A, in place | O(n²); O(n) on sorted input with early exit |
 
-Every swap fixes exactly one pair of values that was out of order (an inversion). Random input has about n²/4 inversions, so bubble sort makes about n²/4 swaps, one at a time. There is no shortcut. [Show me](#play:smallest-first)
+Every swap fixes exactly one pair of values that was out of order (an inversion). Random input has about n²/4 inversions, so bubble sort makes about n²/4 swaps, one at a time. There is no shortcut. The swaps counter goes up only when a pair is out of order, so on sorted input it stays at 0. [Show me](#play:smallest-first)
 
 ## One pass
 

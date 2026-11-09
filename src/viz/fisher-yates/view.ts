@@ -1,3 +1,4 @@
+import './counts.css';
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { padBounds } from '../../layouts/calls';
 import type { Scene, Shape } from '../../render/scene';
@@ -116,7 +117,13 @@ function countsPart(
     14,
     { cls: 'label' },
   );
-  return part([...d.shapes, note], { ...d.bounds, h: d.bounds.h + 24 });
+  // Counts near 1/6 sit on the dashed even line: a halo (counts.css) keeps their digits clear.
+  const shapes = d.shapes.map((sh) =>
+    sh.kind === 'text' && sh.id.startsWith('counts-n-')
+      ? { ...sh, cls: [sh.cls, 'fy-count'].filter(Boolean).join(' ') }
+      : sh,
+  );
+  return part([...shapes, note], { ...d.bounds, h: d.bounds.h + 24 });
 }
 
 export function view(

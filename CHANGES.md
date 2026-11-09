@@ -381,3 +381,5 @@
 2026-11-09 [code] Merged wave 8A (two-pointers, sliding-window, monotonic-stack, monotonic-queue, string-hashing; new kit src/viz/_techniques) and wave 8C (myhill-nerode, regex-derivatives, post-correspondence, busy-beaver). All 12 wave 8 pages are on next
 
 2026-11-09 [code] translate in src/layouts/arrange now moves an arrow's via point; consistent-hashing's ring walk and lr0-parsing's curved moves were bent by up to 73 units (the only two pages affected)
+
+2026-11-09 [decision] No answer by 15:00, so the defaults: two agents do the reviewers' taste items (balanced practice answers on 9 pages; 15 small wording and drawing fixes), and each sorting page says how it counts swaps instead of changing the counts

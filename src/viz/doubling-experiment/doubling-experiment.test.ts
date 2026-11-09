@@ -535,6 +535,29 @@ describe('text', () => {
   });
 });
 
+describe('practice', () => {
+  // "Which algorithm made this table?" offered linear search and the hash set side by side; both
+  // grow like n, so only the exact counts told them apart.
+  it('never offers a look-alike that grows like the right answer', () => {
+    const kind = def.practice!.find((k) => k.id === 'which')!;
+    const byLabel = new Map(ALGOS.map((id) => [ALGO[id].label, id]));
+    const right = new Map<AlgoId, number>();
+    for (let seed = 1; seed <= 300; seed++) {
+      const a = kind.make(makeRng(seed)).answer;
+      if (a.kind !== 'choice') throw new Error('expected a choice');
+      const ids = a.options.map((o) => byLabel.get(o)!);
+      const answer = ids[a.correct]!;
+      for (const id of ids) {
+        if (id !== answer) expect(ALGO[id].order).not.toBe(ALGO[answer].order);
+      }
+      right.set(answer, (right.get(answer) ?? 0) + 1);
+    }
+    // Six algorithms, about 50 each; none should come up more than a third of the time.
+    expect(right.size).toBe(ALGOS.length);
+    expect(Math.max(...right.values())).toBeLessThan(100);
+  });
+});
+
 describe('drawn text size', () => {
   // The table title shrank to 8.4 px on a phone; on two lines (or as wide as the chart), at 9.1.
   it('stays readable on a laptop and on a phone', () => {

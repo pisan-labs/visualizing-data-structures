@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "monotonic-queue",
+  "id": "one-window",
+  "title": "k = n: one window, the whole array",
+  "notes": "One answer, the maximum of A. The deque ends with the values that are bigger than everything after them.",
+  "settings": {
+    "goal": "max",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "3 9 4 7 2 6 1"],
+    ["slide", 7]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

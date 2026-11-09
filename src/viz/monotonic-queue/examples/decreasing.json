@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "monotonic-queue",
+  "id": "decreasing",
+  "title": "Decreasing values: the front expires every time",
+  "notes": "Nothing is ever beaten from the back, so the deque fills to k = 3 and the front leaves the window at every step. Still one push and one pop per index.",
+  "settings": {
+    "goal": "max",
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "9 8 7 6 5 4 3 2"],
+    ["slide", 3]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

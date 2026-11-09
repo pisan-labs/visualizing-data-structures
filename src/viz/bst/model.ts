@@ -733,7 +733,7 @@ const select: Op = {
         const skip = hi;
         yield step(
           c,
-          `${sizeSay}, so ${place}. i = ${i} is bigger: skip those ${skip} keys and go right with i = ${i} - ${skip} = ${i - skip}.`,
+          `${sizeSay}, so ${place}. i = ${i} is bigger: skip ${skip === 1 ? 'that 1 key' : `those ${skip} keys`} and go right with i = ${i} - ${skip} = ${i - skip}.`,
           ['sel.r', 'sel.else', 'sel.skip', 'sel.right'],
           2,
           [nodeMark(x, 'compare'), mark(`size-${x}`, 'active')],
@@ -814,7 +814,7 @@ const rank: Op = {
         c.extra.nil = undefined;
         yield step(
           c,
-          `${k} = ${node.key}: found it. Its left subtree adds ${L} smaller ${L === 1 ? 'key' : 'keys'}, so ${r + L} keys are smaller and ${name} = ${r + L} + 1 = ${result}.`,
+          `${k} = ${node.key}: found it. Its left subtree adds ${L} smaller ${L === 1 ? 'key' : 'keys'}, so ${r + L} ${r + L === 1 ? 'key is' : 'keys are'} smaller and ${name} = ${r + L} + 1 = ${result}.`,
           ['rank.loop', 'rank.found'],
           1,
           [nodeMark(x, 'found'), mark(`size-${x}`, 'found')],

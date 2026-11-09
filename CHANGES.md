@@ -349,3 +349,5 @@
 2026-11-09 [code] Wave 7 review merged for graphs and geometry (8 of 12 fixed: odd-cycle colouring bound, pagerank iteration-limit message and float ties, practice questions with two right answers on kd-tree and delaunay, Bentley-Ottmann narration); review complete: 37 of 62 pages fixed
 
 2026-11-09 [code] doubling-experiment e2e polls the smallest row height (it measured once and failed about 1 run in 12 mid-animation); 30 of 30 repeats pass. Full suite on eedaa19: 4373 unit passed, e2e 3228 passed, 1 failed (this one)
+
+2026-11-09 [code] Merged the review polish items: manacher/z wording, cfg-to-cnf names dropped A -> A, lba cap message from the configuration count, johnson real minus signs, mod-pow tiny exponents, interpolation ties, cuckoo prefixes, independent merkle reference, two concept-page edits

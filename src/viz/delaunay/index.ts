@@ -156,6 +156,7 @@ export const delaunay: VizDef<DState, DSettings, DExtra> = {
     cocircular,
     collinear,
   ] as unknown as SavedExample[],
+  opening: 'ten-points',
   preview: { example: 'ten-points', level: 2, hide: ['counts', 'tri-', 'cc-'] },
 };
 

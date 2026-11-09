@@ -166,6 +166,7 @@ export const closestPair: VizDef<CPState, CPSettings, CPExtra> = {
     repeatedPoint,
     bruteForce,
   ] as unknown as SavedExample[],
+  opening: 'across-the-line',
   preview: { example: 'across-the-line', level: 2, hide: ['call', 'counts'] },
 };
 

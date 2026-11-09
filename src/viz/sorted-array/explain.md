@@ -22,7 +22,7 @@ In a sorted array, one comparison tells you a lot. Look at the middle item. If i
 
 The bookkeeping is two indices, `lo` and `hi`, that bracket where x could still be. The range shrinks until `A[mid] == x` or `lo` passes `hi`, which means x is not there. [Searching for a value that is not there](#example:missing) shows the second case.
 
-Compare with [the same search without order](#example:linear-search): 7 comparisons instead of 3, and the gap grows with n.
+Compare with [the same search without order](#example:linear-search): 7 comparisons instead of 3, and the gap grows with n. A miss is worse: the scan can't stop early, so [a missing value checks every item](#example:missing-unsorted).
 
 ```check
 Q: Binary search on a sorted array of 1,000 items. About how many rounds can it take to decide that x is missing?

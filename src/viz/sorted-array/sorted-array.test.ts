@@ -63,6 +63,18 @@ describe('sorted vs unsorted array', () => {
     expect(most).toBe(8);
   });
 
+  it('links a miss that checks every item as the worst case of unsorted search', () => {
+    const row = sortedArray.complexity!.find((r) => r.op === 'search(x), unsorted')!;
+    const ex = sortedArray.examples.find((e) => e.id === row.worst.example)!;
+    const n = ex.ops.filter(([op]) => op === 'insert').length;
+    const end = (st: SortedSettings) => lastStep(run(st, ex.ops), ex.ops.length - 1).vars;
+    const unsorted = end(ex.settings as SortedSettings);
+    expect(unsorted?.returned).toBe(-1);
+    expect(unsorted?.comparisons).toBe(n);
+    // The notes say the same miss takes 6 comparisons when sorted.
+    expect(end(settings({ mode: 'sorted' }))?.comparisons).toBe(6);
+  });
+
   it('keeps order by shifting the bigger items', () => {
     const t = run(settings(), inserts(20, 40, 60, 80, 10, 90));
     expect(items(t.endState())).toEqual([10, 20, 40, 60, 80, 90]);

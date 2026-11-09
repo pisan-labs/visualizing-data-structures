@@ -10,6 +10,7 @@ import deleteExample from './examples/delete.json';
 import insertShift from './examples/insert-shift.json';
 import linearSearch from './examples/linear-search.json';
 import minMax from './examples/min-max.json';
+import missingUnsorted from './examples/missing-unsorted.json';
 import missing from './examples/missing.json';
 import reverseFull from './examples/reverse-full.json';
 import {
@@ -140,7 +141,7 @@ export const sortedArray: VizDef<SortedState, SortedSettings, SortedExtra> = {
       worst: {
         cost: 'O(n)',
         why: 'x is last or missing: every item is checked.',
-        example: 'linear-search',
+        example: 'missing-unsorted',
       },
     },
     {
@@ -181,6 +182,7 @@ export const sortedArray: VizDef<SortedState, SortedSettings, SortedExtra> = {
     linearSearch,
     insertShift,
     missing,
+    missingUnsorted,
     bounds,
     minMax,
     deleteExample,

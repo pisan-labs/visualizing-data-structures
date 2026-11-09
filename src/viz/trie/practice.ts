@@ -66,7 +66,9 @@ export function triePractice(def: () => Def): PracticeKind[] {
           explain:
             k === 0
               ? `No letter of ${w} has an edge from the root, so each of its ${w.length} letters gets a new node.`
-              : `The first ${plural(k, 'letter')} (${w.slice(0, k)}) already ${k === 1 ? 'has an edge' : 'have a path'}, so only the other ${plural(added, 'letter')} ${added === 1 ? 'needs a new node' : 'need new nodes'}.`,
+              : added === 0
+                ? `Every letter of ${w} already has an edge: ${w} is the start of a longer word. The insert only puts a second ring on its last node.`
+                : `${k === 1 ? `The first letter, ${w[0]}, already has an edge` : `The first ${k} letters, ${w.slice(0, k)}, already have a path`}, so ${added === 1 ? 'only the last letter needs a new node' : `the other ${added} letters need new nodes`}.`,
           watch: [['insert', w]],
         };
       },
@@ -146,7 +148,9 @@ export function triePractice(def: () => Def): PracticeKind[] {
         const k = shared(stored, w);
         const explain = [
           `Every letter of ${w} has an edge, and its last node has the second ring: ${w} is a word.`,
-          `Only the first ${plural(k, 'letter')} of ${w} ${k === 1 ? 'has an edge' : 'have edges'}; the next letter has none, so the search stops there.`,
+          k === 0
+            ? `The root has no edge ${w[0]}, so the search stops at once.`
+            : `Only the first ${k === 1 ? 'letter' : `${k} letters`} of ${w} ${k === 1 ? 'has an edge' : 'have edges'}; the next letter has none, so the search stops there.`,
           `Every letter of ${w} has an edge, but its last node has no second ring: ${w} is only the start of longer words.`,
         ][correct]!;
         return {

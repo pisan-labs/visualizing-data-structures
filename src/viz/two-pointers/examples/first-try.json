@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "two-pointers",
+  "id": "first-try",
+  "title": "The two ends add up: the best case",
+  "notes": "A[0] + A[9] = 54 is the target, so one check is enough.",
+  "settings": {
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "2 5 9 14 21 27 33 40 46 52"],
+    ["pairSum", 54]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

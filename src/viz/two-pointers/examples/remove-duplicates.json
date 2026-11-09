@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "two-pointers",
+  "id": "remove-duplicates",
+  "title": "Remove duplicates with slow and fast",
+  "notes": "Both pointers move the same way. fast reads every value; slow marks the last one kept. Six distinct values out of ten, in one pass.",
+  "settings": {
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [["load", "1 1 2 3 3 3 5 8 8 9"], ["dedupe"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

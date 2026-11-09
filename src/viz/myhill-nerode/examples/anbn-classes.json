@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "myhill-nerode",
+  "id": "anbn-classes",
+  "title": "aⁿbⁿ: the classes never close",
+  "notes": "The same search on aⁿbⁿ keeps finding words that every class word so far tells apart: ε, a, b, aa, ab, aaa, ... It stops at 8 classes only because the page does.",
+  "settings": {
+    "dead": "show"
+  },
+  "seed": 1,
+  "ops": [["load", "anbn"], ["classes"]]
+}

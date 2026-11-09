@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "regex-derivatives",
+  "id": "match-abb",
+  "title": "Matching a word by derivatives",
+  "notes": "Read aabb one symbol at a time, replacing r by its derivative each time. At the end, ν says whether what is left matches the empty word. Then aba, which ends on an expression that does not.",
+  "settings": {
+    "similarity": "aci",
+    "union": "|"
+  },
+  "seed": 1,
+  "ops": [
+    ["match", "aabb"],
+    ["match", "aba"]
+  ]
+}

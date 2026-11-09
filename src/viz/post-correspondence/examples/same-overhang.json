@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "post-correspondence",
+  "id": "same-overhang",
+  "title": "The same overhang again: a proof of no match",
+  "notes": "a over ab, then ba over ab, leaves the bottom one b ahead, exactly as after the first domino. Whatever follows one follows the other, so skipping the repeat loses nothing, and the search ends: no match. Turn off the skipping and it runs to the bound instead.",
+  "settings": {
+    "method": "bfs",
+    "bound": 6,
+    "memo": true,
+    "first": "any"
+  },
+  "seed": 1,
+  "ops": [["load", "a/ab ba/ab"], ["search"]]
+}

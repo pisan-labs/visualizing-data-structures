@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "myhill-nerode",
+  "id": "dead-class",
+  "title": "The class that never gets back",
+  "notes": "In ab*, every word that starts with b, or has an a after the first symbol, can never be extended into L. Those words are one class, the dead class. With it left out of the drawing, the DFA has two states and missing moves reject.",
+  "settings": {
+    "dead": "hide"
+  },
+  "seed": 1,
+  "ops": [["load", "ab*"], ["classes"]]
+}

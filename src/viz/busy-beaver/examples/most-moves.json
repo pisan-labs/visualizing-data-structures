@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "busy-beaver",
+  "id": "most-moves",
+  "title": "Three states, the most moves: 21 moves, 5 ones",
+  "notes": "A different 3-state machine holds the record for moves: S(3) = 21. It leaves only 5 ones, so the two records belong to two machines.",
+  "settings": {
+    "rules": "table"
+  },
+  "seed": 1,
+  "ops": [["load", "bb3s"], ["run"]]
+}

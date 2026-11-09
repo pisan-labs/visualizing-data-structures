@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "post-correspondence",
+  "id": "top-runs-ahead",
+  "title": "Every top is longer: no match, and the search can't tell",
+  "notes": "Each domino has more on top than below, so the top string is always longer and the two can never end together. The search doesn't know that: one branch stays alive forever, and the bound cuts it off.",
+  "settings": {
+    "method": "bfs",
+    "bound": 6,
+    "memo": false,
+    "first": "any"
+  },
+  "seed": 1,
+  "ops": [["load", "aa/a ab/b"], ["search"]]
+}

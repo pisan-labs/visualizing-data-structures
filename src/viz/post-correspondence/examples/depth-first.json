@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "post-correspondence",
+  "id": "depth-first",
+  "title": "Depth first finds a match, not the shortest",
+  "notes": "Depth first takes the newest partial match and goes deeper, backing up only when a branch dies. On these dominoes it finds 2 2 1 3 3 1, six dominoes. Breadth first finds 2 3 1, three: switch Search to breadth first and press Search again.",
+  "settings": {
+    "method": "dfs",
+    "bound": 6,
+    "memo": false,
+    "first": "any"
+  },
+  "seed": 1,
+  "ops": [["load", "ba/a a/aab ab/b"], ["search"]]
+}

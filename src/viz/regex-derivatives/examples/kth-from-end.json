@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "regex-derivatives",
+  "id": "kth-from-end",
+  "title": "Three from the end: eight states",
+  "notes": "The third symbol from the end is a. Each state has to remember the last three symbols, so every DFA for it needs 2³ = 8 states, and the derivatives find all eight.",
+  "settings": {
+    "similarity": "aci",
+    "union": "|"
+  },
+  "seed": 1,
+  "ops": [["load", "(a|b)*a(a|b)(a|b)"], ["dfa"]]
+}

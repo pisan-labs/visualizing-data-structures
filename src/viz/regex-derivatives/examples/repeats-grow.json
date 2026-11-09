@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "regex-derivatives",
+  "id": "repeats-grow",
+  "title": "Without similarity, a*a* keeps growing",
+  "notes": "With only the ∅ and ε rules, d_a(a*a*) = a*a* | a*, and each further derivative repeats an alternative instead of dropping it. The expressions never repeat, so the build gives up. Turn the similarity rules back on and it stops at two states, a*a* and a*|a*a*: similarity does not see that both mean a*, but it is enough to stop.",
+  "settings": {
+    "similarity": "basic",
+    "union": "|"
+  },
+  "seed": 1,
+  "ops": [["load", "a*a*"], ["dfa"]]
+}

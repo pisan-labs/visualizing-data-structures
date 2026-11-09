@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "post-correspondence",
+  "id": "try-a-match",
+  "title": "Check a sequence by hand",
+  "notes": "Try 2 1 3 2 4 one domino at a time: the strings agree all the way and end together, so it is a match. Then 2 3: a·ca on top against ab·a below disagree in the second column, so it dies there. And 1 dies at once: b over ca disagrees with itself.",
+  "settings": {
+    "method": "bfs",
+    "bound": 6,
+    "memo": false,
+    "first": "any"
+  },
+  "seed": 1,
+  "ops": [
+    ["try", "2 1 3 2 4"],
+    ["try", "2 3"],
+    ["try", "1"]
+  ]
+}

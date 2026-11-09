@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "busy-beaver",
+  "id": "walks-away",
+  "title": "A machine that walks away forever",
+  "notes": "Each move writes a 1 and steps right onto a blank cell. It never halts and never repeats a configuration, so the run stops at the cap of 500 moves. Here you can see why it never halts; in general, no program can tell.",
+  "settings": {
+    "rules": "table"
+  },
+  "seed": 1,
+  "ops": [["load", "1RB---_1RA---"], ["run"]]
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "regex-derivatives",
+  "id": "empty-derivative",
+  "title": "A derivative of ∅ stops the match",
+  "notes": "a(a|b)* needs an a first. Its derivative by b is ∅, the empty language: no word can follow, so matching ba stops after one symbol.",
+  "settings": {
+    "similarity": "aci",
+    "union": "|"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "a(a|b)*"],
+    ["match", "ba"],
+    ["match", "abba"]
+  ]
+}

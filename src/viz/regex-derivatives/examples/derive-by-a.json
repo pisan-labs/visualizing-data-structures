@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "regex-derivatives",
+  "id": "derive-by-a",
+  "title": "The derivative by a, part by part",
+  "notes": "d_a((a|b)*abb) from the smallest parts up. The star keeps itself after taking a off one copy, and the first part of each concatenation can be empty only for the star, so a can also come off what follows it.",
+  "settings": {
+    "similarity": "aci",
+    "union": "|"
+  },
+  "seed": 1,
+  "ops": [["derive", "a"]]
+}

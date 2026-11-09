@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "post-correspondence",
+  "id": "long-match-cut",
+  "title": "A match exists, but not within the bound",
+  "notes": "The same dominoes with the bound at 6. The search finds nothing and cuts off a partial match at the bound. No match up to 6 is all it can say: one of 12 dominoes exists.",
+  "settings": {
+    "method": "bfs",
+    "bound": 6,
+    "memo": false,
+    "first": "any"
+  },
+  "seed": 1,
+  "ops": [["load", "aa/baa ab/aaa aba/a"], ["search"]]
+}

@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "busy-beaver",
+  "id": "halts-at-once",
+  "title": "A machine that halts on its first move",
+  "notes": "A reads 0 on the blank tape, writes 1 and halts. One move, one 1: the best case for running and the worst for scoring.",
+  "settings": {
+    "rules": "table"
+  },
+  "seed": 1,
+  "ops": [["load", "1RH1LB_1LA1RB"], ["run"]]
+}

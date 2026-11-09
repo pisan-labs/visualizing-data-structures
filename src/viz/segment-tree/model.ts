@@ -417,7 +417,7 @@ const query: Op = {
     c.more = { l, r, [name]: ans };
     yield step(
       c,
-      `query(${l}, ${r}) = ${ans}: the ${c.min ? 'smallest' : 'sum'} of the ${plural(whole.length, 'node')} taken whole, ${ranges.join(', ')}. ${plural(w.queryCost, 'node')} visited, out of ${2 * w.a.length - 1}: at most four per level, so O(log n).`,
+      `query(${l}, ${r}) = ${ans}: ${whole.length === 1 ? `one node, ${ranges[0]}, is taken whole` : `the ${c.min ? 'smallest' : 'sum'} of the ${whole.length} nodes taken whole, ${ranges.join(', ')}`}. ${plural(w.queryCost, 'node')} visited, out of ${2 * w.a.length - 1}: at most four per level, so O(log n).`,
       ['q.ret'],
       1,
       null,
@@ -561,7 +561,7 @@ function* addRec(
       c,
       lo === hi
         ? `Leaf ${name}: full overlap. Its value goes from ${old} to ${c.w.val[v]}.`
-        : `Node ${name}: full overlap. All ${len} of its values go up by ${x}, so its ${c.min ? `minimum goes up by ${x} too` : `sum goes up by ${x} × ${len} = ${x * len}`}: ${old} becomes ${c.w.val[v]}. Its children are left alone; the tag ${tagText(c.w.lazy[v]!)} says what they still owe.`,
+        : `Node ${name}: full overlap. ${len === 2 ? 'Both' : `All ${len}`} of its values go up by ${x}, so its ${c.min ? `minimum goes up by ${x} too` : `sum goes up by ${x} × ${len} = ${x * len}`}: ${old} becomes ${c.w.val[v]}. Its children are left alone; the tag ${tagText(c.w.lazy[v]!)} says what they still owe.`,
       ['a.full', 'a.apply', 'a.ap.val', 'a.ap.tag'],
       2,
       v,
@@ -641,7 +641,7 @@ const add: Op = {
     }).length;
     yield step(
       c,
-      `Done: ${plural(w.updateCost, 'node')} visited, O(log n), however many values changed. ${tags ? `${plural(tags, 'tag')} now hold${tags === 1 ? 's' : ''} the rest of the work; the values under ${tags === 1 ? 'it' : 'them'} are out of date (gray) until a later query or update passes through and pushes the tag down.` : 'No tags were needed: every node that took the add is a leaf.'}`,
+      `Done: ${plural(w.updateCost, 'node')} visited, O(log n), however many values changed. ${tags ? `${plural(tags, 'tag')} now hold${tags === 1 ? 's' : ''} the rest of the work; the values under ${tags === 1 ? 'it' : 'them'} are out of date (gray) until a later query or update passes through and pushes ${tags === 1 ? 'it' : 'them'} down.` : 'No tags were needed: every node that took the add is a leaf.'}`,
       [],
       1,
       null,

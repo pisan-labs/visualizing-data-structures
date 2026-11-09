@@ -110,7 +110,7 @@ export function bmPractice(def: () => MatchDef): PracticeKind[] {
           setup,
           settings: FULL,
           answer: ordered(RULES, right),
-          explain: `T[${a.s + j}] = '${c}' ≠ P[${j}]. Bad character: ${j} − last['${c}'] = ${j} − ${last < 0 ? `(${last})` : last} = ${bc}. Good suffix: gs[${j}] = ${gs}. P slides ${plural(by.amount, 'place')}.`,
+          explain: `T[${a.s + j}] = '${c}' ≠ P[${j}]. Bad character: ${j} − last['${c}'] = ${j} − ${last < 0 ? '(−1)' : last} = ${bc < 0 ? `−${-bc}, no help` : bc}. Good suffix: gs[${j}] = ${gs}. P slides ${plural(by.amount, 'place')}.`,
           watch: [['next']],
         };
       },

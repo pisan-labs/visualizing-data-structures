@@ -61,7 +61,7 @@ Use it to search for a word in a long text with a big alphabet: a document, a lo
 ## Common mistakes
 
 - Including P's last character in Horspool's table. If it occurs nowhere else, its entry becomes 0 and the search stops moving.
-- Using the bad-character rule on its own without taking at least 1. j − last[c] can be zero or negative, and P slides backwards.
+- Using the bad-character rule on its own without taking at least 1. j − last[c] can be zero or negative, and P stands still or slides backwards.
 - Mixing up the two lookups. Horspool always uses T[s + m − 1]; the bad-character rule uses the character that failed, T[s + j].
 - After a match, sliding by m. That skips overlapping matches.
 

@@ -16,7 +16,7 @@ For i = 1, 2, ..., n - 1: `A[0..i-1]` is sorted, so find where `A[i]` belongs in
 
 CLRS lifts the new value out into a variable, `key`. Then it walks j left through the sorted part, and every value bigger than `key` shifts one slot right. When j finds a value that is not bigger (or falls off the front), `key` drops into the gap. In the drawing, the key hovers above the gap and the faded numbers are old copies that the next write will overwrite.
 
-The other version, common in code you will find online, swaps the new value with its left neighbor until it fits. [Same values, swapping](#example:swap-left). The comparisons are identical. The difference is the writes: a shift is one write, a swap is three. The **Make room by** option switches between them.
+The other version, common in code you will find online, swaps the new value with its left neighbor until it fits. [Same values, swapping](#example:swap-left). The comparisons are identical. The difference is the writes: a shift is one write, a swap is three. The **Make room by** option switches between them. Either way, the counter (shifts or swaps) goes up only for a value bigger than the one being inserted, so on sorted input it stays at 0.
 
 ```check
 Q: How many shifts does insertion sort make on 3, 1, 2?

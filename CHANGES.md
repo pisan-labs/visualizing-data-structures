@@ -375,3 +375,9 @@
 2026-11-09 [code] Merged wave 8B: push-relabel (FIFO, highest label, relabel-to-front), karger-min-cut (trials and histogram), strassen (up to 8x8, padding, M or CLRS names)
 
 2026-11-09 [code] robin-hood-hashing test: the reference now deletes by backward shift on linear probing too; reinserting the run could place keys elsewhere, so the property test failed at random
+
+2026-11-09 [code] Merged the review of the older ranges, geometry, hard problems and automata pages (20 fixed): sparse-table update cost, polygon star winding, TSP narration off the triangle inequality, tie-free practice for TSP, Steiner, DFA minimization and Mealy-Moore
+
+2026-11-09 [code] Merged wave 8A (two-pointers, sliding-window, monotonic-stack, monotonic-queue, string-hashing; new kit src/viz/_techniques) and wave 8C (myhill-nerode, regex-derivatives, post-correspondence, busy-beaver). All 12 wave 8 pages are on next
+
+2026-11-09 [code] translate in src/layouts/arrange now moves an arrow's via point; consistent-hashing's ring walk and lr0-parsing's curved moves were bent by up to 73 units (the only two pages affected)

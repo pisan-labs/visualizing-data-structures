@@ -1,5 +1,5 @@
 import type { OpCall, PracticeKind, Settings } from '../../engine/types';
-import { andList, plural } from '../_strings/kit';
+import { andList, plural, type Shift } from '../_strings/kit';
 import { input, nexts, ordered, pair, stateAfter, type MatchDef } from '../_strings/practice';
 import { badValue, type BmPre } from './model';
 
@@ -15,13 +15,15 @@ export function bmPractice(def: () => MatchDef): PracticeKind[] {
   function pick(
     rng: Parameters<PracticeKind['make']>[0],
     settings: Settings,
-    want: (cells: readonly (string | null)[]) => boolean,
+    want: (cells: readonly (string | null)[], by: Shift | undefined) => boolean,
   ) {
     for (let tries = 0; tries < 1000; tries++) {
       const { text, pattern, load } = input(rng, rng.int(11, 15), rng.int(3, 5), 'ABC');
       const end = stateAfter(def(), settings, [load, ['search']]);
       const all = end.search!.attempts;
-      const ok = all.map((a, k) => k).filter((k) => k + 1 < all.length && want(all[k]!.cells));
+      const ok = all
+        .map((a, k) => k)
+        .filter((k) => k + 1 < all.length && want(all[k]!.cells, all[k + 1]!.by));
       if (!ok.length) continue;
       const k = ok[rng.int(0, ok.length - 1)]!;
       const setup: OpCall[] = [load, ['tables'], ...nexts(k)];
@@ -93,8 +95,13 @@ export function bmPractice(def: () => MatchDef): PracticeKind[] {
       id: 'rule',
       title: 'Which rule decides?',
       make(rng) {
-        const { text, pattern, end, k, setup } = pick(rng, FULL, (cells) =>
-          cells.includes('mismatch'),
+        // Aim at each answer a third of the time: left to chance, the good-suffix rule wins
+        // only about one mismatch in nine.
+        const target = (['bc', 'gs', 'tie'] as const)[rng.int(0, 2)];
+        const { text, pattern, end, k, setup } = pick(
+          rng,
+          FULL,
+          (cells, by) => cells.includes('mismatch') && by?.rule === target,
         );
         const a = end.search!.attempts[k]!;
         const by = end.search!.attempts[k + 1]!.by!;

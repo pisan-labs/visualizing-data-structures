@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { smallestText } from '../../render/text-size';
 import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { practiceSet } from '../../engine/practice';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeQuestion } from '../../engine/types';
 import { checkMatchTimeline, inputArb, plantedArb, refMatches } from '../_strings/check';
@@ -204,6 +205,39 @@ describe('Boyer-Moore practice', () => {
             : 'Both give the same shift',
       );
     }
+  });
+});
+
+describe('Boyer-Moore practice answers', () => {
+  // A learner should not be able to guess. Over 300 seeds each rule (and the tie) is the answer
+  // in at least a quarter of the questions and none in more than half; each answer is the rule
+  // the reference search uses, and appears once among the options.
+  it('makes both rules common answers to "Which rule decides?"', () => {
+    const kind = boyerMoore.practice!.find((k) => k.id === 'rule')!;
+    const counts = new Map<string, number>();
+    for (let seed = 1; seed <= 300; seed++) {
+      const q = kind.make(makeRng(seed));
+      if (q.answer.kind !== 'choice') throw new Error('not a choice');
+      const [text, pattern] = String(q.setup[0]![1]).split(' / ');
+      const ref = refSearch(text!, pattern!, 'full');
+      const s = Number(/P waits at shift (\d+)/.exec(q.prompt)![1]);
+      const rule = ref.slides[ref.shifts.indexOf(s)]!.rule;
+      const picked = q.answer.options[q.answer.correct]!;
+      expect(new Set(q.answer.options).size).toBe(3);
+      expect(picked).toBe(
+        rule === 'bc'
+          ? 'The bad-character rule'
+          : rule === 'gs'
+            ? 'The good-suffix rule'
+            : 'Both give the same shift',
+      );
+      counts.set(picked, (counts.get(picked) ?? 0) + 1);
+    }
+    for (const n of counts.values()) {
+      expect(n).toBeGreaterThanOrEqual(75);
+      expect(n).toBeLessThanOrEqual(150);
+    }
+    expect(counts.size).toBe(3);
   });
 });
 

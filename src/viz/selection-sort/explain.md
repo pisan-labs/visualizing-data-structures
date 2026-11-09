@@ -27,7 +27,7 @@ Q: How many comparisons does selection sort make on 10 values that are already s
 
 ## Few swaps
 
-The one thing selection sort does well is moving data. Each pass makes exactly one swap, so the whole sort makes n - 1 swaps, about 3n writes. Bubble sort and insertion sort can make around n²/4 swaps or shifts on random input. When writing is much more expensive than comparing (big records, or memory that wears out when you write to it), that difference can matter.
+The one thing selection sort does well is moving data. Each pass makes exactly one swap, so the whole sort makes n - 1 swaps, about 3n writes. The swaps counter counts every one, even a value swapped with itself, so it always ends at n - 1. Bubble sort and insertion sort can make around n²/4 swaps or shifts on random input. When writing is much more expensive than comparing (big records, or memory that wears out when you write to it), that difference can matter.
 
 ## Not stable
 

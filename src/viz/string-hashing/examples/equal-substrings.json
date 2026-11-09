@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "string-hashing",
+  "id": "equal-substrings",
+  "title": "Equal substrings, equal hashes",
+  "notes": "abra at 0 and abra at 7 hash to the same value from different parts of the table, and the characters agree.",
+  "settings": {
+    "b": 31,
+    "p": 101,
+    "hashes": "single",
+    "p2": 103
+  },
+  "seed": 1,
+  "ops": [["load", "abracadabra"], ["build"], ["compare", 0, 7, 4]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

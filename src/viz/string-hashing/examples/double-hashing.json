@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "string-hashing",
+  "id": "double-hashing",
+  "title": "Double hashing catches the collision",
+  "notes": "The same comparison with a second hash mod 103. abra and brac still agree mod 101, but not mod 103, so the pair of hashes tells them apart.",
+  "settings": {
+    "b": 31,
+    "p": 101,
+    "hashes": "double",
+    "p2": 103
+  },
+  "seed": 1,
+  "ops": [["load", "abracadabra"], ["build"], ["compare", 0, 1, 4]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

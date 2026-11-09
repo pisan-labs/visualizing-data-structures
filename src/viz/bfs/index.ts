@@ -80,7 +80,6 @@ export const bfs: VizDef<BfsState, BfsSettings, BfsExtra> = {
       best: {
         cost: 'O(V)',
         why: 's has no edges: setting up d, π and the colors is the only work.',
-        example: 'disconnected',
       },
       average: {
         cost: 'O(V + E)',

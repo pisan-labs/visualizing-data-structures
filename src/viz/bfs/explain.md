@@ -65,7 +65,7 @@ Q: A graph has weights on its edges. What does BFS's d give you?
 
 With adjacency lists, each vertex goes through the queue at most once, and each list is read once when its vertex leaves the queue. That is O(V) for the queue and O(E) for the lists: O(V + E). In [the complete graph](#example:dense), 6 vertices and 15 edges take 30 edge checks, two per edge.
 
-With an adjacency matrix, every vertex that leaves the queue reads a whole row of V cells, so BFS takes Θ(V²) whatever the number of edges. On [a path](#example:path) of 1000 vertices that is a million cells to find 999 edges.
+With an adjacency matrix, every vertex that leaves the queue reads a whole row of V cells, so a BFS that reaches every vertex takes Θ(V²) whatever the number of edges. On [a path](#example:path) of 1000 vertices that is a million cells to find 999 edges.
 
 ## Common mistakes
 

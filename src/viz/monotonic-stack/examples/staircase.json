@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "monotonic-stack",
+  "id": "staircase",
+  "title": "A staircase: everything is measured at the end",
+  "notes": "Heights 1 to 5 only go up, so nothing is popped until the height-0 bar after the end. Then the stack empties: 5, 8, 9, 8 and 5. The best is 3 × 3 = 9.",
+  "settings": {
+    "find": "next-greater",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "1 2 3 4 5"], ["histogram"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

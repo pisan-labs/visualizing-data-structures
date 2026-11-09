@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "monotonic-stack",
+  "id": "previous-smaller",
+  "title": "Previous smaller value",
+  "notes": "Now the stack's values increase. A new value pops everything that is not smaller, and whatever is left on top is its answer.",
+  "settings": {
+    "find": "previous-smaller",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "4 7 3 2 5 8 1 6 3"], ["scan"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

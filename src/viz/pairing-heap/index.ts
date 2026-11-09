@@ -179,6 +179,7 @@ export const pairingHeap: VizDef<PairState, PairSettings, PairExtra> = {
     script: (calls: OpCall[], settings: Settings) => codeScript(calls, settings as PairSettings),
   },
   examples: [twoPass, flatRoot, decreaseByCut, meldTwo, multipass] as unknown as SavedExample[],
+  opening: 'two-pass-delete',
   preview: { example: 'two-pass-delete', level: 2 },
 };
 

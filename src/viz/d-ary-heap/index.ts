@@ -205,6 +205,7 @@ export const dAryHeap: VizDef<DHeapState, DHeapSettings, DHeapExtra> = {
     fourChildren,
     buildBottomUp,
   ] as unknown as SavedExample[],
+  opening: 'build-bottom-up',
   preview: { example: 'build-bottom-up', level: 2 },
 };
 

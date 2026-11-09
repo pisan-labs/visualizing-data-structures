@@ -143,6 +143,7 @@ export const persistentBst: VizDef<PersistentState, PersistentSettings, Persiste
     oldVersionsAnswer,
     sortedCopiesMore,
   ] as unknown as SavedExample[],
+  opening: 'insert-copies-path',
   preview: { example: 'insert-copies-path', level: 2 },
 };
 

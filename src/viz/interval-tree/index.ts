@@ -172,6 +172,7 @@ export const intervalTree: VizDef<IntervalState, IntervalSettings, IntervalExtra
     allOverlaps,
     deleteFixesMax,
   ] as unknown as SavedExample[],
+  opening: 'all-overlaps',
   preview: { example: 'all-overlaps', level: 2, hide: ['nl-', 'bar-', 'qband'] },
 };
 

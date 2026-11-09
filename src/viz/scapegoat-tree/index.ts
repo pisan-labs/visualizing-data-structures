@@ -162,6 +162,7 @@ export const scapegoatTree: VizDef<ScapegoatState, ScapegoatSettings, ScapegoatE
     randomStaysLow,
     alphaThreeQuarters,
   ] as unknown as SavedExample[],
+  opening: 'sorted-rebuilds',
   preview: { example: 'sorted-rebuilds' },
 };
 

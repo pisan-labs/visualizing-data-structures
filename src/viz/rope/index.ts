@@ -193,6 +193,7 @@ export const rope: VizDef<RopeState, RopeSettings, RopeExtra> = {
     deleteRange,
     totalLengths,
   ] as unknown as SavedExample[],
+  opening: 'insert-middle',
   preview: { example: 'insert-middle', level: 2 },
 };
 

@@ -178,6 +178,7 @@ export const cartesianTree: VizDef<CartesianState, CartesianSettings, CartesianE
     sortedChain,
     maxOnTop,
   ] as unknown as SavedExample[],
+  opening: 'build-right-spine',
   preview: { example: 'build-right-spine', level: 2 },
 };
 

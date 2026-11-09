@@ -28,7 +28,7 @@ The simple build inserts the suffixes longest first. Each one walks down from th
 
 The `$` guarantees the suffix never ends in the middle of an edge. Without it, A in BANANA would be a prefix of ANA and ANANA, and it would have no leaf of its own. [Show me](#play:banana)
 
-This is O(n²) in the worst case. In AAAAAA, suffix i walks n - i characters before it finally splits off. [One letter repeated](#example:all-same)
+This is O(n²) in the worst case. In AAAAAA, suffix i walks n − i characters before it finally splits off. [One letter repeated](#example:all-same)
 
 ```check
 Q: How many leaves does the suffix tree of MISSISSIPPI$ have?
@@ -48,7 +48,7 @@ Second, the active point (a node, an edge and a length) remembers where the next
 
 Third, suffix links. A node for xα points to the node for α, so after an insertion the algorithm jumps sideways instead of walking down from the root again. Links to the root are not drawn, to keep the picture readable. [Show me](#play:ukkonen-banana)
 
-I'll be honest: Ukkonen is hard to follow the first time, and the second time. Step through it with the detail level on Every detail and keep an eye on the active point in the variables panel.
+Ukkonen is hard to follow the first time. And the second time. Step through it with the detail level on Every detail and keep an eye on the active point in the variables panel.
 
 ## Search, count and the longest repeat
 

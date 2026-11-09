@@ -59,7 +59,7 @@ export function suffixPractice(def: () => Def): PracticeKind[] {
             prompt: `Build the suffix array of ${q(t)}. What is LCP[${i}], the longest common prefix of the suffixes in rows ${i! - 1} and ${i}?`,
             setup: [['load', t]],
             answer: { kind: 'number', value: v! },
-            explain: `Row ${i! - 1} is ${q(t.slice(a))} and row ${i} is ${q(t.slice(b))}. They share ${q(t.slice(b, b + v!))}, ${v} characters, before they differ or one runs out.`,
+            explain: `Row ${i! - 1} is ${q(t.slice(a))} and row ${i} is ${q(t.slice(b))}. They share ${q(t.slice(b, b + v!))}, ${v === 1 ? '1 character' : `${v} characters`}, before they differ or one runs out.`,
             watch: [['build']],
           };
         }

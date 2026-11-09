@@ -77,7 +77,7 @@ Counting in-degrees reads every arc once: O(E). Each vertex goes through the que
 - Putting a vertex in the order before its in-degree reaches 0.
 - Forgetting the check at the end. If L is shorter than V, there is a cycle; returning L as an answer is wrong.
 - Counting out-degrees instead of in-degrees.
-- Expecting one right answer. Unless the graph is a chain, there are many correct orders.
+- Expecting one right answer. There is only one order when a path of arcs runs through every vertex, as in a chain; otherwise there are several.
 - Running it on an undirected graph.
 
 ## Try this

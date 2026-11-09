@@ -219,7 +219,7 @@ function* doublingSort(t: string, c: Counters, s: S): Gen<number[]> {
     yield {
       state: s,
       marks: [],
-      say: `Ranks still repeat, so double. Pair each suffix's rank with the rank of the suffix ${k} further on: that pair sorts the first ${2 * k} characters. Past the end counts as -1, smaller than any rank.`,
+      say: `Ranks still repeat, so double. Pair each suffix's rank with the rank of the suffix ${k} further on: that pair sorts the first ${2 * k} characters. Past the end counts as −1, smaller than any rank.`,
       lines: ['d.while', 'd.pair'],
       level: 2,
       vars: vars(s, c, { k }),
@@ -320,7 +320,7 @@ function* kasai(t: string, sa: number[], c: Counters, s: S): Gen<number[]> {
     yield {
       state: s,
       marks: [mark(rowId(i), 'active'), mark(rowId(j), 'compare'), mark(lcpId(row), 'new')],
-      say: `Position ${i}: ${q(suffix(t, i))} is in row ${row}; above it is ${q(suffix(t, j))}. ${start ? `The first ${start} characters are known to match (h = ${start}), so start comparing after them. ` : ''}They share ${common}: LCP[${row}] = ${h}.${h ? ' Then h drops by one for the next position.' : ''}`,
+      say: `Position ${i}: ${q(suffix(t, i))} is in row ${row}; above it is ${q(suffix(t, j))}. ${start ? `The first ${start === 1 ? 'character is' : `${start} characters are`} known to match (h = ${start}), so start comparing after ${start === 1 ? 'it' : 'them'}. ` : ''}They share ${common}: LCP[${row}] = ${h}.${h ? ' Then h drops by one for the next position.' : ''}`,
       lines: ['k.for', 'k.if', 'k.j', 'k.while', 'k.set', 'k.dec'],
       level: 2,
       vars: vars(s, c, { i, h }),
@@ -486,7 +486,7 @@ const searchOp: Op = {
       state: s,
       marks: rows.map((p) => mark(rowId(p), 'found')),
       say: at.length
-        ? `Rows ${first} to ${last - 1} start with ${q(pat)}, so P occurs ${plural(at.length, 'time')}, at ${at.length === 1 ? 'position' : 'positions'} ${andList(at)}. That took ${plural(c.probes, 'probe')}, about 2 log₂ n, each comparing at most |P| characters.`
+        ? `${at.length === 1 ? `Row ${first} starts` : `Rows ${first} ${at.length === 2 ? 'and' : 'to'} ${last - 1} start`} with ${q(pat)}, so P occurs ${plural(at.length, 'time')}, at ${at.length === 1 ? 'position' : 'positions'} ${andList(at)}. That took ${plural(c.probes, 'probe')}, about 2 log₂ n, each comparing at most |P| characters.`
         : `No row starts with ${q(pat)}: it would go ${first === 0 ? 'above row 0' : first === n ? `below row ${n - 1}` : `between rows ${first - 1} and ${first}`}, but the block is empty. P does not occur in T. That took ${plural(c.probes, 'probe')}.`,
       lines: ['s.ret'],
       level: 1,

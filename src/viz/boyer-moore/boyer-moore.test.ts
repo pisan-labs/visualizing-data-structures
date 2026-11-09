@@ -184,6 +184,10 @@ describe('Boyer-Moore practice', () => {
     }
   });
 
+  it('writes −1 with a minus sign, as the narration does', () => {
+    for (const q of questions('rule')) expect(q.explain).not.toMatch(/-\d/);
+  });
+
   it('names the rule the reference search uses', () => {
     for (const q of questions('rule')) {
       const [text, pattern] = words(q);

@@ -93,11 +93,16 @@ export function topoPractice(def: () => Def): PracticeKind[] {
           const x = waiting[rng.int(0, waiting.length - 1)]!;
           const n = after.indeg[x]!;
           const from = inNeighbours(g, x).filter((p) => !after.order.includes(p));
+          const gone = inNeighbours(g, x).filter((p) => after.order.includes(p));
+          const all = inNeighbours(g, x).length;
+          const arcs = (k: number) => `${k} ${k === 1 ? 'arc' : 'arcs'}`;
           return {
             prompt: `Sort this DAG by in-degree with a first-in, first-out queue. The order starts ${r.order.slice(0, k + 1).join(', ')}. Right after ${y} is taken and its arcs are removed, what is the in-degree of ${x}?`,
             setup,
             answer: { kind: 'number', value: n },
-            explain: `${x} has ${inNeighbours(g, x).length} ${inNeighbours(g, x).length === 1 ? 'arc' : 'arcs'} in. The ones from ${listWords(after.order)} are gone, so ${n} ${n === 1 ? 'is' : 'are'} left, from ${listWords(from)}.`,
+            explain: gone.length
+              ? `${x} has ${arcs(all)} in. The ${gone.length === 1 ? 'one' : 'ones'} from ${listWords(gone)} ${gone.length === 1 ? 'is' : 'are'} gone, taken out with ${gone.length === 1 ? 'it' : 'them'}, so ${n} ${n === 1 ? 'is' : 'are'} left, from ${listWords(from)}.`
+              : `${x} has ${arcs(all)} in, from ${listWords(from)}, and no vertex taken so far is one of them, so its in-degree is still ${n}.`,
             watch,
           };
         }

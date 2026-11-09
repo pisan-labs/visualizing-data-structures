@@ -217,7 +217,7 @@ function* search(s: S, settings: AStarSettings, compare = true): Generator<AStar
     put(src);
     const moves = settings.moves === '8' ? '8 neighbours, diagonals too,' : '4 neighbours';
     yield step(
-      `A* from S at ${cellName(g, src)} to T at ${cellName(g, dst)}, moving to ${moves} at a cost of 1 a move. h is the ${HEURISTIC_NAMES[hName]}${hName === 'zero' ? ', so f = g and this is Dijkstra’s algorithm' : ' to T'}. S gets g = 0, h = ${fmt(r.h[src]!)}, ${fText(src)}, and goes in the open set.`,
+      `A* from S at ${cellName(g, src)} to T at ${cellName(g, dst)}, moving to ${moves} at a cost of 1 a move. ${hName === 'zero' ? 'h is 0, so f = g and this is Dijkstra’s algorithm' : `h is the ${HEURISTIC_NAMES[hName]} to T`}. S gets g = 0, h = ${fmt(r.h[src]!)}, ${fText(src)}, and goes in the open set.`,
       ['start', 'h', 'open'],
       2,
       [mark(id(src), 'new')],
@@ -396,7 +396,7 @@ export function pseudocode(settings: AStarSettings): PseudoBlock[] {
 }
 
 export function initialSay(s: S, settings: AStarSettings): string {
-  return `${describeGrid(s.grid)} Press Find path: A* expands the open cell with the least f = g + h, where h is the ${HEURISTIC_NAMES[settings.heuristic]}${settings.heuristic === 'zero' ? '' : ' to T'}.`;
+  return `${describeGrid(s.grid)} Press Find path: A* expands the open cell with the least f = g + h, ${settings.heuristic === 'zero' ? 'where h is 0' : `where h is the ${HEURISTIC_NAMES[settings.heuristic]} to T`}.`;
 }
 
 export const initialVars = (s: S) => gridVars(s.grid);

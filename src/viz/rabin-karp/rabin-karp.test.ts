@@ -145,6 +145,11 @@ describe('Rabin-Karp practice', () => {
     }
   });
 
+  it('explains in plain grammar, with minus signs', () => {
+    for (const q of questions('count')) expect(q.explain).not.toMatch(/shift \d+,/);
+    for (const q of questions('roll')) expect(q.explain).not.toMatch(/-\d/);
+  });
+
   it('counts the spurious hits like the reference', () => {
     for (const q of questions('count')) {
       const [text, pattern] = words(q);

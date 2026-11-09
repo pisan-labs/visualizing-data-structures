@@ -181,6 +181,11 @@ describe('topological sort practice', () => {
           const placed = start!.split(', ');
           const left = g.edges.filter((e) => e.v === x && !placed.includes(e.u)).length;
           expect(a.kind === 'number' && a.value, where).toBe(left);
+          // The explanation names only arcs into x as gone, never vertices with no arc to x.
+          const gone = /The ones? from ([\w, ]+?) (is|are) gone/.exec(q.explain);
+          const into = g.edges.filter((e) => e.v === x).map((e) => e.u);
+          for (const v of gone ? gone[1]!.split(/, | and /) : []) expect(into, where).toContain(v);
+          if (!gone) expect(q.explain, where).toContain('no vertex taken so far is one of them');
         } else if (kind.id === 'leftover') {
           expect(a.kind === 'sequence' && a.value, where).toEqual(stuck(g));
         } else {

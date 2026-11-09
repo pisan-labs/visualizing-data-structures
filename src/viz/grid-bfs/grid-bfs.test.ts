@@ -1,5 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { practiceSet } from '../../engine/practice';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import { parseGrid, parseGridInput, START_TEXT, type Grid } from '../_grid/grid';
 import { gridBfs } from '.';
@@ -131,6 +133,48 @@ describe('grid BFS', () => {
       }),
       { numRuns: 200 },
     );
+  });
+});
+
+describe('grid BFS practice', () => {
+  it('gets the answers right, and says the walls force a detour only when they do', () => {
+    let detours = 0;
+    let free = 0;
+    for (let seed = 1; seed <= 80; seed++)
+      for (const item of practiceSet(gridBfs, seed, 4)) {
+        const q = item.question;
+        const lines = parseGrid(String(q.setup[0]![1])) as Grid;
+        const moves = q.settings!.moves as '4' | '8';
+        const d = reference(lines.lines, moves);
+        const t = lines.lines.join('').indexOf('T');
+        if (item.kind.id === 'length') {
+          expect(q.answer).toEqual({ kind: 'number', value: d[t] });
+          const cols = lines.lines[0]!.length;
+          const s = lines.lines.join('').indexOf('S');
+          const dr = Math.abs(Math.floor(s / cols) - Math.floor(t / cols));
+          const dc = Math.abs((s % cols) - (t % cols));
+          const open = moves === '8' ? Math.max(dr, dc) : dr + dc;
+          if (d[t]! > open) {
+            detours++;
+            expect(q.explain).toContain(`Without the walls it would take ${open}`);
+          } else {
+            free++;
+            expect(q.explain).toContain('The walls cost nothing here');
+          }
+        }
+        if (item.kind.id === 'reachable' && q.answer.kind === 'choice')
+          expect(q.answer.correct).toBe(d[t]! >= 0 ? 0 : 1);
+      }
+    expect(detours).toBeGreaterThan(0);
+    expect(free).toBeGreaterThan(0);
+  });
+
+  it('asks about grids where T cannot be reached too, not only ones where it can', () => {
+    const kind = gridBfs.practice!.find((k) => k.id === 'reachable')!;
+    const answers = Array.from({ length: 80 }, (_, i) => kind.make(makeRng(i + 1)).answer);
+    const no = answers.filter((a) => a.kind === 'choice' && a.correct === 1).length;
+    expect(no).toBeGreaterThan(20);
+    expect(no).toBeLessThan(60);
   });
 });
 

@@ -427,10 +427,12 @@ const del: Op = {
     W.n(x).end = false;
     c.extra.path = [];
     if (settings.delete === 'lazy') {
-      const dead = W.n(x).kids.length === 0;
+      // The nodes at the end of the path that lead to no word now, which pruning would remove.
+      let idle = 0;
+      for (let y = x; y !== W.root && wordsBelow(W, y).length === 0; y = W.n(y).parent!) idle++;
       yield step(
         c,
-        `Clear the end mark, and that is all a lazy delete does. ${w} is gone${dead ? `, but its nodes stay, although no word ends below them now` : ''}.`,
+        `Clear the end mark, and that is all a lazy delete does. ${w} is gone${idle ? `, but its nodes stay: ${idle === 1 ? 'the last one leads' : `the last ${idle} lead`} to no word now` : ''}.`,
         ['del.notend', 'del.unmark'],
         1,
         [nodeMark(x, 'done')],

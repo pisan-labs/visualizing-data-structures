@@ -5,6 +5,9 @@ import { nexts, ordered, pair, stateAfter, type MatchDef } from '../_strings/pra
 
 const DIGITS = '0123456789';
 
+/** −805, with a minus sign as the narration writes it. */
+const minus = (x: number) => (x < 0 ? `−${-x}` : String(x));
+
 /** A text of digits with the pattern planted once, and a small modulus. */
 function digitsInput(rng: Rng, n: number, m: number, moduli: readonly number[]) {
   const pattern = randomWord(rng, m, DIGITS);
@@ -64,7 +67,7 @@ export function rkPractice(def: () => MatchDef): PracticeKind[] {
           setup,
           settings,
           answer: { kind: 'number', value: next },
-          explain: `Drop ${text[k]} and bring in ${text[k + m]}: (10 × (${t} − ${text[k]} × ${hs.h}) + ${text[k + m]}) mod ${q} = ${10 * a + Number(text[k + m])} mod ${q} = ${next}. Check: ${Number(text.slice(k + 1, k + 1 + m))} mod ${q} = ${next}.`,
+          explain: `Drop ${text[k]} and bring in ${text[k + m]}: (10 × (${t} − ${text[k]} × ${hs.h}) + ${text[k + m]}) mod ${q} = ${minus(10 * a + Number(text[k + m]))} mod ${q} = ${next}. Check: ${Number(text.slice(k + 1, k + 1 + m))} mod ${q} = ${next}.`,
           watch: [['next']],
         };
       },
@@ -123,7 +126,7 @@ export function rkPractice(def: () => MatchDef): PracticeKind[] {
           setup: [load],
           settings,
           answer: { kind: 'number', value: count },
-          explain: `p = ${Number(pattern)} mod ${q} = ${hs.p}. ${count ? `${count === 1 ? 'The window at shift' : `${plural(count, 'window')}, at shifts`} ${andList(hs.spurious)}, ${count === 1 ? 'leaves' : 'leave'} the same remainder without being ${pattern}` : `No window other than a real match leaves remainder ${hs.p}`}.`,
+          explain: `p = ${Number(pattern)} mod ${q} = ${hs.p}. ${count ? `${count === 1 ? `The window at shift ${hs.spurious[0]} leaves` : `${plural(count, 'window')}, at shifts ${andList(hs.spurious)}, leave`} the same remainder without being ${pattern}` : `No window other than a real match leaves remainder ${hs.p}`}.`,
           watch: [['search']],
         };
       },

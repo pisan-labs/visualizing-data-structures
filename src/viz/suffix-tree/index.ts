@@ -126,7 +126,7 @@ export const suffixTree: VizDef<StState, StSettings, StExtra> = {
       },
       worst: {
         cost: 'O(n²)',
-        why: 'AAAA…: suffix i walks n - i characters before it splits off.',
+        why: 'AAAA…: suffix i walks n − i characters before it splits off.',
         example: 'all-same',
       },
     },
@@ -144,8 +144,7 @@ export const suffixTree: VizDef<StState, StSettings, StExtra> = {
       },
       worst: {
         cost: 'O(n)',
-        why: 'Even AAAA… does O(n) extensions in total, for a fixed alphabet.',
-        example: 'all-same',
+        why: 'Even AAAA… does O(n) extensions in total, for a fixed alphabet. (One letter repeated, with Build by set to Ukkonen.)',
       },
       note: 'Space is O(n) for both: 2n + 1 nodes at most, and each edge stores two numbers, not its text.',
     },

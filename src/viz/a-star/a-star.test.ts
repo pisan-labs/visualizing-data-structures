@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { practiceSet } from '../../engine/practice';
 import { Timeline } from '../../engine/timeline';
 import { bfsDistances, targetOf } from '../_grid/grid';
 import { aStar } from '.';
@@ -146,6 +147,44 @@ describe('A*', () => {
       }),
       { numRuns: 250 },
     );
+  });
+});
+
+describe('A* wording and practice', () => {
+  it('says h is 0, not "the zero"', () => {
+    const st = settings({ heuristic: 'zero' });
+    const t = new Timeline(aStar, st, 1, [['run']]);
+    const says = [t.initial.say, ...t.entries[0]!.steps.map((x) => x.say)].join(' ');
+    expect(says).not.toMatch(/the zero/);
+    expect(t.initial.say).toContain('where h is 0.');
+  });
+
+  it('gets h and the cells expanded right, against the reference', () => {
+    for (let seed = 1; seed <= 80; seed++)
+      for (const item of practiceSet(aStar, seed, 4)) {
+        const q = item.question;
+        const lines = String(q.setup[0]![1]).split(' ');
+        const st = { ...aStar.defaults, ...q.settings } as AStarSettings;
+        if (item.kind.id === 'h') {
+          const cols = lines[0]!.length;
+          const flat = lines.join('');
+          const t = flat.indexOf('T');
+          const [, col, row] = /cell ([A-Z])(\d+)\?/.exec(q.prompt)!;
+          const k = (Number(row) - 1) * cols + (col!.charCodeAt(0) - 65);
+          const dr = Math.abs(Math.floor(k / cols) - Math.floor(t / cols));
+          const dc = Math.abs((k % cols) - (t % cols));
+          const h = st.heuristic === 'manhattan' ? dr + dc : Math.max(dr, dc);
+          expect(q.answer).toEqual({ kind: 'number', value: h });
+          expect(q.explain).toContain(`${dc} column`);
+          expect(q.explain).toContain(`${dr} row`);
+        }
+        if (item.kind.id === 'fewer' && q.answer.kind === 'choice') {
+          const m = reference(lines, { ...st, heuristic: 'manhattan' }).expanded;
+          const z = reference(lines, { ...st, heuristic: 'zero' }).expanded;
+          const right = m < z ? 0 : m > z ? 1 : 2;
+          expect(q.answer.options[q.answer.correct]).toBe(q.answer.options[right]);
+        }
+      }
   });
 });
 

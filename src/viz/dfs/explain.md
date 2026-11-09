@@ -82,7 +82,7 @@ With adjacency lists, DFS visits each vertex once and reads each list once, so i
 - Forgetting the outer loop. DFS-VISIT from one vertex only reaches what that vertex can reach; [three pieces](#example:disconnected) need three starts.
 - Calling the edge back to the parent a back edge in an undirected graph. Every graph with an edge then seems to have a cycle.
 - Expecting the stack version to visit in the same order as the recursion.
-- Marking a vertex visited when it is pushed, in the stack version, when you need finish times. Then nothing records when its exploring ends.
+- Marking a vertex visited when it is pushed, in the stack version. A vertex pushed early is then skipped by a deeper vertex that reaches it first, so the tree is no longer depth-first: an undirected graph can show cross edges.
 - Using DFS paths as shortest paths.
 
 ## Try this

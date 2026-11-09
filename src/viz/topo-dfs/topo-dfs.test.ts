@@ -151,6 +151,7 @@ describe('topological sort practice', () => {
         } else if (kind.id === 'finish-time') {
           const v = /What is `(\w+)\.f`/.exec(q.prompt)![1]!;
           expect(a.kind === 'number' && a.value, where).toBe(ref.f.get(v));
+          expect(q.explain, where).not.toMatch(/The 1 vertex/);
         } else {
           throw new Error(`untested kind ${kind.id}`);
         }

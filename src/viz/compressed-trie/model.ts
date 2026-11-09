@@ -68,7 +68,11 @@ const cells = (from: number, to: number, role: Mark['role']) =>
 
 const q = (s: string) => `"${s}"`;
 const allMatch = (k: number) =>
-  k === 1 ? 'its one letter matches' : `all ${k} of its letters match`;
+  k === 1
+    ? 'its one letter matches'
+    : k === 2
+      ? 'both its letters match'
+      : `all ${k} of its letters match`;
 
 // ---------------------------------------------------------------------------------------------
 // Reading a state

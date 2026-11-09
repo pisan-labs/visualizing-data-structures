@@ -3,7 +3,7 @@
   "viz": "grid-bfs",
   "id": "next-door",
   "title": "T next door",
-  "notes": "T is one move from S. BFS dequeues S, finds T among its neighbours, and dequeues T next: the best case.",
+  "notes": "T is one move from S. BFS dequeues S and finds T among its neighbours. C1, found just before T because north comes first, leaves the queue next, and then T: 3 cells expanded, the best case.",
   "settings": { "moves": "4" },
   "seed": 1,
   "ops": [["load", "........ ..ST.... ........ ........"], ["run"]]

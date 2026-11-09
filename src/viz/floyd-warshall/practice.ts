@@ -100,9 +100,20 @@ export function floydPractice(def: () => Def): PracticeKind[] {
           const { g, setup, r, watch } = setupRun(rng);
           const V = g.vertices;
           const pairs: [number, number][] = [];
+          // The vertices x with D[i][x] + w(x, j) = D[i][j]: two of them would make two answers.
+          const waysIn = (i: number, j: number) =>
+            g.edges
+              .flatMap((e) => (g.directed ? [e] : [e, { u: e.v, v: e.u, w: e.w }]))
+              .filter((e) => {
+                const x = V.indexOf(e.u);
+                return (
+                  e.v === V[j] && x !== j && r.D[i]![x] !== null && r.D[i]![x]! + e.w === r.D[i]![j]
+                );
+              }).length;
           V.forEach((_, i) =>
             V.forEach((__, j) => {
-              if (i !== j && r.P[i]![j] !== null && r.P[i]![j] !== V[i]) pairs.push([i, j]);
+              if (i !== j && r.P[i]![j] !== null && r.P[i]![j] !== V[i] && waysIn(i, j) === 1)
+                pairs.push([i, j]);
             }),
           );
           if (pairs.length === 0) continue;

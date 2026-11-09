@@ -16,6 +16,16 @@ type Def = VizDef<BridgesState, BridgesSettings, BridgesExtra>;
 
 const code = (s: string) => `\`${s}\``;
 
+/** Why the cut vertices other than the root count. */
+function lowTest(others: string[], root: boolean): string {
+  if (others.length === 0) return '';
+  if (others.length === 1) {
+    const u = others[0]!;
+    return `${u} has a child v with v.low ≥ ${u}.d: nothing below v climbs above ${u}.`;
+  }
+  return `${root ? 'Each other' : 'Each'} cut vertex u has a child v with v.low ≥ u.d: nothing below v climbs above u.`;
+}
+
 /**
  * Practice for cut vertices and bridges. Every answer comes from running the model: cut
  * vertices, bridges and low values are read from the run's last step.
@@ -57,7 +67,10 @@ export function bridgesPractice(def: () => Def): PracticeKind[] {
               'Type every cut vertex of this graph in name order: the vertices whose removal splits it into more pieces.',
             setup,
             answer: { kind: 'sequence', value: r.cuts },
-            explain: `${listWords(r.cuts)}. ${r.cuts.includes('A') ? `A is the DFS root with ${r.kids['A']} children, which is why it counts. ` : ''}Each other cut vertex u has a child v with v.low ≥ u.d: nothing below v climbs above u.`,
+            explain: `${listWords(r.cuts)}. ${r.cuts.includes('A') ? `A is the DFS root with ${r.kids['A']} children, which is why it counts. ` : ''}${lowTest(
+              r.cuts.filter((v) => v !== 'A'),
+              r.cuts.includes('A'),
+            )}`,
             watch,
           };
         }

@@ -1,7 +1,7 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, Settings, VizDef } from '../../engine/types';
-import { inNeighbours } from '../_graph/graph';
+import { inNeighbours, type Graph } from '../_graph/graph';
 import { loadCall, shuffle } from '../_graph/presets';
 import { pathOf, pathWords } from '../_paths/kit';
 import { randomWeightedDag } from '../_paths/presets';
@@ -17,6 +17,14 @@ import {
 type Def = VizDef<DagState, DagSettings, DagExtra>;
 
 const code = (s: string) => `\`${s}\``;
+
+/** The vertices just before x on some shortest path: more than one means π could be either. */
+function bestWaysIn(g: Graph, d: Record<string, number | null>, x: string): string[] {
+  const arcs = g.edges.flatMap((e) => (g.directed ? [e] : [e, { u: e.v, v: e.u, w: e.w }]));
+  return arcs
+    .filter((e) => e.v === x && typeof d[e.u] === 'number' && d[e.u]! + e.w === d[x])
+    .map((e) => e.u);
+}
 
 /**
  * Practice for DAG shortest paths. Every answer comes from running the model: the order, the
@@ -78,8 +86,12 @@ export function dagPractice(def: () => Def): PracticeKind[] {
         for (;;) {
           const { g, setup, r, watch } = setupRun(rng);
           // A vertex with at least two reached vertices that have an edge into it.
+          // Two ways in with the same total would make two answers right: leave those out.
           const choices = g.vertices.filter(
-            (v) => v !== 'A' && inNeighbours(g, v).filter((x) => r.d[x] !== null).length >= 2,
+            (v) =>
+              v !== 'A' &&
+              inNeighbours(g, v).filter((x) => r.d[x] !== null).length >= 2 &&
+              bestWaysIn(g, r.d, v).length === 1,
           );
           if (choices.length === 0) continue;
           const v = choices[rng.int(0, choices.length - 1)]!;

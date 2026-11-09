@@ -13,7 +13,7 @@ Write down every suffix of BANANA: BANANA, ANANA, NANA, ANA, NA, A. Sort them. W
 
 Every occurrence of a pattern P is the start of some suffix. Sort the suffixes and all the ones that start with P sit together, in one block of rows. Binary search finds the block. [Show me](#play:banana)
 
-LCP[i] is the length of the longest common prefix of the suffixes in rows i - 1 and i. For BANANA it is 0 1 3 0 0 2: ANA and ANANA share 3 characters.
+LCP[i] is the length of the longest common prefix of the suffixes in rows i − 1 and i. For BANANA it is 0 1 3 0 0 2: ANA and ANANA share 3 characters.
 
 ## How it works: building the array
 
@@ -22,7 +22,7 @@ The obvious way is to sort the suffixes like any strings. Set **Build by** to co
 Prefix doubling, the default, never compares characters after the first round. It works in rounds:
 
 1. Rank every suffix by its first character.
-2. Pair each suffix's rank with the rank of the suffix k positions later (-1 past the end). The pair sorts the first 2k characters.
+2. Pair each suffix's rank with the rank of the suffix k positions later (−1 past the end). The pair sorts the first 2k characters.
 3. Sort by the pairs and hand out new ranks, with equal pairs sharing one.
 4. Double k. Stop when every rank is different.
 
@@ -39,7 +39,7 @@ Q: After the round with k = 2, how many characters of each suffix are sorted?
 
 ## How it works: LCP in linear time
 
-Comparing every row with the row above costs O(n²) in the worst case. Kasai's trick is to visit the suffixes in text order: the suffix at 0, then at 1, then at 2. If the suffix at i shares h characters with the row above it, then the suffix at i + 1 (the same thing, minus its first character) shares at least h - 1 with the row above it. So h never starts from zero again; it drops by at most 1 per position and goes up at most 2n times in all.
+Comparing every row with the row above costs O(n²) in the worst case. Kasai's trick is to visit the suffixes in text order: the suffix at 0, then at 1, then at 2. If the suffix at i shares h characters with the row above it, then the suffix at i + 1 (the same thing, minus its first character) shares at least h − 1 with the row above it. So h never starts from zero again; it drops by at most 1 per position and goes up at most 2n times in all.
 
 Watch the narration in [MISSISSIPPI](#example:mississippi): it keeps saying that the first few characters are known to match, so comparing starts after them.
 
@@ -71,7 +71,7 @@ Most textbooks add an end marker $, smaller than every letter, so no suffix is a
 ## Common mistakes
 
 - Sorting copies of the suffixes. Keep the start positions and compare in place, or you use O(n²) memory.
-- Off-by-one in LCP: LCP[i] compares row i with row i - 1, not i + 1. LCP[0] has nothing above it.
+- Off-by-one in LCP: LCP[i] compares row i with row i − 1, not i + 1. LCP[0] has nothing above it.
 - Stopping the first binary search at any row that matches. You want the first one, then the last one.
 - Forgetting that the occurrences come out in sorted order of suffix, not in order of position. Sort them if you need them left to right.
 - Reading the longest repeat from the longest suffix. It comes from the largest LCP.

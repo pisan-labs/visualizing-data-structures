@@ -55,7 +55,7 @@ export function brutePractice(def: () => MatchDef): PracticeKind[] {
           prompt: `${pair(text, pattern)}. How many character comparisons does brute force make to find every match?`,
           setup: [load],
           answer: { kind: 'number', value: end.search!.comparisons },
-          explain: `Shift by shift, from s = 0: ${each.join(' + ')} = ${end.search!.comparisons}. Each shift stops at its first mismatch, or after all ${pattern.length} characters on a match.`,
+          explain: `Shift by shift, from s = 0: ${each.join(' + ')} = ${end.search!.comparisons}. Each shift stops at its first mismatch, or after ${pattern.length === 2 ? 'both characters' : `all ${pattern.length} characters`} on a match.`,
           watch: [['search']],
         };
       },
@@ -71,9 +71,12 @@ export function brutePractice(def: () => MatchDef): PracticeKind[] {
           prompt: `${pair(text, pattern)}. Type every shift where P occurs, from left to right. Matches may overlap.`,
           setup: [load],
           answer: { kind: 'sequence', value: found },
-          explain: found.length
-            ? `P occurs at ${found.length === 1 ? 'shift' : 'shifts'} ${andList(found)}: at each one, T[s..s + ${m - 1}] spells ${pattern}.`
-            : `No shift spells ${pattern}, so the answer is blank.`,
+          explain:
+            found.length === 1
+              ? `P occurs at shift ${found[0]}: T[${found[0]}..${Number(found[0]) + m - 1}] spells ${pattern}.`
+              : found.length
+                ? `P occurs at shifts ${andList(found)}: at each one, T[s..s + ${m - 1}] spells ${pattern}.`
+                : `No shift spells ${pattern}, so the answer is blank.`,
           watch: [['search']],
         };
       },

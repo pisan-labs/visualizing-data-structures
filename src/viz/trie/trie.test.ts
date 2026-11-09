@@ -183,6 +183,23 @@ describe('trie', () => {
     expect(t.entries[4]!.steps.at(-1)!.vars?.removed).toBe(1);
   });
 
+  it('says which nodes a lazy delete leaves leading nowhere, not the shared ones', () => {
+    const t = new Timeline(trie, { delete: 'lazy' }, 1, [
+      ['insert', 'cat'],
+      ['insert', 'card'],
+      ['delete', 'card'],
+      ['insert', 'cart'],
+      ['delete', 'cat'],
+    ]);
+    const last = (i: number) => t.entries[i]!.steps.at(-1)!.say;
+    // d and r lead nowhere; c and a still lead to cat.
+    expect(last(2)).toContain('card is gone, but its nodes stay: the last 2 lead to no word now.');
+    // Only t goes idle; c and a still lead to cart.
+    expect(last(4)).toContain(
+      'cat is gone, but its nodes stay: the last one leads to no word now.',
+    );
+  });
+
   it('turns bad words into a narrated error without changing the trie', () => {
     const t = new Timeline(trie, trie.defaults, 1, [
       ['insert', 'cat'],
@@ -267,6 +284,14 @@ describe('trie practice', () => {
         }
       }
     }
+  });
+
+  it('explains with plain counts, never "0 letters" or "1 letter (t)"', () => {
+    for (let seed = 1; seed <= 200; seed++)
+      for (const k of kinds) {
+        const q = k.make(makeRng(seed));
+        expect(q.explain).not.toMatch(/\b0 letters|\b1 letter\b|other 0/);
+      }
   });
 
   it('shows the answer by playing the asked operation after the setup', () => {

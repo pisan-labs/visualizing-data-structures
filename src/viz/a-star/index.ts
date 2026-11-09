@@ -106,7 +106,7 @@ export const aStar: VizDef<AStarState, AStarSettings, AStarExtra> = {
       },
       worst: {
         cost: 'O(RC log RC)',
-        why: 'With no path, or h = 0, every reachable cell is expanded: Dijkstra on the grid.',
+        why: 'With no path, every reachable cell is expanded. h = 0, Dijkstra on the grid, expands every cell nearer to S than T.',
         example: 'no-path',
       },
       note: 'd is the length of the path and k the cells expanded; each has at most 8 neighbours.',
@@ -125,8 +125,8 @@ export const aStar: VizDef<AStarState, AStarSettings, AStarExtra> = {
       },
       worst: {
         cost: 'All reachable',
-        why: 'h = 0 knows nothing about T and fans out in every direction, like BFS.',
-        example: 'zero-heuristic',
+        why: 'With no path, every cell S can reach is expanded, whatever h is. h = 0 comes close: it expands every cell nearer to S than T.',
+        example: 'no-path',
       },
     },
     {

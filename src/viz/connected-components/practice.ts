@@ -17,8 +17,8 @@ type Def = VizDef<CcState, CcSettings, CcExtra>;
 type CcStep = Step<CcState, CcExtra>;
 
 /** 6 to 9 vertices with no spanning tree underneath, so there are often several pieces. */
-function practiceGraph(rng: Rng): Graph {
-  return randomGraph(rng, rng.int(6, 9), { connected: false, density: rng.int(8, 18) / 100 });
+function practiceGraph(rng: Rng, density = rng.int(8, 18) / 100): Graph {
+  return randomGraph(rng, rng.int(6, 9), { connected: false, density });
 }
 
 /**
@@ -31,8 +31,8 @@ export function ccPractice(def: () => Def): PracticeKind[] {
     const t = new Timeline(def(), { ...defaults, method }, 1, [...setup, ['run']]);
     return t.entries.at(-1)!.steps;
   };
-  const setupRun = (rng: Rng, method: Method = 'bfs') => {
-    const g = practiceGraph(rng);
+  const setupRun = (rng: Rng, method: Method = 'bfs', density?: number) => {
+    const g = practiceGraph(rng, density);
     const setup = [loadCall(g)];
     const steps = runSteps(setup, method);
     const r: CcRun = steps.at(-1)!.extra!.run!;
@@ -73,13 +73,15 @@ export function ccPractice(def: () => Def): PracticeKind[] {
           const b = pool[rng.int(0, pool.length - 1)]!;
           const yes = r.cc[a] === r.cc[b];
           const piece = (x: string) => groups(g, r)[r.cc[x]! - 1]!;
+          const where = (x: string) =>
+            piece(x).length === 1 ? `${x} is alone` : `${x} is in the piece ${listWords(piece(x))}`;
           return {
             prompt: `Are ${a} and ${b} in the same connected component?`,
             setup,
             answer: { kind: 'choice', options: ['Yes', 'No'], correct: yes ? 0 : 1 },
             explain: yes
               ? `Yes. They are both in component ${r.cc[a]}: ${listWords(piece(a))}. A path of edges joins them.`
-              : `No. ${a} is in the piece ${listWords(piece(a))}, and ${b} in ${listWords(piece(b))}. No path joins them, so a search from one never reaches the other.`,
+              : `No. ${where(a)}, and ${where(b)}. No path joins them, so a search from one never reaches the other.`,
             watch,
           };
         }
@@ -108,16 +110,20 @@ export function ccPractice(def: () => Def): PracticeKind[] {
       title: 'Edges that add nothing',
       make(rng) {
         for (;;) {
-          const { g, setup, r } = setupRun(rng, 'union-find');
+          // Denser than the other kinds, so some edges close cycles.
+          const { g, setup, r } = setupRun(rng, 'union-find', rng.int(15, 30) / 100);
           if (g.edges.length < 3) continue;
           const skipped = Object.values(r.edges).filter((x) => x === 'seen').length;
+          // Sparse random graphs are mostly forests; keep an answer of 0 only now and then.
+          if (skipped === 0 && rng.int(0, 3)) continue;
+          const merged = g.vertices.length - r.count;
           return {
             prompt:
               'Union-find reads the edges in order (A-B before A-C before B-C) and merges the sets at their ends. How many edges join two vertices that are already in the same set?',
             setup,
             settings: { ...defaults, method: 'union-find' },
             answer: { kind: 'number', value: skipped },
-            explain: `Each edge that merges two sets cuts the number of sets by one: ${g.vertices.length} vertices end in ${r.count} sets, so ${g.vertices.length - r.count} edges merge. The other ${g.edges.length} - ${g.vertices.length - r.count} = ${skipped} find both ends in the same set already: each of them closes a cycle.`,
+            explain: `Each edge that merges two sets cuts the number of sets by one: ${g.vertices.length} vertices end in ${r.count} sets, so ${merged} edges merge. ${skipped === 0 ? `That is all ${g.edges.length} of them, so none finds both ends in the same set: the graph has no cycle.` : `The other ${g.edges.length} − ${merged} = ${skipped} ${skipped === 1 ? 'finds both ends in the same set already: it closes a cycle' : 'find both ends in the same set already: each of them closes a cycle'}.`}`,
             watch: [['run']],
           };
         }

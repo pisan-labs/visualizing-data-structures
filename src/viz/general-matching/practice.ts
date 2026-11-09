@@ -99,7 +99,7 @@ export function blossomPractice(def: () => Def): PracticeKind[] {
           explain:
             r.blossoms === 0
               ? 'None: no edge ever joins two even vertices of the same tree, so the search never meets an odd cycle it has to shrink.'
-              : `${plural(r.blossoms, 'blossom')}. Each one is an edge between two even vertices of the same tree, which closes an odd cycle.`,
+              : `${plural(r.blossoms, 'blossom')}. ${r.blossoms === 1 ? 'It starts' : 'Each one starts'} at an edge between two even vertices of the same tree: that edge closes an odd cycle, and the cycle is the blossom.`,
           watch,
         };
       },

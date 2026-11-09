@@ -1,7 +1,16 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, Settings, Step, VizDef } from '../../engine/types';
-import { cellName, loadCall, names, randomGrid, startOf, targetOf } from '../_grid/grid';
+import {
+  cellName,
+  loadCall,
+  names,
+  randomGrid,
+  rc,
+  startOf,
+  targetOf,
+  type Grid,
+} from '../_grid/grid';
 import {
   defaults,
   expandedWith,
@@ -15,6 +24,14 @@ import {
 } from './model';
 
 type Def = VizDef<AStarState, AStarSettings, AStarExtra>;
+
+/** "3 columns and 1 row apart", from cell k to T. */
+function apart(g: Grid, k: number): string {
+  const [r0, c0] = rc(g, k);
+  const [r1, c1] = rc(g, targetOf(g));
+  const count = (n: number, one: string) => `${n} ${n === 1 ? one : `${one}s`}`;
+  return `${count(Math.abs(c1 - c0), 'column')} and ${count(Math.abs(r1 - r0), 'row')} apart`;
+}
 type AStarStep = Step<AStarState, AStarExtra>;
 
 const shuffle = <T>(rng: Rng, xs: T[]): T[] => {
@@ -63,7 +80,7 @@ export function aStarPractice(def: () => Def): PracticeKind[] {
             setup,
             settings: settings as Settings,
             answer: { kind: 'number', value: h },
-            explain: `${cellName(g, k)} and T at ${cellName(g, targetOf(g))} are ${which === 'manhattan' ? 'that many rows plus columns apart' : 'that many rows or columns apart, whichever is more'}: h = ${fmt(h)}. h ignores the walls; that is what makes it a guess.`,
+            explain: `${cellName(g, k)} and T at ${cellName(g, targetOf(g))} are ${apart(g, k)}, so h = ${which === 'manhattan' ? 'their sum' : 'the larger'}, ${fmt(h)}. h ignores the walls; that is what makes it a guess.`,
             watch,
           };
         }

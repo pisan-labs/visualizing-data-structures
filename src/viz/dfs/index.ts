@@ -81,7 +81,6 @@ export const dfs: VizDef<DfsState, DfsSettings, DfsExtra> = {
       best: {
         cost: 'Θ(V)',
         why: 'No edges: every vertex is still discovered and finished once.',
-        example: 'disconnected',
       },
       average: {
         cost: 'Θ(V + E)',

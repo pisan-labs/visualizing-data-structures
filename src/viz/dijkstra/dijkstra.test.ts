@@ -260,6 +260,14 @@ describe('Dijkstra practice', () => {
           const path = [v];
           while (ref.pi.has(path[0]!)) path.unshift(ref.pi.get(path[0]!)!);
           expect(a.kind === 'sequence' && a.value, where).toEqual(path);
+          // Only one shortest path to v: no vertex on it has a second way in as light.
+          const adj = arcsOf(g);
+          for (const x of path.slice(1)) {
+            const ways = [...adj].filter(([u, arcs]) =>
+              arcs.some((arc) => arc.v === x && ref.d.get(u)! + arc.w === ref.d.get(x)),
+            );
+            expect(ways.length, where).toBe(1);
+          }
         } else if (kind.id === 'key') {
           const [, u, v] =
             /Right after (\w+) is settled and its edges are relaxed, what is (\w+)'s key/.exec(

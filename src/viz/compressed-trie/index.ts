@@ -115,7 +115,7 @@ export const compressedTrie: VizDef<RadixState, RadixSettings, RadixExtra> = {
       },
       worst: {
         cost: 'O(m)',
-        why: 'One split copies the two pieces of an edge, at most m letters.',
+        why: 'Compare all m letters, then split one edge: O(1) when edges hold positions into the words, not copies of the letters.',
         example: 'word-ends-in-edge',
       },
     },
@@ -132,7 +132,7 @@ export const compressedTrie: VizDef<RadixState, RadixSettings, RadixExtra> = {
       },
       worst: {
         cost: 'O(m)',
-        why: 'A merge joins two edges, which together hold at most m letters.',
+        why: 'Find w in m letters, then join one pair of edges: O(1) when edges hold positions into the words, not copies of the letters.',
         example: 'delete-prefix-merges',
       },
     },

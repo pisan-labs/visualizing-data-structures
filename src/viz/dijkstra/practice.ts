@@ -16,6 +16,14 @@ import {
 type Def = VizDef<DijkstraState, DijkstraSettings, DijkstraExtra>;
 type DStep = Step<DijkstraState, DijkstraExtra>;
 
+/** The vertices just before x on some shortest path: more than one means π could be either. */
+function bestWaysIn(g: Graph, d: Record<string, number | null>, x: string): string[] {
+  const arcs = g.edges.flatMap((e) => (g.directed ? [e] : [e, { u: e.v, v: e.u, w: e.w }]));
+  return arcs
+    .filter((e) => e.v === x && typeof d[e.u] === 'number' && d[e.u]! + e.w === d[x])
+    .map((e) => e.u);
+}
+
 const code = (s: string) => `\`${s}\``;
 
 /** The run as it stands right after vertex `u` is settled and all its edges are relaxed. */
@@ -88,7 +96,14 @@ export function dijkstraPractice(def: () => Def): PracticeKind[] {
         for (;;) {
           const { g, setup, r, watch } = setupRun(rng);
           // A vertex whose shortest path has at least two edges.
-          const far = g.vertices.filter((v) => (pathOf(r.pi, v)?.length ?? 0) >= 3);
+          // A path with a tie along it would let another path count as shortest too.
+          const far = g.vertices.filter(
+            (v) =>
+              (pathOf(r.pi, v)?.length ?? 0) >= 3 &&
+              pathOf(r.pi, v)!
+                .slice(1)
+                .every((x) => bestWaysIn(g, r.d, x).length === 1),
+          );
           if (far.length === 0) continue;
           const v = far[rng.int(0, far.length - 1)]!;
           const p = pathOf(r.pi, v)!;
@@ -108,7 +123,14 @@ export function dijkstraPractice(def: () => Def): PracticeKind[] {
       make(rng) {
         for (;;) {
           const { g, setup, r, watch } = setupRun(rng);
-          const far = g.vertices.filter((v) => (pathOf(r.pi, v)?.length ?? 0) >= 3);
+          // A path with a tie along it would let another path count as shortest too.
+          const far = g.vertices.filter(
+            (v) =>
+              (pathOf(r.pi, v)?.length ?? 0) >= 3 &&
+              pathOf(r.pi, v)!
+                .slice(1)
+                .every((x) => bestWaysIn(g, r.d, x).length === 1),
+          );
           if (far.length === 0) continue;
           const v = far[rng.int(0, far.length - 1)]!;
           const p = pathOf(r.pi, v)!;

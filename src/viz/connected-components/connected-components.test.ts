@@ -202,6 +202,29 @@ describe('connected components practice', () => {
   });
 });
 
+describe('connected components practice, the wording', () => {
+  it('asks about skipped edges with a cycle to find most of the time, in plain grammar', () => {
+    const kind = cc.practice!.find((k) => k.id === 'skipped')!;
+    let zero = 0;
+    for (let seed = 1; seed <= 200; seed++) {
+      const q = kind.make(makeRng(seed));
+      if (q.answer.kind === 'number' && q.answer.value === 0) zero++;
+      expect(q.explain).not.toMatch(/= 0 find|= 1 find |-/);
+    }
+    // It used to be 0 nine times out of ten.
+    expect(zero).toBeLessThan(100);
+    expect(zero).toBeGreaterThan(0);
+  });
+
+  it('says a lone vertex is alone', () => {
+    const kind = cc.practice!.find((k) => k.id === 'together')!;
+    for (let seed = 1; seed <= 120; seed++)
+      expect(kind.make(makeRng(seed)).explain).not.toMatch(
+        /is in the piece (\w+), and|in (\w+)\. No path/,
+      );
+  });
+});
+
 describe('drawn text size', () => {
   // A long spring layout may turn on its side on a phone: 7.7 px before, 10.4 after.
   it('stays readable on a laptop and on a phone', () => {

@@ -165,6 +165,15 @@ describe('brute-force search practice', () => {
     }
   });
 
+  it('explains a single match or a two-character pattern in plain grammar', () => {
+    for (const q of questions('found')) {
+      if (q.answer.kind === 'sequence' && q.answer.value.length === 1)
+        expect(q.explain).not.toMatch(/at each one/);
+    }
+    for (const q of [...questions('total'), ...questions('found')])
+      expect(q.explain).not.toMatch(/all 2 characters/);
+  });
+
   it('counts how often one character is compared like the reference', () => {
     for (const q of questions('again')) {
       const [text, pattern] = words(q);

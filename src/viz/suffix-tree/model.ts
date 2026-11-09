@@ -562,7 +562,7 @@ function* build(s0: S, settings: StSettings, c: Counters): Gen {
 
 function builtSay(s: S, c: Counters, settings: StSettings): string {
   const k = counts(s.tree);
-  return `Built: ${plural(k.leaves, 'leaf', 'leaves')}, one per suffix of ${q(full(s.text))}, and ${plural(k.internal, 'internal node')}, each with at least two children. ${settings.method === 'ukkonen' ? `Ukkonen's build compared ${plural(c.chars, 'character')}.` : `Inserting the suffixes compared ${plural(c.chars, 'character')}.`}`;
+  return `Built: ${plural(k.leaves, 'leaf', 'leaves')}, one per suffix of ${q(full(s.text))}, and ${k.internal ? `${plural(k.internal, 'internal node')} besides the root, each with at least two children` : 'no internal node besides the root'}. ${settings.method === 'ukkonen' ? `Ukkonen's build compared ${plural(c.chars, 'character')}.` : `Inserting the suffixes compared ${plural(c.chars, 'character')}.`}`;
 }
 
 const buildOp: Op = {

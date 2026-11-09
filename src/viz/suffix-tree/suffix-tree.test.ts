@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { practiceSet } from '../../engine/practice';
 import { Timeline } from '../../engine/timeline';
 import { suffixTree } from '.';
 import { bracket, full, parseText, preorder, spell, type StSettings, type StState } from './model';
@@ -130,6 +131,53 @@ describe('suffix tree', () => {
     const t = new Timeline(suffixTree, settings(), 1, [['search', 'NA']]);
     expect(t.endState().tree).not.toBeNull();
     expect(t.entries[0]!.steps.at(-1)!.vars!.found).toBe('2 4');
+  });
+});
+
+/** Internal nodes besides the root: substrings of T$ followed by two or more different characters. */
+function refInternal(t: string): number {
+  const src = `${t}$`;
+  const next = new Map<string, Set<string>>();
+  for (let i = 0; i < src.length; i++)
+    for (let j = i + 1; j < src.length; j++) {
+      const x = src.slice(i, j);
+      if (!next.has(x)) next.set(x, new Set());
+      next.get(x)!.add(src[j]!);
+    }
+  return [...next.values()].filter((after) => after.size >= 2).length;
+}
+
+describe('suffix tree narration and practice', () => {
+  it('says how many internal nodes there are besides the root, even none', () => {
+    const say = (text: string) =>
+      new Timeline(suffixTree, settings(), 1, [['load', text], ['build']]).entries[1]!.steps.at(-1)!
+        .say;
+    expect(say('ABCDEF')).toContain('and no internal node besides the root.');
+    expect(say('BANANA')).toContain('and 3 internal nodes besides the root, each with');
+  });
+
+  it('gets every practice answer right, checked against the references', () => {
+    for (let seed = 1; seed <= 60; seed++)
+      for (const item of practiceSet(suffixTree, seed, 4)) {
+        const q = item.question;
+        const text = String(q.setup[0]![1]);
+        const arg = String(q.watch![0]![1] ?? '');
+        if (item.kind.id === 'internal') {
+          expect(q.answer).toEqual({ kind: 'number', value: refInternal(text) });
+          expect(refInternal(text)).toBeLessThanOrEqual(text.length + 1 - 2);
+        }
+        if (item.kind.id === 'search')
+          expect(q.answer).toEqual({ kind: 'sequence', value: refFind(text, arg).map(String) });
+        if (item.kind.id === 'count')
+          expect(q.answer).toEqual({ kind: 'number', value: refFind(text, arg).length });
+        if (item.kind.id === 'repeat' && q.answer.kind === 'choice') {
+          const right = q.answer.options[q.answer.correct]!;
+          expect(right.length).toBe(refRepeat(text).length);
+          for (const o of q.answer.options)
+            if (o !== right)
+              expect(o.length < right.length || refFind(text, o).length < 2).toBe(true);
+        }
+      }
   });
 });
 

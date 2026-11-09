@@ -98,7 +98,6 @@ export const dijkstra: VizDef<DijkstraState, DijkstraSettings, DijkstraExtra> = 
       best: {
         cost: 'O(V log V)',
         why: 'No key ever drops: the work is V EXTRACT-MINs at O(log V) each.',
-        example: 'unreachable',
       },
       average: {
         cost: 'O((V + E) log V)',

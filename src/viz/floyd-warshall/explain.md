@@ -22,7 +22,7 @@ A shortest path from i to j that may use the first k vertices either skips k, an
 
 In [Every round opens new paths](#example:every-round), round A finds 2 new paths through A, round B 3, round C 2 and round D 3. In the drawing, k's row and column are blue, the entry being updated is blue and the two it reads, D[i][k] and D[k][j], are orange.
 
-CLRS writes a new matrix D(k) each round. This page updates one matrix in place, as most code does. It gives the same numbers: row k and column k cannot change in round k, because going from k to k through k adds D[k][k] = 0.
+CLRS writes a new matrix D(k) each round. This page updates one matrix in place, as most code does. It gives the same numbers when there is no negative cycle: row k and column k cannot change in round k, because going from k to k through k adds D[k][k] = 0.
 
 ```check
 Q: After round 2 (k = B), D[C][A] = ∞. What does that tell you?

@@ -117,6 +117,17 @@ describe('Knuth-Morris-Pratt', { timeout: 60_000 }, () => {
     expect(t.endState().search!.next).toMatchObject({ s: 3, known: 3 });
   });
 
+  it('does not promise another comparison once the slide ends the search', () => {
+    // A border slide, a full match with a border, and a slide from q = 0, each past n − m.
+    for (const input of ['ABCABCABCABCABCA / ABCABD', 'ABABABABAB / ABABA', 'ABCA / C']) {
+      const t = run([['load', input], ['search']]);
+      for (const step of t.entries[1]!.steps)
+        if (/search is over/.test(step.say)) expect(step.say).not.toMatch(/next|carry on|move on/);
+    }
+    const last = run([['load', 'ABCABCABCABCABCA / ABCABD'], ['search']]).entries[1]!.steps.at(-2)!;
+    expect(last.say).toMatch(/Slide P 3 places, to s = 12\. That is past n − m = 10/);
+  });
+
   it('follows the name setting in its narration and pseudocode', () => {
     const t = run([['search']], 'failure');
     expect(t.entries[0]!.steps[0]!.say).toMatch(/^First KMP builds f, the failure function/);
@@ -161,6 +172,10 @@ describe('Knuth-Morris-Pratt practice', () => {
       expect(q.setup.length - 2).toBe(k);
       expect(q.answer).toEqual({ kind: 'number', value: shifts[k + 1] });
     }
+  });
+
+  it('says how many places P slides in plain grammar', () => {
+    for (const q of questions('next-shift')) expect(q.explain).not.toMatch(/\b1 places/);
   });
 
   it('counts the comparisons plain KMP makes', () => {

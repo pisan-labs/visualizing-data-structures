@@ -11,7 +11,7 @@ In a directed graph, u reaching v says nothing about v reaching u. A strongly co
 
 Every vertex is in exactly one component, even if it is alone. In [Four components](#example:four-components), A, B and E share a cycle, so do C and D, so do F and G, and H is on its own. [Show me](#play:four-components)
 
-Each component gets a color and a number. Colors repeat after five, so check the number in the **SCCs** row. Turn on **Show the component graph** to see the DAG that is left.
+Each component gets a color and a number. Colors repeat after eight, so check the number in the **SCCs** row. Turn on **Show the component graph** to see the DAG that is left.
 
 ## Kosaraju's algorithm
 
@@ -82,4 +82,4 @@ A [DAG](#example:dag) is the dull case. No cycles, so every vertex is alone, and
 - [Four components](#example:four-components): before you play it, guess which vertex finishes last in pass 1.
 - Switch [Four components](#example:four-components) to Tarjan. Which component comes off the stack first, and why that one?
 - Load `A>B, B>C, C>D, D>A` and then add `D>B`. Does the number of components change?
-- [A DAG](#example:dag): add one arc that makes every vertex one component. How many arcs do you need?
+- [A DAG](#example:dag): which one arc, added, makes all five vertices a single component?

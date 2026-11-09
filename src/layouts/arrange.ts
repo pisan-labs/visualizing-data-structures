@@ -71,8 +71,10 @@ export function translate(shapes: Shape[], dx: number, dy: number): Shape[] {
   if (!dx && !dy) return shapes;
   return shapes.map((s) => {
     const from = s.enterFrom ? { enterFrom: { x: s.enterFrom.x + dx, y: s.enterFrom.y + dy } } : {};
-    if (s.kind === 'arrow')
-      return { ...s, x1: s.x1 + dx, y1: s.y1 + dy, x2: s.x2 + dx, y2: s.y2 + dy, ...from };
+    if (s.kind === 'arrow') {
+      const via = s.via ? { via: { x: s.via.x + dx, y: s.via.y + dy } } : {};
+      return { ...s, x1: s.x1 + dx, y1: s.y1 + dy, x2: s.x2 + dx, y2: s.y2 + dy, ...via, ...from };
+    }
     if (s.kind === 'polygon')
       return { ...s, points: s.points.map((q) => ({ x: q.x + dx, y: q.y + dy })), ...from };
     return { ...s, x: s.x + dx, y: s.y + dy, ...from };

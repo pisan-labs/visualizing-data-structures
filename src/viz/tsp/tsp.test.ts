@@ -1,8 +1,9 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import { tsp } from '.';
-import { citiesText, readCities, type Points } from './cities';
+import { citiesText, distances, readCities, type Points } from './cities';
 import type { TspMethod, TspRun, TspSettings } from './model';
 
 // ---------------------------------------------------------------------------------------------
@@ -127,6 +128,56 @@ describe('tsp', () => {
         method: 'exact',
       }).r.cost,
     ).toBe(7);
+  });
+
+  it('does not claim the factor-2 bound or free shortcuts without the triangle inequality', () => {
+    const { steps, r } = runOf(
+      'A-B:60, A-C:1, A-D:1, A-E:3, B-C:2, B-D:1, B-E:3, C-D:2, C-E:1, D-E:57',
+      { method: 'mst' },
+    );
+    const says = steps.map((s) => s.say);
+    // Was "length 120 ≤ 8, twice the tree" and "a shortcut, no longer than the walk".
+    expect(says.join(' ')).not.toMatch(/length 120 ≤/);
+    expect(says.some((say) => say.includes(`length ${r.cost}, more than 8, twice the tree`))).toBe(
+      true,
+    );
+    expect(says.some((say) => say.includes("(57): longer than the walk's"))).toBe(true);
+  });
+
+  it('asks for a tree-walk tour only when the spanning tree has no tie', () => {
+    // 19 of 200 questions had two right answers: another minimum spanning tree, as light, walked
+    // to a tour of another length. Prim here breaks ties at random.
+    const kind = tsp.practice!.find((k) => k.id === 'tree-walk')!;
+    for (let seed = 1; seed <= 100; seed++) {
+      const q = kind.make(makeRng(seed));
+      const g = new Timeline(tsp, tsp.defaults, 1, q.setup).endState().graph;
+      const d = distances(g);
+      const vs = g.vertices;
+      const rng = makeRng(seed + 500);
+      for (let k = 0; k < 20; k++) {
+        const kids = new Map<string, string[]>(vs.map((v) => [v, []]));
+        const inTree = [vs[0]!];
+        while (inTree.length < vs.length) {
+          const pairs = inTree.flatMap((a) =>
+            vs.filter((b) => !inTree.includes(b)).map((b) => [a, b]),
+          );
+          const best = Math.min(...pairs.map(([a, b]) => d(a!, b!)));
+          const ties = pairs.filter(([a, b]) => d(a!, b!) === best);
+          const [a, b] = ties[rng.int(0, ties.length - 1)]!;
+          inTree.push(b!);
+          kids.get(a!)!.push(b!);
+        }
+        const order: string[] = [];
+        const walk = (v: string): void => {
+          order.push(v);
+          for (const c of [...kids.get(v)!].sort()) walk(c);
+        };
+        walk(vs[0]!);
+        expect(length(d, order), `seed ${seed}`).toBe(
+          q.answer.kind === 'number' ? q.answer.value : NaN,
+        );
+      }
+    }
   });
 
   it('starts from seven cities where both heuristics miss the optimum', () => {

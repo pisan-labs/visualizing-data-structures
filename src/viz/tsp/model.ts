@@ -466,11 +466,14 @@ function* treeSteps(g: Graph, r: TspRun, step: StepFn, edgeMarks: EdgeMarks) {
       continue;
     }
     r.cost += distances(g)(prev, v);
-    const back = r.walk.slice(r.walk.lastIndexOf(prev) + 1, -1);
+    const seg = r.walk.slice(r.walk.lastIndexOf(prev));
+    const back = seg.slice(1, -1);
+    const direct = distances(g)(prev, v);
+    const around = seg.slice(1).reduce((t, x, k) => t + distances(g)(seg[k]!, x), 0);
     yield step(
       back.length
-        ? `The walk goes back through ${back.join(', ')} to reach ${v}. ${back.length === 1 ? 'That city is' : 'Those cities are'} visited already, so the tour skips ${back.length === 1 ? 'it' : 'them'} and goes straight from ${prev} to ${v} (${distances(g)(prev, v)}): a shortcut, no longer than the walk, by the triangle inequality.`
-        : `The walk goes from ${prev} down to ${v}, a tree edge (${distances(g)(prev, v)}). ${v} is new, so it joins the tour.`,
+        ? `The walk goes back through ${back.join(', ')} to reach ${v}. ${back.length === 1 ? 'That city is' : 'Those cities are'} visited already, so the tour skips ${back.length === 1 ? 'it' : 'them'} and goes straight from ${prev} to ${v} (${direct}): ${direct <= around ? `a shortcut, no longer than the walk's ${around}, by the triangle inequality.` : `longer than the walk's ${around}. These distances break the triangle inequality, so a shortcut can cost more.`}`
+        : `The walk goes from ${prev} down to ${v}, a tree edge (${direct}). ${v} is new, so it joins the tour.`,
       ['mst.list'],
       2,
       [mark(vertexId(v), 'active'), ...edgeMarks(prev, v, 'new')],
@@ -481,7 +484,7 @@ function* treeSteps(g: Graph, r: TspRun, step: StepFn, edgeMarks: EdgeMarks) {
   r.cost = tourCost(g, r.tour);
   r.at = start;
   yield step(
-    `Every city is on the list, in the order the walk first met it: a preorder walk of the tree. Go home from ${last} to ${start}. The tour: ${tourText(r.tour)}, length ${r.cost} ≤ ${2 * w}, twice the tree.`,
+    `Every city is on the list, in the order the walk first met it: a preorder walk of the tree. Go home from ${last} to ${start}. The tour: ${tourText(r.tour)}, length ${r.cost}${r.cost <= 2 * w ? ` ≤ ${2 * w}, twice the tree` : `, more than ${2 * w}, twice the tree: without the triangle inequality the shortcuts can cost more than the walk`}.`,
     ['mst.tour'],
     2,
     [mark(vertexId(start), 'active'), ...edgeMarks(last, start, 'new')],

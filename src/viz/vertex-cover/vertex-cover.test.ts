@@ -115,6 +115,19 @@ describe('vertex-cover', () => {
     expect(r.opt).toBe(6);
   });
 
+  it('says the empty set is the only set of 0 vertices', () => {
+    const t = new Timeline(vertexCover, { ...vertexCover.defaults, method: 'brute' }, 1, [
+      ['load', 'A-B, B-C'],
+      ['run'],
+    ]);
+    const says = t.entries[1]!.steps.map((s) => s.say);
+    // Was "None of the 1 set of 0 vertices covers every edge."
+    expect(says).toContain(
+      'The only set of 0 vertices, ∅, does not cover every edge. Try sets one bigger.',
+    );
+    expect(says.join(' ')).not.toMatch(/\b1 set of/);
+  });
+
   it('refuses a directed graph', () => {
     const t = new Timeline(vertexCover, vertexCover.defaults, 1, [['load', 'A>B, B>C'], ['run']]);
     expect(t.entries[1]!.steps.at(-1)!.say).toContain('This graph is directed');

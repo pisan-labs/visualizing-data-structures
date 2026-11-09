@@ -94,7 +94,7 @@ export const skipList: VizDef<SLState, SkipSettings, SkipExtra> = {
       op: 'search(k)',
       best: {
         cost: 'O(1)',
-        why: 'k is the first key on the top level: one comparison and a short way down.',
+        why: 'k is the first key and the list is a level or two tall: one comparison per level on the way down, and no moves right.',
         example: 'search-path',
       },
       average: {

@@ -98,6 +98,12 @@ describe('quickselect', { timeout: 60_000 }, () => {
     expect(ordinal(23)).toBe('23rd');
   });
 
+  it('never goes right for k = 1, and can stop on a hit, as the smallest example says', () => {
+    const steps = select(settings(), [52, 19, 74, 8, 33, 61, 25, 47], 1).steps;
+    expect(steps.some((s) => s.say.includes('to its right'))).toBe(false);
+    expect(steps.some((s) => s.lines.includes('hit'))).toBe(true);
+  });
+
   it('follows the settings in its pseudocode', () => {
     const text = (s: Partial<SelectSettings>) =>
       quickselect.pseudocode(settings(s))[0]!.lines.map((l) => l.text);

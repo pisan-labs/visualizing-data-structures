@@ -208,6 +208,20 @@ describe('compressed trie', () => {
     expect(modelShape(t.endState())).toBe('(care*())');
   });
 
+  it('says "both its letters", never "all 2 of its letters"', () => {
+    const t = new Timeline(compressedTrie, compressedTrie.defaults, 1, [
+      ['insert', 'algebra'],
+      ['insert', 'alphabet'],
+      ['insert', 'altitude'],
+      ['search', 'algebra'],
+    ]);
+    const says = t.entries.flatMap((e) => e.steps.map((s) => s.say));
+    expect(says).toContain(
+      'The edge "al" starts with a, and both its letters match, so follow it down. Left: gebra.',
+    );
+    expect(says.join(' ')).not.toMatch(/all 2 of/);
+  });
+
   it('turns bad words into a narrated error without changing the trie', () => {
     const t = new Timeline(compressedTrie, compressedTrie.defaults, 1, [
       ['insert', 'cat'],

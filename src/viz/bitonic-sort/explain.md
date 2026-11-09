@@ -43,7 +43,7 @@ Q: How many columns does a bitonic network for 32 values have?
 
 ## Oblivious, and why that matters
 
-The network does exactly the same comparisons on every input of a given size. [Sorted input](#example:sorted) still runs all 24 comparators for 8 values; nothing swaps, but nothing is skipped either. The word for this is *data-oblivious*.
+The network does exactly the same comparisons on every input of a given size. [Sorted input](#example:sorted) still runs all 24 comparators for 8 values; nothing swaps, but nothing is skipped either. The swaps counter counts only the comparators whose two values are out of order and trade places. The word for this is *data-oblivious*.
 
 That costs comparisons. Θ(n log² n) is more than merge sort's n log n. What it buys:
 

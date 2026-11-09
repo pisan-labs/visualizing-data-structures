@@ -266,7 +266,7 @@ export const stringHashing: VizDef<HashState, HashSettings, HashExtra> = {
     smallModulus,
   ] as unknown as SavedExample[],
   practice: hashPractice(() => stringHashing),
-  preview: { example: 'prefix-hashes', level: 2 },
+  preview: { example: 'rolling-windows', level: 2 },
 };
 
 export default stringHashing;

@@ -166,6 +166,14 @@ describe.each(['thompson', 'sipser'] as Construction[])('%s construction', (how)
 const parsed = (r: Regex, sign: UnionSign = '|') =>
   parse(show(r, sign), sign) as Exclude<ReturnType<typeof parse>, Error>;
 
+describe('narration', () => {
+  it('counts one symbol in the singular', () => {
+    const t = new Timeline(regexToNfa, regexToNfa.defaults as RxSettings, 1, [['build', 'a']]);
+    // Was "The expression has m = 1 symbols and operators."
+    expect(t.entries[0]!.steps.at(-1)!.say).toContain('The expression has m = 1 symbol.');
+  });
+});
+
 describe('build and run', () => {
   const settingsArb = fc.record({
     construction: fc.constantFrom<Construction>('thompson', 'sipser'),

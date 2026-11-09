@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import { checkSort, counters, inversions, repeatsArb, valuesArb } from '../_sorting/check';
 import { bubbleSort } from '../bubble-sort';
@@ -93,5 +94,20 @@ describe('cocktail shaker sort', { timeout: 60_000 }, () => {
       cocktailSort.pseudocode(settings(s))[0]!.lines.map((l) => l.text);
     expect(text({})).toContain('hi = hi - 1');
     expect(text({ shrink: 'last' })).toContain('hi = last');
+  });
+
+  it('does not say the backward pass carries the smallest value to the front when it is there', () => {
+    const kind = cocktailSort.practice!.find((k) => k.id === 'backward')!;
+    let stays = 0;
+    for (let seed = 1; seed <= 200; seed++) {
+      const q = kind.make(makeRng(seed));
+      const forward = q.explain.match(/The forward pass leaves ([\d, ]+)\./)![1]!.split(', ');
+      const min = Math.min(...String(q.setup[0]![1]).split(' ').map(Number));
+      if (forward[0] === String(min)) {
+        stays++;
+        expect(q.explain).toContain('is already at the front');
+      } else expect(q.explain).toContain('carries the smallest value');
+    }
+    expect(stays).toBeGreaterThan(0);
   });
 });

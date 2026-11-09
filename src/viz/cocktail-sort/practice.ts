@@ -49,12 +49,17 @@ export function cocktailPractice(def: () => ArrayDef): PracticeKind[] {
         const ms = milestones(stepsOf(def(), {}, [...setup, ['sort']]));
         const forward = valuesAt(ms[0]!);
         const after = valuesAt(ms[1]!);
+        const min = Math.min(...values);
+        const back =
+          forward[0] === String(min)
+            ? `The smallest value, ${min}, is already at the front and stays there. After the backward pass: ${list(after)}.`
+            : `The backward pass carries the smallest value, ${min}, to the front: ${list(after)}.`;
         return {
           prompt:
             'Cocktail shaker sort makes a forward pass, left to right, then a backward pass, right to left. Type A after the first backward pass.',
           setup,
           answer: { kind: 'sequence', value: after },
-          explain: `The forward pass leaves ${list(forward)}. The backward pass carries the smallest value, ${Math.min(...values)}, to the front: ${list(after)}.`,
+          explain: `The forward pass leaves ${list(forward)}. ${back}`,
           watch: [['sort']],
         };
       },

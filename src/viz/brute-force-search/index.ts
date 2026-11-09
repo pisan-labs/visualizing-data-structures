@@ -127,7 +127,7 @@ export const bruteForce: VizDef<MatchState<null>, BruteSettings, MatchExtra> = {
         why: 'Every shift compares all m characters before it fails or matches: m(n − m + 1) comparisons.',
         example: 'worst-case',
       },
-      note: 'n = |T| and m = |P|. A match costs m comparisons at its shift, however clever the search.',
+      note: 'n = |T| and m = |P|. Each match costs brute force all m comparisons at its shift.',
     },
   ],
   code: {

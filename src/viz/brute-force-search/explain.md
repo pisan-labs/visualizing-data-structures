@@ -35,7 +35,7 @@ A shift costs one comparison if its first characters differ, and m if it gets to
 
 - [No Q in the text](#example:best-case): every shift fails at once, so 10 shifts take 10 comparisons. That's n − m + 1, the best case.
 - [AAA…AB and AAAB](#example:worst-case): every shift matches three As before the B fails, and the last one matches. 13 shifts of 4 comparisons is 52, which is m(n − m + 1), the worst case. [Show me](#play:worst-case)
-- [Overlapping matches](#example:overlapping): ABABA occurs at 0, 2 and 4. Each match costs all m comparisons, whatever the algorithm.
+- [Overlapping matches](#example:overlapping): ABABA occurs at 0, 2 and 4, and each match costs brute force all m comparisons. [KMP](/kmp/) knows the first three characters of the next match before it gets there.
 
 On ordinary text the average is much closer to the best case. With random letters from an alphabet of σ, a shift gets to its second comparison with probability 1/σ, to its third with probability 1/σ², and so on. That's fewer than σ/(σ − 1) comparisons per shift: under 2 even with two letters, and about 1.04 with 26. Brute force is fine for a short word in English text. It is slow when the text and the pattern repeat the same few characters, as DNA (four letters) and binary data (two) tend to do.
 

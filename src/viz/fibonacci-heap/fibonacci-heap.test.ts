@@ -353,6 +353,13 @@ describe('Fibonacci heap practice', () => {
     ]);
   });
 
+  // The potential question said "3 trees and 1 marked nodes".
+  it('says "1 marked node" in the potential question', () => {
+    const k = kinds.find((x) => x.id === 'potential-after')!;
+    for (let seed = 1; seed <= 60; seed++)
+      expect(k.make(makeRng(seed)).explain).not.toMatch(/\b1 (marked nodes|trees)\b/);
+  });
+
   it('gets every answer right, checked against the reference heap', () => {
     for (let seed = 1; seed <= 60; seed++) {
       for (const k of kinds) {

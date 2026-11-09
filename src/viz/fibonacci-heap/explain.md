@@ -82,7 +82,7 @@ The logical view draws the trees and the root list. The internal view draws the 
 
 Use a Fibonacci heap when decreaseKey dominates and n is large: shortest paths and minimum spanning trees on dense graphs are the classic case. It's also the reference point for every analysis of those algorithms.
 
-In practice, though, the constants are bad. Every node carries four pointers, a degree and a mark, and consolidate jumps around memory. A binary heap usually wins on real hardware, even with its O(log n) decreaseKey. Hmmm, so why learn it? Because it shows how laziness plus a potential function buys a bound no eager structure gets.
+In practice, though, the constants are bad. Every node carries four pointers, a degree and a mark, and consolidate jumps around memory. A binary heap usually wins on real hardware, even with its O(log n) decreaseKey. Hmmm, so why learn it? Because it shows how laziness plus a potential function buys bounds that are hard to get any other way. (Brodal queues get them in the worst case, with far more code.)
 
 ## Common mistakes
 

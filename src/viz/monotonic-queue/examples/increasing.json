@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "monotonic-queue",
+  "id": "increasing",
+  "title": "Increasing values: one index in the deque",
+  "notes": "Each value beats the one before it, so the deque never holds more than one index, and each window's maximum is its newest value.",
+  "settings": {
+    "goal": "max",
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "1 2 3 4 5 6 7 8"],
+    ["slide", 4]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

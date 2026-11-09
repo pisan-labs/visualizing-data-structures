@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "string-hashing",
+  "id": "collision",
+  "title": "A collision: same hash, different strings",
+  "notes": "abra and brac both hash to 53 mod 101. With only 101 possible values, different strings have to share some, and here two of them sit side by side.",
+  "settings": {
+    "b": 31,
+    "p": 101,
+    "hashes": "single",
+    "p2": 103
+  },
+  "seed": 1,
+  "ops": [["load", "abracadabra"], ["build"], ["compare", 0, 1, 4]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "two-pointers",
+  "id": "find-pair",
+  "title": "Find a pair that adds up to 47",
+  "notes": "The pointers zig-zag in: too big, too big, too small, too small, too big, too small, found. Seven checks; trying every pair could take 45.",
+  "settings": {
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "2 5 9 14 21 27 33 40 46 52"],
+    ["pairSum", 47]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

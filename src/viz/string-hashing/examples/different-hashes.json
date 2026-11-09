@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "string-hashing",
+  "id": "different-hashes",
+  "title": "Different hashes: certainly different",
+  "notes": "cad and dab hash differently, so they are different strings, and no character needs reading.",
+  "settings": {
+    "b": 31,
+    "p": 101,
+    "hashes": "single",
+    "p2": 103
+  },
+  "seed": 1,
+  "ops": [["load", "abracadabra"], ["build"], ["compare", 4, 6, 3]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

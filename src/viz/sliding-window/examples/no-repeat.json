@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "sliding-window",
+  "id": "no-repeat",
+  "title": "The longest stretch with no repeat",
+  "notes": "count[v] says how many times v is in the window. When a value enters a second time, the left end moves until the first copy has left. 4 1 5 9 2 6 wins, length 6.",
+  "settings": {
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [["load", "3 1 4 1 5 9 2 6 5 3"], ["distinct"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "sliding-window",
+  "id": "all-different",
+  "title": "All different: the window never shrinks",
+  "notes": "No value repeats, so every value enters and none leaves. The whole array is the answer.",
+  "settings": {
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [["load", "5 8 1 9 3 7"], ["distinct"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

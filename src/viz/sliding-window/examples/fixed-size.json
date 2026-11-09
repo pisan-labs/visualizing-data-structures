@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "sliding-window",
+  "id": "fixed-size",
+  "title": "The largest sum of 3 in a row",
+  "notes": "Add up the first three, then slide: one value enters, one leaves, and the sum changes by their difference. 9 + 2 + 6 = 17 wins.",
+  "settings": {
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "3 1 4 1 5 9 2 6 5 3"],
+    ["fixed", 3]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

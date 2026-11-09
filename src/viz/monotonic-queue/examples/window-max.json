@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "monotonic-queue",
+  "id": "window-max",
+  "title": "The maximum of every window of 3",
+  "notes": "7 rules the first two windows, then falls out of the window from the front. 5 pops 1 and 4 from the back: they can never win again. Answers: 7 7 5 5 6 6 8 8.",
+  "settings": {
+    "goal": "max",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "2 7 4 1 5 3 6 2 8 4"],
+    ["slide", 3]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

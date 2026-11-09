@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "two-pointers",
+  "id": "reverse-in-place",
+  "title": "Reverse in place",
+  "notes": "Swap the ends and step in: four swaps for eight values, with no second array.",
+  "settings": {
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "3 1 4 1 5 9 2 6"], ["reverse"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "monotonic-stack",
+  "id": "next-greater",
+  "title": "Next greater value, with a stack",
+  "notes": "Values wait on the stack until something bigger arrives. 5 answers both 3 and 2 at once; 8 answers 5 and 7. 8, 6 and the last 3 are still waiting at the end, so they have none.",
+  "settings": {
+    "find": "next-greater",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "4 7 3 2 5 8 1 6 3"], ["scan"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

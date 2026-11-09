@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "string-hashing",
+  "id": "rolling-windows",
+  "title": "Roll a window of 4 across",
+  "notes": "Each window's hash comes from the one before it: drop the first letter, shift, add the next. abra appears twice (a real repeat), and brac lands on the same hash (a collision).",
+  "settings": {
+    "b": 31,
+    "p": 101,
+    "hashes": "single",
+    "p2": 103
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "abracadabra"],
+    ["windows", 4]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

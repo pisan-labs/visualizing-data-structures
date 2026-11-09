@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "monotonic-stack",
+  "id": "all-waiting",
+  "title": "Decreasing values: nobody gets an answer",
+  "notes": "Every value is smaller than the one before, so nothing is ever popped. The stack grows to all seven, the most it can hold, and every answer is none.",
+  "settings": {
+    "find": "next-greater",
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [["load", "9 8 6 5 3 2 1"], ["scan"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

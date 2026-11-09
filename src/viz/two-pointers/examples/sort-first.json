@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "two-pointers",
+  "id": "sort-first",
+  "title": "Unsorted input: sort first",
+  "notes": "On unsorted values a sum that is too small says nothing about which end to move, so Pair sum refuses. Sort A, then the pointers find 8 + 31 = 39.",
+  "settings": {
+    "draw": "cells"
+  },
+  "seed": 1,
+  "ops": [["load", "31 4 18 8 25 12 3"], ["pairSum", 39], ["sort"], ["pairSum", 39]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -93,7 +93,7 @@ export function bTreePractice(def: () => Def): PracticeKind[] {
           explain:
             n === 0
               ? 'No insert meets a full node (5 keys) on its way down, so nothing splits.'
-              : `Each insert splits every full node (5 keys) it meets on the way down, the root included. That happens ${n} ${n === 1 ? 'time' : 'times'}.`,
+              : `Each insert splits every full node (5 keys) it meets on the way down, the root included. That happens ${n === 1 ? 'once' : `${n} times`}.`,
           watch: ask,
         };
       },

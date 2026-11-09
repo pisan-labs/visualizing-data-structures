@@ -3,7 +3,7 @@
   "viz": "b-tree",
   "id": "merge-down",
   "title": "Case 3b: merge with a sibling on the way down",
-  "notes": "The leaf holding 10 and its only sibling both have t - 1 = 2 keys, so they merge, with 30 coming down from the root between them.",
+  "notes": "The leaf holding 10 and the sibling next to it both have t - 1 = 2 keys, so they merge, with 30 coming down from the root between them.",
   "settings": {
     "t": "3",
     "split": "down"

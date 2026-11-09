@@ -371,6 +371,16 @@ describe('B-tree', () => {
     );
   });
 
+  // With t = 2 the narration said "the 1 keys above it" and "t - 1 = 1 keys", and called the
+  // one neighbour of a first child with three siblings "its only sibling".
+  it('says "1 key" when t = 2, and "the sibling next to it" when there are more', () => {
+    const tl = run({ t: '2' }, [...ins([70, 90, 10, 20, 60, 40, 30, 50, 80]), ['delete', 10]]);
+    const says = tl.entries.flatMap((e) => e.steps.map((s) => s.say)).join(' ');
+    expect(says).not.toMatch(/\b1 keys\b/);
+    expect(says).toContain('A new node takes the key above it');
+    expect(says).toContain('[10] has only t - 1 = 1 key, and so does the sibling next to it, [30]');
+  });
+
   it('names every delete case in its curated example', () => {
     const expected: Record<string, string[]> = {
       'delete-leaf': ['1'],

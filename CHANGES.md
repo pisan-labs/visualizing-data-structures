@@ -361,3 +361,5 @@
 2026-11-09 [code] Merged: 27 wave 7 pages open on a curated example (was an empty picture; fisher-yates kept its 1..6 start); timsort starts at full size and zooms out once at the first merge (ArrayExtra.auxRoom); e2e specs that needed an empty start load emptyStart(id)
 
 2026-11-09 [code] Merged: 24 older pages open on a curated example (B-tree, B+ tree, 2-4, BST, AVL, red-black, splay, treap, binary tree, the five heaps, tries, Huffman, Master theorem, the recursion pages, Floyd cycle); stack/queue/list pages keep their empty start
+
+2026-11-09 [code] regex-to-nfa e2e: q2 must stay within half a unit (rounding to a tenth still failed on a 0.1-unit layout difference after the wide-stage change). Final full run on 2d02225: 4382 unit, e2e 3227 passed + this test, now 54 of 54 on repeat

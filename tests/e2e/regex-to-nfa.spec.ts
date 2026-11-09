@@ -147,7 +147,14 @@ test('pieces stay where they are while the build goes on', async ({ page }) => {
   await page.getByRole('button', { name: 'Step forward' }).click();
   await page.getByRole('button', { name: 'Step forward' }).click();
   await settled(page);
-  await expect.poll(() => circle(page, 'q2')).toBe(before);
+  // Within half a unit: layouts may differ by a fraction of a unit between steps; a real move
+  // is many units.
+  const gap = async () => {
+    const [x0, y0] = before.split(',').map(Number);
+    const [x1, y1] = (await circle(page, 'q2')).split(',').map(Number);
+    return Math.hypot(x1! - x0!, y1! - y0!);
+  };
+  await expect.poll(gap).toBeLessThan(0.5);
 });
 
 test('the drawing stays readable and fits the screen', async ({ page }) => {

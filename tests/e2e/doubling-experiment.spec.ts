@@ -191,10 +191,14 @@ test('the table and the plot fit, with a wide font too', async ({ page }) => {
   await settled(page);
   expect(await overflow(page)).toBeLessThanOrEqual(0);
   // Every table row is at least 9 CSS pixels tall on screen, phone included.
-  const heights = await svgText(page, /^\d{1,3}(,\d{3})*$/).evaluateAll((els) =>
-    els.map((e) => e.getBoundingClientRect().height),
-  );
-  expect(Math.min(...heights)).toBeGreaterThanOrEqual(9);
+  // Poll: the drawing may still be easing into its final size.
+  const smallest = async () =>
+    Math.min(
+      ...(await svgText(page, /^\d{1,3}(,\d{3})*$/).evaluateAll((els) =>
+        els.map((e) => e.getBoundingClientRect().height),
+      )),
+    );
+  await expect.poll(smallest).toBeGreaterThanOrEqual(9);
   // CI's default font (DejaVu Sans) is wider: the page must still fit, and no text may run
   // off the drawing.
   await page.addStyleTag({

@@ -165,6 +165,12 @@ describe('loop counting', () => {
     expect(run('missing', 9).found).toBeNull();
   });
 
+  it('says "of 1 cell" in the summary for n = 1', () => {
+    const t = new Timeline(loopCounting, settings('halving'), 1, [['run', 1]]);
+    const text = loopCounting.describe(t.endState(), settings('halving'));
+    expect(text).toContain('0 of 1 cell lit');
+  });
+
   it('rejects n out of range, and n too large to draw for the triple loop', () => {
     const t = new Timeline(loopCounting, settings('triple'), 1, [
       ['run', 3],

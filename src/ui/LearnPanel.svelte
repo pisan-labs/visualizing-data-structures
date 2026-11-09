@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Marked } from 'marked';
+  import { Marked, Renderer } from 'marked';
   import { onMount, tick } from 'svelte';
   import { validateExample } from '../engine/example';
   import ConceptCheck, { type Check } from './ConceptCheck.svelte';
@@ -21,6 +21,16 @@
       heading({ tokens, depth, text }) {
         const inner = this.parser.parseInline(tokens);
         return `<h${depth} id="lesson-${slug(text)}">${inner}</h${depth}>\n`;
+      },
+      // A table can be wider than a phone: its longest words and code, one per column, do not
+      // break. It scrolls inside its own box, so the page never scrolls sideways. A box that
+      // scrolls must be reachable by keyboard (WCAG 2.1.1): a region named by its columns.
+      table(token) {
+        const name = token.header
+          .map((cell) => this.parser.parseInline(cell.tokens).replace(/<[^>]+>/g, ''))
+          .join(', ');
+        const table = Renderer.prototype.table.call(this, token);
+        return `<div class="table-wrap" role="region" tabindex="0" aria-label="Table: ${name}">\n${table}</div>\n`;
       },
     },
   });
@@ -128,6 +138,10 @@
   .learn :global(p),
   .learn :global(li) {
     margin: 0.4em 0;
+  }
+
+  .learn :global(.table-wrap) {
+    overflow-x: auto;
   }
 
   .learn :global(table) {

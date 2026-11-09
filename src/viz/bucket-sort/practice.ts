@@ -90,7 +90,7 @@ export function bucketPractice(def: () => Def): PracticeKind[] {
           explain:
             sizes.length === 0
               ? 'Every bucket holds at most one value, so there is nothing to compare.'
-              : `The buckets with more than one value hold ${sizes.join(', ')} values. Insertion sort compares each new value with the ones before it until it finds a smaller one: ${c} in all.`,
+              : `${sizes.length === 1 ? `One bucket holds more than one value: ${sizes[0]} of them` : `The buckets with more than one value hold ${sizes.slice(0, -1).join(', ')} and ${sizes.at(-1)} values`}. Insertion sort compares each new value with the ones before it until it meets one that is not bigger: ${c} in all.`,
           watch: [['sort']],
         };
       },

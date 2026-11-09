@@ -3,7 +3,7 @@
   "viz": "b-plus-tree",
   "id": "merge",
   "title": "An underflowing leaf merges with a sibling",
-  "notes": "Deleting 10 leaves [20] with 1 key, and its only sibling has no key to spare. The two leaves merge, and their separator, 30, is simply dropped from the parent.",
+  "notes": "Deleting 10 leaves [20] with 1 key, and the sibling next to it has no key to spare. The two leaves merge, and their separator, 30, is simply dropped from the parent.",
   "settings": {
     "order": "4"
   },

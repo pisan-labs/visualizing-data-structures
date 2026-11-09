@@ -339,6 +339,15 @@ describe('B+ tree', () => {
     expect(keysOf(stale.endState())).not.toContain(70);
   });
 
+  // The merge example's leaf has two siblings but one neighbour; it was "its only sibling".
+  it('calls a lone neighbour "the sibling next to it" unless it is the only sibling', () => {
+    const says = example('merge')
+      .entries.at(-1)!
+      .steps.map((s) => s.say)
+      .join(' ');
+    expect(says).toContain('The sibling next to it, [30 40], has no key to spare.');
+  });
+
   it('keeps pseudocode lines short enough for a phone', () => {
     for (const block of bPlusTree.pseudocode({ order: '4' }))
       for (const l of block.lines)

@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import { checkSort, counters, inversions, repeatsArb, valuesArb } from '../_sorting/check';
 import { parseInput } from '../_sorting/kit';
@@ -103,5 +104,22 @@ describe('bubble sort', { timeout: 60_000 }, () => {
     const t = new Timeline(bubbleSort, settings(), 1, [['load', 'cat']]);
     expect(t.endState()).toBe(t.initial.state);
     expect(t.entries[0]!.steps[0]!.marks[0]!.role).toBe('error');
+  });
+
+  it('does not say the extreme value "rides" to its end when it starts there', () => {
+    const kind = bubbleSort.practice!.find((k) => k.id === 'first-pass')!;
+    let stays = 0;
+    for (let seed = 1; seed <= 200; seed++) {
+      const q = kind.make(makeRng(seed));
+      const values = String(q.setup[0]![1]).split(' ').map(Number);
+      const down = q.settings?.direction === 'down';
+      const dest = down ? 0 : values.length - 1;
+      const moved = down ? Math.min(...values) : Math.max(...values);
+      if (values[dest] === moved) {
+        stays++;
+        expect(q.explain).toContain('where it started');
+      } else expect(q.explain).toContain('rides all the way');
+    }
+    expect(stays).toBeGreaterThan(0);
   });
 });

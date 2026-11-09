@@ -38,7 +38,7 @@ export function suffixTreePractice(def: () => Def): PracticeKind[] {
           prompt: `Build the suffix tree of ${q(full(t))}. How many internal nodes does it have, not counting the root? (It has ${k.leaves} leaves, one per suffix.)`,
           setup: [['load', t]],
           answer: { kind: 'number', value: k.internal },
-          explain: `An internal node is where two suffixes that share a start go different ways. ${q(full(t))} has ${k.internal} such places besides the root. There are never more than n - 1 of them for n leaves, since each has at least two children.`,
+          explain: `An internal node is where two suffixes that share a start go different ways. ${q(full(t))} has ${k.internal} such places besides the root. With n leaves there are never more than n − 2 of them, since every internal node, the root too, has at least two children.`,
           watch: [['build']],
         };
       },

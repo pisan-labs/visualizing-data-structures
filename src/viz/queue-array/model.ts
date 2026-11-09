@@ -72,6 +72,8 @@ function vars(s: S, settings: QueueSettings, more: Record<string, Scalar> = {}, 
   return out;
 }
 
+/** "1 item", "3 items". */
+const itemCount = (k: number) => `${k} item${k === 1 ? '' : 's'}`;
 const mark = (id: string, role: Mark['role']): Mark => ({ id, role });
 
 /** "(7 + 1) mod 8 = 0", plus a note when the index runs off the end and wraps around. */
@@ -124,7 +126,7 @@ const enqueue: Op = {
           mark(`v${uid}`, 'error'),
         ],
         say: gap
-          ? `The slot after rear is front itself, so the queue is full: it holds ${n - 1} items, and the one free slot must stay empty. Queue overflow: ${v} is not added.`
+          ? `The slot after rear is front itself, so the queue is full: it holds ${itemCount(n - 1)}, and the one free slot must stay empty. Queue overflow: ${v} is not added.`
           : `count equals capacity, so all ${n} slots are in use. Queue overflow: ${v} is not added.`,
         lines: ['enqueue.overflow'],
         vars: vars(s, settings, { x: value }),
@@ -397,7 +399,7 @@ export function initialSay(state: S, settings: QueueSettings): string {
   const n = state.capacity;
   return counting(settings)
     ? `An empty queue: an array A with capacity ${n}, front = 0, rear = 0 and count = 0. count tells full from empty, so all ${n} slots can be used.`
-    : `An empty queue: an array A with capacity ${n}, front = 0 and rear = 0. front == rear means empty, so one slot always stays free and the queue holds at most ${n - 1} items.`;
+    : `An empty queue: an array A with capacity ${n}, front = 0 and rear = 0. front == rear means empty, so one slot always stays free and the queue holds at most ${itemCount(n - 1)}.`;
 }
 
 export function initialVars(state: S, settings: QueueSettings) {

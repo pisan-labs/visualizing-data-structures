@@ -1,5 +1,5 @@
 import type { PracticeKind } from '../../engine/types';
-import { ascending } from '../_sorting/kit';
+import { ascending, span } from '../_sorting/kit';
 import {
   distinct,
   list,
@@ -51,7 +51,7 @@ export function quickPractice(def: () => ArrayDef): PracticeKind[] {
           explain:
             q === 0
               ? `No value is smaller than the pivot ${after[0]}, so it lands in A[0], and the others stay in the order the walk left them: ${list(after)}.`
-              : `The values smaller than the pivot end up in A[0..${q - 1}], in the order the walk swaps them there, and the pivot ${after[q]} lands in A[${q}]: ${list(after)}.`,
+              : `The values smaller than the pivot end up in ${span(0, q - 1)}, in the order the walk swaps them there, and the pivot ${after[q]} lands in A[${q}]: ${list(after)}.`,
           watch: [['sort']],
         };
       },

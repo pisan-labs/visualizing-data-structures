@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import { checkSort, counters, repeatsArb, valuesArb } from '../_sorting/check';
 import type { PivotRule, Scheme } from '../_sorting/partition';
@@ -168,5 +169,16 @@ describe('quicksort', { timeout: 60_000 }, () => {
     expect(text({ pivot: 'first' })).toContain('swap A[r] and A[p]');
     expect(text({ partition: 'hoare' })).toContain('repeat j = j - 1 until A[j] <= x');
     expect(text({ partition: 'hoare' })).toContain('quicksort(A, p, q)');
+  });
+
+  it('names a one-slot left part A[0], not A[0..0], in the practice explanation', () => {
+    const kind = quickSort.practice!.find((k) => k.id === 'after-partition')!;
+    let one = 0;
+    for (let seed = 1; seed <= 200; seed++) {
+      const q = kind.make(makeRng(seed));
+      expect(q.explain).not.toContain('A[0..0]');
+      if (q.explain.includes('end up in A[0],')) one++;
+    }
+    expect(one).toBeGreaterThan(0);
   });
 });

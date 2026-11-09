@@ -29,6 +29,7 @@ import {
   clauseText,
   describe,
   edgeKey,
+  kText,
   satisfies,
   type NpExtra,
   type NpSettings,
@@ -239,7 +240,7 @@ export function view(
   const panel = (out: Shape[], x: number, y0: number): Bounds => {
     const parts: Bounds[] = [];
     let y = y0;
-    const k = i.problem === '3sat' ? '' : `, k = ${i.k}`;
+    const k = i.problem === '3sat' ? '' : `, k = ${kText(i)}`;
     const head = `${NAMES[i.problem]}${k}`;
     out.push({
       kind: 'text',

@@ -42,6 +42,12 @@ const UPDATES: Record<string, string[]> = {
   insertAt: ['insertAt.setNext', 'insertAt.setPrev', 'insertAt.predLink', 'insertAt.succPrev'],
 };
 
+/** "follows next 3 times", "follows prev once", or no hops at all at index 0 or n - 1. */
+const follows = (ptr: string, hops: number) =>
+  hops === 0
+    ? 'is already there, so it follows no pointers'
+    : `follows ${ptr} ${hops === 1 ? 'once' : `${hops} times`}`;
+
 /**
  * Practice for the doubly linked list (with the sentinel, the default). Every answer comes from
  * running the model. `def` is a getter to avoid an import cycle.
@@ -117,8 +123,8 @@ export function doublyPractice(def: () => Def): PracticeKind[] {
           setup,
           answer: { kind: 'number', value: hops },
           explain: front
-            ? `Index ${i} is in the front half of ${n} nodes, so it starts at the first node and follows next ${hops} times.`
-            : `Index ${i} is in the back half of ${n} nodes, so it starts at the last node and follows prev ${hops} times.`,
+            ? `Index ${i} is in the front half of ${n} nodes, so it starts at the first node and ${follows('next', hops)}.`
+            : `Index ${i} is in the back half of ${n} nodes, so it starts at the last node and ${follows('prev', hops)}.`,
           watch: [['get', i]],
         };
       },

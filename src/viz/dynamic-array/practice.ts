@@ -15,6 +15,9 @@ function distinct(rng: Rng, n: number): number[] {
 
 const appends = (values: number[]): OpCall[] => values.map((v) => ['append', v]);
 
+/** "1 item", "3 items". */
+const count = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+
 /** Practice questions for the dynamic array. Every answer comes from running the model. */
 export function dynamicPractice(def: () => Def): PracticeKind[] {
   const run = (cs: OpCall[], settings: DynSettings = defaults) =>
@@ -33,7 +36,10 @@ export function dynamicPractice(def: () => Def): PracticeKind[] {
           setup: [],
           settings,
           answer: { kind: 'number', value: end.capacity },
-          explain: `Capacity only changes when an append finds the array full: ${settings.start} doubles until it reaches at least ${ask.length}, which gives ${end.capacity}.`,
+          explain:
+            end.capacity === settings.start
+              ? `Capacity only changes when an append finds the array full, and ${count(settings.start, 'slot')} already hold ${ask.length} values: it stays ${end.capacity}.`
+              : `Capacity only changes when an append finds the array full: ${settings.start} doubles until it reaches at least ${ask.length}, which gives ${end.capacity}.`,
           watch: ask,
         };
       },
@@ -50,12 +56,12 @@ export function dynamicPractice(def: () => Def): PracticeKind[] {
         const after = run([...setup, ask]).endState();
         const copied = after.copies - before.copies;
         return {
-          prompt: `The array holds ${before.size} items in ${before.capacity} slots. How many values does ${call(ask)} copy?`,
+          prompt: `The array holds ${count(before.size, 'item')} in ${count(before.capacity, 'slot')}. How many values does ${call(ask)} copy?`,
           setup,
           answer: { kind: 'number', value: copied },
           explain:
             copied > 0
-              ? `size equals capacity, so append first copies all ${copied} values into a new array of ${after.capacity} slots.`
+              ? `size equals capacity, so append first copies ${copied === 1 ? 'the 1 value' : `all ${copied} values`} into a new array of ${after.capacity} slots.`
               : `There is a free slot (size ${before.size} < capacity ${before.capacity}), so append stores the value and copies nothing.`,
           watch: [ask],
         };

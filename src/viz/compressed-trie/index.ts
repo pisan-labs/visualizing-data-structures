@@ -173,6 +173,7 @@ export const compressedTrie: VizDef<RadixState, RadixSettings, RadixExtra> = {
     deletePrefixMerges,
     longWords,
   ] as unknown as SavedExample[],
+  opening: 'long-words',
   preview: { example: 'long-words', level: 2 },
 };
 

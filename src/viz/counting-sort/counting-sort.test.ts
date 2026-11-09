@@ -120,6 +120,22 @@ describe('counting sort practice', () => {
     }
   });
 
+  it('names the later copies by their value in the placement explanation', () => {
+    let one = 0;
+    for (const q of questions('place')) {
+      const vs = loaded(q);
+      const j = Number(/A\[(\d+)\] =/.exec(q.prompt)![1]);
+      const v = vs[j]!;
+      const later = vs.slice(j + 1).filter((x) => x === v).length;
+      if (later === 1) {
+        one++;
+        expect(q.explain).toContain(`1 later ${v} in A is placed before it`);
+      }
+      if (!vs.some((x) => x < v)) expect(q.explain).toMatch(/^No value is smaller/);
+    }
+    expect(one).toBeGreaterThan(0);
+  });
+
   it('says the earlier copy comes first, since the sort is stable', () => {
     for (const q of questions('stable')) expect(q.answer).toMatchObject({ correct: 0 });
   });

@@ -76,7 +76,7 @@ export function countingPractice(def: () => Def): PracticeKind[] {
           prompt: `Counting sort places the values from the right end of A into B. Which index of B does A[${j}] = ${v} go to?`,
           setup: [loadCall(vs)],
           answer: { kind: 'number', value: p },
-          explain: `${below} ${below === 1 ? 'value is' : 'values are'} smaller than ${v}, so the ${v}s take B[${below}] onward. ${later === 0 ? `A[${j}] is the last ${v} in A, so it is placed first, in the last slot for ${v}s` : `${later} ${later === 1 ? 'later 1' : `later ${v}s`} in A ${later === 1 ? 'is' : 'are'} placed before it, from the right`}: B[${p}].`,
+          explain: `${below === 0 ? 'No value is' : below === 1 ? '1 value is' : `${below} values are`} smaller than ${v}, so the ${v}s take B[${below}] onward. ${later === 0 ? `A[${j}] is the last ${v} in A, so it is placed first, in the last slot for ${v}s` : `${later} later ${later === 1 ? v : `${v}s`} in A ${later === 1 ? 'is' : 'are'} placed before it, from the right`}: B[${p}].`,
           watch: [['sort']],
         };
       },

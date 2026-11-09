@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { emptyStart } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -9,7 +10,7 @@ async function build(page: Page, text: string) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/floyd-cycle/');
+  await page.goto(emptyStart('floyd-cycle'));
   await expect(
     page.getByRole('heading', { name: 'Cycle detection (tortoise and hare)' }),
   ).toBeVisible();

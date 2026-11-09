@@ -173,6 +173,7 @@ export const reverseString: VizDef<RevState, RevSettings, undefined> = {
     palindrome,
     longest,
   ] as unknown as SavedExample[],
+  opening: 'rest-first',
   preview: { example: 'rest-first', level: 2 },
 };
 

@@ -18,7 +18,7 @@ The **comparisons** and **moves** variables count the work of each operation. A 
 
 ## Binary search
 
-In a sorted array, one comparison tells you a lot. Look at the middle item. If it is x, you're done. If it is smaller than x, so is everything to its left, and that whole half can go. If it is bigger, the right half goes. Each comparison halves the range, so a million items need about 20 rounds. [Show me](#play:binary-search)
+In a sorted array, one comparison tells you a lot. Look at the middle item. If it is x, you're done. If it is smaller than x, so is everything to its left, and that whole half can go. If it is bigger, the right half goes. Each round halves the range, so a million items need about 20 rounds. [Show me](#play:binary-search)
 
 The bookkeeping is two indices, `lo` and `hi`, that bracket where x could still be. The range shrinks until `A[mid] == x` or `lo` passes `hi`, which means x is not there. [Searching for a value that is not there](#example:missing) shows the second case.
 

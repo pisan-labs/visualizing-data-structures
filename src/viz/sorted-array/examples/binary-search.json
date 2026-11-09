@@ -3,7 +3,7 @@
   "viz": "sorted-array",
   "id": "binary-search",
   "title": "Binary search halves the range",
-  "notes": "Nine sorted values, then search(70). Each comparison throws away half of what is left, so 70 turns up after 3 comparisons.",
+  "notes": "Nine sorted values, then search(70). Each round throws away half of what is left, so 70 turns up in the second round, after 3 comparisons.",
   "settings": { "mode": "sorted", "capacity": 10 },
   "seed": 1,
   "ops": [

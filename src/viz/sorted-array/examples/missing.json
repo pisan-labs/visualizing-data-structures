@@ -3,7 +3,7 @@
   "viz": "sorted-array",
   "id": "missing",
   "title": "Searching for a value that is not there",
-  "notes": "search(55) narrows the range until lo passes hi. That is binary search's worst case, and it still takes only 6 comparisons for 9 items.",
+  "notes": "search(55) narrows the range until lo passes hi: 3 rounds, 6 comparisons for 9 items. A missing value past the right end, like 95, takes one round more, and 8 comparisons is the most any search of 9 items needs.",
   "settings": { "mode": "sorted", "capacity": 10 },
   "seed": 1,
   "ops": [

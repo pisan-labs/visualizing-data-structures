@@ -33,7 +33,7 @@ export function bitmaskPractice(def: () => Def): PracticeKind[] {
           prompt: `x = ${x} = \`${bin(x, w)}\`. Run ${ask.map(call).join(', ')}. What is x now, in decimal?`,
           setup,
           answer: { kind: 'number', value: end },
-          explain: `Each operation changes one bit. x ends as \`${bin(end, w)}\`, which is ${end}.`,
+          explain: `Each operation touches only its own bit: set leaves a 1 alone, clear leaves a 0 alone, toggle always flips. x ends as \`${bin(end, w)}\`, which is ${end}.`,
           watch: ask,
         };
       },
@@ -65,7 +65,7 @@ export function bitmaskPractice(def: () => Def): PracticeKind[] {
           prompt: `x = \`${bin(x, w)}\`. How many times does the loop \`while x != 0: x = x & (x - 1)\` run?`,
           setup,
           answer: { kind: 'number', value: count },
-          explain: `Each pass clears exactly one 1 bit, so the loop runs once per set bit: ${count} times.`,
+          explain: `Each pass clears exactly one 1 bit, so the loop runs once per set bit: ${count === 1 ? 'once' : `${count} times`}.`,
           watch: [['popcount']],
         };
       },
@@ -90,7 +90,7 @@ export function bitmaskPractice(def: () => Def): PracticeKind[] {
               (o) => o !== String(found),
             ),
           ),
-          explain: `Each of the ${k} set bits is either kept or dropped, so there are 2^${k} = ${found} submasks.`,
+          explain: `${k === 1 ? 'The one set bit is' : `Each of the ${k} set bits is`} either kept or dropped, so there are 2^${k} = ${found} submasks.`,
           watch: [['submasks']],
         };
       },

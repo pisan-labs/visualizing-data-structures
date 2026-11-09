@@ -173,7 +173,14 @@ function* fewest(s: S, amount: number): Gen {
     if (tried.length === 0) {
       say = `F[${a}] = ∞: every coin is bigger than ${a}, so ${a} cannot be made.`;
     } else if (best === Infinity) {
-      say = `F[${a}] = ∞: none of ${andList(tried.map((t) => `F[${a - t.c}]`))} can be made, so ${a} cannot be made either.`;
+      const cells = tried.map((t) => `F[${a - t.c}]`);
+      const none =
+        cells.length === 1
+          ? `${cells[0]} is ∞ too`
+          : cells.length === 2
+            ? `neither ${cells[0]} nor ${cells[1]} can be made`
+            : `none of ${andList(cells)} can be made`;
+      say = `F[${a}] = ∞: ${none}, so ${a} cannot be made either.`;
     } else if (tried.length === 1) {
       say = `F[${a}] = F[${a - pick}] + 1 = ${best}, using a ${pick}, the only coin that fits.`;
     } else {

@@ -321,7 +321,7 @@ export function describe(state: S, settings: LcSettings = defaults): string {
     const cells = frame.slices * frame.rows * frame.cols;
     const formula = r.phase === 'formula' || r.phase === 'bigO' ? ` T(n) = ${p.formula(f)}.` : '';
     const order = r.phase === 'bigO' ? ` ${bigO(p.order(f))}.` : '';
-    return `${cap(p.name)} for n = ${r.n}: ${r.count} of ${cells} cells lit, count = ${r.count}.${formula}${order}`;
+    return `${cap(p.name)} for n = ${r.n}: ${r.count} of ${cells} ${cells === 1 ? 'cell' : 'cells'} lit, count = ${r.count}.${formula}${order}`;
   }
   const code = p.card.map((id) => p.lines.find((l) => l.id === id)!.text).join('; ');
   return `${cap(p.name)}: ${code}. Not run yet.`;

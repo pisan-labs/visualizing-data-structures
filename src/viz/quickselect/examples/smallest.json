@@ -3,7 +3,7 @@
   "viz": "quickselect",
   "id": "smallest",
   "title": "k = 1: the smallest value",
-  "notes": "With k = 1 the target is A[0], so every partition sends quickselect to the left. A plain scan would find the minimum with n - 1 comparisons; quickselect is for when k is somewhere in the middle.",
+  "notes": "With k = 1 the target is A[0], so no partition ever sends quickselect to the right: it keeps going left until A[0] is settled. A plain scan would find the minimum with n - 1 comparisons; quickselect is for when k is somewhere in the middle.",
   "settings": { "partition": "lomuto", "pivot": "random", "draw": "bars" },
   "seed": 1,
   "ops": [

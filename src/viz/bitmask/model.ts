@@ -569,6 +569,9 @@ export function initialVars(state: S) {
 }
 
 export function describe(state: S): string {
-  const list = state.listOf ? ` Listed ${state.list.length} ${state.listOf}.` : '';
+  const one = state.list.length === 1;
+  const list = state.listOf
+    ? ` Listed ${state.list.length} ${one ? state.listOf.replace(/^(submask|subset)s /, '$1 ') : state.listOf}.`
+    : '';
   return `x = ${state.x}, binary ${bin(state.x, state.width)}, the set ${setText(state.x)}.${list}`;
 }

@@ -126,7 +126,6 @@ export const dpFibonacci: VizDef<FibState, FibSettings, FibExtra> = {
       best: {
         cost: 'O(φⁿ)',
         why: 'No memo, so the same values are worked out again and again: 2F(n + 1) - 1 calls.',
-        example: 'base-cases',
       },
       average: { cost: 'O(φⁿ)', why: 'The call count grows like F(n) itself, about 1.618ⁿ.' },
       worst: { cost: 'O(φⁿ)', why: 'F(30) takes 2,692,537 calls. The table needs 29 additions.' },

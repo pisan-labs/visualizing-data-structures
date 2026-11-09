@@ -1,10 +1,10 @@
 # Recursion tree vs memoized DAG
 
-A recursive function can be drawn two ways. The call tree has a box for every call. The DAG (directed acyclic graph) has a box for every different subproblem, and an arrow for every call one subproblem makes to another. When subproblems repeat, the two pictures come apart fast. This page draws both, side by side, from the same run.
+A recursive function can be drawn two ways. The call tree has a box for every call. The DAG (directed acyclic graph) has a box for every different subproblem, and an arrow for every call one subproblem makes to another. When subproblems repeat, the two pictures come apart fast. This page draws both from the same run: side by side on a wide screen, one above the other on a phone.
 
 ## Two pictures of one recursion
 
-Run `fib(5)`. On the left, the tree gets a new box for every call, 15 in all. On the right, the DAG only gets a box the first time a subproblem shows up. When the tree calls `fib(3)` a second time, the DAG draws an arrow to the `fib(3)` box it already has, and the ×2 badge counts how many tree calls landed there. [Show me](#play:fib-five)
+Run `fib(5)`. The tree gets a new box for every call, 15 in all. The DAG only gets a box the first time a subproblem shows up. When the tree calls `fib(3)` a second time, the DAG draws an arrow to the `fib(3)` box it already has, and the ×2 badge counts how many tree calls landed there. [Show me](#play:fib-five)
 
 | | Tree | DAG |
 |---|---|---|

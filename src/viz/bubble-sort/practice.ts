@@ -30,12 +30,17 @@ export function bubblePractice(def: () => ArrayDef): PracticeKind[] {
         const setup = [load(values)];
         const after = valuesAt(milestones(stepsOf(def(), settings, [...setup, ['sort']]))[0]!);
         const moved = direction === 'down' ? Math.min(...values) : Math.max(...values);
+        const dest = direction === 'down' ? 0 : values.length - 1;
+        const travel =
+          values[dest] === moved
+            ? `stays in A[${dest}], where it started`
+            : `rides all the way to A[${dest}]`;
         return {
           prompt: `${DIRECTION[direction]} Type A after the first pass.`,
           setup,
           settings,
           answer: { kind: 'sequence', value: after },
-          explain: `After pass 1, A is ${list(after)}. Each swap moves the ${direction === 'down' ? 'smaller' : 'larger'} value of a pair one step ${direction === 'down' ? 'left' : 'right'}, so ${moved} rides all the way to A[${direction === 'down' ? 0 : values.length - 1}].`,
+          explain: `After pass 1, A is ${list(after)}. Each swap moves the ${direction === 'down' ? 'smaller' : 'larger'} value of a pair one step ${direction === 'down' ? 'left' : 'right'}, so ${moved} ${travel}.`,
           watch: [['sort']],
         };
       },

@@ -12,7 +12,7 @@ Don't memorize the theorem first. Draw the recursion tree, and the theorem falls
 
 The root is one call on size n and does f(n) work. Level 1 has a calls on size n/b. Level i has aⁱ calls on size n/bⁱ. The size reaches 1 after log_b n levels, so there are log_b n + 1 levels, and the bottom level has a^(log_b n) leaves. That number is the same as n^(log_b a), which looks like a typo but isn't: take log_b of both and you get (log_b n)(log_b a) either way.
 
-Press **Solve** and the drawing expands the tree one level at a time, with the work of each level on the right. [Show me](#play:merge-sort)
+Press **Solve** and the drawing expands the tree one level at a time and writes down the work of each level, beside the tree when there is room and under it when not. [Show me](#play:merge-sort)
 
 ## Three ways it can go
 

@@ -139,6 +139,27 @@ describe('making change', { timeout: 60_000 }, () => {
     expect(run('ways', [1, 2, 5], 12).steps.at(-1)!.vars?.ways).toBe(13);
   });
 
+  it('fails greedy on 10 with coins 1, 5 and 6, but not once a 10 is there too', () => {
+    expect(run('fewest', [1, 5, 6], 10).steps.at(-1)!.vars).toMatchObject({
+      fewest: 2,
+      greedy: 5,
+    });
+    expect(run('fewest', [1, 5, 6, 10], 10).steps.at(-1)!.vars).toMatchObject({
+      fewest: 1,
+      greedy: 1,
+    });
+    expect(dpChange.explain).toContain('Swap the 10 for a 6');
+  });
+
+  it('words an impossible amount for one or two cells it read', () => {
+    const says = run('fewest', [3, 5], 11).steps.map((s) => s.say);
+    expect(says).toContain('F[4] = ∞: F[1] is ∞ too, so 4 cannot be made either.');
+    expect(says).toContain(
+      'F[7] = ∞: neither F[4] nor F[2] can be made, so 7 cannot be made either.',
+    );
+    expect(says.join(' ')).not.toContain('none of F[1] can');
+  });
+
   it('reads coins and amounts, and refuses what it cannot use', () => {
     expect(parseChange('6')).toBe(6);
     expect(parseChange('4, 1 3')).toBe('4 1 3');

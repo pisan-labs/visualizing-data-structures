@@ -34,7 +34,7 @@ The **How each call works** option switches between them.
 
 ## Partial results on the way back
 
-In the first version nothing is reversed on the way down. Each frame waits with a character it cannot place yet. The work happens on the way back: the base case returns `"K"`, then each frame adds its own first character to what it got back. `"K"`, `"KC"`, `"KCA"`, `"KCAT"`, `"KCATS"`. Each frame shows the value it receives and the value it hands down, and the call tree on the left keeps every partial result after its frame is gone. [Show me](#play:rest-first)
+In the first version nothing is reversed on the way down. Each frame waits with a character it cannot place yet. The work happens on the way back: the base case returns `"K"`, then each frame adds its own first character to what it got back. `"K"`, `"KC"`, `"KCA"`, `"KCAT"`, `"KCATS"`. Each frame shows the value it receives and the value it hands down, and the call tree keeps every partial result after its frame is gone. [Show me](#play:rest-first)
 
 ```check
 Q: `reverse("CODE")` runs, reversing the rest first. What does the call `reverse("DE")` return to its caller?

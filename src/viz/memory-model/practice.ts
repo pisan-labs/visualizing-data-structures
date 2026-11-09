@@ -41,13 +41,21 @@ export function memoryPractice(def: () => Def): PracticeKind[] {
           [run(`ys[0] = ${c}`), run(`ys = [${d}]`)],
           [run(`ys.append(${c})`), run(`xs = [${d}]`)],
         ];
-        const ask = moves[rng.int(0, moves.length - 1)]!;
+        const which = rng.int(0, moves.length - 1);
+        const ask = moves[which]!;
         const value = items(end([...setup, ...ask]), 'xs');
+        const shown = `[${value.join(', ')}]`;
+        const why = [
+          `ys = xs made two names for one list, so the append through ys shows in xs: ${shown}.`,
+          `ys = [${c}] pointed ys at a new list, so the append changes that one. xs still refers to the old list: ${shown}.`,
+          `ys = xs made two names for one list, so ys[0] = ${c} shows in xs. Then ys = [${d}] points ys at a new list, which xs does not notice: ${shown}.`,
+          `The append changes the list both names share, but then xs = [${d}] points xs at a new list of its own: ${shown}.`,
+        ][which]!;
         return {
           prompt: `After the statements shown, run ${code(ask)} in Python or Java. What does \`xs\` hold? Type its items in order.`,
           setup,
           answer: { kind: 'sequence', value },
-          explain: `ys = xs made two names for one list. Changing that list through ys shows in xs; pointing ys at a new list does not. xs ends as [${value.join(', ')}].`,
+          explain: why,
           watch: ask,
         };
       },

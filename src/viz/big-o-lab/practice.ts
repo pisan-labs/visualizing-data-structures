@@ -8,6 +8,7 @@ import {
   defaults,
   ratioText,
   stepsVar,
+  timeText,
   type Fn,
   type LabSettings,
   type LabState,
@@ -32,6 +33,14 @@ export function bigOPractice(def: () => Def): PracticeKind[] {
     ['setn', n],
   ];
   const steps = (cs: OpCall[], f: Fn) => run(cs).entries.at(-1)!.steps.at(-1)!.vars?.[stepsVar(f)];
+  /** "1 step", "24 steps". */
+  const stepText = (cs: OpCall[], f: Fn) => {
+    const v = steps(cs, f);
+    return `${v} ${v === '1' ? 'step' : 'steps'}`;
+  };
+  /** The curve that grows faster (later in FNS) has strictly more steps already. */
+  const fasterAhead = (f: Fn, g: Fn, cf: number, cg: number) =>
+    FNS.indexOf(f) > FNS.indexOf(g) ? cf > cg : cg > cf;
 
   return [
     {
@@ -52,7 +61,7 @@ export function bigOPractice(def: () => Def): PracticeKind[] {
           prompt: `At n = ${n}, which takes more steps: ${FN_LABEL[f]} or ${FN_LABEL[g]}? (log n here counts halvings, so log 8 = 3.)`,
           setup: setup.slice(0, -1),
           answer: ordered(options, right),
-          explain: `At n = ${n}, ${FN_LABEL[f]} takes ${steps(setup, f)} steps and ${FN_LABEL[g]} takes ${steps(setup, g)}. For small n the faster-growing curve does not always win yet.`,
+          explain: `At n = ${n}, ${FN_LABEL[f]} takes ${stepText(setup, f)} and ${FN_LABEL[g]} takes ${stepText(setup, g)}.${fasterAhead(f, g, cf, cg) ? '' : ' For small n the faster-growing curve does not always win yet.'}`,
           watch: [setup.at(-1)!],
         };
       },
@@ -70,7 +79,7 @@ export function bigOPractice(def: () => Def): PracticeKind[] {
           prompt: `n doubles from ${n} to ${2 * n}. How many times more steps does ${FN_LABEL[f]} take?`,
           setup,
           answer: { kind: 'number', value },
-          explain: `${FN_LABEL[f]} goes from ${steps(setup, f)} to ${steps([...setup, ['double']], f)} steps: ${ratioText(f, n, 2 * n)}.${f === '2n' ? ' Doubling n squares 2ⁿ, so the factor is 2ⁿ itself.' : ''}`,
+          explain: `${FN_LABEL[f]} goes from ${steps(setup, f)} to ${stepText([...setup, ['double']], f)}: ${ratioText(f, n, 2 * n)}.${f === '2n' ? ' Doubling n squares 2ⁿ, so the factor is 2ⁿ itself.' : ''}`,
           watch: [['double']],
         };
       },
@@ -132,7 +141,7 @@ export function bigOPractice(def: () => Def): PracticeKind[] {
           prompt: `A computer does a billion steps a second. Roughly how long do ${FN_LABEL[f]} steps take at n = ${n.toLocaleString('en-US')}?`,
           setup: setup.slice(0, -1),
           answer: ordered(options, right),
-          explain: `${FN_LABEL[f]} at n = ${n.toLocaleString('en-US')} is ${steps(setup, f)} steps, which is about ${sec < 1 ? 'a fraction of a second' : `${Math.round(sec).toLocaleString('en-US')} seconds`}.`,
+          explain: `${FN_LABEL[f]} at n = ${n.toLocaleString('en-US')} is ${steps(setup, f)} steps, which takes about ${timeText(count(f, n), 1e9)}.`,
           watch: [setup.at(-1)!],
         };
       },

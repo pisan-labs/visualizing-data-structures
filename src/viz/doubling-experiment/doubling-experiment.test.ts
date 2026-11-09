@@ -315,6 +315,15 @@ describe('doubling experiments', () => {
     expect(binary.map(fix2)).toEqual(['1.00', '0.58', '0.42', '0.32', '0.26', '0.22', '0.19']);
   });
 
+  it("quotes merge sort's own b values in the concept check", () => {
+    const merge = bsOf(runFrom(settings({ algo: 'merge' }), 1000).endState()).map(fix2);
+    const quoted = /Merge sort's b reads ([\d., ]+) as n doubles from 1,000 to 32,000/.exec(
+      def.explain,
+    )![1]!;
+    // 1,000 to 32,000 is five doublings.
+    expect(quoted.split(', ')).toEqual(merge.slice(0, 5));
+  });
+
   it('fits through the last row, or by least squares through all of them', () => {
     const last = runFrom(settings({ algo: 'threesum' }), 3).endState();
     const end = last.rows.at(-1)!;

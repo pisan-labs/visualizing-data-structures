@@ -139,7 +139,7 @@ function* shell(r: Run, rule: ShellSettings['gaps']): Gen {
         r.count('shifts');
         j -= h;
         yield r.step({
-          say: `${v} > ${temp.value}, so shift ${v} from A[${j}] to A[${j + h}], ${h} places right. j = ${j}.`,
+          say: `${v} > ${temp.value}, so shift ${v} from A[${j}] to A[${j + h}], ${plural(h, 'place')} right. j = ${j}.`,
           lines: ['shift', 'dec'],
           level: 2,
           marks: [mark(`v${moving.uid}`, 'active'), mark(`v${temp.uid}`, 'found')],

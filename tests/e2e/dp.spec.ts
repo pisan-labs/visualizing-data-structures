@@ -219,7 +219,7 @@ test.describe('Edit distance', () => {
     await press(page, 'Trace back');
     await toEnd(page);
     await expect(narration(page)).toContainText(
-      'Read the alignment from left to right: 2 substitutions, 1 insert, and 4 matches. Total cost 3.',
+      'Read the alignment from left to right: 2 substitutions, 1 insert and 4 matches. Total cost 3.',
     );
     await expect(stage(page)).toHaveAttribute(
       'aria-label',

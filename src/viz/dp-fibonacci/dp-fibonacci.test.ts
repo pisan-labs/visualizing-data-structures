@@ -1,6 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { practiceSet } from '../../engine/practice';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { PracticeQuestion } from '../../engine/types';
 import { dpFibonacci, parseN } from '.';
@@ -171,6 +172,26 @@ describe('Fibonacci practice', () => {
       const want = q.prompt.includes('already in the memo') ? hits : calls;
       expect(q.answer).toEqual({ kind: 'number', value: want });
     }
+  });
+
+  it('says "1 hit", not "1 hits", for F(3)', () => {
+    const q = dpFibonacci.practice!.find((k) => k.id === 'calls')!;
+    let one = 0;
+    for (let seed = 1; seed <= 300; seed++) {
+      const { explain } = q.make(makeRng(seed));
+      expect(explain).not.toMatch(/\b1 hits\b/);
+      if (/\b1 hit\b/.test(explain)) one++;
+    }
+    expect(one).toBeGreaterThan(0);
+  });
+
+  it('links each Big-O case only to an example in the style it describes', () => {
+    const style = (id: string) => dpFibonacci.examples.find((e) => e.id === id)!.settings.style;
+    const plain = dpFibonacci.complexity.find((r) => r.op.includes('plain recursion'))!;
+    for (const c of [plain.best, plain.average, plain.worst]) expect(c.example).toBeUndefined();
+    const memo = dpFibonacci.complexity.find((r) => r.op.includes('memo'))!;
+    for (const c of [memo.best, memo.average, memo.worst])
+      if (c.example) expect(style(c.example)).toBe('memo');
   });
 });
 

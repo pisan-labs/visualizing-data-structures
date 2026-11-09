@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { bitmask, parseBits } from '.';
@@ -136,6 +137,26 @@ describe('bitmask', () => {
     expect(parseBits('-1')).toBeInstanceOf(Error);
     expect(parseBits('cat')).toBeInstanceOf(Error);
     expect(parseBits('5000')).toBeInstanceOf(Error);
+  });
+
+  it('words one pass, one set bit and one submask properly', () => {
+    const kind = (id: string) => bitmask.practice!.find((k) => k.id === id)!;
+    let once = 0;
+    let oneBit = 0;
+    for (let seed = 1; seed <= 300; seed++) {
+      const pop = kind('popcount-loops').make(makeRng(seed)).explain;
+      expect(pop).not.toMatch(/\b1 times\b/);
+      if (pop.endsWith(': once.')) once++;
+      const sub = kind('submask-count').make(makeRng(seed)).explain;
+      expect(sub).not.toContain('Each of the 1 set bits');
+      if (sub.startsWith('The one set bit')) oneBit++;
+      // set on a 1 and clear on a 0 change nothing, so "changes one bit" would be wrong.
+      expect(kind('x-after').make(makeRng(seed)).explain).not.toContain('changes one bit');
+    }
+    expect(once).toBeGreaterThan(0);
+    expect(oneBit).toBeGreaterThan(0);
+    const empty = new Timeline(bitmask, settings(), 1, [['load', 0], ['submasks']]).endState();
+    expect(bitmask.describe(empty, settings())).toContain('Listed 1 submask of 00000000.');
   });
 });
 

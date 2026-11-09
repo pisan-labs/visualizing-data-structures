@@ -165,7 +165,7 @@ export const dpKnapsack: VizDef<KnapState, KnapSettings, KnapExtra> = {
         why: '6 items and capacity 12: 78 cells, each O(1).',
         example: 'largest',
       },
-      note: 'Pseudo-polynomial: W is a number, so doubling its digits squares the table. Space O(nW), or O(W) for the value alone.',
+      note: 'Pseudo-polynomial: W is a number, so doubling its digits squares the number of columns. Space O(nW), or O(W) for the value alone.',
     },
     {
       op: 'trace back',

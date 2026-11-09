@@ -192,4 +192,28 @@ describe('drawn text size', () => {
     expect(smallestText(recursionDag, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
     expect(smallestText(recursionDag, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
+
+  it('puts the DAG beside the tree on a laptop and under it on a phone, as the page says', () => {
+    const t = new Timeline(recursionDag, settings('fib'), 1, [['call', '5']]);
+    const step = t.at(t.length - 1).step;
+    const mean = (stage: typeof LAPTOP_STAGE, prefix: string, key: 'x' | 'y') => {
+      const vs = recursionDag
+        .view(step, settings('fib'), stage)
+        .shapes.filter((s) => s.id.startsWith(prefix))
+        .map((s) => (s as { x?: number; y?: number })[key])
+        .filter((v): v is number => typeof v === 'number');
+      return vs.reduce((a, b) => a + b, 0) / vs.length;
+    };
+    expect(mean(LAPTOP_STAGE, 'dag-', 'x')).toBeGreaterThan(mean(LAPTOP_STAGE, 'call-', 'x') + 50);
+    expect(mean(PHONE_STAGE, 'dag-', 'y')).toBeGreaterThan(mean(PHONE_STAGE, 'call-', 'y') + 100);
+  });
+
+  it('does not claim smaller always means more calls: fib(0) is called less often than fib(1)', () => {
+    const kind = recursionDag.practice!.find((k) => k.id === 'most-called')!;
+    for (let seed = 1; seed <= 20; seed++) {
+      const q = kind.make(makeRng(seed));
+      expect(q.explain).not.toContain('The smaller the subproblem, the more paths');
+      expect(q.explain).toContain('fib(0) is reached only from fib(2)');
+    }
+  });
 });

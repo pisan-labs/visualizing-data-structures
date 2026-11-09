@@ -3,7 +3,7 @@
   "viz": "shell-sort",
   "id": "halving",
   "title": "Big gaps first",
-  "notes": "Shell's gaps for 8 values are 4, 2 and 1. The 4 and 2 passes move values a long way in a few shifts, so the final pass, a plain insertion sort, has little left to do.",
+  "notes": "Shell's gaps for 8 values are 4, 2 and 1. The gap-4 pass moves 7 and 17 four places each in two shifts. That leaves the gap-2 pass nothing to do and the final pass, a plain insertion sort, one shift.",
   "settings": { "gaps": "shell", "draw": "bars" },
   "seed": 1,
   "ops": [["load", "62 83 18 53 7 17 95 86"], ["sort"]],

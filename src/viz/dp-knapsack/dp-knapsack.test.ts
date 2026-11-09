@@ -201,6 +201,14 @@ describe('0/1 knapsack practice', () => {
       expect(q.answer).toEqual({ kind: 'number', value: refGreedy(items, W) });
     }
   });
+
+  it('lists the items as "1 and 3", not "1, 3"', () => {
+    for (const q of [...questions('chosen'), ...questions('greedy')]) {
+      expect(q.explain).not.toMatch(/[Ii]tems \d+, \d+( |,|\.)(?!.*and)/);
+      expect(q.explain).not.toMatch(/Items \d+ are/);
+    }
+    expect(questions('chosen').some((q) => / and \d+ are worth/.test(q.explain))).toBe(true);
+  });
 });
 
 describe('drawn text size', () => {

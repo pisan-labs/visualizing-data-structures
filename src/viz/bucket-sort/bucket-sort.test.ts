@@ -151,4 +151,11 @@ describe('bucket sort practice', () => {
     for (const q of questions('comparisons'))
       expect(q.answer).toEqual({ kind: 'number', value: refComparisons(loaded(q), 'fraction') });
   });
+
+  it('says insertion sort stops at a value that is not bigger, since equal values stop it too', () => {
+    for (const q of questions('comparisons')) {
+      expect(q.explain).not.toContain('finds a smaller one');
+      expect(q.explain).not.toMatch(/hold \d+, \d+ values/);
+    }
+  });
 });

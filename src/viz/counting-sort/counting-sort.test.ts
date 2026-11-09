@@ -63,6 +63,10 @@ describe('counting sort', { timeout: 60_000 }, () => {
     );
   });
 
+  it('does not claim every other sort on the site compares values (radix sort does not)', () => {
+    expect(countingSort.explain).not.toContain('Every other sort on this site compares');
+  });
+
   it('turns the counts into the prefix sums for the example values', () => {
     const steps = run([2, 5, 3, 0, 2, 3, 0, 3]).entries[1]!.steps as CountStep[];
     const at = (line: string) =>
@@ -118,6 +122,22 @@ describe('counting sort practice', () => {
       const want = vs.filter((x) => x < v).length + vs.slice(0, j).filter((x) => x === v).length;
       expect(q.answer).toEqual({ kind: 'number', value: want });
     }
+  });
+
+  it('names the later copies by their value in the placement explanation', () => {
+    let one = 0;
+    for (const q of questions('place')) {
+      const vs = loaded(q);
+      const j = Number(/A\[(\d+)\] =/.exec(q.prompt)![1]);
+      const v = vs[j]!;
+      const later = vs.slice(j + 1).filter((x) => x === v).length;
+      if (later === 1) {
+        one++;
+        expect(q.explain).toContain(`1 later ${v} in A is placed before it`);
+      }
+      if (!vs.some((x) => x < v)) expect(q.explain).toMatch(/^No value is smaller/);
+    }
+    expect(one).toBeGreaterThan(0);
   });
 
   it('says the earlier copy comes first, since the sort is stable', () => {

@@ -96,7 +96,7 @@ export function dagPractice(def: () => Def): PracticeKind[] {
           setup: [['call', String(n - 2)]] as OpCall[],
           settings: { problem: 'fib' },
           answer: choice(rng, right, wrong),
-          explain: `The smaller the subproblem, the more paths lead down to it, and fib(1) is reached from both fib(2) and fib(3). In \`fib(${n})\` the tree calls ${right} ${times} times.`,
+          explain: `Smaller subproblems sit at the end of more paths, down to fib(1): it is reached from both fib(2) and fib(3), while fib(0) is reached only from fib(2). In \`fib(${n})\` the tree calls ${right} ${times} times.`,
           watch: [['call', String(n)]] as OpCall[],
         };
       },

@@ -176,7 +176,7 @@ export const kargerMinCut: VizDef<KgState, KgSettings, undefined> = {
     treeAlways,
   ] as unknown as SavedExample[],
   practice: kargerPractice(() => kargerMinCut),
-  preview: { example: 'bridge', level: 2, hide: ['grp', 'info', 'hist', 'stat', 'ord'] },
+  preview: { example: 'bridge', level: 3, hide: ['grp-', 'info-', 'hist-', 'stat-', 'ord-'] },
   opening: 'bridge',
 };
 

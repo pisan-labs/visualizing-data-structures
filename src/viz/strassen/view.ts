@@ -371,7 +371,10 @@ function levels(s: StState): Part {
     });
   }
   const mults = k ** L;
-  lines.push({ text: `${mults} multiplies, n³ = ${root.n ** 3}`, role: 'found' });
+  lines.push({
+    text: `${mults} ${mults === 1 ? 'multiply' : 'multiplies'}, n³ = ${root.n ** 3}`,
+    role: 'found',
+  });
   lines.push({ text: k === 7 ? 'T(n) = 7T(n/2) + Θ(n²)' : 'T(n) = 8T(n/2) + Θ(n²)' });
   lines.push({ text: k === 7 ? 'so T(n) = Θ(n^log₂7) ≈ n^2.81' : 'so T(n) = Θ(n^log₂8) = Θ(n³)' });
   lines.forEach((l, i) => {

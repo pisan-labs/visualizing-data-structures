@@ -63,7 +63,7 @@ test('a bad matrix is refused with a reason', async ({ page }) => {
 test('"Show me" links load an example and play it', async ({ page }) => {
   await page.getByRole('tab', { name: 'Learn' }).click();
   await showMe(page, page.getByRole('link', { name: 'Show me' }).first());
-  await expect(narration(page)).toContainText('2 × 2', { timeout: 60_000 });
+  await expect(stage(page)).toHaveAttribute('aria-label', /2 × 2 matrices/, { timeout: 60_000 });
 });
 
 test('a practice question can be shown', async ({ page }) => {

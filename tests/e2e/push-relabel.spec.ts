@@ -65,7 +65,8 @@ test('extra flow climbs above s and goes back', async ({ page }) => {
   await page.getByRole('button', { name: 'Find max flow', exact: true }).click();
   await toEnd(page);
   await expect(narration(page)).toContainText('the maximum flow is 5');
-  await expect(page.locator('.narration')).toContainText('No vertex overflows');
+  // a, b and c end above s (height 5): that is how the extra 4 got back.
+  await expect(stage(page)).toHaveAttribute('aria-label', /a h 6 e 0/);
 });
 
 test('a bad capacity is refused with a reason', async ({ page }) => {

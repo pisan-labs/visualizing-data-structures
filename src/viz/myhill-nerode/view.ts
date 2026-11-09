@@ -175,7 +175,18 @@ function classList(
       size: TEXT,
       mono: true,
     });
-    if (member(s.lang, rep))
+    if (p.closed && p.dead === i)
+      out.push({
+        kind: 'text',
+        id: `${id}-dead`,
+        x: x + width - 8,
+        y: ry + CELL_H / 2 + 5,
+        text: 'dead',
+        size: TEXT,
+        anchor: 'end',
+        cls: 'label',
+      });
+    else if (member(s.lang, rep))
       out.push({
         kind: 'text',
         id: `${id}-in`,

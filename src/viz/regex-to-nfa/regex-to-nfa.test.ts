@@ -368,9 +368,10 @@ describe('layout', () => {
 });
 
 describe('drawn text size', () => {
-  // Five (a|b) factors on two rows reach 10.3 px on a laptop: the rows are taller than the stage.
+  // Five (a|b) factors on two rows reached 10.3 px on a laptop with the tape under the NFA; with
+  // the expression and the tape side by side under it, 11.3.
   it('stays readable on a laptop and on a phone', () => {
-    expect(smallestText(regexToNfa, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(10.2);
+    expect(smallestText(regexToNfa, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
     expect(smallestText(regexToNfa, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

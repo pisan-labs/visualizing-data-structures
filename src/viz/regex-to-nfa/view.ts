@@ -30,7 +30,8 @@ const LABEL_W = 40;
 const LABEL_SIZE = 15;
 /** The tape the layout choice reserves room for, whatever the word. */
 const TAPE_RESERVE = 8;
-const RESULT_W = 96;
+/** Room for the accept/reject badge right of the tape. */
+const RESULT_W = 80;
 
 interface Frame {
   pic: Picture;
@@ -41,25 +42,39 @@ interface Frame {
 }
 
 /**
- * The frame for a picture: the expression over the NFA, and the word's tape under the NFA, or
- * (`top`) right of the expression, its cells level with the expression's first row.
+ * Where the expression and the tape go: the expression over the NFA and the tape under it
+ * (`apart`), the tape right of the expression over the NFA (`top`), or the expression on one
+ * line under the NFA with the tape right of it (`bottom`), which keeps both out of the corner the
+ * zoom buttons cover.
  */
-function frameFor(pic: Picture, text: string, top = false): Frame {
+type Place = 'apart' | 'top' | 'bottom';
+
+/** Between the expression and the tape when they share a line. */
+const BESIDE = 30;
+
+/** The frame for a picture, with the expression and the tape placed as `place` says. */
+function frameFor(pic: Picture, text: string, place: Place = 'apart'): Frame {
   const b = pic.bounds;
   // Beside the expression, the tape takes room from its rows.
-  const tape = top ? 30 + LABEL_W + TAPE_RESERVE * CELL_W + RESULT_W : 0;
-  const per = Math.max(10, Math.floor((b.w - LABEL_W - tape) / RX_W));
+  const tape = place === 'top' ? BESIDE + LABEL_W + TAPE_RESERVE * CELL_W + RESULT_W : 0;
+  const per =
+    place === 'bottom'
+      ? Math.max(10, text.length)
+      : Math.max(10, Math.floor((b.w - LABEL_W - tape) / RX_W));
   const lines = Math.ceil(text.length / per);
   const rowH = lines * RX_H + (lines - 1) * 6;
-  const rowBox = {
-    x: b.x,
-    y: b.y - 20 - rowH,
-    w: LABEL_W + Math.min(per, text.length) * RX_W,
-    h: rowH,
-  };
-  const tapeAt = top
-    ? { x: rowBox.x + rowBox.w + 30 + LABEL_W, y: rowBox.y + RX_H / 2 - 26 - CELL_H / 2 }
-    : { x: b.x + LABEL_W, y: b.y + b.h + 16 };
+  const w = LABEL_W + Math.min(per, text.length) * RX_W;
+  if (place === 'bottom') {
+    // The tape's cells level with the expression's cells, under the NFA.
+    const tapeY = b.y + b.h + 16;
+    const rowBox = { x: b.x, y: tapeY + 26 + CELL_H / 2 - RX_H / 2, w, h: rowH };
+    return { pic, per, rowBox, tapeAt: { x: b.x + w + BESIDE + LABEL_W, y: tapeY } };
+  }
+  const rowBox = { x: b.x, y: b.y - 20 - rowH, w, h: rowH };
+  const tapeAt =
+    place === 'top'
+      ? { x: rowBox.x + rowBox.w + BESIDE + LABEL_W, y: rowBox.y + RX_H / 2 - 26 - CELL_H / 2 }
+      : { x: b.x + LABEL_W, y: b.y + b.h + 16 };
   return { pic, per, rowBox, tapeAt };
 }
 
@@ -76,7 +91,7 @@ const tapeBox = (f: Frame, cells: number): Bounds => ({
 /**
  * The picture that draws largest on this stage (or on both a laptop and a phone). On a stage,
  * the states may also sit closer together (TIGHT), for a long expression, and the tape may go
- * beside the expression instead of under the NFA.
+ * beside the expression instead of under the NFA, both over the NFA or both under it.
  */
 function choose(s: RxState, stage?: StageSize): Frame {
   const key = `${s.sign}|${s.text}`;
@@ -85,7 +100,9 @@ function choose(s: RxState, stage?: StageSize): Frame {
     : pictures(s.frags, s.how, key).filter((p) => p.rows < 4);
   const frames = [
     ...pics.map((p) => frameFor(p, s.text)),
-    ...(stage ? pics.map((p) => frameFor(p, s.text, true)) : []),
+    ...(stage ? pics.map((p) => frameFor(p, s.text, 'top')) : []),
+    // Both under the NFA only on a wide stage, where they would otherwise make it too tall.
+    ...(stage && stage.w > stage.h ? pics.map((p) => frameFor(p, s.text, 'bottom')) : []),
   ];
   const score = (f: Frame) =>
     fitScore(padBounds(unionBounds(f.pic.bounds, f.rowBox, tapeBox(f, TAPE_RESERVE)), 12), stage);

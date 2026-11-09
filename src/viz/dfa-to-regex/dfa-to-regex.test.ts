@@ -343,9 +343,10 @@ describe('dfa-to-regex', () => {
 });
 
 describe('drawn text size', () => {
-  // On a phone the GNFA runs down with the table beside it, its labels wrapped shorter: 8.9 px.
+  // On a phone the GNFA runs down with the table beside it, its labels wrapped shorter: 8.9 px
+  // with the layers 150 apart, 9.3 with them 120 apart.
   it('stays readable on a laptop and on a phone', () => {
     expect(smallestText(dfaToRegex, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
-    expect(smallestText(dfaToRegex, PHONE_STAGE).px).toBeGreaterThanOrEqual(8.8);
+    expect(smallestText(dfaToRegex, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

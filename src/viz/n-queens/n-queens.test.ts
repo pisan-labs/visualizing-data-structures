@@ -197,6 +197,22 @@ describe('n-queens practice', () => {
       }
     }
   });
+
+  it('words one queen and a search with no backtracks properly', () => {
+    const kind = (id: string) => kinds.find((k) => k.id === id)!;
+    let one = 0;
+    for (let seed = 1; seed <= 100; seed++) {
+      const safe = kind('safe-squares').make(makeRng(seed));
+      expect(safe.prompt).not.toContain('rows 1 to 1');
+      if (safe.prompt.startsWith('The queen shown sits in row 1.')) one++;
+      const first = kind('first-solution').make(makeRng(seed));
+      expect(first.explain).not.toContain('0 backtracks');
+      expect(first.explain).not.toContain('Every earlier choice in row 1 was');
+    }
+    expect(one).toBeGreaterThan(0);
+    const five = kind('first-solution').make(makeRng(1));
+    expect(five.explain).toMatch(/no backtracks: the first safe square in every row|dead end/);
+  });
 });
 
 describe('drawn text size', () => {

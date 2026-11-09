@@ -86,7 +86,7 @@ export function queensPractice(def: () => Def): PracticeKind[] {
         const row = state.queens.length;
         const safe = safeColumns(state.queens, n, row);
         return {
-          prompt: `The queens shown sit in rows 1 to ${row}. How many squares of row ${row + 1} does no queen attack?`,
+          prompt: `${row === 1 ? 'The queen shown sits in row 1' : `The queens shown sit in rows 1 to ${row}`}. How many squares of row ${row + 1} does no queen attack?`,
           setup: moves(k),
           settings,
           answer: { kind: 'number', value: safe.length },
@@ -110,7 +110,9 @@ export function queensPractice(def: () => Def): PracticeKind[] {
           setup: [],
           settings,
           answer: { kind: 'sequence', value: cols },
-          explain: `It reaches ${cols.join(' ')} after ${plural(end.placements, 'placement')} and ${plural(end.backtracks, 'backtrack')}. Every earlier choice in row 1${end.backtracks ? ' led to a dead end' : ' was already the right one'}.`,
+          explain: end.backtracks
+            ? `It reaches ${cols.join(' ')} after ${plural(end.placements, 'placement')} and ${plural(end.backtracks, 'backtrack')}. Every earlier choice in row 1 led to a dead end.`
+            : `It reaches ${cols.join(' ')} after ${plural(end.placements, 'placement')} and no backtracks: the first safe square in every row was already the right one.`,
           watch: [['solve']],
         };
       },

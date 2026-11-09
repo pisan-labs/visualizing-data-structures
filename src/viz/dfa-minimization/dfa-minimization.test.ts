@@ -168,6 +168,22 @@ describe('dfa-minimization', () => {
     }
   });
 
+  it('splits the slow-split chain into five blocks in three rounds, as its notes say', () => {
+    const ex = dfaMinimization.examples.find((e) => e.id === 'slow-split')!;
+    const t = new Timeline(
+      dfaMinimization,
+      { ...dfaMinimization.defaults, method: 'moore' },
+      1,
+      ex.ops,
+    );
+    const says = t.entries[1]!.steps.map((s) => s.say);
+    const five = says.findIndex((say) => say.includes('That makes 5 blocks'));
+    expect(says.slice(0, five).some((say) => say.startsWith('Round 3,'))).toBe(true);
+    expect(says.slice(0, five).some((say) => say.startsWith('Round 4,'))).toBe(false);
+    // The notes said "four rounds to split into five blocks".
+    expect(ex.notes).toContain('three rounds to split into five blocks, and a fourth');
+  });
+
   it('refuses an NFA and keeps the DFA it has', () => {
     const t = new Timeline(dfaMinimization, { method: 'moore' }, 1, [
       ['load', 'q0 a -> q1; q0 a -> q0; accept q1'],

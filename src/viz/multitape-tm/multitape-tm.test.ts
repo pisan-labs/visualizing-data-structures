@@ -517,9 +517,10 @@ describe('the drawing', () => {
 });
 
 describe('drawn text size', () => {
-  // On a phone, 3 tapes, the single tape and 13 rules one under another reach 8.75 px.
+  // On a phone, 3 tapes, the single tape and 13 rules one under another reached 8.75 px; with
+  // the rules' boxes closer together, 9.2.
   it('stays readable on a laptop and on a phone', () => {
     expect(smallestText(multitapeTm, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
-    expect(smallestText(multitapeTm, PHONE_STAGE).px).toBeGreaterThanOrEqual(8.7);
+    expect(smallestText(multitapeTm, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
 });

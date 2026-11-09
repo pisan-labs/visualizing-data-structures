@@ -4,7 +4,7 @@
  * (the rule just used, or how the run ended), then the single tape S simulates them on, under
  * them, with a mark in each tape's color on the cell under that tape's head, and S's status.
  * The rules sit beside on a wide stage and under on a tall one, in as many columns as draw the
- * picture largest.
+ * picture largest; on a phone their boxes sit closer together.
  *
  * Every tape is the shared tape (src/layouts/tape.ts): a window of 12 cells (10 on a phone)
  * per tape, held still while the touched cells fit. The single tape wraps onto rows of that
@@ -132,10 +132,16 @@ export function ruleLine(line: string): string {
 }
 
 const RULE_SIZE = 13;
+/** A rule's box and the room between boxes; on a phone (`tight`) the boxes sit closer. */
 const RULE_H = 21;
 const RULE_GAP = 2;
+const TIGHT_H = 19;
+const TIGHT_GAP = 1;
 
-/** The rules as written, in `cols` columns (down the first, then the next), the one in use lit. */
+/**
+ * The rules as written, in `cols` columns (down the first, then the next), the one in use lit,
+ * in smaller boxes when `tight`.
+ */
 function drawRules(
   out: Shape[],
   m: MtMachine,
@@ -143,7 +149,10 @@ function drawRules(
   y: number,
   roles: ReadonlyMap<string, MarkRole>,
   cols: number,
+  tight = false,
 ): Bounds {
+  const h = tight ? TIGHT_H : RULE_H;
+  const gap = tight ? TIGHT_GAP : RULE_GAP;
   const title = 'Rules: state reads → next writes moves';
   out.push({
     kind: 'text',
@@ -161,15 +170,15 @@ function drawRules(
   const top = y + 25;
   texts.forEach((t, j) => {
     const cx = x + Math.floor(j / per) * (colW + 10);
-    const cy = top + (j % per) * (RULE_H + RULE_GAP);
+    const cy = top + (j % per) * (h + gap);
     const id = `rule-${j}`;
     const role = roles.get(id);
-    out.push({ kind: 'rect', id, x: cx, y: cy, w: colW, h: RULE_H, r: 4, cls: 'live', role });
+    out.push({ kind: 'rect', id, x: cx, y: cy, w: colW, h, r: 4, cls: 'live', role });
     out.push({
       kind: 'text',
       id: `${id}-t`,
       x: cx + 7,
-      y: cy + RULE_H / 2 + 4.5,
+      y: cy + h / 2 + 4.5,
       text: t,
       size: RULE_SIZE,
       mono: true,
@@ -181,7 +190,7 @@ function drawRules(
     x,
     y,
     w: Math.max(w, textWidth(title, TITLE_SIZE)),
-    h: 25 + per * (RULE_H + RULE_GAP) - RULE_GAP,
+    h: 25 + per * (h + gap) - gap,
   };
 }
 
@@ -367,7 +376,7 @@ export function view(step: Step<MtState, MtExtra>, settings: MtSettings, stage?:
     for (let cols = 1; cols <= Math.min(3, m.lines.length); cols++) {
       const scratch: Shape[] = [];
       const at = placePanels(scratch, main, stage, (o, x, yy) =>
-        drawRules(o, m, x, yy, roles, cols),
+        drawRules(o, m, x, yy, roles, cols, !wide),
       );
       candidates.push({ shapes: [...out, ...scratch], bounds: unionBounds(main, at) });
     }

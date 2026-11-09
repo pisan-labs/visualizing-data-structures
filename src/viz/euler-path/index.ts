@@ -150,7 +150,7 @@ export const eulerPath: VizDef<EulerState, EulerSettings, EulerExtra> = {
     pieces,
   ] as unknown as SavedExample[],
   practice: eulerPractice(() => eulerPath),
-  preview: { example: 'detour', level: 3, hide: ['vn-', 'h-', 'stk-', 'cir-', 'ptr-'] },
+  preview: { example: 'envelope', level: 3, hide: ['vn-', 'h-', 'stk-', 'cir-', 'ptr-'] },
 };
 
 const graphLines = (g: Graph, settings: EulerSettings) => [

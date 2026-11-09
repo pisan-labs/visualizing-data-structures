@@ -163,7 +163,7 @@ export const manacher: VizDef<ManacherState, ManacherSettings, ManacherExtra> = 
     oneAtATime,
   ] as unknown as SavedExample[],
   practice: manacherPractice(() => manacher),
-  preview: { example: 'long-odd', level: 2 },
+  preview: { example: 'long-odd', level: 2, hide: ['ptr-'] },
 };
 
 export default manacher;

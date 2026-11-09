@@ -185,7 +185,7 @@ export const zAlgorithm: VizDef<ZState, ZSettings, ZExtra> = {
     oneAtATime,
   ] as unknown as SavedExample[],
   practice: zPractice(() => zAlgorithm),
-  preview: { example: 'find-pattern', level: 2 },
+  preview: { example: 'find-pattern', level: 2, hide: ['ptr-'] },
 };
 
 export default zAlgorithm;

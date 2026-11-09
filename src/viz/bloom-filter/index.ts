@@ -147,7 +147,7 @@ export const bloomFilter: VizDef<BloomState, BloomSettings, BloomExtra> = {
     tooManyHashes,
     whyNoDelete,
   ] as unknown as SavedExample[],
-  preview: { example: 'filling-up', level: 2, hide: ['set-', 'key-', 'kt-'] },
+  preview: { example: 'false-positive', level: 2, hide: ['set-', 'key-', 'kt-'] },
 };
 
 /**

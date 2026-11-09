@@ -47,6 +47,8 @@ export interface ArrayExtra {
   held?: { uid?: number; value: number; at: number; label: string; role?: MarkRole };
   /** An auxiliary array aligned with A by index (L and R while merging). */
   aux?: { items: (Item | null)[]; from: number; to: number; label?: (i: number) => string };
+  /** Keep room for the auxiliary row while it is empty, so the frame does not jump between uses. */
+  auxRoom?: boolean;
   /** Index ranges that are out of play. */
   faded?: { from: number; to: number }[];
   /** A sentinel value in the slot just past the end. */

@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "karger-min-cut",
+  "id": "many-trials",
+  "title": "A hundred trials against the bound",
+  "notes": "The same graph, 100 independent trials. The bound promises each one at least 2/(8·7) = 1/28, about 3.6%, of finding the bridge. Here 43 of the 100 find it, and most of the others cut off one corner vertex with 3 edges. The bound is for the worst graph, not this one.",
+  "settings": {
+    "pick": "edge",
+    "trials": 100,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, A-C, B-C, B-D, C-D, A-D, D-E, E-F, E-G, F-G, F-H, G-H, E-H"], ["trials"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

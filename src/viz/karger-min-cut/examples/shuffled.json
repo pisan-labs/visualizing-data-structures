@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "karger-min-cut",
+  "id": "shuffled",
+  "title": "Shuffle once, then go in order",
+  "notes": "With the Kruskal-style setting the trial shuffles all 13 edges once and contracts them in that order, skipping any edge whose ends are already together. Real code does it this way, with a union-find.",
+  "settings": {
+    "pick": "shuffle",
+    "trials": 100,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "A-B, A-C, B-C, B-D, C-D, A-D, D-E, E-F, E-G, F-G, F-H, G-H, E-H"],
+    ["contract"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

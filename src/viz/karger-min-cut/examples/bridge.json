@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "karger-min-cut",
+  "id": "bridge",
+  "title": "One trial finds the bridge",
+  "notes": "Two groups of four, every pair inside a group joined, and one edge D-E between them. 12 of the 13 edges are inside a group, so most picks close up a group. This trial never picks D-E, and the bridge is what is left: a minimum cut of one edge.",
+  "settings": {
+    "pick": "edge",
+    "trials": 100,
+    "layout": "force"
+  },
+  "seed": 8,
+  "ops": [
+    ["load", "A-B, A-C, B-C, B-D, C-D, A-D, D-E, E-F, E-G, F-G, F-H, G-H, E-H"],
+    ["contract"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

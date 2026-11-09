@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "karger-min-cut",
+  "id": "cycle-cuts",
+  "title": "A cycle: every trial wins",
+  "notes": "A cycle of 6. Any two edges make a minimum cut, and there are 15 of them, so every trial ends on one. Each particular cut comes up only about 1 time in 15, exactly 2/(n(n−1)): this is the graph that makes the bound tight.",
+  "settings": {
+    "pick": "edge",
+    "trials": 100,
+    "layout": "force"
+  },
+  "seed": 1,
+  "ops": [["load", "A-B, B-C, C-D, D-E, E-F, F-A"], ["trials"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

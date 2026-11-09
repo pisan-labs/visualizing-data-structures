@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "strassen",
+  "id": "padding",
+  "title": "A 3 × 3 product, padded to 4 × 4",
+  "notes": "3 is not a power of 2, so both matrices get a row and a column of zeros. The split is even again, and the zeros cost multiplications: 49 for a product the schoolbook method does in 27.",
+  "settings": {
+    "method": "strassen",
+    "names": "clrs"
+  },
+  "seed": 1,
+  "ops": [["multiply", "1 2 3; 4 5 6; 7 8 9 * 9 8 7; 6 5 4; 3 2 1"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

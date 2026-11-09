@@ -296,7 +296,7 @@ const hasEdge: Op = {
       step(
         s,
         c,
-        `${yes ? 'Yes' : 'No'}: ${label} ${yes ? 'is' : 'is not'} an edge. ${costLine(c)} The matrix always needs one check; the list at most the ${g.directed ? 'out-degree' : 'degree'} of ${u}, ${deg}; the edge list at most E = ${g.edges.length}.`,
+        `${yes ? 'Yes' : 'No'}: ${label} ${yes ? 'is' : 'is not'} an edge. ${costLine(c)} The matrix always needs one check; the list at most the ${g.directed ? 'out-degree' : 'degree'} of ${u}, ${deg}; the edge list at most one per edge, ${g.edges.length}.`,
         [],
         1,
         yes ? [mark(edgeId(edgeKey(g, u, v)), 'found')] : [],

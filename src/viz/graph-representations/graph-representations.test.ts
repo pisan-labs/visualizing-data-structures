@@ -203,6 +203,18 @@ describe('graph representations', () => {
         expect(2 * l.indent + l.text.length, `${l.id}: ${l.text}`).toBeLessThanOrEqual(33);
   });
 
+  it('does not write E for the edge count next to a vertex named E', () => {
+    const t = new Timeline(def, defaults, 1, [
+      ['load', 'A-B, A-C, B-C, C-E, E-F'],
+      ['hasEdge', 'E-F'],
+    ]);
+    const say = t.entries[1]!.steps.at(-1)!.say;
+    expect(say).toContain(
+      'the list at most the degree of E, 2; the edge list at most one per edge, 5.',
+    );
+    expect(say).not.toMatch(/at most E =/);
+  });
+
   it('counts the matrix copy when a vertex is added', () => {
     const t = new Timeline(def, defaults, 1, [['addVertex', 'I']]);
     const v = t.entries[0]!.steps.at(-1)!.vars!;

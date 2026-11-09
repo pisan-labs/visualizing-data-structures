@@ -74,6 +74,8 @@ function vars(s: S, settings: DequeSettings, more: Record<string, Scalar> = {}, 
   return out;
 }
 
+/** "1 item", "3 items". */
+const itemCount = (k: number) => `${k} item${k === 1 ? '' : 's'}`;
 const mark = (id: string, role: Mark['role']): Mark => ({ id, role });
 
 /**
@@ -122,7 +124,7 @@ function* fullCheck(
       mark(`v${incoming.uid}`, 'error'),
     ],
     say: gap
-      ? `The slot after rear is front itself, so the deque is full: it holds ${n - 1} items, and the one free slot must stay empty. Deque overflow: ${v} is not added.`
+      ? `The slot after rear is front itself, so the deque is full: it holds ${itemCount(n - 1)}, and the one free slot must stay empty. Deque overflow: ${v} is not added.`
       : `count equals capacity, so all ${n} slots are in use. Deque overflow: ${v} is not added.`,
     lines: [`${op}.overflow`],
     vars: vars(s, settings, { x: incoming.value }),
@@ -568,7 +570,7 @@ export function initialSay(state: S, settings: DequeSettings): string {
   const n = state.capacity;
   return counting(settings)
     ? `An empty deque: an array A with capacity ${n}, front = 0, rear = 0 and count = 0. Items can join or leave at either end, and all ${n} slots can be used.`
-    : `An empty deque: an array A with capacity ${n}, front = 0 and rear = 0. Items can join or leave at either end. front == rear means empty, so one slot stays free and the deque holds at most ${n - 1} items.`;
+    : `An empty deque: an array A with capacity ${n}, front = 0 and rear = 0. Items can join or leave at either end. front == rear means empty, so one slot stays free and the deque holds at most ${itemCount(n - 1)}.`;
 }
 
 export function initialVars(state: S, settings: DequeSettings) {

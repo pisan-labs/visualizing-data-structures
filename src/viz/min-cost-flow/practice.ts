@@ -75,7 +75,7 @@ export function minCostPractice(def: () => Def): PracticeKind[] {
               'Successive shortest paths starts with no flow. Type the first path it pushes flow along, from s to t.',
             setup,
             answer: { kind: 'sequence', value: first.p },
-            explain: `With no flow yet, the residual network is the network itself, so the first path is simply the cheapest: ${pathText(first.p)} at ${first.unit} per unit. The next cheapest costs ${all[1]!.cost}. It pushes ${first.b}, all the room that path has.`,
+            explain: `With no flow yet, the residual network is the network itself, so the first path is simply the cheapest: ${pathText(first.p)} at ${first.unit} per unit. The next cheapest costs ${all[1]!.cost}. The push along ${pathText(first.p)} sends ${first.b}, all the room it has.`,
             watch,
           };
         }

@@ -1,3 +1,4 @@
+import './deck.css';
 import type { Step } from '../../engine/types';
 import {
   keyShapeId,
@@ -14,19 +15,50 @@ import {
   pedgeId,
   reach,
   vlabelId,
+  type PNode,
   type PersistentExtra,
   type PersistentSettings,
   type PersistentState,
 } from './model';
 
-/** Every node gets its own column, in key order (copies of one key side by side, oldest first). */
+/**
+ * Every key gets its own column, in key order. The copies of one key stack like a deck: the
+ * copy in the version looked at (or the newest) in front, older copies peeking out above and to
+ * the left. Edges from the copies of a key then run together instead of crossing each other:
+ * side by side, a copy's right edge would cross the left edge of every copy to its right.
+ */
 const P = 40;
 const GAP = 64;
-/** The row of version labels, and the argument box above it. */
-const VY = -(R + 40);
-const AY = VY - 40;
+/** How far each copy further back in a deck sits from the one in front of it. */
+const DECK = { x: -9, y: -6 };
+/** The row of version labels sits this far above the highest node, the argument box above it. */
+const LABEL_RISE = R + 40;
 const LBL = { w: 36, h: 24 };
 const DIM = 0.3;
+
+/**
+ * Centres for labels of width w that want to sit at `want` (sorted), at least w apart: labels
+ * that would overlap form a block, centred on the mean of what its labels want.
+ */
+function packRow(want: number[], w: number): number[] {
+  const blocks: { n: number; sum: number; x: number }[] = [];
+  want.forEach((x) => {
+    let b = { n: 1, sum: x, x };
+    for (;;) {
+      const prev = blocks[blocks.length - 1];
+      if (!prev || prev.x + prev.n * w <= b.x) break;
+      blocks.pop();
+      const n = prev.n + b.n;
+      const sum = prev.sum + b.sum;
+      // Centre the block on the mean of the centres its labels want.
+      b = { n, sum, x: sum / n - ((n - 1) * w) / 2 };
+    }
+    blocks.push(b);
+  });
+  const out: number[] = [];
+  for (const b of blocks) for (let k = 0; k < b.n; k++) out.push(b.x + k * w);
+  return out;
+}
 
 export function view(
   step: Step<PersistentState, PersistentExtra>,
@@ -34,15 +66,43 @@ export function view(
 ): Scene {
   const { state: s, extra = {} } = step;
   const roles = rolesOf(step.marks);
-  const all = Object.values(s.nodes).sort((a, b) => a.key - b.key || a.uid - b.uid);
-  const mid = (all.length - 1) / 2;
-  const pos = new Map(all.map((n, i) => [n.uid, { x: (i - mid) * P, y: n.depth * GAP }]));
   const cur = s.versions[s.current]!;
   const live = new Set(reach(s, cur.root));
   const made = new Set(extra.made ?? []);
   const onPath = new Set(extra.path ?? []);
   // While an update runs, its new nodes are not in any version yet: draw them solid too.
   const solid = (u: number) => live.has(u) || made.has(u);
+  // A column per key, in key order, holding a deck per depth. In a deck, front to back: a copy
+  // this update made, then the copy in the version looked at, then newest first.
+  const rank = (n: PNode) => (made.has(n.uid) ? 2 : live.has(n.uid) ? 1 : 0);
+  const columns = new Map<number, Map<number, PNode[]>>();
+  for (const n of Object.values(s.nodes)) {
+    const col = columns.get(n.key) ?? new Map<number, PNode[]>();
+    col.set(n.depth, [...(col.get(n.depth) ?? []), n]);
+    columns.set(n.key, col);
+  }
+  const keys = [...columns.keys()].sort((a, b) => a - b);
+  const decks = keys.flatMap((k) => [...columns.get(k)!.values()]);
+  for (const deck of decks) deck.sort((a, b) => rank(b) - rank(a) || b.uid - a.uid);
+  const pos = new Map<number, { x: number; y: number }>();
+  let cursor = 0;
+  for (const k of keys) {
+    const col = [...columns.get(k)!.values()];
+    const base = cursor - (Math.max(...col.map((d) => d.length)) - 1) * DECK.x;
+    for (const deck of col)
+      deck.forEach((n, i) =>
+        pos.set(n.uid, { x: base + i * DECK.x, y: n.depth * GAP + i * DECK.y }),
+      );
+    cursor = base + P;
+  }
+  const shift = keys.length ? (cursor - P) / 2 : 0;
+  for (const p of pos.values()) p.x -= shift;
+  // Back to front, so a deck's front copy is drawn over the ones behind it.
+  const all = decks.flatMap((deck) => [...deck].reverse());
+  const front = new Set(decks.map((deck) => deck[0]!.uid));
+  const top = Math.min(0, ...[...pos.values()].map((p) => p.y));
+  const VY = top - LABEL_RISE;
+  const AY = VY - 40;
   const shapes: Shape[] = [];
   const boxes: Bounds[] = [];
 
@@ -68,6 +128,9 @@ export function view(
     const role = roles.get(nodeShapeId(n.uid)) ?? (onPath.has(n.uid) ? 'visit' : undefined);
     const opacity = solid(n.uid) || role ? undefined : DIM;
     const text = String(n.key);
+    // A faded copy gets an opaque backing, so the deck reads as cards, not overlapping rings.
+    if (opacity !== undefined)
+      shapes.push({ kind: 'circle', id: `pback-${n.uid}`, x: p.x, y: p.y, r: R, cls: 'pb-back' });
     shapes.push({
       kind: 'circle',
       id: nodeShapeId(n.uid),
@@ -88,7 +151,8 @@ export function view(
       anchor: 'middle',
       weight: 'bold',
       role,
-      opacity,
+      // Texts are drawn above every circle: only a deck's front copy shows its key.
+      opacity: front.has(n.uid) ? opacity : 0,
     });
     boxes.push({ x: p.x - R, y: p.y - R, w: 2 * R, h: 2 * R });
   }
@@ -100,13 +164,14 @@ export function view(
     x: v.root === null ? -Infinity : pos.get(v.root)!.x,
   }));
   want.sort((a, b) => a.x - b.x || a.i - b.i);
-  let next = -Infinity;
   // Empty versions go first, left of every node.
-  const firstX = all.length ? pos.get(all[0]!.uid)!.x - P : 0;
-  for (const w of want) {
-    const desired = Number.isFinite(w.x) ? w.x : Math.max(firstX, next);
-    const x = Math.max(desired, next);
-    next = x + LBL.w + 4;
+  const firstX = pos.size ? Math.min(...[...pos.values()].map((p) => p.x)) - P : 0;
+  const xs = packRow(
+    want.map((w) => (Number.isFinite(w.x) ? w.x : firstX)),
+    LBL.w + 4,
+  );
+  want.forEach((w, k) => {
+    const x = xs[k]!;
     const v = s.versions[w.i]!;
     const id = vlabelId(w.i);
     const role = roles.get(id) ?? (w.i === s.current ? 'active' : undefined);
@@ -160,7 +225,7 @@ export function view(
       boxes.push({ x: x - 12, y: VY + LBL.h / 2, w: 24, h: 20 });
     }
     boxes.push({ x: x - LBL.w / 2, y: VY - LBL.h / 2, w: LBL.w, h: LBL.h });
-  }
+  });
 
   // The argument, top left.
   if (extra.arg) {

@@ -212,7 +212,8 @@ function arrangeAt(
 
 /**
  * A product state's name is its pair, "p0,q1". It goes on two lines in its circle, p over q,
- * so even a pair such as "dead,q1" fits inside the accept ring; short names get larger type.
+ * so even a pair such as "dead,q1" fits inside the accept ring; short names get larger type, and
+ * four-letter ones regular weight.
  */
 function pairLabels(shapes: Shape[], prefix: string): Shape[] {
   return shapes.flatMap((sh): Shape[] => {
@@ -221,9 +222,18 @@ function pairLabels(shapes: Shape[], prefix: string): Shape[] {
     const [p, q] = sh.text.split(',') as [string, string];
     const longest = Math.max(p.length, q.length);
     const size = longest <= 2 ? 14 : longest <= 4 ? 13 : 10;
-    const half = size / 2;
+    // A four-letter name ("dead") in bold just spills over the accept ring: set it in regular
+    // weight and pull the two lines in a little, where the ring is wider.
+    const long = longest >= 4;
+    const half = size * (long ? 0.45 : 0.5);
     const cy = sh.y - (sh.size ?? 15) * 0.35;
-    const top: TextShape = { ...sh, text: p, size, y: cy - half + size * 0.35 };
+    const top: TextShape = {
+      ...sh,
+      text: p,
+      size,
+      y: cy - half + size * 0.35,
+      ...(long ? { weight: 'normal' as const } : {}),
+    };
     return [top, { ...top, id: `${sh.id}2`, text: q, y: cy + half + size * 0.35 }];
   });
 }

@@ -174,7 +174,7 @@ export const interpolationSearch: VizDef<ArrayState, InterpolationSettings, Arra
     unsorted,
   ] as unknown as SavedExample[],
   practice: interpolationPractice(() => interpolationSearch),
-  preview: { example: 'skewed', level: 2 },
+  preview: { example: 'one-probe', level: 2 },
 };
 
 export default interpolationSearch;

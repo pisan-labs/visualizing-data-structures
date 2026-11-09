@@ -1,0 +1,10 @@
+/*
+ * Word labels under the trie's nodes get a halo in the stage's background colour, so a link
+ * curve that passes behind a label stops short of its letters instead of running through them.
+ */
+svg .shape.text.ac-word {
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}

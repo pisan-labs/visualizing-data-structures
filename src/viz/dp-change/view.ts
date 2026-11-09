@@ -110,6 +110,18 @@ export function view(
     roles,
   });
   const out: Shape[] = shapes;
+  // An arc that reads the cell next door is narrower than its label, which then sits right on
+  // the arrowhead and the other arcs coming down into the same cell: put the label beside the
+  // arc's left end instead, level with it. Only in the lowest lane, which has nothing below it.
+  for (const r of extra.reads ?? []) {
+    if (Math.abs(r.to[1] - r.from[1]) !== 1 || state.coins.indexOf(r.coin ?? 0) !== 0) continue;
+    const over = out.find((sh) => sh.id === `link-read-${r.coin}-over`);
+    const label = out.find((sh) => sh.id === `link-read-${r.coin}-label`);
+    if (over?.kind !== 'arrow' || label?.kind !== 'text') continue;
+    label.x = Math.min(over.x1, over.x2) - 6;
+    label.y = over.y1 + 5;
+    label.anchor = 'end';
+  }
   const x = (k: number) => g.gridLeft + (k + 0.5) * g.cellW;
   const w = Math.min(g.cellW - 6, 46);
   const opts = (label: string) => ({ w, h: STRIP_H, label, labelX: g.gridLeft - 10 });

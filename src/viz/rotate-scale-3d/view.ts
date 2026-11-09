@@ -5,6 +5,7 @@ import {
   column3,
   drawAxes3,
   drawPoint3,
+  project,
   drawSegment3,
   drawVector3,
   makeSpace,
@@ -72,6 +73,16 @@ function draw(
   // Where the shape started, faint.
   edges('base', def.pts, undefined, true, 0.35);
 
+  // A vector's label sits past its tip by half its own width and a gap, so the arrowhead stays
+  // clear (the default offset suits one-letter labels).
+  const past = (to: Vec3, label: string) => {
+    const a = pl.at(project(O, space.kind));
+    const b = pl.at(project(to, space.kind));
+    const d = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+    const k = textW(label, 14) / 2 + 9;
+    return { dx: ((b.x - a.x) / d) * k, dy: ((b.y - a.y) / d) * k + 5 };
+  };
+
   // Everything applied so far: where M sends e1, e2, e3.
   (['m1', 'm2', 'm3'] as const).forEach((id, j) =>
     drawVector3(shapes, space, {
@@ -80,6 +91,7 @@ function draw(
       to: column3(s.m, j),
       role: roles.get(id),
       label: `Me${'₁₂₃'[j]}`,
+      ...past(column3(s.m, j), `Me${'₁₂₃'[j]}`),
       size: 14,
       opacity: roles.has(id) ? 1 : 0.75,
     }),
@@ -95,6 +107,7 @@ function draw(
         to: column3(m, j),
         role: 'active',
         label: `${extra.op!.name}e${'₁₂₃'[j]}`,
+        ...past(column3(m, j), `${extra.op!.name}e${'₁₂₃'[j]}`),
         size: 14,
       }),
     );

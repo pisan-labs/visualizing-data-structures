@@ -283,6 +283,9 @@ export function drawVector3(
     opacity?: number;
     label?: string;
     size?: number;
+    /** The label's offset from the tip; the default is drawVector's. */
+    dx?: number;
+    dy?: number;
   },
 ): void {
   drawVector(shapes, space.plane, {

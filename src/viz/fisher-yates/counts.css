@@ -1,0 +1,10 @@
+/*
+ * Bar counts get a halo in the stage's background colour: a count close to 1/6 of the shuffles
+ * sits on the dashed even line, which then stops short of its digits.
+ */
+svg .shape.text.fy-count {
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}

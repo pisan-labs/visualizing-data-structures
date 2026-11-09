@@ -1,0 +1,5 @@
+/* The opaque backing behind a faded copy in a deck of copies of one key (see view.ts). */
+svg .shape.circle.pb-back {
+  fill: var(--surface);
+  stroke: none;
+}

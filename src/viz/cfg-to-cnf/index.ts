@@ -187,7 +187,7 @@ export const cfgToCnf: VizDef<CnfState, CnfSettings, CnfExtra> = {
     },
   ],
   practice: cnfPractice(() => cfgToCnf),
-  preview: { example: 'every-stage', level: 2 },
+  preview: { example: 'every-stage', level: 2, hide: ['r-'] },
   code: {
     python: pythonSource,
     java: javaSource,

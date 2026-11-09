@@ -1,7 +1,10 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { makeRng } from '../../engine/rng';
+import { validateExample } from '../../engine/example';
 import { Timeline } from '../../engine/timeline';
+import { textWidth } from '../../layouts/text';
+import { LAPTOP_STAGE } from '../../render/stage';
 import { tsp } from '.';
 import { citiesText, distances, readCities, type Points } from './cities';
 import type { TspMethod, TspRun, TspSettings } from './model';
@@ -202,6 +205,72 @@ describe('tsp', () => {
       const st = t.entries[0]!.steps.at(-1)!;
       expect(st.say).toContain(why);
       expect(st.state).toEqual(t.initial.state);
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------------------------
+// Weights clear of arrowheads. The stage draws a head 7 stroke widths long and wide, its tip
+// a tenth of that past the line's end (src/ui/Shapes.svelte); a tour edge's stroke is 4.
+
+type P = { x: number; y: number };
+
+/** Whether two convex polygons overlap (separating axis test). */
+function polygonsOverlap(a: P[], b: P[]): boolean {
+  for (const poly of [a, b])
+    for (let i = 0; i < poly.length; i++) {
+      const p = poly[i]!;
+      const q = poly[(i + 1) % poly.length]!;
+      const n = { x: q.y - p.y, y: p.x - q.x };
+      const span = (ps: P[]) => ps.map((s) => s.x * n.x + s.y * n.y);
+      const [sa, sb] = [span(a), span(b)];
+      if (Math.max(...sa) <= Math.min(...sb) || Math.max(...sb) <= Math.min(...sa)) return false;
+    }
+  return true;
+}
+
+function headOf(s: { x1: number; y1: number; x2: number; y2: number }): P[] {
+  const size = 7 * 4;
+  const len = Math.hypot(s.x2 - s.x1, s.y2 - s.y1) || 1;
+  const [ux, uy] = [(s.x2 - s.x1) / len, (s.y2 - s.y1) / len];
+  const tip = { x: s.x2 + ux * size * 0.1, y: s.y2 + uy * size * 0.1 };
+  const base = { x: s.x2 - ux * size * 0.9, y: s.y2 - uy * size * 0.9 };
+  return [
+    tip,
+    { x: base.x - uy * (size / 2), y: base.y + ux * (size / 2) },
+    { x: base.x + uy * (size / 2), y: base.y - ux * (size / 2) },
+  ];
+}
+
+describe('drawing', () => {
+  // In "No triangle inequality, no guarantee" the 57 on E → D sat under that edge's arrowhead.
+  it('keeps every weight clear of the arrowheads', () => {
+    for (const raw of tsp.examples) {
+      const ex = validateExample(tsp, raw);
+      const t = new Timeline(tsp, ex.settings, ex.seed, ex.ops);
+      for (let i = 0; i < t.length; i++) {
+        const shapes = tsp.view(t.at(i).step, t.settings as TspSettings, LAPTOP_STAGE).shapes;
+        const heads = shapes.flatMap((s) =>
+          s.kind === 'arrow' && (s.head ?? 'end') !== 'none' && !s.via
+            ? [{ id: s.id, poly: headOf(s) }]
+            : [],
+        );
+        for (const w of shapes) {
+          if (w.kind !== 'text' || !w.id.startsWith('ew-')) continue;
+          const tw = textWidth(String(w.text), 13);
+          const [x0, y0] = [w.x - tw / 2, w.y - 4.5 - 5.5];
+          const box = [
+            { x: x0, y: y0 },
+            { x: x0 + tw, y: y0 },
+            { x: x0 + tw, y: y0 + 12 },
+            { x: x0, y: y0 + 12 },
+          ];
+          for (const h of heads)
+            expect(polygonsOverlap(box, h.poly), `${ex.id} step ${i}: ${w.id} on ${h.id}`).toBe(
+              false,
+            );
+        }
+      }
     }
   });
 });

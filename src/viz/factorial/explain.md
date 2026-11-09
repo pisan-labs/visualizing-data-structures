@@ -22,7 +22,7 @@ The time is fine. The stack depth is the part that bites. [Show me](#play:down-a
 
 ## Down and back up
 
-The drawing has two halves. On the right is the call stack, with main at the bottom and the newest frame on top. On the left is the call tree: one box per call, in the order the calls happen. For factorial the tree is a straight line, because each call makes exactly one more call.
+The drawing has two parts. The call tree has one box per call, in the order the calls happen. Beside it (under it, on a phone) is the call stack, with main at the bottom and the newest frame on top. For factorial the tree is a straight line, because each call makes exactly one more call.
 
 On the way down, each frame stops on line 4 with a multiplication it cannot do yet: `4 * factorial(3)`, `3 * factorial(2)`, and so on. On the way back, each answer drops into the frame that asked for it, and that frame finishes its multiplication: 1, 1, 2, 6, 24. The first frame to answer is the last one pushed. Last in, first out. That's a stack.
 

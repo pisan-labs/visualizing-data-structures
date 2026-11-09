@@ -235,4 +235,21 @@ describe('drawn text size', () => {
     expect(smallestText(factorial, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
     expect(smallestText(factorial, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
   });
+
+  it('puts the stack beside the call tree on a laptop and under it on a phone, as the page says', () => {
+    const t = new Timeline(factorial, settings(), 1, [['factorial', 4]]);
+    const step = t.at(t.length - 1).step;
+    const mean = (stage: typeof LAPTOP_STAGE, prefix: string, key: 'x' | 'y') => {
+      const vs = factorial
+        .view(step, settings(), stage)
+        .shapes.filter((s) => s.id.startsWith(prefix))
+        .map((s) => (s as { x?: number; y?: number })[key])
+        .filter((v): v is number => typeof v === 'number');
+      return vs.reduce((a, b) => a + b, 0) / vs.length;
+    };
+    expect(mean(LAPTOP_STAGE, 'frame-', 'x')).toBeGreaterThan(
+      mean(LAPTOP_STAGE, 'call-', 'x') + 50,
+    );
+    expect(mean(PHONE_STAGE, 'frame-', 'y')).toBeGreaterThan(mean(PHONE_STAGE, 'call-', 'y') + 100);
+  });
 });

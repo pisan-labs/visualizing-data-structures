@@ -146,4 +146,10 @@ describe('deque (circular array)', () => {
     expect(parseDequeValue('')).toBeInstanceOf(Error);
     expect(parseDequeValue('1234567')).toBeInstanceOf(Error);
   });
+
+  it('names the Java class so it does not shadow java.util.ArrayDeque', () => {
+    const java = dequeArray.code!.java!;
+    expect(java).toMatch(/public class CircularDeque<T>/);
+    expect(java).not.toMatch(/\bArrayDeque\b/);
+  });
 });

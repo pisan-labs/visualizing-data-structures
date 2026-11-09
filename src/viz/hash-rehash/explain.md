@@ -37,7 +37,7 @@ Q: A table of 5 slots grows to 11 when the 4th key arrives (threshold 0.75). Wha
 
 ## Choosing the threshold
 
-The **Grow when α would pass** option sets the trade-off. A low threshold such as 0.5 wastes space but keeps probe sequences short: [Threshold 0.5: more room, more moves](#example:half-full). A high one saves space and pays in probes. With 1.0 the table only grows when it is completely full, which is how CLRS describes dynamic tables. With linear probing that means the last few inserts before a rehash walk long runs of taken slots: [Threshold 1.0: grow only when full](#example:threshold-one).
+The **Grow when α would pass** option sets the trade-off. A low threshold such as 0.5 wastes space but keeps probe sequences short: [Threshold 0.5: grow sooner, use more room](#example:half-full). A high one saves space and pays in probes. With 1.0 the table only grows when it is completely full, which is how CLRS describes dynamic tables. With linear probing that means the last few inserts before a rehash walk long runs of taken slots: [Threshold 1.0: grow only when full](#example:threshold-one).
 
 Java's `HashMap`, which uses chaining, grows at 0.75. Open addressing tends to grow earlier, because its probes get expensive faster than chains do: Sedgewick keeps linear probing at most half full, and CPython's `dict` grows at two thirds.
 

@@ -229,6 +229,14 @@ describe('leftist heap', () => {
     expect(npls('0')).toEqual(['1', '1']);
   });
 
+  // The opening narration called npl "the distance to the nearest empty spot below it, with
+  // npl(nil) = −1", which makes a leaf 1, not 0.
+  it('defines npl to match the convention it names', () => {
+    const say = (nil: '-1' | '0') => new Timeline(leftistHeap, { npl: nil }, 1, []).at(0).step.say;
+    expect(say('-1')).toContain('so a leaf has 0 and npl(nil) = −1');
+    expect(say('0')).toContain('so npl(nil) = 0 and a leaf has 1');
+  });
+
   it('refuses bad input without changing the heap', () => {
     const t = new Timeline(leftistHeap, leftistHeap.defaults, 1, [
       ['insert', 5],

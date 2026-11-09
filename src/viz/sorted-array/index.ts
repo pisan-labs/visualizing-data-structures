@@ -124,7 +124,7 @@ export const sortedArray: VizDef<SortedState, SortedSettings, SortedExtra> = {
       best: { cost: 'O(1)', why: 'x is the middle item, the first one checked.' },
       average: {
         cost: 'O(log n)',
-        why: 'Each comparison halves the range.',
+        why: 'Each round of two comparisons halves the range.',
         example: 'binary-search',
       },
       worst: {

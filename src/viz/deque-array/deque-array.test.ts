@@ -66,6 +66,16 @@ describe('deque (circular array)', () => {
     ]);
   });
 
+  // Capacity 2 with one slot left empty used to say "holds at most 1 items".
+  it('says "1 item" when two slots hold one', () => {
+    const t = run(settings({ capacity: 2 }), [
+      ['addFirst', 1],
+      ['addLast', 2],
+    ]);
+    expect(t.at(0).step.say).toContain('holds at most 1 item.');
+    expect(lastStep(t, 1).say).toContain('it holds 1 item,');
+  });
+
   it('matches a reference deque, with invariants on every step', () => {
     const value = fc.integer({ min: 0, max: 99 });
     const call = fc.oneof(

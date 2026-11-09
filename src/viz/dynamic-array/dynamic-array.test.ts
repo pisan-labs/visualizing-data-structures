@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { practiceSet } from '../../engine/practice';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, Value } from '../../engine/types';
 import { dynamicArray, parseDynValue } from '.';
@@ -121,6 +122,18 @@ describe('dynamic array', () => {
     ]);
     expect(thrash.entries.map((e) => e.end.capacity).slice(4)).toEqual([8, 4, 8, 4]);
     expect(thrash.endState().copies).toBe(16);
+  });
+
+  // A one-item copy said "All 1 items are in B now", and a one-slot array "with 1 slots".
+  it('says "1 item" and "1 slot"', () => {
+    const t = run(settings({ shrink: 'half' }), [...appends(2), ['removeLast']]);
+    const says = t.entries.flatMap((e) => e.steps.map((s) => s.say)).join(' ');
+    expect(says).toContain('The only item is in B now: 1 copy');
+    expect(says).toContain('Allocate a new array B with 1 slot.');
+    expect(says).not.toMatch(/\b1 (items|slots|values)\b/);
+    for (let seed = 1; seed <= 200; seed++)
+      for (const { question: q } of practiceSet(dynamicArray, seed, 4))
+        expect(`${q.prompt} ${q.explain}`).not.toMatch(/\b1 (items|slots|values)\b/);
   });
 
   it('shifts on insert and remove, and refuses bad indices', () => {

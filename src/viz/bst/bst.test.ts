@@ -290,6 +290,19 @@ describe('binary search tree', () => {
     expect(says.at(-1)).toContain('45 is not in the tree');
   });
 
+  // select said "skip those 1 keys" and rank "so 1 keys are smaller".
+  it('says "1 key" in select and rank', () => {
+    const t = new Timeline(bst, bst.defaults, 1, [
+      ...[10, 20, 30].map((k) => ['insert', k] as OpCall),
+      ['select', 2],
+      ['rank', 20],
+    ]);
+    const says = t.entries.slice(3).flatMap((e) => e.steps.map((s) => s.say));
+    expect(says.join(' ')).not.toMatch(/\b1 keys\b/);
+    expect(says.join(' ')).toContain('skip that 1 key and go right');
+    expect(says.join(' ')).toContain('so 1 key is smaller');
+  });
+
   it('rejects, counts, or updates a key that is already there', () => {
     const run = (s: Partial<BSTSettings>, calls: OpCall[]) =>
       new Timeline(bst, { ...bst.defaults, ...s } as BSTSettings, 1, calls);

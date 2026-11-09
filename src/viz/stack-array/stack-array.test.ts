@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { practiceSet } from '../../engine/practice';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, Value } from '../../engine/types';
 import { parseStackValue, stackArray } from '.';
@@ -105,6 +106,17 @@ describe('stack (array)', () => {
     expect(parseStackValue('cat')).toBe('cat');
     expect(parseStackValue('  ')).toBeInstanceOf(Error);
     expect(parseStackValue('toolongvalue')).toBeInstanceOf(Error);
+  });
+});
+
+describe('practice', () => {
+  // A random filler once repeated a stacked value: push(43), push(54) offered 66, 43, 54, 43.
+  it('offers each choice once', () => {
+    for (let seed = 1; seed <= 300; seed++)
+      for (const { question } of practiceSet(stackArray, seed, 4)) {
+        const a = question.answer;
+        if (a.kind === 'choice') expect(new Set(a.options).size).toBe(a.options.length);
+      }
   });
 });
 

@@ -66,6 +66,9 @@ export function init(): S {
   return emptyState();
 }
 
+/** "key" for one, "keys" otherwise: t - 1 = 1 key when t = 2. */
+const keysWord = (n: number) => (n === 1 ? 'key' : 'keys');
+
 const done = (W: Work) => {
   const st = W.snap();
   return `N = ${keysOf(st).length}, height = ${heightOf(st)}.`;
@@ -91,7 +94,7 @@ function* splitChild(c: Ctx, x: number, i: number, t: number): Generator<BStep, 
   const root = W.n(x).keys.length === 1 && W.root === x;
   yield snap(
     c,
-    `Split ${before}: its middle key ${mid.key} moves up into ${root ? 'the new root' : 'the parent'}, ${label(W, x)}. A new node takes the ${t - 1} keys above it, so ${label(W, yU)} and ${label(W, z)} each keep t - 1 = ${t - 1}, the fewest a node may hold.`,
+    `Split ${before}: its middle key ${mid.key} moves up into ${root ? 'the new root' : 'the parent'}, ${label(W, x)}. A new node takes the ${t - 1 === 1 ? 'key' : `${t - 1} keys`} above it, so ${label(W, yU)} and ${label(W, z)} each keep t - 1 = ${t - 1}, the fewest a node may hold.`,
     ['sp.y', 'sp.z', 'sp.kids', 'sp.keep', 'sp.up', 'sp.link'],
     1,
     [cellMark(mid, 'active'), nodeMark(yU, 'new'), nodeMark(z, 'new'), nodeMark(x, 'active')],
@@ -269,7 +272,7 @@ const insert: Op = {
         {
           most: `2t - 1 = ${2 * t - 1} keys`,
           over: `2t = ${2 * t} keys`,
-          halves: `keep t = ${t} and t - 1 = ${t - 1} keys`,
+          halves: `keep t = ${t} and t - 1 = ${t - 1} ${keysWord(t - 1)}`,
         },
         readouts,
       );
@@ -402,7 +405,7 @@ function* deleteGen(s: S, k: number, t: number): Gen {
       if (z.keys.length >= t) {
         yield snap(
           c,
-          `${target} is in the internal node ${label(W, x)}, but the child before it, ${label(W, yU)}, has only t - 1 = ${min} keys, so it cannot spare its largest.`,
+          `${target} is in the internal node ${label(W, x)}, but the child before it, ${label(W, yU)}, has only t - 1 = ${min} ${keysWord(min)}, so it cannot spare its largest.`,
           ['del.inner', 'del.2a'],
           3,
           [cellMark(hit, 'active'), nodeMark(yU, 'active')],
@@ -414,7 +417,7 @@ function* deleteGen(s: S, k: number, t: number): Gen {
       }
       yield snap(
         c,
-        `Case 2c: ${target} is in the internal node ${label(W, x)}, and both children around it, ${label(W, yU)} and ${label(W, zU)}, have only t - 1 = ${min} keys. Merge ${target} and all of ${label(W, zU)} into ${label(W, yU)}.`,
+        `Case 2c: ${target} is in the internal node ${label(W, x)}, and both children around it, ${label(W, yU)} and ${label(W, zU)}, have only t - 1 = ${min} ${keysWord(min)}. Merge ${target} and all of ${label(W, zU)} into ${label(W, yU)}.`,
         ['del.inner', 'del.2a', 'del.2b', 'del.2c'],
         2,
         [cellMark(hit, 'active'), nodeMark(yU, 'active'), nodeMark(zU, 'active')],
@@ -462,7 +465,7 @@ function* deleteGen(s: S, k: number, t: number): Gen {
         const side = lRich ? 'left' : 'right';
         yield snap(
           c,
-          `${label(W, cU)} has only t - 1 = ${min} keys, the fewest allowed, so it cannot lose one. Case 3a: its ${side} sibling ${label(W, sib)} has ${sn.keys.length} ≥ t = ${t} keys, so borrow one through the parent.`,
+          `${label(W, cU)} has only t - 1 = ${min} ${keysWord(min)}, the fewest allowed, so it cannot lose one. Case 3a: its ${side} sibling ${label(W, sib)} has ${sn.keys.length} ≥ t = ${t} keys, so borrow one through the parent.`,
           ['del.thin', 'del.3a'],
           2,
           [
@@ -509,7 +512,7 @@ function* deleteGen(s: S, k: number, t: number): Gen {
         const sibs = [L, R].filter((u): u is number => u !== undefined).map((u) => label(W, u));
         yield snap(
           c,
-          `${label(W, cU)} has only t - 1 = ${min} keys, and so ${sibs.length === 1 ? 'does its only sibling' : 'do both its siblings'}, ${sibs.join(' and ')}: none can spare a key. Case 3b: merge ${label(W, leftU)} and ${label(W, rightU)}, pulling the key between them, ${sep.key}, down from the parent.`,
+          `${label(W, cU)} has only t - 1 = ${min} ${keysWord(min)}, and so ${sibs.length === 2 ? 'do the siblings on both sides of it' : node.kids.length === 2 ? 'does its only sibling' : 'does the sibling next to it'}, ${sibs.join(' and ')}: none can spare a key. Case 3b: merge ${label(W, leftU)} and ${label(W, rightU)}, pulling the key between them, ${sep.key}, down from the parent.`,
           ['del.thin', 'del.3a', 'del.3b'],
           2,
           [nodeMark(cU, 'error'), nodeMark(withRight ? R! : L!, 'active'), cellMark(sep, 'active')],

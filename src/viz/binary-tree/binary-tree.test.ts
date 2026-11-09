@@ -246,6 +246,21 @@ describe('binary tree', () => {
     }
   });
 
+  // The concept page said the call stack is never deeper than the height plus one. On a chain
+  // of 6 (height 5) it holds 6 node frames, and 7 while the call on nil runs.
+  it('stacks h + 1 node frames, and one more for a call on nil', () => {
+    const t = new Timeline(binaryTree, settings({ mode: 'recursive' }), 1, [
+      ['build', '1 2 _ 3 _ 4 _ 5 _ 6'],
+      ['preorder'],
+    ]);
+    const steps = t.entries[1]!.steps;
+    expect(Math.max(...steps.map((s) => Number(s.vars?.depth ?? 0)))).toBe(7);
+    const nodeFrames = steps.map((s) => (s.extra as { frames?: { uid: number | null }[] }).frames);
+    expect(Math.max(...nodeFrames.map((f) => f?.filter((x) => x.uid !== null).length ?? 0))).toBe(
+      6,
+    );
+  });
+
   it('runs every preset at every size', () => {
     for (const p of binaryTree.controls.presets!) {
       for (const n of binaryTree.controls.sizes!) {

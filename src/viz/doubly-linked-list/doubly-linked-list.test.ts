@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { practiceSet } from '../../engine/practice';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, Value } from '../../engine/types';
 import { doublyLinkedList } from '.';
@@ -235,6 +236,13 @@ describe('doubly linked list', () => {
     const hops = (k: number) =>
       Math.max(...t.entries[k]!.steps.map((s) => Number(s.vars?.hops ?? 0)));
     expect([hops(8), hops(9)]).toEqual([1, 1]);
+  });
+
+  // The nearer-end practice said "follows next 1 times" and "follows prev 0 times".
+  it('counts hops in plain words in practice', () => {
+    for (let seed = 1; seed <= 200; seed++)
+      for (const { question: q } of practiceSet(doublyLinkedList, seed, 4))
+        expect(q.explain).not.toMatch(/\b[01] times\b/);
   });
 
   it('starts as a sentinel pointing at itself', () => {

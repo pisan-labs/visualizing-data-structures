@@ -120,4 +120,10 @@ describe('floyd cycle detection', () => {
     expect(t.entries[0]!.steps.at(-1)!.vars?.cycle).toBe(false);
     expect(t.entries[2]!.steps.at(-1)!.vars).toMatchObject({ cycle: true, μ: 0, λ: 1 });
   });
+
+  // One node used to "make 1 node and link each one to the next".
+  it('builds one node without linking "each one"', () => {
+    const say = run([['build', '7']]).entries[0]!.steps[0]!.say;
+    expect(say).toContain('make 1 node and point head at it');
+  });
 });

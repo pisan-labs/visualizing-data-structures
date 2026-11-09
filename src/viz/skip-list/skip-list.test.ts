@@ -235,6 +235,19 @@ describe('skip list', () => {
     expect(search.entries.at(-1)!.steps.at(-1)!.vars?.found).toBe(false);
   });
 
+  // The Big-O row said finding the first key takes one comparison; search always goes down to
+  // level 1, so it takes one per level.
+  it('compares once per level when it searches for the first key', () => {
+    const tl = example('build');
+    const t = new Timeline(skipList, tl.settings, 1, [
+      ...tl.entries.map((e) => e.call),
+      ['search', 10],
+    ]);
+    const levels = t.entries.at(-2)!.end.level;
+    expect(levels).toBeGreaterThan(1);
+    expect(t.entries.at(-1)!.steps.at(-1)!.vars?.comparisons).toBe(levels);
+  });
+
   it('keeps pseudocode lines short enough for a phone', () => {
     for (const p of ['1/2', '1/4'] as const)
       for (const block of skipList.pseudocode({ p, maxLevel: 5, draw: 'across' }))

@@ -117,7 +117,7 @@ export function fibonacciPractice(def: () => Def): PracticeKind[] {
             prompt: `Run \`decreaseKey(${k}, ${k2})\` on the heap shown. What is the potential Φ = t(H) + 2·m(H) afterwards? t(H) counts the trees and m(H) the marked nodes.`,
             setup,
             answer: { kind: 'number', value: Number(v['Φ']) },
-            explain: `Afterwards there are ${v['t(H)']} trees and ${v['m(H)']} marked nodes, so Φ = ${v['t(H)']} + 2·${v['m(H)']} = ${v['Φ']}.`,
+            explain: `Afterwards there ${v['t(H)'] === 1 ? 'is 1 tree' : `are ${v['t(H)']} trees`} and ${v['m(H)']} marked ${v['m(H)'] === 1 ? 'node' : 'nodes'}, so Φ = ${v['t(H)']} + 2·${v['m(H)']} = ${v['Φ']}.`,
             watch: [call],
           };
         }

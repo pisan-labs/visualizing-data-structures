@@ -44,7 +44,9 @@ export function stackPractice(def: () => Def): PracticeKind[] {
         if (rng.int(0, 1)) setup.push(['pop']);
         const stack = contents(run(setup));
         const top = stack[stack.length - 1]!;
-        const others = shuffle(rng, [...stack.slice(0, -1), ...distinct(rng, 3).map(String)])
+        // A random filler can repeat a value already on the stack: offer each value once.
+        const fillers = new Set([...stack.slice(0, -1), ...distinct(rng, 3).map(String)]);
+        const others = shuffle(rng, [...fillers])
           .filter((v) => v !== top)
           .slice(0, 3);
         const options = shuffle(rng, [top, ...others]);

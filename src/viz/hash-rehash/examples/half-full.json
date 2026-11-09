@@ -2,8 +2,8 @@
   "format": 1,
   "viz": "hash-rehash",
   "id": "half-full",
-  "title": "Threshold 0.5: more room, more moves",
-  "notes": "The same ten keys as the amortized example, but the table grows as soon as α would pass 0.5. It grows three times instead of two, so the total cost is higher, but the table is never more than half full and probe sequences stay short.",
+  "title": "Threshold 0.5: grow sooner, use more room",
+  "notes": "The same ten keys as the amortized example, but the table grows as soon as α would pass 0.5. It still grows twice, just sooner, at the 3rd and 6th inserts, when fewer keys have to move: 17 in total instead of 21. The price is space: 10 keys in 23 slots.",
   "settings": { "m0": 5, "threshold": "0.5", "grow": "prime" },
   "seed": 1,
   "ops": [

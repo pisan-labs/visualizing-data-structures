@@ -481,7 +481,7 @@ function* deleteGen(s: S, k: number, m: number): Gen {
     const sibs = [left, right].filter((v): v is number => v !== undefined);
     yield step(
       c,
-      `${sibs.length === 1 ? 'Its only sibling' : 'Its siblings'}, ${sibs.map((v) => label(W, v)).join(' and ')}, ${sibs.length === 1 ? 'has' : 'have'} no key to spare. Merge ${label(W, lU)} with ${label(W, rU)}.`,
+      `${sibs.length === 2 ? 'Its siblings on both sides' : pn.kids.length === 2 ? 'Its only sibling' : 'The sibling next to it'}, ${sibs.map((v) => label(W, v)).join(' and ')}, ${sibs.length === 1 ? 'has' : 'have'} no key to spare. Merge ${label(W, lU)} with ${label(W, rU)}.`,
       ['del.rich', 'del.else', 'del.merge'],
       2,
       [

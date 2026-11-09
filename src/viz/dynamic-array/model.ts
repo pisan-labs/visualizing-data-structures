@@ -103,6 +103,8 @@ function vars(s: S, more: Record<string, Scalar> = {}) {
   return out;
 }
 
+/** "1 slot", "4 slots". */
+const slotCount = (k: number) => `${k} slot${k === 1 ? '' : 's'}`;
 const mark = (id: string, role: Mark['role']): Mark => ({ id, role });
 
 function amortized(s: S): string {
@@ -129,7 +131,7 @@ function* resize(
   yield {
     state: s,
     marks: [mark(`name-${gen}`, 'new')],
-    say: `${reason} Allocate a new array B with ${capacity} slots.`,
+    say: `${reason} Allocate a new array B with ${slotCount(capacity)}.`,
     lines: [...lines, 'resize.alloc'],
     vars: vars(s, { ...more, ...c }),
     level: 2,
@@ -146,7 +148,7 @@ function* resize(
       state: cur,
       marks: [mark(cellId(gen, k), 'new'), mark(`v${slot.uid}`, 'active')],
       say: last
-        ? `${copied} All ${s.size} items are in B now: ${s.size} ${s.size === 1 ? 'copy' : 'copies'} for this resize, ${cur.copies} in total.`
+        ? `${copied} ${s.size === 1 ? 'The only item is' : `All ${s.size} items are`} in B now: ${s.size} ${s.size === 1 ? 'copy' : 'copies'} for this resize, ${cur.copies} in total.`
         : copied,
       lines: ['resize.loop', 'resize.copy'],
       vars: vars(cur, { ...more, ...c, k }),
@@ -222,7 +224,7 @@ function* shrinkIfSparse(
       marks: [mark('size', 'compare')],
       say:
         s.size === 0
-          ? `size is 0, so there is nothing to copy and the array keeps its ${s.capacity} slots.`
+          ? `size is 0, so there is nothing to copy and the array keeps its ${slotCount(s.capacity)}.`
           : `Shrink? size = ${s.size}, and ${part} of capacity is ${s.capacity} / ${d} = ${limit}. Not equal, so no.`,
       lines: [`${op}.sparse`],
       vars: vars(s, more),

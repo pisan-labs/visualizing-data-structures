@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { practiceSet } from '../../engine/practice';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, Value } from '../../engine/types';
 import { linkedList } from '.';
@@ -173,6 +174,24 @@ describe('singly linked list', () => {
     const on = run(calls, { tail: 'on' });
     expect([0, 1, 2, 3, 4].map((k) => hops(on, k))).toEqual([0, 0, 0, 0, 0]);
     expect(linesOf(on, 4)).not.toContain('insertTail.move');
+  });
+
+  // The second insert said "took 0 hops; with a tail pointer it would take none", and the hops
+  // practice said "1 hops".
+  it('says no hops for a one-node walk, and "1 hop" in practice', () => {
+    const off = run(
+      [
+        ['insertTail', 1],
+        ['insertTail', 2],
+      ],
+      { tail: 'off' },
+    );
+    const says = off.entries[1]!.steps.map((s) => s.say).join(' ');
+    expect(says).toContain('the head, is also the last node');
+    expect(says).not.toContain('0 hops');
+    for (let seed = 1; seed <= 200; seed++)
+      for (const { question: q } of practiceSet(linkedList, seed, 4))
+        expect(q.explain).not.toMatch(/\b1 hops\b/);
   });
 
   it('walks to the node before the tail even with a tail pointer', () => {

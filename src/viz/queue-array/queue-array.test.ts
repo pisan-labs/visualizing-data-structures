@@ -52,6 +52,16 @@ describe('queue (circular array)', () => {
     expect(lastStep(t, 2).marks.some((m) => m.role === 'error')).toBe(true);
   });
 
+  // Capacity 2 with one slot left empty used to say "holds at most 1 items".
+  it('says "1 item" when two slots hold one', () => {
+    const t = run(settings({ capacity: 2 }), [
+      ['enqueue', 1],
+      ['enqueue', 2],
+    ]);
+    expect(t.at(0).step.say).toContain('holds at most 1 item.');
+    expect(lastStep(t, 1).say).toContain('it holds 1 item,');
+  });
+
   it('follows the pseudocode of the chosen convention', () => {
     const lines = (st: QueueSettings) =>
       run(st, [['enqueue', 5], ['dequeue']]).entries.flatMap((e) =>

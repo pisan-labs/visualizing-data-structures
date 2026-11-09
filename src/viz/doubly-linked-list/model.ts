@@ -807,7 +807,7 @@ function removeEnd(op: 'removeHead' | 'removeTail'): Op {
       const from = s.nil !== null ? `nil.${front ? 'next' : 'prev'}` : front ? 'head' : 'tail';
       yield st(
         s,
-        `${op}(): cur = ${from}, the ${front ? 'first' : 'last'} node (${name(s, cur)}). ${front ? '' : 'No walking: tail and prev pointers make the end as cheap as the front.'}`.trim(),
+        `${op}(): cur = ${from}, the ${front ? 'first' : 'last'} node (${name(s, cur)}). ${front ? '' : `No walking: ${from} and the prev pointers make the end as cheap as the front.`}`.trim(),
         [`${op}.cur`, `${op}.check`],
         { marks: [mark('p:cur', 'active')], ptrs: { cur }, vars: {} },
       );

@@ -53,6 +53,16 @@ describe('sorted vs unsorted array', () => {
     expect(unsorted.vars?.comparisons).toBe(7);
   });
 
+  // The "missing" example called search(55), 6 comparisons, the worst case; 95 takes 8.
+  it('needs 6 comparisons to miss 55 among nine values, and at most 8 for any search', () => {
+    const nine = inserts(10, 20, 30, 40, 50, 60, 70, 80, 90);
+    const count = (x: number) => lastStep(run(settings(), [...nine, ['search', x]]), 9).vars;
+    expect(count(55)?.comparisons).toBe(6);
+    expect(count(95)?.comparisons).toBe(8);
+    const most = Math.max(...Array.from({ length: 101 }, (_, x) => Number(count(x)?.comparisons)));
+    expect(most).toBe(8);
+  });
+
   it('keeps order by shifting the bigger items', () => {
     const t = run(settings(), inserts(20, 40, 60, 80, 10, 90));
     expect(items(t.endState())).toEqual([10, 20, 40, 60, 80, 90]);

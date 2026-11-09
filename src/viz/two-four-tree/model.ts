@@ -299,7 +299,7 @@ function* deleteGen(s: S, k: number, succ: boolean): Gen {
     const sibs = [left, right].filter((u): u is number => u !== undefined);
     yield snap(
       c,
-      `${sibs.length === 1 ? 'Its only sibling' : 'Both siblings'}, ${sibs.map((u) => label(W, u)).join(' and ')}, ${sibs.length === 1 ? 'is a 2-node' : 'are 2-nodes'}, with no key to spare. Fusion: merge the empty node with ${label(W, sib)}, bringing ${sep.key} down from the parent between them.`,
+      `${sibs.length === 2 ? 'The siblings on both sides' : pn.kids.length === 2 ? 'Its only sibling' : 'The sibling next to it'}, ${sibs.map((u) => label(W, u)).join(' and ')}, ${sibs.length === 1 ? 'is a 2-node' : 'are 2-nodes'}, with no key to spare. Fusion: merge the empty node with ${label(W, sib)}, bringing ${sep.key} down from the parent between them.`,
       ['del.rich', 'del.else', 'del.fuse'],
       2,
       [nodeMark(v, 'error'), nodeMark(sib, 'active'), cellMark(sep, 'active')],

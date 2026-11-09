@@ -80,7 +80,7 @@ export function bucketPractice(def: () => Def): PracticeKind[] {
           answer: { kind: 'number', value: probes },
           explain: `${k} mod 5 = ${i}. ${
             found
-              ? `The search finds ${k} after ${probes} probes${probes > 2 ? ', reading bucket ' + i + ' and then the overflow area' : ''}.`
+              ? `The search finds ${k} after ${probes} ${probes === 1 ? 'probe' : 'probes'}${probes > 2 ? ', reading bucket ' + i + ' and then the overflow area' : ''}.`
               : full
                 ? `Bucket ${i} is full, so the search reads both slots and then the whole overflow area: ${probes} probes, and no ${k}.`
                 : `Bucket ${i} has a free slot, so ${k} never overflowed: the search stops after reading the bucket's ${probes} slots.`

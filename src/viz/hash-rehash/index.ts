@@ -115,7 +115,7 @@ export const hashRehash: VizDef<RehashState, RehashSettings, RehashExtra> = {
         why: 'This insert triggers a rehash and moves every key.',
         example: 'grow-prime',
       },
-      note: 'Growing by a constant factor is essential. Growing by a constant amount (say 10 slots) makes the rehashes O(n) apart in time but O(n) each, so n inserts cost O(n²).',
+      note: 'Growing by a constant factor is essential. Growing by a constant amount (say 10 slots) puts the rehashes only a constant number of inserts apart, and each is O(n), so n inserts cost O(n²).',
     },
     {
       op: 'search(k)',

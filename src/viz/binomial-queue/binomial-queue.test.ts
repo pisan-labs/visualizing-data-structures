@@ -280,6 +280,17 @@ describe('binomial queue practice', () => {
       }
     }
   });
+
+  // With an even n the explanation said "carries through the 1 bits at the right end ...: 0".
+  it('explains an insert with no link without talking about carries', () => {
+    const k = kinds.find((x) => x.id === 'insert-links')!;
+    for (let seed = 1; seed <= 80; seed++) {
+      const q = k.make(makeRng(seed));
+      if (q.answer.kind === 'number' && q.answer.value === 0)
+        expect(q.explain).toContain('no carry and no link');
+      else expect(q.explain).toContain('carries through');
+    }
+  });
 });
 
 describe('drawn text size', () => {

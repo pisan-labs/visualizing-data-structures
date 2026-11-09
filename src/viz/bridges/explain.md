@@ -78,7 +78,7 @@ It is for undirected graphs. For a directed graph the matching question is which
 - Counting the edge back to the parent as a back edge. Then low never rises above the parent's d, and you find no bridges at all.
 - Using the low test for the root. It always passes, so every root with a child looks like a cut vertex.
 - Mixing up the tests: > for bridges, ≥ for cut vertices.
-- Taking c.low for a back edge instead of w.d. For bridges it happens to give the same answer. For cut vertices it can be wrong.
+- Taking w.low for a back edge u-w instead of w.d. For bridges it happens to give the same answer. For cut vertices it can be wrong.
 - Thinking an endpoint of a bridge must be a cut vertex. A leaf hanging off a bridge is not one. Remove it and there is nothing left to split.
 
 ## Try this

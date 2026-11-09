@@ -169,6 +169,9 @@ describe('cut vertices and bridges practice', () => {
         const a = q.answer;
         if (kind.id === 'cuts') {
           expect(a.kind === 'sequence' && a.value, where).toEqual(ref.cuts);
+          // "Each other cut vertex" only when the root is one of several.
+          if (!ref.cuts.includes('A') || ref.cuts.length < 3)
+            expect(q.explain, where).not.toMatch(/Each other/);
         } else if (kind.id === 'bridges') {
           expect(a.kind === 'number' && a.value, where).toBe(ref.bridges.length);
         } else if (kind.id === 'root') {

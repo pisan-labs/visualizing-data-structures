@@ -230,6 +230,14 @@ describe('Floyd-Warshall practice', () => {
           const d = restricted(g, s!, new Set(V));
           const p = a.kind === 'choice' ? a.options[a.correct]! : '';
           expect(d.get(p)! + weight(g, p, v!), where).toBe(d.get(v!));
+          // No other option is a way in with the same total: one right answer.
+          const into = (x: string) =>
+            g.edges.some(
+              (e) => (e.u === x && e.v === v) || (!g.directed && e.u === v && e.v === x),
+            );
+          for (const o of a.kind === 'choice' ? a.options : [])
+            if (o !== p && o !== v && d.has(o) && into(o))
+              expect(d.get(o)! + weight(g, o, v!), where).toBeGreaterThan(d.get(v!)!);
         } else if (kind.id === 'round-changes') {
           const k = Number(/round (\d+), k =/.exec(q.prompt)![1]) - 1;
           const before = new Set(V.slice(0, k));

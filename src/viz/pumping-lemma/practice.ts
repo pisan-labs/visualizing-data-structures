@@ -144,7 +144,7 @@ export function pumpingPractice(def: () => Def): PracticeKind[] {
           setup,
           settings,
           answer: { kind: 'number', value: count },
-          explain: `x and y lie in the first ${p} symbols. With |xy| = k, x can be 0 to k − 1 symbols long, so there are k splits; k runs from 1 to ${p}, so 1 + 2 + … + ${p} = ${count}. The rest of s does not matter: that is why aᵖ… strings are so easy to reason about.`,
+          explain: `x and y lie in the first ${p} symbols. With |xy| = k, x can be 0 to k − 1 symbols long, so there are k splits; k runs from 1 to ${p}, so ${p <= 4 ? Array.from({ length: p }, (_, k) => k + 1).join(' + ') : `1 + 2 + … + ${p}`} = ${count}. The rest of s does not matter: that is why aᵖ… strings are so easy to reason about.`,
           watch: [['string', s]],
         };
       },

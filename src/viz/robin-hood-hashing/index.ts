@@ -146,6 +146,7 @@ export const robinHoodHashing: VizDef<RobinState, RobinSettings, RobinExtra> = {
     linearCluster,
     fullTable,
   ] as unknown as SavedExample[],
+  opening: 'early-stop',
   preview: { example: 'robin-cluster', level: 1, hide: ['d-'] },
 };
 

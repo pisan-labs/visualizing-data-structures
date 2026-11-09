@@ -135,6 +135,7 @@ export const cuckooHashing: VizDef<CuckooState, CuckooSettings, CuckooExtra> = {
     deleteNoTombstone,
     halfFull,
   ] as unknown as SavedExample[],
+  opening: 'half-full',
   preview: { example: 'half-full', level: 1, hide: ['alt-', 'title-', 'queue-'] },
 };
 

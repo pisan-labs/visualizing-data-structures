@@ -247,7 +247,7 @@ function* transform(
         : d < 0
           ? `det ${name} = ${n(d)} is negative, so the shape is flipped over, and its area is scaled by ${n(Math.abs(d))}.`
           : d === 0
-            ? `det ${name} = 0: the shape is squashed flat onto a line.`
+            ? `det ${name} = 0: the shape is squashed flat onto ${m[0] === 0 && m[3] === 0 ? 'a single point' : 'a line'}.`
             : `Areas are scaled by det ${name} = ${n(d)}.`
     } Everything so far is one matrix: ${settings.convention === 'row' ? `M = M·${name}` : `M = ${name}·M`} = ${matText(mm, settings)}.`,
     lines: pivot ? [`${prefix}.apply`, `${prefix}.back`] : [`${prefix}.apply`],
@@ -369,7 +369,7 @@ const order: Op = {
       state: s,
       marks: [mark('rs', same ? 'found' : 'active'), mark('sr', same ? 'found' : 'error')],
       say: same
-        ? `The two orders give the same shape. ${sx === sy ? 'A uniform scale looks the same in every direction, so it does not matter whether the rotation comes first.' : 'Here the rotation is a multiple of 180°, so the stretch directions line up either way.'}`
+        ? `The two orders give the same shape. ${sx === sy ? 'A uniform scale looks the same in every direction, so it does not matter whether the rotation comes first.' : deg % 180 === 0 ? 'Here the rotation is a multiple of 180°, so the stretch directions line up either way.' : 'At least to two decimals: the angle is so small that the difference does not show.'}`
         : `Different shapes: matrix multiplication is not commutative. Rotating first stretches the turned shape along the world's x and y; scaling first stretches it along its own axes, then turns it.`,
       lines: ['ord.cmp'],
       vars: vars(s, settings, {

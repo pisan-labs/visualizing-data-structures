@@ -46,6 +46,24 @@ describe('2D rotation and scale', () => {
     expect(run(['order', 180, 2, 1])).toBe('yes');
   });
 
+  it('gives the true reason when the two orders agree', () => {
+    const say = (c: OpCall) =>
+      new Timeline(rotateScale2d, settings(), 1, [c]).entries[0]!.steps.at(-1)!.say;
+    expect(say(['order', 180, 2, 1])).toContain('a multiple of 180°');
+    // A tiny angle matches to two decimals; it was said to be "a multiple of 180°".
+    const tiny = say(['order', 0.1, 1, 1.1]);
+    expect(tiny).toContain('the same shape');
+    expect(tiny).not.toContain('multiple of 180°');
+  });
+
+  it('says a scale by 0 and 0 squashes the shape to a point', () => {
+    const last = (c: OpCall) =>
+      new Timeline(rotateScale2d, settings(), 1, [c]).entries[0]!.steps.at(-1)!.say;
+    // Was "squashed flat onto a line" for both factors 0.
+    expect(last(['scale', 0, 0])).toContain('onto a single point');
+    expect(last(['scale', 0, 1])).toContain('onto a line');
+  });
+
   it('refuses a transform that leaves the drawing', () => {
     const t = new Timeline(rotateScale2d, settings(), 1, [['scale', 3, 3]]);
     expect(t.endState().pts).toEqual(SHAPES.letter);

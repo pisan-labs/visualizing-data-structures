@@ -68,7 +68,7 @@ Q: Why can a sparse table answer min(i, j) with two windows that overlap, but no
 
 ## When the array changes
 
-Change one value and the table is out of date. With prefix sums, every `P[k]` with k > i includes `A[i]`, so all of them change. [The worst update](#play:update-first-cell) is `A[0]`, which every prefix includes. With a sparse table, row k has up to 2^k windows that contain position i, and those add up to about 2n for a position in the middle. [One change touches many windows](#example:sparse-update).
+Change one value and the table is out of date. With prefix sums, every `P[k]` with k > i includes `A[i]`, so all of them change. [The worst update](#play:update-first-cell) is `A[0]`, which every prefix includes. With a sparse table, row k has up to 2^k windows that contain position i, and for a position in the middle those add up to n − 1. [One change touches many windows](#example:sparse-update).
 
 Either way an update is O(n), the same as answering a query with a loop. If your array changes as often as you query it, you want a structure that does both in O(log n): a [Fenwick tree](/fenwick-tree/) for sums, or a [segment tree](/segment-tree/) for sums, minimums and more. [Change a value, then query](#example:update-then-query) shows what you would be giving up.
 

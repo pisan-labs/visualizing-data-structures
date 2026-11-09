@@ -153,7 +153,7 @@ export const rangeQueries: VizDef<RQState, RQSettings, RQExtra> = {
       average: { cost: 'O(n)', why: 'Row k has up to 2^k windows that contain i.' },
       worst: {
         cost: 'O(n)',
-        why: 'In the middle, rows add up to about 2n windows to recompute.',
+        why: 'In the middle, the rows add up to n − 1 windows to recompute: 15 for n = 16.',
         example: 'sparse-update',
       },
     },

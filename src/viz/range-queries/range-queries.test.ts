@@ -89,6 +89,18 @@ describe('prefix sums', () => {
     expect(last.vars?.['update cost']).toBe(3);
   });
 
+  it('says one changed entry and an empty prefix plainly', () => {
+    const t = run(PREFIX, [
+      ['build', '5 3 8 1'],
+      ['update', 3, 2],
+      ['query', 0, 2],
+    ]);
+    // Was "1 entry of P changed, P[4] to P[4]".
+    expect(t.entries[1]!.steps.at(-1)!.say).toContain('Done: 1 entry of P changed, P[4].');
+    // Was "P[0] = 0 is the sum of everything before A[0]: nothing comes before A[0], so P[0] = 0."
+    expect(t.entries[2]!.steps[0]!.say).toContain('before A[0], which is nothing.');
+  });
+
   it('refuses ranges it cannot answer, and leaves the state alone', () => {
     const t = run(PREFIX, [
       ['query', 5, 2],
@@ -143,6 +155,29 @@ describe('sparse table', () => {
     const steps = t.entries[1]!.steps;
     expect(steps.at(-1)!.vars?.['update cost']).toBe(15);
     checkComplete(steps.at(-1)!.state, SPARSE);
+  });
+
+  it('names the rows of a short table without a broken list', () => {
+    // Was "every window of 2, 4, … 2 values" for n = 2 and "2, 4, … 4" for n = 4.
+    const say = (list: string) => run(SPARSE, [['build', list]]).entries[0]!.steps[0]!.say;
+    expect(say('3 1')).toContain('Row k = 1 will hold every window of 2 values');
+    expect(say('3 1 4 1')).toContain('Rows k = 1 and 2 will hold every window of 2 and 4 values');
+    expect(say('3 1 4 1 5 9 2 6')).toContain('Rows k = 1 to 3 will hold every window of 2, 4, … 8');
+  });
+
+  it('never recomputes more than n − 1 windows on an update, as the page says', () => {
+    for (let n = 2; n <= 16; n++) {
+      const list = Array.from({ length: n }, (_, k) => k + 1).join(' ');
+      for (let i = 0; i < n; i++) {
+        const t = run(SPARSE, [
+          ['build', list],
+          ['update', i, 0],
+        ]);
+        expect(Number(t.entries[1]!.steps.at(-1)!.vars?.['update cost'])).toBeLessThanOrEqual(
+          n - 1,
+        );
+      }
+    }
   });
 
   it('handles one value: no rows above A', () => {
@@ -288,6 +323,8 @@ describe('range-queries practice', () => {
               for (let t = 0; t + 2 ** kk <= n; t++) if (t <= i && i < t + 2 ** kk) want += 1;
           }
           expect(answer).toEqual({ kind: 'number', value: want });
+          // Was "P[10] to P[10], 1 entries" for the last index.
+          expect(q.explain).not.toMatch(/\b1 entries|P\[(\d+)\] to P\[\1\]/);
         }
       }
     }

@@ -1,6 +1,7 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, Step, VizDef } from '../../engine/types';
+import { andList } from '../_dp/kit';
 import {
   defaults,
   greedy,
@@ -110,7 +111,7 @@ export function knapPractice(def: () => Def): PracticeKind[] {
           setup,
           answer: { kind: 'sequence', value: chosen },
           explain: chosen.length
-            ? `Climb one row at a time. Wherever a value differs from the cell above, that item is in, and the walk moves left by its weight. Items ${chosen.join(', ')} are worth ${String(end.vars?.best)}.`
+            ? `Climb one row at a time. Wherever a value differs from the cell above, that item is in, and the walk moves left by its weight. ${chosen.length === 1 ? `Item ${chosen[0]} is` : `Items ${andList(chosen)} are`} worth ${String(end.vars?.best)}.`
             : 'No item fits, so the best value is 0 and nothing is taken.',
           watch: [['trace']],
         };
@@ -130,7 +131,7 @@ export function knapPractice(def: () => Def): PracticeKind[] {
           prompt: `Items: ${describeItems(items)}. Capacity ${W}. Greedy sorts the items by value per weight, best first (ties keep the earlier item), and takes each one that still fits. What total value does it get?`,
           setup,
           answer: { kind: 'number', value: g.value },
-          explain: `Greedy takes ${check.picks.length ? `items ${check.picks.join(', ')}` : 'nothing'}, worth ${g.value}. The table's best is ${best}${g.value < best ? ', so greedy falls short here' : ', so greedy happens to be right here'}.`,
+          explain: `Greedy takes ${check.picks.length === 0 ? 'nothing' : check.picks.length === 1 ? `item ${check.picks[0]}` : `items ${andList(check.picks)}`}, worth ${g.value}. The table's best is ${best}${g.value < best ? ', so greedy falls short here' : ', so greedy happens to be right here'}.`,
           watch: [['trace']],
         };
       },

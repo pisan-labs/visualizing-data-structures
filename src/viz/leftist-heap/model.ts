@@ -36,6 +36,9 @@ export function initialVars(s: MeldState, settings: LeftistSettings): Record<str
 }
 
 export function initialSay(_s: MeldState, settings: LeftistSettings): string {
-  const nil = settings.npl === '0' ? '0' : '−1';
-  return `An empty leftist heap: a min-heap whose every node keeps its null path length (npl), the distance to the nearest empty spot below it, with npl(nil) = ${nil}. Insert some keys, or merge in a second heap.`;
+  const npl =
+    settings.npl === '0'
+      ? 'the number of edges down to the nearest empty spot, so npl(nil) = 0 and a leaf has 1'
+      : 'the number of edges down to the nearest node with fewer than two children, so a leaf has 0 and npl(nil) = −1';
+  return `An empty leftist heap: a min-heap whose every node keeps its null path length (npl), ${npl}. Insert some keys, or merge in a second heap.`;
 }

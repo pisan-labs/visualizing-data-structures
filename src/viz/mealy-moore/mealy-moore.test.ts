@@ -17,6 +17,7 @@ import {
   randomMachine,
   runMachine,
   sizeProblem,
+  writes,
   type First,
   type Kind,
   type Machine,
@@ -414,6 +415,20 @@ describe('Mealy and Moore page', () => {
     expect(machineKey(p.endState().result!)).toBe(machineKey(machine('parity')));
     expect(p.entries[2]!.steps.at(-1)!.say).toContain('gives back exactly the machine');
     expect(timeline([['back']]).entries[0]!.steps[0]!.say).toContain('Nothing to convert back');
+  });
+
+  it('asks for a converted output only when the Moore start state is forced', () => {
+    // When moves into the start write 0 and 1, the start could be either copy; the page takes
+    // the first, and the question had two right answers.
+    const kind = def.practice!.find((k) => k.id === 'converted-output')!;
+    for (let seed = 1; seed <= 100; seed++) {
+      const q = kind.make(makeRng(seed));
+      const m = new Timeline(def, def.defaults, 1, q.setup).endState().machine;
+      const into = new Set(
+        m.fa.moves.filter((mv) => mv.to === m.fa.start).map((mv) => writes(m, mv.from, mv.on)),
+      );
+      expect(into.size, `seed ${seed}`).toBe(1);
+    }
   });
 
   it('draws every Moore state with its output, and both machines with distinct ids', () => {

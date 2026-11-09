@@ -14,7 +14,7 @@ Each call of quicksort gets a depth budget. The top call gets 2⌊log₂ n⌋, a
 2. **Budget used up**: heap sort it and stop.
 3. **Otherwise**: partition around a median-of-3 pivot, and recurse on both sides with one less budget.
 
-The brackets at the top are the calls waiting on each other, so the stack's height is the depth. The labels say who is handling each part. [Random values](#example:typical) never gets near its budget of 6: quicksort does the work and insertion sort tidies up. [Show me](#play:typical)
+The brackets at the top are the calls waiting on each other, so the stack's height is the depth. The labels say who is handling each part, and the swaps counter adds up the swaps of all three; a value swapped with itself is not counted. [Random values](#example:typical) never gets near its budget of 6: quicksort does the work and insertion sort tidies up. [Show me](#play:typical)
 
 ## Why a depth budget
 

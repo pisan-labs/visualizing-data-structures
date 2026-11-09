@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { bigOLab, parseN } from '.';
@@ -134,6 +135,35 @@ describe('big-o lab', () => {
     expect(parseN('1,000,000')).toBe(1_000_000);
     expect(parseN('0')).toBeInstanceOf(Error);
     expect(parseN('n')).toBeInstanceOf(Error);
+  });
+
+  it('words its practice explanations and summary to fit the numbers', () => {
+    const kind = (id: string) => bigOLab.practice!.find((k) => k.id === id)!;
+    let ahead = 0;
+    let behind = 0;
+    for (let seed = 1; seed <= 200; seed++) {
+      const which = kind('which-bigger').make(makeRng(seed));
+      const [, a, b] = /takes (.+?) steps? and .+? takes (.+?) steps?\./.exec(which.explain)!;
+      const caveat = which.explain.includes('does not always win yet');
+      // The caveat only belongs where the slower-growing curve is not behind.
+      if (caveat) behind++;
+      else ahead++;
+      expect(a === b ? caveat : true).toBe(true);
+      for (const id of ['doubling-factor', 'how-long', 'which-bigger']) {
+        const { explain } = kind(id).make(makeRng(seed));
+        expect(explain).not.toMatch(/\b1 steps\b/);
+        expect(explain).not.toContain('about a fraction');
+        expect(explain).not.toMatch(/\d{1,3}(,\d{3}){2,} seconds/);
+      }
+    }
+    expect(ahead).toBeGreaterThan(0);
+    expect(behind).toBeGreaterThan(0);
+    expect(
+      bigOLab.describe(
+        new Timeline(bigOLab, bigOLab.defaults, 1, [['show-1']]).endState(),
+        bigOLab.defaults,
+      ),
+    ).toContain('1: 1 step,');
   });
 });
 

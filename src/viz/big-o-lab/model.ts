@@ -379,7 +379,7 @@ export function describe(state: S, settings: LabSettings = defaults): string {
   const speed = speedOf(settings);
   const parts = state.shown.map((f) => {
     const c = count(f, state.n);
-    return `${FN_LABEL[f]}: ${countText(c)} steps, ${timeText(c, speed)}`;
+    return `${FN_LABEL[f]}: ${countText(c)} ${c.exact === 1n ? 'step' : 'steps'}, ${timeText(c, speed)}`;
   });
   return `n = ${state.n}. ${parts.join('; ')}.`;
 }

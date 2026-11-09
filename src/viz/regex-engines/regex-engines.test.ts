@@ -261,6 +261,15 @@ describe('regex engines page', () => {
     expect(t.endState().sim!.result).toBe('reject');
   });
 
+  it('says a flat count plainly, in the singular', () => {
+    const t = new Timeline(def, def.defaults, 1, [['grow', 'b ; a']]);
+    const say = t.entries[0]!.steps.at(-1)!.say;
+    // Was "steps went from 1 to 1, then stayed there" and "stayed at 1 steps".
+    expect(say).toContain('the backtracker took 1 step every time');
+    expect(say).toContain('The NFA simulation stayed at 1 step:');
+    expect(say).not.toMatch(/from 1 to 1|\b1 steps/);
+  });
+
   it('reads its input as an expression and a word', () => {
     expect(readCall('(a|a)*b ; aaa', 'match')).toEqual({ regex: '(a|a)*b', word: 'aaa' });
     expect(readCall('aaa', 'match')).toEqual({ regex: null, word: 'aaa' });

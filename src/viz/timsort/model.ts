@@ -111,9 +111,11 @@ const sort: Op = {
       stack: stackText() || 'empty',
       ...more,
     });
+    // From the first merge on, the frame keeps the tmp row's room (see view.ts).
     const extraFor = (regions: BarsRegion[], pointers: BarsPointer[] = []): ArrayExtra => ({
       regions,
       pointers,
+      ...(merges > 0 ? { auxRoom: true } : {}),
       ...(auxTo >= auxFrom
         ? {
             aux: {
@@ -566,7 +568,7 @@ const sort: Op = {
       lines: [],
       level: 1,
       vars: { n, merges },
-      extra: { regions: doneRegions(r) },
+      extra: { regions: doneRegions(r), ...(merges > 0 ? { auxRoom: true } : {}) },
     });
     return r.state();
   },

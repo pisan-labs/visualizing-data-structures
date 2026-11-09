@@ -150,6 +150,7 @@ export const euclid: VizDef<EuState, EuclidSettings, undefined> = {
     inverseExists,
     noInverse,
   ] as unknown as SavedExample[],
+  opening: 'remainders',
   preview: { example: 'bezout', level: 2 },
 };
 

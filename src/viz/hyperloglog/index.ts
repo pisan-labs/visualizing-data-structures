@@ -133,6 +133,7 @@ export const hyperloglog: VizDef<HllState, HllSettings, HllExtra> = {
     smallRange,
     noCorrection,
   ] as unknown as SavedExample[],
+  opening: 'hundred-items',
   preview: { example: 'hundred-items', level: 1, hide: ['calc-'] },
 };
 

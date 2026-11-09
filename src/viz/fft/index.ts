@@ -149,6 +149,7 @@ export const fft: VizDef<FftState, FftSettings, undefined> = {
     multiplyQuadratics,
     otherSign,
   ] as unknown as SavedExample[],
+  opening: 'eight-points',
   preview: {
     example: 'eight-points',
     level: 2,

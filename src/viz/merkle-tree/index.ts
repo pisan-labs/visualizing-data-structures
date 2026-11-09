@@ -187,6 +187,7 @@ export const merkleTree: VizDef<MerkleState, MerkleSettings, MerkleExtra> = {
     appendPath,
     duplicateOdd,
   ] as unknown as SavedExample[],
+  opening: 'build-eight',
   preview: { example: 'change-block', level: 2 },
 };
 

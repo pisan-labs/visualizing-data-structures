@@ -161,6 +161,7 @@ export const countMinSketch: VizDef<CmsState, CmsSettings, CmsExtra> = {
     oneRow,
     conservativeUpdate,
   ] as unknown as SavedExample[],
+  opening: 'heavy-hitters',
   preview: { example: 'heavy-hitters', level: 1, hide: ['th-', 'tx-', 'tt-', 'te-', 'it-'] },
 };
 

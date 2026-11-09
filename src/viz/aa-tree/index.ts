@@ -160,6 +160,7 @@ export const aaTree: VizDef<AAState, AASettings, AAExtra> = {
     deleteInner,
     redBlackView,
   ] as unknown as SavedExample[],
+  opening: 'rising-splits',
   preview: { example: 'rising-splits', level: 2 },
 };
 

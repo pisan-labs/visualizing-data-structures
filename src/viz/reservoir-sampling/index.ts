@@ -139,6 +139,7 @@ export const reservoirSampling: VizDef<ResState, ResSettings, undefined> = {
     fillingUp,
     biggerReservoir,
   ] as unknown as SavedExample[],
+  opening: 'ten-items',
   preview: { example: 'ten-items', level: 2 },
 };
 

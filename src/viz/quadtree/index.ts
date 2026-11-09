@@ -174,6 +174,7 @@ export const quadtree: VizDef<QState, QSettings, QExtra> = {
     rangeQuery,
     clusters,
   ] as unknown as SavedExample[],
+  opening: 'split-on-overflow',
   preview: { example: 'split-on-overflow', level: 2 },
 };
 

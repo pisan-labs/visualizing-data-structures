@@ -143,6 +143,7 @@ export const karatsuba: VizDef<KaraState, KaraSettings, undefined> = {
     sumsGrow,
     uneven,
   ] as unknown as SavedExample[],
+  opening: 'three-products',
   preview: { example: 'three-products', level: 2 },
 };
 

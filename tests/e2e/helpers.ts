@@ -73,3 +73,12 @@ export function axeFindings(results: { violations: { id: string; nodes: AxeNode[
     ),
   );
 }
+
+/**
+ * The link to a page with nothing in it: an example with no operations. A page with an `opening`
+ * otherwise arrives full, and tests that build from empty load this instead.
+ */
+export function emptyStart(id: string): string {
+  const json = JSON.stringify({ format: 1, viz: id, ops: [] });
+  return `/${id}/#ex=j${Buffer.from(json).toString('base64url')}`;
+}

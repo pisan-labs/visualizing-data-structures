@@ -204,6 +204,7 @@ export const kdTree: VizDef<KdState, KdSettings, KdExtra> = {
     noPruning,
     medianOrder,
   ] as unknown as SavedExample[],
+  opening: 'build-and-split',
   preview: { example: 'build-and-split', level: 2 },
 };
 

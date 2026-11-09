@@ -184,6 +184,7 @@ export const minMaxHeap: VizDef<MMState, MMSettings, MMExtra> = {
     buildBottomUp,
     maxMin,
   ] as unknown as SavedExample[],
+  opening: 'build-bottom-up',
   preview: { example: 'build-bottom-up', level: 2 },
 };
 

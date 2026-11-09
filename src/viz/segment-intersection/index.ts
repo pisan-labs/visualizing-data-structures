@@ -241,6 +241,7 @@ export const segmentIntersection: VizDef<SIState, SISettings, SIExtra> = {
     threeAtOnce,
     fan,
   ] as unknown as SavedExample[],
+  opening: 'neighbours-only',
   preview: { example: 'report-every-crossing', level: 2, hide: ['st-', 'q-', 'counts'] },
 };
 

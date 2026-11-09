@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { axeFindings, settled, showMe } from './helpers';
+import { axeFindings, emptyStart, settled, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -37,7 +37,7 @@ async function answerFirst(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/robin-hood-hashing/');
+  await page.goto(emptyStart('robin-hood-hashing'));
   await expect(page.getByRole('heading', { name: 'Robin Hood hashing' })).toBeVisible();
   await page.getByRole('combobox', { name: 'Speed' }).selectOption('4');
 });

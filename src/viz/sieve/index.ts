@@ -135,6 +135,7 @@ export const sieve: VizDef<SieveState, SieveSettings, undefined> = {
     primesTo120,
     justTwo,
   ] as unknown as SavedExample[],
+  opening: 'primes-to-100',
   preview: { example: 'first-primes', level: 3 },
 };
 

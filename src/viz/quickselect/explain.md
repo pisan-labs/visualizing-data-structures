@@ -8,7 +8,7 @@ Say you want the median of a million numbers. You could sort them and read the m
 |---|---|---|
 | `select(k)` | Returns the k-th smallest value (k = 1 is the smallest) | O(n) on average; O(n²) in the worst case |
 
-In sorted order, the k-th smallest value would sit in `A[k - 1]`, the target slot. Partition the array around a pivot, exactly as quicksort does. Lomuto's partition puts the pivot in its final place, `A[q]`. If q is the target slot, you are done. If the target is left of q, the answer is somewhere left of the pivot, and everything right of it can be ignored for good, and the other way round. The drawing fades the part that is out of play. [Show me](#play:median)
+In sorted order, the k-th smallest value would sit in `A[k - 1]`, the target slot. Partition the array around a pivot, exactly as quicksort does. Lomuto's partition puts the pivot in its final place, `A[q]`. If q is the target slot, you are done. If the target is left of q, the answer is somewhere left of the pivot, and everything right of it can be ignored for good, and the other way round. The drawing fades the part that is out of play. As on the quicksort page, the swaps counter skips a value swapped with itself, such as a pivot that is already in place. [Show me](#play:median)
 
 ```check
 Q: Quickselect wants the 3rd smallest of 8 values, so the target is A[2]. The first partition puts the pivot in A[5]. Where does it look next?

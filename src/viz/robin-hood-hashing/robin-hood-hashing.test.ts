@@ -61,13 +61,17 @@ class Reference {
       }
       return;
     }
-    // Plain linear probing: take out the rest of the run and insert it again.
-    const rest: number[] = [];
+    // Plain linear probing: walk the rest of the run and move a key into the hole when the hole
+    // lies between the key's home and its slot (CLRS's delete for linear probing). Taking the
+    // run out and inserting it again is not the same: it can leave the keys in other slots.
     for (let j = (i + 1) % this.m; this.t[j] !== null; j = (j + 1) % this.m) {
-      rest.push(this.t[j]!);
-      this.t[j] = null;
+      const y = this.t[j]!;
+      if (this.d(y, j) >= (j - i + this.m) % this.m) {
+        this.t[i] = y;
+        this.t[j] = null;
+        i = j;
+      }
     }
-    for (const x of rest) this.insert(x);
   }
 }
 
@@ -121,6 +125,25 @@ describe('Robin Hood hashing', () => {
         if (!c) return;
         for (let q = c.key % 5; q !== j; q = (q + 1) % 5) expect(st.state.slots[q]).not.toBeNull();
       });
+  });
+
+  it('shifts a wrapped key back on a linear-probing delete', () => {
+    // 18 wraps from its home at 3 to slot 2; deleting 0 frees slot 0, which lies between them.
+    const calls: OpCall[] = [
+      ['insert', 0],
+      ['insert', 1],
+      ['insert', 53],
+      ['insert', 28],
+      ['insert', 18],
+      ['delete', 0],
+    ];
+    expect(keysOf(run(calls, { m: 5, policy: 'linear' }).endState())).toEqual([
+      18,
+      1,
+      null,
+      53,
+      28,
+    ]);
   });
 
   it('matches a reference table and keeps every key findable', () => {

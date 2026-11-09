@@ -68,7 +68,7 @@ Reductions are how you show a problem is hard, so you can stop looking for an ex
 
 What a reduction does not carry over is anything about approximate answers. VERTEX-COVER has a simple algorithm that is never worse than twice the best. INDEPENDENT-SET, its mirror image under n - k, has no good approximation known, and under standard assumptions none exists. A cover twice too big says almost nothing about the independent set left over.
 
-And NP-complete is about the worst case. Plenty of instances are easy. The 3-SAT formulas on this page take a few dozen tries.
+And NP-complete is about the worst case. Plenty of instances are easy. The 3-SAT formulas on this page have at most four variables, so brute force needs at most 16 tries.
 
 ## Common mistakes
 

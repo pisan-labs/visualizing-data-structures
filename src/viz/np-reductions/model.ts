@@ -635,7 +635,7 @@ function* wrongStart(s: S, to: Problem): Gen {
     marks: [],
     say:
       here === to
-        ? `This is already a ${NAMES[to]} instance. ${can.length ? `From here you can reduce it to ${listWords(can)}.` : 'Load a formula or a graph to start again.'}`
+        ? `This is already ${to === 'is' ? 'an' : 'a'} ${NAMES[to]} instance. ${can.length ? `From here you can reduce it to ${listWords(can)}.` : 'Load a formula or a graph to start again.'}`
         : `The reduction to ${NAMES[to]} on this page starts from ${listWords(from.map((p) => NAMES[p]))}, and this is a ${NAMES[here]} instance. ${can.length ? `From here you can reduce it to ${listWords(can)}.` : 'SET-COVER is the end of the line here: load a formula or a graph to start again.'}`,
     lines: [],
     level: 1,
@@ -773,7 +773,7 @@ function* finishFromSat(built: S, src: Inst, settings: NpSettings): Gen {
     yield {
       state: done,
       marks: chosen.map((v) => mark(vxId(v), 'found')),
-      say: `In each triangle, take a vertex whose literal is true: ${listWords(chosen)}. That is ${m} vertices, one per triangle, and no edge joins two of them: not inside a triangle, and not x to ${NOT}x, since x cannot be both true and false. An independent set of size k = ${m}, so the answer is yes on both sides. (Back the other way: an independent set of size k has one vertex per triangle; make those literals true.)`,
+      say: `In each triangle, take a vertex whose literal is true: ${listWords(chosen)}. That is ${plural(m, 'vertex', 'vertices')}, one per triangle, and no edge joins two of them: not inside a triangle, and not x to ${NOT}x, since x cannot be both true and false. An independent set of size k = ${m}, so the answer is yes on both sides. (Back the other way: an independent set of size k has one vertex per triangle; make those literals true.)`,
       lines: ['i.map', 'i.ok'],
       level: 1,
       vars: vars(done),
@@ -866,7 +866,7 @@ function* graphReduction(s0: S, way: GraphWay, settings: NpSettings): Gen {
     yield {
       state: mid,
       marks: g.edges.map((e) => mark(eId(e), 'new')),
-      say: `And every missing pair gets an edge: ${plural(g.edges.length, 'edge')} in the complement. ${n} vertices have ${(n * (n - 1)) / 2} pairs, so this takes O(n²) time.`,
+      say: `And every missing pair gets an edge: ${plural(g.edges.length, 'edge')} in the complement. ${plural(n, 'vertex', 'vertices')} ${n === 1 ? 'has' : 'have'} ${plural((n * (n - 1)) / 2, 'pair')}, so this takes O(n²) time.`,
       lines: [`${p}.comp`],
       level: 2,
       vars: vars(mid),
@@ -1011,7 +1011,7 @@ const toSc: Op = {
     yield {
       state: s,
       marks: g.edges.map((e) => mark(eId(e), 'active')),
-      say: `The universe U has one element per edge: number the edges 1 to ${fam.m}. Covering U will mean covering every edge.`,
+      say: `The universe U has one element per edge: ${fam.m === 1 ? 'number the one edge 1' : `number the edges 1 to ${fam.m}`}. Covering U will mean covering every edge.`,
       lines: ['s.U'],
       level: 2,
       vars: vars(s),
@@ -1075,7 +1075,7 @@ const toSc: Op = {
       yield {
         state: done,
         marks: w.map((v) => mark(setId(v), 'found')),
-        say: `Map it across: the sets of the cover's vertices, ${w.map((v) => `S${v}`).join(', ')}. Every element of U is in one of them, so ${src.k} sets cover U. Yes maps to yes.`,
+        say: `Map it across: the sets of the cover's vertices, ${w.map((v) => `S${v}`).join(', ')}. Every element of U is in one of them, so ${plural(src.k, 'set')} cover${src.k === 1 ? 's' : ''} U. Yes maps to yes.`,
         lines: ['s.map', 's.ok'],
         level: 1,
         vars: vars(done),
@@ -1088,7 +1088,7 @@ const toSc: Op = {
       yield {
         state: done,
         marks: [],
-        say: `Now check that no maps to no. Brute force: the smallest vertex cover has ${optimum(g, 'vc')} vertices, and the smallest set cover needs ${smallestCover(fam)} sets, both more than k = ${src.k}.`,
+        say: `Now check that no maps to no. Brute force: the smallest vertex cover has ${plural(optimum(g, 'vc'), 'vertex', 'vertices')}, and the smallest set cover needs ${plural(smallestCover(fam), 'set')}, both more than k = ${src.k}.`,
         lines: canSolve ? ['s.solve', 's.ok'] : ['s.ok'],
         level: 1,
         vars: vars(done),
@@ -1099,7 +1099,7 @@ const toSc: Op = {
     yield {
       state: built,
       marks: [],
-      say: `Built. ${src.k} sets cover U exactly when ${src.k} vertices cover every edge.`,
+      say: `Built. ${plural(src.k, 'set')} cover${src.k === 1 ? 's' : ''} U exactly when ${plural(src.k, 'vertex', 'vertices')} cover${src.k === 1 ? 's' : ''} every edge.`,
       lines: ['s.ret'],
       level: 1,
       vars: vars(built),
@@ -1121,8 +1121,8 @@ const check: Op = {
       i.problem === '3sat'
         ? `all ${1 << i.formula!.vars.length} assignments`
         : i.problem === 'sc'
-          ? `every choice of ${i.k} of the ${i.family!.sets.length} sets`
-          : `every set of ${i.k} of the ${i.graph!.vertices.length} vertices`;
+          ? `every choice of ${plural(i.k, 'set')} out of ${i.family!.sets.length}`
+          : `every set of ${plural(i.k, 'vertex', 'vertices')} out of ${i.graph!.vertices.length}`;
     yield {
       state: s,
       marks: [],
@@ -1138,7 +1138,7 @@ const check: Op = {
         i.problem === '3sat'
           ? 'No assignment makes every clause true.'
           : i.problem === 'sc'
-            ? `The smallest cover needs ${smallestCover(i.family!)} sets.`
+            ? `The smallest cover needs ${plural(smallestCover(i.family!), 'set')}.`
             : `The ${i.problem === 'vc' ? 'smallest' : 'largest'} ${THING[i.problem]} has size ${optimum(i.graph!, i.problem)}.`;
       yield {
         state: done,

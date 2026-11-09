@@ -63,6 +63,10 @@ describe('counting sort', { timeout: 60_000 }, () => {
     );
   });
 
+  it('does not claim every other sort on the site compares values (radix sort does not)', () => {
+    expect(countingSort.explain).not.toContain('Every other sort on this site compares');
+  });
+
   it('turns the counts into the prefix sums for the example values', () => {
     const steps = run([2, 5, 3, 0, 2, 3, 0, 3]).entries[1]!.steps as CountStep[];
     const at = (line: string) =>

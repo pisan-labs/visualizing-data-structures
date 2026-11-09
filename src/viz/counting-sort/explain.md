@@ -1,6 +1,6 @@
 # Counting sort
 
-Every other sort on this site compares two values and decides which goes first. Any sort that works that way needs about n log₂ n comparisons in the worst case; you cannot beat it. Counting sort makes no comparisons at all. It only works on whole numbers in a small range, 0 to k, and then it sorts in O(n + k).
+Most sorts on this site compare two values and decide which goes first. Any sort that works that way needs about n log₂ n comparisons in the worst case; you cannot beat it. Counting sort makes no comparisons at all. It only works on whole numbers in a small range, 0 to k, and then it sorts in O(n + k).
 
 ## The idea
 

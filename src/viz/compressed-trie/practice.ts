@@ -15,19 +15,27 @@ export const mergeText = (top: string, bottom: string) =>
   `${q(top)} and ${q(bottom)} → ${q(top + bottom)}`;
 export const NO_MERGE = 'No edges merge';
 
-/** Words not in `stored` that are worth trying: the families, the loners, and edits of both. */
+/**
+ * More real words that share their start with the families, so an insert can split an edge
+ * without making up a word.
+ */
+export const MORE_WORDS = [
+  ...['cab', 'can', 'cap', 'carp', 'cars', 'case', 'cash', 'cast', 'cave', 'carton'],
+  ...['doe', 'dock', 'doll', 'dome', 'doom', 'dose', 'dots', 'dogs', 'dove', 'down'],
+  ...['angle', 'ankle', 'anchor', 'anvil', 'ants', 'anthem', 'antler'],
+  ...['teas', 'tear', 'teach', 'tent', 'tenth', 'them', 'they', 'thin', 'toad', 'tone', 'top'],
+  ...['bed', 'beef', 'been', 'beet', 'bent', 'best', 'bats', 'bathe', 'bad', 'bag'],
+  ...['inch', 'inks', 'inner', 'input', 'inset', 'its', 'itch', 'item', 'isle'],
+  ...['seal', 'seam', 'seas', 'seek', 'seem', 'seen', 'sets', 'site', 'sip', 'six'],
+  ...['pane', 'pant', 'pans', 'pet', 'pens', 'pint', 'pink', 'pins', 'pots', 'pod'],
+];
+
+/** Real words not in `stored`, in a random order, to try inserting. */
 function candidates(rng: Rng, stored: string[]): string[] {
-  const out = new Set<string>([...FAMILIES.flat(), ...LONERS]);
-  for (const w of stored) {
-    for (let i = 1; i < w.length; i++) out.add(w.slice(0, i));
-    for (const ch of 'aeiost') {
-      out.add(w + ch);
-      if (w.length > 1) out.add(w.slice(0, -1) + ch);
-    }
-  }
+  const all = new Set([...FAMILIES.flat(), ...LONERS, ...MORE_WORDS]);
   return shuffle(
     rng,
-    [...out].filter((w) => !stored.includes(w) && w.length <= 10),
+    [...all].filter((w) => !stored.includes(w)),
   );
 }
 
@@ -121,36 +129,41 @@ export function radixPractice(def: () => Def): PracticeKind[] {
       id: 'delete-merge',
       title: 'Which edges merge after a delete?',
       make(rng) {
-        let stored = sharedWords(rng, rng.int(4, 6));
-        let s = run(inserts(stored)).endState();
-        // Edges one above the other, for the wrong answers (almost always the first try).
+        // Edges one above the other, for the wrong answers.
         const pairsOf = (st: RadixState) =>
           Object.values(st.nodes)
             .filter((n) => n.uid !== st.root && n.kids.length > 0)
             .flatMap((n) => n.kids.map((k) => mergeText(n.label, st.nodes[k]!.label)));
-        while (pairsOf(s).length === 0) {
-          stored = sharedWords(rng, rng.int(4, 6));
-          s = run(inserts(stored)).endState();
+        // A delete that merges three times in four, so "no edges merge" is not the safe guess.
+        const wantMerge = rng.int(0, 3) > 0;
+        for (;;) {
+          const stored = sharedWords(rng, rng.int(4, 6));
+          const setup = inserts(stored);
+          const s = run(setup).endState();
+          if (pairsOf(s).length === 0) continue;
+          const deletes = stored.map((w) => ({
+            w,
+            merge: lastOp([...setup, ['delete', w]]).find((st) => st.extra?.merge)?.extra?.merge,
+          }));
+          const pool = deletes.filter((d) => !!d.merge === wantMerge);
+          if (pool.length === 0) continue;
+          const { w, merge } = pool[rng.int(0, pool.length - 1)]!;
+          const right = merge ? mergeText(merge.top, merge.bottom) : NO_MERGE;
+          const wrong = shuffle(
+            rng,
+            pairsOf(s).filter((x) => x !== right),
+          ).slice(0, 2);
+          const options = shuffle(rng, [...new Set([right, ...wrong, NO_MERGE])]);
+          return {
+            prompt: `Delete ${code(w)} from the compressed trie shown. Which two edges merge into one, if any?`,
+            setup,
+            answer: { kind: 'choice', options, correct: options.indexOf(right) },
+            explain: merge
+              ? `After ${w} goes, the node at the end of ${q(merge.top)} ends no word and has one child left, so it is not needed: its edge and its child's edge join into ${q(merge.top + merge.bottom)}.`
+              : `After ${w} goes, every node left still ends a word or has two or more children, so nothing merges.`,
+            watch: [['delete', w]],
+          };
         }
-        const setup = inserts(stored);
-        const w = stored[rng.int(0, stored.length - 1)]!;
-        const steps = lastOp([...setup, ['delete', w]]);
-        const merge = steps.find((st) => st.extra?.merge)?.extra?.merge;
-        const right = merge ? mergeText(merge.top, merge.bottom) : NO_MERGE;
-        const wrong = shuffle(
-          rng,
-          pairsOf(s).filter((x) => x !== right),
-        ).slice(0, 2);
-        const options = shuffle(rng, [...new Set([right, ...wrong, NO_MERGE])]);
-        return {
-          prompt: `Delete ${code(w)} from the compressed trie shown. Which two edges merge into one, if any?`,
-          setup,
-          answer: { kind: 'choice', options, correct: options.indexOf(right) },
-          explain: merge
-            ? `After ${w} goes, the node at the end of ${q(merge.top)} ends no word and has one child left, so it is not needed: its edge and its child's edge join into ${q(merge.top + merge.bottom)}.`
-            : `After ${w} goes, every node left still ends a word or has two or more children, so nothing merges.`,
-          watch: [['delete', w]],
-        };
       },
     },
   ];

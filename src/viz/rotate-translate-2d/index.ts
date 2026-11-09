@@ -101,10 +101,11 @@ export const rotateTranslate2d: VizDef<RtState, RtSettings, RtExtra> = {
         label: 'Rotate about a point',
         usesInput: true,
         args: ['an angle', 'cx', 'cy'],
+        more: true,
       },
       { op: 'order', label: 'Compare orders', usesInput: true, args: ['an angle', 'tx', 'ty'] },
-      { op: 'invert', label: 'Undo all (inverse)', usesInput: false },
-      { op: 'reset', label: 'Reset', usesInput: false },
+      { op: 'invert', label: 'Undo all (inverse)', usesInput: false, more: true },
+      { op: 'reset', label: 'Reset', usesInput: false, more: true },
     ],
     random: {
       label: 'Random motion',

@@ -100,8 +100,8 @@ export const rotateScale3d: VizDef<RsState, Rs3Settings, Rs3Extra> = {
       { op: 'rotateY', label: 'Rotate about y', usesInput: true },
       { op: 'rotateZ', label: 'Rotate about z', usesInput: true },
       { op: 'scale', label: 'Scale', usesInput: true, args: ['sx', 'sy', 'sz'] },
-      { op: 'order', label: 'Compare orders (x, y)', usesInput: true },
-      { op: 'reset', label: 'Reset', usesInput: false },
+      { op: 'order', label: 'Compare orders (x, y)', usesInput: true, more: true },
+      { op: 'reset', label: 'Reset', usesInput: false, more: true },
     ],
     random: {
       label: 'Random rotation',

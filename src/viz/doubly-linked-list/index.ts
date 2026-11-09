@@ -63,12 +63,13 @@ export const doublyLinkedList: VizDef<DState, DSettings, DExtra> = {
     },
     buttons: [
       { op: 'insertTail', label: 'Insert at tail', usesInput: true, bulk: true, primary: true },
-      { op: 'insertHead', label: 'Insert at head', usesInput: true, bulk: true },
+      { op: 'insertHead', label: 'Insert at head', usesInput: true, bulk: true, more: true },
       {
         op: 'insertAt',
         label: 'Insert at (i, x)',
         usesInput: true,
         args: ['an index', 'a value'],
+        more: true,
       },
       { op: 'removeHead', label: 'Remove head', usesInput: false },
       { op: 'removeTail', label: 'Remove tail', usesInput: false },

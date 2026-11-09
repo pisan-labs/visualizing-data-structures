@@ -246,7 +246,14 @@
     color: var(--text);
   }
 
-  /* A long preset label must not widen the row past the screen on phones. */
+  /* A long preset label must not widen the row past the screen on phones. A select is as wide
+     as its longest option, and a flex item is at least as wide as its content, so the select's
+     row and the row around it must be allowed to shrink too. */
+  .secondary,
+  .presets {
+    min-width: 0;
+  }
+
   #preset {
     min-width: 0;
     max-width: 100%;

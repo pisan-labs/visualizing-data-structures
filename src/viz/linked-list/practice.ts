@@ -127,6 +127,7 @@ export function listPractice(def: () => Def): PracticeKind[] {
           kind === 0 ? ['insertTail', vals[n]!] : kind === 1 ? ['get', i] : ['removeTail'];
         const steps = run([...setup, op], settings).entries.at(-1)!.steps;
         const hops = Math.max(0, ...steps.map((s) => Number(s.vars?.hops ?? 0)));
+        const hopCount = `${hops} ${hops === 1 ? 'hop' : 'hops'}`;
         const prompt =
           kind === 0
             ? `This list has only a head pointer. How many times does ${call(op)} follow a next pointer to find the last node?`
@@ -135,10 +136,10 @@ export function listPractice(def: () => Def): PracticeKind[] {
               : `This list has a tail pointer. How many times does ${call(op)} follow a next pointer?`;
         const explain =
           kind === 0
-            ? `Without tail, it walks from head to the last node of ${n}: ${hops} hops.`
+            ? `Without tail, it walks from head to the last node of ${n}: ${hopCount}.`
             : kind === 1
-              ? `It starts at head (index 0) and follows next until index ${i}: ${hops} hops.`
-              : `It needs the node before the last one, and tail cannot say which that is, so it walks from head: ${hops} hops.`;
+              ? `It starts at head (index 0) and follows next until index ${i}: ${hopCount}.`
+              : `It needs the node before the last one, and tail cannot say which that is, so it walks from head: ${hopCount}.`;
         return {
           prompt,
           setup,

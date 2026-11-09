@@ -284,7 +284,9 @@ function* walkToLast(
   }
   yield st(
     s,
-    `cur.next is null, so ${val(s, cur)} is the last node. Finding it took ${plural(hops, 'hop')}; with a tail pointer it would take none.`,
+    hops === 0
+      ? `cur.next is null, so ${val(s, cur)}, the head, is also the last node. Finding it took no hops this time.`
+      : `cur.next is null, so ${val(s, cur)} is the last node. Finding it took ${plural(hops, 'hop')}; with a tail pointer it would take none.`,
     [`${op}.loop`],
     { marks: [mark(nid(cur), 'found')], ptrs: { ...ptrs, cur }, pending, vars: more() },
   );

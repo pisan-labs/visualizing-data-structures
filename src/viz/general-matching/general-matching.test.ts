@@ -1,8 +1,9 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { practiceSet } from '../../engine/practice';
 import { Timeline } from '../../engine/timeline';
 import { makeGraph, type Graph } from '../_graph/graph';
-import { formatGraph } from '../_graph/parse';
+import { formatGraph, parseGraph } from '../_graph/parse';
 import { generalMatching } from '.';
 import { matchedPairs, matchingSize, type BlRun } from './model';
 
@@ -114,5 +115,23 @@ describe('general matching (blossom)', () => {
       }),
       { numRuns: 400 },
     );
+  });
+});
+
+describe('general matching practice', () => {
+  it('gets the size and the perfect-matching answers right, by brute force', () => {
+    for (let seed = 1; seed <= 80; seed++)
+      for (const item of practiceSet(generalMatching, seed, 4)) {
+        const q = item.question;
+        const g = parseGraph(String(q.setup[0]![1])) as Graph;
+        const best = brute(g);
+        if (item.kind.id === 'size') expect(q.answer).toEqual({ kind: 'number', value: best });
+        if (item.kind.id === 'perfect' && q.answer.kind === 'choice')
+          expect(q.answer.correct).toBe(2 * best === g.vertices.length ? 0 : 1);
+        if (item.kind.id === 'free' && q.answer.kind === 'sequence')
+          expect(q.answer.value.length).toBe(g.vertices.length - 2 * best);
+        // A blossom is an odd cycle, not an edge.
+        expect(q.explain).not.toMatch(/is an edge between two even/);
+      }
   });
 });

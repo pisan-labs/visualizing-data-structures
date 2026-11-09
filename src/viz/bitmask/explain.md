@@ -65,7 +65,7 @@ Avoid it when the set can grow past the word size or when the items are not smal
 
 ## Common mistakes
 
-- Precedence. In C, C++ and Java, `x & 1 == 0` means `x & (1 == 0)`. Write `(x & 1) == 0`.
+- Precedence. In C and C++, `x & 1 == 0` means `x & (1 == 0)`, which is always 0. Java reads it the same way and then refuses to compile it: `int & boolean` is a type error. Write `(x & 1) == 0`.
 - Shifting too far. `1 << 31` in Java is negative, and `1 << 32` in C++ on a 32-bit int is undefined. Use `1L << i` or an unsigned type.
 - Right-shifting a negative number. Java's `>>` copies the sign bit; `>>>` does not.
 - Forgetting the empty set. Subset loops that start at 1 miss it, and submask loops that stop at `sub > 0` never visit 0.

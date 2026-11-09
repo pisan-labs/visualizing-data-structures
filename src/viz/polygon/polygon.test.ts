@@ -77,6 +77,44 @@ describe('polygon algorithms', () => {
     });
   });
 
+  it('says what the star does: right turns, −720°, winding −2', () => {
+    const star = '6,11 9,2 1,7 11,7 3,2';
+    const t = new Timeline(polygon, winding, 1, [['load', star], ['convex'], ['inside', 6, 6]]);
+    const turns = t.entries[1]!.steps.slice(0, -1).map((s) => s.say);
+    expect(turns.every((say) => say.includes('a right turn'))).toBe(true);
+    expect(t.entries[1]!.steps.at(-1)!.say).toContain('The turns add up to -720°');
+    expect(t.entries[2]!.end.result).toMatchObject({ where: 'inside', count: -2 });
+    // The concept page and the notes said "turns left at every vertex" and "winding number 2".
+    expect(polygon.explain).not.toContain('turns left at every vertex');
+    const notes = (id: string) => polygon.examples.find((e) => e.id === id)!.notes;
+    expect(notes('star-winding')).toContain('winding number is −2');
+    expect(notes('star-even-odd')).toContain('−720°');
+  });
+
+  it('says the even-odd rule agrees when the winding number is odd', () => {
+    // A triangle traced three times winds around its middle 3 times: 3 crossings, odd.
+    const thrice = '2,2 10,2 6,10 2,2 10,2 6,10 2,2 10,2 6,10';
+    const say = new Timeline(polygon, winding, 1, [
+      ['load', thrice],
+      ['inside', 6, 5],
+    ]).entries[1]!.steps.at(-1)!.say;
+    expect(say).toContain('The winding number is 3, so q is inside.');
+    // Was "the even-odd rule would call it outside", which is false for an odd count.
+    expect(say).toContain('the even-odd rule agrees, since that is odd');
+    expect(end(ray, thrice, ['inside', 6, 5]).result).toMatchObject({ where: 'inside', count: 3 });
+  });
+
+  it('explains the half-open rule at the edge it lets through', () => {
+    const steps = new Timeline(polygon, ray, 1, [
+      ['load', '6,1 11,6 6,11 1,6'],
+      ['inside', 3, 6],
+    ]).entries[1]!.steps;
+    // Was "goes from y = 6 to y = 11, past y = 6".
+    expect(steps.find((s) => s.say.startsWith('Edge BC'))!.say).toContain(
+      'Its end on the ray counts as below it',
+    );
+  });
+
   it('agrees with Pick, angle sums and an edge-by-edge convexity check', () => {
     fc.assert(
       fc.property(polyArb, coord, coord, (v, qx, qy) => {

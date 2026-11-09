@@ -55,7 +55,7 @@ A point on the boundary is its own problem. Different programs answer differentl
 
 The other rule counts how many times the boundary winds around q. Walk along the edges: an edge that crosses q's horizontal line going up, with q on its left, adds 1; one going down with q on its right subtracts 1. A nonzero total means inside.
 
-For a simple polygon the two rules always agree. When edges cross, they do not. The middle of a five-pointed star is wrapped twice: two crossings (even, so outside) but winding number 2 (nonzero, so inside). This is the `fill-rule` option in SVG and the canvas: `evenodd` or `nonzero`. Compare the [even-odd star](#example:star-even-odd) with the [winding star](#example:star-winding).
+For a simple polygon the two rules always agree. When edges cross, they do not. The middle of a five-pointed star is wrapped twice: two crossings (even, so outside) but winding number 2 (nonzero, so inside). The star here goes clockwise, so its count comes out as −2. Still nonzero. This is the `fill-rule` option in SVG and the canvas: `evenodd` or `nonzero`. Compare the [even-odd star](#example:star-even-odd) with the [winding star](#example:star-winding).
 
 ```check
 Q: The ray from q crosses 4 edges of a simple polygon. Where is q?
@@ -69,7 +69,7 @@ Q: The ray from q crosses 4 edges of a simple polygon. Where is q?
 
 A polygon is convex when every vertex turns the same way. One turn the other way is a dent (a reflex vertex), and you can stop there. [An L-shape](#example:l-shape)
 
-That check alone is not enough. The star turns left at every vertex and is clearly not convex: its edges cross. So also add up the turning angles. A convex polygon turns through exactly one full circle, 360°. The star goes round twice, 720°.
+That check alone is not enough. The star turns right at every vertex and is clearly not convex: its edges cross. So also add up the turning angles. A convex polygon turns through exactly one full circle, 360°. The star goes round twice, 720° (−720° here, since it goes clockwise).
 
 ## Which way round
 

@@ -3,7 +3,7 @@
   "viz": "polygon",
   "id": "star-even-odd",
   "title": "A five-pointed star, even-odd",
-  "notes": "A star drawn in one stroke. Every turn goes the same way, yet it is not convex: the turns add up to 720°. Its centre is crossed twice by the ray, so the even-odd rule calls it outside.",
+  "notes": "A star drawn in one stroke. Every turn goes the same way (right), yet it is not convex: the turns add up to −720°, two full circles clockwise. Its centre is crossed twice by the ray, so the even-odd rule calls it outside.",
   "settings": {
     "inside": "ray"
   },

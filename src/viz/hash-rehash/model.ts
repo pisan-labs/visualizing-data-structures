@@ -236,7 +236,7 @@ function* insertKey(s: S, raw: Value, settings: RehashSettings): Generator<RStep
   } else if (free >= 0) {
     yield step(
       c,
-      `n + 1 = ${n + 1} keys make α = ${n + 1}/${m} ≈ ${fmtNum(after)}, not above ${settings.threshold}, so no need to grow.`,
+      `n + 1 = ${n + 1} ${n === 0 ? 'key makes' : 'keys make'} α = ${n + 1}/${m} ≈ ${fmtNum(after)}, not above ${settings.threshold}, so no need to grow.`,
       ['ins.check'],
       3,
       [],

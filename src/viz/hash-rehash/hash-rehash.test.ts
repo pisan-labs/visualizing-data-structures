@@ -93,6 +93,27 @@ describe('rehashing', () => {
     expect(lastStep(t, 9).vars?.amortized).toBe(2.1);
   });
 
+  // The half-full example said threshold 0.5 grows three times and costs more. It grows twice,
+  // sooner, and costs less: 17 against 21.
+  it('grows twice and sooner with threshold 0.5, and costs less in total', () => {
+    const t = run(
+      Array.from({ length: 10 }, (_, i): OpCall => ['insert', i + 1]),
+      { threshold: '0.5' },
+    );
+    const grows = t.entries.filter((e) => e.steps.some((s) => s.lines.includes('ins.move')));
+    expect(grows.map((e) => t.entries.indexOf(e) + 1)).toEqual([3, 6]);
+    expect(t.endState().total).toBe(17);
+    expect(t.endState().table.m).toBe(23);
+  });
+
+  // The first insert said "n + 1 = 1 keys make α = 1/5".
+  it('says "1 key makes" for the first insert', () => {
+    const says = run([['insert', 1]]).entries[0]!.steps.map((s) => s.say);
+    expect(says).toContain(
+      'n + 1 = 1 key makes α = 1/5 ≈ 0.2, not above 0.75, so no need to grow.',
+    );
+  });
+
   it('grows only when full with threshold 1.0', () => {
     const t = run(
       [1, 6, 11, 16, 21, 26].map((k): OpCall => ['insert', k]),

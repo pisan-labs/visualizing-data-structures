@@ -93,7 +93,7 @@ export const stringHashing: VizDef<HashState, HashSettings, HashExtra> = {
       label: 'Base b',
       min: 2,
       max: 999,
-      help: 'Pick b bigger than the alphabet (26), so short strings never collide before the mod.',
+      help: 'Pick b of at least 26, the number of letter values, so no two strings collide before the mod.',
     },
     {
       kind: 'number',

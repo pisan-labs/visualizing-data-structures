@@ -110,6 +110,8 @@ const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? o
 /** One number per modulus: "53", or "53 and 12" with double hashing. */
 const both = (xs: readonly number[]) => xs.join(' and ');
 const pairText = (xs: readonly number[]) => (xs.length > 1 ? `(${xs.join(', ')})` : String(xs[0]));
+/** For the variables: a number with one hash, "(53, 12)" with two. */
+const pv = (xs: readonly number[]): Scalar => (xs.length > 1 ? pairText(xs) : xs[0]!);
 
 // ----- Input -----
 
@@ -234,7 +236,7 @@ function* build(run: Run, again: boolean): Gen {
         mark(`H-${i + 1}`, 'new'),
         mark(`P-${i + 1}`, 'new'),
       ],
-      { k: i + 1, [`H[${i + 1}]`]: pairText(parts.map((x) => x.next)) },
+      { k: i + 1, [`H[${i + 1}]`]: pv(parts.map((x) => x.next)) },
     );
   }
   run.st.built = true;
@@ -302,7 +304,7 @@ const hashOp: Op = {
       ['hget'],
       1,
       [...marks, mark('result', 'found')],
-      { l, r, len, hash: pairText(hs) },
+      { l, r, len, hash: pv(hs) },
       { ...span, result: { text: `hash(${q(sub)}) = ${pairText(hs)}`, role: 'found' } },
     );
     return run.st;
@@ -349,7 +351,7 @@ const compareOp: Op = {
       ['csig', 'chash'],
       2,
       [mark('span-1', 'active'), ...hashMarks(i)],
-      { i, j, len, 'hash 1': pairText(hx) },
+      { i, j, len, 'hash 1': pv(hx) },
       spans,
     );
     yield run.step(
@@ -357,11 +359,11 @@ const compareOp: Op = {
       ['chash'],
       2,
       [mark('span-2', 'visit'), ...hashMarks(j)],
-      { i, j, len, 'hash 1': pairText(hx), 'hash 2': pairText(hy) },
+      { i, j, len, 'hash 1': pv(hx), 'hash 2': pv(hy) },
       spans,
     );
     const same = hx.every((v, t) => v === hy[t]);
-    const vars = { i, j, len, 'hash 1': pairText(hx), 'hash 2': pairText(hy) };
+    const vars = { i, j, len, 'hash 1': pv(hx), 'hash 2': pv(hy) };
     if (!same) {
       yield run.step(
         `${pairText(hx)} ≠ ${pairText(hy)}: the substrings are different, for certain. Equal strings always have equal hashes, so a hash check never says "different" by mistake.`,
@@ -428,7 +430,7 @@ const windowsOp: Op = {
       ['wsig', 'wtop', 'wfirst'],
       2,
       [mark('w-0', 'new')],
-      { k, 'b^(k−1)': pairText(top), hash: pairText(first) },
+      { k, 'b^(k−1)': pv(top), hash: pv(first) },
       { spans: [{ id: 'span-1', from: 0, to: k - 1 }] },
     );
     for (let w = 1; w < count; w++) {
@@ -443,7 +445,7 @@ const windowsOp: Op = {
         ['wroll', 'wupdate'],
         2,
         [mark(`s-${w - 1}`, 'remove'), mark(`s-${w + k - 1}`, 'new'), mark(`w-${w}`, 'new')],
-        { k, 'b^(k−1)': pairText(top), w, hash: pairText(next) },
+        { k, 'b^(k−1)': pv(top), w, hash: pv(next) },
         { spans: [{ id: 'span-1', from: w, to: w + k - 1 }] },
       );
     }

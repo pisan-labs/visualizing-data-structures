@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "busy-beaver",
+  "id": "one-bit-off",
+  "title": "One bit off the champion: 3 ones",
+  "notes": "The 2-state champion with one change: its last rule writes 0 instead of 1. It still halts after 6 moves, but leaves 3 ones, not 4.",
+  "settings": {
+    "rules": "table"
+  },
+  "seed": 1,
+  "ops": [["load", "1RB1LB_1LA0RH"], ["run"]]
+}

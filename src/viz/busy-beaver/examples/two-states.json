@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "busy-beaver",
+  "id": "two-states",
+  "title": "The 2-state champion: 4 ones in 6 moves",
+  "notes": "Two states and a halt state. A writes 1 and hands over to B, B writes 1 and hands back, and on the sixth move B finds a 1 and halts. Σ(2) = 4 and S(2) = 6: no 2-state machine does better.",
+  "settings": {
+    "rules": "table"
+  },
+  "seed": 1,
+  "ops": [["load", "bb2"], ["run"]]
+}

@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "busy-beaver",
+  "id": "four-states",
+  "title": "Four states: 13 ones in 107 moves",
+  "notes": "The 4-state champion, run 100 moves at once and then to the end. At the normal detail level you see every tenth move. Σ(4) = 13 and S(4) = 107.",
+  "settings": {
+    "rules": "table"
+  },
+  "seed": 1,
+  "ops": [["load", "bb4"], ["steps", 100], ["run"]]
+}

@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "busy-beaver",
+  "id": "loops",
+  "title": "A machine that never halts: it comes back to where it was",
+  "notes": "A and B bounce between cells 0 and 1. After move 4 the state, the head and the tape are exactly as they were after move 2, so it repeats forever. It has a rule into H; it just never uses it.",
+  "settings": {
+    "rules": "table"
+  },
+  "seed": 1,
+  "ops": [["load", "0RB1RH_1LA1LA"], ["run"]]
+}

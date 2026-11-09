@@ -248,6 +248,9 @@ function* attempt(run: R, settings: KmpSettings): Gen<KmpPre> {
     if (!same) break;
   }
   const i = s + q;
+  /** Past the last shift that fits, the search is over, so there is nothing to carry on with. */
+  const over = (to: number) => to > run.n - m;
+  const past = ` That is past n − m = ${run.n - m}, so the search is over.`;
   const skipped = known
     ? ` The first ${plural(known, 'character')} were known to match, so ${known === 1 ? 'it was' : 'they were'} not compared.`
     : '';
@@ -255,11 +258,13 @@ function* attempt(run: R, settings: KmpSettings): Gen<KmpPre> {
     const k = pi[m - 1]!;
     const d = m - k;
     run.close('match', { s: s + d, known: k, by: { amount: d, why: `${sym}[${m - 1}] = ${k}` } });
-    const then = k
-      ? `${sym}[${m - 1}] = ${k}: the match ends with ${quote(pattern.slice(0, k))}, a prefix of P. Slide P ${plural(d, 'place')}, to s = ${s + d}, so that prefix lines up with it, and carry on at T[${i}] with q = ${k}.`
-      : `${sym}[${m - 1}] = 0, so no part of the match can start another one. Slide P all the way past it, to s = ${s + d}.`;
+    const then = !k
+      ? `${sym}[${m - 1}] = 0, so no part of the match can start another one. Slide P all the way past it, to s = ${s + d}.`
+      : over(s + d)
+        ? `${sym}[${m - 1}] = ${k}: the match ends with ${quote(pattern.slice(0, k))}, a prefix of P. Slide P ${plural(d, 'place')}, to s = ${s + d}.`
+        : `${sym}[${m - 1}] = ${k}: the match ends with ${quote(pattern.slice(0, k))}, a prefix of P. Slide P ${plural(d, 'place')}, to s = ${s + d}, so that prefix lines up with it, and carry on at T[${i}] with q = ${k}.`;
     yield run.step(
-      `All ${m} characters match: P occurs at shift ${s}.${skipped} ${then}${s + d > run.n - m ? ' That is past n − m, so the search is over.' : ''}`,
+      `All ${m} characters match: P occurs at shift ${s}.${skipped} ${then}${over(s + d) ? past : ''}`,
       ['check', 'add', 'else', 'slide', 'keep'],
       1,
       [mark(`found-${s}`, 'found'), mark(piCell(m - 1), 'compare')],
@@ -270,7 +275,9 @@ function* attempt(run: R, settings: KmpSettings): Gen<KmpPre> {
   if (q === 0) {
     run.close('mismatch', { s: s + 1, known: 0, by: { amount: 1 } });
     yield run.step(
-      `Nothing matched at shift ${s}, so slide P one place, to s = ${s + 1}, and move on to T[${i + 1}].${s + 1 > run.n - m ? ' That is past n − m, so the search is over.' : ''}`,
+      over(s + 1)
+        ? `Nothing matched at shift ${s}, so slide P one place, to s = ${s + 1}.${past}`
+        : `Nothing matched at shift ${s}, so slide P one place, to s = ${s + 1}, and move on to T[${i + 1}].`,
       ['check', 'zero'],
       2,
       [],
@@ -282,11 +289,13 @@ function* attempt(run: R, settings: KmpSettings): Gen<KmpPre> {
   const d = q - k;
   run.close('mismatch', { s: s + d, known: k, by: { amount: d, why: `${sym}[${q - 1}] = ${k}` } });
   const matched = quote(pattern.slice(0, q));
-  const keep = k
-    ? `Its longest border is ${quote(pattern.slice(0, k))}: ${sym}[${q - 1}] = ${k}. Slide P ${plural(d, 'place')}, to s = ${s + d}, so its first ${plural(k, 'character')} line up with T[${i - k}..${i - 1}], which already match them. i stays at ${i}: compare T[${i}] with P[${k}] next.`
-    : `${sym}[${q - 1}] = 0: no prefix of P can start inside it. Slide P ${plural(d, 'place')}, to s = ${s + d}, and compare T[${i}] with P[0] next. i stays at ${i}.`;
+  const keep = over(s + d)
+    ? `${k ? `Its longest border is ${quote(pattern.slice(0, k))}: ${sym}[${q - 1}] = ${k}` : `${sym}[${q - 1}] = 0: no prefix of P can start inside it`}. Slide P ${plural(d, 'place')}, to s = ${s + d}.${past}`
+    : k
+      ? `Its longest border is ${quote(pattern.slice(0, k))}: ${sym}[${q - 1}] = ${k}. Slide P ${plural(d, 'place')}, to s = ${s + d}, so its first ${plural(k, 'character')} line up with T[${i - k}..${i - 1}], which already match them. i stays at ${i}: compare T[${i}] with P[${k}] next.`
+      : `${sym}[${q - 1}] = 0: no prefix of P can start inside it. Slide P ${plural(d, 'place')}, to s = ${s + d}, and compare T[${i}] with P[0] next. i stays at ${i}.`;
   yield run.step(
-    `Shift ${s} matched ${matched}, then T[${i}] ≠ P[${q}].${skipped} ${keep}${s + d > run.n - m ? ' That is past n − m, so the search is over.' : ''}`,
+    `Shift ${s} matched ${matched}, then T[${i}] ≠ P[${q}].${skipped} ${keep}`,
     ['check', 'zero', 'else', 'slide', 'keep'],
     2,
     [mark(piCell(q - 1), 'compare')],

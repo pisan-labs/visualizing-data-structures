@@ -94,7 +94,7 @@ export function kmpPractice(def: () => MatchDef): PracticeKind[] {
             answer: { kind: 'number', value: next },
             explain:
               q > 0
-                ? `\`${pattern.slice(0, q)}\` matches, then T[${a.s + q}] ≠ P[${q}]. ${sym}[${q - 1}] = ${pi[q - 1]}, so P slides ${q} − ${pi[q - 1]} = ${q - pi[q - 1]!} places: s = ${a.s} + ${q - pi[q - 1]!} = ${next}.`
+                ? `\`${pattern.slice(0, q)}\` matches, then T[${a.s + q}] ≠ P[${q}]. ${sym}[${q - 1}] = ${pi[q - 1]}, so P slides ${q} − ${pi[q - 1]} = ${plural(q - pi[q - 1]!, 'place')}: s = ${a.s} + ${q - pi[q - 1]!} = ${next}.`
                 : `Nothing matches, so P slides one place, to s = ${next}.`,
             watch: [['next']],
           };

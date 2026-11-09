@@ -355,3 +355,5 @@
 2026-11-09 [decision] Yusuf: the concept pages are fine (closes the open voice-read item); go ahead with the four remaining small-text pages, the visual rough edges, and a by-eye check of the wave 7 thumbnails and pages
 
 2026-11-09 [code] Merged: the last four pages reach 11/9 px (regex-to-nfa expression and tape side by side on wide stages, multitape-tm tighter rules on a phone, dfa-to-regex closer layers, nfa-to-dfa a 6-row table window on a phone); every page now meets the text-size target
+
+2026-11-09 [code] Merged: persistent-bst stacks copies of a key like cards (older copies faded behind), johnson roomier with curved q arcs, aho-corasick labels move off curves with halos, rotate-scale-3d labels clear of arrowheads, dp-change arc label, fisher-yates count halos, product-construction pair names; six wave 7 thumbnails changed after a by-eye check of all 62; partial: johnson dense centre, product-construction "dead" touches its ring

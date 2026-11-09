@@ -43,7 +43,7 @@ The order of the input barely matters. [Reverse sorted](#example:reverse-input) 
 
 That's the selling point: O(n log n) in the worst case, like [merge sort](/merge-sort/), and no extra array, unlike merge sort. Many C++ libraries use it as a safety net: their `std::sort` is introsort, a quicksort that switches to heap sort when the recursion gets too deep.
 
-Equal values are the one exception. A child that is not bigger never swaps, so with [all values equal](#example:all-equal) nothing sinks and the sort is O(n): 15 comparisons and 6 swaps for 7 values.
+Equal values are the one exception. A child that is not bigger never swaps, so with [all values equal](#example:all-equal) nothing sinks and the sort is O(n): 15 comparisons and 6 swaps for 7 values. Those 6 are phase 2 moving the root to the end, and the swaps counter counts every such swap, even between two equal values.
 
 ## Not stable
 

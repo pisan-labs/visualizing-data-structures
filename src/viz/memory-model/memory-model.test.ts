@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { memoryModel, parseStatement } from '.';
@@ -148,6 +149,39 @@ describe('memory model', () => {
     expect(parseStatement('print(x)')).toBeInstanceOf(Error);
     expect(parseStatement('x = 1000')).toBeInstanceOf(Error);
     expect(parseStatement('toolongname = 1')).toBeInstanceOf(Error);
+  });
+
+  it('says a write through a C++ reference lands in the variable it refers to', () => {
+    const says = (calls: string[]) =>
+      new Timeline(
+        memoryModel,
+        settings({ lang: 'values' }),
+        1,
+        calls.map((c) => ['run', c] as OpCall),
+      ).entries.flatMap((e) => e.steps.map((s) => s.say));
+    const r = says(['x = 5', '&r = x', 'r = 7']);
+    expect(r).toContain("r = 7: r is a reference to x, so the number goes into x's box.");
+    expect(r.join(' ')).not.toContain("into r's box");
+    const fn = says(['xs = [1, 2]', 'resetRef(xs)', 'n = 1', 'bumpRef(n)']).join(' ');
+    expect(fn).toContain('a = [0]: a is a reference to xs, so the values go into xs.');
+    expect(fn).toContain("n is a reference to the caller's n");
+    expect(fn).not.toContain('n is a reference to n');
+    expect(fn).not.toContain('live in a itself');
+  });
+
+  it('explains what xs holds from the statements actually run, including xs = [...]', () => {
+    const kind = memoryModel.practice!.find((k) => k.id === 'alias-list')!;
+    let reassigned = 0;
+    for (let seed = 1; seed <= 80; seed++) {
+      const q = kind.make(makeRng(seed));
+      const ran = q.watch!.map((c) => String(c[1]));
+      if (ran.some((s) => s.startsWith('xs = ['))) {
+        reassigned++;
+        expect(q.explain).toContain('points xs at a new list');
+      } else expect(q.explain).not.toContain('points xs at a new list');
+      expect(q.explain).toContain(`[${(q.answer as { value: string[] }).value.join(', ')}]`);
+    }
+    expect(reassigned).toBeGreaterThan(0);
   });
 });
 

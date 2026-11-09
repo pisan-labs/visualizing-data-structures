@@ -298,11 +298,18 @@ function* assign(s: S, name: string, value: Cell, how: string, line: string, ref
         `In C++ a variable keeps its type: ${name} holds ${target.v.cell.kind === 'num' ? 'a number' : 'a list'}. Use a new name.`,
       );
     const next = setVar(s, target.frame, { ...target.v, cell: value });
-    const through =
-      existing.cell.kind === 'alias'
-        ? ` ${name} is a reference, so this writes to ${target.v.name}.`
-        : '';
-    yield step(next, `${how}${through}`, [line], [mark(varId(target.v), 'new')]);
+    // Through a reference the value lands in the variable it refers to, not in a box of its own.
+    const t = target.v.name === name ? `the caller's ${name}` : target.v.name;
+    const stmt = how.slice(0, how.indexOf(': '));
+    const say =
+      existing.cell.kind !== 'alias'
+        ? how
+        : how.includes("'s box")
+          ? `${stmt}: ${name} is a reference to ${t}, so the number goes into ${target.v.name === name ? t : `${t}'s box`}.`
+          : how.includes('itself')
+            ? `${stmt}: ${name} is a reference to ${t}, so the values go into ${t}.`
+            : `${how} ${name} is a reference, so this writes to ${t}.`;
+    yield step(next, say, [line], [mark(varId(target.v), 'new')]);
     return next;
   }
   if (!existing && frame.vars.length >= MAX_VARS)
@@ -552,7 +559,7 @@ function* call(s: S, fn: Fn, arg: string, refs: boolean): Gen {
   let how: string;
   if (byRef) {
     cell = { kind: 'alias', frame: src.frame, name: src.v.name };
-    how = `${param} is a reference to ${arg}: another name for the same variable. Nothing is copied.`;
+    how = `${param} is a reference to ${param === arg ? `the caller's ${arg}` : arg}: another name for the same variable. Nothing is copied.`;
   } else if (src.v.cell.kind === 'list') {
     const [s2, copy] = newItems(
       s,

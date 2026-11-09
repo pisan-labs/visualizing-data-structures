@@ -365,3 +365,13 @@
 2026-11-09 [code] regex-to-nfa e2e: q2 must stay within half a unit (rounding to a tenth still failed on a 0.1-unit layout difference after the wide-stage change). Final full run on 2d02225: 4382 unit, e2e 3227 passed + this test, now 54 of 54 on repeat
 
 2026-11-09 [plan] Yusuf (about 10:30): wave 8 (12 pages: two-pointers, sliding-window, monotonic-stack, monotonic-queue, string-hashing, push-relabel, karger-min-cut, strassen, myhill-nerode, regex-derivatives, post-correspondence, busy-beaver), and in parallel a review of the 129 older pages, memory-model phone overflow, and the 9 pages with wrapping buttons; PLAN.md section 17
+
+2026-11-09 [note] Yusuf: give every time in Lisbon time until further notice (UTC+0 in November). Routines keep their schedules: the daily deploy at 17:27 Berlin is 16:27 Lisbon
+
+2026-11-09 [code] Merged: concept-page tables scroll in their own box and the preset select may shrink, so no page scrolls sideways on a phone (70 page loads did, at 360 and 390 wide); rare buttons of 9 pages under More operations
+
+2026-11-09 [code] Merged the review of the older pages: strings, graphs and flow (26 fixed), structures (20 fixed), sorting, recursion, DP and foundations (23 fixed). Mostly "1 keys" grammar, ambiguous practice answers, false claims in explain.md and example notes
+
+2026-11-09 [code] Merged wave 8B: push-relabel (FIFO, highest label, relabel-to-front), karger-min-cut (trials and histogram), strassen (up to 8x8, padding, M or CLRS names)
+
+2026-11-09 [code] robin-hood-hashing test: the reference now deletes by backward shift on linear probing too; reinserting the run could place keys elsewhere, so the property test failed at random

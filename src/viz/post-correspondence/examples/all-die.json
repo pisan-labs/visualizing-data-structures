@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "post-correspondence",
+  "id": "all-die",
+  "title": "Every branch dies: no match at all",
+  "notes": "abc over ab can start, but whatever comes next disagrees with it, and the other two dominoes disagree with themselves. The queue runs dry with nothing cut off, so the search has proved there is no match of any length.",
+  "settings": {
+    "method": "bfs",
+    "bound": 6,
+    "memo": false,
+    "first": "any"
+  },
+  "seed": 1,
+  "ops": [["load", "abc/ab ca/a acc/ba"], ["search"]]
+}

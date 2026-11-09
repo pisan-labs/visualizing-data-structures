@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "post-correspondence",
+  "id": "short-match",
+  "title": "A match of five dominoes",
+  "notes": "Four dominoes: b over ca, a over ab, ca over a, abc over c. Breadth first tries every sequence of one domino, then of two, and so on, and most of them die at once. The first match it finds, 2 1 3 2 4, spells abcaaabc on both sides.",
+  "settings": {
+    "method": "bfs",
+    "bound": 6,
+    "memo": false,
+    "first": "any"
+  },
+  "seed": 1,
+  "ops": [["search"]]
+}

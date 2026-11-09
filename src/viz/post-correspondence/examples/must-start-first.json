@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "post-correspondence",
+  "id": "must-start-first",
+  "title": "Modified PCP: start with domino 1",
+  "notes": "Sipser's modified problem demands that a match start with the first domino. Here domino 1 is b over ca, which disagrees with itself, so there is no match, even though the plain problem has one.",
+  "settings": {
+    "method": "bfs",
+    "bound": 6,
+    "memo": false,
+    "first": "first"
+  },
+  "seed": 1,
+  "ops": [["search"]]
+}

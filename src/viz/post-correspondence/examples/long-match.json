@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "post-correspondence",
+  "id": "long-match",
+  "title": "A shortest match of 12 dominoes",
+  "notes": "Three small dominoes whose shortest match takes 12 of them. Almost every extension dies, so breadth first reaches depth 12 after extending only 17 partial matches.",
+  "settings": {
+    "method": "bfs",
+    "bound": 12,
+    "memo": false,
+    "first": "any"
+  },
+  "seed": 1,
+  "ops": [["load", "aa/baa ab/aaa aba/a"], ["search"]]
+}

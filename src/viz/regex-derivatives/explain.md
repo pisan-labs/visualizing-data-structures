@@ -4,7 +4,7 @@ Here is a question you can ask any regular expression r: if a word starts with t
 
 | Operation | What it does | Cost |
 |---|---|---|
-| **Load** | reads an expression, such as `(a|b)*abb` | O(m), m its size |
+| **Load** | reads an expression, such as `a*(ba)*` | O(m), m its size |
 | **Derive** | works out d_c(r) from the smallest parts up | O(m), about twice as large at worst |
 | **Match** | one derivative per symbol, then checks ν | O(n·m) for a word of length n, with simplifying |
 | **Build DFA** | takes derivatives by every symbol until nothing new turns up | one derivative per state and symbol |

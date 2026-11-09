@@ -38,7 +38,7 @@ Comparing two words letter by letter can be misleading. flaw and lawn differ in 
 
 ## Changing the costs
 
-The options set what each edit costs. With every edit costing 1, intention becomes execution in 5. Make a substitution cost 2 and the answer is 8. [Show me](#play:sub-costs-two) A substitution that costs as much as a delete plus an insert never saves anything, so the cheapest alignment uses only matches, inserts and deletes. It keeps as many matches as possible, which makes it a longest common subsequence: the distance is then m + n minus twice the LCS length, 9 + 9 − 2·5 = 8.
+The options set what each edit costs. With every edit costing 1, intention becomes execution in 5. Make a substitution cost 2 and the answer is 8. [Show me](#play:sub-costs-two) A substitution that costs as much as a delete plus an insert never saves anything. Swap each one for a delete and an insert and the cost stays the same, so some cheapest alignment uses only matches, inserts and deletes. (The walk here still takes the diagonal when it ties, so it shows three substitutions.) Then every letter that is not matched costs 1, and the most letters you can match is a longest common subsequence: the distance is m + n minus twice the LCS length, 9 + 9 − 2·5 = 8.
 
 Uneven costs change the alignment too. With deletes at 3, abc becomes cab with three substitutions instead of an insert and a delete. [Deletes cost 3](#example:costly-delete)
 

@@ -1,6 +1,6 @@
 import type { OpSpec, PseudoBlock, PseudoLine, Scalar, Step } from '../../engine/types';
 import type { Cell } from '../../layouts/table';
-import { cellId, mark, plural, wordFromArg } from '../_dp/kit';
+import { andList, cellId, mark, plural, wordFromArg } from '../_dp/kit';
 
 export const MAX_LEN = 9;
 
@@ -319,7 +319,7 @@ const trace: Op = {
       say:
         dist === 0
           ? `Back at D[0][0]: every column is a match, so the words are the same and the distance is 0.`
-          : `Back at D[0][0]. Read the alignment from left to right: ${parts.join(', ')}, and ${plural(count('M'), 'match', 'matches')}. Total cost ${dist}.`,
+          : `Back at D[0][0]. Read the alignment from left to right: ${andList([...parts, count('M') ? plural(count('M'), 'match', 'matches') : 'no matches'])}. Total cost ${dist}.`,
       lines: ['p.stop'],
       vars: { distance: dist, ops },
       level: 1,

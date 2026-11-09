@@ -146,6 +146,21 @@ describe('edit distance', { timeout: 60_000 }, () => {
     expect(solve('a', 'banana')).toMatchObject({ distance: 5, ops: 'IIIIIM' });
   });
 
+  it('lists the edits without a stray comma and says "no matches" for none', () => {
+    const last = (a: string, b: string, c: Costs = { ins: 1, del: 1, sub: 1 }) =>
+      run(c, [['load', a, b], ['fill'], ['trace']])
+        .entries.at(-1)!
+        .steps.at(-1)!.say;
+    expect(last('intention', 'execution')).toContain(': 5 substitutions and 4 matches.');
+    expect(last('kitten', 'sitting')).toContain(': 2 substitutions, 1 insert and 4 matches.');
+    expect(last('abc', 'cab', { ins: 1, del: 3, sub: 1 })).toContain(
+      ': 3 substitutions and no matches.',
+    );
+    // With substitutions at 2 the walk still shows some, as the concept page says.
+    expect(last('intention', 'execution', { ins: 1, del: 1, sub: 2 })).toContain('3 substitutions');
+    expect(dpEditDistance.explain).toContain('so it shows three substitutions');
+  });
+
   it('refuses words it cannot draw and a walk before the table is full', () => {
     const t = run({ ins: 1, del: 1, sub: 1 }, [
       ['trace'],

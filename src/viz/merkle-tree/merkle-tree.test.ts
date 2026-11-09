@@ -10,19 +10,20 @@ import { hash, type MerkleSettings } from './model';
 const settings = (s: Partial<MerkleSettings> = {}): MerkleSettings =>
   ({ ...merkleTree.defaults, ...s }) as MerkleSettings;
 
-/** The root, straight from the definition: split the list in pairs, recursively. */
+/**
+ * The root, by splitting the list instead of pairing level by level: a tree of height h holds
+ * up to 2^h blocks, its left subtree takes the first 2^(h − 1) and its right subtree the rest. A
+ * subtree with nothing on its right is the odd node out: promoted as is, or hashed with itself.
+ */
 function refRoot(blocks: string[], odd: 'promote' | 'duplicate'): string {
-  let level = blocks.map(hash);
-  while (level.length > 1) {
-    const up: string[] = [];
-    for (let i = 0; i < level.length; i += 2) {
-      const a = level[i]!;
-      const b = level[i + 1];
-      up.push(b !== undefined ? hash(a + b) : odd === 'duplicate' ? hash(a + a) : a);
-    }
-    level = up;
-  }
-  return level[0]!;
+  const root = (part: string[], height: number): string => {
+    if (height === 0) return hash(part[0]!);
+    const half = 2 ** (height - 1);
+    const left = root(part.slice(0, half), height - 1);
+    if (part.length > half) return hash(left + root(part.slice(half), height - 1));
+    return odd === 'duplicate' ? hash(left + left) : left;
+  };
+  return root(blocks, Math.ceil(Math.log2(blocks.length)));
 }
 
 describe('merkle tree', () => {

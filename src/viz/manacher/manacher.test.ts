@@ -93,6 +93,19 @@ describe('Manacher', { timeout: 60_000 }, () => {
     expect(t.endState().best).toEqual({ center: 7, radius: 7 });
   });
 
+  it('says the comparison after a radius that fits inside R only confirms it', () => {
+    const steps = run([['load', 'abacabad'], ['build']]).entries[1]!.steps;
+    let seen = 0;
+    steps.forEach((s, n) => {
+      if (!s.say.includes('fits inside')) return;
+      seen++;
+      expect(s.say).toMatch(/the next comparison only confirms it/);
+      expect(s.say).not.toMatch(/for sure/);
+      expect(steps[n + 1]!.say).toMatch(/they differ/);
+    });
+    expect(seen).toBeGreaterThan(0);
+  });
+
   it('goes one center at a time and explains input it cannot use', () => {
     const t = run([['load', 'aba'], ['next'], ['next'], ['load', 'a b'], ['load', 'abcdefghijk']]);
     expect(t.entries[1]!.end.p).toEqual([0, null, null, null, null, null, null]);

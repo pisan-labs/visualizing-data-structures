@@ -346,7 +346,7 @@ function* find(s: S, raw: Value, op: 'search' | 'delete'): Generator<CStep, S, v
   if (op === 'search') c.vars.found = false;
   yield step(
     c,
-    `${hashSay(1, k, m)}, and T2[${j}] ${cell ? `holds ${cell.key}` : 'is empty'}. ${k} is in neither of its two nests, so it is not in the table: 2 probes, always.`,
+    `${op}(${k}): ${hashSay(1, k, m)}, and T2[${j}] ${cell ? `holds ${cell.key}` : 'is empty'}. ${k} is in neither of its two nests, so it is not in the table: 2 probes, always.`,
     [`${pre}.t2`, `${pre}.miss`],
     1,
     [mark(cellId(1, j), 'compare')],

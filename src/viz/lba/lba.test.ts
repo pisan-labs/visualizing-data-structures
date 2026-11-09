@@ -4,7 +4,7 @@ import { Timeline } from '../../engine/timeline';
 import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { smallestText } from '../../render/text-size';
 import { lba } from '.';
-import { LEFT, RIGHT, defaults, type MachineId } from './model';
+import { CAP, LEFT, RIGHT, capSay, defaults, type MachineId } from './model';
 
 const run = (machine: MachineId, w: string) =>
   new Timeline(lba, { ...defaults, machine }, 1, [['run', w || 'eps']]);
@@ -26,6 +26,13 @@ describe('lba', () => {
     const t = run('double', 'aa');
     expect(t.endState().verdict).toBe('blocked');
     expect(t.entries[0]!.steps.at(-1)!.say).toContain('An LBA may not');
+  });
+
+  it('claims a loop at the move cap only when the configurations are fewer than the moves', () => {
+    expect(capSay(CAP)).toMatch(/so one repeats: it loops/);
+    expect(capSay(CAP + 1)).not.toMatch(/repeats: it loops/);
+    expect(capSay(CAP + 1)).toMatch(/proves nothing yet: this word allows 1001 configurations/);
+    expect(capSay(5e9)).toMatch(/5\.0×10\^9 configurations/);
   });
 
   it('refuses letters the machine does not read', () => {

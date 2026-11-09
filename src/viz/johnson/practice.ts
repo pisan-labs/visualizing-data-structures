@@ -6,6 +6,8 @@ import { loadCall } from '../_graph/presets';
 import { withNegativeCycle, withNegativeEdges } from '../_paths/presets';
 import {
   defaults,
+  fmt,
+  signed,
   type JohnsonExtra,
   type JohnsonRun,
   type JohnsonSettings,
@@ -27,7 +29,7 @@ export function johnsonPractice(def: () => Def): PracticeKind[] {
     return { g, ops, r, watch: [['run']] as OpCall[] };
   }
   const hText = (g: { vertices: string[] }, r: JohnsonRun) =>
-    g.vertices.map((v) => `h(${v}) = ${r.h[v]}`).join(', ');
+    g.vertices.map((v) => `h(${v}) = ${fmt(r.h[v])}`).join(', ');
 
   return [
     {
@@ -56,7 +58,7 @@ export function johnsonPractice(def: () => Def): PracticeKind[] {
           prompt: `After Bellman-Ford from q, what is the new weight w'(${e.u}, ${e.v}) = w(${e.u}, ${e.v}) + h(${e.u}) − h(${e.v})?`,
           setup: ops,
           answer: { kind: 'number', value: w2 },
-          explain: `${hText(g, r)}. So w'(${e.u}, ${e.v}) = ${e.w} + ${r.h[e.u]} − (${r.h[e.v]}) = ${w2}, never negative.`,
+          explain: `${hText(g, r)}. So w'(${e.u}, ${e.v}) = ${fmt(e.w)} + ${signed(r.h[e.u]!)} − ${signed(r.h[e.v]!)} = ${fmt(w2)}, never negative.`,
           watch,
         };
       },
@@ -75,7 +77,7 @@ export function johnsonPractice(def: () => Def): PracticeKind[] {
             prompt: `What is the shortest distance from ${s} to ${t} in this graph? (Negative edges are fine; there is no negative cycle.)`,
             setup: ops,
             answer: { kind: 'number', value: d },
-            explain: `Dijkstra from ${s} on the reweighted arcs, then D[${s}][${t}] = d'(${s}, ${t}) − h(${s}) + h(${t}) = ${d}.`,
+            explain: `Dijkstra from ${s} on the reweighted arcs, then D[${s}][${t}] = d'(${s}, ${t}) − h(${s}) + h(${t}) = ${fmt(d)}.`,
             watch,
           };
         }

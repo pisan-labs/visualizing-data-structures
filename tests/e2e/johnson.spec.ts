@@ -37,8 +37,8 @@ test('Johnson fills the whole matrix despite negative edges', async ({ page }) =
   await toEnd(page);
   await expect(narration(page)).toContainText('Done: the matrix holds the shortest distance');
   await expect(page.locator('.vars')).toContainText(/rows\s*5/);
-  await expect(stage(page)).toHaveAttribute('aria-label', /h: A 0, B -1, C -5, D 0, E -4\./);
-  await expect(stage(page)).toHaveAttribute('aria-label', /A: 0 1 -3 2 -4/);
+  await expect(stage(page)).toHaveAttribute('aria-label', /h: A 0, B −1, C −5, D 0, E −4\./);
+  await expect(stage(page)).toHaveAttribute('aria-label', /A: 0 1 −3 2 −4/);
 });
 
 test('a negative cycle stops Johnson', async ({ page }) => {

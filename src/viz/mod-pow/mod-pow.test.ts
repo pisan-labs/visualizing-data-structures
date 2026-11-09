@@ -42,6 +42,18 @@ describe('mod-pow', () => {
     );
   });
 
+  it('compares squarings with plain multiplication honestly for tiny exponents', () => {
+    const first = (b: number) =>
+      new Timeline(modPow, modPow.defaults, 1, [['pow', 3, b, 7]]).entries[0]!.steps[0]!.say;
+    expect(first(1)).toMatch(
+      /1 bit, so about 1 squaring\. Multiplying by 3 directly takes 0 multiplications, so for an exponent this small squaring saves nothing/,
+    );
+    expect(first(2)).toMatch(
+      /about 2 squarings\. Multiplying by 3 directly takes 1 multiplication,/,
+    );
+    expect(first(100)).toMatch(/about 7 squarings instead of 99 multiplications\./);
+  });
+
   it('rejects input out of range', () => {
     const t = new Timeline(modPow, modPow.defaults, 1, [['pow', 2, 2000, 7]]);
     expect(t.entries[0]!.steps).toHaveLength(1);

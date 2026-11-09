@@ -17,14 +17,15 @@ import {
   placePanels,
   unionBounds,
   VERTEX_R,
+  weightId,
   type GraphLayout,
 } from '../../layouts/graph';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { keyOf, makeGraph } from '../_graph/graph';
-import { dist } from '../_paths/kit';
 import {
   describe,
   describeRun,
+  fmt,
   qArcId,
   qId,
   type JohnsonExtra,
@@ -120,9 +121,16 @@ function draw(
   const drawn = drawGraph(shown, layout, {
     roles,
     vertex: r && ((v) => (v === r.u ? 'current' : r.settled?.includes(v) ? 'done' : undefined)),
-    note: r && r.phase !== 'q' ? (v) => (r.h[v] === null ? undefined : `h=${r.h[v]}`) : undefined,
+    note:
+      r && r.phase !== 'q' ? (v) => (r.h[v] === null ? undefined : `h=${fmt(r.h[v])}`) : undefined,
     pointers: r?.s ? [{ name: 's', at: r.s }] : [],
   });
+  // Weights through the page's one number format (−4, not -4).
+  const weightText = new Map(shown.edges.map((e) => [weightId(keyOf(e)), fmt(e.w)]));
+  for (const sh of drawn.shapes) {
+    const t = weightText.get(sh.id);
+    if (sh.kind === 'text' && t !== undefined) sh.text = t;
+  }
   const shapes: Shape[] = [];
   const boxes: Bounds[] = [drawn.bounds];
   if (showQ) boxes.push(drawQ(shapes, layout, g.vertices, roles));
@@ -138,12 +146,12 @@ function draw(
           columns: g.vertices,
           head: 'v',
           rows: [
-            { key: 'hv', label: 'h', cells: g.vertices.map((v) => ({ text: dist(r.h[v]) })) },
+            { key: 'hv', label: 'h', cells: g.vertices.map((v) => ({ text: fmt(r.h[v]) })) },
             {
               key: 'd',
               label: r.s ? `d'(${r.s})` : "d'",
               cells: g.vertices.map((v) => ({
-                text: r.d2 && (r.settled?.includes(v) || r.u === undefined) ? dist(r.d2[v]) : '',
+                text: r.d2 && (r.settled?.includes(v) || r.u === undefined) ? fmt(r.d2[v]) : '',
               })),
             },
           ],
@@ -159,7 +167,7 @@ function draw(
           rows: g.vertices.map((s) => ({
             key: `r${s}`,
             label: s,
-            cells: g.vertices.map((t) => ({ text: r.D[s] ? dist(r.D[s]![t]) : '' })),
+            cells: g.vertices.map((t) => ({ text: r.D[s] ? fmt(r.D[s]![t]) : '' })),
           })),
           roles,
           perRow: 8,

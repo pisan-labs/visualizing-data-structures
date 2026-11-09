@@ -55,7 +55,7 @@ inorder(x)
     inorder(x.right)
 ```
 
-Where does the bookkeeping go? Onto the call stack. When `inorder(2)` calls `inorder(4)`, the frame for 2 waits on the stack. It still has to visit 2 and then go right. The frames on the stack always form one path from the root down to where you are, so the stack is never deeper than the height plus one. Set **Detail** to **Every detail** and you'll also see the calls on nil. Every leaf makes two of them, and a tree with n nodes has n + 1 empty children in total. Step slowly through [the call stack in a recursive inorder walk](#example:call-stack).
+Where does the bookkeeping go? Onto the call stack. When `inorder(2)` calls `inorder(4)`, the frame for 2 waits on the stack. It still has to visit 2 and then go right. The frames on the stack always form one path from the root down to where you are, so they never number more than the nodes on the longest path, h + 1 (one more while a call on nil runs). Set **Detail** to **Every detail** and you'll also see the calls on nil. Every leaf makes two of them, and a tree with n nodes has n + 1 empty children in total. Step slowly through [the call stack in a recursive inorder walk](#example:call-stack).
 
 A balanced tree with a million nodes is only about 20 levels deep, so recursion is fine there. A chain is another story. [Show me](#play:skewed-depth) a chain of 6: at the deepest point the stack holds one frame per node. Make the chain 10,000 nodes long and Python gives up with a `RecursionError` (its default limit is 1,000 frames). Java and C++ last longer, but a long enough chain overflows their stacks too.
 

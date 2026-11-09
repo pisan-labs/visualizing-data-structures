@@ -828,6 +828,31 @@ All ten families merged into `next` on 8 November between 19:40 and 21:20: 62 pa
 in all. Each passed conformance (10 runs by its agent, 2 or 3 by the lead), its own tests, code
 tabs, previews and e2e; the full unit suite passed on the merged tree.
 
+## 17. Wave 8 and the review of the older pages (planned 2026-11-09)
+
+Yusuf (9 November, about 10:30): build these first, and at the same time review the older pages
+(the 129 built before wave 7, as wave 7 was reviewed), fix memory-model's sideways scroll on a
+phone, and move rarely used buttons of the 9 pages whose buttons wrap at laptop width under
+"More operations". Not now: the phone layout with the stage below the fold, the partial visual
+fixes (Johnson's centre, product-construction's "dead"), engine gaps (multitape-tm identity,
+refused-op check, the factorial axe flake), and the chosen simplifications (Timsort, introsort,
+segment intersection's default).
+
+### 17.1 Pages (12, in `src/viz/catalog.ts`)
+
+| Agent | Pages | Kits to reuse |
+|---|---|---|
+| 8A Techniques | two-pointers, sliding-window, monotonic-stack, monotonic-queue, string-hashing | `_sorting` bars, align, `_strings` |
+| 8B Algorithms | push-relabel, karger-min-cut, strassen | `_flow`, `_graph`, `_numbers`, calls |
+| 8C Theory | myhill-nerode, regex-derivatives, post-correspondence, busy-beaver | `_automata`, `_grammar`, `_turing`, tape |
+
+The definition of done and the wave 7 brief apply unchanged.
+
+### 17.2 Review of the older pages
+
+Four reviewers, the wave 7 review brief: structures (32 pages), sorting/recursion/DP/foundations
+(33), strings/graphs/flow (33), ranges/geometry/hard problems/automata (31).
+
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 
 | Page | Controls |

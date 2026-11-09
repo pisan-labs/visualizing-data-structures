@@ -202,6 +202,7 @@ export const families: Family[] = [
       { id: 'manacher', title: 'Manacher (longest palindrome)', added: true, advanced: true },
       { id: 'burrows-wheeler', title: 'Burrows-Wheeler transform', added: true, advanced: true },
       { id: 'lz-compression', title: 'LZ77 and LZW compression', added: true, advanced: true },
+      { id: 'string-hashing', title: 'String hashing (polynomial rolling hash)', added: true },
     ],
   },
   {
@@ -250,6 +251,7 @@ export const families: Family[] = [
         advanced: true,
       },
       { id: 'general-matching', title: 'General matching (blossom)', added: true, advanced: true },
+      { id: 'push-relabel', title: 'Push-relabel max flow', added: true, advanced: true },
     ],
   },
   {
@@ -283,6 +285,16 @@ export const families: Family[] = [
     ],
   },
   {
+    name: 'Techniques',
+    pathways: ['algorithms'],
+    items: [
+      { id: 'two-pointers', title: 'Two pointers', added: true },
+      { id: 'sliding-window', title: 'Sliding window', added: true },
+      { id: 'monotonic-stack', title: 'Monotonic stack', added: true },
+      { id: 'monotonic-queue', title: 'Monotonic queue (sliding window maximum)', added: true },
+    ],
+  },
+  {
     name: 'Greedy algorithms',
     pathways: ['algorithms'],
     items: [
@@ -297,6 +309,7 @@ export const families: Family[] = [
     items: [
       { id: 'karatsuba', title: 'Karatsuba multiplication', added: true },
       { id: 'fft', title: 'Fast Fourier transform', added: true, advanced: true },
+      { id: 'strassen', title: 'Strassen matrix multiplication', added: true },
     ],
   },
   {
@@ -315,6 +328,7 @@ export const families: Family[] = [
     items: [
       { id: 'fisher-yates', title: 'Fisher-Yates shuffle', added: true },
       { id: 'reservoir-sampling', title: 'Reservoir sampling', added: true },
+      { id: 'karger-min-cut', title: "Karger's min cut", added: true, advanced: true },
     ],
   },
   {
@@ -369,6 +383,20 @@ export const families: Family[] = [
       { id: 'lr0-parsing', title: 'LR(0) parsing', added: true, advanced: true },
       { id: 'lba', title: 'Linear-bounded automaton', added: true, advanced: true },
       { id: 'rice-theorem', title: "Rice's theorem", added: true, advanced: true },
+      { id: 'myhill-nerode', title: 'Myhill-Nerode theorem', added: true, advanced: true },
+      {
+        id: 'regex-derivatives',
+        title: 'Regular expression derivatives',
+        added: true,
+        advanced: true,
+      },
+      {
+        id: 'post-correspondence',
+        title: 'Post correspondence problem',
+        added: true,
+        advanced: true,
+      },
+      { id: 'busy-beaver', title: 'Busy beaver', added: true, advanced: true },
     ],
   },
 ];

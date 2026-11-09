@@ -103,7 +103,7 @@ export function topoPractice(def: () => Def): PracticeKind[] {
           prompt: `${intro} What is ${code(`${v}.f`)}, the time ${v} finishes?`,
           setup,
           answer: { kind: 'number', value: f },
-          explain: `${v} is discovered at time ${r.d[v]} and finishes at ${f}. ${pos === 0 ? `Nothing finishes later, so ${v} is at the front of L.` : `The ${pos} ${pos === 1 ? 'vertex' : 'vertices'} in front of it in L (${r.order.slice(0, pos).join(', ')}) all finish later.`}`,
+          explain: `${v} is discovered at time ${r.d[v]} and finishes at ${f}. ${pos === 0 ? `Nothing finishes later, so ${v} is at the front of L.` : pos === 1 ? `The one vertex in front of it in L, ${r.order[0]}, finishes later.` : `The ${pos} vertices in front of it in L (${r.order.slice(0, pos).join(', ')}) all finish later.`}`,
           watch,
         };
       },

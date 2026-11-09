@@ -236,6 +236,10 @@ describe('DAG shortest paths practice', () => {
           const d = distances(g, 'A');
           const p = a.kind === 'choice' ? a.options[a.correct]! : '';
           expect(d.get(p)! + weight(g, p, v), where).toBe(d.get(v));
+          // No other option is a way in with the same total: one right answer.
+          for (const o of a.kind === 'choice' ? a.options : [])
+            if (o !== p && d.has(o) && g.edges.some((e) => e.u === o && e.v === v))
+              expect(d.get(o)! + weight(g, o, v), where).toBeGreaterThan(d.get(v)!);
         } else if (kind.id === 'critical') {
           expect(q.settings?.goal).toBe('longest');
           const best = Math.max(...distances(g, 'A', -1).values());

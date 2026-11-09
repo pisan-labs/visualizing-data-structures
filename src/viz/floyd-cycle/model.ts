@@ -143,7 +143,9 @@ const build: Op = {
     const shown = spec.values.map(fmt).join(' → ');
     yield st(
       line,
-      `build(${formatSpec(spec)}): make ${plural(n, 'node')} and link each one to the next: head → ${shown}.`,
+      n === 1
+        ? `build(${formatSpec(spec)}): make 1 node and point head at it: head → ${shown}.`
+        : `build(${formatSpec(spec)}): make ${plural(n, 'node')} and link each one to the next: head → ${shown}.`,
       ['build.nodes'],
       { marks: [mark('p:head', 'active')], vars: { n } },
     );

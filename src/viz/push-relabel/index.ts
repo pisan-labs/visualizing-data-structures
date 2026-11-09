@@ -200,7 +200,7 @@ export const pushRelabel: VizDef<PrState, PrSettings, PrExtra> = {
     longChain,
   ] as unknown as SavedExample[],
   practice: pushRelabelPractice(() => pushRelabel),
-  preview: { example: 'fifo-order', level: 2, hide: ['ht-', 'q-', 'cut-', 'cmp-'] },
+  preview: { example: 'fifo-order', level: 2, hide: ['ht-', 'q-', 'cut-', 'cmp-', 'vn-'] },
 };
 
 const netLines = (net: Network) => [

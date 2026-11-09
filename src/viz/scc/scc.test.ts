@@ -187,6 +187,14 @@ describe('strongly connected components', () => {
       );
     }
   });
+
+  // A lone vertex read "{ H }", with spaces, next to "{A, B}".
+  it('writes a lone vertex as a set like the others, {H}', () => {
+    const t = new Timeline(scc, scc.defaults as SccSettings, 1, [['run']]);
+    const say = t.entries[0]!.steps.at(-1)!.say;
+    expect(say).toContain('{A, B, E}, {C, D}, {F, G} and {H}');
+    expect(say).not.toContain('{ H }');
+  });
 });
 
 describe('SCC practice', () => {

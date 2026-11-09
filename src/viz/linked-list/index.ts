@@ -66,9 +66,9 @@ export const linkedList: VizDef<ListState, ListSettings, ListExtra> = {
     buttons: [
       { op: 'insertTail', label: 'Insert at tail', usesInput: true, bulk: true, primary: true },
       { op: 'insertHead', label: 'Insert at head', usesInput: true, bulk: true },
-      { op: 'removeHead', label: 'Remove head', usesInput: false },
+      { op: 'removeHead', label: 'Remove head', usesInput: false, more: true },
       { op: 'removeTail', label: 'Remove tail', usesInput: false },
-      { op: 'search', label: 'Search', usesInput: true },
+      { op: 'search', label: 'Search', usesInput: true, more: true },
       { op: 'reverse', label: 'Reverse', usesInput: false },
       {
         op: 'insertAt',

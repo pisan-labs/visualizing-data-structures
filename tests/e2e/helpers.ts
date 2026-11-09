@@ -22,6 +22,19 @@ export async function showMe(page: Page, trigger: Locator): Promise<void> {
 }
 
 /**
+ * An operation button of the page's controls. Less common operations sit under "More
+ * operations"; when the button is one of them, the fold-out is opened first.
+ */
+export async function opButton(page: Page, name: string): Promise<Locator> {
+  const form = page.locator('form.controls');
+  const more = form.locator('details.more');
+  const folded = more.getByRole('button', { name, exact: true, includeHidden: true });
+  if ((await folded.count()) && !(await more.evaluate((d) => (d as HTMLDetailsElement).open)))
+    await more.locator('summary').click();
+  return form.getByRole('button', { name, exact: true });
+}
+
+/**
  * Wait until the drawing stops moving: playback finished, no CSS transitions running, and the
  * stage markup unchanged for a few frames. Axe measures colors as drawn, so a shape caught
  * mid-fade can fail contrast. The viewBox counts too: the camera tweens to a new framing, and it

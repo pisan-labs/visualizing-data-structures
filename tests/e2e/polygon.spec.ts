@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { showMe } from './helpers';
+import { opButton, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -17,7 +17,7 @@ test('the shoelace formula gives the area of an L-shape', async ({ page }) => {
   await expect(stage(page)).toHaveAttribute('aria-label', /6 vertices/, { timeout: 10_000 });
   await page.getByRole('button', { name: 'Area', exact: true }).click();
   await expect(narration(page)).toContainText('Area = |78| / 2 = 39', { timeout: 20_000 });
-  await page.getByRole('button', { name: 'Convex?', exact: true }).click();
+  await (await opButton(page, 'Convex?')).click();
   await expect(narration(page)).toContainText('Not convex', { timeout: 20_000 });
 });
 

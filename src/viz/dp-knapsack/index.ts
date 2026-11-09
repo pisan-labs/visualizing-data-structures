@@ -84,7 +84,7 @@ export const dpKnapsack: VizDef<KnapState, KnapSettings, KnapExtra> = {
     },
     buttons: [
       { op: 'items', label: 'Load items', usesInput: true, primary: true },
-      { op: 'capacity', label: 'Capacity', usesInput: true },
+      { op: 'capacity', label: 'Capacity', usesInput: true, more: true },
       { op: 'fill', label: 'Fill the table', usesInput: false },
       { op: 'trace', label: 'Trace back', usesInput: false },
       { op: 'row', label: 'Fill one row', usesInput: false, more: true },

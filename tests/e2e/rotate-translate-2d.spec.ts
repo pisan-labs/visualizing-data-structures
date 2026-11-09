@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { showMe } from './helpers';
+import { opButton, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -37,7 +37,7 @@ test('the inverse sends the shape home', async ({ page }) => {
   await page.getByRole('button', { name: 'Rotate (degrees)', exact: true }).click();
   await box(page).fill('3 -2');
   await page.getByRole('button', { name: 'Translate', exact: true }).click();
-  await page.getByRole('button', { name: 'Undo all (inverse)', exact: true }).click();
+  await (await opButton(page, 'Undo all (inverse)')).click();
   await expect(stage(page)).toHaveAttribute('aria-label', /vertices: \(1, 1\), \(2, 1\)/, {
     timeout: 20_000,
   });

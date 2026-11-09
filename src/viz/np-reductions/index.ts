@@ -95,9 +95,9 @@ export const npReductions: VizDef<NpState, NpSettings, NpExtra> = {
     buttons: [
       { op: 'load', label: 'Load', usesInput: true, primary: true },
       { op: 'toIs', label: 'To IND-SET', usesInput: false },
-      { op: 'toVc', label: 'To V-COVER', usesInput: false },
+      { op: 'toVc', label: 'To V-COVER', usesInput: false, more: true },
       { op: 'toClique', label: 'To CLIQUE', usesInput: false },
-      { op: 'toSc', label: 'To SET-COVER', usesInput: false },
+      { op: 'toSc', label: 'To SET-COVER', usesInput: false, more: true },
       { op: 'check', label: 'Solve by brute force', usesInput: false, more: true },
       { op: 'map', label: 'Show the map', usesInput: false, more: true },
     ],

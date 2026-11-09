@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { showMe } from './helpers';
+import { opButton, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -22,10 +22,10 @@ test('a quarter turn about z sends (x, y, z) to (-y, x, z)', async ({ page }) =>
 
 test('rotations about x and y do not commute', async ({ page }) => {
   await box(page).fill('90');
-  await page.getByRole('button', { name: 'Compare orders (x, y)', exact: true }).click();
+  await (await opButton(page, 'Compare orders (x, y)')).click();
   await expect(narration(page)).toContainText('Different shapes', { timeout: 20_000 });
   await box(page).fill('180');
-  await page.getByRole('button', { name: 'Compare orders (x, y)', exact: true }).click();
+  await (await opButton(page, 'Compare orders (x, y)')).click();
   await expect(narration(page)).toContainText('half turns', { timeout: 20_000 });
 });
 

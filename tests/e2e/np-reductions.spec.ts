@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { axeFindings, settled, showMe } from './helpers';
+import { axeFindings, opButton, settled, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -14,7 +14,10 @@ async function toEnd(page: Page) {
   while (!(await next.isDisabled())) await next.click({ force: true });
 }
 
-const button = (page: Page, name: string) => page.getByRole('button', { name, exact: true });
+/** Press an operation button; V-COVER and SET-COVER sit under "More operations". */
+async function press(page: Page, name: string) {
+  await (await opButton(page, name)).click();
+}
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/np-reductions/');
@@ -28,7 +31,7 @@ test('starts on the map', async ({ page }) => {
 
 test('3-SAT to IND-SET builds triangles and carries the certificate', async ({ page }) => {
   await fast(page);
-  await button(page, 'To IND-SET').click();
+  await press(page, 'To IND-SET');
   await toEnd(page);
   await expect(narration(page)).toContainText(
     'In each triangle, take a vertex whose literal is true',
@@ -43,8 +46,8 @@ test('3-SAT to IND-SET builds triangles and carries the certificate', async ({ p
 test('an unsatisfiable formula maps to a no', async ({ page }) => {
   await fast(page);
   await page.locator('#op-input').fill('(a), (!a | b), (!b | c), (!c)');
-  await button(page, 'Load').click();
-  await button(page, 'To IND-SET').click();
+  await press(page, 'Load');
+  await press(page, 'To IND-SET');
   await toEnd(page);
   await expect(narration(page)).toContainText('no maps to no');
   await expect(page.locator('.vars')).toContainText(/answer\s*"no"/);
@@ -53,10 +56,10 @@ test('an unsatisfiable formula maps to a no', async ({ page }) => {
 test('the chain goes on to V-COVER and SET-COVER', async ({ page }) => {
   await fast(page);
   await page.locator('#op-input').fill('a | b | !c, !a | !b, b | c');
-  await button(page, 'Load').click();
-  await button(page, 'To IND-SET').click();
-  await button(page, 'To V-COVER').click();
-  await button(page, 'To SET-COVER').click();
+  await press(page, 'Load');
+  await press(page, 'To IND-SET');
+  await press(page, 'To V-COVER');
+  await press(page, 'To SET-COVER');
   await toEnd(page);
   await expect(narration(page)).toContainText('Yes maps to yes');
   await expect(stage(page)).toHaveAttribute('aria-label', /SET-COVER: universe \{1, …, 9\}/);
@@ -65,15 +68,15 @@ test('the chain goes on to V-COVER and SET-COVER', async ({ page }) => {
 test('a graph goes to CLIQUE through the complement', async ({ page }) => {
   await fast(page);
   await page.locator('#op-input').fill('A-B, B-C, C-D, D-A, A-C k=2');
-  await button(page, 'Load').click();
-  await button(page, 'To CLIQUE').click();
+  await press(page, 'Load');
+  await press(page, 'To CLIQUE');
   await toEnd(page);
   await expect(narration(page)).toContainText('a clique of size 2');
   await expect(page.locator('.vars')).toContainText(/E\s*1k/);
 });
 
 test('a reduction that cannot start here says why', async ({ page }) => {
-  await button(page, 'To SET-COVER').click();
+  await press(page, 'To SET-COVER');
   await expect(narration(page)).toContainText('starts from VERTEX-COVER');
 });
 
@@ -103,7 +106,7 @@ for (const theme of ['dark', 'contrast']) {
     };
     await scan();
     await fast(page);
-    await button(page, 'To IND-SET').click();
+    await press(page, 'To IND-SET');
     await toEnd(page);
     for (let i = 0; i < 3; i++) await page.getByRole('button', { name: 'Step back' }).click();
     await scan();

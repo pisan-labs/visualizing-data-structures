@@ -1,11 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
+import { opButton } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
 
 async function op(page: Page, button: string, text?: string) {
   if (text !== undefined) await page.getByLabel('Value').fill(text);
-  await page.getByRole('button', { name: button, exact: true }).click();
+  await (await opButton(page, button)).click();
 }
 
 test.beforeEach(async ({ page }) => {

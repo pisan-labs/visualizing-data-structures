@@ -51,7 +51,7 @@ export const circularLinkedList: VizDef<CState, CSettings, CExtra> = {
     },
     buttons: [
       { op: 'insertBack', label: 'Insert at back', usesInput: true, bulk: true, primary: true },
-      { op: 'insertFront', label: 'Insert at front', usesInput: true, bulk: true },
+      { op: 'insertFront', label: 'Insert at front', usesInput: true, bulk: true, more: true },
       { op: 'removeFront', label: 'Remove front', usesInput: false },
       { op: 'rotate', label: 'Rotate', usesInput: false },
       { op: 'traverse', label: 'Traverse', usesInput: false },

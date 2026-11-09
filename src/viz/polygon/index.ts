@@ -125,7 +125,7 @@ export const polygon: VizDef<PolyState, PolySettings, PolyExtra> = {
       { op: 'load', label: 'Load polygon', usesInput: true, primary: true },
       { op: 'area', label: 'Area', usesInput: false },
       { op: 'inside', label: 'Inside?', usesInput: true, args: ['x', 'y'] },
-      { op: 'convex', label: 'Convex?', usesInput: false },
+      { op: 'convex', label: 'Convex?', usesInput: false, more: true },
       { op: 'orientation', label: 'Orientation', usesInput: false },
     ],
     random: {

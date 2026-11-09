@@ -3,7 +3,7 @@
  * practice question. Every page also runs through all-vizzes.spec.ts.
  */
 import { expect, test, type Page } from '@playwright/test';
-import { showMe } from './helpers';
+import { opButton, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -20,8 +20,9 @@ async function type(page: Page, label: string, text: string) {
   await form(page).getByLabel(label, { exact: true }).fill(text);
 }
 
+/** Press an operation button, opening "More operations" first when it sits there. */
 async function press(page: Page, button: string) {
-  await form(page).getByRole('button', { name: button, exact: true }).click();
+  await (await opButton(page, button)).click();
 }
 
 /** Jump to the end of the history. Playback can disable the button between check and click. */

@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { axeFindings, settled, showMe } from './helpers';
+import { axeFindings, emptyStart, settled, showMe } from './helpers';
 
 const narration = (page: Page) => page.locator('.narration p');
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -30,7 +30,7 @@ async function stepUntil(page: Page, text: string) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/skew-heap/');
+  await page.goto(emptyStart('skew-heap'));
   await expect(page.getByRole('heading', { name: 'Skew heap' })).toBeVisible();
 });
 

@@ -245,6 +245,7 @@ export const binaryHeap: VizDef<HeapState, HeapSettings, HeapExtra> = {
     deleteSiftsUp,
     minHeapZero,
   ] as unknown as SavedExample[],
+  opening: 'build-bottom-up',
   preview: { example: 'build-by-inserts', level: 2 },
 };
 

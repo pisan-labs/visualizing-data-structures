@@ -177,6 +177,7 @@ export const bTree: VizDef<BState, BTreeSettings, BExtra> = {
     mergeDown,
     mergeShrinks,
   ] as unknown as SavedExample[],
+  opening: 'ascending',
   preview: { example: 'ascending' },
 };
 

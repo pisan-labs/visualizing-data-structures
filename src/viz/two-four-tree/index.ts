@@ -152,6 +152,7 @@ export const twoFourTree: VizDef<BState, TwoFourSettings, BExtra> = {
     fusion,
     fusionCascade,
   ] as unknown as SavedExample[],
+  opening: 'split-cascade',
   preview: { example: 'split-cascade' },
 };
 

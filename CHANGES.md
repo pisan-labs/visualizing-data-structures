@@ -383,3 +383,5 @@
 2026-11-09 [code] translate in src/layouts/arrange now moves an arrow's via point; consistent-hashing's ring walk and lr0-parsing's curved moves were bent by up to 73 units (the only two pages affected)
 
 2026-11-09 [decision] No answer by 15:00, so the defaults: two agents do the reviewers' taste items (balanced practice answers on 9 pages; 15 small wording and drawing fixes), and each sorting page says how it counts swaps instead of changing the counts
+
+2026-11-09 [note] Deployed 16:30 Lisbon on Yusuf's "deploy" (the scheduled push was blocked by the auto-mode check): main 8109abe..4c1fc1c, waves 7 and 8 and the review fixes. Live bundle matches the local build; all 203 pages return 200

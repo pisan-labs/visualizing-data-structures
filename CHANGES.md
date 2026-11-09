@@ -353,3 +353,5 @@
 2026-11-09 [code] Merged the review polish items: manacher/z wording, cfg-to-cnf names dropped A -> A, lba cap message from the configuration count, johnson real minus signs, mod-pow tiny exponents, interpolation ties, cuckoo prefixes, independent merkle reference, two concept-page edits
 
 2026-11-09 [decision] Yusuf: the concept pages are fine (closes the open voice-read item); go ahead with the four remaining small-text pages, the visual rough edges, and a by-eye check of the wave 7 thumbnails and pages
+
+2026-11-09 [code] Merged: the last four pages reach 11/9 px (regex-to-nfa expression and tape side by side on wide stages, multitape-tm tighter rules on a phone, dfa-to-regex closer layers, nfa-to-dfa a 6-row table window on a phone); every page now meets the text-size target

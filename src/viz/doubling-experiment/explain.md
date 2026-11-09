@@ -69,7 +69,7 @@ The doubling test assumes T(n) ≈ a·nᵇ. When the truth is not a power of n, 
 A b that drifts in one direction is a hint. A b that settles is a power.
 
 ```check
-Q: Merge sort's b reads 1.16, 1.14, 1.12, 1.10 as n doubles from 1,000 to 32,000. What is the most likely growth?
+Q: Merge sort's b reads 1.16, 1.14, 1.13, 1.12, 1.11 as n doubles from 1,000 to 32,000. What is the most likely growth?
 - n^1.1
 * n log n
 - n

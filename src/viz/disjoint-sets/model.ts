@@ -21,6 +21,9 @@
  */
 import type { Mark, OpSpec, PseudoBlock, Scalar, Step, Value } from '../../engine/types';
 
+/** "1 node", "3 nodes". */
+const nodes = (k: number) => `${k} ${k === 1 ? 'node' : 'nodes'}`;
+
 export interface DSState {
   /** Elements in increasing order. */
   elems: number[];
@@ -447,7 +450,7 @@ const union: Op = {
       if (sa > sb) {
         child = b;
         parent = a;
-        say = `${a}'s tree has ${sa} nodes and ${b}'s has ${sb}, so the smaller one goes under: ${b}.p = ${a}, and ${a}.size = ${sa + sb}.`;
+        say = `${a}'s tree has ${nodes(sa)} and ${b}'s has ${sb}, so the smaller one goes under: ${b}.p = ${a}, and ${a}.size = ${sa + sb}.`;
         lines = ['l.if', 'l.under.a', 'l.add.a'];
       } else {
         child = a;
@@ -455,7 +458,7 @@ const union: Op = {
         say =
           sa === sb
             ? `Both trees have ${sa} ${sa === 1 ? 'node' : 'nodes'}. On a tie, ${a} goes under ${b}: ${a}.p = ${b}, and ${b}.size = ${sa + sb}.`
-            : `${a}'s tree has ${sa} nodes and ${b}'s has ${sb}, so the smaller one goes under: ${a}.p = ${b}, and ${b}.size = ${sa + sb}.`;
+            : `${a}'s tree has ${nodes(sa)} and ${b}'s has ${sb}, so the smaller one goes under: ${a}.p = ${b}, and ${b}.size = ${sa + sb}.`;
         lines = ['l.if', 'l.under.b', 'l.add.b'];
       }
     } else {

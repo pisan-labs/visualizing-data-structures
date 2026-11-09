@@ -2,6 +2,7 @@ import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { smallestText } from '../../render/text-size';
 import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
+import { practiceSet } from '../../engine/practice';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { disjointSets, parseElement } from '.';
@@ -148,6 +149,47 @@ describe('disjoint sets', () => {
     expect(parseElement('7')).toBe(7);
     expect(parseElement('100')).toBeInstanceOf(Error);
     expect(parseElement('a')).toBeInstanceOf(Error);
+  });
+});
+
+describe('disjoint sets practice', () => {
+  const replay = (settings: DSSettings, calls: OpCall[]) => {
+    const ref = new Ref(settings);
+    for (const [op, x, y] of calls)
+      if (op === 'union') ref.union(Number(x), Number(y));
+      else if (op === 'find') ref.find(Number(x));
+    return ref;
+  };
+
+  it('says "1 node", not "1 nodes", when union by size compares trees', () => {
+    const t = new Timeline(disjointSets, { union: 'size', path: 'compress' }, 1, [
+      ['union', 0, 1],
+      ['union', 2, 1],
+    ]);
+    const say = t.entries[1]!.steps.at(-1)!.say;
+    expect(say).toContain("2's tree has 1 node and 1's has 2");
+  });
+
+  it('gets every answer right, checked against the reference, in plain grammar', () => {
+    for (let seed = 1; seed <= 80; seed++)
+      for (const item of practiceSet(disjointSets, seed, 4)) {
+        const q = item.question;
+        const settings = { ...disjointSets.defaults, ...q.settings } as DSSettings;
+        const ref = replay(settings, q.setup);
+        expect(q.explain).not.toMatch(/\b1 nodes/);
+        if (item.kind.id === 'who-goes-under' && q.answer.kind === 'choice') {
+          const [, a, b] = /union\((\d+), (\d+)\)/.exec(q.prompt)!;
+          ref.union(Number(a), Number(b));
+          const under =
+            ref.p.get(Number(a)) === Number(b) ? `${a} goes under ${b}` : `${b} goes under ${a}`;
+          expect(q.answer.options[q.answer.correct]).toBe(under);
+        }
+        if (item.kind.id === 'parent-after-find') {
+          const x = Number(/`(\d+)\.p`/.exec(q.prompt)![1]);
+          ref.find(x);
+          expect(q.answer).toEqual({ kind: 'number', value: ref.p.get(x) });
+        }
+      }
   });
 });
 

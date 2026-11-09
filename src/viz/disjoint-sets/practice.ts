@@ -117,7 +117,7 @@ export function dsPractice(def: () => Def): PracticeKind[] {
             union === 'rank'
               ? `${a} has rank ${s.rank[a]} and ${b} has rank ${s.rank[b]}. The smaller rank goes under; on a tie, the first root goes under the second.`
               : union === 'size'
-                ? `${a}'s tree has ${s.size[a]} nodes and ${b}'s has ${s.size[b]}. The smaller tree goes under; on a tie, the first root goes under the second.`
+                ? `${a}'s tree has ${s.size[a]} ${s.size[a] === 1 ? 'node' : 'nodes'} and ${b}'s has ${s.size[b]}. The smaller tree goes under; on a tie, the first root goes under the second.`
                 : 'Naive union always puts the first root under the second, whatever the sizes.';
           return {
             prompt: `This forest uses ${union === 'naive' ? 'naive union' : `union by ${union}`}. In \`union(${a}, ${b})\`, which root goes under the other?`,

@@ -359,3 +359,5 @@
 2026-11-09 [code] Merged: persistent-bst stacks copies of a key like cards (older copies faded behind), johnson roomier with curved q arcs, aho-corasick labels move off curves with halos, rotate-scale-3d labels clear of arrowheads, dp-change arc label, fisher-yates count halos, product-construction pair names; six wave 7 thumbnails changed after a by-eye check of all 62; partial: johnson dense centre, product-construction "dead" touches its ring
 
 2026-11-09 [code] Merged: 27 wave 7 pages open on a curated example (was an empty picture; fisher-yates kept its 1..6 start); timsort starts at full size and zooms out once at the first merge (ArrayExtra.auxRoom); e2e specs that needed an empty start load emptyStart(id)
+
+2026-11-09 [code] Merged: 24 older pages open on a curated example (B-tree, B+ tree, 2-4, BST, AVL, red-black, splay, treap, binary tree, the five heaps, tries, Huffman, Master theorem, the recursion pages, Floyd cycle); stack/queue/list pages keep their empty start

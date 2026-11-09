@@ -11,16 +11,28 @@
  * beside the NFA, and the table under or beside both, whichever draws largest on the stage
  * (or on both a laptop and a phone when there is no stage). The choice is made from the
  * finished DFA and table, so it holds through a run.
+ *
+ * On a narrow stage a long table may show only a window of WINDOW_ROWS rows (windowRows):
+ * the row being worked on and those after it, the rows the step marks always among them, with
+ * "rows i–j of n" beside its header.
  */
 import { pickBest } from '../../layouts/arrange';
-import type { MarkRole, StageSize, Step } from '../../engine/types';
+import type { Mark, MarkRole, StageSize, Step } from '../../engine/types';
 import {
   drawAutomaton,
   layoutFromLayers,
   layoutStates,
   type StateLayout,
 } from '../../layouts/automaton';
-import { below, beside, padBounds, placePanels, translate, unionBounds } from '../../layouts/graph';
+import {
+  below,
+  beside,
+  padBounds,
+  placePanels,
+  textWidth,
+  translate,
+  unionBounds,
+} from '../../layouts/graph';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { setName, stateLetter, type Automaton } from '../_automata/automaton';
 import { automatonKey } from '../_automata/page';
@@ -66,8 +78,66 @@ function dfaLayout(
   );
 }
 
+/** The rows a table window shows, for a table of more than LONG rows. */
+const WINDOW_ROWS = 6;
+const LONG = 10;
+const WINDOW_SIZE = 15;
+
+/**
+ * The rows a step must show: those its marks name, and the first row not done yet (the one
+ * being worked on, or next). None once every row is done.
+ */
+function anchors(r: ConvRun, marks: readonly Mark[]): number[] {
+  const at = new Map(r.rows.map((row, i) => [row.name, i]));
+  const out = marks.flatMap((m) => {
+    const row = /^tbl-(.+)-(name|set|on-.+)$/.exec(m.id)?.[1];
+    const i = row === undefined ? undefined : at.get(row);
+    return i === undefined ? [] : [i];
+  });
+  const next = r.rows.findIndex((row) => !r.done.includes(row.name));
+  if (next >= 0) out.push(next);
+  return [...new Set(out)].sort((x, y) => x - y);
+}
+
+/**
+ * The rows (indices, in order) a window of `size` shows: from the first anchor on, or the last
+ * rows when that runs past the end. When the anchors are further apart than that (the row
+ * being worked on, and a new row at the end), the first anchor, the other anchors and as many
+ * of the last rows as fill the window.
+ */
+export function windowRows(r: ConvRun, marks: readonly Mark[], size: number): number[] {
+  const n = r.rows.length;
+  const a = anchors(r, marks);
+  const range = (from: number, to: number) => Array.from({ length: to - from }, (_, i) => from + i);
+  const tail = Math.max(0, n - size);
+  if (!a.length) return range(tail, n);
+  if (a.at(-1)! - a[0]! < size) {
+    const from = Math.min(a[0]!, tail);
+    return range(from, Math.min(n, from + size));
+  }
+  const keep = new Set(a);
+  for (let i = n - 1; i >= 0 && keep.size < size; i--) keep.add(i);
+  return [...keep].sort((x, y) => x - y);
+}
+
+/** "rows 8, 12–16 of 16", beside the header of a table window (rows counted from 1). */
+export function windowText(rows: readonly number[], n: number): string {
+  const runs: string[] = [];
+  for (let i = 0; i < rows.length;) {
+    let j = i;
+    while (j + 1 < rows.length && rows[j + 1] === rows[j]! + 1) j++;
+    runs.push(i === j ? `${rows[i]! + 1}` : `${rows[i]! + 1}–${rows[j]! + 1}`);
+    i = j + 1;
+  }
+  return `rows ${runs.join(', ')} of ${n}`;
+}
+
 interface Frame {
+  /** The NFA runs across; the DFA too, unless `turned`. */
   across: boolean;
+  turned: boolean;
+  /** The table's rows shown at once, or 0 for all of them. */
+  window: number;
   /** Both diagrams' spacing (layoutFromLayers). */
   tight: number;
   /** Where the DFA's shapes move to. */
@@ -105,40 +175,61 @@ function arrange(nfa: Automaton, mode: SubsetMode, stage?: StageSize): Frame {
   const widths = tableColumns(nfa, dfa, sets);
   const candidates: Frame[] = [];
   const tights = dfa.states.length >= TIGHT_FROM ? [1, TIGHT] : [1];
-  for (const tight of tights)
-    for (const across of [true, false]) {
-      const nb = captioned(drawAutomaton(nfa, layoutStates(nfa, across, tight)).bounds);
-      const db = captioned(
-        drawAutomaton(dfa, dfaLayout(nfa, dfa, mode, across, tight), { prefix: DFA_PREFIX }).bounds,
-      );
-      for (const under of [false, true]) {
-        const dx = under ? nb.x - db.x : beside(nb, 40) - db.x;
-        const dy = under ? below(nb, 24) - db.y : nb.y - db.y;
-        const diagrams = unionBounds(nb, { ...db, x: db.x + dx, y: db.y + dy });
-        const table = placePanels([], diagrams, stage, (out, x, y) =>
-          drawGrid(out, {
-            id: 'tbl',
-            x,
-            y,
-            cols: [],
-            head: [],
-            widths,
-            rows: [],
-            reserve: dfa.states.length,
-          }),
-        );
-        candidates.push({
-          across,
-          tight,
-          dx,
-          dy,
-          tx: table.x,
-          ty: table.y,
-          widths,
-          bounds: unionBounds(diagrams, table),
-        });
-      }
-    }
+  // A narrow stage may show a window of a long table's rows.
+  const shown = stage && stage.w < stage.h && dfa.states.length > LONG ? [0, WINDOW_ROWS] : [0];
+  const tableW = widths.reduce((a, b) => a + b + 3, -3);
+  const noteW = textWidth(windowText([8, 10, 11], dfa.states.length), WINDOW_SIZE) + 10;
+  for (const window of shown)
+    for (const tight of tights)
+      for (const across of [true, false])
+        for (const turned of window ? [false, true] : [false]) {
+          const nb = captioned(drawAutomaton(nfa, layoutStates(nfa, across, tight)).bounds);
+          const db = captioned(
+            drawAutomaton(dfa, dfaLayout(nfa, dfa, mode, across !== turned, tight), {
+              prefix: DFA_PREFIX,
+            }).bounds,
+          );
+          const grid = (out: Shape[], x: number, y: number) => {
+            const b = drawGrid(out, {
+              id: 'tbl',
+              x,
+              y,
+              cols: [],
+              head: [],
+              widths,
+              rows: [],
+              reserve: window || dfa.states.length,
+            });
+            return window ? { ...b, w: tableW + noteW } : b;
+          };
+          const push = (dx: number, dy: number, table: Bounds, diagrams: Bounds) =>
+            candidates.push({
+              window,
+              across,
+              turned,
+              tight,
+              dx,
+              dy,
+              tx: table.x,
+              ty: table.y,
+              widths,
+              bounds: unionBounds(diagrams, table),
+            });
+          for (const under of [false, true]) {
+            const dx = under ? nb.x - db.x : beside(nb, 40) - db.x;
+            const dy = under ? below(nb, 24) - db.y : nb.y - db.y;
+            const diagrams = unionBounds(nb, { ...db, x: db.x + dx, y: db.y + dy });
+            push(dx, dy, placePanels([], diagrams, stage, grid), diagrams);
+          }
+          // A table window beside the NFA, and the DFA under both.
+          if (window) {
+            const table = grid([], beside(nb, 30), nb.y);
+            const top = unionBounds(nb, table);
+            const dx = nb.x - db.x;
+            const dy = below(top, 24) - db.y;
+            push(dx, dy, table, unionBounds(nb, { ...db, x: db.x + dx, y: db.y + dy }));
+          }
+        }
   const best = pickBest(candidates, stage);
   if (frames.size > 300) frames.clear();
   frames.set(key, best);
@@ -173,11 +264,22 @@ export function view(
 
   shapes.push(...translate(drawDfa(nfa, r, f, roles), f.dx, f.dy));
   const { dfa } = finalDfa(nfa, mode);
-  const db = drawAutomaton(dfa, dfaLayout(nfa, dfa, mode, f.across, f.tight), {
+  const db = drawAutomaton(dfa, dfaLayout(nfa, dfa, mode, f.across !== f.turned, f.tight), {
     prefix: DFA_PREFIX,
   }).bounds;
   caption(shapes, 'cap-dfa', 'DFA', { ...db, x: db.x + f.dx, y: db.y + f.dy });
 
+  const shown = f.window ? windowRows(r, step.marks, f.window) : r.rows.map((_, i) => i);
+  if (shown.length < r.rows.length)
+    shapes.push({
+      kind: 'text',
+      id: 'tbl-window',
+      x: f.tx + f.widths.reduce((a, b) => a + b + 3, -3) + 10,
+      y: f.ty + 15,
+      text: windowText(shown, r.rows.length),
+      size: WINDOW_SIZE,
+      cls: 'label',
+    });
   drawGrid(shapes, {
     id: 'tbl',
     x: f.tx,
@@ -185,22 +287,24 @@ export function view(
     cols: ['name', 'set', ...nfa.alphabet.map((c) => `on-${c}`)],
     head: ['DFA', 'NFA states', ...nfa.alphabet],
     widths: f.widths,
-    rows: r.rows.map((row) => {
-      const dim = r.unreachable?.includes(row.name);
-      const mark = `${row.name === r.start ? '→' : ''}${r.accept.includes(row.name) ? '*' : ''}`;
-      return {
-        key: row.name,
-        cells: [
-          { text: `${mark}${row.name}`, dim },
-          { text: setName(row.set), dim },
-          ...nfa.alphabet.map((c) => ({
-            text: r.moves.find((m) => m.from === row.name && m.on === c)?.to ?? '',
-            dim,
-          })),
-        ],
-      };
-    }),
-    reserve: dfa.states.length,
+    rows: shown
+      .map((i) => r.rows[i]!)
+      .map((row) => {
+        const dim = r.unreachable?.includes(row.name);
+        const mark = `${row.name === r.start ? '→' : ''}${r.accept.includes(row.name) ? '*' : ''}`;
+        return {
+          key: row.name,
+          cells: [
+            { text: `${mark}${row.name}`, dim },
+            { text: setName(row.set), dim },
+            ...nfa.alphabet.map((c) => ({
+              text: r.moves.find((m) => m.from === row.name && m.on === c)?.to ?? '',
+              dim,
+            })),
+          ],
+        };
+      }),
+    reserve: f.window || dfa.states.length,
     roles,
   });
   return {
@@ -220,7 +324,7 @@ function drawDfa(nfa: Automaton, r: ConvRun, f: Frame, roles: Map<string, MarkRo
   const found = new Set(r.moves.map((m) => `${m.from} ${m.on} ${m.to}`));
   return drawAutomaton(
     { ...dfa, accept: r.accept },
-    dfaLayout(nfa, dfa, r.mode, f.across, f.tight),
+    dfaLayout(nfa, dfa, r.mode, f.across !== f.turned, f.tight),
     {
       prefix: DFA_PREFIX,
       roles,

@@ -8,6 +8,7 @@ import { formatAutomaton } from '../_automata/parse';
 import { nfaToDfa } from '.';
 import { MAX_DFA, allSubsets, runDfa, type ConvRun, type NdSettings } from './model';
 import { nthFromEnd } from './presets';
+import { windowText } from './view';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: ε-closures and acceptance written from the definitions, apart from the kit.
@@ -188,7 +189,7 @@ describe('nfa-to-dfa', () => {
   });
 
   it('refuses an NFA whose DFA is too big to draw, and keeps the old one', () => {
-    const t = new Timeline(nfaToDfa, { subsets: 'reachable' }, 1, [
+    const t = new Timeline(nfaToDfa, { subsets: 'reachable' } as NdSettings, 1, [
       ['load', formatAutomaton(nthFromEnd(5))],
     ]);
     expect(t.entries[0]!.steps[0]!.say).toMatch(/32 states, too many to draw/);
@@ -204,10 +205,26 @@ describe('nfa-to-dfa', () => {
 
 describe('drawn text size', () => {
   // The 16-state DFA of the fourth symbol from the end, with its NFA and its 16-row table: 4.9 px
-  // on a phone before the states could move closer together, 7.3 now. Packing the DFA tighter
-  // still draws its labels over its arrows, so a phone stays under 9 px here.
+  // on a phone before the states could move closer together, 7.3 with them closer, 9.0 with the
+  // NFA across over the DFA drawn down and a window of 6 of the table's rows under them.
   it('stays readable on a laptop and on a phone', () => {
     expect(smallestText(nfaToDfa, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(11);
-    expect(smallestText(nfaToDfa, PHONE_STAGE).px).toBeGreaterThanOrEqual(7.2);
+    expect(smallestText(nfaToDfa, PHONE_STAGE).px).toBeGreaterThanOrEqual(9);
+  });
+
+  it('shows a long table on a phone as a window of rows that follows the work', () => {
+    const t = new Timeline(nfaToDfa, { subsets: 'reachable' } as NdSettings, 1, [
+      ['load', formatAutomaton(nthFromEnd(4))],
+      ['convert'],
+    ]);
+    const last = t.at(t.length - 1).step;
+    const rows = (stage?: typeof PHONE_STAGE) =>
+      nfaToDfa.view(last, t.settings, stage).shapes.filter((s) => /^tbl-[^-]+-name$/.test(s.id))
+        .length;
+    expect(rows(PHONE_STAGE)).toBe(6);
+    // Without a stage (thumbnails, practice), the whole table.
+    expect(rows()).toBe(16);
+    expect(windowText([7, 11, 12, 13, 14, 15], 16)).toBe('rows 8, 12–16 of 16');
+    expect(windowText([10, 11, 12, 13, 14, 15], 16)).toBe('rows 11–16 of 16');
   });
 });

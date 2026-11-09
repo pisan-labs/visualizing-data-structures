@@ -82,6 +82,15 @@ describe('radix sort', { timeout: 60_000 }, () => {
     expect(run([999], 2).entries[1]!.steps.at(-1)!.vars?.passes).toBe(10);
   });
 
+  it('does not mention earlier passes at the end of pass 1', () => {
+    const ends = run([329, 457, 657, 839, 436, 720, 355], 10)
+      .entries[1]!.steps.filter((s) => s.level === 1 && s.say.startsWith('After pass'))
+      .map((s) => s.say);
+    expect(ends[0]).toContain('kept the order they had in A');
+    expect(ends[0]).not.toContain('earlier passes');
+    expect(ends[1]).toContain('the order the earlier passes gave them');
+  });
+
   it('follows the base in its pseudocode, and refuses values above 999', () => {
     const text = radixSort
       .pseudocode({ base: 16, draw: 'cells' })

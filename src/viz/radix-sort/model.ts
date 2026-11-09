@@ -167,7 +167,7 @@ const sort: Op = {
       yield run.step({
         say: last
           ? `After pass ${pass}, A is sorted by every digit: ${run.a.map((x) => x.value).join(', ')}.`
-          : `After pass ${pass}, A is sorted by its last ${pass === 1 ? 'digit' : `${pass} digits`}: ${run.a.map((x) => x.value).join(', ')}. Values with the same digit kept the order the earlier passes gave them.`,
+          : `After pass ${pass}, A is sorted by its last ${pass === 1 ? 'digit' : `${pass} digits`}: ${run.a.map((x) => x.value).join(', ')}. Values with the same digit kept the order ${pass === 1 ? 'they had in A' : 'the earlier passes gave them'}.`,
         lines: ['gather'],
         level: 1,
         vars: vars(),

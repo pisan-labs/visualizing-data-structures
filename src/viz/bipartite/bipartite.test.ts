@@ -167,4 +167,26 @@ describe('bipartite practice', () => {
       }
     }
   });
+
+  // A learner should not be able to guess the length. Over 300 seeds no length comes up in more
+  // than half the questions. Each graph has exactly one odd cycle, so the answer is not a matter
+  // of which odd cycle the search happens to find: an edge lies on every odd cycle exactly when
+  // removing it leaves the graph bipartite, and there are as many such edges as the answer.
+  it('asks for odd cycles of different lengths, each the only odd cycle', () => {
+    const kind = bipartite.practice!.find((k) => k.id === 'cycle')!;
+    const counts = new Map<number, number>();
+    for (let seed = 1; seed <= 300; seed++) {
+      const q = kind.make(makeRng(seed));
+      const g = parseGraph(String(q.setup[0]![1])) as Graph;
+      if (q.answer.kind !== 'number') throw new Error('expected a number');
+      const n = q.answer.value;
+      counts.set(n, (counts.get(n) ?? 0) + 1);
+      const onEvery = g.edges.filter((e) =>
+        refBipartite({ ...g, edges: g.edges.filter((x) => x !== e) }),
+      );
+      expect(onEvery.length, `seed ${seed}`).toBe(n);
+    }
+    expect(Math.max(...counts.values())).toBeLessThanOrEqual(150);
+    expect([...counts.keys()].sort()).toEqual([3, 5, 7]);
+  });
 });

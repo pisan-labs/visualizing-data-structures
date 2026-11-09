@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "myhill-nerode",
+  "id": "ends-in-ab",
+  "title": "Three classes: words ending in ab",
+  "notes": "Start from ε and extend each class word by a and by b. a is told apart from ε by the suffix b; ab is told apart from both by ε itself, since ab is in L. Every other extension joins one of those three classes, and the three classes are the minimal DFA.",
+  "settings": {
+    "dead": "show"
+  },
+  "seed": 1,
+  "ops": [["classes"]]
+}

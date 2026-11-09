@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "myhill-nerode",
+  "id": "anbn-infinite",
+  "title": "aⁿbⁿ: infinitely many classes",
+  "notes": "The words ε, a, aa, ..., a⁵ are pairwise told apart: bⁱ puts aⁱbⁱ in L and aʲbⁱ out of it. Nothing stops at 5, so no number of states is enough, and no DFA accepts aⁿbⁿ.",
+  "settings": {
+    "dead": "show"
+  },
+  "seed": 1,
+  "ops": [["load", "anbn"], ["family"]]
+}

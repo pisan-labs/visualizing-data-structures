@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "myhill-nerode",
+  "id": "equivalent-words",
+  "title": "Equivalent words: they end the same way",
+  "notes": "For words ending in ab, a, ba and bba all end in a, and no suffix treats them differently. They are one class, and a DFA may send them all to the same state. ab is the odd one out.",
+  "settings": {
+    "dead": "show"
+  },
+  "seed": 1,
+  "ops": [["apart", "a ba bba ab"]]
+}

@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "myhill-nerode",
+  "id": "apart-lower-bound",
+  "title": "Four words apart: at least four states",
+  "notes": "In words whose second symbol from the end is a, the words ε, a, aa and ab are pairwise told apart, each pair by a suffix of at most two symbols. So every DFA for this language needs at least four states, and four is enough.",
+  "settings": {
+    "dead": "show"
+  },
+  "seed": 1,
+  "ops": [["load", "(a|b)*a(a|b)"], ["apart", "eps a aa ab"], ["classes"]]
+}

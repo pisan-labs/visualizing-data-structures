@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "myhill-nerode",
+  "id": "equal-counts",
+  "title": "As many a's as b's: not regular either",
+  "notes": "The same words and the same suffixes work for words with as many a’s as b’s: aⁱbⁱ is in, aʲbⁱ is not. Infinitely many classes again.",
+  "settings": {
+    "dead": "show"
+  },
+  "seed": 1,
+  "ops": [["load", "equal"], ["family"]]
+}

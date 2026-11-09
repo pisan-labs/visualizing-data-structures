@@ -140,6 +140,17 @@ describe('NFA', () => {
     expect(dead.extra!.run!.rows.map(setName)).toEqual(['{q0,q1,q3}', '{q2,q5}', '∅']);
   });
 
+  it('says where each guess of the ends-in-01 example dies, as its notes do', () => {
+    const ex = nfa.examples.find((e) => e.id === 'ends-in-01')!;
+    const t = new Timeline(nfa, settings(), 1, ex.ops);
+    const steps = t.entries[2]!.steps.filter((s) => s.say.startsWith('Read '));
+    // 0110: the guess from the first 0 dies at the second 1, not at the final 0.
+    expect(steps[2]!.say).toContain('q2 has no move on 1, so its branch dies.');
+    expect(steps[3]!.say).not.toContain('dies');
+    expect(ex.notes).toContain('dies at the second 1');
+    expect(ex.notes).not.toContain('dies on the final 0');
+  });
+
   it('shows the ε-closure as its own step, or folds it in', () => {
     const calls: OpCall[] = [
       ['load', MACHINES.aOrB],

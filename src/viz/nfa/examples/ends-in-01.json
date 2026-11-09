@@ -3,7 +3,7 @@
   "viz": "nfa",
   "id": "ends-in-01",
   "title": "Ends in 01: guess where the 01 starts",
-  "notes": "q0 reads anything and stays put. On each 0 the machine also guesses that the final 01 starts here and moves to q1 as well. A wrong guess dies at the next symbol. 1101 ends with q2 in the set and is accepted; on 0110 the last guess dies on the final 0.",
+  "notes": "q0 reads anything and stays put. On each 0 the machine also guesses that the final 01 starts here and moves to q1 as well. A wrong guess dies at the next symbol. 1101 ends with q2 in the set and is accepted; on 0110 the guess from the first 0 dies at the second 1, and the guess from the last 0 runs out of input in q1.",
   "settings": { "closure": "separate" },
   "seed": 1,
   "ops": [

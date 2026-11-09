@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "push-relabel",
+  "id": "funnel",
+  "title": "A funnel: fewer arc checks than Edmonds-Karp",
+  "notes": "Four arcs of 2 feed one vertex e, and e has an arc of 9 to t. Edmonds-Karp needs four augmenting paths and searches the network four times. Push-relabel moves each excess one arc at a time and e sends all 8 on in one push: 35 arc checks against 60.",
+  "settings": {
+    "rule": "fifo",
+    "residual": false,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [["load", "s>a:2, s>b:2, s>c:2, s>d:2, a>e:2, b>e:2, c>e:2, d>e:2, e>t:9"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

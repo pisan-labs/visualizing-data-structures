@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "push-relabel",
+  "id": "highest-first",
+  "title": "Highest label first saves work",
+  "notes": "The same network as Extra flow climbs back to s, but always draining the highest overflowing vertex. Excess moves down in one wave instead of sloshing back and forth: 12 pushes and 10 relabels instead of 15 and 12.",
+  "settings": {
+    "rule": "highest",
+    "residual": false,
+    "layout": "lr"
+  },
+  "seed": 1,
+  "ops": [["load", "s>a:9, a>b:4, a>c:5, b>t:3, c>t:2"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

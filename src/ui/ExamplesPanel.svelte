@@ -192,6 +192,29 @@
 
   <section aria-labelledby="save-heading">
     <h3 id="save-heading">My examples</h3>
+    {#snippet browserList()}
+      {#if mine.length}
+        {#if account.user}<h4 id="browser-list-heading">Saved in this browser</h4>{/if}
+        <ul class="mine" aria-labelledby={account.user ? 'browser-list-heading' : undefined}>
+          {#each mine as item (item.key)}
+            <li>
+              <span class="title">{item.title}</span>
+              <span class="buttons">
+                <button class="btn small" onclick={() => session.load(item.example)}>Open</button>
+                <button class="btn small" onclick={() => download(item.example, item.title)}
+                  >Download</button
+                >
+                <button
+                  class="btn small"
+                  onclick={() => remove(item)}
+                  aria-label="Delete {item.title}">Delete</button
+                >
+              </span>
+            </li>
+          {/each}
+        </ul>
+      {/if}
+    {/snippet}
     <form class="row" onsubmit={save}>
       <label class="visually-hidden" for="save-title">Name</label>
       <input
@@ -209,39 +232,27 @@
       </p>
       {#await accountList()}
         <p class="muted small" role="status">Loading your examples…</p>
+        {@render browserList()}
       {:then { default: AccountExamples }}
-        <AccountExamples bind:this={inAccount} {session} userId={account.user.id} {library} />
+        <AccountExamples
+          bind:this={inAccount}
+          {session}
+          userId={account.user.id}
+          {library}
+          browser={browserList}
+        />
       {:catch}
         <p class="problem" role="alert">
           Could not load your account's examples. Reload the page to try again.
         </p>
+        {@render browserList()}
       {/await}
     {:else}
       <p class="muted small">
         Saved in this browser only. Clearing site data deletes them, so download anything you want
         to keep.
       </p>
-    {/if}
-    {#if mine.length}
-      {#if account.user}<h4 id="browser-list-heading">Saved in this browser</h4>{/if}
-      <ul class="mine" aria-labelledby={account.user ? 'browser-list-heading' : undefined}>
-        {#each mine as item (item.key)}
-          <li>
-            <span class="title">{item.title}</span>
-            <span class="buttons">
-              <button class="btn small" onclick={() => session.load(item.example)}>Open</button>
-              <button class="btn small" onclick={() => download(item.example, item.title)}
-                >Download</button
-              >
-              <button
-                class="btn small"
-                onclick={() => remove(item)}
-                aria-label="Delete {item.title}">Delete</button
-              >
-            </span>
-          </li>
-        {/each}
-      </ul>
+      {@render browserList()}
     {/if}
   </section>
 

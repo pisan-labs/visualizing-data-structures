@@ -129,24 +129,22 @@
             {busy === 'email' ? 'Sending…' : 'Email me a sign-in link'}
           </button>
         </div>
+        <p class="status" class:problem={!!problem} role="status">
+          {#if problem}
+            {problem}
+          {:else if sentTo}
+            <strong>Check your email.</strong> We sent a sign-in link to {sentTo}.
+          {/if}
+        </p>
         <p id="email-note" class="muted small">
           Open the link in this browser: it works only in the browser that asked for it.
         </p>
         {#if wait > 0}
           <p class="muted small">
-            You can ask for another link in {wait}
-            {wait === 1 ? 'second' : 'seconds'}.
+            {`You can ask for another link in ${wait} ${wait === 1 ? 'second' : 'seconds'}.`}
           </p>
         {/if}
       </form>
-
-      <p class="status" class:problem={!!problem} role="status">
-        {#if problem}
-          {problem}
-        {:else if sentTo}
-          <strong>Check your email.</strong> We sent a sign-in link to {sentTo}.
-        {/if}
-      </p>
 
       <p class="privacy small muted">
         Your account keeps your email address and the examples you save in it. Nothing else about

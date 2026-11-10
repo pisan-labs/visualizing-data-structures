@@ -88,7 +88,7 @@ export type AccountErrorKind =
 export const MESSAGES: Record<AccountErrorKind, string> = {
   off: 'Accounts are not available on this site.',
   unreachable:
-    'Could not reach your account. Try again in a minute; the rest of the page still works.',
+    'Could not reach the account server. Try again in a minute; the rest of the page still works.',
   expired: 'Your sign-in has expired. Sign in again.',
   rate: 'Too many sign-in emails right now. Try Google, or wait a minute and try again.',
   email: 'That email address does not look right.',

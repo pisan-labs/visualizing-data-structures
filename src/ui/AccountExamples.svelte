@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { tick } from 'svelte';
+  import { tick, type Snippet } from 'svelte';
   import { connect } from '../account/account.svelte';
   import { asAccountError, exampleOf, type AccountExample } from '../account/backend';
   import { copyBrowserExamples, notYetCopied } from '../account/library';
@@ -15,8 +15,18 @@
    * browser's saved examples into it. ExamplesPanel loads this component only for a signed-in
    * reader, so a signed-out visit never downloads it.
    */
-  let { session, userId, library }: { session: Session; userId: string; library: LibraryItem[] } =
-    $props();
+  let {
+    session,
+    userId,
+    library,
+    browser,
+  }: {
+    session: Session;
+    userId: string;
+    library: LibraryItem[];
+    /** The panel's "Saved in this browser" list, shown above the button that copies it. */
+    browser?: Snippet;
+  } = $props();
 
   // A new list for each page and each account.
   const shelf = $derived(new AccountShelf(session.def.id));
@@ -256,13 +266,6 @@
     {/each}
   </ul>
 {/if}
-{#if toCopy.length}
-  <button class="btn small copy-all" onclick={copyToAccount} disabled={copying}>
-    {toCopy.length === 1
-      ? 'Copy the example saved in this browser to your account'
-      : `Copy the ${toCopy.length} examples saved in this browser to your account`}
-  </button>
-{/if}
 {#if linkText}
   <label class="visually-hidden" for="account-link">Link to the shared example</label>
   <input
@@ -272,6 +275,15 @@
     value={linkText}
     onfocus={(e) => e.currentTarget.select()}
   />
+{/if}
+
+{@render browser?.()}
+{#if toCopy.length}
+  <button class="btn small copy-all" onclick={copyToAccount} disabled={copying}>
+    {toCopy.length === 1
+      ? 'Copy the example saved in this browser to your account'
+      : `Copy the ${toCopy.length} examples saved in this browser to your account`}
+  </button>
 {/if}
 
 <style>
@@ -362,6 +374,7 @@
   /* A long label on a phone: let it wrap rather than widen the page. */
   .copy-all {
     margin-top: 10px;
+    padding-block: 5px;
     white-space: normal;
     text-align: left;
   }

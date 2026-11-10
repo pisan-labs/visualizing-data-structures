@@ -423,3 +423,5 @@
 2026-11-10 [code] Merged accounts slice 2: preferences and progress follow the account (merged per key, compare-and-swap writes), "New since your last visit" from src/releases.ts and dist/releases.json, the email opt-in, Delete my StepWise data (delete_my_data), magic links through the sign-in-link service (Turnstile only on a check); migration 0002
 
 2026-11-10 [note] Plabs applied 0002 and 0003 to app_stepwise (admin run 45; check-schema run 46 passed); the opt-in email sender is approved but waits for self-service account deletion. A test magic link went to Yusuf at 21:16 Lisbon
+
+2026-11-10 [note] Deployed 21:40 Lisbon on Yusuf's "finish lesson lists and slice 2, then deploy": main 99303a0..2905721 (sign-in, saved and shared examples, lesson lists, sync, new since your last visit, Present tools, Save picture, shortcuts, worksheets, progress, recent pages, offline app). Live bundle matches; all 203 pages 200; no account requests on an ordinary visit

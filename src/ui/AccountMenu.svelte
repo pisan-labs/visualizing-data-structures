@@ -10,6 +10,7 @@
     signOut,
   } from '../account/account.svelte';
   import { asAccountError } from '../account/backend';
+  import { googleG } from '../account/google-g';
   import { deleteMyData, sync } from '../account/sync.svelte';
   import { loadTurnstile, type Turnstile } from '../account/turnstile';
   import { notify, prefs } from './state.svelte';
@@ -258,8 +259,12 @@
       </div>
       <p>Keep your examples, settings and progress in an account and use them on any computer.</p>
 
-      <button class="btn wide" onclick={google} disabled={busy !== ''}>
-        {busy === 'google' ? 'Opening Google…' : 'Continue with Google'}
+      <!-- Google's branding guidelines: Google's own G, its colours and type, a pill shape. Both
+           Gs are in the page and the theme shows one (no shared ids). -->
+      <button class="gsi" onclick={google} disabled={busy !== ''}>
+        <span class="g g-light">{@html googleG('light')}</span>
+        <span class="g g-dark">{@html googleG('dark')}</span>
+        <span>{busy === 'google' ? 'Opening Google…' : 'Continue with Google'}</span>
       </button>
 
       <div class="or" aria-hidden="true"><span>or</span></div>
@@ -275,7 +280,7 @@
             required
             bind:value={email}
           />
-          <button class="btn" type="submit" disabled={busy !== '' || waiting}>
+          <button class="gsi" type="submit" disabled={busy !== '' || waiting}>
             {busy === 'email' ? 'Sending…' : 'Email me a sign-in link'}
           </button>
         </div>
@@ -511,10 +516,73 @@
     font-size: 0.86rem;
   }
 
-  .wide {
-    width: 100%;
+  /* Google's sign-in button (light values; dark values below), and the email button in the same
+     shape and type so that it is no more prominent. */
+  .gsi {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 40px;
+    padding: 0 12px;
+    border: 1px solid #747775;
+    border-radius: 20px;
+    background: #ffffff;
+    color: #1f1f1f;
+    font-family: 'Google Sans', Roboto, Arial, sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: left;
+    cursor: pointer;
+  }
+  .gsi:first-of-type {
     margin-top: 6px;
-    white-space: normal;
+    align-self: flex-start;
+  }
+  .gsi:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+  .gsi:focus-visible {
+    outline: 2px solid var(--focus, #2457c5);
+    outline-offset: 2px;
+  }
+  .g {
+    display: inline-flex;
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
+  .g-dark {
+    display: none;
+  }
+  :global(:root[data-theme='dark']) .gsi,
+  :global(:root[data-theme='contrast']) .gsi {
+    border-color: #8e918f;
+    background: #131314;
+    color: #e3e3e3;
+  }
+  :global(:root[data-theme='dark']) .g-light,
+  :global(:root[data-theme='contrast']) .g-light {
+    display: none;
+  }
+  :global(:root[data-theme='dark']) .g-dark,
+  :global(:root[data-theme='contrast']) .g-dark {
+    display: inline-flex;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light']):not([data-theme='contrast'])) .gsi {
+      border-color: #8e918f;
+      background: #131314;
+      color: #e3e3e3;
+    }
+    :global(:root:not([data-theme='light']):not([data-theme='contrast'])) .g-light {
+      display: none;
+    }
+    :global(:root:not([data-theme='light']):not([data-theme='contrast'])) .g-dark {
+      display: inline-flex;
+    }
   }
 
   .or {
@@ -549,7 +617,7 @@
     gap: 6px;
   }
 
-  .row .btn {
+  .row .gsi {
     white-space: normal;
   }
 

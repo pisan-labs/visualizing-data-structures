@@ -1,7 +1,14 @@
 import fs from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { buildVersion, precacheList, serviceWorkerSource, stampBuild } from './precache';
-import { ASK_VERSION, BUILD_META, SKIP_WAITING } from './protocol';
+import {
+  buildVersion,
+  offlineList,
+  serviceWorkerSource,
+  shellList,
+  stampBuild,
+  transferSize,
+} from './precache';
+import { ASK_STATUS, ASK_VERSION, BUILD_META, DOWNLOAD, SKIP_WAITING } from './protocol';
 
 const template = fs.readFileSync(new URL('./sw.js', import.meta.url), 'utf8');
 
@@ -30,8 +37,8 @@ const dist = [
   'drafts/index.html',
 ];
 
-describe('precache list', () => {
-  const entries = precacheList(dist, ['stack-array', 'bst']);
+describe('offline list', () => {
+  const entries = offlineList(dist, ['stack-array', 'bst']);
   const urls = entries.map((e) => e.url);
 
   it('holds the home page, every page, the hashed assets, the thumbnails and the icons', () => {
@@ -75,17 +82,51 @@ describe('precache list', () => {
   });
 
   it('does not depend on the order the files were listed in', () => {
-    expect(precacheList([...dist].reverse(), ['bst', 'stack-array'])).toEqual(entries);
+    expect(offlineList([...dist].reverse(), ['bst', 'stack-array'])).toEqual(entries);
   });
 
   it('refuses a build that lacks a page', () => {
-    expect(() => precacheList(dist, ['stack-array', 'avl'])).toThrow('avl/index.html');
-    expect(() => precacheList(dist.slice(1), [])).toThrow('index.html');
+    expect(() => offlineList(dist, ['stack-array', 'avl'])).toThrow('avl/index.html');
+    expect(() => offlineList(dist.slice(1), [])).toThrow('index.html');
+  });
+});
+
+describe('app shell', () => {
+  const all = offlineList(dist, ['stack-array', 'bst']);
+  const home =
+    '<link rel="icon" href="/favicon.svg" /><link rel="manifest" href="/manifest.webmanifest" />' +
+    '<script type="module" crossorigin src="/assets/index-AbC123.js"></script>' +
+    '<link rel="stylesheet" crossorigin href="/assets/index-AbC123.css">';
+
+  it("is the home page, the files its HTML loads, the manifest and the icons, and no page's own", () => {
+    expect(shellList(all, home).map((e) => e.url)).toEqual([
+      '/',
+      '/apple-touch-icon.png',
+      '/assets/index-AbC123.css',
+      '/assets/index-AbC123.js',
+      '/favicon.svg',
+      '/icons/icon-192.png',
+      '/icons/icon.svg',
+      '/icons/maskable-512.png',
+      '/manifest.webmanifest',
+    ]);
+  });
+
+  it('takes module preloads too, and refuses files that are not in the build', () => {
+    const preload = `${home}<link rel="modulepreload" crossorigin href="/assets/bst-x9Y8z7.js">`;
+    expect(shellList(all, preload).map((e) => e.url)).toContain('/assets/bst-x9Y8z7.js');
+    expect(() => shellList(all, '<script src="/assets/gone-1.js"></script>')).toThrow('gone-1');
+  });
+
+  it('measures what a file costs to download', () => {
+    const text = 'stack '.repeat(1000);
+    expect(transferSize(text)).toBeGreaterThan(0);
+    expect(transferSize(text)).toBeLessThan(text.length / 10);
   });
 });
 
 describe('worker version', () => {
-  const entries = precacheList(dist, ['stack-array', 'bst']);
+  const entries = offlineList(dist, ['stack-array', 'bst']);
   const files: Record<string, string> = Object.fromEntries(dist.map((f) => [f, `contents ${f}`]));
   const version = (t = template, read = (f: string) => files[f]!) => buildVersion(t, entries, read);
 
@@ -96,7 +137,7 @@ describe('worker version', () => {
     expect(changed('bst/index.html')).not.toBe(version());
     expect(changed('assets/bst-x9Y8z7.js')).not.toBe(version());
     expect(changed('previews.json')).not.toBe(version());
-    // Files that are not precached do not matter.
+    // Files the worker never caches do not matter.
     expect(changed('previews/bst.json')).toBe(version());
   });
 
@@ -106,14 +147,27 @@ describe('worker version', () => {
 });
 
 describe('dist/sw.js', () => {
-  const urls = ['/', '/assets/index-AbC123.js', '/stack-array/'];
-  const source = serviceWorkerSource(template, '0123456789abcdef', urls);
+  const shell = ['/', '/assets/index-AbC123.js'];
+  const files: [string, number][] = [
+    ['/', 900],
+    ['/assets/index-AbC123.js', 80_000],
+    ['/stack-array/', 1200],
+  ];
+  const source = serviceWorkerSource(template, '0123456789abcdef', shell, files);
 
-  it('fills in the version and the list', () => {
+  it('fills in the version, the shell and every file with its size', () => {
     expect(source).toContain("const VERSION = '0123456789abcdef';");
     expect(source).not.toContain("const VERSION = 'dev';");
-    const list = /const PRECACHE = (\[[^\]]*\]);/.exec(source)?.[1];
-    expect(JSON.parse(list!)).toEqual(urls);
+    const list = (name: string) =>
+      JSON.parse(
+        new RegExp(`const ${name} = (\\[[^;]*\\]);`).exec(source)![1]!.replace(/,\s*\]$/, ']'),
+      );
+    expect(list('SHELL')).toEqual(shell);
+    expect(list('FILES')).toEqual(files);
+  });
+
+  it('refuses a shell file that is not in the list', () => {
+    expect(() => serviceWorkerSource(template, 'abc', ['/nope.js'], files)).toThrow('/nope.js');
   });
 
   it('is valid JavaScript', () => {
@@ -121,13 +175,17 @@ describe('dist/sw.js', () => {
   });
 
   it('refuses a template without the placeholder lines, or a strange version', () => {
-    expect(() => serviceWorkerSource('self.x = 1;', 'abc', urls)).toThrow('exactly one line');
-    expect(() => serviceWorkerSource(template, "x'; alert(1); '", urls)).toThrow('version');
+    expect(() => serviceWorkerSource('self.x = 1;', 'abc', shell, files)).toThrow(
+      'exactly one line',
+    );
+    expect(() => serviceWorkerSource(template, "x'; alert(1); '", shell, files)).toThrow('version');
   });
 
   it('uses the message names the page sends', () => {
     expect(template).toContain(`type === '${ASK_VERSION}'`);
     expect(template).toContain(`type === '${SKIP_WAITING}'`);
+    expect(template).toContain(`type === '${ASK_STATUS}'`);
+    expect(template).toContain(`type === '${DOWNLOAD}'`);
   });
 });
 

@@ -36,7 +36,11 @@
           />
           <circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none" />
         </svg>
-        {app.ready ? 'Offline: every page still works' : 'Offline'}
+        {app.missing?.count === 0
+          ? 'Offline: every page still works'
+          : app.ready
+            ? 'Offline: pages you have opened still work'
+            : 'Offline'}
       </p>
     {/if}
     {#if app.update}

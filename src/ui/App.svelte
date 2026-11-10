@@ -6,6 +6,8 @@
   import Catalog from './Catalog.svelte';
   import ComparePage from './ComparePage.svelte';
   import Logo from './Logo.svelte';
+  import OfflineDownload from './OfflineDownload.svelte';
+  import PageUnavailable from './PageUnavailable.svelte';
   import { parseLocation } from './route';
   import { notices, prefs, setPref, type Theme } from './state.svelte';
   import VizPage from './VizPage.svelte';
@@ -19,14 +21,21 @@
 
   // undefined while loading, null when there is no such page.
   let viz = $state<AnyVizDef | null | undefined>(undefined);
+  // A page's code could not load (offline and never saved, or the network failed).
+  let unavailable = $state(false);
   $effect(() => {
     const r = route;
     if (r.kind !== 'viz') return;
     let live = true;
     viz = undefined;
-    loadViz(r.id).then((def) => {
-      if (live) viz = def ?? null;
-    });
+    unavailable = false;
+    loadViz(r.id)
+      .then((def) => {
+        if (live) viz = def ?? null;
+      })
+      .catch(() => {
+        if (live) unavailable = true;
+      });
     return () => {
       live = false;
     };
@@ -39,9 +48,13 @@
     vizB = undefined;
     if (r.kind !== 'viz' || !r.compare) return;
     let live = true;
-    loadViz(r.compare).then((def) => {
-      if (live) vizB = def ?? null;
-    });
+    loadViz(r.compare)
+      .then((def) => {
+        if (live) vizB = def ?? null;
+      })
+      .catch(() => {
+        if (live) unavailable = true;
+      });
     return () => {
       live = false;
     };
@@ -110,7 +123,9 @@
   {#if route.kind === 'catalog'}
     <Catalog />
   {:else if route.kind === 'viz'}
-    {#if viz && route.compare}
+    {#if unavailable}
+      <PageUnavailable />
+    {:else if viz && route.compare}
       {#if vizB}
         {#key route.key}
           <ComparePage a={viz} b={vizB} code={route.code} codeB={route.codeB} />
@@ -151,6 +166,7 @@
 
 {#if !embed}
   <footer class="site">
+    {#if route.kind === 'catalog'}<OfflineDownload />{/if}
     <p>
       Code under the MIT license, text under CC BY 4.0. <a href={REPO_URL}>Source on GitHub</a>.
     </p>

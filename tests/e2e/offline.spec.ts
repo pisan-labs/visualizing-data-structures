@@ -223,6 +223,9 @@ test.describe('with the service worker', () => {
     context,
     request,
   }) => {
+    // It downloads every page (about 490 files), then scans all three themes twice and browses
+    // offline: well past the default 30 s on CI's runners, though each step is quick.
+    test.setTimeout(180_000);
     const { files } = await builtWorker(request);
     await page.goto('/');
     await installed(page);

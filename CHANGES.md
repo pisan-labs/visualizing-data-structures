@@ -395,3 +395,5 @@
 2026-11-10 [plan] Yusuf accepted the usability ideas except follow-along mode: pen and pointer in Present mode, picture export, shortcuts overlay, practice worksheets, progress, pick up where you left off, offline app, lesson lists. PLAN.md section 19
 
 2026-11-10 [decision] Accounts use the shared HintWise Supabase project (auth.hintwise.org, US East, paid), schema app_stepwise only; shared links via a security-definer function, not an anon policy. Plabs applies the SQL with Yusuf's yes; the URL and anon key go into netlify.toml after that
+
+2026-11-10 [note] Defaults taken at 12:50: PostgreSQL 16 installed in this cloud container only (throwaway server on localhost:54329, data in /tmp/swpg) to test the accounts SQL against a stand-in auth schema; new-page notices in-app first, email later

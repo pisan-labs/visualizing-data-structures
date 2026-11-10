@@ -6,6 +6,9 @@
   import type { Scene } from '../render/scene';
   import { ZOOM_BUTTONS, ZOOM_STRIP } from '../render/stage';
   import Icon from './Icon.svelte';
+  import type { Ink } from './ink.svelte';
+  import InkLayer from './InkLayer.svelte';
+  import { readPicture, type Picture } from './picture';
   import Shapes from './Shapes.svelte';
   import { reducedMotion } from './state.svelte';
 
@@ -13,7 +16,17 @@
     scene,
     duration,
     room = $bindable(),
-  }: { scene: Scene; duration: number; room?: StageSize } = $props();
+    ink,
+  }: {
+    scene: Scene;
+    duration: number;
+    room?: StageSize;
+    /** Present mode's pointer and pen: an overlay above the drawing. */
+    ink?: Ink;
+  } = $props();
+
+  // While the pointer or pen is on, the drawing does not pan or zoom.
+  const locked = $derived(!!ink?.busy);
 
   // The scene currently on screen; during a tween it is a blend of two scenes.
   let shown = $state.raw<Scene>(untrack(() => interpolate(scene, scene, 1)));
@@ -70,6 +83,7 @@
   let zoomStart = 1;
 
   function onPointerDown(e: PointerEvent) {
+    if (locked) return;
     pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     (e.currentTarget as Element).setPointerCapture(e.pointerId);
     if (pointers.size === 2) {
@@ -103,7 +117,12 @@
     // Plain wheel scrolls the page; pinch on a trackpad (ctrl+wheel) zooms.
     if (!e.ctrlKey && !e.metaKey) return;
     e.preventDefault();
-    zoom = clampZoom(zoom * Math.exp(-e.deltaY * 0.01));
+    if (!locked) zoom = clampZoom(zoom * Math.exp(-e.deltaY * 0.01));
+  }
+
+  /** The step as drawn, whole (whatever the zoom), for "Save picture". */
+  export function picture(): Picture | null {
+    return svg ? readPicture(svg, shown.bounds, scene.label) : null;
   }
 
   const ratio = $derived(`${scene.bounds.w} / ${scene.bounds.h}`);
@@ -160,9 +179,20 @@
   >
     <Shapes shapes={shown.shapes} />
   </svg>
+  {#if ink}
+    <div
+      class="ink-box"
+      style:top="{phone.current ? ZOOM_STRIP.top : ZOOM_BUTTONS.inset}px"
+      style:inset-inline="{ZOOM_BUTTONS.inset}px"
+      style:bottom="{ZOOM_BUTTONS.inset}px"
+    >
+      <InkLayer {ink} viewBox="{view.x} {view.y} {view.w} {view.h}" />
+    </div>
+  {/if}
   <div class="zoom" role="group" aria-label="Zoom">
     <button
       class="icon-btn small"
+      disabled={locked}
       onclick={() => (zoom = clampZoom(zoom * 1.25))}
       aria-label="Zoom in"
       title="Zoom in"
@@ -171,13 +201,20 @@
     </button>
     <button
       class="icon-btn small"
+      disabled={locked}
       onclick={() => (zoom = clampZoom(zoom / 1.25))}
       aria-label="Zoom out"
       title="Zoom out"
     >
       <Icon name="minus" size={18} />
     </button>
-    <button class="icon-btn small" onclick={fit} aria-label="Fit to screen" title="Fit to screen">
+    <button
+      class="icon-btn small"
+      disabled={locked}
+      onclick={fit}
+      aria-label="Fit to screen"
+      title="Fit to screen"
+    >
       <Icon name="fit" size={18} />
     </button>
   </div>
@@ -211,6 +248,16 @@
     }
   }
 
+  .ink-box {
+    position: absolute;
+    /* Only the ink layer inside takes the pointer, and only while a tool is on. */
+    pointer-events: none;
+  }
+
+  .ink-box > :global(.ink) {
+    inset: 0;
+  }
+
   .zoom {
     position: absolute;
     top: var(--zoom-inset);
@@ -224,5 +271,10 @@
     height: var(--zoom-size);
     border-radius: 8px;
     opacity: 0.85;
+  }
+
+  /* Off while the pointer or pen is on: the drawing stays still. */
+  .icon-btn.small:disabled {
+    opacity: 0.4;
   }
 </style>

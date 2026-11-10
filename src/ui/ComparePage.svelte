@@ -16,6 +16,8 @@
   import { vizHref } from './route';
   import { Session } from './session.svelte';
   import SettingsPanel from './SettingsPanel.svelte';
+  import { nextSpeed, runShortcut, shortcutsFor, type KeyActions } from './shortcuts';
+  import ShortcutsDialog from './ShortcutsDialog.svelte';
   import Stage from './Stage.svelte';
   import { notify, prefs, setPref } from './state.svelte';
   import Transport from './Transport.svelte';
@@ -99,42 +101,25 @@
     }, 400);
   });
 
-  function onKey(e: KeyboardEvent) {
-    const t = e.target as HTMLElement;
-    if (e.altKey || e.ctrlKey || e.metaKey) return;
-    if (t.closest('input, textarea, select, [contenteditable="true"]')) return;
-    switch (e.key) {
-      case ' ':
-        if (t.closest('button, a, summary')) return;
-        e.preventDefault();
-        pair.toggle();
-        break;
-      case 'ArrowRight':
-      case 'PageDown':
-        e.preventDefault();
-        pair.stepForward();
-        break;
-      case 'ArrowLeft':
-      case 'PageUp':
-        e.preventDefault();
-        pair.stepBack();
-        break;
-      case '-':
-      case '+':
-      case '=': {
-        const speeds = [0.25, 0.5, 1, 1.5, 2, 4];
-        const i = speeds.indexOf(pair.speed);
-        const next =
-          speeds[Math.max(0, Math.min(speeds.length - 1, i + (e.key === '-' ? -1 : 1)))]!;
-        pair.setSpeed(next);
-        setPref('speed', next);
-        break;
-      }
-    }
+  // The same shortcuts table as a single page (shortcuts.ts), without the tabs and Present mode.
+  let help: ShortcutsDialog | undefined = $state();
+  const listed = shortcutsFor({});
+  function changeSpeed(dir: -1 | 1) {
+    const next = nextSpeed(pair.speed, dir);
+    pair.setSpeed(next);
+    setPref('speed', next);
   }
+  const keyActions: KeyActions = {
+    play: () => pair.toggle(),
+    forward: () => pair.stepForward(),
+    back: () => pair.stepBack(),
+    slower: () => changeSpeed(-1),
+    faster: () => changeSpeed(1),
+    help: () => help?.show(),
+  };
 </script>
 
-<svelte:window onkeydown={onKey} />
+<svelte:window onkeydown={(e) => runShortcut(e, keyActions)} />
 
 <div class="compare">
   <header class="head">
@@ -147,7 +132,16 @@
   </header>
 
   <OpControls session={pair} />
-  <Transport session={pair} />
+  <Transport session={pair}>
+    <button
+      type="button"
+      class="icon-btn keys-btn"
+      aria-label="Keyboard shortcuts"
+      title="Keyboard shortcuts (?)"
+      onclick={() => help?.show()}>?</button
+    >
+  </Transport>
+  <ShortcutsDialog bind:this={help} shortcuts={listed} />
 
   <div class="sides">
     {#each pair.sides as s, i (i)}
@@ -191,6 +185,18 @@
 
   .back {
     font-size: 0.92rem;
+  }
+
+  .keys-btn {
+    margin-left: auto;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .keys-btn {
+      display: none;
+    }
   }
 
   .sides {

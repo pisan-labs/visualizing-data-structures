@@ -413,3 +413,5 @@
 2026-11-10 [code] Merged the offline app: installable (manifest, icons), hand-written service worker; install keeps the app shell (about 0.11 MB), pages are kept as opened, "Make every page available offline" saves the rest (about 2.9 MB); kill switch scripts/sw-kill.js. CLAUDE.md lists src/account, src/pwa, src/progress
 
 2026-11-10 [code] Thompson layout: the arrow from a mid-row accept state to the next row is checked as drawn and rerouted only when it runs into a state (a CI property test found one, old since 8 Nov); scenes of regex-to-nfa and regex-engines unchanged otherwise
+
+2026-11-10 [plan] Yusuf: finish lesson lists and accounts slice 2, then deploy. Two agents: slice 2 (preferences and progress sync, "new since your last visit" from src/releases.ts, opt-in email flag, delete my StepWise data; migration 0002) and lesson lists (migration 0003). Asked Plabs how app email should be sent

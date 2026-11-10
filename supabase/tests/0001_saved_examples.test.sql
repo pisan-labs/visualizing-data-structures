@@ -78,7 +78,7 @@ do $$ begin
   end if;
 end $$;
 
-select pg_sleep(0.02);
+do $$ begin perform pg_sleep(0.02); end $$;
 
 -- A renames, unshares and deletes her own rows; updated_at moves, created_at stays.
 begin;

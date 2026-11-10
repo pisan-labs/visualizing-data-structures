@@ -3,6 +3,8 @@
 do $$ begin
   if not exists (select from pg_roles where rolname = 'anon') then create role anon nologin; end if;
   if not exists (select from pg_roles where rolname = 'authenticated') then create role authenticated nologin; end if;
+  -- The platform's server-side jobs (Edge Functions with the service-role key) bypass RLS.
+  if not exists (select from pg_roles where rolname = 'service_role') then create role service_role nologin bypassrls; end if;
 end $$;
 create schema if not exists auth;
 create table if not exists auth.users (id uuid primary key, email text);

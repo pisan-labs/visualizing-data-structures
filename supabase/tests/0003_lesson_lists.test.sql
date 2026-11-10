@@ -1,5 +1,5 @@
 -- Tests for migrations/0003_lesson_lists.sql, on a throwaway database that has
--- tests/supabase-stub.sql, 0001 and 0003 loaded (supabase/README.md, "Testing the migrations").
+-- tests/supabase-stub.sql, 0001 and 0003 loaded (supabase/README.md, "Testing the migration").
 -- Every check raises an exception when it fails, and psql stops at the first one (run with
 -- -v ON_ERROR_STOP=1). The last line printed is "all lesson_lists tests passed".
 --

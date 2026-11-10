@@ -29,6 +29,14 @@ Supabase, so the code is safe to merge and deploy before then.
    Both are public: they end up in the JavaScript every visitor downloads, and row-level
    security is what protects the data. The service-role key never goes in the site.
    *Unlocks:* the "Sign in" button and `#saved=` links on the live site.
+3. **Say yes to the lesson lists migration.** `migrations/0003_lesson_lists.sql` (it needs 0001
+   only) creates `lesson_lists` and `lesson_list_items` with row-level security, and two
+   functions: `shared_lesson_list` (a shared list's content, for anyone with its link) and
+   `reorder_lesson_list` (puts a list's items in a new order, for its owner). Idempotent; never
+   edited once applied. Until it is applied the rest of the site works, and the lesson-list
+   parts say they could not reach the account.
+   *Unlocks:* "Add to list" on examples saved in an account, "My lesson lists" (`/#lists`), and
+   playing a list from its link (`/#list=<id>`), signed out too when it is shared.
 
 ## What is stored, and where
 
@@ -45,6 +53,15 @@ Everything is in the HintWise project, in Supabase's US East region (us-east-1).
   and when it was made and last changed. Each reader sees only their own rows. Nobody else can
   read the table; a shared example's content (page, name, notes, example) is readable by anyone
   with its link through `app_stepwise.shared_example(id)`, and never who owns it.
+- **`app_stepwise.lesson_lists`** and **`app_stepwise.lesson_list_items`**: a reader's lesson
+  lists (name, notes, whether it is shared, when it was made and last changed) and, for each, the
+  saved examples in it in order, each with an optional note. An item can hold only an example
+  from the same account. Each reader sees only their own lists; nobody else can read either
+  table. A shared list is readable by anyone with its link through
+  `app_stepwise.shared_lesson_list(id)`: its name, notes and its examples in order (page, name,
+  notes, example, note), including examples that are not shared on their own, and never who owns
+  it or any id. Deleting a saved example takes it out of every list (`on delete cascade`);
+  deleting a list leaves its examples in the account.
 - **In the reader's browser**: the session (localStorage `stepwise:auth`, written by
   supabase-js, plus a short-lived PKCE code verifier while a sign-in is under way), which
   browser examples were already copied into which account (`stepwise:account-copied`), which
@@ -54,8 +71,9 @@ Everything is in the HintWise project, in Supabase's US East region (us-east-1).
 Nothing else is recorded: no analytics, no tracking, no logging of what readers do.
 
 **Deleting an account:** there is no self-service yet. A reader who wants their account gone
-emails builder@hintwise.org. Deleting the user in Supabase Auth deletes their saved examples with
-it (`on delete cascade`), and it ends their account in every HintWise app, since they share it.
+emails builder@hintwise.org. Deleting the user in Supabase Auth deletes their saved examples and
+lesson lists with it (`on delete cascade`), and it ends their account in every HintWise app, since
+they share it.
 
 ## Testing the migration
 
@@ -80,6 +98,28 @@ returns only shared rows and only its four columns, signed in or not; that the c
 constraints refuse oversize rows; that an account stops at 1000 examples; and that deleting the
 auth user deletes their rows.
 
+Lesson lists (`0003_lesson_lists.sql`) are tested the same way, on their own throwaway database
+with the stub and 0001 loaded first, then 0003 twice:
+
+```sh
+createdb $P sw_lists
+psql $P -d sw_lists -v ON_ERROR_STOP=1 -q -f supabase/tests/supabase-stub.sql
+psql $P -d sw_lists -v ON_ERROR_STOP=1 -q -f supabase/migrations/0001_saved_examples.sql
+psql $P -d sw_lists -v ON_ERROR_STOP=1 -q -f supabase/migrations/0003_lesson_lists.sql
+psql $P -d sw_lists -v ON_ERROR_STOP=1 -q -f supabase/migrations/0003_lesson_lists.sql  # again
+psql $P -d sw_lists -v ON_ERROR_STOP=1 -q -f supabase/tests/0003_lesson_lists.test.sql
+dropdb $P sw_lists
+```
+
+It prints `all lesson_lists tests passed`. It checks that a reader sees, makes, changes, reorders
+and deletes only their own lists and items; that nobody can put another account's example (even
+a shared one) in a list, or move an item to another list; that anon has no grants on either
+table and cannot reorder; that `shared_lesson_list` returns a shared list's three columns with
+its items in order (private examples included, no ids), and nothing for a private, unshared or
+missing list; that new items go at the end and a reorder must name every item once; the size
+checks, 200 lists per account and 100 items per list; and the cascades (an example, a list, the
+auth user).
+
 What it cannot show: the stand-in is not Supabase. It does not run PostgREST (so not the
 exposed-schema setting, the HTTP errors, or how `rpc` and `maybeSingle` answer), the real
 `auth.uid()` and JWT checks, Supabase's default privileges and other roles (`service_role`,
@@ -94,4 +134,5 @@ exposed-schema setting, the HTTP errors, or how `rpc` and `maybeSingle` answer),
 - Tests turn accounts on or off with `window.__STEPWISE_ACCOUNTS__ = { url, anonKey }` (or
   `null`), set before the app starts (Playwright's `page.addInitScript`).
 - supabase-js loads in its own chunk, only when a reader opens Sign in, already has a stored
-  session, comes back from signing in (`?code=` or `?error=`), or opens a `#saved=` link.
+  session, comes back from signing in (`?code=` or `?error=`), or opens a `#saved=` link or a
+  lesson list's link (`#list=`).

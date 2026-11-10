@@ -411,3 +411,5 @@
 2026-11-10 [code] Accounts on for production builds: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (public) in netlify.toml, after Plabs applied app_stepwise (16:38 to 16:44, check-schema and check-google passed). Live API checked: shared_example answers anon, the table refuses anon. Goes live with the next deploy
 
 2026-11-10 [code] Merged the offline app: installable (manifest, icons), hand-written service worker; install keeps the app shell (about 0.11 MB), pages are kept as opened, "Make every page available offline" saves the rest (about 2.9 MB); kill switch scripts/sw-kill.js. CLAUDE.md lists src/account, src/pwa, src/progress
+
+2026-11-10 [code] Thompson layout: the arrow from a mid-row accept state to the next row is checked as drawn and rerouted only when it runs into a state (a CI property test found one, old since 8 Nov); scenes of regex-to-nfa and regex-engines unchanged otherwise

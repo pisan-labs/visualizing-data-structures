@@ -146,5 +146,6 @@ everything on every push; Netlify builds and deploys `main` (`netlify.toml`).
   reader's settings and opens on the last step (the Chomsky hierarchy opens on the whole map).
 - The app loads each visualization on demand (`src/viz/registry.ts`); tests and prerender use
   `src/viz/all.ts`.
-- No analytics or tracking. No external fonts or CDNs.
+- No analytics or tracking. No external fonts or CDNs. One exception: Cloudflare Turnstile,
+  loaded only when the platform's sign-in-link service asks for a check during a magic-link sign-in.
 - Code is MIT; written explanations are CC BY 4.0.

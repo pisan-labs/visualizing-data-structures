@@ -59,7 +59,7 @@ export const regexToNfa: VizDef<RxState, RxSettings, RxExtra> = {
         { value: 'thompson', label: "Thompson's: one start and one accept state per piece" },
         { value: 'sipser', label: "Sipser's: fewer states, several accept states" },
       ],
-      help: "Both build an NFA for the same language. Thompson's pieces always have one way in and one way out; Sipser's (Theorem 1.54) reuse accept states instead of adding new ones.",
+      help: "Both build an NFA for the same language. Thompson's pieces always have one way in and one way out; Sipser's, from the proof of his Lemma 1.55, reuse accept states instead of adding new ones.",
     },
     {
       kind: 'choice',

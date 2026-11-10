@@ -31,8 +31,27 @@ function previews(): Plugin {
   };
 }
 
+/** Serves the web app manifest in development; scripts/prerender.mjs writes it into dist. */
+function manifest(): Plugin {
+  return {
+    name: 'stepwise-manifest',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (req.url?.split('?')[0] !== '/manifest.webmanifest') return next();
+        server
+          .ssrLoadModule('/src/pwa/manifest.ts')
+          .then(({ makeManifest }) => {
+            res.setHeader('Content-Type', 'application/manifest+json');
+            res.end(JSON.stringify(makeManifest()));
+          })
+          .catch(next);
+      });
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [svelte(), previews()],
+  plugins: [svelte(), previews(), manifest()],
   // Absolute, because each visualization has its own page at /<id>/.
   base: '/',
   build: { target: 'es2022' },

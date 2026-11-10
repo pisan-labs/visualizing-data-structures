@@ -220,7 +220,10 @@ export class AccountSync {
         this.problem = '';
       } else {
         this.status = 'offline';
-        this.problem = problem.message;
+        this.problem =
+          problem.kind === 'large'
+            ? 'Your progress is too large to keep in your account.'
+            : problem.message;
       }
       this.known = undefined;
       return problem;

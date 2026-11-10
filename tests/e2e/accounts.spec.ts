@@ -14,7 +14,10 @@ import {
   mockSupabase,
   row,
   SESSION,
+  OTHER,
   storedSession,
+  stubTurnstile,
+  TURNSTILE,
   USER,
   type Mock,
 } from './supabase-mock';
@@ -58,14 +61,6 @@ async function fits(page: Page) {
     content: ":root { --font: 'DejaVu Sans', Verdana, sans-serif !important; }",
   });
   expect(await overflow(page)).toBeLessThanOrEqual(0);
-}
-
-/** The seconds the dialog says to wait before asking for another link. */
-async function waitShown(page: Page): Promise<number> {
-  const text = await dialog(page)
-    .getByText(/another link in \d+ seconds/)
-    .textContent();
-  return Number(/(\d+) seconds/.exec(text ?? '')?.[1]);
 }
 
 /** Uncaught errors in the page; a test expects none. */
@@ -135,7 +130,9 @@ test.describe('signed out', () => {
     await expect(dialog(page).getByRole('button', { name: 'Continue with Google' })).toBeVisible();
     await expect(dialog(page).getByLabel('Email')).toBeVisible();
     await expect(dialog(page)).toContainText('the examples you save');
-    await expect(dialog(page)).toContainText('works only in the browser that asked for it');
+    // An emailed link works in any browser now (the platform's sign-in-link service).
+    await expect(dialog(page)).not.toContainText('works only in the browser');
+    await expect(dialog(page)).not.toContainText('Cloudflare');
     // Opening the dialog loads the client, which sends nothing until asked to.
     await expect.poll(() => mock.chunks.length).toBe(1);
     expect(mock.calls).toEqual([]);
@@ -154,51 +151,178 @@ test.describe('signed out', () => {
     expect(errors).toEqual([]);
   });
 
-  test('emails a sign-in link that comes back to this page, then waits a minute', async ({
+  test('asks the sign-in-link service for a link that comes back to this page', async ({
     page,
   }) => {
     const mock = await mockSupabase(page);
+    const cloudflare: string[] = [];
+    page.on('request', (r) => {
+      if (r.url().startsWith(TURNSTILE)) cloudflare.push(r.url());
+    });
+    await page.goto('/stack-array/');
+    await push(page, '4 5');
+    await expect(page).toHaveURL(/#ex=z/);
+    await signIn(page).click();
+    await dialog(page).getByLabel('Email').fill(USER.email);
+    await dialog(page).getByRole('button', { name: 'Email me a sign-in link' }).click();
+    await expect(dialog(page).getByRole('status')).toContainText(
+      `Check your email. We sent a sign-in link to ${USER.email}.`,
+    );
+    const [sent] = callsTo(mock, '/functions/v1/sign-in-link');
+    expect(sent?.method).toBe('POST');
+    const browserId = await page.evaluate(() => localStorage.getItem('hintwise.browserId'));
+    expect(browserId).toMatch(/^[\w-]{8,100}$/);
+    // The page's address only: the service drops a query and a hash.
+    expect(sent?.body).toEqual({
+      email: USER.email,
+      redirectTo: new URL('/stack-array/', page.url()).href,
+      app: 'stepwise',
+      browserId,
+    });
+    expect(callsTo(mock, '/auth/v1/otp')).toEqual([]);
+    // No check was asked for, so nothing came from Cloudflare.
+    expect(cloudflare).toEqual([]);
+    await expect(dialog(page).getByLabel('Email')).toHaveValue(USER.email);
+    // The hash waits in this tab for the link to come back.
+    expect(await page.evaluate(() => sessionStorage.getItem('stepwise:auth-return'))).toContain(
+      '#ex=z',
+    );
+  });
+
+  test('says until when to wait when the service asks to', async ({ page }) => {
+    const retryAt = new Date(Date.now() + 3 * 60_000).toISOString();
+    await mockSupabase(page, { links: [{ status: 429, body: { status: 'wait', retryAt } }] });
     await page.goto('/stack-array/');
     await signIn(page).click();
     await dialog(page).getByLabel('Email').fill(USER.email);
     const send = dialog(page).getByRole('button', { name: 'Email me a sign-in link' });
     await send.click();
-    await expect(dialog(page).getByRole('status')).toContainText(
-      `Check your email. We sent a sign-in link to ${USER.email}.`,
+    const time = await page.evaluate(
+      (at) => new Date(at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }),
+      retryAt,
     );
-    const [otp] = callsTo(mock, '/auth/v1/otp');
-    expect(otp?.method).toBe('POST');
-    expect(otp?.url.searchParams.get('redirect_to')).toBe(
-      new URL('/stack-array/', page.url()).href,
+    await expect(dialog(page).getByRole('status')).toHaveText(
+      `You can ask for another link at ${time}.`,
     );
-    expect(otp?.body).toMatchObject({ email: USER.email, code_challenge_method: 's256' });
     await expect(send).toBeDisabled();
-    await expect(dialog(page).getByText(/another link in \d+ seconds/)).toBeVisible();
-    expect(await waitShown(page)).toBeGreaterThan(40);
-    expect(await waitShown(page)).toBeLessThanOrEqual(60);
     await expect(dialog(page).getByLabel('Email')).toHaveValue(USER.email);
+    await fits(page);
   });
 
-  test('says plainly when sign-in emails are limited, and keeps the address', async ({ page }) => {
-    await mockSupabase(page, {
-      rateLimit: 'For security purposes, you can only request this after 45 seconds.',
+  test('shows the service’s own message, and the usual one with no network', async ({ page }) => {
+    const mock = await mockSupabase(page, {
+      links: [
+        { status: 503, body: { status: 'error', message: 'Email sign-in is paused; try Google' } },
+      ],
     });
     await page.goto('/stack-array/');
     await signIn(page).click();
     await dialog(page).getByLabel('Email').fill(USER.email);
-    await dialog(page).getByRole('button', { name: 'Email me a sign-in link' }).click();
+    const send = dialog(page).getByRole('button', { name: 'Email me a sign-in link' });
+    await send.click();
     await expect(dialog(page).getByRole('status')).toHaveText(
-      'Too many sign-in emails right now. Try Google, or wait a minute and try again.',
+      'Email sign-in is paused; try Google',
     );
-    await expect(dialog(page).getByLabel('Email')).toHaveValue(USER.email);
-    await expect(
-      dialog(page).getByRole('button', { name: 'Email me a sign-in link' }),
-    ).toBeDisabled();
-    // The server said 45 seconds, so the wait is that long rather than a minute.
-    await expect(dialog(page).getByText(/another link in \d+ seconds/)).toBeVisible();
-    expect(await waitShown(page)).toBeGreaterThan(30);
-    expect(await waitShown(page)).toBeLessThanOrEqual(45);
+    await page.route(`${HOST}/functions/v1/sign-in-link`, (r) => r.abort('internetdisconnected'));
+    await send.click();
+    await expect(dialog(page).getByRole('status')).toHaveText(
+      'Could not reach the account server. Try again in a minute; the rest of the page still works.',
+    );
+    expect(callsTo(mock, '/functions/v1/sign-in-link')).toHaveLength(1);
+  });
+
+  test('loads the Turnstile check only when the service asks, then sends with its token', async ({
+    page,
+  }) => {
+    const errors = pageErrors(page);
+    const challenge = { status: 403, body: { status: 'challenge', siteKey: 'test-site-key' } };
+    const mock = await mockSupabase(page, {
+      links: [challenge, { ...challenge, body: { ...challenge.body, failed: true } }],
+    });
+    const loads = await stubTurnstile(page);
+    await page.goto('/stack-array/');
+    await signIn(page).click();
+    await dialog(page).getByLabel('Email').fill(USER.email);
+    expect(loads).toEqual([]);
+    await dialog(page).getByRole('button', { name: 'Email me a sign-in link' }).click();
+
+    // The check appears, with Cloudflare named in the privacy text while it shows.
+    const check = dialog(page).getByRole('button', { name: 'Pass the test check' });
+    await expect(check).toBeVisible();
+    expect(loads).toEqual([`${TURNSTILE}/turnstile/v0/api.js?render=explicit`]);
+    await expect(dialog(page)).toContainText(
+      'Nothing on this site tracks you. This check is run by Cloudflare.',
+    );
+    const stub = () =>
+      page.evaluate(
+        () =>
+          (window as unknown as { __turnstile: { renders: unknown[]; resets: number } })
+            .__turnstile,
+      );
+    expect((await stub()).renders).toEqual([
+      expect.objectContaining({ sitekey: 'test-site-key', action: 'sign-in' }),
+    ]);
+    await settled(page);
+    const results = await new AxeBuilder({ page })
+      .include('dialog.signin')
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+      .analyze();
+    expect(axeFindings(results)).toEqual([]);
     await fits(page);
+
+    // The first token fails the service's check: say so, with the widget reset for another go.
+    await check.click();
+    await expect(dialog(page)).toContainText('That check did not work; try again.');
+    expect((await stub()).resets).toBe(1);
+    // The second passes: the same request again, with the new token.
+    await check.click();
+    await expect(dialog(page).getByRole('status')).toContainText('Check your email.');
+    const sent = callsTo(mock, '/functions/v1/sign-in-link');
+    expect(sent.map((c) => (c.body as { turnstileToken?: string }).turnstileToken)).toEqual([
+      undefined,
+      'turnstile-token-1',
+      'turnstile-token-2',
+    ]);
+    for (const c of sent) expect(c.body).toMatchObject({ email: USER.email, app: 'stepwise' });
+    await expect(check).toHaveCount(0);
+    await expect(dialog(page)).not.toContainText('Cloudflare');
+    // Loaded once, and nothing else from Cloudflare.
+    expect(loads).toHaveLength(1);
+    expect(errors).toEqual([]);
+  });
+
+  test('an emailed link signs in, in any browser, and puts the page back', async ({ page }) => {
+    const errors = pageErrors(page);
+    const mock = await mockSupabase(page);
+    await page.addInitScript(() => {
+      if (sessionStorage.getItem('test:stash-set')) return;
+      sessionStorage.setItem('test:stash-set', '1');
+      sessionStorage.setItem(
+        'stepwise:auth-return',
+        JSON.stringify({ path: '/stack-array/', hash: '#lesson=idea', at: Date.now() }),
+      );
+    });
+    await page.goto('/stack-array/?token_hash=abc123&type=email&email_hint=r***%40example.com');
+    await expect(accountMenu(page)).toBeVisible();
+    await expect(page.getByText(`Signed in as ${USER.email}.`)).toBeVisible();
+    const [verify] = callsTo(mock, '/auth/v1/verify');
+    expect(verify?.method).toBe('POST');
+    expect(verify?.body).toMatchObject({ token_hash: 'abc123', type: 'email' });
+    const url = new URL(page.url());
+    expect(url.pathname).toBe('/stack-array/');
+    expect(url.search).toBe('');
+    expect(url.hash).toBe('#lesson=idea');
+    expect(errors).toEqual([]);
+  });
+
+  test('an old emailed link says so', async ({ page }) => {
+    await mockSupabase(page);
+    await page.goto('/stack-array/?token_hash=used&type=email&email_hint=r***%40example.com');
+    await expect(
+      page.getByText('That sign-in link has expired or was already used. Ask for a new one.'),
+    ).toBeVisible();
+    await expect(signIn(page)).toBeVisible();
+    expect(new URL(page.url()).search).toBe('');
   });
 
   test('Continue with Google comes back signed in, on the same page with the same work', async ({
@@ -459,6 +583,47 @@ test.describe('signed in', () => {
     );
     expect(mock.rows).toHaveLength(2);
     expect(errors).toEqual([]);
+  });
+
+  test('an emailed link for another account asks before switching', async ({ page }) => {
+    const errors = pageErrors(page);
+    const mock = await mockSupabase(page);
+    await page.goto('/stack-array/?token_hash=other-1&type=email&email_hint=o***%40example.org');
+    const ask = page.getByRole('dialog', { name: 'Switch accounts?' });
+    await expect(ask).toBeVisible();
+    await expect(ask).toContainText('This sign-in link is for o***@example.org.');
+    await expect(ask).toContainText(`You are signed in as ${USER.email}.`);
+    expect(new URL(page.url()).search).toBe('');
+    await settled(page);
+    const results = await new AxeBuilder({ page })
+      .include('dialog.ask')
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+      .analyze();
+    expect(axeFindings(results)).toEqual([]);
+    await fits(page);
+    // Stay: the link is left unused.
+    await ask.getByRole('button', { name: 'Stay signed in' }).click();
+    await expect(ask).toBeHidden();
+    expect(callsTo(mock, '/auth/v1/verify')).toEqual([]);
+    await accountMenu(page).click();
+    await expect(header(page).getByText(`Signed in as ${USER.email}`)).toBeVisible();
+
+    // The same kind of link again, and this time switch.
+    await page.goto('/stack-array/?token_hash=other-2&type=email&email_hint=o***%40example.org');
+    await ask.getByRole('button', { name: 'Switch accounts' }).click();
+    await expect(page.getByText(`Signed in as ${OTHER.email}.`)).toBeVisible();
+    expect(callsTo(mock, '/auth/v1/verify')[0]?.body).toMatchObject({ token_hash: 'other-2' });
+    await accountMenu(page).click();
+    await expect(header(page).getByText(`Signed in as ${OTHER.email}`)).toBeVisible();
+    expect(errors).toEqual([]);
+  });
+
+  test('an emailed link for the same account signs in without asking', async ({ page }) => {
+    const mock = await mockSupabase(page);
+    await page.goto('/stack-array/?token_hash=again&type=email&email_hint=r***%40example.com');
+    await expect(page.getByText(`Signed in as ${USER.email}.`)).toBeVisible();
+    await expect(page.getByRole('dialog', { name: 'Switch accounts?' })).toHaveCount(0);
+    expect(callsTo(mock, '/auth/v1/verify')).toHaveLength(1);
   });
 
   test('an old sign-in link leaves the earlier sign-in in place', async ({ page }) => {

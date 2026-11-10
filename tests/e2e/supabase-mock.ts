@@ -194,26 +194,30 @@ export async function mockSupabase(page: Page, options: MockOptions = {}): Promi
         // An emailed link: its token signs in whoever it was made for.
         const hash = (body as { token_hash?: string })?.token_hash ?? '';
         if (hash === 'used')
-          return json(403, { code: 'otp_expired', msg: 'Email link is invalid or has expired' });
+          return json(403, {
+            code: 403,
+            error_code: 'otp_expired',
+            msg: 'Email link is invalid or has expired',
+          });
         return json(200, hash.startsWith('other') ? OTHER_SESSION : SESSION);
       }
       case '/rest/v1/preferences': {
         if (options.noPreferences) return missing();
         const p = mock.preferences;
-        if (req.method === 'GET') return json(200, p ? [p] : []);
-        if (req.method === 'POST') {
+        if (req.method() === 'GET') return json(200, p ? [p] : []);
+        if (req.method() === 'POST') {
           if (p) return json(409, { code: '23505', message: 'duplicate key value' });
           const { owner: _owner, ...fields } = body as PrefRow & { owner: string };
           mock.preferences = { ...fields, updated_at: stamp() };
           return json(201, one ? mock.preferences : [mock.preferences]);
         }
-        if (req.method === 'PATCH') {
+        if (req.method() === 'PATCH') {
           // Compare and swap: only on top of the copy the page read.
           if (!p || eq('updated_at') !== p.updated_at) return json(200, []);
           mock.preferences = { ...p, ...(body as Partial<PrefRow>), updated_at: stamp() };
           return json(200, [mock.preferences]);
         }
-        if (req.method === 'DELETE') {
+        if (req.method() === 'DELETE') {
           mock.preferences = undefined;
           return json(204);
         }

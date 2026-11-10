@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "sorted-array",
+  "id": "missing-unsorted",
+  "title": "Unsorted, a missing value checks every item",
+  "notes": "Nine values in no order, then search(55). Nothing tells the scan it can stop early, so it checks all 9 items before it can say 55 is not there. Sorted, the same miss takes 6 comparisons.",
+  "settings": { "mode": "unsorted", "capacity": 10 },
+  "seed": 1,
+  "ops": [
+    ["insert", 40],
+    ["insert", 90],
+    ["insert", 10],
+    ["insert", 70],
+    ["insert", 30],
+    ["insert", 80],
+    ["insert", 20],
+    ["insert", 60],
+    ["insert", 50],
+    ["search", 55]
+  ],
+  "at": { "op": -1, "step": 0 }
+}

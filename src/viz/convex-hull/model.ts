@@ -331,7 +331,8 @@ function* scan(
   run: Run,
   pts: HPt[],
   ids: { loop: string; test: string; pop: string; push: string },
-  side = '',
+  /** Where a popped point is: inside the hull, or above the lower hull, or below the upper. */
+  where = 'inside the hull',
 ): Generator<HStep, void, void> {
   const get = (id: number) => byId(run.s, id);
   for (const p of pts) {
@@ -345,7 +346,7 @@ function* scan(
         b,
         ids.pop,
         cross < 0
-          ? `${b.name} sits inside the turn ${a.name} → ${p.name}${side}.`
+          ? `${a.name} → ${b.name} → ${p.name} turns right at ${b.name}, so ${b.name} is ${where}.`
           : `${b.name} lies on the line from ${a.name} to ${p.name}, so it is not a corner.`,
       );
     }
@@ -469,7 +470,7 @@ function* monotone(run: Run): Generator<HStep, S, void> {
     run,
     sorted,
     { loop: 'hull.lower', test: 'hull.lwhile', pop: 'hull.lpop', push: 'hull.lpush' },
-    ', so it is above the lower hull',
+    'above the lower hull',
   );
   const lower = run.s.stack;
   run.s = { ...run.s, lower, stack: [] };
@@ -485,7 +486,7 @@ function* monotone(run: Run): Generator<HStep, S, void> {
     run,
     [...sorted].reverse(),
     { loop: 'hull.upper', test: 'hull.uwhile', pop: 'hull.upop', push: 'hull.upush' },
-    ', so it is below the upper hull',
+    'below the upper hull',
   );
   const upper = run.s.stack;
   const hull = [...lower.slice(0, -1), ...upper.slice(0, -1)];

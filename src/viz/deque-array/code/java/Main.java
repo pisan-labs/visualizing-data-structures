@@ -25,15 +25,15 @@ public class Main {
     public static void main(String[] argv) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder out = new StringBuilder();
-        ArrayDeque<String> deque = null;
+        CircularDeque<String> deque = null;
         String line;
         while ((line = in.readLine()) != null) {
             String[] parts = line.trim().split("\\s+");
             if (parts[0].isEmpty()) continue;
-            ArrayDeque<String> d = deque;
+            CircularDeque<String> d = deque;
             String result = switch (parts[0]) {
                 case "new" -> {
-                    deque = new ArrayDeque<>(Integer.parseInt(parts[1]));
+                    deque = new CircularDeque<>(Integer.parseInt(parts[1]));
                     yield null;
                 }
                 case "addFirst" -> add(() -> d.addFirst(parts[1]));

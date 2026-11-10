@@ -33,7 +33,7 @@ After a forward pass, everything after the last swap is already in place, not ju
 
 ## What it costs
 
-Cocktail shaker sort saves comparisons, not swaps. Each swap of two neighbors fixes exactly one pair that was out of order, which is the same deal bubble sort gets, so on the same input both make exactly the same number of swaps.
+Cocktail shaker sort saves comparisons, not swaps. Each swap of two neighbors fixes exactly one pair that was out of order, which is the same deal bubble sort gets, so on the same input both make exactly the same number of swaps. The swaps counter goes up only when a pair is out of order, so on sorted input it stays at 0.
 
 The worst case is reverse order. Nothing is gained from the second direction: 9 values take 36 comparisons and 36 swaps, n(n - 1)/2 of each. [Show me](#play:reverse)
 

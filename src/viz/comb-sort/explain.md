@@ -16,7 +16,7 @@ With n = 12 the gaps are 9, 6, 4, 3, 2, 1, 1, ... [Gaps of 9, 6, 4, 3, 2, 1](#ex
 
 In [Two turtles](#example:turtle), 3 and 5 sit at the end of 16 values. Bubble sort moves them one slot per pass: 15 passes, 120 comparisons. Comb sort's first gap is 12, so 3 jumps 12 slots left in a single swap. 8 passes, 90 comparisons. [Show me](#play:turtle)
 
-Each long swap can fix many out-of-order pairs at once. Bubble sort only ever fixes one pair per swap, so it needs exactly as many swaps as there are inversions: 45 for [ten values in reverse](#example:reverse). Comb sort needs 7.
+Each long swap can fix many out-of-order pairs at once. Bubble sort only ever fixes one pair per swap, so it needs exactly as many swaps as there are inversions: 45 for [ten values in reverse](#example:reverse). Comb sort needs 7. Either way, the swaps counter goes up only when a pair is out of order, so on sorted input it stays at 0.
 
 ```check
 Q: A = 20 30 40 50 60 70 80 10. Why is this slow for bubble sort?

@@ -24,11 +24,14 @@ const STARTS: Record<AlgoId, number[]> = {
   threesum: [3],
 };
 
-/** Algorithms a learner might mistake each one for. */
+/**
+ * Algorithms a learner might mistake each one for. Never one with the same growth: linear search
+ * and the hash set are both linear, and only the exact counts would tell them apart.
+ */
 const LOOKALIKES: Record<AlgoId, AlgoId[]> = {
-  linear: ['hash', 'merge', 'binary'],
+  linear: ['merge', 'binary', 'insertion'],
   binary: ['linear', 'hash', 'merge'],
-  hash: ['linear', 'merge', 'binary'],
+  hash: ['merge', 'binary', 'insertion'],
   merge: ['linear', 'hash', 'insertion'],
   insertion: ['merge', 'threesum', 'linear'],
   threesum: ['insertion', 'merge', 'linear'],

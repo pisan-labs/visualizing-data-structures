@@ -227,6 +227,34 @@ describe('NP reductions', () => {
     expect(all).not.toMatch(/\b1 (vertices|sets|pairs)\b/);
   });
 
+  // While 3-SAT → IND-SET built its graph, the panel said "k = 0".
+  it('shows k = ? until the reduction sets k', () => {
+    const cases: [OpCall[], string, string][] = [
+      [[['load', '(a | b | !c), (!a | c), (b | c)'], ['toIs']], 'i.k', 'INDEPENDENT-SET, k = 3'],
+      [[['load', 'clique: A-B, B-C, A-C, C-D k=3'], ['toVc']], 'v.k', 'VERTEX-COVER, k = 1'],
+    ];
+    for (const [calls, setLine, done] of cases) {
+      const steps = new Timeline(npReductions, settings(), 1, calls).entries[1]!.steps;
+      const head = (k: number) => {
+        const s = npReductions.view(steps[k]!, settings()).shapes.find((x) => x.id === 'head');
+        return s?.kind === 'text' ? s.text : '';
+      };
+      const at = steps.findIndex((s) => s.lines.includes(setLine));
+      const target = steps[at]!.state.inst.problem;
+      const building = steps.flatMap((s, k) =>
+        k < at && s.state.inst.problem === target ? [k] : [],
+      );
+      expect(building.length).toBeGreaterThan(0);
+      for (const k of building) {
+        expect(head(k)).toBe(`${done.split(',')[0]}, k = ?`);
+        expect(steps[k]!.vars?.k).toBe('?');
+        expect(npReductions.describe(steps[k]!.state, settings())).toContain('k not set yet');
+      }
+      expect(head(at)).toBe(done);
+      expect(steps[at]!.vars?.k).toBe(Number(done.split('= ')[1]));
+    }
+  });
+
   it('says why a reduction cannot start from the current problem', () => {
     const t = new Timeline(npReductions, settings(), 1, [['toVc'], ['toSc'], ['toClique']]);
     for (const e of t.entries) expect(e.end.inst.problem).toBe('3sat');

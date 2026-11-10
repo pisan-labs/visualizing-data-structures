@@ -64,6 +64,25 @@ describe('2D rotation and scale', () => {
     expect(last(['scale', 0, 1])).toContain('onto a line');
   });
 
+  // Was "only the direction changes", even when the turn carried the shape somewhere else.
+  it('says when a turn moves the shape as well as turning it', () => {
+    const last = (s: Partial<RsSettings>, calls: OpCall[]) =>
+      new Timeline(rotateScale2d, settings(s), 1, calls).entries.at(-1)!.steps.at(-1)!.say;
+    const moves =
+      'Turning about the pivot (3, 2) changes where the shape is as well as which way it faces.';
+    expect(last({ about: 'pivot' }, [['rotate', 90]])).toContain(moves);
+    expect(last({}, [['rotate', 90]])).toContain('Turning about the origin changes where');
+    const square = { about: 'pivot', shape: 'square' } as const;
+    expect(
+      last(square, [
+        ['pivot', 2, 2],
+        ['rotate', 90],
+      ]),
+    ).toContain('the shape turns in place about the pivot (2, 2).');
+    for (const say of [last({ about: 'pivot' }, [['rotate', 45]]), last({}, [['rotate', 30]])])
+      expect(say).not.toContain('only the direction changes');
+  });
+
   it('refuses a transform that leaves the drawing', () => {
     const t = new Timeline(rotateScale2d, settings(), 1, [['scale', 3, 3]]);
     expect(t.endState().pts).toEqual(SHAPES.letter);

@@ -46,7 +46,7 @@ Q: Quicksort with the last value as pivot runs on 10 20 30 40 50. How many compa
 
 Hoare's original scheme uses the first value as pivot and two indices that walk toward each other. j walks left past values bigger than the pivot, i walks right past values smaller than it, and when both stop, the two values swap. When the indices cross, the range splits at j. The pivot is not necessarily in its final place yet, so both parts, `A[p..q]` and `A[q+1..r]`, get sorted. [Show me](#play:hoare)
 
-Hoare's version swaps less: 7 swaps to Lomuto's 13 on the example. It also behaves better when many values are equal. With [all values equal](#example:all-equal), Lomuto puts every value on the ≤ side and gets the staircase again, while Hoare's indices stop at every value and meet in the middle.
+Hoare's version swaps less: 7 swaps to Lomuto's 13 on the example. The swaps counter skips a value swapped with itself (Lomuto's i and j on the same slot, or a pivot already in place), so with the last value as pivot, sorted input shows 0 swaps. It also behaves better when many values are equal. With [all values equal](#example:all-equal), Lomuto puts every value on the ≤ side and gets the staircase again, while Hoare's indices stop at every value and meet in the middle.
 
 ## When to use it
 

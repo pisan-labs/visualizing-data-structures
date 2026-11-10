@@ -131,9 +131,8 @@ function clone(r: SccRun): SccRun {
   };
 }
 
-/** A component as a set: {A, B}. A lone vertex gets spaces, { A }, so it never reads as a
- * template placeholder. */
-export const braces = (c: string[]) => (c.length === 1 ? `{ ${c[0]} }` : `{${c.join(', ')}}`);
+/** A component as a set: {A, B}, and a lone vertex the same way, {H}. */
+export const braces = (c: string[]) => `{${c.join(', ')}}`;
 
 /** The component graph: one vertex per component (named 1, 2, ...), an arc per pair joined. */
 export function condensation(g: Graph, comps: string[][]): Graph {

@@ -47,13 +47,13 @@ test('SCC finds four components either way', async ({ page }) => {
   await page.getByRole('button', { name: 'Find SCCs', exact: true }).click();
   await toEnd(page);
   await expect(narration(page)).toContainText(
-    '4 strongly connected components, {A, B, E}, {C, D}, {F, G} and { H }',
+    '4 strongly connected components, {A, B, E}, {C, D}, {F, G} and {H}',
   );
   await expect(page.locator('.vars')).toContainText(/SCCs\s*4/);
   await option(page, 'Tarjan: one DFS with low-links and a stack');
   await page.getByRole('button', { name: 'Find SCCs', exact: true }).click();
   await toEnd(page);
-  await expect(narration(page)).toContainText('{ H }, {F, G}, {C, D} and {A, B, E}');
+  await expect(narration(page)).toContainText('{H}, {F, G}, {C, D} and {A, B, E}');
 });
 
 test('cut vertices and bridges, with the root rule', async ({ page }) => {

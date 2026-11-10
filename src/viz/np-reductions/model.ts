@@ -77,6 +77,8 @@ export interface Inst {
   graph: UGraph | null;
   family: Family | null;
   k: number;
+  /** While a reduction is still building this instance and has not set k yet: shown as k = ?. */
+  kPending?: true;
   /** A certificate when one is known: true variables, vertices, or set names. */
   witness: string[] | null;
   answer: 'yes' | 'no' | null;
@@ -501,6 +503,9 @@ export function init(): S {
   return { inst: formulaInst(parseFormula(START_TEXT) as Formula), show: 'map' };
 }
 
+/** k as the panel and readouts show it: ? until the reduction sets it. */
+export const kText = (i: Inst): string => (i.kPending ? '?' : String(i.k));
+
 /** The instance as one sentence. */
 export function instText(i: Inst): string {
   switch (i.problem) {
@@ -510,7 +515,8 @@ export function instText(i: Inst): string {
       return `SET-COVER: universe {1, …, ${i.family!.m}} and ${plural(i.family!.sets.length, 'set')}. Do ${i.k} of them cover the universe?`;
     default: {
       const g = i.graph!;
-      return `${NAMES[i.problem]}: a graph with ${plural(g.vertices.length, 'vertex', 'vertices')} and ${plural(g.edges.length, 'edge')}. Is there ${i.problem === 'is' ? 'an' : 'a'} ${THING[i.problem]} of size ${i.k}?`;
+      const size = i.kPending ? 'k, with k not set yet' : String(i.k);
+      return `${NAMES[i.problem]}: a graph with ${plural(g.vertices.length, 'vertex', 'vertices')} and ${plural(g.edges.length, 'edge')}. Is there ${i.problem === 'is' ? 'an' : 'a'} ${THING[i.problem]} of size ${size}?`;
     }
   }
 }
@@ -536,7 +542,7 @@ function vars(s: S, more: Record<string, Scalar> = {}): Record<string, Scalar> {
   } else {
     base.V = i.graph!.vertices.length;
     base.E = i.graph!.edges.length;
-    base.k = i.k;
+    base.k = i.kPending ? '?' : i.k;
   }
   base.size = sizeOf(i);
   base.answer = i.answer ?? '?';
@@ -676,11 +682,12 @@ const toIs: Op = {
     // Grow the graph clause by clause, then add the conflict edges variable by variable.
     const vertices: string[] = [];
     const edges: [string, string][] = [];
-    const partial = (k: number): S => ({
+    // k is set last, at "k = number of clauses".
+    const partial = (): S => ({
       inst: {
         ...blank('is'),
         graph: { vertices: [...vertices], edges: [...edges], pos: full.graph.pos },
-        k,
+        kPending: true,
       },
       show: 'instance',
     });
@@ -692,7 +699,7 @@ const toIs: Op = {
       for (let a = 0; a < vs.length; a++)
         for (let b = a + 1; b < vs.length; b++) fresh.push([vs[a]!, vs[b]!]);
       edges.push(...fresh);
-      const s = partial(0);
+      const s = partial();
       const shape = c.length === 3 ? 'a triangle' : c.length === 2 ? 'an edge' : 'a lone vertex';
       yield {
         state: s,
@@ -717,7 +724,7 @@ const toIs: Op = {
         continue;
       }
       edges.push(...add);
-      const s = partial(0);
+      const s = partial();
       yield {
         state: s,
         marks: add.map((e) => mark(eId(e), 'new')),
@@ -862,7 +869,11 @@ function* graphReduction(s0: S, way: GraphWay, settings: NpSettings): Gen {
       extra: { from },
     };
     g = complement(g0);
-    const mid: S = { inst: { ...blank(way.to), graph: g, k: src.k }, show: 'instance' };
+    // CLIQUE → VERTEX-COVER sets k' = n - k only after the complement.
+    const mid: S = {
+      inst: { ...blank(way.to), graph: g, k: src.k, ...(way.nMinusK && { kPending: true }) },
+      show: 'instance',
+    };
     yield {
       state: mid,
       marks: g.edges.map((e) => mark(eId(e), 'new')),

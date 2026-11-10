@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, StageSize } from '../../engine/types';
 import type { Shape } from '../../render/scene';
@@ -455,6 +456,21 @@ describe('Multi-tape Turing machine page', () => {
     const last = t.entries[1]!.steps.at(-1)!;
     expect(last.extra?.capped).toBe(true);
     expect(last.say).toContain(`Still running after ${SIM_CAP} moves of M`);
+  });
+
+  // Was "Tape 1's segment grows from 3 to 4 cells, and tape 2's segment grows ..., and ...".
+  it('lists the segments that grow in one plain sentence, and they add up to the shifts', () => {
+    const kind = multitapeTm.practice!.find((k) => k.id === 'shifts')!;
+    let several = 0;
+    for (let seed = 1; seed <= 300; seed++) {
+      const q = kind.make(makeRng(seed));
+      expect(q.explain).not.toContain(', and ');
+      const grown = [...q.explain.matchAll(/from (\d+) to (\d+)/g)];
+      if (grown.length > 1) several++;
+      const total = grown.reduce((t, m) => t + Number(m[2]) - Number(m[1]), 0);
+      expect(q.answer.kind === 'number' && q.answer.value).toBe(total);
+    }
+    expect(several).toBeGreaterThan(0);
   });
 });
 

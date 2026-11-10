@@ -238,12 +238,23 @@ function* transform(
     mults: s.mults + mults * s.pts.length,
   };
   const d = detOf(m);
+  // A turn keeps lengths and angles, but unless the shape is centered there, it moves too.
+  const middle = (ps: Vec[]) => ({
+    x: ps.reduce((t, q) => t + q.x, 0) / ps.length,
+    y: ps.reduce((t, q) => t + q.y, 0) / ps.length,
+  });
+  const [m0, m1] = [middle(s.pts), middle(result)];
+  const where = pivot ? `the pivot ${fmtVec(c)}` : 'the origin';
+  const turned =
+    Math.hypot(m1.x - m0.x, m1.y - m0.y) > 1e-9
+      ? `Lengths and angles stay the same. Turning about ${where} changes where the shape is as well as which way it faces.`
+      : `Lengths and angles stay the same: the shape turns in place about ${where}.`;
   yield {
     state: end,
     marks: [mark('sh', 'active'), mark('m1', 'active'), mark('m2', 'active')],
     say: `${pivot ? `Apply ${name}, then slide back by +${fmtVec(c)}.` : `Multiply every vertex by ${name}.`} ${
       prefix === 'rot'
-        ? 'Lengths and angles stay the same: only the direction changes.'
+        ? turned
         : d < 0
           ? `det ${name} = ${n(d)} is negative, so the shape is flipped over, and its area is scaled by ${n(Math.abs(d))}.`
           : d === 0

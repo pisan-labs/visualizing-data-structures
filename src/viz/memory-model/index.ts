@@ -175,10 +175,10 @@ export const memoryModel: VizDef<MemState, MemSettings, undefined> = {
       },
     },
     {
-      op: 'freeing an unreachable list',
+      op: 'freeing an unreachable list of n items',
       best: {
-        cost: 'O(1)',
-        why: 'Reference counting frees it as the last reference goes.',
+        cost: 'O(n)',
+        why: 'Reference counting frees the n items as the last reference goes, and looks at nothing else.',
         example: 'garbage',
       },
       average: { cost: 'O(n)', why: 'Freeing n items touches each one.' },

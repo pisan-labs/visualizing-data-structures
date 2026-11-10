@@ -4,12 +4,12 @@ import java.util.NoSuchElementException;
  * A double-ended queue in a fixed-size circular array. front is the first item and rear is
  * the slot after the last item. One slot always stays empty, so front == rear means empty.
  */
-public class ArrayDeque<T> {
+public class CircularDeque<T> {
     private final Object[] data;
     private int front = 0;
     private int rear = 0;
 
-    public ArrayDeque(int capacity) {
+    public CircularDeque(int capacity) {
         data = new Object[capacity];
     }
 

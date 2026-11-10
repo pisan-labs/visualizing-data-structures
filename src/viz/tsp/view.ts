@@ -23,6 +23,7 @@ import {
   type PanelCell,
   type VertexLook,
 } from '../../layouts/graph';
+import { textWidth } from '../../layouts/text';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { ratioText } from '../_approx/kit';
 import { edgeKey, type Graph } from '../_graph/graph';
@@ -190,6 +191,137 @@ function panels(
   return unionBounds(...boxes);
 }
 
+// ----- Weights clear of the arrowheads -----
+// drawGraph places each weight beside the middle of its edge without knowing about arrowheads.
+// The tour's heads are big (7 stroke widths of 4, src/ui/Shapes.svelte), so on a short edge
+// the head covers the middle and its weight. Such a weight moves along its edge, or further
+// out from it, to the nearest spot clear of heads, vertices, lines and the other weights.
+
+type Pt = { x: number; y: number };
+
+const HEAD = 7 * 4;
+const ALONG = [0.5, 0.42, 0.58, 0.34, 0.66, 0.26, 0.74];
+const OUT = [11, 18, 25];
+
+/** The head at an arrow's end: the tip a tenth of the head past the line's end. */
+function headOf(a: { x1: number; y1: number; x2: number; y2: number }): Pt[] {
+  const len = Math.hypot(a.x2 - a.x1, a.y2 - a.y1) || 1;
+  const [ux, uy] = [(a.x2 - a.x1) / len, (a.y2 - a.y1) / len];
+  const [bx, by] = [a.x2 - ux * HEAD * 0.9, a.y2 - uy * HEAD * 0.9];
+  const half = HEAD / 2;
+  return [
+    { x: a.x2 + ux * HEAD * 0.1, y: a.y2 + uy * HEAD * 0.1 },
+    { x: bx - uy * half, y: by + ux * half },
+    { x: bx + uy * half, y: by - ux * half },
+  ];
+}
+
+/** Whether two convex polygons (a segment counts) overlap: no edge normal separates them. */
+function meet(a: Pt[], b: Pt[]): boolean {
+  for (const poly of [a, b])
+    for (let i = 0; i < poly.length; i++) {
+      const [p, q] = [poly[i]!, poly[(i + 1) % poly.length]!];
+      const n = { x: q.y - p.y, y: p.x - q.x };
+      const sa = a.map((s) => s.x * n.x + s.y * n.y);
+      const sb = b.map((s) => s.x * n.x + s.y * n.y);
+      if (Math.max(...sa) <= Math.min(...sb) || Math.max(...sb) <= Math.min(...sa)) return false;
+    }
+  return true;
+}
+
+const corners = (b: Bounds): Pt[] => [
+  { x: b.x, y: b.y },
+  { x: b.x + b.w, y: b.y },
+  { x: b.x + b.w, y: b.y + b.h },
+  { x: b.x, y: b.y + b.h },
+];
+
+/** A weight's box around its spot (the text's baseline is 4.5 below the spot). */
+function weightBox(at: Pt, text: string): Bounds {
+  const w = textWidth(text, 13, false, true);
+  return { x: at.x - w / 2, y: at.y - 6, w, h: 12 };
+}
+
+/** Whether a line drawn by drawGraph is (a piece of) the edge with this key. */
+const own = (id: string, key: string) => id === edgeId(key) || id === `${edgeId(key)}-a`;
+
+/** The distance from c to the segment [a, b]. */
+function segDist(c: Pt, [a, b]: Pt[]): number {
+  const [dx, dy] = [b!.x - a!.x, b!.y - a!.y];
+  const t = Math.max(
+    0,
+    Math.min(1, ((c.x - a!.x) * dx + (c.y - a!.y) * dy) / (dx * dx + dy * dy || 1)),
+  );
+  return Math.hypot(c.x - a!.x - t * dx, c.y - a!.y - t * dy);
+}
+
+function clearOfHeads(
+  drawn: { shapes: Shape[]; bounds: Bounds },
+  layout: GraphLayout,
+): { shapes: Shape[]; bounds: Bounds } {
+  const heads: Pt[][] = [];
+  const lines: { id: string; pts: Pt[] }[] = [];
+  for (const s of drawn.shapes) {
+    if (s.kind !== 'arrow' || s.via) continue;
+    lines.push({
+      id: s.id,
+      pts: [
+        { x: s.x1, y: s.y1 },
+        { x: s.x2, y: s.y2 },
+      ],
+    });
+    if ((s.head ?? 'end') !== 'none') heads.push(headOf(s));
+  }
+  if (!heads.length) return drawn;
+  const boxes = new Map<string, Bounds>();
+  for (const s of drawn.shapes)
+    if (s.kind === 'text' && s.id.startsWith('ew-'))
+      boxes.set(s.id, weightBox({ x: s.x, y: s.y - 4.5 }, s.text));
+  const onHead = (b: Bounds) => heads.some((h) => meet(corners(b), h));
+  const clear = (b: Bounds, id: string, key: string) =>
+    !onHead(b) &&
+    Object.values(layout.pos).every(
+      (c) =>
+        Math.hypot(
+          c.x - Math.max(b.x, Math.min(c.x, b.x + b.w)),
+          c.y - Math.max(b.y, Math.min(c.y, b.y + b.h)),
+        ) >=
+        layout.r + 2,
+    ) &&
+    lines.every((l) => own(l.id, key) || !meet(corners(b), l.pts)) &&
+    [...boxes].every(([other, o]) => other === id || !meet(corners(b), corners(o)));
+  const out: Bounds[] = [drawn.bounds];
+  const shapes = drawn.shapes.map((s): Shape => {
+    if (s.kind !== 'text' || !boxes.has(s.id) || !onHead(boxes.get(s.id)!)) return s;
+    const key = s.id.slice(3);
+    const [u, v] = key.split('-') as [string, string];
+    const [p, q] = [layout.pos[u]!, layout.pos[v]!];
+    const len = Math.hypot(q.x - p.x, q.y - p.y) || 1;
+    const [nx, ny] = [-(q.y - p.y) / len, (q.x - p.x) / len];
+    const now = { x: s.x, y: s.y - 4.5 };
+    // Nearest the old spot, and nearer its own line than any other, or it reads as theirs.
+    const cost = (c: Pt) =>
+      Math.hypot(c.x - now.x, c.y - now.y) +
+      (lines.some((l) => !own(l.id, key) && segDist(c, l.pts) < segDist(c, [p, q])) ? 100 : 0);
+    let at: Pt | undefined;
+    for (const t of ALONG)
+      for (const d of OUT)
+        for (const side of [1, -1]) {
+          const c = {
+            x: p.x + (q.x - p.x) * t + nx * d * side,
+            y: p.y + (q.y - p.y) * t + ny * d * side,
+          };
+          if (clear(weightBox(c, s.text), s.id, key) && (!at || cost(c) < cost(at))) at = c;
+        }
+    if (!at) return s;
+    const box = weightBox(at, s.text);
+    boxes.set(s.id, box);
+    out.push(box);
+    return { ...s, x: at.x, y: at.y + 4.5 };
+  });
+  return { shapes, bounds: unionBounds(...out) };
+}
+
 export function view(
   step: Step<TspState, TspExtra>,
   _settings?: TspSettings,
@@ -231,11 +363,12 @@ export function view(
       role: roles.get(edgeId(key)),
     });
   }
-  const shapes: Shape[] = [...faint, ...drawn.shapes];
-  const boxes: Bounds[] = [drawn.bounds];
+  const graph = clearOfHeads(drawn, layout);
+  const shapes: Shape[] = [...faint, ...graph.shapes];
+  const boxes: Bounds[] = [graph.bounds];
   if (r) {
     boxes.push(
-      placePanels(shapes, drawn.bounds, stage, (out, x, y) => {
+      placePanels(shapes, graph.bounds, stage, (out, x, y) => {
         const box = panels(out, g, r, layout, roles, x, y, false);
         const room = panels([], g, r, layout, roles, x, y, true);
         return unionBounds(box, room);

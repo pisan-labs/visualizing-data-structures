@@ -1,7 +1,7 @@
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, SavedExample, Settings, Value, VizDef } from '../../engine/types';
 import cppSource from './code/cpp/array_deque.hpp?raw';
-import javaSource from './code/java/ArrayDeque.java?raw';
+import javaSource from './code/java/CircularDeque.java?raw';
 import pythonSource from './code/python/array_deque.py?raw';
 import explain from './explain.md?raw';
 import asQueue from './examples/as-queue.json';

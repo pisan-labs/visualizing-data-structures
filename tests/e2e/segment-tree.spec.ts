@@ -75,7 +75,7 @@ test('an update walks one path and fixes it on the way back', async ({ page }) =
   await fast(page);
   await op(page, 'Update', '5 10');
   await toEnd(page);
-  await expect(narration(page)).toContainText('Done: 4 nodes changed');
+  await expect(narration(page)).toContainText('Done: 4 nodes visited');
   await expect(vars(page)).toContainText(/update cost\s*4/);
 });
 

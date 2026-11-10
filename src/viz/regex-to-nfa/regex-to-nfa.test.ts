@@ -172,6 +172,13 @@ describe('narration', () => {
     // Was "The expression has m = 1 symbols and operators."
     expect(t.entries[0]!.steps.at(-1)!.say).toContain('The expression has m = 1 symbol.');
   });
+
+  // Was "(Theorem 1.54)": the construction is the proof of Lemma 1.55.
+  it("cites the lemma whose proof is Sipser's construction", () => {
+    const help = regexToNfa.settings.map((s) => s.help ?? '').join(' ');
+    expect(help).toContain('Lemma 1.55');
+    expect(help).not.toContain('1.54');
+  });
 });
 
 describe('build and run', () => {

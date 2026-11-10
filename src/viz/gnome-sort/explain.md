@@ -21,7 +21,7 @@ At the front there is nothing to compare with, so the gnome steps forward. The a
 
 Here is the trick. Everything left of pos is always sorted. Stepping forward past a pair in order keeps it sorted. A swap and a step back carry a value left, one slot at a time, until it is no smaller than its left neighbor. That is insertion: the new value walks into its place in the sorted part.
 
-So gnome sort makes exactly the swaps insertion sort (the swap version) makes: one per out-of-order pair. The difference is what happens after. Insertion sort's outer loop jumps straight to the next new value. The gnome has no outer loop, so he walks forward over the sorted part, comparing every pair again, until he reaches new ground.
+So gnome sort makes exactly the swaps insertion sort (the swap version) makes: one per out-of-order pair. The swaps counter counts nothing else, so on sorted input it stays at 0. The difference is what happens after. Insertion sort's outer loop jumps straight to the next new value. The gnome has no outer loop, so he walks forward over the sorted part, comparing every pair again, until he reaches new ground.
 
 In [A small value walks home](#example:walk-back), 5 starts at the end. Five swaps carry it to the front. Then the gnome walks back past 20, 30, 40 and 50, finding each pair in order: 14 comparisons in all. Insertion sort makes 9. [Show me](#play:walk-back)
 

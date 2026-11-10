@@ -182,15 +182,8 @@ describe('suffix tree narration and practice', () => {
 });
 
 describe('drawn text size', () => {
-  // mississippi's leaf numbers drew at 5.2 px on a phone. Smaller edge labels there narrow the tree.
-  it('stays readable on a laptop and on a phone', () => {
-    expect(smallestText(suffixTree, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(12);
-    expect(smallestText(suffixTree, PHONE_STAGE).px).toBeGreaterThanOrEqual(7);
-  });
-});
-
-describe('drawn text size', () => {
-  // mississippi's leaves in one row drew its labels at 7.3 px on a phone; growing right, 10.
+  // mississippi's leaf numbers drew at 5.2 px on a phone; smaller edge labels there narrow the
+  // tree. With its leaves in one row the labels drew at 7.3 px; growing right, 10.
   it('stays readable on a laptop and on a phone', () => {
     expect(smallestText(suffixTree, LAPTOP_STAGE).px).toBeGreaterThanOrEqual(12);
     expect(smallestText(suffixTree, PHONE_STAGE).px).toBeGreaterThanOrEqual(10);

@@ -683,12 +683,14 @@ describe('Supabase adapter (no network)', () => {
     expect(rpc.method).toBe('POST');
     expect(rpc.headers.get('content-profile')).toBe('app_stepwise');
 
-    // A database without 0002: no function, no preferences table; the examples still go.
+    // A database without 0002: no function, no preferences table; the lists and examples still
+    // go (lists first; their items go with them).
     const old = setup((req) => {
       if (req.url.pathname === '/rest/v1/rpc/delete_my_data')
         return { status: 404, body: { code: 'PGRST202', message: 'Could not find the function' } };
       if (req.url.pathname === '/rest/v1/preferences')
         return { status: 404, body: { code: 'PGRST205', message: 'Could not find the table' } };
+      if (req.url.pathname === '/rest/v1/lesson_lists') return { status: 204 };
       if (req.url.pathname === '/rest/v1/saved_examples') return { status: 204 };
       return ok(req);
     });
@@ -696,6 +698,7 @@ describe('Supabase adapter (no network)', () => {
     const deletes = old.seen.filter((r) => r.method === 'DELETE');
     expect(deletes.map((r) => r.url.pathname)).toEqual([
       '/rest/v1/preferences',
+      '/rest/v1/lesson_lists',
       '/rest/v1/saved_examples',
     ]);
     for (const d of deletes) expect(d.url.searchParams.get('owner')).toBe(`eq.${userId}`);

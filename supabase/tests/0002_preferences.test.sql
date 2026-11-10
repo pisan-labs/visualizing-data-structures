@@ -326,7 +326,13 @@ do $$
 declare got jsonb;
 begin
   got := app_stepwise.delete_my_data();
-  if got <> '{"preferences": 1, "saved_examples": 2, "test_lists": 1, "test_list_items": 2}'::jsonb then
+  -- Other app_stepwise tables (later migrations) may appear in the counts; A has no rows there.
+  if not got @> '{"preferences": 1, "saved_examples": 2, "test_lists": 1, "test_list_items": 2}'::jsonb
+     or exists (
+       select from jsonb_each(got)
+       where key not in ('preferences', 'saved_examples', 'test_lists', 'test_list_items')
+         and value <> '0'::jsonb
+     ) then
     raise exception 'delete_my_data deleted %', got;
   end if;
   if exists (select from app_stepwise.preferences)
@@ -337,7 +343,8 @@ begin
   end if;
   -- Again: nothing left, nothing fails.
   got := app_stepwise.delete_my_data();
-  if got <> '{"preferences": 0, "saved_examples": 0, "test_lists": 0, "test_list_items": 0}'::jsonb then
+  if not got ?& array['preferences', 'saved_examples', 'test_lists', 'test_list_items']
+     or exists (select from jsonb_each(got) where value <> '0'::jsonb) then
     raise exception 'a second delete_my_data deleted %', got;
   end if;
 end $$;

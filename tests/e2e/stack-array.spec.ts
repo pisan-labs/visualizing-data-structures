@@ -21,7 +21,7 @@ test.beforeEach(async ({ page }) => {
 
 test('catalog links to the stack', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('link', { name: 'Stack (array)' }).click();
+  await page.getByRole('link', { name: 'Stack (array)', exact: true }).click();
   await expect(page).toHaveURL(/\/stack-array\//);
   await expect(narration(page)).toContainText('An empty stack');
 });
@@ -249,7 +249,7 @@ test('catalog search and pathways filter the list', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Linked lists' })).toHaveCount(0);
   await page.getByText('Ready only').click();
   await page.getByText('Everything').click();
-  await expect(page.getByRole('link', { name: 'Stack (array)' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Stack (array)', exact: true })).toBeVisible();
 });
 
 test('a typed script starts over and explains mistakes', async ({ page }) => {

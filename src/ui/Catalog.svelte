@@ -2,8 +2,13 @@
   import { onMount } from 'svelte';
   import { SITE_NAME, TAGLINE } from '../site';
   import type { PreviewPoster } from '../render/preview';
+  import { pageSummary } from '../progress/progress';
   import { families, isLive, pathways, type Pathway } from '../viz/catalog';
   import PreviewThumb from './PreviewThumb.svelte';
+  import ProgressMark from './ProgressMark.svelte';
+  import ProgressOverview from './ProgressOverview.svelte';
+  import { progress } from './progress.svelte';
+  import RecentPages from './RecentPages.svelte';
 
   // Thumbnails are made at build time (scripts/prerender.mjs; the dev server makes them on
   // request). Without them the catalog is a plain list, so a failed fetch is ignored.
@@ -46,6 +51,15 @@
       .filter((f) => f.items.length > 0),
   );
   const count = $derived(shown.reduce((n, f) => n + f.items.length, 0));
+
+  // A mark beside each page the reader has started (src/progress/progress.ts).
+  const started = $derived(
+    Object.fromEntries(
+      Object.keys(progress.current.pages)
+        .map((id) => [id, pageSummary(progress.current, id)] as const)
+        .filter(([, s]) => s.started),
+    ),
+  );
 </script>
 
 <div class="catalog">
@@ -58,6 +72,9 @@
     </p>
     <p class="muted">{live} of {total} visualizations are ready. The rest are on the way.</p>
   </section>
+
+  <RecentPages {posters} />
+  <ProgressOverview />
 
   <form class="filters" role="search" onsubmit={(e) => e.preventDefault()}>
     <label class="search">
@@ -111,6 +128,7 @@
                     />{/if}
                   <span>{item.title}</span>
                 </a>
+                {#if started[item.id]}<ProgressMark summary={started[item.id]!} />{/if}
               {:else}
                 <span class="planned">{item.title}</span>
                 <span class="tag">{item.advanced ? 'advanced, planned' : 'planned'}</span>
@@ -229,11 +247,16 @@
   }
 
   li.live {
-    display: block;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 8px;
   }
 
   li.live a {
     display: flex;
+    flex: 1;
+    min-width: 0;
     align-items: center;
     gap: 10px;
     font-weight: 700;

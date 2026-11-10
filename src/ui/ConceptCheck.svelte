@@ -9,9 +9,23 @@
 <script lang="ts">
   import { marked } from 'marked';
 
-  let { check, n }: { check: Check; n: number } = $props();
+  let {
+    check,
+    n,
+    onanswer,
+  }: {
+    check: Check;
+    /** Makes the element ids unique on the page. */
+    n: number | string;
+    /**
+     * Told about each pick (for the reader's progress): right only when no wrong pick came
+     * before it, since a wrong pick shows the right answer.
+     */
+    onanswer?: (right: boolean) => void;
+  } = $props();
 
   let picked = $state<number | null>(null);
+  let missed = false;
   const inline = (s: string) => marked.parseInline(s, { async: false }) as string;
   const correct = $derived(picked !== null && check.options[picked]!.correct);
 </script>
@@ -31,7 +45,11 @@
         class:wrong={picked === i && !o.correct}
         aria-pressed={picked === i}
         disabled={picked !== null && picked !== i && !o.correct}
-        onclick={() => (picked = i)}
+        onclick={() => {
+          picked = i;
+          onanswer?.(o.correct && !missed);
+          if (!o.correct) missed = true;
+        }}
       >
         <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         {@html inline(o.text)}

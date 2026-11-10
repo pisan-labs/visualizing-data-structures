@@ -1,14 +1,17 @@
 <script lang="ts">
   import { marked } from 'marked';
+  import { tick } from 'svelte';
   import { makeExample } from '../engine/example';
   import { answerText, isCorrect, practiceSet } from '../engine/practice';
   import { randomSeed } from '../engine/rng';
-  import { Timeline } from '../engine/timeline';
   import type { PracticeQuestion } from '../engine/types';
-  import { vizHref } from './route';
+  import { attemptKey, pageSummary, recordAttempt } from '../progress/progress';
+  import { now, progress } from './progress.svelte';
   import type { Session } from './session.svelte';
   import { notify } from './state.svelte';
   import Thumbnail from './Thumbnail.svelte';
+  import Worksheet from './Worksheet.svelte';
+  import { assignmentLink, practiceScene } from './worksheet';
 
   let {
     session,
@@ -42,11 +45,42 @@
 
   const inline = (s: string) => marked.parseInline(s, { async: false }) as string;
 
-  function sceneFor(q: PracticeQuestion) {
-    const settings = { ...def.defaults, ...q.settings };
-    const t = new Timeline(def, settings, 1, q.setup);
-    // The plain state: no highlights or values in flight that could give the answer away.
-    return def.view({ ...t.at(t.length - 1).step, marks: [], extra: undefined }, settings);
+  // The reader's first tries on this page, kept in the browser (src/progress/progress.ts).
+  const record = $derived(pageSummary(progress.current, def.id));
+
+  function check(i: number) {
+    checked[i] = true;
+    const right = isCorrect(items[i]!.question.answer, responses[i] ?? '');
+    progress.update((p) => recordAttempt(p, def.id, attemptKey(seed, i), right, now()));
+  }
+
+  // A worksheet to print: this set's questions, 5 or 10 of them, with an answer key.
+  let sheetCount = $state(5);
+  // An assignment of 10 questions prints 10 unless the reader picks otherwise.
+  $effect(() => {
+    if (count === 5 || count === 10) sheetCount = count;
+  });
+  let sheetKey = $state(true);
+  let printing = $state<{ count: number; key: boolean } | null>(null);
+
+  async function printWorksheet() {
+    printing = { count: sheetCount, key: sheetKey };
+    await tick();
+    const root = document.documentElement;
+    const title = document.title;
+    // The title names the file when the sheet is saved as a PDF.
+    document.title = `${def.title} worksheet, set ${seed}`;
+    root.classList.add('printing-worksheet');
+    addEventListener(
+      'afterprint',
+      () => {
+        root.classList.remove('printing-worksheet');
+        document.title = title;
+        printing = null;
+      },
+      { once: true },
+    );
+    print();
   }
 
   function watch(q: PracticeQuestion) {
@@ -58,7 +92,7 @@
   }
 
   async function copyAssignment() {
-    const link = `${location.origin}${vizHref(def.id)}#practice=${seed}&n=${count}`;
+    const link = assignmentLink(location.origin, def.id, seed, count);
     try {
       await navigator.clipboard.writeText(link);
       notify('Assignment link copied. Everyone who opens it gets this same set.');
@@ -74,6 +108,12 @@
       Answer from the picture, then check. Each set comes from a number, so the same link gives
       everyone the same questions.
     </p>
+    {#if record.practiceTried}
+      <p class="record">
+        Your first tries on this page so far: {record.practiceRight} of {record.practiceTried}
+        right.
+      </p>
+    {/if}
     <div class="row">
       <label>
         Questions
@@ -87,7 +127,31 @@
       <button class="btn small" onclick={() => (seed = newSeed())}>New set</button>
       <button class="btn small" onclick={copyAssignment}>Copy assignment link</button>
     </div>
+    {#if items.length}
+      <details class="sheet">
+        <summary class="btn small">Print a worksheet</summary>
+        <div class="sheet-form">
+          <fieldset>
+            <legend>How many questions</legend>
+            {#each [5, 10] as n (n)}
+              <label><input type="radio" value={n} bind:group={sheetCount} /> {n}</label>
+            {/each}
+          </fieldset>
+          <label><input type="checkbox" bind:checked={sheetKey} /> Answer key on its own page</label
+          >
+          <p class="muted">
+            The questions come from this set's number, so they match the assignment link's. The
+            sheet shows the number and the link.
+          </p>
+          <button class="btn small primary" onclick={printWorksheet}>Print the worksheet</button>
+        </div>
+      </details>
+    {/if}
   </div>
+
+  {#if printing}
+    <Worksheet {def} {seed} count={printing.count} key={printing.key} />
+  {/if}
 
   {#if items.length === 0}
     <p class="muted">There are no practice questions for this page yet.</p>
@@ -103,12 +167,12 @@
       <!-- Inline Markdown written by our own generators. -->
       <!-- eslint-disable-next-line svelte/no-at-html-tags -->
       <p class="prompt">{@html inline(q.prompt)}</p>
-      <Thumbnail scene={sceneFor(q)} />
+      <Thumbnail scene={practiceScene(def, q)} />
       <form
         class="answer"
         onsubmit={(e) => {
           e.preventDefault();
-          checked[i] = true;
+          check(i);
         }}
       >
         {#if q.answer.kind === 'choice'}
@@ -192,6 +256,58 @@
   .top p {
     margin: 0 0 8px;
     font-size: 0.92rem;
+  }
+
+  .top .record {
+    font-size: 0.85rem;
+    color: var(--text-2);
+  }
+
+  .sheet {
+    margin-top: 10px;
+  }
+
+  .sheet summary::after {
+    content: '▾';
+    font-size: 0.8em;
+  }
+
+  .sheet[open] summary::after {
+    content: '▴';
+  }
+
+  .sheet-form {
+    display: grid;
+    justify-items: start;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+
+  .sheet-form fieldset {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 14px;
+  }
+
+  .sheet-form legend {
+    float: left;
+    margin-right: 6px;
+    padding: 0;
+  }
+
+  .sheet-form label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 32px;
+  }
+
+  .sheet-form p {
+    margin: 0;
   }
 
   .row {

@@ -1,7 +1,7 @@
 // After `vite build`: write dist/<id>/index.html for every visualization, so each page has its
-// own title, description and link preview, plus a sitemap, robots.txt and the catalog thumbnails
-// (previews.json, previews/<id>.json). The app itself is the same on every page; it reads the
-// page's path to decide what to show.
+// own title, description and link preview, plus a sitemap, robots.txt, the catalog thumbnails
+// (previews.json, previews/<id>.json) and the web app manifest. The app itself is the same on
+// every page; it reads the page's path to decide what to show.
 import fs from 'node:fs';
 import path from 'node:path';
 import { createServer } from 'vite';
@@ -70,6 +70,13 @@ try {
   );
   console.log(
     `prerendered ${vizzes.length} visualization pages, ${Object.keys(previews).length} previews`,
+  );
+
+  // The installable app's manifest.
+  const { makeManifest } = await server.ssrLoadModule('/src/pwa/manifest.ts');
+  fs.writeFileSync(
+    path.join(dist, 'manifest.webmanifest'),
+    `${JSON.stringify(makeManifest(), null, 2)}\n`,
   );
 } finally {
   await server.close();

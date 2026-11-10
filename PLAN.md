@@ -861,8 +861,8 @@ Supabase.
 
 **Choice: the shared HintWise Supabase project** (10 Nov, from the Plabs session at Yusuf's
 request): `https://auth.hintwise.org`, US East, paid plan (no pausing), shared with other HintWise
-apps. Google and magic-link sign-in (Resend, about 30 emails an hour across all apps) are already
-set up; the redirect allow-list covers `https://*.hintwise.org/**` but not localhost or previews,
+apps. Google and magic-link sign-in are already set up, the magic links sent through Yusuf's paid Resend
+account (any Supabase auth email rate limit is raised to suit, with his yes); the redirect allow-list covers `https://*.hintwise.org/**` but not localhost or previews,
 so tests stay mocked. StepWise uses only its own schema, `app_stepwise`; one user pool across the
 apps. Alternatives weighed before this: a new Supabase project, Firebase, our own auth on Netlify
 or Cloudflare.
@@ -884,8 +884,9 @@ or Cloudflare.
    by a short link (`#saved=<id>`) that loads without signing in. SQL migration with RLS, setup
    notes for Yusuf, unit tests with a fake backend, e2e with mocked Supabase endpoints.
 2. Preferences sync (theme, speed, detail, code view, tab); "New since your last visit" from a
-   dated list of releases (works signed out too); an opt-in for email about new pages (sending
-   waits on a mail provider); delete my account.
+   dated list of releases (works signed out too); an opt-in for email about new pages, sent through
+   Yusuf's Resend account from a server-side job (the platform's choice: Edge Function or admin
+   workflow); delete my account.
 3. Lesson lists: an ordered set of saved examples across pages, played in Present mode, with a
    link for a class.
 

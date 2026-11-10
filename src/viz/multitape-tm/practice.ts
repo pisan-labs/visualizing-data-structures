@@ -120,15 +120,19 @@ export function mtPractice(def: () => Def): PracticeKind[] {
         const grew = segmentLengths(begin.cells)
           .map((n, i) => [i + 1, n, segmentLengths(end.cells)[i]!] as const)
           .filter(([, a, b]) => b > a)
-          .map(
-            ([i, a, b], j) => `${j ? 'tape' : 'Tape'} ${i}'s segment grows from ${a} to ${b} cells`,
+          .map(([i, a, b], j) =>
+            j
+              ? `tape ${i}'s from ${a} to ${b}`
+              : `Tape ${i}'s segment grows from ${a} to ${b} cells`,
           );
+        const growth =
+          grew.length > 1 ? `${grew.slice(0, -1).join(', ')} and ${grew.at(-1)}` : grew[0];
         return {
           prompt: `The single tape starts as shown, for \`${w}\`. Simulate the run: how many times does S shift part of its tape right to make room for a head?`,
           setup: setupFor(machine, w),
           answer: { kind: 'number', value: shifts },
           explain: grew.length
-            ? `Each shift adds one cell. ${grew.join(', and ')}: ${shifts} shift${shifts === 1 ? '' : 's'} in all.`
+            ? `Each shift adds one cell. ${growth}: ${shifts} shift${shifts === 1 ? '' : 's'} in all.`
             : 'No head ever moves past the end of its segment, so S never shifts.',
           watch: [['simulate', w]],
         };

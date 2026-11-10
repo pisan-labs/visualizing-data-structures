@@ -6,7 +6,14 @@ import { smallestText } from '../../render/text-size';
 import { components, makeGraph, type Graph } from '../_graph/graph';
 import { formatGraph } from '../_graph/parse';
 import { kargerMinCut } from '.';
-import { crossing, groupsOf, type KgSettings, type KgState, type PickRule } from './model';
+import {
+  crossing,
+  groupText,
+  groupsOf,
+  type KgSettings,
+  type KgState,
+  type PickRule,
+} from './model';
 
 // ---------------------------------------------------------------------------------------------
 // References written independently of the page: the minimum cut by colouring the vertices two
@@ -166,6 +173,13 @@ describe('karger-min-cut', () => {
     expect(same!.steps[0]!.say).toMatch(/already in the same super-vertex/);
     expect(none!.steps[0]!.say).toMatch(/No edge joins/);
     expect(groupsOf(none!.end).length).toBe(3);
+  });
+});
+
+describe('group text', () => {
+  it('writes a lone vertex like a group, with no spaces inside the braces', () => {
+    expect(groupText(['C'])).toBe('{C}');
+    expect(groupText(['A', 'B'])).toBe('{A, B}');
   });
 });
 

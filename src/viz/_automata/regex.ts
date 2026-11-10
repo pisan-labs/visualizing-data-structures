@@ -250,8 +250,8 @@ export interface Fragment {
 
 /**
  * Thompson's construction: each node becomes a fragment with one start and one accept state,
- * so the NFA has exactly 2 states per symbol and operator (Sipser 1.54 builds the same
- * languages; this is the textbook form with ε-moves around union and star). R* adds a new start
+ * so the NFA has exactly 2 states per symbol and operator (Sipser's proof of Lemma 1.55 builds
+ * the same languages; this is the textbook form with ε-moves around union and star). R* adds a new start
  * and accept with ε-moves into R, back from its end to repeat it, out, and around it to skip
  * it; R+ is the same without the skip, and R? the same without the repeat.
  */

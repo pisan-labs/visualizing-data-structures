@@ -163,8 +163,7 @@ export function groupsOf(s: Pick<S, 'graph' | 'group'>): [string, string[]][] {
 export const crossing = (s: Pick<S, 'graph' | 'group'>): Edge[] =>
   s.graph.edges.filter((e) => s.group[e.u] !== s.group[e.v]);
 
-export const groupText = (members: string[]): string =>
-  members.length === 1 ? `{ ${members[0]} }` : `{${members.join(', ')}}`;
+export const groupText = (members: string[]): string => `{${members.join(', ')}}`;
 
 const groupOfText = (s: S, v: string): string =>
   groupText(s.graph.vertices.filter((x) => s.group[x] === s.group[v]));

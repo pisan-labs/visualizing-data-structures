@@ -1,14 +1,20 @@
 <script lang="ts">
-  import type { AnyVizDef } from '../engine/types';
+  import { account, openShared, startAccounts } from '../account/account.svelte';
+  import { asAccountError, exampleOf } from '../account/backend';
+  import { encodeExample } from '../engine/example';
+  import type { AnyVizDef, SavedExample } from '../engine/types';
   import { REPO_URL, SITE_NAME } from '../site';
   import { loadViz } from '../viz/registry';
+  import AccountMenu from './AccountMenu.svelte';
   import Catalog from './Catalog.svelte';
   import ComparePage from './ComparePage.svelte';
   import Logo from './Logo.svelte';
   import { parseLocation } from './route';
-  import { notices, prefs, setPref, type Theme } from './state.svelte';
+  import { notices, notify, prefs, setPref, type Theme } from './state.svelte';
   import VizPage from './VizPage.svelte';
 
+  // Before reading the address: a sign-in that came back puts the reader's page back first.
+  startAccounts();
   const initial = parseLocation(location.pathname, location.hash);
   // Old links (/#/stack-array?ex=...) move to the page's own address.
   if (initial.kind === 'legacy') location.replace(initial.target);
@@ -26,6 +32,32 @@
     loadViz(r.id).then((def) => {
       if (live) viz = def ?? null;
     });
+    return () => {
+      live = false;
+    };
+  });
+
+  // A #saved=<id> link opens an example shared from an account: fetch it, then open the page
+  // with it as an #ex= link would. undefined while it loads; null when there is none.
+  let savedCode = $state<string | null | undefined>(null);
+  $effect(() => {
+    const r = route;
+    savedCode = null;
+    if (r.kind !== 'viz' || !r.saved || r.code || r.compare) return;
+    let live = true;
+    savedCode = undefined;
+    openShared(r.saved)
+      .then(async (shared) => {
+        const code = await encodeExample(exampleOf(shared) as SavedExample);
+        if (!live) return;
+        savedCode = code;
+        notify(`Opened "${shared.title}". Press play or step through it.`);
+      })
+      .catch((e: unknown) => {
+        if (!live) return;
+        notify(asAccountError(e).message, 'error');
+        savedCode = null;
+      });
     return () => {
       live = false;
     };
@@ -90,18 +122,21 @@
       <Logo size={30} />
       <span class="word">Step<span class="w">Wise</span></span>
     </a>
-    <label class="theme">
-      <span class="visually-hidden">Theme</span>
-      <select
-        class="field"
-        value={prefs.theme}
-        onchange={(e) => setPref('theme', e.currentTarget.value as Theme)}
-      >
-        {#each themes as t (t.value)}
-          <option value={t.value}>{t.label}</option>
-        {/each}
-      </select>
-    </label>
+    <div class="tools">
+      <label class="theme">
+        <span class="visually-hidden">Theme</span>
+        <select
+          class="field"
+          value={prefs.theme}
+          onchange={(e) => setPref('theme', e.currentTarget.value as Theme)}
+        >
+          {#each themes as t (t.value)}
+            <option value={t.value}>{t.label}</option>
+          {/each}
+        </select>
+      </label>
+      {#if account.enabled}<AccountMenu />{/if}
+    </div>
   </header>
 {/if}
 
@@ -123,11 +158,13 @@
       {:else}
         <p class="loading muted" aria-live="polite">Loading…</p>
       {/if}
+    {:else if viz && savedCode === undefined}
+      <p class="loading muted" aria-live="polite">Opening the saved example…</p>
     {:else if viz}
       {#key route.key}
         <VizPage
           def={viz}
-          code={route.code}
+          code={route.code ?? savedCode ?? null}
           embed={route.embed}
           lesson={route.lesson}
           theme={route.theme}
@@ -204,6 +241,14 @@
 
   .brand .w {
     color: var(--accent);
+  }
+
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
   }
 
   .theme select {

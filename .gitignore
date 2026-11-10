@@ -11,3 +11,8 @@ test-results/
 # Python bytecode from the code-tab tests
 __pycache__/
 *.pyc
+
+# Local environment values (accounts): only the empty template is committed
+.env
+.env.*
+!.env.example

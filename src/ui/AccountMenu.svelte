@@ -262,7 +262,10 @@
       <!-- Google's branding guidelines: Google's own G, its colours and type, a pill shape. Both
            Gs are in the page and the theme shows one (no shared ids). -->
       <button class="gsi" onclick={google} disabled={busy !== ''}>
+        <!-- Google's own G, a file bundled at build time; never reader input. -->
+        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         <span class="g g-light">{@html googleG('light')}</span>
+        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         <span class="g g-dark">{@html googleG('dark')}</span>
         <span>{busy === 'google' ? 'Opening Google…' : 'Continue with Google'}</span>
       </button>

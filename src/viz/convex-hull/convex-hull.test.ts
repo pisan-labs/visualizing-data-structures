@@ -170,6 +170,23 @@ describe('convex hull narration', () => {
     );
   });
 
+  // Was "C sits inside the turn A → B, so it is above the lower hull."
+  it('says a popped point is where the right turn is', () => {
+    expect(run('monotone', '1,1 5,1 3,4').entries[1]!.steps.map((s) => s.say)).toContain(
+      'Pop C. A → C → B turns right at C, so C is above the lower hull.',
+    );
+    for (const algorithm of ['graham', 'monotone'] as const) {
+      const pops = run(algorithm, '0,0 8,0 8,8 0,8 4,1 4,7 1,4 7,4 3,3')
+        .entries[1]!.steps.map((s) => s.say)
+        .filter((say) => say.startsWith('Pop ') && say.includes('turns right'));
+      expect(pops.length).toBeGreaterThan(0);
+      for (const say of pops)
+        expect(say).toMatch(
+          /^Pop (\w)\. \w → \1 → \w turns right at \1, so \1 is (inside the hull|above the lower hull|below the upper hull)\.$/,
+        );
+    }
+  });
+
   it('pops both edge points of the collinear-edge example, as its notes say', () => {
     const ex = convexHull.examples.find((e) => e.id === 'collinear-edge')!;
     const t = new Timeline(convexHull, settings('graham'), 1, ex.ops);

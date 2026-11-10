@@ -403,3 +403,5 @@
 2026-11-10 [code] Merged pen and pointer in Present mode (P, L, U, C keys; ink never saved), Save picture (stand-alone SVG, 2x PNG, next to Compare and Present), and one shortcuts table behind a "?" list
 
 2026-11-10 [code] Merged printable practice worksheets (5 or 10 of the assignment set, answer key on its own page), progress kept in the browser (lessons, checks, practice; merge function ready for account sync), and recent pages on the home page
+
+2026-11-10 [code] Merged accounts slice 1: optional sign-in (Google or magic link, PKCE) and examples saved in the account (rename, delete, share by #saved= link), schema app_stepwise with RLS; off until the two VITE_ values are set; Supabase client in its own on-demand chunk (main JS +5 kB gzip)

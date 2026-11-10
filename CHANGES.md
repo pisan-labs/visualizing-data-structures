@@ -417,3 +417,5 @@
 2026-11-10 [plan] Yusuf: finish lesson lists and accounts slice 2, then deploy. Two agents: slice 2 (preferences and progress sync, "new since your last visit" from src/releases.ts, opt-in email flag, delete my StepWise data; migration 0002) and lesson lists (migration 0003). Asked Plabs how app email should be sent
 
 2026-11-10 [decision] Magic links move to the platform's sign-in-link service (live 18:15): POST /functions/v1/sign-in-link, verifyOtp on ?token_hash=, works in any browser. Cloudflare Turnstile is the one third-party script, loaded only when the service asks for a check (CLAUDE.md conventions updated)
+
+2026-11-10 [code] Merged lesson lists: lists of saved examples from any pages (My lesson lists at /#lists), played in order with a list bar and < > keys, Present mode included; shared lists play signed out (/#list=<id>); migration 0003 (owner-only RLS, shared_lesson_list, reorder_lesson_list)

@@ -116,12 +116,8 @@
   function onWheel(e: WheelEvent) {
     // Plain wheel scrolls the page; pinch on a trackpad (ctrl+wheel) zooms.
     if (!e.ctrlKey && !e.metaKey) return;
-    if (locked) {
-      e.preventDefault();
-      return;
-    }
     e.preventDefault();
-    zoom = clampZoom(zoom * Math.exp(-e.deltaY * 0.01));
+    if (!locked) zoom = clampZoom(zoom * Math.exp(-e.deltaY * 0.01));
   }
 
   /** The step as drawn, whole (whatever the zoom), for "Save picture". */

@@ -67,6 +67,9 @@
   onpointerup={onUp}
   onpointercancel={onUp}
   onwheel={onWheel}
+  oncontextmenu={(e) => {
+    if (ink.busy) e.preventDefault();
+  }}
 >
   <svg bind:this={svg} {viewBox} focusable="false">
     {#each ink.strokes as s, i (i)}
@@ -83,9 +86,13 @@
     pointer-events: none;
   }
 
+  /* A drag or a long press here draws or points: no scrolling, selecting or callouts. */
   .ink.busy {
     pointer-events: auto;
     touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
   }
 
   .ink.pen {

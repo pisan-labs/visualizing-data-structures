@@ -147,8 +147,10 @@
       </form>
 
       <p class="privacy small muted">
-        Your account keeps your email address and the examples you save in it. Nothing else about
-        you is stored, and nothing on this site tracks you.
+        Your account keeps your email address, a display name and the examples you save. With
+        Google, it also keeps what Google sends: your name, picture link and Google account id. One
+        account works on every HintWise app and is stored in the US. Nothing on this site tracks
+        you.
       </p>
     </div>
   </dialog>

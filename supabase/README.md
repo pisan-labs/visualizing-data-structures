@@ -35,8 +35,11 @@ Supabase, so the code is safe to merge and deploy before then.
 Everything is in the HintWise project, in Supabase's US East region (us-east-1).
 
 - **Supabase Auth** (shared by every HintWise app; one account works on all of them): the email
-  address, when the account was made and last signed in, and for Google sign-ins the name and
-  picture Google sends. `platform.ensure_profile()` makes the shared HintWise profile.
+  address, when the account was made and last signed in, the sign-in method, and for Google
+  sign-ins what Google sends (name, picture link and Google account id).
+- **`platform.profiles`** (shared HintWise profile, made by `platform.ensure_profile()`): the
+  user id, email, a display name (Google's name, else the part of the email before @) and when
+  it was made. The reader can read their own row and change the display name.
 - **`app_stepwise.saved_examples`**: one row per saved example: the page id, its name, notes,
   the example itself (settings, seed and operations, as in a share link), whether it is shared,
   and when it was made and last changed. Each reader sees only their own rows. Nobody else can

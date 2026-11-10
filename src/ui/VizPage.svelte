@@ -12,6 +12,7 @@
   import Narration from './Narration.svelte';
   import OpControls from './OpControls.svelte';
   import PracticePanel from './PracticePanel.svelte';
+  import RecentTracker from './RecentTracker.svelte';
   import { vizHref } from './route';
   import { Session } from './session.svelte';
   import SettingsPanel from './SettingsPanel.svelte';
@@ -219,6 +220,8 @@
 </script>
 
 <svelte:window onkeydown={onKey} />
+<!-- The home page's "Pick up where you left off" (embeds are not the reader's own visits). -->
+{#if !embed}<RecentTracker {session} />{/if}
 
 <div class="viz" class:embed bind:this={vizEl}>
   <header class="viz-head">

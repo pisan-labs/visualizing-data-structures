@@ -44,14 +44,15 @@ async function register(): Promise<void> {
   if (!reg) return;
   registration = reg;
   void navigator.serviceWorker.ready.then(() => (app.ready = true));
-  if (reg.waiting && reg.active) void consider(reg.waiting);
-  reg.addEventListener('updatefound', () => {
-    const worker = reg.installing;
+  const watch = (worker: ServiceWorker | null) =>
     worker?.addEventListener('statechange', () => {
       // With no older worker active, a new one takes over by itself (the first visit).
       if (worker.state === 'installed' && reg.active) void consider(worker);
     });
-  });
+  if (reg.waiting && reg.active) void consider(reg.waiting);
+  // The browser looks for a new worker as the page loads, so one may be installing already.
+  watch(reg.installing);
+  reg.addEventListener('updatefound', () => watch(reg.installing));
   // A page left open for hours (a lecture, a lab) looks for a new version now and then.
   setInterval(checkForUpdate, HOUR);
   document.addEventListener('visibilitychange', () => {

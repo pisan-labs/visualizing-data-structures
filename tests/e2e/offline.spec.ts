@@ -22,7 +22,6 @@ const updateNotice = (page: Page) => status(page).getByText('A new version is re
 async function builtWorker(request: APIRequestContext) {
   const source = await (await request.get('/sw.js')).text();
   return {
-    source,
     version: /const VERSION = '([0-9a-f]+)';/.exec(source)![1]!,
     precache: JSON.parse(/const PRECACHE = (\[[^\]]*\]);/.exec(source)![1]!) as string[],
   };

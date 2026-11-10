@@ -15,7 +15,9 @@
 </script>
 
 {#if !embed}
-  <div class="app-status" role="status">
+  <!-- A polite live region that is always there, so screen readers hear the notes appear. It has
+       no role, so the page keeps a single role="status" region (App.svelte's notices). -->
+  <div class="app-status" aria-live="polite">
     {#if app.offline}
       <p class="note offline">
         <svg

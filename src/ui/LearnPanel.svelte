@@ -2,18 +2,23 @@
   import { Marked, Renderer } from 'marked';
   import { onMount, tick } from 'svelte';
   import { validateExample } from '../engine/example';
+  import {
+    checkId,
+    pageSummary,
+    reachLesson,
+    setCheckRight,
+    setLesson,
+    summaryText,
+    withOutline,
+    type Progress,
+  } from '../progress/progress';
   import ConceptCheck, { type Check } from './ConceptCheck.svelte';
+  import { lessonSlug as slug, onReach, splitLessons } from './lessons';
+  import { now, progress } from './progress.svelte';
   import type { Session } from './session.svelte';
   import { notify } from './state.svelte';
 
   let { session, lesson = null }: { session: Session; lesson?: string | null } = $props();
-
-  const slug = (s: string) =>
-    s
-      .toLowerCase()
-      .replace(/<[^>]+>/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
 
   // Each "##" section is a lesson with its own deep link (/<viz>/#lesson=<slug>).
   const md = new Marked({
@@ -49,9 +54,7 @@
     return check;
   }
 
-  // The page already shows the title, so drop the Markdown's first heading.
-  const segments = $derived.by((): Segment[] => {
-    const source = session.def.explain.replace(/^# .*\n+/, '');
+  function segmentsOf(source: string): Segment[] {
     const out: Segment[] = [];
     const re = /```check\n([\s\S]*?)```/g;
     let last = 0;
@@ -65,7 +68,42 @@
     }
     out.push({ kind: 'html', html: md.parse(source.slice(last), { async: false }) as string });
     return out;
+  }
+
+  // The page already shows the title, so drop the Markdown's first heading. Each "##" section
+  // is a lesson the reader can mark read.
+  const lessons = $derived(
+    splitLessons(session.def.explain.replace(/^# .*\n+/, '')).map((l) => ({
+      ...l,
+      segments: segmentsOf(l.body),
+    })),
+  );
+
+  // Progress: the lessons read and the checks answered right (src/progress/progress.ts).
+  const viz = $derived(session.def.id);
+  const outline = $derived({
+    lessons: lessons.flatMap((l) => (l.slug ? [l.slug] : [])),
+    checks: lessons.flatMap((l) =>
+      l.segments.flatMap((s) => (s.kind === 'check' ? [checkId(s.check.question)] : [])),
+    ),
   });
+  const marks = $derived(progress.current.pages[viz]);
+  const summary = $derived(pageSummary(progress.current, viz, outline));
+
+  /** Record a change, noting the page's lessons and checks so the catalog can count them. */
+  function record(change: (p: Progress) => Progress) {
+    progress.update((p) => change(withOutline(p, viz, outline, now())));
+  }
+
+  /** The reader reached a lesson's end: mark it read, unless they have marked it themselves. */
+  function reachEnd(node: Element, slug: string) {
+    return {
+      destroy: onReach(node, () => {
+        if (!progress.current.pages[viz]?.lessons[slug])
+          record((p) => reachLesson(p, viz, slug, now()));
+      }),
+    };
+  }
 
   let article: HTMLElement | undefined = $state();
 
@@ -93,6 +131,8 @@
   });
 
   onMount(async () => {
+    // Once there is progress here, keep the catalog's count of this page's lessons up to date.
+    if (progress.current.pages[viz]) record((p) => p);
     if (!lesson) return;
     await tick();
     document.getElementById(`lesson-${slug(lesson)}`)?.scrollIntoView({ block: 'start' });
@@ -100,20 +140,52 @@
 </script>
 
 <div class="learn-tools">
+  {#if summary.started}
+    <p class="progress-note">Your progress here: {summaryText(summary)}.</p>
+  {/if}
   <button class="btn small" onclick={() => print()} title="Print this explanation as a handout">
     Print
   </button>
 </div>
 
 <article class="learn" bind:this={article}>
-  {#each segments as seg, i (i)}
-    {#if seg.kind === 'html'}
-      <!-- Our own Markdown, rendered at runtime. -->
-      <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-      {@html seg.html}
-    {:else}
-      <ConceptCheck check={seg.check} n={i} />
-    {/if}
+  {#each lessons as l, li (li)}
+    <div class="lesson">
+      {#each l.segments as seg, si (si)}
+        {#if seg.kind === 'html'}
+          <!-- Our own Markdown, rendered at runtime. -->
+          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+          {@html seg.html}
+        {:else}
+          <ConceptCheck
+            check={seg.check}
+            n="{li}-{si}"
+            onanswer={(right) => {
+              if (right) record((p) => setCheckRight(p, viz, checkId(seg.check.question), now()));
+            }}
+          />
+        {/if}
+      {/each}
+      {#if l.slug}
+        {@const slug = l.slug}
+        {@const read = !!marks?.lessons[slug]?.done}
+        {@const label = read ? 'Read' : 'Mark as read'}
+        <!-- The lesson's heading describes the box. Its title is not in the box's name, so the
+             name never clashes with another control's label. -->
+        <label class="lesson-end" class:read use:reachEnd={slug}>
+          <input
+            type="checkbox"
+            checked={read}
+            aria-describedby="lesson-{slug}"
+            onchange={(e) => {
+              const done = e.currentTarget.checked;
+              record((p) => setLesson(p, viz, slug, done, now()));
+            }}
+          />
+          <span>{label}</span>
+        </label>
+      {/if}
+    </div>
   {/each}
 </article>
 
@@ -122,7 +194,48 @@
 <style>
   .learn-tools {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     justify-content: flex-end;
+    gap: 6px 12px;
+  }
+
+  .progress-note {
+    flex: 1 1 16em;
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-2);
+  }
+
+  /* The end of a lesson: reaching it marks the lesson read; the box changes that by hand. */
+  .lesson-end {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    min-height: 32px;
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    color: var(--text-2);
+    cursor: pointer;
+  }
+
+  .lesson-end input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--c-new);
+  }
+
+  .lesson-end.read {
+    color: var(--c-new);
+    font-weight: 600;
+  }
+
+  @media print {
+    .lesson-end {
+      display: none;
+    }
   }
 
   .learn {

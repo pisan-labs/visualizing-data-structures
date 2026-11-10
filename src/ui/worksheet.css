@@ -1,0 +1,225 @@
+/*
+ * The printable practice worksheet (Worksheet.svelte). It exists only while it prints: on screen
+ * it is hidden, so the page looks the same, and while it prints the rest of the site is not
+ * printed. Sizes are in print units so A4 and Letter both fit.
+ */
+.ws-root {
+  display: none;
+}
+
+@media print {
+  :root.printing-worksheet body > :not(.ws-root) {
+    display: none !important;
+  }
+
+  :root.printing-worksheet .ws-root {
+    display: block;
+  }
+}
+
+@page worksheet {
+  margin: 14mm 14mm 16mm;
+}
+
+/* Paper colors whatever the screen theme: the light theme's tokens. */
+.ws-root {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #eef1f5;
+  --text: #000000;
+  --text-2: #3a414b;
+  --line: #b9c1cc;
+  --line-strong: #6b7480;
+  --accent: #1f4fb3;
+  --c-active: #2457c5;
+  --c-compare: #a35a00;
+  --c-visit: #0b7285;
+  --c-new: #1e7d3c;
+  --c-done: #1e7d3c;
+  --c-remove: #b8480f;
+  --c-found: #7a3db8;
+  --c-error: #c0262d;
+  --c-stale: #6b7480;
+  --c-g1: #0a6aa8;
+  --c-g2: #c2500a;
+  --c-g3: #0b7d5a;
+  --c-g4: #b2407f;
+  --c-g5: #7a5c00;
+  --c-g6: #5b3fb0;
+  --c-g7: #00838f;
+  --c-g8: #a8102d;
+  --cell-live: #ffffff;
+  --cell-empty: #f1f3f6;
+  --code-hl: #e8eefc;
+  color-scheme: light;
+  color: var(--text);
+  background: #ffffff;
+  font: 11pt/1.45 var(--font);
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.worksheet {
+  page: worksheet;
+}
+
+.worksheet h1 {
+  margin: 0 0 2pt;
+  font-size: 18pt;
+  line-height: 1.2;
+}
+
+.ws-site {
+  margin: 0 0 2pt;
+  font-size: 9pt;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.ws-meta,
+.ws-how {
+  margin: 0 0 4pt;
+  font-size: 9.5pt;
+  color: var(--text-2);
+}
+
+.ws-link {
+  font-family: var(--mono);
+  font-size: 8.5pt;
+  overflow-wrap: anywhere;
+}
+
+.ws-name {
+  display: flex;
+  align-items: baseline;
+  gap: 6pt;
+  margin: 10pt 0 8pt;
+}
+
+.ws-fill {
+  flex: 1;
+  min-width: 30mm;
+  border-bottom: 1px solid var(--text);
+  height: 1.1em;
+}
+
+.ws-fill.short {
+  flex: 0 0 35mm;
+}
+
+.ws-head {
+  padding-bottom: 6pt;
+  border-bottom: 1.5pt solid var(--text);
+}
+
+.ws-questions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ws-q {
+  padding: 10pt 0 12pt;
+  border-bottom: 1px solid var(--line);
+  break-inside: avoid;
+}
+
+.ws-q h2 {
+  margin: 0 0 3pt;
+  font-size: 12pt;
+  break-after: avoid;
+}
+
+.ws-n {
+  color: var(--text-2);
+}
+
+.ws-prompt {
+  margin: 0 0 6pt;
+}
+
+.ws-prompt code,
+.ws-why code {
+  font-family: var(--mono);
+  font-size: 0.92em;
+}
+
+/* As large as on screen, but short enough for three or so questions on a page. */
+.ws-pic {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 62mm;
+  margin: 4pt auto 8pt;
+}
+
+.ws-choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 55mm), 1fr));
+  gap: 5pt 12pt;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ws-choices li {
+  display: flex;
+  align-items: baseline;
+  gap: 5pt;
+}
+
+.ws-box {
+  flex: none;
+  display: inline-block;
+  width: 3.6mm;
+  height: 3.6mm;
+  border: 1px solid var(--text);
+  border-radius: 0.6mm;
+  transform: translateY(0.5mm);
+}
+
+.ws-answer {
+  display: flex;
+  align-items: baseline;
+  gap: 6pt;
+  margin: 6pt 0 0;
+}
+
+.ws-answer .ws-fill {
+  max-width: 60mm;
+}
+
+.ws-answer.long .ws-fill {
+  max-width: none;
+}
+
+.ws-key {
+  break-before: page;
+}
+
+.ws-key h1 {
+  padding-bottom: 4pt;
+  border-bottom: 1.5pt solid var(--text);
+}
+
+.ws-key ol {
+  list-style: none;
+  margin: 8pt 0 0;
+  padding: 0;
+}
+
+.ws-key li {
+  padding: 6pt 0;
+  border-bottom: 1px solid var(--line);
+  break-inside: avoid;
+}
+
+.ws-key b {
+  margin-right: 4pt;
+}
+
+.ws-why {
+  color: var(--text-2);
+}

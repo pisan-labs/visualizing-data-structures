@@ -407,3 +407,5 @@
 2026-11-10 [code] Merged accounts slice 1: optional sign-in (Google or magic link, PKCE) and examples saved in the account (rename, delete, share by #saved= link), schema app_stepwise with RLS; off until the two VITE_ values are set; Supabase client in its own on-demand chunk (main JS +5 kB gzip)
 
 2026-11-10 [decision] Default taken at 16:41 (no answer): the offline app precaches only the app shell and the pages a reader opens, plus a "Make every page available offline" button for the rest (about 2.9 MB compressed); nothing automatic under Save-Data. Precaching everything for every visitor would cost each first visit 8.6 MB
+
+2026-11-10 [code] Accounts on for production builds: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (public) in netlify.toml, after Plabs applied app_stepwise (16:38 to 16:44, check-schema and check-google passed). Live API checked: shared_example answers anon, the table refuses anon. Goes live with the next deploy

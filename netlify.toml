@@ -6,6 +6,11 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  # Optional accounts (PLAN.md section 18): the shared HintWise Supabase project. Both values are
+  # public by design (row-level security protects the data); the service-role key never goes here.
+  # Remove these two lines to switch accounts off: the site then shows no sign-in at all.
+  VITE_SUPABASE_URL = "https://auth.hintwise.org"
+  VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFya3R4bHJseWNlZmZ5b3pkd2hxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4ODEwMTAsImV4cCI6MjA5MjQ1NzAxMH0.Vuku-irT3kAHZYibK23q6dpyOEqV_Eg5zB78I3dyshE"
 
 [[headers]]
   for = "/assets/*"

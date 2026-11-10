@@ -6,7 +6,7 @@
     sendSignInLink,
     signOut,
   } from '../account/account.svelte';
-  import { asAccountError } from '../account/backend';
+  import { asAccountError, LINK_WAIT_MS, secondsLeft } from '../account/backend';
 
   /**
    * "Sign in" in the site header, and the account menu once signed in. App.svelte shows it only
@@ -18,6 +18,20 @@
   let busy = $state<'' | 'email' | 'google'>('');
   let sentTo = $state('');
   let problem = $state('');
+
+  // After a link is sent (or the server asks us to wait), "Email me a sign-in link" waits.
+  let waitUntil = $state(0);
+  let now = $state(Date.now());
+  const wait = $derived(secondsLeft(waitUntil, now));
+  $effect(() => {
+    if (wait <= 0) return;
+    const t = setTimeout(() => (now = Date.now()), 1000);
+    return () => clearTimeout(t);
+  });
+  function waitFor(ms: number) {
+    now = Date.now();
+    waitUntil = now + ms;
+  }
 
   function open() {
     problem = '';
@@ -34,14 +48,19 @@
   async function emailLink(e: SubmitEvent) {
     e.preventDefault();
     const to = email.trim();
-    if (!to) return;
+    if (!to || wait > 0) return;
     busy = 'email';
     problem = '';
+    sentTo = '';
     try {
       await sendSignInLink(to);
       sentTo = to;
+      waitFor(LINK_WAIT_MS);
     } catch (err) {
-      problem = asAccountError(err).message;
+      // The address stays in the field, ready for another try.
+      const why = asAccountError(err);
+      problem = why.message;
+      if (why.retryAfter) waitFor(why.retryAfter * 1000);
     } finally {
       busy = '';
     }
@@ -94,38 +113,40 @@
 
       <div class="or" aria-hidden="true"><span>or</span></div>
 
-      {#if sentTo}
-        <div class="sent">
-          <p><strong>Check your email.</strong> We sent a sign-in link to {sentTo}.</p>
-          <p class="muted small">
-            Open it in this browser: the link works only in the browser that asked for it.
-          </p>
-          <button class="btn small" onclick={() => (sentTo = '')}>Use a different email</button>
+      <form onsubmit={emailLink}>
+        <label for="signin-email">Email</label>
+        <div class="row">
+          <input
+            id="signin-email"
+            class="field grow"
+            type="email"
+            autocomplete="email"
+            required
+            bind:value={email}
+            aria-describedby="email-note"
+          />
+          <button class="btn" type="submit" disabled={busy !== '' || wait > 0}>
+            {busy === 'email' ? 'Sending…' : 'Email me a sign-in link'}
+          </button>
         </div>
-      {:else}
-        <form onsubmit={emailLink}>
-          <label for="signin-email">Email</label>
-          <div class="row">
-            <input
-              id="signin-email"
-              class="field grow"
-              type="email"
-              autocomplete="email"
-              required
-              bind:value={email}
-              aria-describedby="email-note"
-            />
-            <button class="btn" type="submit" disabled={busy !== ''}>
-              {busy === 'email' ? 'Sending…' : 'Email me a sign-in link'}
-            </button>
-          </div>
-          <p id="email-note" class="muted small">
-            Open the link in this browser: it works only in the browser that asked for it.
+        <p id="email-note" class="muted small">
+          Open the link in this browser: it works only in the browser that asked for it.
+        </p>
+        {#if wait > 0}
+          <p class="muted small">
+            You can ask for another link in {wait}
+            {wait === 1 ? 'second' : 'seconds'}.
           </p>
-        </form>
-      {/if}
+        {/if}
+      </form>
 
-      <p class="problem" role="status">{problem}</p>
+      <p class="status" class:problem={!!problem} role="status">
+        {#if problem}
+          {problem}
+        {:else if sentTo}
+          <strong>Check your email.</strong> We sent a sign-in link to {sentTo}.
+        {/if}
+      </p>
 
       <p class="privacy small muted">
         Your account keeps your email address and the examples you save in it. Nothing else about
@@ -253,10 +274,8 @@
     min-width: 0;
   }
 
-  .sent {
-    display: grid;
-    gap: 6px;
-    justify-items: start;
+  .status {
+    overflow-wrap: anywhere;
   }
 
   .problem {

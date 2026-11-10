@@ -29,8 +29,17 @@ export function toAccountError(raw: unknown, status?: number): AccountError {
   )
     return new AccountError('link');
   if (message.includes('saved_examples_limit')) return new AccountError('full');
-  if (code === 'over_email_send_rate_limit' || code === 'over_request_rate_limit' || http === 429)
-    return new AccountError('rate');
+  // One link per address a minute ("For security purposes, you can only request this after 42
+  // seconds."), and a limit for the whole project ("email rate limit exceeded").
+  if (
+    code === 'over_email_send_rate_limit' ||
+    code === 'over_request_rate_limit' ||
+    http === 429 ||
+    /rate limit|only request this after/i.test(message)
+  ) {
+    const after = /after (\d+) seconds?/i.exec(message);
+    return new AccountError('rate', undefined, after ? Number(after[1]) : undefined);
+  }
   if (
     code === 'email_address_invalid' ||
     ((http === 400 || http === 422) && /email/i.test(message))

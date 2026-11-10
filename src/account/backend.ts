@@ -90,7 +90,7 @@ export const MESSAGES: Record<AccountErrorKind, string> = {
   unreachable:
     'Could not reach your account. Try again in a minute; the rest of the page still works.',
   expired: 'Your sign-in has expired. Sign in again.',
-  rate: 'Too many sign-in emails in a short time. Wait a few minutes, then try again.',
+  rate: 'Too many sign-in emails right now. Try Google, or wait a minute and try again.',
   email: 'That email address does not look right.',
   link: 'That sign-in link has expired or was already used. Ask for a new one.',
   browser: 'Open the sign-in link in the same browser you asked for it from.',
@@ -106,10 +106,19 @@ export class AccountError extends Error {
   constructor(
     readonly kind: AccountErrorKind,
     message: string = MESSAGES[kind],
+    /** For 'rate': how many seconds the server asked us to wait, when it said. */
+    readonly retryAfter?: number,
   ) {
     super(message);
   }
 }
+
+/** Supabase sends one sign-in link per address a minute; the dialog waits as long. */
+export const LINK_WAIT_MS = 60_000;
+
+/** Whole seconds until `until` (a time in ms), never below 0. */
+export const secondsLeft = (until: number, now: number): number =>
+  Math.max(0, Math.ceil((until - now) / 1000));
 
 /** The most examples one account holds; the database enforces the same number. */
 export const MAX_EXAMPLES = 1000;

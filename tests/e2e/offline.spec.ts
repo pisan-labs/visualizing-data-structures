@@ -18,16 +18,21 @@ const status = (page: Page) => page.locator('.app-status');
 const narration = (page: Page) => page.locator('.narration p');
 const updateNotice = (page: Page) => status(page).getByText('A new version is ready.');
 
-/** The worker as the build wrote it: its version and the addresses it precaches. */
+/** The worker as the build wrote it: its version, its app shell and every file it can keep. */
 async function builtWorker(request: APIRequestContext) {
   const source = await (await request.get('/sw.js')).text();
+  const list = (name: string) =>
+    JSON.parse(
+      new RegExp(`const ${name} = (\\[[^;]*\\]);`).exec(source)![1]!.replace(/,\s*\]$/, ']'),
+    );
   return {
     version: /const VERSION = '([0-9a-f]+)';/.exec(source)![1]!,
-    precache: JSON.parse(/const PRECACHE = (\[[^\]]*\]);/.exec(source)![1]!) as string[],
+    shell: list('SHELL') as string[],
+    files: (list('FILES') as [string, number][]).map(([url]) => url),
   };
 }
 
-/** Wait until the worker is active and controls the page (so everything is precached). */
+/** Wait until the worker is active and controls the page (so the app shell is kept). */
 async function installed(page: Page): Promise<void> {
   await expect
     .poll(
@@ -60,8 +65,9 @@ function controllerVersion(page: Page): Promise<unknown> {
  * browser's update checks for a worker, so the edit has to come from a real server.) It runs on
  * its own port, so its worker and caches are apart from every other test's.
  */
-async function serveBuild() {
+async function serveBuild(extra: Record<string, string> = {}) {
   let edit: (source: string) => string = (source) => source;
+  const requests: string[] = [];
   const types: Record<string, string> = {
     '.html': 'text/html',
     '.js': 'text/javascript',
@@ -73,6 +79,11 @@ async function serveBuild() {
   };
   const server = http.createServer((req, res) => {
     const pathname = decodeURIComponent(new URL(req.url ?? '/', 'http://x').pathname);
+    requests.push(pathname);
+    if (pathname in extra) {
+      res.writeHead(200, { 'Content-Type': 'text/javascript' }).end(extra[pathname]);
+      return;
+    }
     const file = path.join(dist, pathname.endsWith('/') ? `${pathname}index.html` : pathname);
     if (!file.startsWith(dist) || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
       res.writeHead(404).end();
@@ -89,6 +100,8 @@ async function serveBuild() {
   return {
     url: `http://localhost:${(server.address() as AddressInfo).port}`,
     ship: (f: (source: string) => string) => (edit = f),
+    /** Every address asked for since the last call. */
+    requested: () => requests.splice(0),
     close: () => new Promise((done) => server.close(done)),
   };
 }
@@ -96,6 +109,21 @@ async function serveBuild() {
 /** Make the browser look for a new worker now, as it does on its own from time to time. */
 async function checkForUpdate(page: Page): Promise<void> {
   await page.evaluate(() => navigator.serviceWorker.getRegistration().then((r) => r?.update()));
+}
+
+/** The paths of every file in StepWise's caches. */
+async function kept(page: Page): Promise<string[]> {
+  return (await cachedUrls(page, 'stepwise-')).map((u) => new URL(u).pathname);
+}
+
+/** Wait until StepWise's caches hold all of `paths`. */
+async function keptSoon(page: Page, paths: string[]): Promise<void> {
+  await expect
+    .poll(async () => {
+      const have = new Set(await kept(page));
+      return paths.filter((p) => !have.has(p));
+    })
+    .toEqual([]);
 }
 
 /** Every address in StepWise's caches named `prefix`. */
@@ -108,6 +136,21 @@ function cachedUrls(page: Page, prefix: string): Promise<string[]> {
     return urls.sort();
   }, prefix);
 }
+
+async function axeInEveryTheme(page: Page): Promise<void> {
+  for (const theme of ['light', 'dark', 'contrast']) {
+    await page.getByRole('combobox', { name: 'Theme' }).selectOption(theme);
+    await settled(page);
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+      .analyze();
+    expect(axeFindings(results), theme).toEqual([]);
+  }
+}
+
+const saveButton = (page: Page) =>
+  page.getByRole('button', { name: 'Make every page available offline' });
+const allSaved = (page: Page) => page.getByText('Every page is available offline on this device.');
 
 const overflow = (page: Page) =>
   page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
@@ -150,17 +193,9 @@ test.describe('with the service worker', () => {
     await installed(page);
     await expect(status(page)).toBeEmpty();
     await context.setOffline(true);
-    await expect(status(page)).toHaveText('Offline: every page still works');
+    await expect(status(page)).toHaveText('Offline: pages you have opened still work');
     expect(await overflow(page)).toBeLessThanOrEqual(0);
-    await settled(page);
-    for (const theme of ['light', 'dark', 'contrast']) {
-      await page.getByRole('combobox', { name: 'Theme' }).selectOption(theme);
-      await settled(page);
-      const results = await new AxeBuilder({ page })
-        .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
-        .analyze();
-      expect(axeFindings(results), theme).toEqual([]);
-    }
+    await axeInEveryTheme(page);
     // Lectures and handouts get the drawing only.
     await page.evaluate(() => document.documentElement.classList.add('presenting'));
     await expect(status(page)).toBeHidden();
@@ -169,42 +204,180 @@ test.describe('with the service worker', () => {
     await expect(status(page)).toBeEmpty();
   });
 
+  test('offline, a page never opened says so and links home', async ({ page, context }) => {
+    await page.goto('/');
+    await installed(page);
+    await context.setOffline(true);
+    await page.goto('/avl/');
+    await expect(
+      page.getByRole('heading', { name: 'This page has not been saved for offline use yet' }),
+    ).toBeVisible();
+    expect(await overflow(page)).toBeLessThanOrEqual(0);
+    await axeInEveryTheme(page);
+    await page.getByRole('link', { name: 'See all visualizations' }).click();
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('one step at a time');
+  });
+
+  test('"Make every page available offline" downloads the rest, with its size and progress', async ({
+    page,
+    context,
+    request,
+  }) => {
+    const { files } = await builtWorker(request);
+    await page.goto('/');
+    await installed(page);
+    await expect(saveButton(page)).toBeVisible();
+    await expect(page.locator('.offline-download')).toContainText(
+      /about \d+(\.\d)? MB to download/,
+    );
+    expect(await overflow(page)).toBeLessThanOrEqual(0);
+    await axeInEveryTheme(page);
+    await saveButton(page).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByLabel(/Saving every page for offline use/)).toBeVisible();
+    await expect(allSaved(page)).toBeVisible({ timeout: 60_000 });
+    await keptSoon(page, files);
+    // Done for this build: it says so on the next visit too.
+    await page.reload();
+    await expect(allSaved(page)).toBeVisible();
+    await expect(saveButton(page)).toHaveCount(0);
+    await axeInEveryTheme(page);
+
+    await context.setOffline(true);
+    await expect(status(page)).toHaveText('Offline: every page still works');
+    await page.goto('/avl/');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('AVL tree');
+    await page.goto('/bst/');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Binary search tree');
+  });
+
   test.describe('desktop', () => {
     test.skip(({ isMobile }) => isMobile, 'Desktop Chromium covers the worker itself');
 
-    test('installs, then the home page, a page not visited and a reload all work offline', async ({
+    test('install keeps only the app shell, and a page opened since works offline', async ({
       page,
       context,
       request,
     }) => {
       const errors: string[] = [];
       page.on('pageerror', (e) => errors.push(e.message));
+      const { shell, files } = await builtWorker(request);
       await page.goto('/');
       await installed(page);
-      const { precache } = await builtWorker(request);
-      const origin = new URL(page.url()).origin;
-      expect(await cachedUrls(page, 'stepwise-static-')).toEqual(
-        precache.map((u) => `${origin}${u}`).sort(),
+      await keptSoon(page, shell);
+      // Besides the shell, only what the home page itself loaded (its thumbnails): no page and
+      // no page's chunk.
+      const loaded = await page.evaluate(() =>
+        performance.getEntriesByType('resource').map((e) => new URL(e.name).pathname),
       );
+      expect((await kept(page)).filter((p) => !shell.includes(p) && !loaded.includes(p))).toEqual(
+        [],
+      );
+      expect((await kept(page)).filter((p) => files.includes(p)).length).toBeLessThan(20);
 
+      await page.goto('/stack-array/');
+      await expect(page.getByRole('heading', { name: 'Stack (array)' })).toBeVisible();
+      await keptSoon(page, ['/stack-array/']);
       await context.setOffline(true);
-      await page.goto('/');
-      await expect(page.getByRole('heading', { level: 1 })).toContainText('one step at a time');
-      await expect(page.locator('li.live svg.thumb').first()).toBeVisible();
-
       await page.goto('/stack-array/');
       await expect(page.getByRole('heading', { name: 'Stack (array)' })).toBeVisible();
       await page.getByRole('combobox', { name: 'Speed' }).selectOption('4');
       await page.getByLabel('Value').fill('10 20');
       await page.getByRole('button', { name: 'Push', exact: true }).click();
       await expect(narration(page)).toContainText('20 is now the top of the stack');
-      await expect(status(page)).toHaveText('Offline: every page still works');
-
+      await expect(status(page)).toHaveText('Offline: pages you have opened still work');
       await page.reload();
       await expect(page.getByRole('heading', { name: 'Stack (array)' })).toBeVisible();
+      await page.goto('/');
+      await expect(page.getByRole('heading', { level: 1 })).toContainText('one step at a time');
       await page.goto('/no-such-page/');
       await expect(page.getByRole('heading', { name: 'Not here yet' })).toBeVisible();
       expect(errors).toEqual([]);
+    });
+
+    test('the first page opened, before the worker, is kept too', async ({ page, context }) => {
+      await page.goto('/bst/');
+      await installed(page);
+      await keptSoon(page, ['/bst/']);
+      // Its chunk too: every script the page loaded.
+      const scripts = await page.evaluate(() =>
+        performance
+          .getEntriesByType('resource')
+          .map((e) => new URL(e.name).pathname)
+          .filter((p) => p.startsWith('/assets/')),
+      );
+      await keptSoon(page, scripts);
+      await context.setOffline(true);
+      await page.reload();
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText('Binary search tree');
+    });
+
+    test('with Save-Data on, nothing downloads unasked, and the button still works', async ({
+      page,
+      context,
+      request,
+    }) => {
+      const { files } = await builtWorker(request);
+      const site = await serveBuild();
+      try {
+        // Save-Data as the page sees it, and as the worker does (Playwright cannot set it there).
+        await context.addInitScript(() =>
+          Object.defineProperty(navigator, 'connection', {
+            value: { saveData: true },
+            configurable: true,
+          }),
+        );
+        site.ship((source) =>
+          source.replace(/const saveData = [^;]+;/, 'const saveData = () => true;'),
+        );
+        await page.goto(`${site.url}/stack-array/`);
+        await installed(page);
+        await page.waitForTimeout(1500);
+        expect(await kept(page)).toEqual([]);
+
+        // A page fetched anyway is kept; the shell was never fetched for its own sake.
+        await page.goto(`${site.url}/`);
+        await expect(saveButton(page)).toBeVisible();
+        await saveButton(page).click();
+        await expect(allSaved(page)).toBeVisible({ timeout: 60_000 });
+        await keptSoon(page, files);
+      } finally {
+        await site.close();
+      }
+    });
+
+    test('a new build tops up only what it changed for a reader who saved every page', async ({
+      page,
+    }) => {
+      const changed = '/assets/zz-changed-for-the-test.js';
+      const site = await serveBuild({ [changed]: 'export {};' });
+      try {
+        await page.goto(`${site.url}/`);
+        await installed(page);
+        await saveButton(page).click();
+        await expect(allSaved(page)).toBeVisible({ timeout: 60_000 });
+        const old = await controllerVersion(page);
+        const next = old === 'f'.repeat(16) ? 'e'.repeat(16) : 'f'.repeat(16);
+        // The next build: another version, and one hashed file that is new.
+        site.ship((source) =>
+          source
+            .replace(`const VERSION = '${old}';`, `const VERSION = '${next}';`)
+            .replace('const FILES = [', `const FILES = [\n  ["${changed}", 20],`),
+        );
+        site.requested();
+        await checkForUpdate(page);
+        await expect(updateNotice(page)).toBeVisible({ timeout: 30_000 });
+        await Promise.all([
+          page.waitForEvent('load'),
+          page.getByRole('button', { name: 'Reload' }).click(),
+        ]);
+        await expect.poll(() => controllerVersion(page)).toBe(next);
+        await expect(allSaved(page)).toBeVisible({ timeout: 60_000 });
+        // Every hashed file the old build kept was carried over: only the new one was fetched.
+        expect(site.requested().filter((p) => p.startsWith('/assets/'))).toEqual([changed]);
+      } finally {
+        await site.close();
+      }
     });
 
     test('never intercepts or caches another origin', async ({ page, context }) => {

@@ -41,11 +41,22 @@ Netlify builds and publishes every push to `main`; `main` only moves by fast-for
 StepWise installs as an app and works offline. The pieces:
 
 - `src/pwa/sw.js` is the service worker, written by hand. `npm run build` (in
-  `scripts/prerender.mjs`) writes it to `dist/sw.js` with a version (a hash of the files) and the
-  list of files to precache: the home page, every page, the hashed assets, `previews.json`, the
-  manifest and the icons (about 8.6 MB, 2.5 to 3 MB over the wire).
+  `scripts/prerender.mjs`) writes it to `dist/sw.js` with a version (a hash of the files), the app
+  shell, and every file a reader can keep for offline use with its download size
+  (`src/pwa/precache.ts`).
+- On install the worker keeps only the app shell: the home page, its script and stylesheet, the
+  manifest and the icons (11 files, about 0.11 MB). Pages and their chunks are kept as the reader
+  opens them, so pages they have used work offline. Offline, a page that was never opened says
+  "This page has not been saved for offline use yet" and links home.
+- "Make every page available offline", at the bottom of the home page, downloads the rest (about
+  2.9 MB, shown before it starts), with progress and a done state. The choice is remembered, and a
+  later build fetches only what it changed (hashed files the old build kept are carried over;
+  pages are fetched again, since each carries the build's version). Most chunks import the main
+  chunk by its hashed name, so a change there renames them too.
+- With Save-Data on, nothing downloads unasked (no shell on install, no top-ups); the button
+  still works.
 - Pages come from the network first, so a reader who is online always gets the latest deploy;
-  the cached copy is used only when the network fails. Hashed files in `/assets/` come from the
+  the kept copy is used only when the network fails. Hashed files in `/assets/` come from the
   cache first. Requests to other sites (such as Supabase) are never intercepted or cached.
 - The page registers the worker in production builds only (`src/pwa/offline.svelte.ts`). When a
   newer version is waiting, it shows "A new version is ready" with a Reload button; it never
@@ -55,6 +66,8 @@ StepWise installs as an app and works offline. The pieces:
   `node scripts/icons.mjs` and commit the files it writes.
 - `netlify.toml` serves `/sw.js` and the manifest with `Cache-Control: no-cache`, so browsers
   see a new deploy on the next visit.
+- Every e2e spec but `tests/e2e/offline.spec.ts` runs with service workers blocked
+  (`playwright.config.ts`).
 
 ### Kill switch
 

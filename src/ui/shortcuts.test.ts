@@ -43,10 +43,14 @@ describe('the shortcuts table', () => {
     }
   });
 
-  it('lists the tabs and Present mode only on pages that have them', () => {
+  it('lists the tabs, Present mode and a lesson list only on pages that have them', () => {
     const ids = (s: Shortcut[]) => s.map((x) => x.id);
     expect(ids(shortcutsFor({}))).toEqual(['play', 'forward', 'back', 'slower', 'faster', 'help']);
-    expect(ids(shortcutsFor({ tabs: true, present: true }))).toEqual(SHORTCUTS.map((s) => s.id));
+    expect(ids(shortcutsFor({ tabs: true, present: true, list: true }))).toEqual(
+      SHORTCUTS.map((s) => s.id),
+    );
+    expect(ids(shortcutsFor({ tabs: true, present: true }))).not.toContain('list-next');
+    expect(ids(shortcutsFor({ list: true })).slice(-2)).toEqual(['list-previous', 'list-next']);
   });
 });
 
@@ -96,6 +100,18 @@ describe('matching a key press', () => {
     expect(id('l')).toBe('pointer');
     expect(id('u')).toBe('undo-ink');
     expect(id('c')).toBe('clear-ink');
+  });
+
+  it('moves through a lesson list only while one plays, and not while typing', () => {
+    const noList = (s: Shortcut) => s.needs !== 'list';
+    expect(id('>', 'other', {}, noList)).toBeNull();
+    expect(id('<', 'other', {}, noList)).toBeNull();
+    expect(id('>')).toBe('list-next');
+    expect(id('<')).toBe('list-previous');
+    expect(id('>', 'control')).toBe('list-next');
+    expect(id('>', 'field')).toBeNull();
+    expect(id('<', 'tab')).toBeNull();
+    expect(id('>', 'other', { ctrlKey: true })).toBeNull();
   });
 });
 

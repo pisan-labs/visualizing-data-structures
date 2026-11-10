@@ -6,7 +6,9 @@
   import { AccountShelf } from '../account/shelf.svelte';
   import { ExampleError, validateExample } from '../engine/example';
   import type { LibraryItem } from '../engine/storage';
-  import { vizHref } from './route';
+  import AddToList from '../lists/AddToList.svelte';
+  import { ListShelf } from '../lists/shelf.svelte';
+  import { listsHref, vizHref } from './route';
   import type { Session } from './session.svelte';
   import { notify } from './state.svelte';
 
@@ -75,6 +77,16 @@
   let confirming = $state<string | null>(null);
   let busy = $state<string | null>(null);
   let linkText = $state('');
+  // "Add to list": the reader's lesson lists load when a picker first opens.
+  let adding = $state<string | null>(null);
+  let lists = $state.raw<ListShelf | null>(null);
+
+  function startAdd(item: AccountExample) {
+    editing = null;
+    confirming = null;
+    lists ??= new ListShelf();
+    adding = adding === item.id ? null : item.id;
+  }
 
   const focus = (node: HTMLElement) => node.focus();
 
@@ -106,6 +118,7 @@
 
   function startRename(item: AccountExample) {
     confirming = null;
+    adding = null;
     editing = item.id;
     draft = item.title;
   }
@@ -209,7 +222,10 @@
             </span>
           </form>
         {:else if confirming === item.id}
-          <span class="title">Delete "{item.title}" from your account? This cannot be undone.</span>
+          <span class="title"
+            >Delete "{item.title}" from your account? It also comes out of any lesson list it is in.
+            This cannot be undone.</span
+          >
           <span class="buttons">
             <button
               class="btn small danger"
@@ -241,6 +257,13 @@
               disabled={busy === item.id}
               aria-label="Copy link to {item.title}">Copy link</button
             >
+            <button
+              id="add-{item.id}"
+              class="btn small"
+              aria-expanded={adding === item.id}
+              onclick={() => startAdd(item)}
+              aria-label="Add {item.title} to a lesson list">Add to list</button
+            >
             <label class="toggle">
               <input
                 type="checkbox"
@@ -256,15 +279,32 @@
               class="btn small"
               onclick={() => {
                 editing = null;
+                adding = null;
                 confirming = item.id;
               }}
               aria-label="Delete {item.title}">Delete</button
             >
           </span>
+          {#if adding === item.id && lists}
+            <AddToList
+              shelf={lists}
+              exampleId={item.id}
+              title={item.title}
+              onclose={() => {
+                adding = null;
+                void refocus(`add-${item.id}`);
+              }}
+            />
+          {/if}
         {/if}
       </li>
     {/each}
   </ul>
+{/if}
+{#if shelf.items.length}
+  <p class="muted small lists-link">
+    To teach with these, put them in a <a href={listsHref}>lesson list</a> and play it in class.
+  </p>
 {/if}
 {#if linkText}
   <label class="visually-hidden" for="account-link">Link to the shared example</label>
@@ -377,6 +417,10 @@
     padding-block: 5px;
     white-space: normal;
     text-align: left;
+  }
+
+  .lists-link {
+    margin-top: 6px;
   }
 
   .share {

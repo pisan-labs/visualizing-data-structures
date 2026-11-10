@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount, untrack } from 'svelte';
+  import { exampleOf } from '../account/backend';
   import { decodeExample, encodeExample, ExampleError, validateExample } from '../engine/example';
   import type { AnyVizDef, StageSize } from '../engine/types';
   import { pictureName } from '../render/picture';
@@ -11,6 +12,8 @@
   import HistoryPanel from './HistoryPanel.svelte';
   import { Ink } from './ink.svelte';
   import LearnPanel from './LearnPanel.svelte';
+  import ListBar from '../lists/ListBar.svelte';
+  import { carry, itemHref, ListPlay, takePresent } from '../lists/player.svelte';
   import Narration from './Narration.svelte';
   import OpControls from './OpControls.svelte';
   import { download, pngOf } from './picture';
@@ -18,7 +21,7 @@
   import PracticePanel from './PracticePanel.svelte';
   import PresentTools from './PresentTools.svelte';
   import RecentTracker from './RecentTracker.svelte';
-  import { vizHref } from './route';
+  import { navigate, vizHref } from './route';
   import SaveMenu from './SaveMenu.svelte';
   import { Session } from './session.svelte';
   import SettingsPanel from './SettingsPanel.svelte';
@@ -39,6 +42,8 @@
     autoplay = false,
     practice = null,
     practiceCount = 5,
+    list = null,
+    item = 1,
   }: {
     def: AnyVizDef;
     code: string | null;
@@ -48,15 +53,45 @@
     autoplay?: boolean;
     practice?: number | null;
     practiceCount?: number;
+    /** A lesson list playing (#list=<id>&item=<n>); not in embeds. */
+    list?: string | null;
+    item?: number;
   } = $props();
 
   const session = untrack(() => new Session(def, { speed: prefs.speed, detail: prefs.detail }));
   let ready = $state(false);
 
+  // A lesson list playing on this page; null once the reader leaves it.
+  let play = $state(untrack(() => (list && !embed ? new ListPlay(list, item) : null)));
+  let listBar: ListBar | undefined = $state();
+
+  /** Open the list's example for this page, once the list has loaded. */
+  async function openListItem(p: ListPlay): Promise<'moved' | void> {
+    const loaded = await p.load();
+    const it = p.item;
+    if (!loaded || !it) return;
+    // The list changed since its link was made, and this example is on another page.
+    if (it.viz !== def.id) {
+      carry.present = presenting;
+      navigate(itemHref(p.id, loaded, p.n), true);
+      return 'moved';
+    }
+    // The reader started something while the list loaded: leave it.
+    if (session.timeline.entries.length) return;
+    try {
+      session.load(validateExample(def, exampleOf(it)));
+    } catch (e) {
+      notify(e instanceof ExampleError ? e.message : 'That example could not be opened.', 'error');
+    }
+  }
+
   onMount(async () => {
     document.title = `${def.title} · ${SITE_NAME}`;
+    // Present mode carries on from the list's example before.
+    if (play && takePresent()) void present(true);
     if (lesson) setPref('tab', 'learn');
     if (practice) setPref('tab', 'practice');
+    const listing = play?.load();
     if (code) {
       try {
         session.load(validateExample(def, await decodeExample(code)));
@@ -66,6 +101,8 @@
           'error',
         );
       }
+    } else if (listing && play) {
+      if ((await openListItem(play)) === 'moved') return;
     } else if (def.opening) {
       const ex = def.examples.find((e) => e.id === def.opening);
       if (ex) session.fill(ex.ops);
@@ -134,6 +171,7 @@
     void session.version;
     void session.cursor;
     const settings = session.settings;
+    const inList = play ? { list: play.id, item: play.n } : {};
     if (!ready) return;
     clearTimeout(syncTimer);
     syncTimer = setTimeout(async () => {
@@ -143,7 +181,11 @@
       const ex = pristine ? undefined : await encodeExample(session.toExample());
       if (!alive) return;
       fullUrl = location.origin + vizHref(def.id, { ex });
-      history.replaceState(history.state, '', vizHref(def.id, { ex, embed, theme, autoplay }));
+      history.replaceState(
+        history.state,
+        '',
+        vizHref(def.id, { ex, embed, theme, autoplay, ...inList }),
+      );
     }, 400);
   });
 
@@ -191,7 +233,10 @@
     }
     queueMicrotask(fitStage);
   }
-  onDestroy(() => document.documentElement.classList.remove('presenting'));
+  // A lesson list moving to its next example keeps presenting (the next page takes it up).
+  onDestroy(() => {
+    if (!carry.present) document.documentElement.classList.remove('presenting');
+  });
 
   // The step on screen changed (or the work did): the ink goes, unless it is kept.
   $effect(() => {
@@ -201,7 +246,7 @@
   });
 
   // The keyboard shortcuts, from the one table in shortcuts.ts that the "?" list shows too.
-  const listed = $derived(shortcutsFor({ tabs: !embed, present: !embed }));
+  const listed = $derived(shortcutsFor({ tabs: !embed, present: !embed, list: !!play }));
   let help: ShortcutsDialog | undefined = $state();
 
   function changeSpeed(dir: -1 | 1) {
@@ -222,10 +267,16 @@
     'undo-ink': () => ink.undo(),
     'clear-ink': () => ink.clear(),
     escape: () => (ink.busy ? ink.setTool('off') : present(false)),
+    'list-previous': () => listBar?.move(-1),
+    'list-next': () => listBar?.move(1),
   };
 
   function onKey(e: KeyboardEvent) {
-    runShortcut(e, keyActions, (s) => s.needs !== 'present' || presenting);
+    runShortcut(
+      e,
+      keyActions,
+      (s) => (s.needs !== 'present' || presenting) && (s.needs !== 'list' || !!play),
+    );
   }
 
   // "Save picture": the step as drawn, named after the page and the step number on screen.
@@ -288,6 +339,9 @@
       {/if}
     </div>
     {#if !embed}<p class="blurb muted">{def.blurb}</p>{/if}
+    {#if play}
+      <ListBar bind:this={listBar} {play} {presenting} onleave={() => (play = null)} />
+    {/if}
   </header>
 
   <!-- DOM order is the phone order; on wide screens the side column sits next to the stage. -->

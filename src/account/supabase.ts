@@ -19,6 +19,7 @@ import {
 } from './backend';
 import { SESSION_KEY, type AccountConfig } from './config';
 import { toAccountError } from './errors';
+import { supabaseLessonLists } from './lists-supabase';
 
 /** A request that gets no answer in this long counts as unreachable. */
 const TIMEOUT_MS = 15_000;
@@ -269,5 +270,7 @@ export function createSupabaseBackend(
         if (error) throw toAccountError(error, status);
         return (data as SharedExample | null) ?? null;
       }),
+
+    ...supabaseLessonLists(client, userId),
   };
 }

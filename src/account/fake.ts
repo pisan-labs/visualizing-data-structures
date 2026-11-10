@@ -13,6 +13,7 @@ import {
   type AccountExample,
   type AccountUser,
 } from './backend';
+import { fakeLessonLists, type FakeListStore } from './lists-fake';
 
 interface StoredRow extends AccountExample {
   owner: string;
@@ -29,6 +30,8 @@ export interface FakeBackend extends AccountBackend {
   readonly googleReturns: string[];
   /** Every row of every account, for checks. */
   readonly rows: StoredRow[];
+  /** Every lesson list and item of every account, for checks. */
+  readonly lessonLists: FakeListStore;
 }
 
 export function createFakeBackend(): FakeBackend {
@@ -150,6 +153,8 @@ export function createFakeBackend(): FakeBackend {
           })
         : null;
     },
+
+    ...fakeLessonLists({ me: signedIn, check, user: () => user, examples: rows, now, newId }),
   };
 
   function check() {

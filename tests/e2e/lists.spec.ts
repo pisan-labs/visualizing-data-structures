@@ -9,7 +9,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { axeFindings, settled } from './helpers';
 import { itemRow, listRow } from './lists-mock';
-import { accountsOn, mockSupabase, row, SESSION, storedSession, type Mock } from './supabase-mock';
+import {
+  accountsOn,
+  HOST,
+  mockSupabase,
+  row,
+  SESSION,
+  storedSession,
+  type Mock,
+} from './supabase-mock';
 
 const bar = (page: Page) => page.getByRole('navigation', { name: 'Lesson list' });
 const stage = (page: Page) => page.locator('.stage > svg');
@@ -450,7 +458,7 @@ test.describe('building lists, signed in', () => {
 
   test('a full list and an unreachable server fail with a plain message', async ({ page }) => {
     const { rows } = classData();
-    const full = listRow({ title: 'Full' });
+    const full = listRow({ title: 'Full: a list with a long name that is wider than a phone' });
     const items = Array.from({ length: 100 }, (_, i) =>
       itemRow({ list_id: full.id, example_id: rows[0]!.id, position: i }),
     );
@@ -458,10 +466,20 @@ test.describe('building lists, signed in', () => {
     await page.goto('/stack-array/');
     await page.getByRole('tab', { name: 'Examples' }).click();
     await accountList(page).getByRole('button', { name: 'Add One push to a lesson list' }).click();
+    await expect(page.getByLabel('Lesson list', { exact: true })).toContainText('(100)');
+    // The picker's select is as wide as the longest name: it must not widen the page.
+    await fits(page);
     await page.getByRole('button', { name: 'Add', exact: true }).click();
     await expect(page.locator('.notice.error')).toHaveText(
       'A lesson list holds at most 100 examples. Remove some, or start another list.',
     );
+    // The server goes away: the next try says so, and the page carries on.
+    await page.route(`${HOST}/**`, (route) => route.abort('internetdisconnected'));
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(page.locator('.notice.error').last()).toContainText(
+      'Could not reach the account server.',
+    );
+    await expect(page.getByRole('form', { name: 'Add One push to a lesson list' })).toBeVisible();
   });
 });
 
@@ -515,8 +533,8 @@ test('screenshots', async ({ browser }, info) => {
       const card = page
         .getByRole('list', { name: 'Your lesson lists' })
         .getByRole('listitem')
-        .first();
-      await card.getByRole('button', { name: /^Edit / }).click();
+        .filter({ hasText: 'Week 3' });
+      await card.getByRole('button', { name: 'Edit Week 3' }).click();
       await expect(card.getByRole('list')).toBeVisible();
       await page.screenshot({
         path: path.join(dir!, `lists-${name}-${theme}.png`),
@@ -534,5 +552,5 @@ test('screenshots', async ({ browser }, info) => {
       await context.close();
     }
   }
-  expect(fs.readdirSync(dir!).length).toBeGreaterThanOrEqual(14);
+  expect(fs.readdirSync(dir!).filter((f) => /^(bar|present|lists|add)-/.test(f)).length).toBe(14);
 });

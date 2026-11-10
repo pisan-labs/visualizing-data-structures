@@ -92,12 +92,14 @@
 </form>
 
 <style>
+  /* A select is as wide as its longest list name: let it shrink instead of widening the page. */
   .add-to-list {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 6px;
     width: 100%;
+    min-width: 0;
     padding: 6px 0 2px;
   }
 
@@ -109,7 +111,9 @@
   select,
   input {
     flex: 1 1 180px;
+    width: 0;
     min-width: 0;
+    max-width: 100%;
     min-height: 32px;
   }
 

@@ -421,3 +421,5 @@
 2026-11-10 [code] Merged lesson lists: lists of saved examples from any pages (My lesson lists at /#lists), played in order with a list bar and < > keys, Present mode included; shared lists play signed out (/#list=<id>); migration 0003 (owner-only RLS, shared_lesson_list, reorder_lesson_list)
 
 2026-11-10 [code] Merged accounts slice 2: preferences and progress follow the account (merged per key, compare-and-swap writes), "New since your last visit" from src/releases.ts and dist/releases.json, the email opt-in, Delete my StepWise data (delete_my_data), magic links through the sign-in-link service (Turnstile only on a check); migration 0002
+
+2026-11-10 [note] Plabs applied 0002 and 0003 to app_stepwise (admin run 45; check-schema run 46 passed); the opt-in email sender is approved but waits for self-service account deletion. A test magic link went to Yusuf at 21:16 Lisbon

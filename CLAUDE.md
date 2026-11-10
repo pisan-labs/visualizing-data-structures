@@ -42,6 +42,15 @@ everything on every push; Netlify builds and deploys `main` (`netlify.toml`).
 - `src/render/`: `Scene` of shapes with stable ids; `interpolate.ts` blends two scenes by id.
 - `src/ui/`: Svelte 5 components. `session.svelte.ts` holds playback state. The timeline mutates
   in place, so read lists through `session.entries` (a fresh copy), never a cached array.
+- `src/account/`: optional accounts (the shared HintWise Supabase project, schema
+  `app_stepwise`; SQL in `supabase/migrations/`, never edited once applied). Off unless
+  `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are set (production sets them in
+  `netlify.toml`); the client loads on demand. Tests mock Supabase; never call the real host.
+- `src/pwa/`: the offline app (manifest, a hand-written service worker written into `dist/` by
+  `scripts/prerender.mjs`; kill switch `scripts/sw-kill.js`). Playwright blocks service workers
+  for every spec except `tests/e2e/offline.spec.ts`.
+- `src/progress/`: progress kept in the browser (lessons, checks, practice), with a merge for
+  account sync.
 - `src/viz/<id>/`: one folder per visualization: `model.ts` (state, operations, pseudocode),
   `view.ts` (step to scene), `index.ts` (the `VizDef`), `explain.md` (concept page),
   `examples/*.json` (curated examples), `code/` (Python, Java, C++), tests. Pages are found

@@ -1,4 +1,5 @@
 import type { Page, Request, Route } from '@playwright/test';
+import { answerLists, type ItemRow, type ListRow } from './lists-mock';
 
 /**
  * A pretend Supabase for the accounts e2e tests. The site is pointed at HOST, a name that can
@@ -49,6 +50,9 @@ export interface MockOptions {
   /** POST /auth/v1/otp answers 429 with this message. */
   rateLimit?: string;
   rows?: Row[];
+  /** Lesson lists and their items (./lists-mock.ts). */
+  lists?: ListRow[];
+  items?: ItemRow[];
 }
 
 export interface Mock {
@@ -57,6 +61,8 @@ export interface Mock {
   calls: { method: string; url: URL; body: unknown }[];
   /** Requests for the Supabase chunk (assets/supabase-*.js). */
   chunks: string[];
+  lists: ListRow[];
+  items: ItemRow[];
 }
 
 let ids = 0;
@@ -96,7 +102,13 @@ const pick = (r: Row, cols: string[]) =>
 
 /** Answer the Supabase auth and REST endpoints the site uses, from an in-memory table. */
 export async function mockSupabase(page: Page, options: MockOptions = {}): Promise<Mock> {
-  const mock: Mock = { rows: options.rows ?? [], calls: [], chunks: [] };
+  const mock: Mock = {
+    rows: options.rows ?? [],
+    calls: [],
+    chunks: [],
+    lists: options.lists ?? [],
+    items: options.items ?? [],
+  };
   page.on('request', (req: Request) => {
     if (/\/assets\/supabase-[\w-]+\.js$/.test(req.url())) mock.chunks.push(req.url());
   });
@@ -132,6 +144,8 @@ export async function mockSupabase(page: Page, options: MockOptions = {}): Promi
     const path = url.pathname;
     const one = (req.headers()['accept'] ?? '').includes('vnd.pgrst.object');
     const eq = (k: string) => url.searchParams.get(k)?.replace(/^eq\./, '');
+    const lists = answerLists(mock, req, url, body, json);
+    if (lists) return lists;
 
     switch (path) {
       case '/auth/v1/user':

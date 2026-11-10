@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { untrack } from 'svelte';
   import { account, openShared, startAccounts } from '../account/account.svelte';
   import { asAccountError, exampleOf } from '../account/backend';
   import { encodeExample } from '../engine/example';
   import type { AnyVizDef, SavedExample } from '../engine/types';
   import { REPO_URL, SITE_NAME } from '../site';
+  import ListsRoute from '../lists/ListsRoute.svelte';
   import { loadViz } from '../viz/registry';
   import AccountMenu from './AccountMenu.svelte';
   import AppStatus from './AppStatus.svelte';
@@ -23,6 +25,13 @@
   if (initial.kind === 'legacy') location.replace(initial.target);
 
   let route = $state(initial);
+  // The page's path, so Back and Forward between two pages of a lesson list (which change the
+  // path, and so fire no hashchange) are followed too.
+  let path = location.pathname;
+  function follow(to: URL) {
+    path = to.pathname;
+    route = parseLocation(to.pathname, to.hash);
+  }
   const embed = $derived(route.kind === 'viz' && route.embed);
 
   // undefined while loading, null when there is no such page.
@@ -32,6 +41,8 @@
   $effect(() => {
     const r = route;
     if (r.kind !== 'viz') return;
+    // The same page with other state in the address keeps its loaded code.
+    if (untrack(() => viz?.id) === r.id) return;
     let live = true;
     viz = undefined;
     unavailable = false;
@@ -116,9 +127,9 @@
 <!-- Read the address the navigation went to, not the current one: a page that is being replaced
      could still rewrite it. -->
 <svelte:window
-  onhashchange={(e) => {
-    const to = new URL(e.newURL);
-    route = parseLocation(to.pathname, to.hash);
+  onhashchange={(e) => follow(new URL(e.newURL))}
+  onpopstate={() => {
+    if (location.pathname !== path) follow(new URL(location.href));
   }}
 />
 
@@ -157,6 +168,8 @@
 <main id="main" tabindex="-1">
   {#if route.kind === 'catalog'}
     <Catalog />
+  {:else if route.kind === 'lists' || route.kind === 'list'}
+    {#key route.key}<ListsRoute {route} />{/key}
   {:else if route.kind === 'viz'}
     {#if unavailable}
       <PageUnavailable />
@@ -176,7 +189,7 @@
       {/if}
     {:else if viz && savedCode === undefined}
       <p class="loading muted" aria-live="polite">Opening the saved example…</p>
-    {:else if viz}
+    {:else if viz && viz.id === route.id}
       {#key route.key}
         <VizPage
           def={viz}
@@ -187,6 +200,8 @@
           autoplay={route.autoplay}
           practice={route.practice}
           practiceCount={route.practiceCount}
+          list={route.list}
+          item={route.item}
         />
       {/key}
     {:else if viz === null}

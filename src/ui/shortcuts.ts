@@ -15,10 +15,15 @@ export type ShortcutId =
   | 'pen'
   | 'undo-ink'
   | 'clear-ink'
-  | 'escape';
+  | 'escape'
+  | 'list-previous'
+  | 'list-next';
 
-/** Where a shortcut exists: on every page, on a page with the tab row, or in Present mode. */
-export type ShortcutNeeds = 'tabs' | 'present';
+/**
+ * Where a shortcut exists: on every page, on a page with the tab row, in Present mode, or while
+ * a lesson list plays.
+ */
+export type ShortcutNeeds = 'tabs' | 'present' | 'list';
 
 export interface Shortcut {
   id: ShortcutId;
@@ -28,7 +33,7 @@ export interface Shortcut {
   show: readonly string[];
   /** What it does, as the list says it. */
   does: string;
-  group: 'Playback' | 'Page' | 'Present mode';
+  group: 'Playback' | 'Page' | 'Present mode' | 'Lesson list';
   needs?: ShortcutNeeds;
   /** Works while typing in a field and with Ctrl, Alt or Cmd held (Escape). */
   anywhere?: boolean;
@@ -119,6 +124,23 @@ export const SHORTCUTS: readonly Shortcut[] = [
     group: 'Present mode',
     needs: 'present',
     anywhere: true,
+  },
+  // Not Page Up and Page Down, which presentation clickers send to step through the example.
+  {
+    id: 'list-previous',
+    keys: ['<'],
+    show: ['<'],
+    does: 'Previous example in the lesson list',
+    group: 'Lesson list',
+    needs: 'list',
+  },
+  {
+    id: 'list-next',
+    keys: ['>'],
+    show: ['>'],
+    does: 'Next example in the lesson list',
+    group: 'Lesson list',
+    needs: 'list',
   },
 ];
 

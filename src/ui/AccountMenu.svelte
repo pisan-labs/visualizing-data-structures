@@ -7,6 +7,7 @@
     signOut,
   } from '../account/account.svelte';
   import { asAccountError, LINK_WAIT_MS, secondsLeft } from '../account/backend';
+  import ListsMenuEntry from '../lists/ListsMenuEntry.svelte';
 
   /**
    * "Sign in" in the site header, and the account menu once signed in. App.svelte shows it only
@@ -84,6 +85,7 @@
     <summary class="btn small">Account</summary>
     <div class="menu card">
       <p>Signed in as <strong class="email">{account.user.email ?? 'you'}</strong></p>
+      <ListsMenuEntry />
       <button class="btn small" onclick={signOut}>Sign out</button>
     </div>
   </details>
@@ -147,10 +149,10 @@
       </form>
 
       <p class="privacy small muted">
-        Your account keeps your email address, a display name and the examples you save. With
-        Google, it also keeps what Google sends: your name, picture link and Google account id. One
-        account works on every HintWise app and is stored in the US. Nothing on this site tracks
-        you.
+        Your account keeps your email address, a display name, the examples you save and your lesson
+        lists. With Google, it also keeps what Google sends: your name, picture link and Google
+        account id. One account works on every HintWise app and is stored in the US. Nothing on this
+        site tracks you.
       </p>
     </div>
   </dialog>

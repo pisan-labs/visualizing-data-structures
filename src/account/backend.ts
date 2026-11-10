@@ -6,6 +6,8 @@
  * show it and carry on: an account that cannot be reached never stops the rest of the page.
  */
 
+import type { LessonListBackend } from './lists';
+
 export interface AccountUser {
   id: string;
   email: string | null;
@@ -51,7 +53,8 @@ export type AuthReturn =
   | { kind: 'code'; code: string; flowId?: string }
   | { kind: 'error'; code: string; description: string };
 
-export interface AccountBackend {
+/** Lesson lists (./lists.ts) are part of the same service. */
+export interface AccountBackend extends LessonListBackend {
   /** Email a sign-in link that brings the reader back to `returnTo`. */
   sendSignInLink(email: string, returnTo: string): Promise<void>;
   /** Leave for Google's sign-in page, which comes back to `returnTo`. */

@@ -1,7 +1,8 @@
 // After `vite build`: write dist/<id>/index.html for every visualization, so each page has its
 // own title, description and link preview, plus a sitemap, robots.txt, the catalog thumbnails
-// (previews.json, previews/<id>.json), the web app manifest and the service worker (sw.js). The
-// app itself is the same on every page; it reads the page's path to decide what to show.
+// (previews.json, previews/<id>.json), the releases (releases.json), the web app manifest and the
+// service worker (sw.js). The app itself is the same on every page; it reads the page's path to
+// decide what to show.
 import fs from 'node:fs';
 import path from 'node:path';
 import { createServer } from 'vite';
@@ -71,6 +72,20 @@ try {
   console.log(
     `prerendered ${vizzes.length} visualization pages, ${Object.keys(previews).length} previews`,
   );
+
+  // The releases (src/releases.ts), for the platform's email about new pages: each page with its
+  // title and address. A page id with no page fails the build.
+  const { releases } = await server.ssrLoadModule('/src/releases.ts');
+  const byId = new Map(vizzes.map((d) => [d.id, d]));
+  const releaseList = releases.map((r) => ({
+    ...r,
+    pages: r.pages.map((id) => {
+      const def = byId.get(id);
+      if (!def) throw new Error(`src/releases.ts: no page "${id}" (release ${r.id})`);
+      return { id, title: def.title, url: `${SITE_URL}/${id}/` };
+    }),
+  }));
+  fs.writeFileSync(path.join(dist, 'releases.json'), `${JSON.stringify(releaseList, null, 2)}\n`);
 
   // The installable app: the manifest, then the service worker, with the app shell it keeps on
   // install and every file a reader can keep for offline use, each with its download size

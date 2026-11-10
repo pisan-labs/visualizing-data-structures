@@ -70,8 +70,10 @@ test('three pages at most, the latest first, and Clear removes them', async ({ p
     'AVL tree',
     'Deterministic finite automaton (DFA)',
   ]);
-  // Going back to a page moves it to the front.
+  // Going back to a page moves it to the front. Wait for it to load: a page left before it has
+  // loaded is not recorded, by design.
   await page.goto('/dfa/');
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   await page.goto('/');
   await expect(titles.first()).toHaveText('Deterministic finite automaton (DFA)');
   await expect(titles).toHaveCount(3);

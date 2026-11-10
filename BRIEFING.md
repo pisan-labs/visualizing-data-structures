@@ -40,9 +40,12 @@ the browser, exported as files, and embedded in Canvas.
   `https://stepwise.hintwise.org` (Netlify site `stepwise-pisan-labs`); nothing is published until the
   first deploy.
 
+- **Optional accounts (2026-11-10, Yusuf):** sign in with Google or a magic link (Supabase) to
+  save examples on the server, sync preferences and hear about new pages. Signing in is never
+  required; signed out, the site works as before and sends nothing. `PLAN.md` section 18.
+
 ## Non-goals (v1)
 
-- Accounts or server-side storage
 - LTI grade passback
 - Copying Galles/Lucet code
 - Old browsers

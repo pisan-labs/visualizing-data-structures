@@ -853,6 +853,45 @@ The definition of done and the wave 7 brief apply unchanged.
 Four reviewers, the wave 7 review brief: structures (32 pages), sorting/recursion/DP/foundations
 (33), strings/graphs/flow (33), ranges/geometry/hard problems/automata (31).
 
+## 18. Optional accounts: sign in, saved examples on the server (planned 2026-11-10)
+
+Yusuf (10 Nov): an optional Google or magic-link sign-in that saves preferences, tells people
+about new pages, and saves examples on the server so they can be loaded in class. Possibly
+Supabase.
+
+**Choice: Supabase** (Auth with magic links and Google, Postgres with row-level security, a JS
+client). Alternatives weighed: Firebase (no pausing, but a larger SDK and a document store),
+Netlify Functions or Cloudflare Workers with our own auth (more code to own, and magic links
+still need a mail provider). Supabase's free tier pauses a project after a week with no requests;
+the site must keep working when it does.
+
+**Rules**
+- Signing in is optional. Signed out, or with no Supabase configured, every page works as now,
+  the account UI is hidden, and nothing is sent anywhere (no analytics, no tracking).
+- The Supabase client loads on demand (dynamic import), only when someone opens Sign in or
+  already has a session, so the main bundle does not grow.
+- Configured at build time by `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (both public).
+  The service-role key never enters the repository or the client.
+- Data is private by default (row-level security: each user sees only their own rows); an
+  example marked shared can be read by anyone with its link.
+- No sign-in inside embeds (Google refuses sign-in in iframes; embeds stay read-only).
+
+**Slices**
+1. *Vertical slice:* sign in (magic link and Google), save, list, load, rename and delete this
+   page's examples in the account; copy the browser's saved examples into it; share an example
+   by a short link (`#saved=<id>`) that loads without signing in. SQL migration with RLS, setup
+   notes for Yusuf, unit tests with a fake backend, e2e with mocked Supabase endpoints.
+2. Preferences sync (theme, speed, detail, code view, tab); "New since your last visit" from a
+   dated list of releases (works signed out too); an opt-in for email about new pages (sending
+   waits on a mail provider); delete my account.
+3. Lesson lists: an ordered set of saved examples across pages, played in Present mode, with a
+   link for a class.
+
+**Owner actions (Yusuf)**: create the Supabase project; set its Site URL and redirect URLs; run the
+migration SQL; add Google as a provider (OAuth client in Google Cloud); set up SMTP for magic
+links; set the two variables in Netlify. Until the variables are set, production shows no
+account UI, so merging and deploying the code is safe.
+
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 
 | Page | Controls |

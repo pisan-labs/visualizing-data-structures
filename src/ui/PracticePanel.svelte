@@ -55,8 +55,11 @@
   }
 
   // A worksheet to print: this set's questions, 5 or 10 of them, with an answer key.
-  // svelte-ignore state_referenced_locally
-  let sheetCount = $state(count === 10 ? 10 : 5);
+  let sheetCount = $state(5);
+  // An assignment of 10 questions prints 10 unless the reader picks otherwise.
+  $effect(() => {
+    if (count === 5 || count === 10) sheetCount = count;
+  });
   let sheetKey = $state(true);
   let printing = $state<{ count: number; key: boolean } | null>(null);
 

@@ -105,6 +105,9 @@ test('a five-question worksheet is the start of the same set', async ({ page }) 
   await page.goto('/bst/#practice=777&n=10');
   await expect(page.locator('.question')).toHaveCount(10);
   const prompts = await page.locator('.question .prompt').allTextContents();
+  // A 10-question assignment offers a 10-question sheet first.
+  await page.locator('details.sheet summary').click();
+  await expect(page.getByRole('radio', { name: '10', exact: true })).toBeChecked();
   await printSheet(page, 5);
   await page.emulateMedia({ media: 'print' });
   await expect(page.locator('.ws-q .ws-prompt')).toHaveText(prompts.slice(0, 5));

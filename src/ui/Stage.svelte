@@ -6,6 +6,7 @@
   import type { Scene } from '../render/scene';
   import { ZOOM_BUTTONS, ZOOM_STRIP } from '../render/stage';
   import Icon from './Icon.svelte';
+  import { readPicture, type Picture } from './picture';
   import Shapes from './Shapes.svelte';
   import { reducedMotion } from './state.svelte';
 
@@ -104,6 +105,11 @@
     if (!e.ctrlKey && !e.metaKey) return;
     e.preventDefault();
     zoom = clampZoom(zoom * Math.exp(-e.deltaY * 0.01));
+  }
+
+  /** The step as drawn, whole (whatever the zoom), for "Save picture". */
+  export function picture(): Picture | null {
+    return svg ? readPicture(svg, shown.bounds, scene.label) : null;
   }
 
   const ratio = $derived(`${scene.bounds.w} / ${scene.bounds.h}`);

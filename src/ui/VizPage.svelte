@@ -2,6 +2,7 @@
   import { onDestroy, onMount, untrack } from 'svelte';
   import { decodeExample, encodeExample, ExampleError, validateExample } from '../engine/example';
   import type { AnyVizDef, StageSize } from '../engine/types';
+  import { pictureName } from '../render/picture';
   import { REPO_URL, SITE_NAME } from '../site';
   import CodePanel from './CodePanel.svelte';
   import CompareMenu from './CompareMenu.svelte';
@@ -11,8 +12,10 @@
   import LearnPanel from './LearnPanel.svelte';
   import Narration from './Narration.svelte';
   import OpControls from './OpControls.svelte';
+  import { download, pngOf } from './picture';
   import PracticePanel from './PracticePanel.svelte';
   import { vizHref } from './route';
+  import SaveMenu from './SaveMenu.svelte';
   import { Session } from './session.svelte';
   import SettingsPanel from './SettingsPanel.svelte';
   import Stage from './Stage.svelte';
@@ -216,6 +219,28 @@
       }
     }
   }
+
+  // "Save picture": the step as drawn, named after the page and the step number on screen.
+  let stage: Stage | undefined = $state();
+  const stepNumber = $derived.by(() => {
+    const visible = session.timeline.visibleIndices(session.detail);
+    return Math.max(1, visible.filter((v) => v <= session.cursor).length);
+  });
+  async function savePicture(format: 'svg' | 'png') {
+    const picture = stage?.picture();
+    if (!picture) return;
+    const name = pictureName(def.id, stepNumber, format);
+    try {
+      const blob =
+        format === 'svg'
+          ? new Blob([picture.svg], { type: 'image/svg+xml' })
+          : await pngOf(picture, 2);
+      download(blob, name);
+      notify(`Saving ${name}.`);
+    } catch {
+      notify('This browser could not make the picture.', 'error');
+    }
+  }
 </script>
 
 <svelte:window onkeydown={onKey} />
@@ -230,6 +255,7 @@
       {#if !embed}
         <div class="actions">
           <CompareMenu {session} />
+          <SaveMenu save={savePicture} />
           <button
             class="btn small present"
             onclick={() => present(!presenting)}
@@ -258,7 +284,7 @@
     <OpControls {session} />
     {#if !embed && !wide}<SettingsPanel {session} />{/if}
     <div id="stage-anchor"></div>
-    <Stage {scene} {duration} bind:room />
+    <Stage bind:this={stage} {scene} {duration} bind:room />
     <Transport {session} scrub={session} />
   </div>
 

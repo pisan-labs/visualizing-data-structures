@@ -391,3 +391,5 @@
 2026-11-10 [decision] Yusuf: optional sign-in (Google or magic link) to save examples on the server, sync preferences and hear about new pages. Supabase; never required, no tracking. PLAN.md section 18; BRIEFING updated (accounts no longer a non-goal)
 
 2026-11-10 [note] Deployed 12:20 Lisbon on Yusuf's "deploy": main 4c1fc1c..99303a0 (the review follow-ups). Live bundle matches the local build; all 203 pages return 200
+
+2026-11-10 [plan] Yusuf accepted the usability ideas except follow-along mode: pen and pointer in Present mode, picture export, shortcuts overlay, practice worksheets, progress, pick up where you left off, offline app, lesson lists. PLAN.md section 19

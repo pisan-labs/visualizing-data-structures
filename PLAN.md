@@ -892,6 +892,30 @@ migration SQL; add Google as a provider (OAuth client in Google Cloud); set up S
 links; set the two variables in Netlify. Until the variables are set, production shows no
 account UI, so merging and deploying the code is safe.
 
+## 19. Usability (planned 2026-11-10)
+
+Yusuf accepted these (not follow-along mode):
+
+1. **Pen and pointer in Present mode:** a laser-style pointer and freehand ink over the stage,
+   cleared when the step changes unless kept; mouse, touch and stylus.
+2. **Save the picture** as SVG or PNG (the current step, in the current theme) for slides and
+   handouts.
+3. **Keyboard shortcuts overlay** on "?", built from the same table the key handlers use.
+4. **Printable practice worksheets:** a seeded set (the same seed as the assignment link) with
+   pictures and blanks, and an answer key on its own page.
+5. **Progress:** lessons read, concept checks answered and practice scores, kept in the browser
+   (synced to the account in section 18, slice 2), shown per page and per pathway in the catalog.
+6. **Pick up where you left off:** the home page offers the last few pages at the step and
+   example the reader left.
+7. **Works offline:** an installable app with a service worker we write ourselves; pages load
+   from the network first and from the cache when offline. A self-unregistering `sw.js` is the
+   kill switch.
+8. **Lesson lists** (section 18, slice 3): after accounts slice 1 lands.
+
+Built by three agents in parallel with the accounts slice, split by area so they do not edit the
+same files: stage and Present mode (1 to 3), practice, progress and the home page (4 to 6), and
+the offline app (7).
+
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 
 | Page | Controls |

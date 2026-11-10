@@ -9,15 +9,20 @@
   import BigOPanel from './BigOPanel.svelte';
   import ExamplesPanel from './ExamplesPanel.svelte';
   import HistoryPanel from './HistoryPanel.svelte';
+  import { Ink } from './ink.svelte';
   import LearnPanel from './LearnPanel.svelte';
   import Narration from './Narration.svelte';
   import OpControls from './OpControls.svelte';
   import { download, pngOf } from './picture';
+  import PointerDot from './PointerDot.svelte';
   import PracticePanel from './PracticePanel.svelte';
+  import PresentTools from './PresentTools.svelte';
   import { vizHref } from './route';
   import SaveMenu from './SaveMenu.svelte';
   import { Session } from './session.svelte';
   import SettingsPanel from './SettingsPanel.svelte';
+  import { nextSpeed, runShortcut, shortcutsFor, type KeyActions } from './shortcuts';
+  import ShortcutsDialog from './ShortcutsDialog.svelte';
   import Stage from './Stage.svelte';
   import { notify, prefs, setPref, type Tab } from './state.svelte';
   import TracePanel from './TracePanel.svelte';
@@ -158,19 +163,24 @@
   ]);
 
   function onTabKey(e: KeyboardEvent) {
-    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-    e.preventDefault();
-    e.stopPropagation();
-    const i = tabs.findIndex((t) => t.id === prefs.tab);
-    const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]!;
-    setPref('tab', next.id);
-    document.getElementById(`tab-${next.id}`)?.focus();
+    runShortcut(e, {
+      tabs: () => {
+        e.stopPropagation();
+        const i = tabs.findIndex((t) => t.id === prefs.tab);
+        const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]!;
+        setPref('tab', next.id);
+        document.getElementById(`tab-${next.id}`)?.focus();
+      },
+    });
   }
 
   // Presentation mode for lectures: bigger text, no site chrome or tabs, full screen.
   let presenting = $state(false);
+  // Present mode's pointer and pen. Ink is never part of the scene or the saved example.
+  const ink = new Ink();
   async function present(on: boolean) {
     presenting = on;
+    if (!on) ink.reset();
     document.documentElement.classList.toggle('presenting', on);
     try {
       if (on && !document.fullscreenElement) await document.documentElement.requestFullscreen();
@@ -182,42 +192,39 @@
   }
   onDestroy(() => document.documentElement.classList.remove('presenting'));
 
+  // The step on screen changed (or the work did): the ink goes, unless it is kept.
+  $effect(() => {
+    void session.cursor;
+    void session.version;
+    untrack(() => ink.stepChanged());
+  });
+
+  // The keyboard shortcuts, from the one table in shortcuts.ts that the "?" list shows too.
+  const listed = $derived(shortcutsFor({ tabs: !embed, present: !embed }));
+  let help: ShortcutsDialog | undefined = $state();
+
+  function changeSpeed(dir: -1 | 1) {
+    const next = nextSpeed(session.speed, dir);
+    session.setSpeed(next);
+    setPref('speed', next);
+  }
+
+  const keyActions: KeyActions = {
+    play: () => session.toggle(),
+    forward: () => session.stepForward(),
+    back: () => session.stepBack(),
+    slower: () => changeSpeed(-1),
+    faster: () => changeSpeed(1),
+    help: () => help?.show(),
+    pointer: () => ink.toggle('pointer'),
+    pen: () => ink.toggle('pen'),
+    'undo-ink': () => ink.undo(),
+    'clear-ink': () => ink.clear(),
+    escape: () => (ink.busy ? ink.setTool('off') : present(false)),
+  };
+
   function onKey(e: KeyboardEvent) {
-    if (e.key === 'Escape' && presenting) {
-      present(false);
-      return;
-    }
-    const t = e.target as HTMLElement;
-    if (e.altKey || e.ctrlKey || e.metaKey) return;
-    if (t.closest('input, textarea, select, [contenteditable="true"], [role="tab"]')) return;
-    switch (e.key) {
-      case ' ':
-        if (t.closest('button, a, summary')) return;
-        e.preventDefault();
-        session.toggle();
-        break;
-      case 'ArrowRight':
-      case 'PageDown':
-        e.preventDefault();
-        session.stepForward();
-        break;
-      case 'ArrowLeft':
-      case 'PageUp':
-        e.preventDefault();
-        session.stepBack();
-        break;
-      case '-':
-      case '+':
-      case '=': {
-        const speeds = [0.25, 0.5, 1, 1.5, 2, 4];
-        const i = speeds.indexOf(session.speed);
-        const next =
-          speeds[Math.max(0, Math.min(speeds.length - 1, i + (e.key === '-' ? -1 : 1)))]!;
-        session.setSpeed(next);
-        setPref('speed', next);
-        break;
-      }
-    }
+    runShortcut(e, keyActions, (s) => s.needs !== 'present' || presenting);
   }
 
   // "Save picture": the step as drawn, named after the page and the step number on screen.
@@ -254,6 +261,7 @@
       <h1>{def.title}</h1>
       {#if !embed}
         <div class="actions">
+          {#if presenting}<PresentTools {ink} />{/if}
           <CompareMenu {session} />
           <SaveMenu save={savePicture} />
           <button
@@ -284,8 +292,18 @@
     <OpControls {session} />
     {#if !embed && !wide}<SettingsPanel {session} />{/if}
     <div id="stage-anchor"></div>
-    <Stage bind:this={stage} {scene} {duration} bind:room />
-    <Transport {session} scrub={session} />
+    <Stage bind:this={stage} {scene} {duration} bind:room ink={presenting ? ink : undefined} />
+    <Transport {session} scrub={session}>
+      {#if !embed}
+        <button
+          type="button"
+          class="icon-btn keys-btn"
+          aria-label="Keyboard shortcuts"
+          title="Keyboard shortcuts (?)"
+          onclick={() => help?.show()}>?</button
+        >
+      {/if}
+    </Transport>
   </div>
 
   <div class="side">
@@ -343,6 +361,9 @@
   {/if}
 </div>
 
+<ShortcutsDialog bind:this={help} shortcuts={listed} />
+{#if presenting && ink.tool === 'pointer'}<PointerDot />{/if}
+
 <style>
   .viz {
     display: grid;
@@ -379,8 +400,22 @@
 
   .actions {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 8px;
+  }
+
+  /* The shortcuts button closes the playback bar. Touch screens have no keys to list. */
+  .keys-btn {
+    margin-left: auto;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .keys-btn {
+      display: none;
+    }
   }
 
   /* On a phone the back link has a line of its own above the title. */

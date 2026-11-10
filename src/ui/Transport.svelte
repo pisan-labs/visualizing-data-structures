@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Snippet } from 'svelte';
   import type { Level } from '../engine/types';
   import Icon from './Icon.svelte';
   import type { Playback } from './pair.svelte';
@@ -6,8 +7,9 @@
   import { setPref } from './state.svelte';
 
   // `session` plays (one page, or a compare page's pair); `scrub`, when given, adds a timeline
-  // slider for that one session.
-  let { session, scrub }: { session: Playback; scrub?: Session } = $props();
+  // slider for that one session; `children` go at the end of the bar (the shortcuts button).
+  let { session, scrub, children }: { session: Playback; scrub?: Session; children?: Snippet } =
+    $props();
 
   const visible = $derived(scrub ? scrub.timeline.visibleIndices(scrub.detail) : []);
   const pos = $derived.by(() => {
@@ -116,6 +118,7 @@
       </select>
     </label>
   </div>
+  {@render children?.()}
 </div>
 
 <style>

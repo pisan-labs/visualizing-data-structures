@@ -1,7 +1,7 @@
 // After `vite build`: write dist/<id>/index.html for every visualization, so each page has its
 // own title, description and link preview, plus a sitemap, robots.txt, the catalog thumbnails
-// (previews.json, previews/<id>.json) and the web app manifest. The app itself is the same on
-// every page; it reads the page's path to decide what to show.
+// (previews.json, previews/<id>.json), the web app manifest and the service worker (sw.js). The
+// app itself is the same on every page; it reads the page's path to decide what to show.
 import fs from 'node:fs';
 import path from 'node:path';
 import { createServer } from 'vite';
@@ -72,11 +72,40 @@ try {
     `prerendered ${vizzes.length} visualization pages, ${Object.keys(previews).length} previews`,
   );
 
-  // The installable app's manifest.
+  // The installable app: the manifest, then the service worker with every file a reader needs
+  // to open any page offline (src/pwa/precache.ts). Each page is tagged with the build's version
+  // so it can tell whether a waiting worker is newer than itself.
   const { makeManifest } = await server.ssrLoadModule('/src/pwa/manifest.ts');
   fs.writeFileSync(
     path.join(dist, 'manifest.webmanifest'),
     `${JSON.stringify(makeManifest(), null, 2)}\n`,
+  );
+  const { precacheList, buildVersion, serviceWorkerSource, stampBuild } =
+    await server.ssrLoadModule('/src/pwa/precache.ts');
+  const files = fs
+    .readdirSync(dist, { recursive: true })
+    .map((f) => String(f).split(path.sep).join('/'))
+    .filter((f) => fs.statSync(path.join(dist, f)).isFile());
+  const entries = precacheList(
+    files,
+    vizzes.map((d) => d.id),
+  );
+  const worker = fs.readFileSync(path.resolve('src/pwa/sw.js'), 'utf8');
+  const version = buildVersion(worker, entries, (f) => fs.readFileSync(path.join(dist, f)));
+  for (const { path: f } of entries.filter((e) => e.path.endsWith('.html'))) {
+    const file = path.join(dist, f);
+    fs.writeFileSync(file, stampBuild(fs.readFileSync(file, 'utf8'), version));
+  }
+  const bytes = entries.reduce((n, e) => n + fs.statSync(path.join(dist, e.path)).size, 0);
+  // A committed public/sw.js (the kill switch, scripts/sw-kill.js; see README) wins.
+  if (fs.existsSync(path.resolve('public/sw.js'))) {
+    console.warn('public/sw.js exists, so dist/sw.js is that file (the kill switch?)');
+  } else {
+    const urls = entries.map((e) => e.url);
+    fs.writeFileSync(path.join(dist, 'sw.js'), serviceWorkerSource(worker, version, urls));
+  }
+  console.log(
+    `service worker ${version}: precaches ${entries.length} files, ${(bytes / 1e6).toFixed(1)} MB`,
   );
 } finally {
   await server.close();

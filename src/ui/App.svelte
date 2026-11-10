@@ -2,6 +2,7 @@
   import type { AnyVizDef } from '../engine/types';
   import { REPO_URL, SITE_NAME } from '../site';
   import { loadViz } from '../viz/registry';
+  import AppStatus from './AppStatus.svelte';
   import Catalog from './Catalog.svelte';
   import ComparePage from './ComparePage.svelte';
   import Logo from './Logo.svelte';
@@ -166,6 +167,8 @@
     <div class="notice" class:error={n.tone === 'error'}>{n.text}</div>
   {/each}
 </div>
+
+<AppStatus {embed} />
 
 <style>
   .skip {

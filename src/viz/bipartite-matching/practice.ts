@@ -1,7 +1,7 @@
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, Settings, VizDef } from '../../engine/types';
 import { shuffle } from '../_graph/presets';
-import { chainBipartite, loadCall, randomBipartite } from './graphs';
+import { ladders, loadCall, perfectBipartite, randomBipartite } from './graphs';
 import {
   defaults,
   pathWords,
@@ -97,15 +97,25 @@ export function matchingPractice(def: () => Def): PracticeKind[] {
       title: 'How many phases?',
       make(rng) {
         const settings: Settings = { ...defaults, method: 'hopcroft-karp' };
-        const text =
-          rng.int(0, 3) === 0
-            ? chainBipartite(rng.int(6, 10))
-            : randomBipartite(rng, rng.int(8, 10), 0.3);
-        const setup = [loadCall(text)];
-        const { r } = runOn(setup, settings);
+        // Aim at 1, 2 or 3 phases first. Random graphs mostly need 1 or 2; two ladders of
+        // different lengths need 3.
+        const want = rng.int(1, 3);
+        let setup: OpCall[] = [];
+        let r: BmRun | undefined;
+        for (let tries = 0; tries < 60 && r?.phase !== want; tries++) {
+          const text =
+            want === 3
+              ? ladders(rng, [1, 2], rng.int(0, 2))
+              : want === 2 && rng.int(0, 1)
+                ? perfectBipartite(rng, rng.int(8, 10))
+                : randomBipartite(rng, rng.int(8, 10), want === 1 ? 0.3 : 0.4);
+          setup = [loadCall(text)];
+          r = runOn(setup, settings).r;
+        }
+        r = r!;
         return {
           prompt:
-            'Run Hopcroft-Karp on this graph. How many phases find at least one augmenting path?',
+            'Run Hopcroft-Karp on this graph, with left vertices and neighbours in name order. How many phases find at least one augmenting path?',
           setup,
           settings,
           answer: { kind: 'number', value: r.phase },

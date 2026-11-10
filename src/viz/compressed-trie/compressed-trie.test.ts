@@ -5,7 +5,8 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall } from '../../engine/types';
 import { compressedTrie } from '.';
 import { heightOf, nodeCount, wordsOf, type RadixState } from './model';
-import { mergeText, NO_MERGE, splitText } from './practice';
+import { FAMILIES, LONERS } from '../_trie/words';
+import { mergeText, MORE_WORDS, NO_MERGE, splitText } from './practice';
 
 // ---------------------------------------------------------------------------------------------
 // Reference: a set of words, and the compressed trie it must give, built straight from the set.
@@ -305,6 +306,37 @@ describe('compressed trie practice', () => {
           );
         }
       }
+    }
+  });
+
+  // A learner should not be able to guess. Over 300 seeds "No edges merge" is the answer in
+  // 10% to 40% of the delete questions and no answer comes up in more than half; each answer
+  // matches the canonical trie and appears once among the options.
+  it('makes "no edges merge" a minority answer', () => {
+    const kind = kinds.find((k) => k.id === 'delete-merge')!;
+    const counts = new Map<string, number>();
+    for (let seed = 1; seed <= 300; seed++) {
+      const q = kind.make(makeRng(seed));
+      if (q.answer.kind !== 'choice') throw new Error('delete-merge is a choice');
+      const words = new Set(q.setup.map((c) => String(c[1])));
+      const right = q.answer.options[q.answer.correct]!;
+      expect(right).toBe(mergeOf(words, String(q.watch![0]![1])) ?? NO_MERGE);
+      expect(new Set(q.answer.options).size).toBe(q.answer.options.length);
+      counts.set(right, (counts.get(right) ?? 0) + 1);
+    }
+    expect(counts.get(NO_MERGE)).toBeGreaterThanOrEqual(30);
+    expect(counts.get(NO_MERGE)).toBeLessThanOrEqual(120);
+    expect(Math.max(...counts.values())).toBeLessThanOrEqual(150);
+  });
+
+  it('inserts only real words in the split questions', () => {
+    const real = new Set([...FAMILIES.flat(), ...LONERS, ...MORE_WORDS]);
+    const kind = kinds.find((k) => k.id === 'split-pieces')!;
+    for (let seed = 1; seed <= 300; seed++) {
+      const q = kind.make(makeRng(seed));
+      for (const c of [...q.setup, ...q.watch!]) expect(real, String(c[1])).toContain(String(c[1]));
+      if (q.answer.kind !== 'choice') throw new Error('split-pieces is a choice');
+      expect(new Set(q.answer.options).size).toBe(q.answer.options.length);
     }
   });
 

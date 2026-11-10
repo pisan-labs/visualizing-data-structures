@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import { parseFormulaInput, twoSat } from '.';
 import {
@@ -96,5 +97,64 @@ describe('2-SAT', () => {
       }),
       { numRuns: 300 },
     );
+  });
+});
+
+describe('2-SAT practice', () => {
+  /** Arcs ¬x → y and ¬y → x for each clause x ∨ y, each once, and the strong components. */
+  function graphOf(s: SatState) {
+    const arcs = new Set<string>();
+    for (const [a, b] of s.clauses) {
+      const x = litIndex(a);
+      const y = litIndex(b);
+      arcs.add(`${x ^ 1},${y}`);
+      arcs.add(`${y ^ 1},${x}`);
+    }
+    const n = 2 * s.vars.length;
+    const reach = Array.from({ length: n }, (_, i) => new Set([i]));
+    for (const a of arcs) {
+      const [x, y] = a.split(',').map(Number);
+      reach[x!]!.add(y!);
+    }
+    for (let k = 0; k < n; k++)
+      for (let i = 0; i < n; i++) if (reach[i]!.has(k)) for (const j of reach[k]!) reach[i]!.add(j);
+    const comps = new Set(
+      reach.map((r, i) =>
+        [...r]
+          .filter((j) => reach[j]!.has(i))
+          .sort((p, q) => p - q)
+          .join(),
+      ),
+    );
+    return { arcs: arcs.size, comps: comps.size };
+  }
+
+  // No clause is always true (a ∨ ¬a makes loops and says nothing) and none comes twice. A
+  // learner should not be able to guess: over 300 seeds a yes-or-no answer is each way 25% to
+  // 75% of the time, and no number comes up in more than half the questions.
+  it('draws formulas with no tautology or repeated clause, and answers that vary', () => {
+    for (const kind of twoSat.practice!) {
+      const counts = new Map<string, number>();
+      for (let seed = 1; seed <= 300; seed++) {
+        const q = kind.make(makeRng(seed));
+        const s = parseFormula(String(q.setup[0]![1])) as SatState;
+        const keys = s.clauses.map((c) => c.map(litIndex).sort((p, q) => p - q));
+        for (const [x, y] of keys) expect(x! ^ 1, formatFormula(s)).not.toBe(y);
+        expect(new Set(keys.map((k) => k.join())).size, formatFormula(s)).toBe(keys.length);
+        const a = q.answer;
+        const ref = graphOf(s);
+        if (kind.id === 'arcs') expect(a).toEqual({ kind: 'number', value: ref.arcs });
+        if (kind.id === 'components') expect(a).toEqual({ kind: 'number', value: ref.comps });
+        if (kind.id === 'sat' && a.kind === 'choice') expect(a.correct).toBe(brute(s) ? 0 : 1);
+        const key =
+          a.kind === 'choice' ? a.options[a.correct]! : a.kind === 'number' ? String(a.value) : '';
+        counts.set(key, (counts.get(key) ?? 0) + 1);
+      }
+      const most = Math.max(...counts.values());
+      if (counts.size === 2) {
+        expect(most, kind.id).toBeLessThanOrEqual(225);
+        expect(Math.min(...counts.values()), kind.id).toBeGreaterThanOrEqual(75);
+      } else expect(most, kind.id).toBeLessThanOrEqual(150);
+    }
   });
 });

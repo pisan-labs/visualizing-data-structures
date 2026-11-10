@@ -9,6 +9,9 @@
  *                                     paths get longer and longer
  *   hallBipartite(rng, n)             a group of workers who between them like too few jobs
  *   starBipartite(n)                  every worker likes job 1 only
+ *   ladders(rng, ks, noise)           one ladder per k: taking jobs greedily in name order
+ *                                     leaves an augmenting path of 2k + 1 edges in each, so
+ *                                     Hopcroft-Karp needs a phase for every different k
  */
 import type { Rng } from '../../engine/rng';
 import type { OpCall } from '../../engine/types';
@@ -74,6 +77,37 @@ export function hallBipartite(rng: Rng, n: number): string {
 export function starBipartite(n: number): string {
   const { left } = split(n);
   return text(left.map((u) => [u, '1']));
+}
+
+/**
+ * Ladders, one per k in `ks`, on shuffled names, plus `noise` random edges. A ladder has
+ * workers u1 < u2 < ... < u(k + 1) and jobs v0, v1, ..., vk with v1 < v0: u1 likes v1 and v0,
+ * u(i + 1) likes vi and v(i + 1), and u(k + 1) likes vk only. Taken in name order, ui gets vi
+ * and u(k + 1) is left out, with one way in: u(k + 1) – vk = uk – ... = u1 – v0.
+ */
+export function ladders(rng: Rng, ks: number[], noise = 0): string {
+  const workers = letters(ks.reduce((n, k) => n + k + 1, 0));
+  const jobs = Array.from({ length: workers.length }, (_, i) => String(i + 1));
+  const w = shuffle(rng, workers);
+  const j = shuffle(rng, jobs);
+  const byName = (a: string, b: string) => a.length - b.length || (a < b ? -1 : a > b ? 1 : 0);
+  const pairs: [string, string][] = [];
+  for (const k of ks) {
+    const u = w.splice(0, k + 1).sort(byName);
+    const v = j.splice(0, k + 1).sort(byName);
+    // v[1] < v[0]: u1's first job in name order is v1.
+    [v[0], v[1]] = [v[1]!, v[0]!];
+    pairs.push([u[0]!, v[0]!]);
+    for (let i = 0; i < k; i++) pairs.push([u[i]!, v[i + 1]!], [u[i + 1]!, v[i + 1]!]);
+  }
+  for (let added = 0, tries = 0; added < noise && tries < 50; tries++) {
+    const a = workers[rng.int(0, workers.length - 1)]!;
+    const b = jobs[rng.int(0, jobs.length - 1)]!;
+    if (pairs.some(([x, y]) => x === a && y === b)) continue;
+    pairs.push([a, b]);
+    added++;
+  }
+  return text(pairs.sort(([a, b], [c, d]) => byName(a, c) || byName(b, d)));
 }
 
 export const loadCall = (t: string): OpCall => ['load', t];

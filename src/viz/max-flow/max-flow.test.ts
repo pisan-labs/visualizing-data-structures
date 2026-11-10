@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import { keyOf } from '../_graph/graph';
 import { formatNetwork, parseNetwork, residual, type Network } from '../_flow/network';
@@ -141,6 +142,47 @@ describe('max-flow', () => {
       for (const block of pseudocode({ ...maxFlow.defaults, method }))
         for (const l of block.lines)
           expect(2 * l.indent + l.text.length, `${l.id}: ${l.text}`).toBeLessThanOrEqual(34);
+  });
+});
+
+describe('max-flow practice', () => {
+  /** Breadth-first from s over arcs with capacity, neighbours in name order: the first path. */
+  function firstPath(net: Network): string[] {
+    const parent = new Map<string, string>([[net.s!, '']]);
+    const queue = [net.s!];
+    while (queue.length) {
+      const u = queue.shift()!;
+      const out = net.graph.edges.filter((e) => e.u === u && e.w > 0).map((e) => e.v);
+      for (const v of out.sort())
+        if (!parent.has(v)) {
+          parent.set(v, u);
+          queue.push(v);
+        }
+    }
+    const path = [net.t!];
+    while (path[0] !== net.s) path.unshift(parent.get(path[0]!)!);
+    return path;
+  }
+
+  // A learner should not be able to guess: over 300 seeds no amount left on the arc comes up in
+  // more than half the questions (0, a full arc, about a quarter of the time).
+  it('asks how much room is left, with answers that vary', () => {
+    const kind = maxFlow.practice!.find((k) => k.id === 'room-left')!;
+    const counts = new Map<number, number>();
+    for (let seed = 1; seed <= 300; seed++) {
+      const q = kind.make(makeRng(seed));
+      const net = parseNetwork(String(q.setup[0]![1])) as Network;
+      const path = firstPath(net);
+      const [, said, u, v] = /path is ([\w →]+)\. After .* on (\w+)→(\w+)\?/.exec(q.prompt)!;
+      expect(said!.split(' → '), `seed ${seed}`).toEqual(path);
+      const cap = (a: string, b: string) => net.graph.edges.find((e) => e.u === a && e.v === b)!.w;
+      const bottleneck = Math.min(...path.slice(1).map((b, i) => cap(path[i]!, b)));
+      if (q.answer.kind !== 'number') throw new Error('expected a number');
+      expect(q.answer.value, `seed ${seed}`).toBe(cap(u!, v!) - bottleneck);
+      counts.set(q.answer.value, (counts.get(q.answer.value) ?? 0) + 1);
+    }
+    expect(Math.max(...counts.values())).toBeLessThanOrEqual(150);
+    expect(counts.size).toBeGreaterThanOrEqual(5);
   });
 });
 

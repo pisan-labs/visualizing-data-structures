@@ -1,5 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import { bipartiteMatching } from '.';
 import { parseBipartite, pseudocode, type BmRun, type BmSettings, type BmState } from './model';
@@ -119,5 +120,75 @@ describe('bipartite-matching', () => {
       for (const block of pseudocode({ ...bipartiteMatching.defaults, method }))
         for (const l of block.lines)
           expect(2 * l.indent + l.text.length, `${l.id}: ${l.text}`).toBeLessThanOrEqual(34);
+  });
+});
+
+describe('bipartite-matching practice', () => {
+  /**
+   * Hopcroft-Karp written separately: layers by breadth-first search from the free left
+   * vertices, then a depth-first search from each in name order along the layers. Names here
+   * are one letter or one digit, so string order is name order. Returns the phases that flip.
+   */
+  function refPhases(s: BmState): number {
+    const adj = new Map(s.left.map((u) => [u, [] as string[]]));
+    for (const e of s.graph.edges) {
+      const [u, v] = s.left.includes(e.u) ? [e.u, e.v] : [e.v, e.u];
+      adj.get(u)!.push(v);
+    }
+    for (const list of adj.values()) list.sort();
+    const mate = new Map<string, string>();
+    for (let phase = 0; ; phase++) {
+      const dist = new Map<string, number>();
+      const queue = s.left.filter((u) => !mate.has(u));
+      for (const u of queue) dist.set(u, 0);
+      let shortest = Infinity;
+      for (let i = 0; i < queue.length; i++) {
+        const u = queue[i]!;
+        if (dist.get(u)! >= shortest) continue;
+        for (const v of adj.get(u)!) {
+          const w = mate.get(v);
+          if (w === undefined) shortest = Math.min(shortest, dist.get(u)! + 1);
+          else if (!dist.has(w)) {
+            dist.set(w, dist.get(u)! + 1);
+            queue.push(w);
+          }
+        }
+      }
+      if (shortest === Infinity) return phase;
+      const dfs = (u: string): boolean => {
+        for (const v of adj.get(u)!) {
+          const w = mate.get(v);
+          const ok =
+            w === undefined
+              ? dist.get(u)! + 1 === shortest
+              : dist.get(w) === dist.get(u)! + 1 && dfs(w);
+          if (ok) {
+            mate.set(u, v);
+            mate.set(v, u);
+            dist.set(u, Infinity);
+            return true;
+          }
+        }
+        dist.set(u, Infinity);
+        return false;
+      };
+      for (const u of s.left) if (!mate.has(u) && dist.get(u) === 0) dfs(u);
+    }
+  }
+
+  // A learner should not be able to guess: over 300 seeds no number of phases comes up in more
+  // than half the questions, and each answer matches the separate Hopcroft-Karp.
+  it('asks for numbers of phases that vary', () => {
+    const kind = bipartiteMatching.practice!.find((k) => k.id === 'phases')!;
+    const counts = new Map<number, number>();
+    for (let seed = 1; seed <= 300; seed++) {
+      const q = kind.make(makeRng(seed));
+      const s = parseBipartite(String(q.setup[0]![1])) as BmState;
+      if (q.answer.kind !== 'number') throw new Error('expected a number');
+      expect(q.answer.value, `seed ${seed}`).toBe(refPhases(s));
+      counts.set(q.answer.value, (counts.get(q.answer.value) ?? 0) + 1);
+    }
+    expect(Math.max(...counts.values())).toBeLessThanOrEqual(150);
+    expect([...counts.keys()].sort()).toEqual([1, 2, 3]);
   });
 });

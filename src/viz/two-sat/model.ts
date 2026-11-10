@@ -96,10 +96,25 @@ export function parseFormula(raw: string): SatState | Error {
 export const VARS = 'abcdefgh';
 const lit = (rng: Rng, n: number) => `${rng.int(0, 1) ? '!' : ''}${VARS[rng.int(0, n - 1)]}`;
 
-/** A random formula with about 1.5 clauses per variable: usually satisfiable, not always. */
+/**
+ * A random formula with about 1.5 clauses per variable: usually satisfiable, not always. No
+ * clause is always true, like a | !a (it only adds arcs from a literal to itself), and no
+ * clause comes twice, in either order. n variables allow 2n² such clauses.
+ */
 export function randomFormula(rng: Rng, n: number, ratio = 1.5): string {
-  const m = Math.max(1, Math.min(16, Math.round(n * ratio)));
-  return Array.from({ length: m }, () => `${lit(rng, n)} | ${lit(rng, n)}`).join(', ');
+  const m = Math.max(1, Math.min(16, 2 * n * n, Math.round(n * ratio)));
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (let tries = 0; out.length < m && tries < 1000; tries++) {
+    const x = lit(rng, n);
+    const y = lit(rng, n);
+    const key = [x, y].sort().join(' | ');
+    if (x.replace('!', '') === y.replace('!', '') && x !== y) continue;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(`${x} | ${y}`);
+  }
+  return out.join(', ');
 }
 
 export const START_STATE = parseFormula(START_TEXT) as SatState;

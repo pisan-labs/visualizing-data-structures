@@ -69,17 +69,23 @@ export function maxFlowPractice(def: () => Def): PracticeKind[] {
       id: 'room-left',
       title: 'How much room is left?',
       make(rng) {
+        // A full arc (0 left) one time in four; otherwise an arc with room to spare.
+        const full = rng.int(0, 3) === 0;
         for (;;) {
           const { net, setup, steps, r, watch } = setupRun(rng, 2);
           const first = r.paths[0]!;
           const after = afterFirst(steps);
-          // An arc on the first path that is not full afterwards, else the bottleneck arc.
-          const arcs = first.p.slice(1).map((v, i) => ({ u: first.p[i]!, v }));
-          const real = arcs.filter((a) => net.graph.edges.some((e) => e.u === a.u && e.v === a.v));
-          if (real.length === 0) continue;
-          const pick = real[rng.int(0, real.length - 1)]!;
-          const cap = capacity(net, pick.u, pick.v);
-          const left = cap - (after.flow[`${pick.u}-${pick.v}`] ?? 0);
+          const arcs = first.p
+            .slice(1)
+            .map((v, i) => ({ u: first.p[i]!, v }))
+            .filter((a) => net.graph.edges.some((e) => e.u === a.u && e.v === a.v))
+            .map((a) => {
+              const cap = capacity(net, a.u, a.v);
+              return { ...a, cap, left: cap - (after.flow[`${a.u}-${a.v}`] ?? 0) };
+            })
+            .filter((a) => (a.left === 0) === full);
+          if (arcs.length === 0) continue;
+          const { cap, left, ...pick } = arcs[rng.int(0, arcs.length - 1)]!;
           return {
             prompt: `Edmonds-Karp's first augmenting path is ${pathText(first.p)}. After it pushes its bottleneck, how much room is left on ${arrow(pick.u, pick.v)}?`,
             setup,

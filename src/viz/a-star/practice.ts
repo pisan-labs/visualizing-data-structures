@@ -148,23 +148,31 @@ export function aStarPractice(def: () => Def): PracticeKind[] {
       },
     },
     {
-      id: 'fewer',
-      title: 'Which heuristic does less work?',
+      id: 'expanded',
+      title: 'How many cells does A* expand?',
       make(rng) {
         for (;;) {
-          const { g, settings, setup, r, watch } = setupRun(rng);
+          // Small grids, so the run can be followed by hand.
+          const which: Heuristic = rng.int(0, 1) ? 'manhattan' : 'zero';
+          const g = randomGrid(rng, rng.int(3, 4), rng.int(5, 7), 0.22);
+          const settings: AStarSettings = { ...defaults, heuristic: which };
+          const setup: OpCall[] = [loadCall(g)];
+          const t = new Timeline(def(), settings, 1, [...setup, ['run']]);
+          const r = t.entries.at(-1)!.steps.at(-1)!.extra!.run!;
           if (r.end !== 'found') continue;
-          const withH = r.closed.length;
-          const zero = expandedWith(g, { ...settings, heuristic: 'zero' });
-          const options = ['The Manhattan distance', 'h = 0 (Dijkstra)', 'They expand the same'];
-          const correct = withH < zero ? 0 : withH > zero ? 1 : 2;
+          const count = r.closed.length;
+          const other: Heuristic = which === 'zero' ? 'manhattan' : 'zero';
+          const otherCount = expandedWith(g, { ...settings, heuristic: other });
+          const hText =
+            which === 'zero' ? 'h = 0 (Dijkstra’s algorithm)' : 'the Manhattan distance';
+          const otherText = other === 'zero' ? 'h = 0' : 'the Manhattan distance';
           return {
-            prompt: `A* searches this grid with 4 neighbours. Which h expands fewer cells before T comes out of the open set?`,
+            prompt: `${which === 'zero' ? 'A* searches this grid with 4 neighbours, every move costing 1, and h = 0, so it is Dijkstra’s algorithm.' : intro('manhattan')} How many cells does it expand, counting S and T? Ties on f go to ${which === 'zero' ? 'the cell added first' : 'the smaller h, then to the cell added first'} (neighbours are added clockwise from north).`,
             setup,
             settings: settings as Settings,
-            answer: { kind: 'choice', options, correct },
-            explain: `With the Manhattan distance A* expands ${withH} cells; with h = 0 it expands ${zero}. Both find a path of ${r.path.length - 1} moves (${names(g, r.path).join(' → ')}). ${correct === 0 ? 'The guess pulls the search toward T.' : 'Here the walls make the guess no help.'}`,
-            watch,
+            answer: { kind: 'number', value: count },
+            explain: `With ${hText}, A* expands ${count} cells: ${names(g, r.closed).join(', ')}. The path has ${r.path.length - 1} moves. With ${otherText} it would expand ${otherCount}.`,
+            watch: [['run']],
           };
         }
       },

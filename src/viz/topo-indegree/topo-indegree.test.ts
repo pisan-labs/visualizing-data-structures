@@ -194,6 +194,28 @@ describe('topological sort practice', () => {
       }
     }
   });
+
+  // A learner should not be able to guess: over 300 seeds no in-degree comes up in more than
+  // half the questions, and every answer is the arcs into x from vertices not yet placed.
+  it('asks for in-degrees that vary', () => {
+    const kind = topo.practice!.find((k) => k.id === 'indegree')!;
+    const counts = new Map<number, number>();
+    for (let seed = 1; seed <= 300; seed++) {
+      const q = kind.make(makeRng(seed));
+      const g = parseGraph(String(q.setup[0]![1])) as Graph;
+      const [, start, x] = /order starts ([\w, ]+)\. Right after \w+ is taken.*of (\w+)\?/.exec(
+        q.prompt,
+      )!;
+      const placed = start!.split(', ');
+      const left = g.edges.filter((e) => e.v === x && !placed.includes(e.u)).length;
+      if (q.answer.kind !== 'number') throw new Error('expected a number');
+      expect(q.answer.value, `seed ${seed}`).toBe(left);
+      expect(left).toBeGreaterThan(0);
+      counts.set(left, (counts.get(left) ?? 0) + 1);
+    }
+    expect(Math.max(...counts.values())).toBeLessThanOrEqual(150);
+    expect(counts.size).toBeGreaterThanOrEqual(3);
+  });
 });
 
 describe('drawn text size', () => {

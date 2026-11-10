@@ -62,7 +62,7 @@ export function satPractice(def: () => Def): PracticeKind[] {
           prompt: `Build the implication graph of ${formulaText(s)}: two arcs per clause, each arc only once. How many arcs does it have?`,
           setup,
           answer: { kind: 'number', value: r.arcs.length },
-          explain: `${plural(r.arcs.length, 'arc')}: ${r.arcs.map(([x, y]) => `${litName(s, x)} → ${litName(s, y)}`).join(', ')}. A clause with one literal, or one repeated, adds fewer.`,
+          explain: `${plural(r.arcs.length, 'arc')}: ${r.arcs.map(([x, y]) => `${litName(s, x)} → ${litName(s, y)}`).join(', ')}.${r.arcs.length < 2 * s.clauses.length ? ' A clause with one literal, such as (a), gives one arc, ¬a → a, not two.' : ''}`,
           watch,
         };
       },

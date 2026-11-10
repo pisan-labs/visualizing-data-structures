@@ -239,6 +239,41 @@ describe('Bellman-Ford practice', () => {
       }
     }
   });
+
+  // A learner should not be able to guess. Over 300 seeds no number of passes, and no count of
+  // distances pass 2 lowers, comes up in more than half the questions.
+  it('asks questions whose answers vary', () => {
+    const kind = (id: string) => bellmanFord.practice!.find((k) => k.id === id)!;
+    const passes = new Map<number, number>();
+    const second = new Map<number, number>();
+    let asked = 0;
+    for (let seed = 1; seed <= 300; seed++) {
+      const p = kind('passes').make(makeRng(seed)).answer;
+      if (p.kind !== 'number') throw new Error('expected a number');
+      passes.set(p.value, (passes.get(p.value) ?? 0) + 1);
+      const q = kind('changes').make(makeRng(seed));
+      if (q.answer.kind !== 'number') throw new Error('expected a number');
+      if (!q.prompt.includes('pass 2')) continue;
+      asked++;
+      second.set(q.answer.value, (second.get(q.answer.value) ?? 0) + 1);
+    }
+    expect(Math.max(...passes.values())).toBeLessThanOrEqual(150);
+    expect(passes.size).toBeGreaterThanOrEqual(3);
+    expect(asked).toBeGreaterThan(100);
+    expect(Math.max(...second.values())).toBeLessThanOrEqual(asked / 2);
+  });
+
+  it('draws practice graphs with negative edges, no negative cycle, and A reaching all', () => {
+    for (let seed = 1; seed <= 300; seed++) {
+      const g = parseGraph(
+        String(bellmanFord.practice![0]!.make(makeRng(seed)).setup[0]![1]),
+      ) as Graph;
+      const ref = reference(g, 'A');
+      expect(g.edges.some((e) => e.w < 0)).toBe(true);
+      expect(ref.negative).toBe(false);
+      for (const v of g.vertices) expect(ref.afterPass.at(-1)!.has(v), v).toBe(true);
+    }
+  });
 });
 
 describe('drawn text size', () => {

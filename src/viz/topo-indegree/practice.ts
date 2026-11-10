@@ -76,8 +76,11 @@ export function topoPractice(def: () => Def): PracticeKind[] {
       id: 'indegree',
       title: 'How many arcs left?',
       make(rng) {
+        // Aim at an answer of 1, 2 or 3 first, on a denser DAG, so 1 is not nearly always it.
+        const want = rng.int(1, 3);
         for (;;) {
-          const { g, setup } = dag(rng);
+          const g = mixedDag(rng, rng.int(6, 8), 0.25);
+          const setup = [loadCall(g)];
           const steps = runSteps(setup, 'fifo');
           const r = last(steps);
           // The steps where a vertex is taken; the one before each shows the previous one done.
@@ -88,7 +91,9 @@ export function topoPractice(def: () => Def): PracticeKind[] {
           const k = rng.int(1, Math.min(3, takes.length - 2));
           const y = takes[k]!.st.extra!.run!.u!;
           const after = steps[takes[k + 1]!.i - 1]!.extra!.run!;
-          const waiting = g.vertices.filter((v) => !after.order.includes(v) && after.indeg[v]! > 0);
+          const waiting = g.vertices.filter(
+            (v) => !after.order.includes(v) && after.indeg[v] === want,
+          );
           if (waiting.length === 0) continue;
           const x = waiting[rng.int(0, waiting.length - 1)]!;
           const n = after.indeg[x]!;

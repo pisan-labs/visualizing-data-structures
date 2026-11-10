@@ -1,7 +1,7 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, Settings, Step, VizDef } from '../../engine/types';
-import type { Graph } from '../_graph/graph';
+import { letters, makeGraph, type Edge, type Graph } from '../_graph/graph';
 import { loadCall, shuffle } from '../_graph/presets';
 import { arcs, arrow, cycleWords, rotateCycle } from '../_paths/kit';
 import { cycleOutOfReach, withNegativeCycle, withNegativeEdges } from '../_paths/presets';
@@ -20,6 +20,39 @@ export function afterPass(steps: BfStep[], k: number): BfRun {
 }
 
 /**
+ * Directed, A reaches everything, with negative edges and no negative cycle. A chain from A
+ * through the other vertices in a shuffled order (with a few branches) carries the shortest
+ * paths, so they are long and their edges come in no particular place in the name order: one
+ * pass finds some of the distances, and later passes find the rest. A few longer arcs make
+ * shortcuts, and weights are shifted by vertex potentials, w + h(u) - h(v), which makes some
+ * negative and leaves every cycle's weight (and every shortest path) as it was.
+ */
+export function longPaths(rng: Rng, n: number): Graph {
+  const names = letters(n);
+  const order = [names[0]!, ...shuffle(rng, names.slice(1))];
+  const edges: Edge[] = [];
+  const has = (u: string, v: string) =>
+    edges.some((e) => (e.u === u && e.v === v) || (e.u === v && e.v === u));
+  for (let i = 1; i < n; i++) {
+    const from = rng.int(0, 5) ? order[i - 1]! : order[rng.int(0, i - 1)]!;
+    edges.push({ u: from, v: order[i]!, w: rng.int(1, 4) });
+  }
+  for (let extra = rng.int(2, 3), tries = 0; extra > 0 && tries < 50; tries++) {
+    const u = order[rng.int(1, n - 1)]!;
+    const v = order[rng.int(1, n - 1)]!;
+    if (u === v || has(u, v)) continue;
+    edges.push({ u, v, w: rng.int(5, 9) });
+    extra--;
+  }
+  for (;;) {
+    const h = new Map(names.map((v) => [v, rng.int(0, 6)]));
+    const shifted = edges.map((e) => ({ ...e, w: e.w + h.get(e.u)! - h.get(e.v)! }));
+    if (shifted.some((e) => e.w < 0))
+      return makeGraph({ directed: true, weighted: true, vertices: names, edges: shifted });
+  }
+}
+
+/**
  * Practice for Bellman-Ford. Every answer comes from running the model: the changes per pass,
  * the distances after a pass, the number of passes and the result are read from its steps.
  */
@@ -31,7 +64,7 @@ export function bellmanFordPractice(def: () => Def): PracticeKind[] {
 
   /** Directed, with negative edges and no negative cycle, 5 to 7 vertices. */
   function setupRun(rng: Rng, settings: Settings = defaults) {
-    const g = withNegativeEdges(rng, rng.int(5, 7));
+    const g = longPaths(rng, rng.int(5, 7));
     const setup = [loadCall(g)];
     const steps = runSteps(setup, settings);
     return { g, setup, steps, r: steps.at(-1)!.extra!.run!, watch: [['run', 'A']] as OpCall[] };
@@ -94,7 +127,12 @@ export function bellmanFordPractice(def: () => Def): PracticeKind[] {
       title: 'How many passes?',
       make(rng) {
         const settings: Settings = { ...defaults, early: true };
-        const { g, setup, r, watch } = setupRun(rng, settings);
+        // Aim at a number of passes first, so that no one answer is the usual one.
+        const want = rng.int(2, 5);
+        let found = setupRun(rng, settings);
+        for (let tries = 0; tries < 40 && found.r.changes.length !== want; tries++)
+          found = setupRun(rng, settings);
+        const { g, setup, r, watch } = found;
         const n = r.changes.length;
         const quiet = r.changes.at(-1) === 0;
         return {

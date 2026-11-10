@@ -3,7 +3,7 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
 import { listWords, type Graph } from '../_graph/graph';
 import { loadCall, randomGraph, shuffle } from '../_graph/presets';
-import { randomBipartite, treePlusOdd } from './graphs';
+import { oneOddCycle, randomBipartite, treePlusOdd } from './graphs';
 import {
   defaults,
   sideList,
@@ -128,7 +128,11 @@ export function bipartitePractice(def: () => Def): PracticeKind[] {
       title: 'How long is the odd cycle?',
       make(rng) {
         for (;;) {
-          const { setup, r, watch } = setupRun(rng, 'no');
+          // One odd cycle of 3, 5 or 7 edges (maybe an even one too), so the answer varies.
+          const len = 2 * rng.int(1, 3) + 1;
+          const setup = [loadCall(oneOddCycle(rng, rng.int(Math.max(6, len), 8), len))];
+          const r = runOf(setup);
+          const watch: OpCall[] = [['run']];
           if (r.verdict !== 'no') continue;
           const c = r.cycle!;
           return {

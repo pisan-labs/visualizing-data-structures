@@ -1,6 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { practiceSet } from '../../engine/practice';
+import { makeRng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import { bfsDistances, targetOf } from '../_grid/grid';
 import { aStar } from '.';
@@ -178,13 +179,28 @@ describe('A* wording and practice', () => {
           expect(q.explain).toContain(`${dc} column`);
           expect(q.explain).toContain(`${dr} row`);
         }
-        if (item.kind.id === 'fewer' && q.answer.kind === 'choice') {
-          const m = reference(lines, { ...st, heuristic: 'manhattan' }).expanded;
-          const z = reference(lines, { ...st, heuristic: 'zero' }).expanded;
-          const right = m < z ? 0 : m > z ? 1 : 2;
-          expect(q.answer.options[q.answer.correct]).toBe(q.answer.options[right]);
+        if (item.kind.id === 'expanded') {
+          expect(q.answer).toEqual({ kind: 'number', value: reference(lines, st).expanded });
+          expect(reference(lines, st).cost).toBeGreaterThan(0);
         }
       }
+  });
+
+  // A learner should not be able to guess: over 300 seeds no count of cells expanded comes up
+  // in more than a third of the questions, and both heuristics are asked about.
+  it('asks for counts that vary', () => {
+    const kind = aStar.practice!.find((k) => k.id === 'expanded')!;
+    const counts = new Map<number, number>();
+    const hs = new Set<string>();
+    for (let seed = 1; seed <= 300; seed++) {
+      const q = kind.make(makeRng(seed));
+      if (q.answer.kind !== 'number') throw new Error('expected a number');
+      counts.set(q.answer.value, (counts.get(q.answer.value) ?? 0) + 1);
+      hs.add(String(q.settings!.heuristic));
+    }
+    expect(Math.max(...counts.values())).toBeLessThanOrEqual(100);
+    expect(counts.size).toBeGreaterThanOrEqual(8);
+    expect(hs).toEqual(new Set(['manhattan', 'zero']));
   });
 });
 

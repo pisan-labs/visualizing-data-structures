@@ -30,7 +30,8 @@ export function readAuthReturn(
       ret = {
         kind: 'error',
         code: p.get('error_code') ?? p.get('error') ?? '',
-        description: p.get('error_description') ?? '',
+        // Shown to the reader: keep it short, since anyone can write it into a link.
+        description: (p.get('error_description') ?? '').slice(0, 160),
       };
     }
   }

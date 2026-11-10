@@ -355,6 +355,9 @@ describe('coming back from signing in', () => {
       search: '',
       hash: '',
     });
+    // Anyone can write a description into a link, so only a short one is shown.
+    const long = readAuthReturn(`?error=x&error_description=${'a'.repeat(500)}`, '').ret;
+    expect(long?.kind === 'error' && long.description.length).toBe(160);
     expect(readAuthReturn('', '#error=server_error&error_description=Oops').ret).toEqual({
       kind: 'error',
       code: 'server_error',

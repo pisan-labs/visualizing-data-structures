@@ -68,6 +68,13 @@ async function waitShown(page: Page): Promise<number> {
   return Number(/(\d+) seconds/.exec(text ?? '')?.[1]);
 }
 
+/** Uncaught errors in the page; a test expects none. */
+function pageErrors(page: Page): string[] {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  return errors;
+}
+
 const callsTo = (mock: Mock, pathname: string) =>
   mock.calls.filter((c) => c.url.pathname === pathname);
 
@@ -106,6 +113,7 @@ test.describe('signed out', () => {
   });
 
   test('loads nothing until Sign in is opened; the dialog is accessible', async ({ page }) => {
+    const errors = pageErrors(page);
     const mock = await mockSupabase(page);
     const lazy: string[] = [];
     page.on('request', (r) => {
@@ -143,6 +151,7 @@ test.describe('signed out', () => {
     await page.keyboard.press('Escape');
     await expect(dialog(page)).toBeHidden();
     await expect(signIn(page)).toBeFocused();
+    expect(errors).toEqual([]);
   });
 
   test('emails a sign-in link that comes back to this page, then waits a minute', async ({
@@ -195,6 +204,7 @@ test.describe('signed out', () => {
   test('Continue with Google comes back signed in, on the same page with the same work', async ({
     page,
   }) => {
+    const errors = pageErrors(page);
     const mock = await mockSupabase(page);
     await page.goto('/stack-array/');
     await push(page, '4 5');
@@ -221,6 +231,7 @@ test.describe('signed out', () => {
     expect(token?.body).toMatchObject({ auth_code: 'test-auth-code' });
     expect((token?.body as { code_verifier?: string }).code_verifier).toBeTruthy();
     await expect.poll(() => callsTo(mock, '/rest/v1/rpc/ensure_profile').length).toBe(1);
+    expect(errors).toEqual([]);
   });
 
   test('a sign-in that came back with an error says why', async ({ page }) => {
@@ -256,6 +267,7 @@ test.describe('signed out', () => {
       ]),
     });
     const kept = row({ viz: 'stack-array', title: 'Private', example: stackExample([]) });
+    const errors = pageErrors(page);
     const mock = await mockSupabase(page, { rows: [shared, kept] });
     await page.goto(`/stack-array/#saved=${shared.id}`);
     await expect(stage(page)).toHaveAttribute('aria-label', /From bottom to top: 3, 4/);
@@ -276,6 +288,7 @@ test.describe('signed out', () => {
     await page.goto('/stack-array/#saved=not-an-id');
     await expect(page.getByText('That saved example is not available.')).toBeVisible();
     expect(mock.calls.length).toBe(before);
+    expect(errors).toEqual([]);
   });
 });
 
@@ -286,6 +299,7 @@ test.describe('signed in', () => {
   });
 
   test('save, list, open, rename, share, copy a link, delete, sign out', async ({ page }) => {
+    const errors = pageErrors(page);
     const mock = await mockSupabase(page, {
       rows: [
         row({
@@ -403,9 +417,11 @@ test.describe('signed in', () => {
     await expect(page.getByText('Saved in this browser only.')).toBeVisible();
     expect(callsTo(mock, '/auth/v1/logout')[0]?.url.searchParams.get('scope')).toBe('local');
     expect(await page.evaluate(() => localStorage.getItem('stepwise:auth'))).toBeNull();
+    expect(errors).toEqual([]);
   });
 
   test('copies the examples saved in this browser into the account, once', async ({ page }) => {
+    const errors = pageErrors(page);
     const mock = await mockSupabase(page);
     // Two examples saved in the browser before signing in (another page's counts too).
     await page.addInitScript(() => {
@@ -442,6 +458,17 @@ test.describe('signed in', () => {
       0,
     );
     expect(mock.rows).toHaveLength(2);
+    expect(errors).toEqual([]);
+  });
+
+  test('an old sign-in link leaves the earlier sign-in in place', async ({ page }) => {
+    await mockSupabase(page);
+    await page.goto('/stack-array/?code=already-used');
+    await expect(
+      page.getByText('Open the sign-in link in the same browser you asked for it from.'),
+    ).toBeVisible();
+    await expect(accountMenu(page)).toBeVisible();
+    expect(new URL(page.url()).search).toBe('');
   });
 
   test('a failing account server leaves the rest of the page working', async ({ page }) => {

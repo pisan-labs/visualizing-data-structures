@@ -118,6 +118,8 @@ async function finishSignIn(ret: AuthReturn): Promise<void> {
     notify(user.email ? `Signed in as ${user.email}.` : 'Signed in.');
   } catch (e) {
     notify(asAccountError(e).message, 'error');
+    // A failed return (an old link, another browser's link) leaves an earlier sign-in in place.
+    if (hasStoredSession()) await refresh();
   } finally {
     account.checking = false;
   }

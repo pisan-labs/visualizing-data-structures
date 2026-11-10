@@ -399,3 +399,5 @@
 2026-11-10 [note] Defaults taken at 12:50: PostgreSQL 16 installed in this cloud container only (throwaway server on localhost:54329, data in /tmp/swpg) to test the accounts SQL against a stand-in auth schema; new-page notices in-app first, email later
 
 2026-11-10 [decision] Yusuf: use his paid Resend account for magic links (no email-limit warning in the dialog) and later for new-page emails. Asked Plabs to raise Supabase's auth email rate limit if that is what caps it at about 30 an hour
+
+2026-11-10 [code] Merged pen and pointer in Present mode (P, L, U, C keys; ink never saved), Save picture (stand-alone SVG, 2x PNG, next to Compare and Present), and one shortcuts table behind a "?" list

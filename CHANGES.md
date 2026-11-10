@@ -427,3 +427,5 @@
 2026-11-10 [note] Deployed 21:40 Lisbon on Yusuf's "finish lesson lists and slice 2, then deploy": main 99303a0..2905721 (sign-in, saved and shared examples, lesson lists, sync, new since your last visit, Present tools, Save picture, shortcuts, worksheets, progress, recent pages, offline app). Live bundle matches; all 203 pages 200; no account requests on an ordinary visit
 
 2026-11-10 [code] Sign-in dialog: the Google button follows Google's branding guidelines (Google's own G, light and dark values, 40 px pill), the email button in the same shape; asked by Yusuf through Plabs
+
+2026-11-10 [code] Every page carries the HintWise footer (scripts/site-footer.html, the owner's markup byte for byte, after our own footer; hidden in embeds and Present mode); asked by Yusuf through Plabs

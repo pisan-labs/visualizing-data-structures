@@ -859,11 +859,13 @@ Yusuf (10 Nov): an optional Google or magic-link sign-in that saves preferences,
 about new pages, and saves examples on the server so they can be loaded in class. Possibly
 Supabase.
 
-**Choice: Supabase** (Auth with magic links and Google, Postgres with row-level security, a JS
-client). Alternatives weighed: Firebase (no pausing, but a larger SDK and a document store),
-Netlify Functions or Cloudflare Workers with our own auth (more code to own, and magic links
-still need a mail provider). Supabase's free tier pauses a project after a week with no requests;
-the site must keep working when it does.
+**Choice: the shared HintWise Supabase project** (10 Nov, from the Plabs session at Yusuf's
+request): `https://auth.hintwise.org`, US East, paid plan (no pausing), shared with other HintWise
+apps. Google and magic-link sign-in (Resend, about 30 emails an hour across all apps) are already
+set up; the redirect allow-list covers `https://*.hintwise.org/**` but not localhost or previews,
+so tests stay mocked. StepWise uses only its own schema, `app_stepwise`; one user pool across the
+apps. Alternatives weighed before this: a new Supabase project, Firebase, our own auth on Netlify
+or Cloudflare.
 
 **Rules**
 - Signing in is optional. Signed out, or with no Supabase configured, every page works as now,
@@ -887,10 +889,10 @@ the site must keep working when it does.
 3. Lesson lists: an ordered set of saved examples across pages, played in Present mode, with a
    link for a class.
 
-**Owner actions (Yusuf)**: create the Supabase project; set its Site URL and redirect URLs; run the
-migration SQL; add Google as a provider (OAuth client in Google Cloud); set up SMTP for magic
-links; set the two variables in Netlify. Until the variables are set, production shows no
-account UI, so merging and deploying the code is safe.
+**Owner actions (Yusuf):** say yes to the Plabs session applying `app_stepwise` (it runs the admin
+workflow and checks Google sign-in returns to the site). Then the lead commits the URL and anon key
+(both public) to `netlify.toml` and accounts go live. Account deletion has no self-service yet:
+email builder@hintwise.org.
 
 ## 19. Usability (planned 2026-11-10)
 

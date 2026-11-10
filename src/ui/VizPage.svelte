@@ -72,6 +72,7 @@
     if (!loaded || !it) return;
     // The list changed since its link was made, and this example is on another page.
     if (it.viz !== def.id) {
+      carry.present = presenting;
       navigate(itemHref(p.id, loaded, p.n), true);
       return 'moved';
     }

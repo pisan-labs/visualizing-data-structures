@@ -499,9 +499,33 @@ function wrapped(
           soft: labels.filter(away),
           r: STATE_R,
         });
-      const lead = via
-        ? { a: add(P, mul(unit(sub(via, P)), STATE_R)), b: J, via }
-        : { a: add(P, mul(unit(sub(J, P)), STATE_R)), b: J };
+      const leadThrough = (v: Pt | undefined): Seg =>
+        v
+          ? { a: add(P, mul(unit(sub(v, P)), STATE_R)), b: J, via: v }
+          : { a: add(P, mul(unit(sub(J, P)), STATE_R)), b: J };
+      // The router judges a curve cut at both ends, but the lead runs on to J uncut, so it can
+      // pass closer to a state than the router saw. Check the lead as drawn, and only when it
+      // fails look for a bulge that clears every other state.
+      const others = Object.entries(out.pos)
+        .filter(([q]) => q !== move.from && q !== move.to)
+        .map(([, p]) => p);
+      const clears = (s: Seg) =>
+        curveSamples(s, Math.ceil(curveLength(s) / 4)).every((p) =>
+          others.every((o) => dist(p, o) > STATE_R + 6),
+        );
+      let lead = leadThrough(via);
+      if (!clears(lead)) {
+        const n0 = unit({ x: -(J.y - P.y), y: J.x - P.x });
+        search: for (let c = 0; c <= 400; c += 6)
+          for (const t of [0.5, 0.3, 0.7, 0.15, 0.85])
+            for (const side of [1, -1]) {
+              const cand = leadThrough(add(add(P, mul(sub(J, P), t)), mul(n0, side * c)));
+              if (clears(cand)) {
+                lead = cand;
+                break search;
+              }
+            }
+      }
       out.paths[key] = {
         segs: [
           lead,

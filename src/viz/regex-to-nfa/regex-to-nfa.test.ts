@@ -287,49 +287,57 @@ describe('layout', () => {
     how: fc.constantFrom<Construction>('thompson', 'sipser'),
   });
 
+  /** No two states overlap, and no arrow or label runs through a state, in any picture. */
+  function checkLayout(p: ReturnType<typeof parsed>, how: Construction) {
+    const { nfa, frags } = construct(p, how);
+    const key = `|${p.text}`;
+    for (const pic of [...pictures(frags, how, key), ...pictures(frags, how, key, TIGHT)]) {
+      const pts = nfa.states.map((q) => ({ q, ...pic.pos[q]! }));
+      for (let i = 0; i < pts.length; i++)
+        for (let j = i + 1; j < pts.length; j++)
+          expect(Math.hypot(pts[i]!.x - pts[j]!.x, pts[i]!.y - pts[j]!.y)).toBeGreaterThanOrEqual(
+            2 * STATE_R + 10,
+          );
+      for (const m of nfa.moves) {
+        const path = pic.paths[`${m.from}>${m.to}`]!;
+        for (const o of pts) {
+          if (o.q === m.from || o.q === m.to) continue;
+          for (const seg of path.segs) {
+            const arrow = {
+              kind: 'arrow',
+              id: '',
+              x1: seg.a.x,
+              y1: seg.a.y,
+              x2: seg.b.x,
+              y2: seg.b.y,
+              via: seg.via,
+            } as const;
+            const ps = arrowPoints(arrow);
+            const d = Math.min(...ps.slice(1).map((b, k) => segDist(o, ps[k]!, b)));
+            expect(
+              d,
+              `${p.text} ${how} rows ${pic.rows}: ${m.from}>${m.to} passes ${o.q}`,
+            ).toBeGreaterThan(STATE_R + 2);
+          }
+          expect(Math.hypot(path.label.x - o.x, path.label.y - o.y)).toBeGreaterThan(STATE_R + 6);
+        }
+      }
+    }
+  }
+
   it('never puts two states on top of each other, or an arrow or label through a state', () => {
     fc.assert(
-      fc.property(caseArb, ({ r, how }) => {
-        const p = parsed(r);
-        const { nfa, frags } = construct(p, how);
-        const key = `|${p.text}`;
-        for (const pic of [...pictures(frags, how, key), ...pictures(frags, how, key, TIGHT)]) {
-          const pts = nfa.states.map((q) => ({ q, ...pic.pos[q]! }));
-          for (let i = 0; i < pts.length; i++)
-            for (let j = i + 1; j < pts.length; j++)
-              expect(
-                Math.hypot(pts[i]!.x - pts[j]!.x, pts[i]!.y - pts[j]!.y),
-              ).toBeGreaterThanOrEqual(2 * STATE_R + 10);
-          for (const m of nfa.moves) {
-            const path = pic.paths[`${m.from}>${m.to}`]!;
-            for (const o of pts) {
-              if (o.q === m.from || o.q === m.to) continue;
-              for (const seg of path.segs) {
-                const arrow = {
-                  kind: 'arrow',
-                  id: '',
-                  x1: seg.a.x,
-                  y1: seg.a.y,
-                  x2: seg.b.x,
-                  y2: seg.b.y,
-                  via: seg.via,
-                } as const;
-                const ps = arrowPoints(arrow);
-                const d = Math.min(...ps.slice(1).map((b, k) => segDist(o, ps[k]!, b)));
-                expect(
-                  d,
-                  `${show(r)} ${how} rows ${pic.rows}: ${m.from}>${m.to} passes ${o.q}`,
-                ).toBeGreaterThan(STATE_R + 2);
-              }
-              expect(Math.hypot(path.label.x - o.x, path.label.y - o.y)).toBeGreaterThan(
-                STATE_R + 6,
-              );
-            }
-          }
-        }
-      }),
+      fc.property(caseArb, ({ r, how }) => checkLayout(parsed(r), how)),
       { numRuns: 300 },
     );
+  });
+
+  it('routes a row-to-row arrow from mid-row clear of the states after it', () => {
+    // Sipser's construction joins each accept state of the first row to the second row; the
+    // arrow from q5 ran through q6 in two rows (CI, 10 Nov, seed 1369757034).
+    const p = parse('(((∅?)?|a|a|a)*)+a', '|') as ReturnType<typeof parsed>;
+    expect(p).not.toBeInstanceOf(Error);
+    checkLayout(p, 'sipser');
   });
 
   it('keeps every state where it is for the whole build, on any stage', () => {

@@ -51,7 +51,7 @@ test('contracting by hand keeps the parallel edges', async ({ page }) => {
   }
   await toEnd(page);
   await expect(narration(page)).toContainText('{A, B} and {C} become {A, B, C}');
-  await expect(stage(page)).toHaveAttribute('aria-label', /Super-vertices: \{A, B, C\}, \{ D \}/);
+  await expect(stage(page)).toHaveAttribute('aria-label', /Super-vertices: \{A, B, C\}, \{D\}/);
   // A-D, B-D and C-D are three parallel edges from the box to D.
   await input(page).fill('A-B');
   await page.getByRole('button', { name: 'Contract edge', exact: true }).click();

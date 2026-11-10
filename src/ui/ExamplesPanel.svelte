@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { account } from '../account/account.svelte';
+  import { asAccountError } from '../account/backend';
   import { encodeExample, exampleViz, validateExample } from '../engine/example';
   import {
     deleteFromLibrary,
@@ -18,6 +20,12 @@
   let library = $state<LibraryItem[]>(loadLibrary());
   const mine = $derived(library.filter((i) => i.example.viz === session.def.id));
   let title = $state('');
+
+  // Signed in, Save goes to the account, which lists this page's examples. Signed out (or with
+  // accounts off) the panel is as it always was: everything stays in this browser.
+  const accountList = () => import('./AccountExamples.svelte');
+  let inAccount = $state<{ save(title: string): Promise<void> } | undefined>();
+  let saving = $state(false);
   let shareText = $state('');
   let fileInput: HTMLInputElement | undefined = $state();
 
@@ -52,9 +60,23 @@
     await copy(html, 'Embed code');
   }
 
-  function save(e: SubmitEvent) {
+  async function save(e: SubmitEvent) {
     e.preventDefault();
     const name = title.trim() || `${session.def.title}, ${new Date().toLocaleString()}`;
+    if (account.user) {
+      saving = true;
+      try {
+        if (!inAccount) throw new Error('The account list has not loaded.');
+        await inAccount.save(name);
+        title = '';
+        notify(`Saved "${name}" in your account.`);
+      } catch (err) {
+        notify(asAccountError(err).message, 'error');
+      } finally {
+        saving = false;
+      }
+      return;
+    }
     const item = saveToLibrary(name, session.toExample());
     if (!item) {
       notify('This browser is not letting the site save. Download a file instead.', 'error');
@@ -170,6 +192,29 @@
 
   <section aria-labelledby="save-heading">
     <h3 id="save-heading">My examples</h3>
+    {#snippet browserList()}
+      {#if mine.length}
+        {#if account.user}<h4 id="browser-list-heading">Saved in this browser</h4>{/if}
+        <ul class="mine" aria-labelledby={account.user ? 'browser-list-heading' : undefined}>
+          {#each mine as item (item.key)}
+            <li>
+              <span class="title">{item.title}</span>
+              <span class="buttons">
+                <button class="btn small" onclick={() => session.load(item.example)}>Open</button>
+                <button class="btn small" onclick={() => download(item.example, item.title)}
+                  >Download</button
+                >
+                <button
+                  class="btn small"
+                  onclick={() => remove(item)}
+                  aria-label="Delete {item.title}">Delete</button
+                >
+              </span>
+            </li>
+          {/each}
+        </ul>
+      {/if}
+    {/snippet}
     <form class="row" onsubmit={save}>
       <label class="visually-hidden" for="save-title">Name</label>
       <input
@@ -179,31 +224,35 @@
         bind:value={title}
         maxlength="200"
       />
-      <button class="btn small" type="submit">Save</button>
+      <button class="btn small" type="submit" disabled={saving}>Save</button>
     </form>
-    <p class="muted small">
-      Saved in this browser only. Clearing site data deletes them, so download anything you want to
-      keep.
-    </p>
-    {#if mine.length}
-      <ul class="mine">
-        {#each mine as item (item.key)}
-          <li>
-            <span class="title">{item.title}</span>
-            <span class="buttons">
-              <button class="btn small" onclick={() => session.load(item.example)}>Open</button>
-              <button class="btn small" onclick={() => download(item.example, item.title)}
-                >Download</button
-              >
-              <button
-                class="btn small"
-                onclick={() => remove(item)}
-                aria-label="Delete {item.title}">Delete</button
-              >
-            </span>
-          </li>
-        {/each}
-      </ul>
+    {#if account.user}
+      <p class="muted small">
+        Saved in your account, so you can open them on any computer where you sign in.
+      </p>
+      {#await accountList()}
+        <p class="muted small" role="status">Loading your examples…</p>
+        {@render browserList()}
+      {:then { default: AccountExamples }}
+        <AccountExamples
+          bind:this={inAccount}
+          {session}
+          userId={account.user.id}
+          {library}
+          browser={browserList}
+        />
+      {:catch}
+        <p class="problem" role="alert">
+          Could not load your account's examples. Reload the page to try again.
+        </p>
+        {@render browserList()}
+      {/await}
+    {:else}
+      <p class="muted small">
+        Saved in this browser only. Clearing site data deletes them, so download anything you want
+        to keep.
+      </p>
+      {@render browserList()}
     {/if}
   </section>
 
@@ -321,5 +370,15 @@
   .small {
     font-size: 0.82rem;
     margin-top: 6px;
+  }
+
+  h4 {
+    margin: 10px 0 4px;
+    font-size: 0.9rem;
+  }
+
+  .problem {
+    color: var(--c-error);
+    font-weight: 600;
   }
 </style>

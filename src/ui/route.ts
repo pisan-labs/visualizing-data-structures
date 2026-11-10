@@ -15,6 +15,8 @@ export type Route =
       /** Compare mode: the second page (#compare=<id>) and its saved state (&exb=<code>). */
       compare: string | null;
       codeB: string | null;
+      /** An example saved in an account and shared (#saved=<id>). */
+      saved: string | null;
       key: string;
     }
   /** An old link of the form /#/<id>?ex=...; the app sends it to /<id>/#ex=... */
@@ -23,7 +25,8 @@ export type Route =
 /**
  * Each visualization has its own page, /<id>/. The hash carries only state:
  * #ex=<code> (a saved example), &embed=1, &lesson=<section>, and for compare mode
- * #compare=<other id>&ex=<code>&exb=<code for the other page>.
+ * #compare=<other id>&ex=<code>&exb=<code for the other page>, and #saved=<id> for an example
+ * shared from an account.
  */
 export function parseLocation(pathname: string, hash: string): Route {
   if (hash.startsWith('#/')) {
@@ -45,6 +48,7 @@ export function parseLocation(pathname: string, hash: string): Route {
     practiceCount: Number(params.get('n')) || 5,
     compare: params.get('compare'),
     codeB: params.get('exb'),
+    saved: params.get('saved'),
     key: `${pathname}${hash}`,
   };
 }
@@ -59,11 +63,13 @@ export function vizHref(
     autoplay?: boolean;
     compare?: string;
     exb?: string;
+    saved?: string;
   } = {},
 ): string {
   const params = [
     state.compare ? `compare=${state.compare}` : '',
     state.ex ? `ex=${state.ex}` : '',
+    !state.ex && state.saved ? `saved=${encodeURIComponent(state.saved)}` : '',
     state.compare && state.exb ? `exb=${state.exb}` : '',
     state.embed ? 'embed=1' : '',
     state.embed && state.theme ? `theme=${state.theme}` : '',

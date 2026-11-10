@@ -32,6 +32,35 @@ export const SESSION = {
   user: USER,
 };
 
+/** Another reader, for an emailed link that signs in to a different account. */
+export const OTHER = {
+  id: '0000000b-0000-4000-8000-000000000000',
+  email: 'other@example.org',
+  aud: 'authenticated',
+  role: 'authenticated',
+};
+const OTHER_TOKEN = `${b64({ alg: 'HS256', typ: 'JWT' })}.${b64({
+  sub: OTHER.id,
+  exp: 4102444800,
+  role: 'authenticated',
+})}.c2lnbmF0dXJl`;
+const OTHER_SESSION = { ...SESSION, access_token: OTHER_TOKEN, user: OTHER };
+
+/** A row of app_stepwise.preferences, as PostgREST returns it. */
+export interface PrefRow {
+  prefs: unknown;
+  progress: unknown;
+  last_release: string | null;
+  notify_new_pages: boolean;
+  updated_at: string;
+}
+
+/** What the sign-in-link service answers to one request. */
+export interface LinkReply {
+  status: number;
+  body: unknown;
+}
+
 export interface Row {
   id: string;
   owner: string;
@@ -47,16 +76,21 @@ export interface Row {
 export interface MockOptions {
   /** Every request to the host fails as if offline. */
   down?: boolean;
-  /** POST /auth/v1/otp answers 429 with this message. */
-  rateLimit?: string;
   rows?: Row[];
   /** Lesson lists and their items (./lists-mock.ts). */
   lists?: ListRow[];
   items?: ItemRow[];
+  /** The signed-in reader's preferences row; undefined for none. */
+  preferences?: PrefRow;
+  /** The database has no preferences table or delete_my_data (0002 not applied). */
+  noPreferences?: boolean;
+  /** The sign-in-link service's answers, in order; then "sent". */
+  links?: LinkReply[];
 }
 
 export interface Mock {
   rows: Row[];
+  preferences: PrefRow | undefined;
   /** Every request the page sent to HOST. */
   calls: { method: string; url: URL; body: unknown }[];
   /** Requests for the Supabase chunk (assets/supabase-*.js). */
@@ -64,6 +98,13 @@ export interface Mock {
   lists: ListRow[];
   items: ItemRow[];
 }
+
+let stamps = 0;
+/** An updated_at as PostgREST writes it (microseconds and an offset), always later. */
+export const stamp = () =>
+  new Date(Date.UTC(2026, 10, 10, 12, 0, 0) + ++stamps * 1000)
+    .toISOString()
+    .replace('Z', '123+00:00');
 
 let ids = 0;
 export function row(fields: Partial<Row> & Pick<Row, 'viz' | 'title' | 'example'>): Row {
@@ -104,11 +145,13 @@ const pick = (r: Row, cols: string[]) =>
 export async function mockSupabase(page: Page, options: MockOptions = {}): Promise<Mock> {
   const mock: Mock = {
     rows: options.rows ?? [],
+    preferences: options.preferences,
     calls: [],
     chunks: [],
     lists: options.lists ?? [],
     items: options.items ?? [],
   };
+  const links = [...(options.links ?? [])];
   page.on('request', (req: Request) => {
     if (/\/assets\/supabase-[\w-]+\.js$/.test(req.url())) mock.chunks.push(req.url());
   });
@@ -147,13 +190,58 @@ export async function mockSupabase(page: Page, options: MockOptions = {}): Promi
     const lists = answerLists(mock, req, url, body, json);
     if (lists) return lists;
 
+    const other = (req.headers()['authorization'] ?? '').includes(OTHER_TOKEN);
+    const missing = () => json(404, { code: 'PGRST205', message: `Could not find ${path}` });
+
     switch (path) {
       case '/auth/v1/user':
-        return json(200, USER);
-      case '/auth/v1/otp':
-        if (options.rateLimit)
-          return json(429, { code: 'over_email_send_rate_limit', msg: options.rateLimit });
-        return json(200, {});
+        return json(200, other ? OTHER : USER);
+      case '/functions/v1/sign-in-link': {
+        const reply = links.shift() ?? { status: 200, body: { status: 'sent' } };
+        return json(reply.status, reply.body);
+      }
+      case '/auth/v1/verify': {
+        // An emailed link: its token signs in whoever it was made for.
+        const hash = (body as { token_hash?: string })?.token_hash ?? '';
+        if (hash === 'used')
+          return json(403, {
+            code: 403,
+            error_code: 'otp_expired',
+            msg: 'Email link is invalid or has expired',
+          });
+        return json(200, hash.startsWith('other') ? OTHER_SESSION : SESSION);
+      }
+      case '/rest/v1/preferences': {
+        if (options.noPreferences) return missing();
+        const p = mock.preferences;
+        if (req.method() === 'GET') return json(200, p ? [p] : []);
+        if (req.method() === 'POST') {
+          if (p) return json(409, { code: '23505', message: 'duplicate key value' });
+          const { owner: _owner, ...fields } = body as PrefRow & { owner: string };
+          mock.preferences = { ...fields, updated_at: stamp() };
+          return json(201, one ? mock.preferences : [mock.preferences]);
+        }
+        if (req.method() === 'PATCH') {
+          // Compare and swap: only on top of the copy the page read.
+          if (!p || eq('updated_at') !== p.updated_at) return json(200, []);
+          mock.preferences = { ...p, ...(body as Partial<PrefRow>), updated_at: stamp() };
+          return json(200, [mock.preferences]);
+        }
+        if (req.method() === 'DELETE') {
+          mock.preferences = undefined;
+          return json(204);
+        }
+        return json(405, { message: 'method not mocked' });
+      }
+      case '/rest/v1/rpc/delete_my_data': {
+        if (options.noPreferences)
+          return json(404, { code: 'PGRST202', message: 'Could not find the function' });
+        const mine = mock.rows.filter((r) => r.owner === USER.id).length;
+        mock.rows = mock.rows.filter((r) => r.owner !== USER.id);
+        const had = mock.preferences ? 1 : 0;
+        mock.preferences = undefined;
+        return json(200, { preferences: had, saved_examples: mine });
+      }
       case '/auth/v1/logout':
         return json(204);
       case '/auth/v1/token':
@@ -217,4 +305,44 @@ export async function mockSupabase(page: Page, options: MockOptions = {}): Promi
     return json(405, { message: 'method not mocked' });
   });
   return mock;
+}
+
+/** Cloudflare Turnstile's host. Tests answer it with a stand-in; nothing reaches it. */
+export const TURNSTILE = 'https://challenges.cloudflare.com';
+
+const TURNSTILE_STUB = `
+window.__turnstile = { renders: [], resets: 0, removes: 0 };
+window.turnstile = {
+  render(el, opts) {
+    window.__turnstile.renders.push({ sitekey: opts.sitekey, action: opts.action, size: opts.size });
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'btn';
+    b.textContent = 'Pass the test check';
+    let n = 0;
+    b.addEventListener('click', () => opts.callback('turnstile-token-' + ++n));
+    el.append(b);
+    return 'widget-1';
+  },
+  reset() {
+    window.__turnstile.resets++;
+  },
+  remove() {
+    window.__turnstile.removes++;
+    document.querySelectorAll('.widget button').forEach((b) => b.remove());
+  },
+};
+`;
+
+/**
+ * Answer Turnstile's script with a stand-in whose widget is one button that passes the check.
+ * Returns the addresses the page asked Turnstile's host for.
+ */
+export async function stubTurnstile(page: Page): Promise<string[]> {
+  const loads: string[] = [];
+  await page.route(`${TURNSTILE}/**`, (route: Route) => {
+    loads.push(route.request().url());
+    return route.fulfill({ contentType: 'text/javascript', body: TURNSTILE_STUB });
+  });
+  return loads;
 }

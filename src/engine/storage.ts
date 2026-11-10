@@ -25,6 +25,14 @@ export function writeJson(key: string, value: unknown): boolean {
   }
 }
 
+export function removeJson(key: string): void {
+  try {
+    localStorage.removeItem(PREFIX + key);
+  } catch {
+    // Nothing stored, or storage is blocked: nothing to remove.
+  }
+}
+
 export interface LibraryItem {
   key: string;
   title: string;

@@ -1,17 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { saveToLibrary, loadLibrary, type LibraryItem } from '../engine/storage';
 import type { SavedExample } from '../engine/types';
-import { account, connect, openShared, useBackendForTests } from './account.svelte';
+import { account, connect, fitsHint, openShared, useBackendForTests } from './account.svelte';
 import { readAuthReturn, stashReturn, takeStash } from './auth-return';
-import {
-  AccountError,
-  asAccountError,
-  exampleOf,
-  isExampleId,
-  LINK_WAIT_MS,
-  MESSAGES,
-  secondsLeft,
-} from './backend';
+import { AccountError, asAccountError, exampleOf, isExampleId, MESSAGES } from './backend';
 import { accountConfig, makeConfig, readConfig, SESSION_KEY } from './config';
 import { toAccountError } from './errors';
 import { createFakeBackend, type FakeBackend } from './fake';
@@ -309,14 +301,21 @@ describe('failure messages', () => {
     expect(toAccountError({ message: 'Too Many Requests' }, 429).kind).toBe('rate');
   });
 
-  it('waits a minute between sign-in links', () => {
-    const sent = 1_000_000;
-    expect(LINK_WAIT_MS).toBe(60_000);
-    expect(secondsLeft(sent + LINK_WAIT_MS, sent)).toBe(60);
-    expect(secondsLeft(sent + LINK_WAIT_MS, sent + 1)).toBe(60);
-    expect(secondsLeft(sent + LINK_WAIT_MS, sent + 59_500)).toBe(1);
-    expect(secondsLeft(sent + LINK_WAIT_MS, sent + 60_000)).toBe(0);
-    expect(secondsLeft(0, sent)).toBe(0);
+  it('says when the database is not ready for a feature yet', () => {
+    const kind = (raw: unknown, status?: number) => toAccountError(raw, status).kind;
+    expect(
+      kind(
+        {
+          code: 'PGRST205',
+          message: "Could not find the table 'app_stepwise.preferences' in the schema cache",
+        },
+        404,
+      ),
+    ).toBe('unavailable');
+    expect(kind({ code: 'PGRST202', message: 'Could not find the function' }, 404)).toBe(
+      'unavailable',
+    );
+    expect(kind({ code: '42P01', message: 'relation does not exist' }, 404)).toBe('unavailable');
   });
 
   it('treats a part of the site that did not load as unreachable', () => {
@@ -363,6 +362,30 @@ describe('coming back from signing in', () => {
       code: 'server_error',
       description: 'Oops',
     });
+  });
+
+  it('takes an emailed link’s token and hint out of the address', () => {
+    expect(
+      readAuthReturn('?token_hash=th1&type=email&email_hint=a***%40example.com&keep=1', ''),
+    ).toEqual({
+      ret: { kind: 'token', tokenHash: 'th1', type: 'email', emailHint: 'a***@example.com' },
+      search: '?keep=1',
+      hash: '',
+    });
+    // Only a token return loses a "type" in the query.
+    expect(readAuthReturn('?code=c&type=x', '').search).toBe('?type=x');
+    const long = readAuthReturn(`?token_hash=t&email_hint=${'a'.repeat(500)}`, '').ret;
+    expect(long?.kind === 'token' && long.emailHint.length).toBe(120);
+  });
+
+  it('tells whether an address fits a link’s hint', () => {
+    expect(fitsHint('ann@example.com', 'a***@example.com')).toBe(true);
+    expect(fitsHint('Ann@Example.com', 'a***@example.com')).toBe(true);
+    expect(fitsHint('ann@example.com', 'an***@example.com')).toBe(true);
+    expect(fitsHint('bob@example.com', 'a***@example.com')).toBe(false);
+    expect(fitsHint('ann@example.org', 'a***@example.com')).toBe(false);
+    expect(fitsHint('ann@example.com', '')).toBe(false);
+    expect(fitsHint(null, 'a***@example.com')).toBe(false);
   });
 
   it('leaves every other address alone', () => {
@@ -502,31 +525,180 @@ describe('Supabase adapter (no network)', () => {
     expect(seen.length).toBe(before);
   });
 
-  it('sends a magic link that comes back to the page', async () => {
-    const { backend, seen } = setup(ok);
-    await backend.sendSignInLink('a@example.com', 'https://stepwise.example.test/bst/');
-    const otp = seen.find((r) => r.url.pathname === '/auth/v1/otp')!;
-    expect(otp.method).toBe('POST');
-    expect(otp.url.searchParams.get('redirect_to')).toBe('https://stepwise.example.test/bst/');
-    expect(otp.body).toMatchObject({ email: 'a@example.com', code_challenge_method: 's256' });
+  const LINK = '/functions/v1/sign-in-link';
+
+  it('asks the sign-in-link service for a magic link that comes back to the page', async () => {
+    const { backend, seen } = setup((req) =>
+      req.url.pathname === LINK ? { body: { status: 'sent' } } : ok(req),
+    );
+    expect(
+      await backend.sendSignInLink('a@example.com', 'https://stepwise.example.test/bst/'),
+    ).toEqual({ status: 'sent' });
+    const sent = seen.find((r) => r.url.pathname === LINK)!;
+    expect(sent.method).toBe('POST');
+    expect(sent.url.origin).toBe(URL_);
+    expect(sent.headers.get('apikey')).toBe('anon');
+    expect(sent.headers.get('content-type')).toBe('application/json');
+    const id = localStorage.getItem('hintwise.browserId');
+    expect(id).toMatch(/^[\w-]{8,100}$/);
+    expect(sent.body).toEqual({
+      email: 'a@example.com',
+      redirectTo: 'https://stepwise.example.test/bst/',
+      app: 'stepwise',
+      browserId: id,
+    });
+    // Supabase's own magic links are not used.
+    expect(seen.some((r) => r.url.pathname === '/auth/v1/otp')).toBe(false);
+    // The same browser id every time, and a check's token when there is one.
+    await backend.sendSignInLink('a@example.com', 'https://stepwise.example.test/', 'tok-1');
+    const again = seen.filter((r) => r.url.pathname === LINK)[1]!;
+    expect(again.body).toMatchObject({ browserId: id, turnstileToken: 'tok-1' });
   });
 
-  it('says to wait when Supabase limits sign-in emails', async () => {
-    const { backend } = setup((req) =>
-      req.url.pathname === '/auth/v1/otp'
+  it('passes on the service’s answers: wait, a check, or its own message', async () => {
+    const answers: { status: number; body?: unknown }[] = [
+      { status: 429, body: { status: 'wait', retryAt: '2026-11-10T18:42:00.000Z' } },
+      { status: 403, body: { status: 'challenge', siteKey: 'site-key' } },
+      { status: 403, body: { status: 'challenge', siteKey: 'site-key', failed: true } },
+      { status: 503, body: { status: 'error', message: 'Email sign-in is paused; try Google' } },
+      {
+        status: 400,
+        body: { status: 'error', message: 'That email address does not look right.' },
+      },
+      { status: 500 },
+      { status: 429 },
+    ];
+    const { backend } = setup((req) => (req.url.pathname === LINK ? answers.shift()! : ok(req)));
+    const send = () => backend.sendSignInLink('a@example.com', 'https://x.test/');
+    expect(await send()).toEqual({ status: 'wait', retryAt: '2026-11-10T18:42:00.000Z' });
+    expect(await send()).toEqual({ status: 'challenge', siteKey: 'site-key', failed: false });
+    expect(await send()).toEqual({ status: 'challenge', siteKey: 'site-key', failed: true });
+    await expect(send()).rejects.toThrow('Email sign-in is paused; try Google');
+    await expect(send()).rejects.toThrow('That email address does not look right.');
+    await expect(send()).rejects.toThrow(MESSAGES.unreachable);
+    // A wait with no time: a minute from now.
+    const wait = await send();
+    expect(wait.status).toBe('wait');
+    const left = Date.parse((wait as { retryAt: string }).retryAt) - Date.now();
+    expect(left).toBeGreaterThan(50_000);
+    expect(left).toBeLessThanOrEqual(60_000);
+  });
+
+  it('verifies an emailed link’s token, in any browser', async () => {
+    const other = { ...user, id: '0000000c-0000-4000-8000-000000000000', email: 'c@example.com' };
+    const { backend, seen, storage } = setup((req) =>
+      req.url.pathname === '/auth/v1/verify'
         ? {
-            status: 429,
             body: {
-              code: 'over_email_send_rate_limit',
-              msg: 'For security purposes, you can only request this after 37 seconds.',
+              access_token: jwt,
+              refresh_token: 'r2',
+              token_type: 'bearer',
+              expires_in: 3600,
+              expires_at: 4102444800,
+              user: other,
             },
           }
         : ok(req),
     );
-    const err = await backend.sendSignInLink('a@example.com', 'https://x.test/').catch((e) => e);
-    expect(err).toBeInstanceOf(AccountError);
-    expect(err.kind).toBe('rate');
-    expect(err.retryAfter).toBe(37);
+    storage.removeItem(SESSION_KEY);
+    const got = await backend.completeSignIn({
+      kind: 'token',
+      tokenHash: 'th-1',
+      type: 'email',
+      emailHint: 'c***@example.com',
+    });
+    expect(got).toEqual({ id: other.id, email: 'c@example.com' });
+    const verify = seen.find((r) => r.url.pathname === '/auth/v1/verify')!;
+    expect(verify.method).toBe('POST');
+    expect(verify.body).toMatchObject({ token_hash: 'th-1', type: 'email' });
+    expect(storage.getItem(SESSION_KEY)).toContain('r2');
+  });
+
+  it('reads and writes the preferences row by compare and swap', async () => {
+    const row = {
+      prefs: { theme: { value: 'dark', at: '2026-11-10T09:00:00.000Z' } },
+      progress: { version: 1, pages: {} },
+      last_release: '2026-11-09-wave-8',
+      notify_new_pages: true,
+      updated_at: '2026-11-10T09:00:00.123456+00:00',
+    };
+    let patched = true;
+    const { backend, seen } = setup((req) => {
+      if (req.url.pathname !== '/rest/v1/preferences') return ok(req);
+      // maybeSingle takes an array and returns its one row, or null for none.
+      if (req.method === 'GET') return { body: [row] };
+      if (req.method === 'POST')
+        return { status: 409, body: { code: '23505', message: 'duplicate key' } };
+      if (req.method === 'PATCH')
+        return { body: patched ? [{ ...row, updated_at: '2026-11-10T09:00:01.5+00:00' }] : [] };
+      return { status: 405 };
+    });
+    expect(await backend.readPreferences()).toEqual({
+      prefs: row.prefs,
+      progress: row.progress,
+      lastRelease: '2026-11-09-wave-8',
+      notifyNewPages: true,
+      updatedAt: row.updated_at,
+    });
+    const get = seen.find((r) => r.url.pathname === '/rest/v1/preferences')!;
+    expect(get.url.searchParams.get('owner')).toBe(`eq.${userId}`);
+    expect(get.headers.get('accept-profile')).toBe('app_stepwise');
+
+    const fields = {
+      prefs: {},
+      progress: { version: 1, pages: {} },
+      lastRelease: null,
+      notifyNewPages: false,
+    };
+    // An update names the copy it was merged from.
+    expect((await backend.writePreferences(fields, row.updated_at))?.updatedAt).toBe(
+      '2026-11-10T09:00:01.5+00:00',
+    );
+    const patch = seen.find((r) => r.method === 'PATCH')!;
+    expect(patch.url.searchParams.get('owner')).toBe(`eq.${userId}`);
+    expect(patch.url.searchParams.get('updated_at')).toBe(`eq.${row.updated_at}`);
+    expect(patch.body).toEqual({
+      prefs: {},
+      progress: { version: 1, pages: {} },
+      last_release: null,
+      notify_new_pages: false,
+    });
+    // Changed meanwhile: nothing matched, so null (read again).
+    patched = false;
+    expect(await backend.writePreferences(fields, row.updated_at)).toBeNull();
+    // A first row that another tab made first: null too.
+    expect(await backend.writePreferences(fields, null)).toBeNull();
+    const post = seen.find(
+      (r) => r.method === 'POST' && r.url.pathname === '/rest/v1/preferences',
+    )!;
+    expect(post.body).toMatchObject({ owner: userId, notify_new_pages: false });
+  });
+
+  it('deletes my data through delete_my_data, or table by table without it', async () => {
+    const { backend, seen } = setup((req) =>
+      req.url.pathname === '/rest/v1/rpc/delete_my_data' ? { body: { preferences: 1 } } : ok(req),
+    );
+    await backend.deleteMyData();
+    const rpc = seen.find((r) => r.url.pathname === '/rest/v1/rpc/delete_my_data')!;
+    expect(rpc.method).toBe('POST');
+    expect(rpc.headers.get('content-profile')).toBe('app_stepwise');
+
+    // A database without 0002: no function, no preferences table; the examples still go.
+    const old = setup((req) => {
+      if (req.url.pathname === '/rest/v1/rpc/delete_my_data')
+        return { status: 404, body: { code: 'PGRST202', message: 'Could not find the function' } };
+      if (req.url.pathname === '/rest/v1/preferences')
+        return { status: 404, body: { code: 'PGRST205', message: 'Could not find the table' } };
+      if (req.url.pathname === '/rest/v1/saved_examples') return { status: 204 };
+      return ok(req);
+    });
+    await old.backend.deleteMyData();
+    const deletes = old.seen.filter((r) => r.method === 'DELETE');
+    expect(deletes.map((r) => r.url.pathname)).toEqual([
+      '/rest/v1/preferences',
+      '/rest/v1/saved_examples',
+    ]);
+    for (const d of deletes) expect(d.url.searchParams.get('owner')).toBe(`eq.${userId}`);
   });
 
   it('fails softly with no network', async () => {

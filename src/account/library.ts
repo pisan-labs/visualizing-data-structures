@@ -41,6 +41,14 @@ function markCopied(userId: string, key: string): void {
   writeJson(COPIED, { ...base, [userId]: [...copiedKeys(userId), key] });
 }
 
+/** Forget which browser examples went into this account (its examples were deleted). */
+export function forgetCopied(userId: string): void {
+  const all = readJson<Record<string, unknown>>(COPIED, {});
+  if (!all || typeof all !== 'object' || Array.isArray(all) || !(userId in all)) return;
+  const { [userId]: _gone, ...rest } = all;
+  writeJson(COPIED, rest);
+}
+
 /** The browser's saved examples (every page's) not yet copied into this account. */
 export function notYetCopied(userId: string, library: LibraryItem[]): LibraryItem[] {
   const done = new Set(copiedKeys(userId));

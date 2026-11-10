@@ -46,17 +46,48 @@ export interface SharedExample {
 }
 
 /**
- * A sign-in that came back in the page's address (the PKCE flow): `?code=` to exchange for a
- * session, or `?error=...&error_description=...`.
+ * A sign-in that came back in the page's address: `?code=` from Google (the PKCE flow) to
+ * exchange for a session, `?token_hash=` from an emailed link (the platform's sign-in-link
+ * service) to verify, or `?error=...&error_description=...`.
  */
 export type AuthReturn =
   | { kind: 'code'; code: string; flowId?: string }
+  | { kind: 'token'; tokenHash: string; type: string; emailHint: string }
   | { kind: 'error'; code: string; description: string };
+
+/**
+ * What the platform's sign-in-link service answered: the link is on its way; or wait until
+ * `retryAt` (an ISO time) before asking again for this address; or prove the reader is a person
+ * first (a Cloudflare Turnstile check with `siteKey`; `failed` when the last check did not pass).
+ */
+export type LinkAnswer =
+  | { status: 'sent' }
+  | { status: 'wait'; retryAt: string }
+  | { status: 'challenge'; siteKey: string; failed: boolean };
+
+/**
+ * The reader's row in app_stepwise.preferences. `prefs` and `progress` are untrusted: parse them
+ * (src/account/sync-merge.ts) before use.
+ */
+export interface AccountPreferences {
+  prefs: unknown;
+  progress: unknown;
+  lastRelease: string | null;
+  notifyNewPages: boolean;
+  /** The row's version: a write names the version it was merged from (compare and swap). */
+  updatedAt: string;
+}
+
+export type PreferencesFields = Omit<AccountPreferences, 'updatedAt'>;
 
 /** Lesson lists (./lists.ts) are part of the same service. */
 export interface AccountBackend extends LessonListBackend {
-  /** Email a sign-in link that brings the reader back to `returnTo`. */
-  sendSignInLink(email: string, returnTo: string): Promise<void>;
+  /**
+   * Ask the platform to email a sign-in link that brings the reader back to `returnTo` (an
+   * address without query or hash). `turnstileToken` answers a challenge. Throws AccountError
+   * with the service's own message when it refuses.
+   */
+  sendSignInLink(email: string, returnTo: string, turnstileToken?: string): Promise<LinkAnswer>;
   /** Leave for Google's sign-in page, which comes back to `returnTo`. */
   signInWithGoogle(returnTo: string): Promise<void>;
   /** Finish a sign-in that came back in the address. */
@@ -73,6 +104,22 @@ export interface AccountBackend extends LessonListBackend {
   deleteExample(id: string): Promise<void>;
   /** A shared example, signed in or not; null when it is missing, private or deleted. */
   readSharedExample(id: string): Promise<SharedExample | null>;
+  /** This reader's preferences row, or null when there is none yet. */
+  readPreferences(): Promise<AccountPreferences | null>;
+  /**
+   * Write the row, but only if it is still the copy read: `seen` is that copy's updatedAt, or
+   * null when there was no row. Returns the row as stored, or null when it changed meanwhile (in
+   * another tab or on another computer): read it again, merge, and try again.
+   */
+  writePreferences(
+    fields: PreferencesFields,
+    seen: string | null,
+  ): Promise<AccountPreferences | null>;
+  /**
+   * Delete every row this reader has in app_stepwise: saved examples, preferences and lesson
+   * lists. The account itself (shared by every HintWise app) stays.
+   */
+  deleteMyData(): Promise<void>;
 }
 
 export type AccountErrorKind =
@@ -86,6 +133,7 @@ export type AccountErrorKind =
   | 'missing'
   | 'full'
   | 'large'
+  | 'unavailable'
   | 'other';
 
 export const MESSAGES: Record<AccountErrorKind, string> = {
@@ -100,6 +148,7 @@ export const MESSAGES: Record<AccountErrorKind, string> = {
   missing: 'That example is no longer in your account.',
   full: 'Your account holds as many examples as it can (1000). Delete some to save more.',
   large: 'This example is too large to keep in an account. Download it as a file instead.',
+  unavailable: 'This part of your account is not ready yet. Try again later.',
   other: 'Something went wrong with your account. Try again in a minute.',
 };
 
@@ -115,13 +164,6 @@ export class AccountError extends Error {
     super(message);
   }
 }
-
-/** Supabase sends one sign-in link per address a minute; the dialog waits as long. */
-export const LINK_WAIT_MS = 60_000;
-
-/** Whole seconds until `until` (a time in ms), never below 0. */
-export const secondsLeft = (until: number, now: number): number =>
-  Math.max(0, Math.ceil((until - now) / 1000));
 
 /** The most examples one account holds; the database enforces the same number. */
 export const MAX_EXAMPLES = 1000;

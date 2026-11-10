@@ -4,6 +4,7 @@
   import type { PreviewPoster } from '../render/preview';
   import { pageSummary } from '../progress/progress';
   import { families, isLive, pathways, type Pathway } from '../viz/catalog';
+  import NewSince from './NewSince.svelte';
   import PreviewThumb from './PreviewThumb.svelte';
   import ProgressMark from './ProgressMark.svelte';
   import ProgressOverview from './ProgressOverview.svelte';
@@ -73,6 +74,7 @@
     <p class="muted">{live} of {total} visualizations are ready. The rest are on the way.</p>
   </section>
 
+  <NewSince />
   <RecentPages {posters} />
   <ProgressOverview />
 

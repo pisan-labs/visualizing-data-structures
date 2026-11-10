@@ -12,13 +12,16 @@ import {
   type AccountBackend,
   type AccountExample,
   type AccountExamplePatch,
+  type AccountPreferences,
   type AccountUser,
   type AuthReturn,
   type NewAccountExample,
+  type PreferencesFields,
   type SharedExample,
 } from './backend';
 import { SESSION_KEY, type AccountConfig } from './config';
 import { toAccountError } from './errors';
+import { browserId, requestSignInLink } from './link-service';
 
 /** A request that gets no answer in this long counts as unreachable. */
 const TIMEOUT_MS = 15_000;
@@ -45,6 +48,31 @@ const fromRow = (r: Row): AccountExample => ({
   shared: r.shared,
   createdAt: r.created_at,
   updatedAt: r.updated_at,
+});
+
+const PREF_COLUMNS = 'prefs, progress, last_release, notify_new_pages, updated_at';
+
+interface PrefRow {
+  prefs: unknown;
+  progress: unknown;
+  last_release: string | null;
+  notify_new_pages: boolean;
+  updated_at: string;
+}
+
+const fromPrefRow = (r: PrefRow): AccountPreferences => ({
+  prefs: r.prefs,
+  progress: r.progress,
+  lastRelease: r.last_release,
+  notifyNewPages: r.notify_new_pages === true,
+  updatedAt: r.updated_at,
+});
+
+const toPrefRow = (f: PreferencesFields) => ({
+  prefs: f.prefs,
+  progress: f.progress,
+  last_release: f.lastRelease,
+  notify_new_pages: f.notifyNewPages,
 });
 
 const toUser = (u: User | null | undefined): AccountUser | null =>
@@ -80,6 +108,7 @@ export function createSupabaseBackend(
   config: AccountConfig,
   options: SupabaseOptions = {},
 ): AccountBackend {
+  const baseFetch: typeof fetch = options.fetch ?? ((...a) => fetch(...a));
   const client = createClient(config.url, config.anonKey, {
     auth: {
       flowType: 'pkce',
@@ -93,9 +122,10 @@ export function createSupabaseBackend(
       ...(options.storage ? { storage: options.storage } : {}),
     },
     db: { schema: 'app_stepwise' },
-    global: { fetch: fetchWithTimeout(options.fetch ?? ((...a) => fetch(...a))) },
+    global: { fetch: fetchWithTimeout(baseFetch) },
   });
   const table = () => client.from('saved_examples');
+  const preferences = () => client.from('preferences');
 
   /** Run an account call; anything it throws becomes an AccountError. */
   async function guard<T>(work: () => Promise<T>): Promise<T> {
@@ -136,14 +166,20 @@ export function createSupabaseBackend(
   const sessionUser = (session: Session | null): AccountUser | null => toUser(session?.user);
 
   return {
-    sendSignInLink: (email, returnTo) =>
-      guard(async () => {
-        const { error } = await client.auth.signInWithOtp({
-          email,
-          options: { emailRedirectTo: returnTo },
-        });
-        if (error) throw toAccountError(error);
-      }),
+    sendSignInLink: (email, returnTo, turnstileToken) =>
+      guard(() =>
+        requestSignInLink(
+          config,
+          {
+            email,
+            redirectTo: returnTo,
+            app: 'stepwise',
+            browserId: browserId(),
+            ...(turnstileToken ? { turnstileToken } : {}),
+          },
+          baseFetch,
+        ),
+      ),
 
     signInWithGoogle: (returnTo) =>
       guard(async () => {
@@ -164,10 +200,15 @@ export function createSupabaseBackend(
             ret.description ? `Sign-in did not work: ${ret.description}` : undefined,
           );
         }
-        const { data, error } = await client.auth.exchangeCodeForSession(
-          ret.code,
-          ret.flowId ? { flowId: ret.flowId } : undefined,
-        );
+        // An emailed link (the sign-in-link service) carries a token to verify, in any browser;
+        // Google's return carries a code for this browser's PKCE verifier.
+        const { data, error } =
+          ret.kind === 'token'
+            ? await client.auth.verifyOtp({ token_hash: ret.tokenHash, type: 'email' })
+            : await client.auth.exchangeCodeForSession(
+                ret.code,
+                ret.flowId ? { flowId: ret.flowId } : undefined,
+              );
         if (error) throw toAccountError(error);
         const user = toUser(data.user ?? data.session?.user);
         if (!user) throw new AccountError('link');
@@ -268,6 +309,56 @@ export function createSupabaseBackend(
           .maybeSingle();
         if (error) throw toAccountError(error, status);
         return (data as SharedExample | null) ?? null;
+      }),
+
+    readPreferences: () =>
+      guard(async () => {
+        const owner = await userId();
+        const { data, error, status } = await preferences()
+          .select(PREF_COLUMNS)
+          .eq('owner', owner)
+          .maybeSingle();
+        if (error) throw toAccountError(error, status);
+        return data ? fromPrefRow(data as PrefRow) : null;
+      }),
+
+    writePreferences: (fields, seen) =>
+      guard(async () => {
+        const owner = await userId();
+        if (seen === null) {
+          const { data, error, status } = await preferences()
+            .insert({ owner, ...toPrefRow(fields) })
+            .select(PREF_COLUMNS)
+            .single();
+          // Another tab or computer made the row first.
+          if (error?.code === '23505') return null;
+          if (error) throw toAccountError(error, status);
+          return fromPrefRow(data as PrefRow);
+        }
+        // Only if the row is still the copy the fields were merged from.
+        const { data, error, status } = await preferences()
+          .update(toPrefRow(fields))
+          .eq('owner', owner)
+          .eq('updated_at', seen)
+          .select(PREF_COLUMNS)
+          .maybeSingle();
+        if (error) throw toAccountError(error, status);
+        return data ? fromPrefRow(data as PrefRow) : null;
+      }),
+
+    deleteMyData: () =>
+      guard(async () => {
+        const owner = await userId();
+        // One call deletes this reader's rows in every app_stepwise table (0002_preferences.sql).
+        const { error, status } = await client.rpc('delete_my_data');
+        if (!error) return;
+        const problem = toAccountError(error, status);
+        if (problem.kind !== 'unavailable') throw problem;
+        // The database has no delete_my_data yet: delete table by table, skipping missing ones.
+        for (const name of ['preferences', 'saved_examples']) {
+          const { error: e, status: st } = await client.from(name).delete().eq('owner', owner);
+          if (e && toAccountError(e, st).kind !== 'unavailable') throw toAccountError(e, st);
+        }
       }),
   };
 }

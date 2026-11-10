@@ -45,6 +45,9 @@ export function toAccountError(raw: unknown, status?: number): AccountError {
     ((http === 400 || http === 422) && /email/i.test(message))
   )
     return new AccountError('email');
+  // A table or function this build expects is not in the database yet (a migration not applied).
+  if (code === 'PGRST205' || code === 'PGRST202' || code === '42P01' || code === '42883')
+    return new AccountError('unavailable');
   if (code === 'PGRST116' || code === '22P02') return new AccountError('missing');
   if (code === '23514' || code === '22001' || http === 413) return new AccountError('large');
   if (

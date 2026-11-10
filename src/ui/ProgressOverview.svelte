@@ -1,5 +1,6 @@
 <script lang="ts">
   import { tick } from 'svelte';
+  import { account } from '../account/account.svelte';
   import { pageSummary } from '../progress/progress';
   import { families, isLive, pathways } from '../viz/catalog';
   import { progress } from './progress.svelte';
@@ -63,7 +64,9 @@
       {/each}
     </ul>
     <div class="reset">
-      <p class="muted">Kept in this browser only.</p>
+      <p class="muted">
+        {account.user ? 'Kept in this browser and in your account.' : 'Kept in this browser only.'}
+      </p>
       {#if !confirming}
         <button class="btn small" onclick={ask}>Reset my progress</button>
       {:else}

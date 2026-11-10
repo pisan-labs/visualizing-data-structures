@@ -25,7 +25,7 @@
   import { nextSpeed, runShortcut, shortcutsFor, type KeyActions } from './shortcuts';
   import ShortcutsDialog from './ShortcutsDialog.svelte';
   import Stage from './Stage.svelte';
-  import { notify, prefs, setPref, type Tab } from './state.svelte';
+  import { notify, onPrefsApplied, prefs, setPref, type Tab } from './state.svelte';
   import TracePanel from './TracePanel.svelte';
   import Transport from './Transport.svelte';
   import VarsPanel from './VarsPanel.svelte';
@@ -51,6 +51,13 @@
   } = $props();
 
   const session = untrack(() => new Session(def, { speed: prefs.speed, detail: prefs.detail }));
+  // Speed and detail that arrive from the account (signing in) apply to this page too.
+  $effect(() =>
+    onPrefsApplied(() => {
+      session.setSpeed(prefs.speed);
+      session.setDetail(prefs.detail);
+    }),
+  );
   let ready = $state(false);
 
   onMount(async () => {

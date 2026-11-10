@@ -1,4 +1,5 @@
-import { readJson, writeJson } from '../engine/storage';
+import { listeners } from '../engine/listeners';
+import { readJson, removeJson, writeJson } from '../engine/storage';
 import {
   emptyProgress,
   mergeProgress,
@@ -20,11 +21,18 @@ const stored = (): Progress => parseProgress(readJson<unknown>(PROGRESS_KEY, nul
  */
 class ProgressStore {
   current = $state.raw<Progress>(typeof localStorage === 'undefined' ? emptyProgress() : stored());
+  private changes = listeners();
+
+  /** Called after the reader's own changes here (the account sync writes them back). */
+  onChange(listener: () => void): () => void {
+    return this.changes.add(listener);
+  }
 
   update(change: (p: Progress) => Progress): void {
     const next = change(mergeProgress(this.current, stored()));
     this.current = next;
     writeJson(PROGRESS_KEY, next);
+    this.changes.emit();
   }
 
   /** "Reset my progress": empty here, and a reset time that empties other copies when merged. */
@@ -32,6 +40,20 @@ class ProgressStore {
     const next = resetProgress(now());
     this.current = next;
     writeJson(PROGRESS_KEY, next);
+    this.changes.emit();
+  }
+
+  /** Merge in another copy (the account's). Not a change of the reader's, so nobody is told. */
+  mergeIn(other: Progress): void {
+    const next = mergeProgress(mergeProgress(this.current, stored()), other);
+    this.current = next;
+    writeJson(PROGRESS_KEY, next);
+  }
+
+  /** Forget the progress kept here ("Delete my StepWise data"): nothing, and no reset time. */
+  clear(): void {
+    this.current = emptyProgress();
+    removeJson(PROGRESS_KEY);
   }
 
   /** Another tab wrote: take its changes. */

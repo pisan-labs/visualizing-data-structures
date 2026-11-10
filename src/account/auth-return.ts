@@ -1,15 +1,19 @@
 import type { AuthReturn } from './backend';
 
 /**
- * Signing in leaves the page (Google) or comes back in a new one (the emailed link). Supabase
- * returns to the page's address with `?code=` (or `?error=...&error_description=...`) and may
- * drop the hash, which holds the reader's work. So the hash is put aside in sessionStorage
- * before leaving, and the app reads the return before it routes: it takes the sign-in
- * parameters out of the address and puts the hash back.
+ * Signing in leaves the page (Google) or comes back in a new one (the emailed link). Google
+ * returns through Supabase to the page's address with `?code=` (or
+ * `?error=...&error_description=...`); the platform's emailed link opens the page with
+ * `?token_hash=...&type=email&email_hint=...`. Neither keeps the hash, which holds the reader's
+ * work. So the hash is put aside in sessionStorage before leaving (or once a link is sent), and
+ * the app reads the return before it routes: it takes the sign-in parameters out of the address
+ * and puts the hash back.
  */
 
-/** Parameters Supabase adds on the way back. Errors may come in the query and the hash. */
-const QUERY_KEYS = ['code', 'error', 'error_code', 'error_description', 'sb_flow_id'];
+/** Parameters added on the way back. Errors may come in the query and the hash. */
+const QUERY_KEYS = ['code', 'error', 'error_code', 'error_description', 'sb_flow_id', 'token_hash'];
+/** And with a token_hash, the link's other two. */
+const TOKEN_KEYS = ['type', 'email_hint'];
 const HASH_ERROR_KEYS = ['error', 'error_code', 'error_description', 'sb'];
 
 /**
@@ -35,6 +39,16 @@ export function readAuthReturn(
       };
     }
   }
+  const tokenHash = q.get('token_hash');
+  if (!ret && tokenHash) {
+    ret = {
+      kind: 'token',
+      tokenHash,
+      type: q.get('type') ?? 'email',
+      // Shown to the reader: keep it short, since anyone can write it into a link.
+      emailHint: (q.get('email_hint') ?? '').slice(0, 120),
+    };
+  }
   const code = q.get('code');
   if (!ret && code) {
     const flowId = q.get('sb_flow_id');
@@ -42,6 +56,7 @@ export function readAuthReturn(
   }
   if (!ret) return { ret: null, search, hash };
   for (const k of QUERY_KEYS) q.delete(k);
+  if (ret.kind === 'token') for (const k of TOKEN_KEYS) q.delete(k);
   if (errorIn(h)) for (const k of HASH_ERROR_KEYS) h.delete(k);
   const qs = q.toString();
   const hs = h.toString();

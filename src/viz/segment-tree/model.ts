@@ -516,7 +516,7 @@ const update: Op = {
     yield* updateRec(c, 1, 0, n - 1, i, x);
     yield step(
       c,
-      `Done: ${plural(w.updateCost, 'node')} changed, one per level from the root to the leaf: O(log n).`,
+      `Done: ${plural(w.updateCost, 'node')} visited, one per level from the root to the leaf: O(log n).`,
       [],
       1,
       null,

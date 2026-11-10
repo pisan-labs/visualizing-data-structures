@@ -117,6 +117,23 @@ describe('segment tree', () => {
     expect(queried.end.lazy[5]).toBe(3);
   });
 
+  // Was "Done: 4 nodes changed, one per level": a push changes the siblings on the path too.
+  it('counts the nodes an update visits, one per level, not the nodes it changes', () => {
+    const t = run(SUM, [
+      ['build', '5 3 8 1 9 2 7 4'],
+      ['add', 2, 7, 3],
+      ['update', 5, 10],
+    ]);
+    const [before, after] = [t.entries[1]!.end, t.entries[2]!.end];
+    const changed = after.val.filter((v, k) => v !== before.val[k]).length;
+    const done = t.entries[2]!.steps.at(-1)!;
+    expect(done.say).toBe(
+      'Done: 4 nodes visited, one per level from the root to the leaf: O(log n).',
+    );
+    expect(done.vars?.['update cost']).toBe(4);
+    expect(changed).toBeGreaterThan(4);
+  });
+
   it('words one node taken whole, two values and two tags plainly', () => {
     const t = run(SUM, [
       ['build', '5 3 8 1 9 2 7 4'],

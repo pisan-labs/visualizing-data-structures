@@ -389,3 +389,5 @@
 2026-11-10 [code] Merged the review follow-ups: practice answers spread out on 9 pages (a-star asks how many cells A* expands; two-sat formulas have no tautologies or repeats, presets too), and 15 small fixes on 25 pages (sorted-array missing-key example, CircularDeque, k = ?, tsp weights clear of arrowheads, each sorting page says how it counts swaps)
 
 2026-11-10 [decision] Yusuf: optional sign-in (Google or magic link) to save examples on the server, sync preferences and hear about new pages. Supabase; never required, no tracking. PLAN.md section 18; BRIEFING updated (accounts no longer a non-goal)
+
+2026-11-10 [note] Deployed 12:20 Lisbon on Yusuf's "deploy": main 4c1fc1c..99303a0 (the review follow-ups). Live bundle matches the local build; all 203 pages return 200

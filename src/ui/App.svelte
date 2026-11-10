@@ -33,6 +33,11 @@
     route = parseLocation(to.pathname, to.hash);
   }
   const embed = $derived(route.kind === 'viz' && route.embed);
+  // An embed shows the visualization alone: app.css hides the HintWise footer (a static part of
+  // every page, added by scripts/prerender.mjs) while this class is on.
+  $effect(() => {
+    document.documentElement.classList.toggle('embedded', embed);
+  });
 
   // undefined while loading, null when there is no such page.
   let viz = $state<AnyVizDef | null | undefined>(undefined);

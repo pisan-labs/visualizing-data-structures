@@ -5,3 +5,6 @@ playwright-report
 test-results
 **/*.md
 .claude
+
+# The HintWise footer: the platform's markup, byte for byte (src/site-footer.test.ts checks its sha256).
+scripts/site-footer.html

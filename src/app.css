@@ -313,6 +313,13 @@ button {
   display: none;
 }
 
+/* The HintWise footer (scripts/site-footer.html) stays out of embeds and presentations. A rule
+   here outranks its own :host { display: block }. */
+:root.presenting site-footer,
+:root.embedded site-footer {
+  display: none;
+}
+
 :root.presenting .viz {
   max-width: none;
 }

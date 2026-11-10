@@ -25,8 +25,20 @@ const server = await createServer({
 try {
   const { vizzes } = await server.ssrLoadModule('/src/viz/all.ts');
   const { SITE_NAME, SITE_URL } = await server.ssrLoadModule('/src/site.ts');
-  const template = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
+  // The HintWise footer every HintWise app carries, byte for byte, just before the last </body>
+  // of every page (scripts/site-footer.html; the owner's wording, sent by the platform session,
+  // which sends a new copy when it changes). A declarative shadow root: it takes the page's text
+  // colour, its style cannot leak, and it hides itself in print. It comes after our own footer.
+  const footer = fs.readFileSync(path.resolve('scripts/site-footer.html'), 'utf8');
+  const withFooter = (html) => {
+    if (html.includes('data-site-footer')) return html;
+    const at = html.lastIndexOf('</body>');
+    if (at < 0) throw new Error('A page has no </body> for the HintWise footer');
+    return html.slice(0, at) + footer + html.slice(at);
+  };
+  const template = withFooter(fs.readFileSync(path.join(dist, 'index.html'), 'utf8'));
   if (!template.includes('<div id="app"></div>')) throw new Error('Unexpected dist/index.html');
+  fs.writeFileSync(path.join(dist, 'index.html'), template);
 
   for (const def of vizzes) {
     const title = `${def.title} · ${SITE_NAME}`;
@@ -125,6 +137,11 @@ try {
       entries.map((e) => [e.url, sizes.get(e.url)]),
     );
     fs.writeFileSync(path.join(dist, 'sw.js'), source);
+  }
+  // Every page carries the HintWise footer exactly once.
+  for (const f of files.filter((f) => f.endsWith('.html'))) {
+    const n = fs.readFileSync(path.join(dist, f), 'utf8').split('data-site-footer').length - 1;
+    if (n !== 1) throw new Error(`${f} has the HintWise footer ${n} times, not once`);
   }
   console.log(
     `service worker ${version}: shell ${shell.length} files, ${mb(shell)} MB; ` +

@@ -26,9 +26,10 @@ everything on every push; Netlify builds and deploys `main` (`netlify.toml`).
 
 - Work on `next` and push `next`; CI runs on every push to `next` and `main`.
 - Every push to `main` publishes to production (Netlify builds `main`; each deploy costs 15
-  credits). `main` only moves by fast-forwarding to `next`: once a day at 17:27 Europe/Berlin
-  (a scheduled task), or when Yusuf says "deploy". Never commit to `main` directly. Never start,
-  publish or roll back a Netlify deploy by other means.
+  credits). `main` only moves by fast-forwarding to `next` when Yusuf says "deploy" (the daily
+  17:27 deploy routine was deleted on 11 November 2026; `HANDOFF.md` has the steps and the live
+  check). Never commit to `main` directly. Never start, publish or roll back a Netlify deploy by
+  other means.
 - Agent worktrees start from the default branch (`main`), so each agent first runs
   `git reset --hard next`; the lead merges them back into `next`.
 

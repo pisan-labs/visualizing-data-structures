@@ -1,179 +1,107 @@
 # StepWise handoff
 
-The rolling handoff for the StepWise cloud sessions (the session-relay skill). Each handover
-rewrites this file; it never gets a dated copy. Times are Europe/Berlin.
-
-Last written: Sunday 8 November 2026, about 08:40, for the handover Yusuf asked for at about
-08:12 ("merge next to main and deploy, and then do handoff"). The previous session starts the
-next one at once, so the 16:52 session-start run (which looks only for a marker made since
-15:30) finds nothing to do.
+The closing handoff. The session relay ended on Wednesday 11 November 2026: Yusuf asked for a
+final deploy, the routines to be deleted, and the last session (`session_01JyJzMVTxpUGw93ZHHXr69v`)
+to be archived. No session takes over, and nothing is scheduled. Times are Lisbon time (Yusuf's
+choice of 10 November).
 
 ## What is live
 
-- `main` is at `1d91418`, live on Netlify (site `stepwise-pisan-labs`, `stepwise.hintwise.org`, formerly `stepwise.pisan.me`),
-  deployed at 08:26 on Yusuf's word after CI run 98 passed: 129 pages. The live bundle matched a
-  local build of `1d91418`, and every page returned 200.
-- `next` is ahead of `main` by two cleanups and their logs: the layout chooser and table strip
-  moved into `src/layouts` (`ad5bac1`; no scene changed on any page), and one definition of the
-  typical stages and a thumbnail stage in `src/render/stage.ts` (`38f65a4`; 5 thumbnails better,
-  none worse). The daily deploy at 17:27 fast-forwards `main` to `next` if CI on `next`'s head is
-  green.
-- Checks: on `38f65a4`, lint, svelte-check and 3016 unit tests passed; the full local e2e on
-  `4cb8f93` (the same code as `1d91418`, which only adds log lines) had 2166 passed, 1 failed
-  (the factorial axe scan, intermittent, register item 11), 5 skipped. At 08:45 CI was still
-  running on `next` (runs 99 and 101) and on `main` (run 100).
+- `main` is at `70155fe`, live on Netlify at https://stepwise.hintwise.org/ (site
+  `stepwise-pisan-labs`), deployed on 11 November at 10:32 on Yusuf's word, after CI on
+  `70155fe` passed. The live check passed:
+  - the bundle (`index-HsjKBzBp.js`) is the same as at `b418072`, because no source changed;
+  - all 204 addresses (the home page and 203 pages) return 200, each with the HintWise footer
+    once;
+  - the manifest is served as `application/manifest+json`;
+  - an ordinary visit sends nothing to `auth.hintwise.org`.
+- 203 visualizations (every page in `src/viz/catalog.ts`), each with its concept page,
+  examples, practice, code tabs (Python, Java, C++) and a catalog thumbnail.
+- Since 10 November:
+  - optional accounts on the shared HintWise Supabase project (`app_stepwise` schema,
+    migrations 0001 to 0003 applied), with Google and magic-link sign-in;
+  - saved and shared examples, lesson lists, preferences and progress that follow the account;
+  - "New since your last visit", and "Delete my StepWise data";
+  - Present-mode pen and pointer, Save picture, the shortcuts list;
+  - printable worksheets, progress, recent pages;
+  - the offline app;
+  - the HintWise footer on every page, and a Google button that follows Google's branding
+    guidelines.
+- Magic links go only through the platform's sign-in-link service: the email hook is on since
+  11 November, and Yusuf's first live magic-link sign-in worked.
+- `next` is one commit ahead of `main`: this handoff and its log lines (docs only, not part of
+  the site). Deploy it with the next real change.
 
-## Merged since the last handover (7 November, 08:00), on `next` unless marked
+## How deploys work now
 
-- 7 November: waves 5A, 5B and 5C, the 17 automata and computability pages (09:39 to 21:10);
-  catalog thumbnails from PR #1 (Yusuf, `main`, 14:42) merged into `next`; `VizDef.opening`
-  (pages that open on an example); the allow rule in `.claude/settings.json` for the daily
-  deploy's push; e2e count checks that wait for the drawing to settle. Deploys at 18:45 and 20:00.
-- 8 November:
-  - 01:58, `main`: deployed (125 pages).
-  - 03:57 to 06:24, wave 6, understanding Big-O (`PLAN.md` section 14; decisions 35 to 37 in section 11):
-    loop-counting, big-o-definition, amortized-analysis (linked from the dynamic array page),
-    doubling-experiment.
-  - 06:16, the Mealy and Moore property test generates only machines the page loads (it failed
-    about 1 run in 6; `0de5f99` was pushed with that failure in the local check, hidden by a pipe through
-    grep; CI run 93 on it passed).
-  - 06:26 onwards, the shared-code cleanup (`PLAN.md` section 15): the debt register; one
-    measured `textWidth` and `wrapText` (`src/layouts/text.ts`) used by layouts and four pages;
-    `settled()` waits for playback to finish; one source for the zoom buttons' room
-    (`src/render/stage.ts`, `StageSize.strip`; three phone copies counted the buttons twice);
-    the layout chooser and table strip in `src/layouts`; the typical stages and a thumbnail
-    stage in `src/render/stage.ts`.
-  - 08:26, `main`: deployed (129 pages).
+`main` moves only when Yusuf says "deploy": fast-forward it to a commit on `next` whose CI is
+green (`git push origin <sha>:refs/heads/main`, after `git merge-base --is-ancestor origin/main
+<sha>`). Each deploy costs 15 Netlify credits. The daily 17:27 Berlin deploy routine was deleted
+on 11 November. Then check the live site:
 
-## Branches still unmerged
+- the bundle name in https://stepwise.hintwise.org/ matches a local `npm run build` made with
+  the `VITE_` values from `netlify.toml` (when only docs or headers changed, the bundle name
+  does not change, so check the header or page that did);
+- every page returns 200;
+- an ordinary visit sends nothing to `auth.hintwise.org`.
 
-No branch of this session's is unmerged. Seven `worktree-agent-*` WIP copies from 5 and 6
-November are on origin and are not ancestors of `next` (`git cherry` finds commits in five of
-them with no match); earlier handoffs judged them superseded, their content being on `main`, but
-that was not re-checked on 8 November. Leave them; they are not an owner action.
+## Branches to delete (Yusuf; this session could not)
 
-## Next, in order
+GitHub refused this session's branch deletes (HTTP 403); pushes work. All 19 leftover branches
+on origin were checked on 11 November and are safe to delete:
 
-1. Watch the 17:27 deploy on 8 November: `next` has the two cleanups after `1d91418`. It is the
-   first daily run since the allow rule; if the permission check still blocks the push, tell
-   Yusuf (he can say "deploy").
-2. The rest of the cleanup register, `PLAN.md` section 15.1:
-   - item 8, one chart layout in `src/layouts/chart.ts` for the three local charts
-     (big-o-definition on exact fractions, doubling-experiment log-log, amortized-analysis
-     two-lane bars; their reports list what each needs);
-   - item 9, shared code living in page folders (avl for treap, splay and red-black;
-     hash-chaining for four pages; linked-list for three; regex-to-nfa for regex-engines; prim
-     for kruskal; leftist-heap for skew-heap) into kits;
-   - item 10, `matches()` in `_automata/regex.ts` is exponential on nested concatenations;
-   - item 11, the intermittent factorial axe failure (capture the element next time);
-   - from the item 6 report: the floyd-warshall and multitape-tm pickers score like `pickBest`
-     in `_automata/panels.ts`, and the `acrossFits` in `_automata/panels.ts` and `pda/view.ts` are near copies; they
-     could merge if
-     `pickBest` moved into `src/layouts`.
-3. Smaller shared-code requests from the wave 5 and 6 agents: multi-line and custom move labels
-   in `drawAutomaton`; a `parse` option for `loadOp`; a shared two-machine parser; `drawTape`
-   with rows and identity-based cell ids; `gridScene` with an id prefix and no empty headers;
-   `classify()` reason wording; `parseRegex`'s 40-character limit.
-4. Pages still small (option 3): the Master theorem's smallest text is about 8 px on a laptop
-   and 4 px on a phone; measure again before choosing which to fix.
-5. Older items from 6 November: the wider input pushes buttons to a second row on some pages; a
-   three-value button's error reads "needs l and r and an amount"; `src/viz/_paths/overlap.ts`
-   could become a shared test; code-tab coverage for the master-theorem and memory-model drivers;
-   unify `src/layouts/node-chain.ts` with `linked.ts`; the hashing "All colliding keys" preset
-   could become plain inserts.
+- 9 are fully merged into `next`: `dev`, `wip/accounts-slice1`, `wip/lesson-lists`,
+  `wip/offline-app`, `wip/present-tools`, `wip/slice2-sync`,
+  `worktree-agent-a821abc5bc340c0ac`, `worktree-agent-aa205b40a571e95f4` and
+  `worktree-agent-aa81297ea160adf81`.
+- 10 hold only work-in-progress snapshots whose work reached `next` in later commits:
+  `wip/followup-practice`, `wip/followup-wording`, `wip/practice-progress`,
+  `worktree-agent-a0c892cfc943adc5f`, `worktree-agent-a363cfb926bbc7c1f`,
+  `worktree-agent-a4a2653da0afe3f55`, `worktree-agent-a623f1d5e970be25f`,
+  `worktree-agent-a64e7be82dd66d736`, `worktree-agent-a69c97199f92c789d` and
+  `worktree-agent-abea496d65b7d74bd`.
+  - Every file they touch is on `next`, identical or later edited there.
+  - What differs: a debug print in a tsp test, a 5 November Master theorem phone layout that
+    was later redone, and `prim/mst.ts`, which moved to `src/viz/_graph/mst.ts`.
 
-## Waiting on Yusuf
+From a checkout with push rights:
 
-- Read some of the new concept pages for voice (not urgent): the 17 automata pages and the four
-  Big-O pages. Every agent invoked `anthropic-skills:write-like-pisan` before its final
-  `explain.md`; nobody has read them against it. Send page links only once they are live.
+```
+git push origin --delete dev wip/accounts-slice1 wip/lesson-lists wip/offline-app wip/present-tools wip/slice2-sync wip/followup-practice wip/followup-wording wip/practice-progress worktree-agent-a821abc5bc340c0ac worktree-agent-aa205b40a571e95f4 worktree-agent-aa81297ea160adf81 worktree-agent-a0c892cfc943adc5f worktree-agent-a363cfb926bbc7c1f worktree-agent-a4a2653da0afe3f55 worktree-agent-a623f1d5e970be25f worktree-agent-a64e7be82dd66d736 worktree-agent-a69c97199f92c789d worktree-agent-abea496d65b7d74bd
+git ls-remote --heads origin
+```
+
+The second command should list only `main` and `next`.
+
+## Waiting on others
+
+- **Opt-in emails about new pages:** they wait for the platform's daily sender. It reads
+  `dist/releases.json` and `preferences.notify_new_pages`, and sends through Yusuf's Resend
+  account (`supabase/README.md`). StepWise's side is live; StepWise has no sending code.
+- **Self-service deletion of a whole HintWise account:** this is a platform feature. "Delete my
+  StepWise data" already removes StepWise's rows.
+- The platform side (the Supabase project, the sign-in-link service, the email hook, the footer
+  markup) belongs to the Plabs session for `pisanuw/claude-built-apps`. Its `HANDOFF.md` names
+  its current session.
 
 ## Not verified
 
-- Whether the 17:27 routine can push to `main` on its own with the allow rule; the three pushes
-  to `main` since it was added (20:00, 01:58 and 08:26) were all on Yusuf's word.
-- regex-engines: the backtracker skips an ε-move back to a state already passed at the same
-  position, and after 150 visits shows only the steps where the count doubles; nobody else has
-  reviewed these choices.
-- The factorial axe failure (register item 11): one color-contrast node, once, element not
-  captured.
+- **The factorial axe scan:** on 8 November it found one color-contrast node, once, then passed
+  32 runs in a row. Every axe check now prints the failing elements (`PLAN.md` section 15.1,
+  item 11), so the next failure will show the cause.
 
-## Dated tasks
+## Starting again
 
-| When | What |
-|---|---|
-| Daily 17:27 | The deploy routine fast-forwards `main` to `next` if CI on `next` is green |
+Start a session by hand at https://claude.ai/code with `pisan-labs/visualizing-data-structures`
+on the branch `next`. Read `CLAUDE.md` (commands, definition of done, branches), `BRIEFING.md`,
+the end of `CHANGES.md`, then this file. Work on `next`; before committing run `npm run lint &&
+npm run check && npm test`, and `npm run e2e` when `src/ui`, `src/render` or a view changed.
 
-## Notes for the next session
-
-### Standing instructions (Yusuf's)
-
-- Read `CLAUDE.md` (definition of done, commands, branches), `BRIEFING.md` and the end of
-  `CHANGES.md` (append-only, one line per entry: `YYYY-MM-DD [type] description`).
-- Work on `next` and push `next`; no pull requests. Before a commit or push, `git fetch` first.
-  `main` is what Netlify publishes (15 credits a deploy): it only fast-forwards to `next`, once
-  a day at 17:27 (the daily deploy routine) or when Yusuf says "deploy" (his choice, 7 November).
-  Before committing run `npm run lint && npm run check && npm test`, and `npm run e2e` when
-  `src/ui`, `src/render` or a view changed.
-- Another session (`session_015Hhm4gYmBnZQozfDqkFdPy`, the catalog thumbnails) works through
-  pull requests that Yusuf merges into `main`. After such a merge `main` is no longer an
-  ancestor of `next`: merge `origin/main` into `next`, run the checks and push `next`, or the
-  daily deploy stops and asks. New pages must name a `preview` (`src/render/preview.test.ts`).
-- Reports and every time in them use Europe/Berlin. Lead with the answer, keep it short, say
-  what is not verified.
-- Questions go in the message text (or a decision card), numbered, each with a recommendation;
-  never a blocking dialog. With no answer in 15 minutes, take the recommendation and say how to
-  undo it; without a recommendation, keep working on other parts and list it as open.
-- Always ask first and wait for a yes before: writing production data, deploying outside the
-  daily routine, spending money or using an API key (use the local `claude` CLI), deleting what
-  cannot be restored, rotating secrets, rewriting shared history, publishing outside the
-  session.
-- Concept pages are written in Yusuf's voice: invoke `anthropic-skills:write-like-pisan` first.
-- Usage: on 7 November at 09:54 Yusuf said usage was at 80% and asked to slow down but not stop.
-  Run fewer agents at once when usage is high.
-- Agent worktrees start from `main` (the default branch), not `next`: tell every agent to run
-  `git reset --hard next` first (seen 7 November).
-- Agents: about four at a time, each in its own worktree with its own `E2E_PORT` (ports up to 4298 have been used; start new ones at 4300), told not to edit shared files, to name e2e
-  specs after their pages, to use `showMe()` from `tests/e2e/helpers.ts` for "Show me" checks,
-  to commit WIP before a limit stop, to add practice sets and a `preview`, to keep rows able to
-  wrap for CI's wider font, to poll (`expect.poll`) when measuring the drawing, and not to
-  push. The lead checks the branch for files outside the agent's folders, merges with
-  `--no-ff`, runs the conformance check 10 or more times on the new pages
-  (`npx vitest run src/viz/conformance.test.ts -t "<ids>"`), then the full suite, then pushes.
-- The 5-hour usage limit pauses everything every few hours, and the container can restart:
-  worktrees survive, so resume agents with SendMessage when the limit resets.
-- Never hand over while agents are running: their worktrees and notices live in the old
-  container.
-
-### Parameters
-
-| Parameter | Value |
-|---|---|
-| Repository | `pisan-labs/visualizing-data-structures` |
-| Handoff document | `HANDOFF.md` at the repo root |
-| Routine time zone | Europe/Berlin |
-| Report time zone | Europe/Berlin |
-| Handover check | 15:56 |
-| Session start | 16:52 |
-| Handoff marker | a commit on `next` with exactly the subject `docs: the handoff of <D Month>` (no pull requests) |
-| Merge rule | `npm run lint && npm run check && npm test` pass (and `npm run e2e` when `src/ui`, `src/render` or a view changed), then push `next`; CI runs on the push. `main` fast-forwards to `next` at 17:27 or when Yusuf says "deploy" |
-| Project rule | never hand over while subagents are running |
-
-### Scheduling
-
-- Previous session: `session_01JyJzMXcc2unSAwN88hsew5` (lineage depth 2, limit 8). It took over
-  on Saturday 7 November at 08:00 from `session_01JyJzMZHCY1tEoov2vYAuJv` and hands over on
-  Sunday 8 November at about 08:45, at Yusuf's request (context about 70%). The next session is
-  at depth 3.
-- Routines, to be moved to the next session when it takes over, keeping their names exactly:
-  - `trig_01AEsnzySTfQAsgxsS9RCdAA`: "StepWise hourly status report", `46 * * * *`.
-  - `trig_016mmp7qgknR6maFcPpcHyn6`: "StepWise handoff check: hand over only when due",
-    `CRON_TZ=Europe/Berlin 56 15 * * *`.
-  - `trig_01Q4wsxyfeskA8277FXxTfcY`: "StepWise daily handoff: start the next session
-    (create_session)", `CRON_TZ=Europe/Berlin 52 16 * * *`.
-  - `trig_01PfFMZmwbM2JKpfyhtLRmvn`: "StepWise daily deploy: fast-forward main to next",
-    `CRON_TZ=Europe/Berlin 27 17 * * *`. It deploys only when CI on `next`'s head is green, and
-    stops and asks Yusuf if `main` is not an ancestor of `next`. `.claude/settings.json` allows
-    its push (`git push origin origin/next:main`).
-- The account's other routines (DSA, Chess TD, Chess Analyzer, Plabs, TPT, product ideas,
-  reminders) belong to other projects: never move or change them.
+- The SQL tests (`supabase/tests/`) need a local PostgreSQL 16 with
+  `supabase/tests/supabase-stub.sql`; `supabase/README.md` has the steps.
+- New migrations go in `supabase/migrations/0004_...`; never edit an applied one. The Plabs
+  session applies them on Yusuf's yes.
+- A cloud clone can be shallow: run `git fetch --unshallow origin` before comparing branches.
+- To run the relay again, the `anthropic-skills:session-relay` skill sets up the routines. The
+  deleted ones were the hourly status report, the handover check (15:56 Berlin), the session
+  start (16:52 Berlin) and the daily deploy (17:27 Berlin).

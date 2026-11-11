@@ -437,3 +437,9 @@
 2026-11-11 [note] First live magic-link sign-in worked (Yusuf, with the platform email hook on): sign-in-link service, email, verifyOtp on return
 
 2026-11-11 [code] The manifest is served as application/manifest+json (netlify.toml); PLAN.md 18 owner actions marked done
+
+2026-11-11 [note] Leftover branches checked: all 19 on origin are safe to delete (9 merged; 10 WIP snapshots whose work landed later). The session gets 403 on deletes, so Yusuf deletes them (HANDOFF.md)
+
+2026-11-11 [note] Final deploy 10:32 Lisbon on Yusuf's word: main b418072..70155fe (manifest type). Live check passed: 204 addresses 200, manifest application/manifest+json
+
+2026-11-11 [decision] The session relay ends (Yusuf): StepWise routines deleted, session archived; main moves only on "deploy"; HANDOFF.md is the closing handoff

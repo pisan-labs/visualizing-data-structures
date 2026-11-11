@@ -431,3 +431,5 @@
 2026-11-10 [code] Every page carries the HintWise footer (scripts/site-footer.html, the owner's markup byte for byte, after our own footer; hidden in embeds and Present mode); asked by Yusuf through Plabs
 
 2026-11-11 [note] Deployed 00:04 Lisbon on "deploy when ready": main 2905721..b418072 (Google button branding, HintWise footer). Bundle matches; 204 addresses 200 with the footer once; no account requests
+
+2026-11-11 [note] The platform email hook is on (Yusuf): magic links come only from the sign-in-link service, which StepWise uses since 2905721; no code change

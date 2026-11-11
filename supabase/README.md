@@ -57,7 +57,9 @@ Supabase, so the code is safe to merge and deploy before then.
 
 Google sign-in goes through Supabase Auth as before (PKCE, `?code=` on the way back). Magic
 links go through the HintWise platform's sign-in-link service instead of
-`supabase.auth.signInWithOtp` (`src/account/link-service.ts`):
+`supabase.auth.signInWithOtp` (`src/account/link-service.ts`). Since 11 November 2026 the
+platform's email hook is on, so the service is the only way to get a magic link: a
+`signInWithOtp` call straight to Supabase is refused.
 
 - **Request:** `POST https://auth.hintwise.org/functions/v1/sign-in-link` with the headers
   `apikey: <anon key>` and `content-type: application/json`, and the body

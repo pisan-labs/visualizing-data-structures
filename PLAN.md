@@ -890,10 +890,11 @@ or Cloudflare.
 3. Lesson lists: an ordered set of saved examples across pages, played in Present mode, with a
    link for a class.
 
-**Owner actions (Yusuf):** say yes to the Plabs session applying `app_stepwise` (it runs the admin
-workflow and checks Google sign-in returns to the site). Then the lead commits the URL and anon key
-(both public) to `netlify.toml` and accounts go live. Account deletion has no self-service yet:
-email builder@hintwise.org.
+**Owner actions (Yusuf):** ✔ all done. Plabs applied `app_stepwise` (migrations 0001 to 0003,
+10 Nov), the URL and anon key are in `netlify.toml`, and accounts are live since 2905721 (10 Nov).
+The platform email hook is on, and the first live magic-link sign-in worked (11 Nov). "Delete my
+StepWise data" removes StepWise's rows; deleting the whole HintWise account has no self-service
+yet (email builder@hintwise.org).
 
 ## 19. Usability (planned 2026-11-10)
 

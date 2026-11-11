@@ -28,6 +28,7 @@
   for = "/manifest.webmanifest"
   [headers.values]
     Cache-Control = "no-cache"
+    Content-Type = "application/manifest+json"
 
 # No X-Frame-Options: pages must stay embeddable in Canvas and slides.
 [[headers]]

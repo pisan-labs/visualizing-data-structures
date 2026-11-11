@@ -435,3 +435,5 @@
 2026-11-11 [note] The platform email hook is on (Yusuf): magic links come only from the sign-in-link service, which StepWise uses since 2905721; no code change
 
 2026-11-11 [note] First live magic-link sign-in worked (Yusuf, with the platform email hook on): sign-in-link service, email, verifyOtp on return
+
+2026-11-11 [code] The manifest is served as application/manifest+json (netlify.toml); PLAN.md 18 owner actions marked done

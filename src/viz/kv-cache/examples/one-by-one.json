@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "kv-cache",
+  "id": "one-by-one",
+  "title": "The same text one token at a time",
+  "notes": "Notes to come.",
+  "settings": {
+    "cache": true,
+    "window": "all"
+  },
+  "seed": 1,
+  "ops": [
+    ["prefill", "the"],
+    ["generate", "cat"],
+    ["generate", "sat"],
+    ["generate", "on"],
+    ["generate", "the"],
+    ["generate", "mat"],
+    ["generate", "and"],
+    ["generate", "it"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

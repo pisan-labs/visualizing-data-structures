@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "kv-cache",
+  "id": "cache-grows",
+  "title": "The cache grows one row per token",
+  "notes": "Notes to come.",
+  "settings": {
+    "cache": true,
+    "window": "all"
+  },
+  "seed": 1,
+  "ops": [
+    ["prefill", "the dog saw the ball"],
+    ["generate", "and"],
+    ["generate", "it"],
+    ["generate", "ran"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -920,11 +920,11 @@ Built by three agents in parallel with the accounts slice, split by area so they
 same files: stage and Present mode (1 to 3), practice, progress and the home page (4 to 6), and
 the offline app (7).
 
-## 20. Wave 9: AI and LLMs (planned 2026-11-13, waiting for Yusuf's approval)
+## 20. Wave 9: AI and LLMs (planned 2026-11-13, approved the same day)
 
 Yusuf (13 November): lots of interest in LLMs and the AI algorithms behind them; research which
 topics and visualizations would be useful and write a detailed plan, then ask before building.
-Nothing in this section is built. The questions are in 20.9.
+The questions are in 20.9 and the answers in 20.10; the slice (9A) is in 20.11.
 
 ### 20.1 What courses teach (surveyed 2026-11-13)
 
@@ -1142,8 +1142,9 @@ advanced (`advanced: true`). Every page meets the definition of done in `CLAUDE.
 
 Risks:
 - **Float agreement across tabs:** `round3`, `StrictMath` in Java; a value that lands exactly
-  on a rounding edge can still differ by 0.001. Code tests compare numbers within 0.0015 for
-  these pages only.
+  on a rounding edge could still differ by 0.001. The self-attention tabs match the model
+  exactly, so the code tests still compare lines exactly; a page that ever needs a tolerance
+  adds one then.
 - **A field that moves fast:** concept pages stick to published algorithms and date their
   "at real scale" numbers.
 - **Toy sizes mislead about scale:** the "at real scale" sections say how far off we are.
@@ -1163,6 +1164,35 @@ Risks:
    (free to read, and courses name them).
 5. Anything from 20.7 you want in now (RNN/LSTM, LoRA, ring all-reduce, MCTS)?
 6. Approve 9A (the slice) to start?
+
+### 20.10 Answers (Yusuf, 13 November: "Yes to all")
+
+1. Tiers 1 and 2 after the slice; tier 3 later.
+2. A fourth pathway, "AI and LLMs".
+3. Toy weights now; the trained model is decided when `transformer-block` comes up.
+4. SLP3 and the original papers.
+5. Read as yes to all four: `rnn-lstm`, `mcts`, `lora` and `ring-allreduce` join tier 3 (33
+   planned pages in all). To drop them, delete their four lines in `src/viz/catalog.ts`.
+6. 9A started.
+
+### 20.11 The slice (9A, built 13 November)
+
+- **Catalog:** the `ai` pathway and its six families (Tokenization, Language models and decoding,
+  Inside the transformer, Training, Serving LLMs, Retrieval and vector search), 33 pages, one
+  live.
+- **Shaded cells:** `shade` on `rect` (−1 to 1), drawn in `Shapes.svelte` as a mix of the
+  active (positive) or compare (negative) color into the cell, at most half, so the number
+  printed on it stays readable; a mark changes the outline and keeps the shade.
+- **`_lm`:** `numbers.ts` (matmul, dot, stable softmax, `round3` with a sign, `short` for
+  cells, `two` for narration) and `vocab.ts` (21 words with hand-made embeddings: animal,
+  thing, action, small).
+- **`_matrix`:** panels of numbers in rows, with the words down the left; one row on a laptop,
+  two or three on a phone (`pickLayout`).
+- **Practice:** number answers take a `tolerance` (two decimals take 0.005); a typed − counts.
+- **`self-attention`:** one head, d = 4, d_k = 2, at most 7 words of at most 6 letters (so
+  the smallest text is 11 px on a laptop and 9 px on a phone); operations load, project and
+  attend; settings causal (default on), scale (on) and the head (made by hand, or random); 7
+  examples; 4 practice kinds; code tabs that match the model exactly.
 
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 

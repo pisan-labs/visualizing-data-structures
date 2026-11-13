@@ -13,7 +13,7 @@ export interface CatalogItem {
   advanced?: boolean;
 }
 
-export type Pathway = 'structures' | 'algorithms' | 'computation';
+export type Pathway = 'structures' | 'algorithms' | 'computation' | 'ai';
 
 export interface Family {
   name: string;
@@ -26,6 +26,7 @@ export const pathways: { id: Pathway; label: string }[] = [
   { id: 'structures', label: 'Data structures' },
   { id: 'algorithms', label: 'Algorithms' },
   { id: 'computation', label: 'Theory of computation' },
+  { id: 'ai', label: 'AI and LLMs' },
 ];
 
 export const families: Family[] = [
@@ -397,6 +398,86 @@ export const families: Family[] = [
         advanced: true,
       },
       { id: 'busy-beaver', title: 'Busy beaver', added: true, advanced: true },
+    ],
+  },
+  // PLAN.md section 20: wave 9, AI and LLMs. Tier 3 is marked advanced.
+  {
+    name: 'Tokenization',
+    pathways: ['ai'],
+    items: [
+      { id: 'bpe-tokenizer', title: 'Byte-pair encoding (BPE)', added: true },
+      { id: 'wordpiece', title: 'WordPiece tokenizer', added: true },
+      { id: 'unigram-tokenizer', title: 'Unigram tokenizer (Viterbi split)', added: true },
+    ],
+  },
+  {
+    name: 'Language models and decoding',
+    pathways: ['ai'],
+    items: [
+      { id: 'ngram-lm', title: 'N-gram language model', added: true },
+      { id: 'sampling', title: 'Sampling: temperature, top-k, top-p', added: true },
+      { id: 'beam-search', title: 'Beam search', added: true },
+      { id: 'speculative-decoding', title: 'Speculative decoding', added: true },
+      { id: 'constrained-decoding', title: 'Constrained decoding with a DFA', added: true },
+      { id: 'rnn-lstm', title: 'Recurrent networks (RNN and LSTM)', added: true, advanced: true },
+      { id: 'mcts', title: 'Monte Carlo tree search', added: true, advanced: true },
+    ],
+  },
+  {
+    name: 'Inside the transformer',
+    pathways: ['ai'],
+    items: [
+      { id: 'embeddings', title: 'Embeddings and similarity', added: true },
+      { id: 'self-attention', title: 'Self-attention', added: true },
+      { id: 'multi-head-attention', title: 'Multi-head attention (and GQA)', added: true },
+      { id: 'positional-encoding', title: 'Positional encoding (sinusoidal, RoPE)', added: true },
+      { id: 'transformer-block', title: 'The transformer block', added: true },
+      { id: 'moe-routing', title: 'Mixture-of-experts routing', added: true },
+    ],
+  },
+  {
+    name: 'Training',
+    pathways: ['ai'],
+    items: [
+      { id: 'backpropagation', title: 'Backpropagation', added: true },
+      { id: 'gradient-descent', title: 'Gradient descent (momentum, Adam)', added: true },
+      { id: 'word2vec', title: 'word2vec (skip-gram)', added: true, advanced: true },
+      {
+        id: 'policy-optimization',
+        title: 'Policy optimization (PPO, GRPO, DPO)',
+        added: true,
+        advanced: true,
+      },
+      { id: 'lora', title: 'LoRA (low-rank adapters)', added: true, advanced: true },
+      { id: 'ring-allreduce', title: 'Ring all-reduce', added: true, advanced: true },
+    ],
+  },
+  {
+    name: 'Serving LLMs',
+    pathways: ['ai'],
+    items: [
+      { id: 'kv-cache', title: 'KV cache', added: true },
+      { id: 'paged-attention', title: 'Paged KV cache (PagedAttention)', added: true },
+      { id: 'continuous-batching', title: 'Continuous batching', added: true },
+      { id: 'quantization', title: 'Quantization (int8, int4)', added: true },
+      { id: 'prefix-cache', title: 'Prefix cache (radix tree)', added: true, advanced: true },
+      {
+        id: 'flash-attention',
+        title: 'FlashAttention (online softmax)',
+        added: true,
+        advanced: true,
+      },
+    ],
+  },
+  {
+    name: 'Retrieval and vector search',
+    pathways: ['ai'],
+    items: [
+      { id: 'k-means', title: 'k-means clustering', added: true },
+      { id: 'bm25', title: 'Inverted index and BM25', added: true },
+      { id: 'hnsw', title: 'HNSW graph search', added: true },
+      { id: 'ivf-index', title: 'IVF index', added: true, advanced: true },
+      { id: 'product-quantization', title: 'Product quantization', added: true, advanced: true },
     ],
   },
 ];

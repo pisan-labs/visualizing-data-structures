@@ -204,10 +204,20 @@ describe('practice sets', () => {
     expect(isCorrect({ kind: 'choice', options: ['a', 'b'], correct: 0 }, '')).toBe(false);
     expect(isCorrect({ kind: 'number', value: 3 }, ' 3 ')).toBe(true);
     expect(isCorrect({ kind: 'number', value: 0 }, '')).toBe(false);
+    expect(isCorrect({ kind: 'number', value: 0.8266 }, '0.83')).toBe(false);
+    expect(isCorrect({ kind: 'number', value: 0.8266, tolerance: 0.005 }, '0.83')).toBe(true);
+    expect(isCorrect({ kind: 'number', value: 0.8266, tolerance: 0.005 }, '.82')).toBe(false);
+    expect(isCorrect({ kind: 'number', value: -1.2, tolerance: 0.005 }, '\u22121.2')).toBe(true);
+    expect(isCorrect({ kind: 'number', value: 0, tolerance: 0.005 }, '')).toBe(false);
     expect(isCorrect({ kind: 'sequence', value: ['10', 'A'] }, '10, a')).toBe(true);
     expect(isCorrect({ kind: 'sequence', value: ['10', 'A'] }, '10')).toBe(false);
     expect(isCorrect({ kind: 'sequence', value: [] }, '  ')).toBe(true);
     expect(answerText({ kind: 'sequence', value: [] })).toBe('(nothing)');
+    expect(answerText({ kind: 'number', value: 2.8284271247461903, tolerance: 0.005 })).toBe(
+      '2.83',
+    );
+    expect(answerText({ kind: 'number', value: 4, tolerance: 0.005 })).toBe('4.00');
+    expect(answerText({ kind: 'number', value: 15 })).toBe('15');
   });
 });
 

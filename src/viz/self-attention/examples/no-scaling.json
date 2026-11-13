@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "self-attention",
+  "id": "no-scaling",
+  "title": "Without dividing by √d_k",
+  "notes": "The same sentence with raw dot products. The scores are larger, so softmax is sharper: sat gives cat even more of its weight. With keys of width 64 or 128 instead of 2, unscaled scores push softmax to all-or-nothing and training stalls.",
+  "settings": {
+    "causal": true,
+    "scale": false,
+    "weights": "designed"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat on the mat"], ["attend"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "self-attention",
+  "id": "same-word-twice",
+  "title": "Attention does not know word order",
+  "notes": "With no mask, the two cats get the same rows: same embedding, same query, same key, so the same weights and the same output. Attention on its own treats a sentence as a bag of words. That is why transformers add positions to the embeddings. Turn the mask on and the two cats differ, because the mask is the only thing here that knows positions.",
+  "settings": {
+    "causal": false,
+    "scale": true,
+    "weights": "designed"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat saw the cat"], ["attend"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

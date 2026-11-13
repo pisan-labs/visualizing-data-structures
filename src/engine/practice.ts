@@ -33,8 +33,14 @@ export function isCorrect(answer: PracticeAnswer, response: string): boolean {
     case 'choice':
       // No choice made is never right (Number('') would be 0, the first option).
       return response.trim() !== '' && Number(response) === answer.correct;
-    case 'number':
-      return response.trim() !== '' && Number(response) === answer.value;
+    case 'number': {
+      if (response.trim() === '') return false;
+      // A typed minus sign (−) counts as a hyphen.
+      const n = Number(response.trim().replace(/^\u2212/, '-'));
+      return answer.tolerance === undefined
+        ? n === answer.value
+        : Math.abs(n - answer.value) <= answer.tolerance + 1e-9;
+    }
     case 'sequence': {
       const got = tokens(response);
       const want = answer.value.map((v) => v.toLowerCase());
@@ -48,8 +54,12 @@ export function answerText(answer: PracticeAnswer): string {
   switch (answer.kind) {
     case 'choice':
       return answer.options[answer.correct]!;
-    case 'number':
-      return String(answer.value);
+    case 'number': {
+      if (answer.tolerance === undefined) return String(answer.value);
+      // To the precision asked for: a tolerance of 0.005 means two decimals.
+      const places = Math.max(0, Math.ceil(-Math.log10(2 * answer.tolerance) - 1e-9));
+      return answer.value.toFixed(places);
+    }
     case 'sequence':
       return answer.value.length ? answer.value.join(' ') : '(nothing)';
   }

@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "self-attention",
+  "id": "one-word",
+  "title": "One word attends to itself",
+  "notes": "A single word can only look at itself, so its weight is 1 and its output is its own value. The smallest case: one dot product, one softmax over one number.",
+  "settings": {
+    "causal": true,
+    "scale": true,
+    "weights": "designed"
+  },
+  "seed": 1,
+  "ops": [["load", "cat"], ["attend"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

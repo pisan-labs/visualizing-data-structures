@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "self-attention",
+  "id": "it-dog-or-ball",
+  "title": "Who is \"it\"?",
+  "notes": "it is half an action and half a small word, so it looks for an animal and, less, for a thing. It leans to dog and gives ball a share: attention spreads weight instead of making one hard choice.",
+  "settings": {
+    "causal": true,
+    "scale": true,
+    "weights": "designed"
+  },
+  "seed": 1,
+  "ops": [["load", "the dog saw the ball and it"], ["attend"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

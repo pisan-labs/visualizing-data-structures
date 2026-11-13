@@ -24,6 +24,12 @@ export interface RectShape extends ShapeBase {
   w: number;
   h: number;
   r?: number;
+  /**
+   * Shade the cell by a value: 0 to 1 tints it with the positive color, 0 to −1 with the
+   * negative one (a heat map). Always print the number in the cell too, so color is never the
+   * only cue. Values beyond ±1 are clamped.
+   */
+  shade?: number;
 }
 
 export interface TextShape extends ShapeBase {

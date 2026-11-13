@@ -4,7 +4,7 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 export const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
-const GEOMETRY = ['x', 'y', 'w', 'h', 'r', 'x1', 'y1', 'x2', 'y2', 'size'] as const;
+const GEOMETRY = ['x', 'y', 'w', 'h', 'r', 'x1', 'y1', 'x2', 'y2', 'size', 'shade'] as const;
 
 function mix(a: Shape, b: Shape, t: number): Shape {
   const out: Record<string, unknown> = { ...b };

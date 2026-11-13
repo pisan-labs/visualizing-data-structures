@@ -193,7 +193,11 @@ export interface SavedExample {
 /** How a practice question is answered. */
 export type PracticeAnswer =
   | { kind: 'choice'; options: string[]; correct: number }
-  | { kind: 'number'; value: number }
+  /**
+   * A number. With `tolerance`, any response within it is right (a value to two decimals takes
+   * 0.005); the prompt should say how to round.
+   */
+  | { kind: 'number'; value: number; tolerance?: number }
   /** Values typed in order, separated by spaces or commas, e.g. a traversal. */
   | { kind: 'sequence'; value: string[] };
 

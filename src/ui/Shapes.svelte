@@ -19,6 +19,9 @@
     ...['active', 'error', 'found', 'new', 'done', 'compare', 'visit', 'remove'],
     ...GROUP_ROLES,
   ];
+  /** How much of the heat color a shaded cell takes: at most half, so its text stays readable. */
+  const shadeMix = (v?: number) =>
+    v === undefined ? undefined : `${Math.round(Math.min(1, Math.abs(v)) * 50)}%`;
   const markerFor = (role?: string) =>
     `url(#arrow-${uid}-${role && HEAD_ROLES.includes(role) ? role : 'base'})`;
 </script>
@@ -42,6 +45,9 @@
   {#if s.kind === 'rect'}
     <rect
       class="shape rect {s.cls ?? ''} {roleClass(s.role)}"
+      class:shaded={s.shade !== undefined}
+      class:neg={(s.shade ?? 0) < 0}
+      style:--shade={shadeMix(s.shade)}
       x={s.x}
       y={s.y}
       width={s.w}
@@ -125,6 +131,15 @@
 
   .circle.dead-state {
     stroke-dasharray: 4 3;
+  }
+
+  /* Heat-map cells: positive values tint toward the active color, negative toward the compare
+     color. Doubled class so a mark changes the outline but keeps the shade. */
+  .rect.shaded.shaded {
+    fill: color-mix(in srgb, var(--c-active) var(--shade), var(--cell-live));
+  }
+  .rect.shaded.shaded.neg {
+    fill: color-mix(in srgb, var(--c-compare) var(--shade), var(--cell-live));
   }
 
   .shape.rect.wall {

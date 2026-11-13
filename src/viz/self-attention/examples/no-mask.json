@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "self-attention",
+  "id": "no-mask",
+  "title": "Every word sees every word",
+  "notes": "With the mask off (an encoder, like BERT), the second the can look ahead and finds the mat. Even the first the now sees the mat. A model that predicts the next word cannot work this way: it would see the answer.",
+  "settings": {
+    "causal": false,
+    "scale": true,
+    "weights": "designed"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat on the mat"], ["attend"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

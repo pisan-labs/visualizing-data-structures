@@ -447,3 +447,7 @@
 2026-11-13 [code] dist/notify-feed.json (src/notify-feed.ts, built with releases.json) for the platform app-notify daily email, asked by Plabs; "Email me when StepWise adds new pages (at most once a day)" wording; goes live with the next deploy
 
 2026-11-13 [plan] PLAN.md section 20: wave 9, AI and LLMs (29 pages in three tiers, a self-attention slice first), surveyed courses and tools; waiting for Yusuf's approval
+
+2026-11-13 [decision] Yusuf: "Yes to all" to PLAN.md 20.9: tiers 1-2 after the slice, fourth pathway "AI and LLMs", toy weights, SLP3 and papers; rnn-lstm, mcts, lora, ring-allreduce added to tier 3
+
+2026-11-13 [code] Wave 9A slice: ai pathway and six families (33 planned pages), shade on rect (heat cells), _lm (numbers, toy vocabulary), _matrix panels, practice number tolerance, self-attention page

@@ -13,6 +13,7 @@ import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { pickLayout, translate } from '../../layouts/arrange';
 import { text, type Plane, type Vec } from '../../layouts/plane';
 import type { Bounds, Scene, Shape } from '../../render/scene';
+import { ZOOM_DROP } from '../../render/stage';
 import { drawPt, drawWindow, field } from '../_retrieve/draw';
 import { d2 } from '../_retrieve/points';
 import {
@@ -76,10 +77,16 @@ function drawLayer(
       const hi = Math.max(a.id, b);
       let role: MarkRole | undefined;
       if (here && extra.cur !== undefined && extra.seen !== undefined)
-        if ((extra.cur === a.id && extra.seen === b) || (both && extra.cur === b && extra.seen === a.id))
+        if (
+          (extra.cur === a.id && extra.seen === b) ||
+          (both && extra.cur === b && extra.seen === a.id)
+        )
           role = 'active';
       if (extra.linked?.layer === layer && extra.newId !== undefined)
-        if ((a.id === extra.newId && extra.linked.ids.includes(b)) || (b === extra.newId && extra.linked.ids.includes(a.id)))
+        if (
+          (a.id === extra.newId && extra.linked.ids.includes(b)) ||
+          (b === extra.newId && extra.linked.ids.includes(a.id))
+        )
           role = 'new';
       const pa = plane.at(a);
       const pb = plane.at(bn);
@@ -121,6 +128,7 @@ function drawLayer(
       }
       return last.path.includes(id) ? 'visit' : undefined;
     }
+    if (layer > 0 && extra.path?.includes(id)) return 'visit';
     if (s.last?.kind === 'insert' && s.last.id === id) return 'found';
     return undefined;
   };
@@ -162,7 +170,11 @@ function drawLayer(
     });
     if (big)
       shapes.push(
-        text(`${queryId(layer)}-l`, { x: c.x + 8, y: c.y + 17 }, 'q', { size: SIZE, bold: true, cls: '' }),
+        text(`${queryId(layer)}-l`, { x: c.x + 8, y: c.y + 17 }, 'q', {
+          size: SIZE,
+          bold: true,
+          cls: '',
+        }),
       );
   }
   return shapes;
@@ -176,44 +188,63 @@ function drawLists(s: HnswState, extra: HnswExtra, settings: HnswSettings): Bloc
   let cols: [number, number][][];
   const last = s.last?.kind === 'search' ? s.last : undefined;
   if (extra.cand || extra.found) {
-    const joins = extra.newId !== undefined && (extra.layer ?? 0) <= (s.nodes[extra.newId]?.level ?? 0);
-    const ef = extra.newId === undefined ? (extra.layer === 0 ? efOf(settings) : 1) : joins ? EF_C : 1;
+    const joins =
+      extra.newId !== undefined && (extra.layer ?? 0) <= (s.nodes[extra.newId]?.level ?? 0);
+    const ef =
+      extra.newId === undefined ? (extra.layer === 0 ? efOf(settings) : 1) : joins ? EF_C : 1;
     heads = ['candidates C', `found W (ef ${ef})`];
     cols = [extra.cand ?? [], extra.found ?? []];
   } else if (last) {
     heads = [`HNSW (${last.dists})`, `exact (${s.nodes.length})`];
-    const withD = (ids: number[]) => ids.map((id) => [d2(last.q, s.nodes[id]!), id] as [number, number]);
+    const withD = (ids: number[]) =>
+      ids.map((id) => [d2(last.q, s.nodes[id]!), id] as [number, number]);
     cols = [withD(last.found), withD(last.truth)];
   } else {
     heads = ['', ''];
     cols = [[], []];
   }
   const colW = 100;
-  heads.forEach((h, c) => shapes.push(text(`lh-${c}`, { x: c * colW, y: 14 }, h, { size: SIZE, bold: true })));
+  heads.forEach((h, c) =>
+    shapes.push(text(`lh-${c}`, { x: c * colW, y: 14 }, h, { size: SIZE, bold: true })),
+  );
   cols.forEach((col, c) =>
     col.forEach(([d, id], r) => {
       const missed = last && c === 1 && !last.found.includes(id);
       shapes.push(
-        text(`li-${c}-${id}`, { x: c * colW, y: 34 + r * ROW_H }, `${name(id)} ${d}${missed ? ' missed' : ''}`, {
-          size: SIZE,
-          mono: true,
-          role: missed ? 'error' : undefined,
-          cls: missed ? undefined : '',
-        }),
+        text(
+          `li-${c}-${id}`,
+          { x: c * colW, y: 34 + r * ROW_H },
+          `${name(id)} ${d}${missed ? ' missed' : ''}`,
+          {
+            size: SIZE,
+            mono: true,
+            role: missed ? 'error' : undefined,
+            cls: missed ? undefined : '',
+          },
+        ),
       );
     }),
   );
   if (last)
     shapes.push(
-      text('lr', { x: 0, y: 34 + K * ROW_H + 8 }, `recall ${last.found.filter((id) => last.truth.includes(id)).length}/${Math.min(K, s.nodes.length)}`, {
-        size: SIZE,
-        bold: true,
-      }),
+      text(
+        'lr',
+        { x: 0, y: 34 + K * ROW_H + 8 },
+        `recall ${last.found.filter((id) => last.truth.includes(id)).length}/${Math.min(K, s.nodes.length)}`,
+        {
+          size: SIZE,
+          bold: true,
+        },
+      ),
     );
   return { shapes, bounds: { x: 0, y: 0, w: 2 * colW + 4, h: 34 + 12 * ROW_H } };
 }
 
-export function view(step: Step<HnswState, HnswExtra>, settings: HnswSettings, stage?: StageSize): Scene {
+export function view(
+  step: Step<HnswState, HnswExtra>,
+  settings: HnswSettings,
+  stage?: StageSize,
+): Scene {
   const { state: s, extra = {} } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const lists = drawLists(s, extra, settings);
@@ -226,18 +257,25 @@ export function view(step: Step<HnswState, HnswExtra>, settings: HnswSettings, s
     shapes: parts.flatMap(([sh, dx, dy]) => translate(sh, dx, dy)),
     bounds: { x: -8, y: -8, w: w + 16, h: h + 16 },
   });
-  const bigShapes = (x: number, y: number) => drawLayer(s, 0, field(BIG, x + 8, y + 22), roles, extra, true);
+  const bigShapes = (x: number, y: number) =>
+    drawLayer(s, 0, field(BIG, x + 8, y + 22), roles, extra, true);
   const smallShapes = (layer: number, x: number, y: number) =>
     drawLayer(s, layer, field(SMALL, x + 6, y + 20), roles, extra, false);
   const uppers = Array.from({ length: TOP }, (_, i) => TOP - i);
 
   const wide = (() => {
-    const parts: [Shape[], number, number][] = uppers.map((l, i) => [smallShapes(l, 0, i * smallH), 0, 0]);
+    const parts: [Shape[], number, number][] = uppers.map((l, i) => [
+      smallShapes(l, 0, i * smallH),
+      0,
+      0,
+    ]);
     const bx = smallW + 10;
     parts.push([bigShapes(bx, 0), 0, 0]);
     const lx = bx + bigW + 12;
-    parts.push([lists.shapes, lx, 8]);
-    return compose(parts, lx + lists.bounds.w, Math.max(TOP * smallH, bigH, lists.bounds.h + 8));
+    // Below the stage's zoom buttons, which sit over the top right corner.
+    const ly = stage?.strip ? 8 : ZOOM_DROP + 14;
+    parts.push([lists.shapes, lx, ly]);
+    return compose(parts, lx + lists.bounds.w, Math.max(TOP * smallH, bigH, lists.bounds.h + ly));
   })();
   const tall = (() => {
     const parts: [Shape[], number, number][] = [[bigShapes(0, 0), 0, 0]];

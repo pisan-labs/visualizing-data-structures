@@ -3,7 +3,7 @@
   "viz": "bm25",
   "id": "saturation",
   "title": "Repeats count less and less",
-  "notes": "PLACEHOLDER",
+  "notes": "d3 is \"cat cat cat cat\". Four times the hits of d1, but with k₁ = 1.2 its share is 0.75 against d1's 0.48: about 1.6 times. Repeats count, less and less.",
   "settings": {
     "k1": "1.2",
     "b": "0.75",
@@ -13,12 +13,9 @@
   "ops": [
     [
       "add",
-      "the cat sat; the cat saw the cat; cat cat cat cat; the dog sat; the bird sat; a fox ran"
+      "the cat sat; the dog saw the bird; cat cat cat cat; the dog sat; the bird sat; a fox ran"
     ],
-    [
-      "search",
-      "cat"
-    ]
+    ["search", "cat"]
   ],
   "at": {
     "op": 1,

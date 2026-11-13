@@ -3,7 +3,7 @@
   "viz": "bm25",
   "id": "cat-mat",
   "title": "Two words, one document has both",
-  "notes": "PLACEHOLDER",
+  "notes": "Six sentences from the toy corpus, then the query \"cat mat\". cat is in 2 documents (IDF 0.59), mat in 1 (IDF 1.30). d1 has both and scores 0.86; d3 has only cat, 0.29. Three postings are read, and the four documents without either word are never touched.",
   "settings": {
     "k1": "1.2",
     "b": "0.75",
@@ -15,10 +15,7 @@
       "add",
       "the cat sat on the mat; the dog sat on the rug; the cat saw the dog; the bird sat on the tree; a dog ate the ball; the fox ran and the dog chased it"
     ],
-    [
-      "search",
-      "cat mat"
-    ]
+    ["search", "cat mat"]
   ],
   "at": {
     "op": 1,

@@ -3,21 +3,15 @@
   "viz": "hnsw",
   "id": "twelve-points",
   "title": "Twelve points on four layers",
-  "notes": "PLACEHOLDER",
+  "notes": "Twelve points inserted with M = 2: 12 on layer 0, 6 on layer 1, 3 on layer 2, 1 on layer 3, each layer about half the one below. The search for (1, 6) starts at K, d² 68 away, goes K, H, L, B, J down the upper layers, and finds J, F and B, the true three nearest, after 15 distance computations.",
   "settings": {
     "M": 2,
     "ef": 3
   },
   "seed": 16,
   "ops": [
-    [
-      "insert",
-      "1,1 3,8 8,2 5,5 9,9 2,4 7,6 4,1 6,9 0,7 9,4 3,3"
-    ],
-    [
-      "search",
-      "1,6"
-    ]
+    ["insert", "1,1 3,8 8,2 5,5 9,9 2,4 7,6 4,1 6,9 0,7 9,4 3,3"],
+    ["search", "1,6"]
   ],
   "at": {
     "op": 1,

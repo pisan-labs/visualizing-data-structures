@@ -4,15 +4,7 @@ import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
 import { writePoints, type Vec } from '../../layouts/plane';
 import { two } from '../_lm/numbers';
 import { blobs, randomPoints } from '../_retrieve/points';
-import {
-  cName,
-  defaults,
-  num,
-  wcss,
-  type KmExtra,
-  type KmSettings,
-  type KmState,
-} from './model';
+import { cName, defaults, num, wcss, type KmExtra, type KmSettings, type KmState } from './model';
 
 type Def = VizDef<KmState, KmSettings, KmExtra>;
 
@@ -27,7 +19,8 @@ function someCentres(rng: Rng, k: number): Vec[] {
  * running the model.
  */
 export function kmeansPractice(def: () => Def): PracticeKind[] {
-  const run = (ops: OpCall[], settings: KmSettings = defaults) => new Timeline(def(), settings, 1, ops);
+  const run = (ops: OpCall[], settings: KmSettings = defaults) =>
+    new Timeline(def(), settings, 1, ops);
 
   /** Points and hand-placed centres; `rounds` assign-update rounds already done. */
   function setup(rng: Rng, rounds: number) {

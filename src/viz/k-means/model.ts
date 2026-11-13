@@ -168,7 +168,12 @@ export function pickByD2(dd: readonly number[], u: number) {
 export const pickUniform = (m: number, u: number) => Math.floor(u * m);
 
 /** The draws of a seeding, in order: plain arithmetic, no steps. */
-export function seedPicks(points: readonly Vec[], k: number, seeding: Seeding, us: number[]): Draw[] {
+export function seedPicks(
+  points: readonly Vec[],
+  k: number,
+  seeding: Seeding,
+  us: number[],
+): Draw[] {
   const chosen: number[] = [];
   const draws: Draw[] = [];
   for (let c = 0; c < k; c++) {
@@ -256,7 +261,14 @@ const placeOp: Op = {
     const pts = readCentres(args[0]);
     if (typeof pts === 'string') return yield* fail(s, settings, pts);
     const centres = pts.map((p, i) => ({ id: i + 1, x: p.x, y: p.y }));
-    const next: S = { ...s, centres, assign: s.points.map(() => null), round: 0, converged: false, work: 0 };
+    const next: S = {
+      ...s,
+      centres,
+      assign: s.points.map(() => null),
+      round: 0,
+      converged: false,
+      work: 0,
+    };
     yield {
       state: next,
       marks: centres.map((c) => mark(cId(c.id), 'new')),
@@ -384,7 +396,8 @@ function* assignSteps(s: S, set: KmSettings, level: 2 | 3): Gen {
       k === 1
         ? `d² to ${cName(c.id)} = ${num(dists[0]!)}`
         : `d² to ${s.centres.map((o, j) => `${cName(o.id)} ${num(dists[j]!)}`).join(', ')}`;
-    const tie = dists.filter((d) => d === dists[best]).length > 1 ? ' (a tie: the lower number wins)' : '';
+    const tie =
+      dists.filter((d) => d === dists[best]).length > 1 ? ' (a tie: the lower number wins)' : '';
     const move =
       was === null || was === undefined
         ? `${p.name} joins ${cName(c.id)}`
@@ -451,7 +464,9 @@ function* updateSteps(s: S, set: KmSettings, level: 2 | 3): Gen {
     const still = from.x === m.x && from.y === m.y;
     if (!still) moved.push({ id: c.id, from });
     const sum = (key: 'x' | 'y') =>
-      members.length === 1 ? `${members[0]![key]}` : `(${members.map((p) => p[key]).join(' + ')}) / ${members.length}`;
+      members.length === 1
+        ? `${members[0]![key]}`
+        : `(${members.map((p) => p[key]).join(' + ')}) / ${members.length}`;
     const now = cur();
     yield {
       state: now,
@@ -523,7 +538,12 @@ const updateOp: Op = {
   *run(s, _args, { settings }) {
     if (!s.points.length) return yield* fail(s, settings, 'Load some points first.');
     if (!s.centres.length) return yield* fail(s, settings, 'Seed or place the centres first.');
-    if (s.assign.every((a) => a === null)) return yield* fail(s, settings, 'Assign the points first: a centre moves to the mean of its points.');
+    if (s.assign.every((a) => a === null))
+      return yield* fail(
+        s,
+        settings,
+        'Assign the points first: a centre moves to the mean of its points.',
+      );
     return yield* updateSteps(s, settings, 2);
   },
 };
@@ -571,26 +591,63 @@ export const ops = {
 // ---------------------------------------------------------------------------------------------
 // Pseudocode
 
-const L = (id: string, indent: number, text: string, plain: string) => ({ id, indent, text, plain });
+const L = (id: string, indent: number, text: string, plain: string) => ({
+  id,
+  indent,
+  text,
+  plain,
+});
 
 export function pseudocode(set: KmSettings): PseudoBlock[] {
   const plus = set.seeding === 'plus';
   const seed = [
-    L('psig', 0, `SEED(points, k)${plus ? '   // k-means++' : ''}`, `Choose ${plus ? 'spread-out' : 'random'} starting centres:`),
-    L('pfirst', 1, 'c₁ = a point drawn uniformly', 'the first centre is any point, each equally likely;'),
+    L(
+      'psig',
+      0,
+      `SEED(points, k)${plus ? '   // k-means++' : ''}`,
+      `Choose ${plus ? 'spread-out' : 'random'} starting centres:`,
+    ),
+    L(
+      'pfirst',
+      1,
+      'c₁ = a point drawn uniformly',
+      'the first centre is any point, each equally likely;',
+    ),
     ...(plus
       ? [
           L('pfor', 1, 'for j = 2 to k', 'then, for each further centre,'),
-          L('pd2', 2, 'D²(x) = min over chosen c of |x − c|²', 'every point measures how far it is from the nearest centre so far,'),
-          L('pdraw', 2, 'c_j = a point x drawn with probability D²(x) / Σ D²', 'and a point is picked with a chance that grows with that distance squared.'),
+          L(
+            'pd2',
+            2,
+            'D²(x) = min over chosen c of |x − c|²',
+            'every point measures how far it is from the nearest centre so far,',
+          ),
+          L(
+            'pdraw',
+            2,
+            'c_j = a point x drawn with probability D²(x) / Σ D²',
+            'and a point is picked with a chance that grows with that distance squared.',
+          ),
         ]
-      : [L('pdraw', 1, 'c₂ … c_k = more points drawn uniformly, no repeats', 'and so is every other centre, never the same point twice.')]),
+      : [
+          L(
+            'pdraw',
+            1,
+            'c₂ … c_k = more points drawn uniformly, no repeats',
+            'and so is every other centre, never the same point twice.',
+          ),
+        ]),
     L('pret', 1, 'return c₁ … c_k', 'These are the starting centres.'),
   ];
   const assign = [
     L('asig', 0, 'ASSIGN(points, centres)', 'Give every point to a centre:'),
     L('afor', 1, 'for each point x', 'for each point,'),
-    L('anear', 2, 'cluster(x) = the j with the least |x − c_j|²', 'find the nearest centre (a tie goes to the lower number).'),
+    L(
+      'anear',
+      2,
+      'cluster(x) = the j with the least |x − c_j|²',
+      'find the nearest centre (a tie goes to the lower number).',
+    ),
     L('aret', 1, 'return the number of points that changed', 'Count the points that switched.'),
   ];
   const update = [
@@ -612,20 +669,31 @@ export function pseudocode(set: KmSettings): PseudoBlock[] {
   return [
     {
       op: 'load',
-      lines: [L('lsig', 0, 'LOAD(points)', 'Start from some points'), L('lload', 1, 'x₁ … x_N, no centres yet', 'with no clusters yet.')],
+      lines: [
+        L('lsig', 0, 'LOAD(points)', 'Start from some points'),
+        L('lload', 1, 'x₁ … x_N, no centres yet', 'with no clusters yet.'),
+      ],
     },
     { op: 'seed', lines: seed },
     {
       op: 'place',
-      lines: [L('psig2', 0, 'PLACE(c₁ … c_k)', 'Put the centres where you choose:'), L('pset', 1, 'centres = the points typed', 'the points you typed.')],
+      lines: [
+        L('psig2', 0, 'PLACE(c₁ … c_k)', 'Put the centres where you choose:'),
+        L('pset', 1, 'centres = the points typed', 'the points you typed.'),
+      ],
     },
     { op: 'assign', lines: assign },
     { op: 'update', lines: update },
     {
       op: 'run',
       lines: [
-        L('rsig', 0, "LLOYD(points, k)", 'Cluster the points:'),
-        L('rseed', 1, 'if there are no centres: SEED(points, k)', 'start from seeded centres if there are none,'),
+        L('rsig', 0, 'LLOYD(points, k)', 'Cluster the points:'),
+        L(
+          'rseed',
+          1,
+          'if there are no centres: SEED(points, k)',
+          'start from seeded centres if there are none,',
+        ),
         L('rloop', 1, 'repeat ASSIGN, then UPDATE', 'then assign and move, again and again,'),
         L('rret', 1, 'until ASSIGN changes nothing', 'until no point switches.'),
       ],

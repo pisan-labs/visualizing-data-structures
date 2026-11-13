@@ -27,7 +27,12 @@ function reference(pts: Vec[], start: Vec[], empty: 'farthest' | 'stay') {
     const lab = labels;
     const moved = centres.map((c, j) => {
       const m = pts.filter((_, i) => lab[i] === j);
-      return m.length ? { x: m.reduce((t, p) => t + p.x, 0) / m.length, y: m.reduce((t, p) => t + p.y, 0) / m.length } : null;
+      return m.length
+        ? {
+            x: m.reduce((t, p) => t + p.x, 0) / m.length,
+            y: m.reduce((t, p) => t + p.y, 0) / m.length,
+          }
+        : null;
     });
     const taken = new Set<number>();
     centres = moved.map((m, j) => {
@@ -156,7 +161,12 @@ describe('k-means', () => {
   it('tells the story the examples tell', () => {
     const run = (id: string) => {
       const ex = kMeans.examples.find((e) => e.id === id)!;
-      return new Timeline(kMeans, { ...kMeans.defaults, ...ex.settings } as KmSettings, ex.seed, ex.ops).endState();
+      return new Timeline(
+        kMeans,
+        { ...kMeans.defaults, ...ex.settings } as KmSettings,
+        ex.seed,
+        ex.ops,
+      ).endState();
     };
     expect(wcss(run('three-groups'))).toBeCloseTo(28 / 3, 9);
     expect(wcss(run('plus-spreads'))).toBeCloseTo(28 / 3, 9);

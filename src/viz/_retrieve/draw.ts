@@ -29,8 +29,18 @@ export function drawWindow(
 ): void {
   const grid = o.grid ?? 2;
   for (let k = grid; k < MAX; k += grid) {
-    drawSegment(shapes, plane, { id: `${id}-gx${k}`, a: { x: k, y: 0 }, b: { x: k, y: MAX }, opacity: 0.12 });
-    drawSegment(shapes, plane, { id: `${id}-gy${k}`, a: { x: 0, y: k }, b: { x: MAX, y: k }, opacity: 0.12 });
+    drawSegment(shapes, plane, {
+      id: `${id}-gx${k}`,
+      a: { x: k, y: 0 },
+      b: { x: k, y: MAX },
+      opacity: 0.12,
+    });
+    drawSegment(shapes, plane, {
+      id: `${id}-gy${k}`,
+      a: { x: 0, y: k },
+      b: { x: MAX, y: k },
+      opacity: 0.12,
+    });
   }
   const c: Vec[] = [
     { x: 0, y: 0 },

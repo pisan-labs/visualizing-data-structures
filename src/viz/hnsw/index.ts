@@ -127,29 +127,49 @@ export const hnsw: VizDef<HnswState, HnswSettings, HnswExtra> = {
     {
       op: `Search for the ${K} nearest (brute force)`,
       best: { cost: 'Θ(N)', why: 'Measure every point, always.', example: 'first-point' },
-      average: { cost: 'Θ(N)', why: 'N distances, then keep the nearest K.', example: 'twelve-points' },
+      average: {
+        cost: 'Θ(N)',
+        why: 'N distances, then keep the nearest K.',
+        example: 'twelve-points',
+      },
       worst: { cost: 'Θ(N)', why: 'Exact, and never cheaper.', example: 'greedy-misses' },
       note: 'In d dimensions each distance costs Θ(d).',
     },
     {
       op: 'Insert a point',
-      best: { cost: 'Θ(1)', why: 'The first point: it just becomes the entry point.', example: 'first-point' },
+      best: {
+        cost: 'Θ(1)',
+        why: 'The first point: it just becomes the entry point.',
+        example: 'first-point',
+      },
       average: {
         cost: 'O(log N)',
         why: 'A search on each layer it joins, with efConstruction and M as constants.',
         example: 'twelve-points',
       },
-      worst: { cost: 'Θ(N)', why: 'A search that wanders over most of the graph.', example: 'links-dropped' },
+      worst: {
+        cost: 'Θ(N)',
+        why: 'A search that wanders over most of the graph.',
+        example: 'links-dropped',
+      },
     },
     {
       op: 'Memory for the links',
-      best: { cost: 'Θ(N·M)', why: 'Up to 2M links per node on layer 0.', example: 'twelve-points' },
+      best: {
+        cost: 'Θ(N·M)',
+        why: 'Up to 2M links per node on layer 0.',
+        example: 'twelve-points',
+      },
       average: {
         cost: 'Θ(N·M)',
         why: 'A node is on M/(M − 1) layers on average, with at most M links on each upper one.',
         example: 'new-top',
       },
-      worst: { cost: 'Θ(N·M)', why: 'Bounded by the limits on links, whatever the points.', example: 'links-dropped' },
+      worst: {
+        cost: 'Θ(N·M)',
+        why: 'Bounded by the limits on links, whatever the points.',
+        example: 'links-dropped',
+      },
     },
   ],
   code: {

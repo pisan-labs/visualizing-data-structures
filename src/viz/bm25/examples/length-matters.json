@@ -3,7 +3,7 @@
   "viz": "bm25",
   "id": "length-matters",
   "title": "A short document wins",
-  "notes": "PLACEHOLDER",
+  "notes": "\"the cat\" (2 words) against \"the old cat ran under the big tree\" (8 words), one cat each. B is 0.64 for the short one and 1.83 for the long one, so the short one gets the bigger share and wins, 0.19 to 0.11.",
   "settings": {
     "k1": "1.2",
     "b": "0.75",
@@ -11,14 +11,8 @@
   },
   "seed": 1,
   "ops": [
-    [
-      "add",
-      "the cat; the old cat ran under the big tree; the dog sat; a bird sang; the fox ran"
-    ],
-    [
-      "search",
-      "cat"
-    ]
+    ["add", "the cat; the old cat ran under the big tree; the dog sat; a bird sang; the fox ran"],
+    ["search", "cat"]
   ],
   "at": {
     "op": 1,

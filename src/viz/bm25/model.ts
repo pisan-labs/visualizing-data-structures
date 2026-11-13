@@ -117,12 +117,16 @@ export const tokens = (text: string): string[] =>
 
 /** Documents separated by ";", each its words, or an Error a learner can act on. */
 export function parseDocs(text: string): string[][] | Error {
-  const docs = text.split(';').map(tokens).filter((d) => d.length);
+  const docs = text
+    .split(';')
+    .map(tokens)
+    .filter((d) => d.length);
   if (!docs.length) return new Error('Type a short sentence, such as "the cat sat on the mat".');
   if (docs.length > MAX_DOCS) return new Error(`At most ${MAX_DOCS} documents.`);
   if (docs.some((d) => d.length > MAX_WORDS))
     return new Error(`Keep each document to ${MAX_WORDS} words, so the index fits on the screen.`);
-  if (docs.some((d) => d.some((w) => w.length > 10))) return new Error('Use words of ten letters at most.');
+  if (docs.some((d) => d.some((w) => w.length > 10)))
+    return new Error('Use words of ten letters at most.');
   return docs;
 }
 
@@ -149,7 +153,8 @@ export const tfPart = (tf: number, k1: number, lenB: number) => tf / (tf + k1 * 
 export const postingsOf = (s: S, term: string) => s.index.find((t) => t.term === term)?.postings;
 
 /** Whether a is a weaker result than b: a lower score, or the same score and a later document. */
-export const weaker = (a: Kept, b: Kept) => a.score < b.score || (a.score === b.score && a.doc > b.doc);
+export const weaker = (a: Kept, b: Kept) =>
+  a.score < b.score || (a.score === b.score && a.doc > b.doc);
 
 /** The whole search with no steps: scores term at a time, then the best K. */
 export function bm25(s: S, query: readonly string[], set: BmSettings) {
@@ -178,7 +183,11 @@ export function bm25(s: S, query: readonly string[], set: BmSettings) {
 // ---------------------------------------------------------------------------------------------
 // Narration helpers
 
-export function vars(s: S, set: BmSettings, extra: Record<string, Scalar> = {}): Record<string, Scalar> {
+export function vars(
+  s: S,
+  set: BmSettings,
+  extra: Record<string, Scalar> = {},
+): Record<string, Scalar> {
   return {
     N: s.docs.length,
     avgdl: s.docs.length ? Math.round(avgdl(s) * 100) / 100 : 0,
@@ -308,8 +317,19 @@ const searchOp: Op = {
     const idf: Record<string, number> = {};
     const scores: Record<number, number> = {};
     let read = 0;
-    const extra = (o: Partial<X> = {}): X => ({ query, idf: { ...idf }, scores: { ...scores }, ...o });
-    const step = (say: string, lines: string[], level: 1 | 2 | 3, marks: Mark[], o: Partial<X> = {}): BStep => ({
+    const extra = (o: Partial<X> = {}): X => ({
+      query,
+      idf: { ...idf },
+      scores: { ...scores },
+      ...o,
+    });
+    const step = (
+      say: string,
+      lines: string[],
+      level: 1 | 2 | 3,
+      marks: Mark[],
+      o: Partial<X> = {},
+    ): BStep => ({
       state: s,
       marks,
       say,
@@ -355,7 +375,9 @@ const searchOp: Op = {
         const B = lengthPart(len, avg, b);
         const part = tfPart(p.tf, k1, B);
         const add = w * part;
-        const hits = doc.words.flatMap((x, i) => (x === t ? [mark(wordId(doc.id, i), 'active')] : []));
+        const hits = doc.words.flatMap((x, i) =>
+          x === t ? [mark(wordId(doc.id, i), 'active')] : [],
+        );
         yield step(
           `${dName(doc.id)} has ${plural(len, 'word')}: B = 1 − b + b·|d|/avgdl = ${two(1 - b)} + ${two(b)} × ${len} / ${two(avg)} = ${two(B)}.${B > 1 ? ' Longer than average, so it needs more hits for the same share.' : B < 1 ? ' Shorter than average: each hit counts for more.' : ''}`,
           ['sb'],
@@ -414,9 +436,15 @@ const searchOp: Op = {
         role = 'stale';
         say = `${dName(d)} (${two(e.score)}) does not beat the weakest kept, ${dName(heap[0]!.doc)} (${two(heap[0]!.score)}): one comparison and it is out.`;
       }
-      yield step(say, ['sheap'], 3, [mark(scoreId(d), role), ...(role === 'new' ? [mark(heapId(d), 'new')] : [])], {
-        heap: [...heap],
-      });
+      yield step(
+        say,
+        ['sheap'],
+        3,
+        [mark(scoreId(d), role), ...(role === 'new' ? [mark(heapId(d), 'new')] : [])],
+        {
+          heap: [...heap],
+        },
+      );
     }
     const { top } = bm25(s, query, settings);
     next = { ...s, last: { query, idf, scores, top, postings: read } };
@@ -470,7 +498,12 @@ export const ops = { add: addOp, search: searchOp, clear: clearOp };
 // ---------------------------------------------------------------------------------------------
 // Pseudocode
 
-const L = (id: string, indent: number, text: string, plain: string) => ({ id, indent, text, plain });
+const L = (id: string, indent: number, text: string, plain: string) => ({
+  id,
+  indent,
+  text,
+  plain,
+});
 
 export function pseudocode(set: BmSettings): PseudoBlock[] {
   return [
@@ -479,24 +512,56 @@ export function pseudocode(set: BmSettings): PseudoBlock[] {
       lines: [
         L('asig', 0, 'ADD(d)', 'Index a document:'),
         L('acount', 1, 'tf[t] = how often each term t occurs in d', 'count its words;'),
-        L('anew', 1, 'if t is not in the index: index[t] = [(d, tf[t])]', 'a new word gets a list of its own,'),
-        L('aappend', 1, 'else append (d, tf[t]) to index[t]', 'a known word gets this document added to its list.'),
+        L(
+          'anew',
+          1,
+          'if t is not in the index: index[t] = [(d, tf[t])]',
+          'a new word gets a list of its own,',
+        ),
+        L(
+          'aappend',
+          1,
+          'else append (d, tf[t]) to index[t]',
+          'a known word gets this document added to its list.',
+        ),
         L('aret', 1, 'N = N + 1; update avgdl', 'Count the document and its length.'),
       ],
     },
     {
       op: 'search',
       lines: [
-        L('ssig', 0, `SEARCH(q)   // k₁ = ${set.k1}, b = ${set.b}`, 'Rank the documents for a query:'),
-        L('slook', 1, 'for each word t of q: list = index[t]', 'look up each query word in the index;'),
+        L(
+          'ssig',
+          0,
+          `SEARCH(q)   // k₁ = ${set.k1}, b = ${set.b}`,
+          'Rank the documents for a query:',
+        ),
+        L(
+          'slook',
+          1,
+          'for each word t of q: list = index[t]',
+          'look up each query word in the index;',
+        ),
         L(
           'sidf',
           2,
-          set.idf === 'rsj' ? 'IDF = ln((N − n + 0.5) / (n + 0.5)), n = |list|' : 'IDF = ln(1 + (N − n + 0.5) / (n + 0.5)), n = |list|',
+          set.idf === 'rsj'
+            ? 'IDF = ln((N − n + 0.5) / (n + 0.5)), n = |list|'
+            : 'IDF = ln(1 + (N − n + 0.5) / (n + 0.5)), n = |list|',
           'a word in few documents weighs more;',
         ),
-        L('sb', 2, 'for each (d, tf) in list: B = 1 − b + b · |d| / avgdl', 'for each document on its list, see how long it is,'),
-        L('stf', 3, 'share = tf / (tf + k₁ · B)', 'take a share of the weight that grows with tf but levels off,'),
+        L(
+          'sb',
+          2,
+          'for each (d, tf) in list: B = 1 − b + b · |d| / avgdl',
+          'for each document on its list, see how long it is,',
+        ),
+        L(
+          'stf',
+          3,
+          'share = tf / (tf + k₁ · B)',
+          'take a share of the weight that grows with tf but levels off,',
+        ),
         L('sadd', 3, 'score[d] = score[d] + IDF · share', 'and add it to that document’s score.'),
         L('sheap', 1, `keep the best ${K} scores in a min-heap`, `Keep the best ${K},`),
         L('sret', 1, 'return them, best first', 'best first.'),

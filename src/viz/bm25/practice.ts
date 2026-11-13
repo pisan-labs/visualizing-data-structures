@@ -47,7 +47,8 @@ export function bm25Practice(def: () => Def): PracticeKind[] {
     return { ops, s, terms };
   }
 
-  const search = (ops: OpCall[], q: string) => run([...ops, ['search', q]]).endState().last as SearchDone;
+  const search = (ops: OpCall[], q: string) =>
+    run([...ops, ['search', q]]).endState().last as SearchDone;
 
   return [
     {
@@ -110,7 +111,9 @@ export function bm25Practice(def: () => Def): PracticeKind[] {
             answer: { kind: 'choice', options, correct: first.doc - 1 },
             explain: `The scores: ${Object.entries(done.scores)
               .map(([d, v]) => `${dName(Number(d))} ${two(v)}`)
-              .join(', ')}. ${dName(first.doc)} is highest${second ? `, ahead of ${dName(second.doc)}` : ''}.`,
+              .join(
+                ', ',
+              )}. ${dName(first.doc)} is highest${second ? `, ahead of ${dName(second.doc)}` : ''}.`,
             watch: [['search', q]],
           };
         }
@@ -133,7 +136,13 @@ export function bm25Practice(def: () => Def): PracticeKind[] {
           prompt: `Add d5: "${extra}". Then what is the postings list of **${t}**? List its documents in order (such as d1 d3 d5).`,
           setup: ops,
           answer: { kind: 'sequence', value: list.map((p) => dName(p.doc)) },
-          explain: `${postingsOf(s, t) ? `"${t}" was on ${postingsOf(s, t)!.map((p) => dName(p.doc)).join(', ')}; d5 goes on the end` : `"${t}" was not in the index, so it gets a new list`}: ${list.map((p) => `${dName(p.doc)}:${p.tf}`).join(' ')} (document:tf). Lists stay in document order for free, because documents arrive in order.`,
+          explain: `${
+            postingsOf(s, t)
+              ? `"${t}" was on ${postingsOf(s, t)!
+                  .map((p) => dName(p.doc))
+                  .join(', ')}; d5 goes on the end`
+              : `"${t}" was not in the index, so it gets a new list`
+          }: ${list.map((p) => `${dName(p.doc)}:${p.tf}`).join(' ')} (document:tf). Lists stay in document order for free, because documents arrive in order.`,
           watch,
         };
       },

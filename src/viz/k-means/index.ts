@@ -135,27 +135,67 @@ export const kMeans: VizDef<KmState, KmSettings, KmExtra> = {
   complexity: [
     {
       op: 'Assign: every point to its nearest centre',
-      best: { cost: 'Θ(N·k)', why: 'Each of N points measures its distance to all k centres.', example: 'by-hand' },
-      average: { cost: 'Θ(N·k)', why: 'The same work every round, wherever the centres are.', example: 'three-groups' },
-      worst: { cost: 'Θ(N·k)', why: 'No shortcut in the plain algorithm: every distance is computed.', example: 'too-many-centres' },
+      best: {
+        cost: 'Θ(N·k)',
+        why: 'Each of N points measures its distance to all k centres.',
+        example: 'by-hand',
+      },
+      average: {
+        cost: 'Θ(N·k)',
+        why: 'The same work every round, wherever the centres are.',
+        example: 'three-groups',
+      },
+      worst: {
+        cost: 'Θ(N·k)',
+        why: 'No shortcut in the plain algorithm: every distance is computed.',
+        example: 'too-many-centres',
+      },
       note: 'In d dimensions each distance costs Θ(d), so a round is Θ(N·k·d).',
     },
     {
       op: 'Update: every centre to its mean',
-      best: { cost: 'Θ(N + k)', why: 'One pass adds each point to its cluster’s sum; then k divisions.', example: 'by-hand' },
+      best: {
+        cost: 'Θ(N + k)',
+        why: 'One pass adds each point to its cluster’s sum; then k divisions.',
+        example: 'by-hand',
+      },
       average: { cost: 'Θ(N + k)', why: 'Linear in the points.', example: 'three-groups' },
-      worst: { cost: 'Θ(N + k)', why: 'An empty cluster adds one pass to find the farthest point.', example: 'empty-cluster' },
+      worst: {
+        cost: 'Θ(N + k)',
+        why: 'An empty cluster adds one pass to find the farthest point.',
+        example: 'empty-cluster',
+      },
     },
     {
       op: 'Seed with k-means++',
-      best: { cost: 'Θ(N·k)', why: 'Each new centre updates every point’s D² once.', example: 'plus-spreads' },
-      average: { cost: 'Θ(N·k)', why: 'k draws, each a pass over the N points.', example: 'three-groups' },
-      worst: { cost: 'Θ(N·k)', why: 'The same for any input; random seeding costs only Θ(k).', example: 'bad-start' },
+      best: {
+        cost: 'Θ(N·k)',
+        why: 'Each new centre updates every point’s D² once.',
+        example: 'plus-spreads',
+      },
+      average: {
+        cost: 'Θ(N·k)',
+        why: 'k draws, each a pass over the N points.',
+        example: 'three-groups',
+      },
+      worst: {
+        cost: 'Θ(N·k)',
+        why: 'The same for any input; random seeding costs only Θ(k).',
+        example: 'bad-start',
+      },
     },
     {
       op: "Lloyd's algorithm until nothing changes",
-      best: { cost: 'Θ(N·k)', why: 'Good centres: the second assignment changes nothing.', example: 'plus-spreads' },
-      average: { cost: 'Θ(I·N·k)', why: 'I rounds; in practice I is small (a handful here).', example: 'three-groups' },
+      best: {
+        cost: 'Θ(N·k)',
+        why: 'Good centres: the second assignment changes nothing.',
+        example: 'plus-spreads',
+      },
+      average: {
+        cost: 'Θ(I·N·k)',
+        why: 'I rounds; in practice I is small (a handful here).',
+        example: 'three-groups',
+      },
       worst: {
         cost: '2^Ω(N) rounds',
         why: 'Vattani (2011) built point sets in the plane that take exponentially many rounds.',
@@ -207,9 +247,13 @@ function codeScript(calls: OpCall[], settings: KmSettings) {
     if (end === prev) continue;
     if (op === 'load') input.push(`points ${end.points.map(pair).join(' ')}`.trimEnd());
     if (op === 'place') input.push(`place ${end.centres.map(pair).join(' ')}`);
-    const draws = e.steps.flatMap((st) => (st.extra?.draw && st.extra.draw.pick >= 0 ? [st.extra.draw] : []));
+    const draws = e.steps.flatMap((st) =>
+      st.extra?.draw && st.extra.draw.pick >= 0 ? [st.extra.draw] : [],
+    );
     if (draws.length) {
-      input.push(`seed ${settings.seeding} ${draws.length} ${draws.map((d) => String(d.u)).join(' ')}`);
+      input.push(
+        `seed ${settings.seeding} ${draws.length} ${draws.map((d) => String(d.u)).join(' ')}`,
+      );
       expected.push(draws.map((d) => d.pick).join(' '));
     }
     if (op === 'assign') {
@@ -223,7 +267,9 @@ function codeScript(calls: OpCall[], settings: KmSettings) {
     if (op === 'run' && end.centres.length) {
       const seeded = draws.length ? 0 : prev.round;
       input.push(`run ${settings.empty}`);
-      expected.push(`${end.round - seeded} | ${labels(end)} | ${centreLine(end)} | ${round3(wcss(end))}`);
+      expected.push(
+        `${end.round - seeded} | ${labels(end)} | ${centreLine(end)} | ${round3(wcss(end))}`,
+      );
     }
     prev = end;
   }

@@ -3,21 +3,15 @@
   "viz": "hnsw",
   "id": "beam-finds",
   "title": "A longer list gets around it",
-  "notes": "PLACEHOLDER",
+  "notes": "The same search with ef = 3. The list keeps L (d² 9) and even F (d² 17), which are worse than H, and F links to D, which links to C. It finds C, D and H, recall 3/3, after 13 distance computations: one more than brute force on 12 points.",
   "settings": {
     "M": 2,
     "ef": 3
   },
   "seed": 16,
   "ops": [
-    [
-      "insert",
-      "1,1 3,8 8,2 5,5 9,9 2,4 7,6 4,1 6,9 0,7 9,4 3,3"
-    ],
-    [
-      "search",
-      "6,3"
-    ]
+    ["insert", "1,1 3,8 8,2 5,5 9,9 2,4 7,6 4,1 6,9 0,7 9,4 3,3"],
+    ["search", "6,3"]
   ],
   "at": {
     "op": 1,

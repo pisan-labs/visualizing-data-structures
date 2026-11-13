@@ -3,22 +3,14 @@
   "viz": "k-means",
   "id": "three-groups",
   "title": "Three round groups",
-  "notes": "PLACEHOLDER",
+  "notes": "Ten points in three round groups, k = 3, k-means++. The second draw lands on F, right next to the first centre E: a 1% chance. Lloyd's algorithm still finds the three groups, in 3 rounds, with WCSS falling 93, 27.75, 15.19, 9.33.",
   "settings": {
     "k": 3,
     "seeding": "plus",
     "empty": "farthest"
   },
   "seed": 5,
-  "ops": [
-    [
-      "load",
-      "1,2 2,1 2,3 3,2 7,7 8,8 9,7 1,8 2,9 3,8"
-    ],
-    [
-      "run"
-    ]
-  ],
+  "ops": [["load", "1,2 2,1 2,3 3,2 7,7 8,8 9,7 1,8 2,9 3,8"], ["run"]],
   "at": {
     "op": 0,
     "step": 0

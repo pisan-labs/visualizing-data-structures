@@ -6,7 +6,16 @@ import { writePoints, type Vec } from '../../layouts/plane';
 import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { smallestText } from '../../render/text-size';
 import { hnsw } from '.';
-import { bruteForce, EF_C, K, levelFor, maxLinks, TOP, type HnswSettings, type SearchDone } from './model';
+import {
+  bruteForce,
+  EF_C,
+  K,
+  levelFor,
+  maxLinks,
+  TOP,
+  type HnswSettings,
+  type SearchDone,
+} from './model';
 
 /**
  * The paper's Algorithms 1, 2, 3 and 5 written independently: plain arrays sorted after every
@@ -22,7 +31,8 @@ class Reference {
     const p = this.pts[i]!;
     return [(q.x - p.x) * (q.x - p.x) + (q.y - p.y) * (q.y - p.y), i];
   }
-  less = (a: [number, number], b: [number, number]) => a[0] < b[0] || (a[0] === b[0] && a[1] < b[1]);
+  less = (a: [number, number], b: [number, number]) =>
+    a[0] < b[0] || (a[0] === b[0] && a[1] < b[1]);
   sort = (xs: [number, number][]) => xs.sort((a, b) => (this.less(a, b) ? -1 : 1));
   layer(q: Vec, eps: [number, number][], ef: number, l: number): [number, number][] {
     const seen = new Set(eps.map((e) => e[1]));
@@ -81,36 +91,52 @@ class Reference {
   search(q: Vec, ef: number) {
     this.count = 1;
     let eps = [this.key(q, this.entry)];
-    for (let l = this.links[this.entry]!.length - 1; l > 0; l--) eps = this.layer(q, eps, 1, l).slice(0, 1);
-    return this.layer(q, eps, ef, 0).slice(0, K).map((x) => x[1]);
+    for (let l = this.links[this.entry]!.length - 1; l > 0; l--)
+      eps = this.layer(q, eps, 1, l).slice(0, 1);
+    return this.layer(q, eps, ef, 0)
+      .slice(0, K)
+      .map((x) => x[1]);
   }
 }
 
 const ptArb = fc.record({ x: fc.integer({ min: 0, max: 10 }), y: fc.integer({ min: 0, max: 10 }) });
-const ptsArb = fc.uniqueArray(ptArb, { minLength: 1, maxLength: 12, selector: (p) => `${p.x},${p.y}` });
-const settingsArb = fc.record({ M: fc.integer({ min: 2, max: 4 }), ef: fc.integer({ min: 1, max: 8 }) });
+const ptsArb = fc.uniqueArray(ptArb, {
+  minLength: 1,
+  maxLength: 12,
+  selector: (p) => `${p.x},${p.y}`,
+});
+const settingsArb = fc.record({
+  M: fc.integer({ min: 2, max: 4 }),
+  ef: fc.integer({ min: 1, max: 8 }),
+});
 
 describe('hnsw', () => {
   it('builds the same graph and finds the same points as an independent reference', () => {
     fc.assert(
-      fc.property(ptsArb, fc.array(ptArb, { minLength: 1, maxLength: 4 }), settingsArb, fc.integer({ min: 1, max: 1000 }), (pts, qs, set, seed) => {
-        const settings: HnswSettings = { ...set };
-        const t = new Timeline(hnsw, settings, seed, [
-          ['insert', writePoints(pts)],
-          ...qs.map((q) => ['search', `${q.x},${q.y}`] as [string, string]),
-        ]);
-        const built = t.entries[0]!.end;
-        const ref = new Reference(set.M);
-        for (const n of built.nodes) ref.insert(n, n.level);
-        expect(built.nodes.map((n) => n.links)).toEqual(ref.links);
-        expect(built.entry).toBe(ref.entry);
-        t.entries.slice(1).forEach((e, i) => {
-          const last = e.end.last as SearchDone;
-          expect(last.found).toEqual(ref.search(qs[i]!, set.ef));
-          expect(last.dists).toBe(ref.count);
-          expect(last.truth).toEqual(bruteForce(built.nodes, qs[i]!));
-        });
-      }),
+      fc.property(
+        ptsArb,
+        fc.array(ptArb, { minLength: 1, maxLength: 4 }),
+        settingsArb,
+        fc.integer({ min: 1, max: 1000 }),
+        (pts, qs, set, seed) => {
+          const settings: HnswSettings = { ...set };
+          const t = new Timeline(hnsw, settings, seed, [
+            ['insert', writePoints(pts)],
+            ...qs.map((q) => ['search', `${q.x},${q.y}`] as [string, string]),
+          ]);
+          const built = t.entries[0]!.end;
+          const ref = new Reference(set.M);
+          for (const n of built.nodes) ref.insert(n, n.level);
+          expect(built.nodes.map((n) => n.links)).toEqual(ref.links);
+          expect(built.entry).toBe(ref.entry);
+          t.entries.slice(1).forEach((e, i) => {
+            const last = e.end.last as SearchDone;
+            expect(last.found).toEqual(ref.search(qs[i]!, set.ef));
+            expect(last.dists).toBe(ref.count);
+            expect(last.truth).toEqual(bruteForce(built.nodes, qs[i]!));
+          });
+        },
+      ),
       { numRuns: 150 },
     );
   });
@@ -118,7 +144,10 @@ describe('hnsw', () => {
   it('keeps its invariants on every step of random runs', () => {
     fc.assert(
       fc.property(ptsArb, settingsArb, fc.integer({ min: 1, max: 1000 }), (pts, set, seed) => {
-        const t = new Timeline(hnsw, { ...set }, seed, [['insert', writePoints(pts)], ['search', '5,5']]);
+        const t = new Timeline(hnsw, { ...set }, seed, [
+          ['insert', writePoints(pts)],
+          ['search', '5,5'],
+        ]);
         for (const e of t.entries)
           for (const step of e.steps) {
             const s = step.state;
@@ -173,7 +202,12 @@ describe('hnsw', () => {
   it('tells the story the examples tell', () => {
     const run = (id: string) => {
       const ex = hnsw.examples.find((e) => e.id === id)!;
-      return new Timeline(hnsw, { ...hnsw.defaults, ...ex.settings } as HnswSettings, ex.seed, ex.ops);
+      return new Timeline(
+        hnsw,
+        { ...hnsw.defaults, ...ex.settings } as HnswSettings,
+        ex.seed,
+        ex.ops,
+      );
     };
     const miss = run('greedy-misses').endState().last as SearchDone;
     const beam = run('beam-finds').endState().last as SearchDone;

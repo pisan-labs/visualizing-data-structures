@@ -38,17 +38,28 @@ interface Block {
 }
 
 const SIZE = 13;
-const ROW_H = 22;
+const ROW_H = 20;
 const CHAR = SIZE * 0.62;
-const CHIP_W = 42;
+const CHIP_W = 38;
 const NODE_W = 62;
 const NODE_H = 38;
 
 const textW = (s: string) => s.length * CHAR;
+/** Words are set in the monospace font, so their widths are exact and the gaps even. */
+const MONO = SIZE * 0.6;
+const wordW = (s: string) => s.length * MONO;
 
-function drawDocs(s: BmState, roles: Roles, scores: Record<number, number> | undefined, query: string[]): Block {
+function drawDocs(
+  s: BmState,
+  roles: Roles,
+  scores: Record<number, number> | undefined,
+  query: string[],
+): Block {
   const shapes: Shape[] = [];
-  const wordsW = Math.max(150, ...s.docs.map((d) => d.words.reduce((t, w) => t + textW(w) + 6, 0)));
+  const wordsW = Math.max(
+    150,
+    ...s.docs.map((d) => d.words.reduce((t, w) => t + wordW(w) + MONO, 0)),
+  );
   const xWords = 30;
   const xLen = xWords + wordsW + 8;
   const xScore = xLen + 30;
@@ -80,23 +91,30 @@ function drawDocs(s: BmState, roles: Roles, scores: Record<number, number> | und
       role,
       opacity: role ? 1 : 0,
     });
-    shapes.push(text(`dn-${d.id}`, { x: 2, y: y + 16 }, dName(d.id), { size: SIZE, bold: true, cls: '' }));
+    shapes.push(
+      text(`dn-${d.id}`, { x: 2, y: y + 15 }, dName(d.id), { size: SIZE, bold: true, cls: '' }),
+    );
     let x = xWords;
     d.words.forEach((w, i) => {
       const id = wordId(d.id, i);
       const hit = query.includes(w);
       shapes.push(
-        text(id, { x, y: y + 16 }, w, {
+        text(id, { x, y: y + 15 }, w, {
           size: SIZE,
           role: roles.get(id) ?? (hit ? 'found' : undefined),
           bold: hit,
+          mono: true,
           cls: roles.get(id) || hit ? undefined : '',
         }),
       );
-      x += textW(w) + 6;
+      x += wordW(w) + MONO;
     });
     shapes.push(
-      text(`dl-${d.id}`, { x: xLen + 10, y: y + 16 }, String(d.words.length), { size: SIZE, anchor: 'middle', mono: true }),
+      text(`dl-${d.id}`, { x: xLen + 10, y: y + 15 }, String(d.words.length), {
+        size: SIZE,
+        anchor: 'middle',
+        mono: true,
+      }),
     );
     const sc = scores?.[d.id];
     shapes.push({
@@ -113,7 +131,7 @@ function drawDocs(s: BmState, roles: Roles, scores: Record<number, number> | und
       opacity: sc === undefined ? 0.35 : 1,
     });
     shapes.push(
-      text(`${scoreId(d.id)}-t`, { x: xScore + 24, y: y + 16 }, sc === undefined ? '' : short(sc), {
+      text(`${scoreId(d.id)}-t`, { x: xScore + 24, y: y + 15 }, sc === undefined ? '' : short(sc), {
         size: SIZE,
         anchor: 'middle',
         mono: true,
@@ -159,13 +177,17 @@ function drawIndex(s: BmState, roles: Roles, idf: Record<string, number> | undef
       role,
       opacity: role ? 1 : 0,
     });
-    shapes.push(text(`${id}-n`, { x: 4, y: y + 16 }, t.term, { size: SIZE, bold: true, cls: '' }));
+    shapes.push(text(`${id}-n`, { x: 4, y: y + 15 }, t.term, { size: SIZE, bold: true, cls: '' }));
     shapes.push(
-      text(`${id}-df`, { x: xN + 8, y: y + 16 }, String(t.postings.length), { size: SIZE, anchor: 'middle', mono: true }),
+      text(`${id}-df`, { x: xN + 8, y: y + 15 }, String(t.postings.length), {
+        size: SIZE,
+        anchor: 'middle',
+        mono: true,
+      }),
     );
     const w = idf?.[t.term];
     shapes.push(
-      text(`${id}-idf`, { x: xIdf + 20, y: y + 16 }, w === undefined ? '' : short(w), {
+      text(`${id}-idf`, { x: xIdf + 20, y: y + 15 }, w === undefined ? '' : short(w), {
         size: SIZE,
         anchor: 'middle',
         mono: true,
@@ -175,9 +197,19 @@ function drawIndex(s: BmState, roles: Roles, idf: Record<string, number> | undef
     t.postings.forEach((p, k) => {
       const pid = postingId(t.term, p.doc);
       const x = xList + k * (CHIP_W + 4);
-      shapes.push({ kind: 'rect', id: pid, x, y: y + 2, w: CHIP_W, h: ROW_H - 4, r: 3, cls: 'live', role: roles.get(pid) });
+      shapes.push({
+        kind: 'rect',
+        id: pid,
+        x,
+        y: y + 1,
+        w: CHIP_W,
+        h: ROW_H - 2,
+        r: 3,
+        cls: 'live',
+        role: roles.get(pid),
+      });
       shapes.push(
-        text(`${pid}-t`, { x: x + CHIP_W / 2, y: y + 16 }, `${dName(p.doc)}:${p.tf}`, {
+        text(`${pid}-t`, { x: x + CHIP_W / 2, y: y + 15 }, `${dName(p.doc)}:${p.tf}`, {
           size: SIZE,
           anchor: 'middle',
           mono: true,
@@ -191,9 +223,32 @@ function drawIndex(s: BmState, roles: Roles, idf: Record<string, number> | undef
 
 function node(shapes: Shape[], e: Kept, cx: number, y: number, roles: Roles) {
   const id = heapId(e.doc);
-  shapes.push({ kind: 'rect', id, x: cx - NODE_W / 2, y, w: NODE_W, h: NODE_H, r: 4, cls: 'live', role: roles.get(id) });
-  shapes.push(text(`${id}-d`, { x: cx, y: y + 16 }, dName(e.doc), { size: SIZE, bold: true, anchor: 'middle', cls: '' }));
-  shapes.push(text(`${id}-s`, { x: cx, y: y + 32 }, short(e.score), { size: SIZE, anchor: 'middle', mono: true }));
+  shapes.push({
+    kind: 'rect',
+    id,
+    x: cx - NODE_W / 2,
+    y,
+    w: NODE_W,
+    h: NODE_H,
+    r: 4,
+    cls: 'live',
+    role: roles.get(id),
+  });
+  shapes.push(
+    text(`${id}-d`, { x: cx, y: y + 16 }, dName(e.doc), {
+      size: SIZE,
+      bold: true,
+      anchor: 'middle',
+      cls: '',
+    }),
+  );
+  shapes.push(
+    text(`${id}-s`, { x: cx, y: y + 32 }, short(e.score), {
+      size: SIZE,
+      anchor: 'middle',
+      mono: true,
+    }),
+  );
 }
 
 function drawHeap(s: BmState, roles: Roles, extra: BmExtra): Block {
@@ -201,33 +256,59 @@ function drawHeap(s: BmState, roles: Roles, extra: BmExtra): Block {
   const top = 24;
   const W = 3 * (NODE_W + 10);
   if (extra.heap) {
-    shapes.push(text('hh', { x: 0, y: 14 }, `best ${K} so far (min-heap)`, { size: SIZE, bold: true }));
-    const at = (p: number) => (p === 0 ? { x: W / 2, y: top } : { x: p === 1 ? W / 4 : (3 * W) / 4, y: top + 54 });
+    shapes.push(
+      text('hh', { x: 0, y: 14 }, `best ${K} so far (min-heap)`, { size: SIZE, bold: true }),
+    );
+    const at = (p: number) =>
+      p === 0 ? { x: W / 2, y: top } : { x: p === 1 ? W / 4 : (3 * W) / 4, y: top + 54 };
     extra.heap.forEach((e, p) => {
       const c = at(p);
       if (p > 0) {
         const r = at(0);
-        shapes.push({ kind: 'arrow', id: `he-${p}`, x1: r.x, y1: r.y + NODE_H, x2: c.x, y2: c.y, head: 'none', opacity: 0.6 });
+        shapes.push({
+          kind: 'arrow',
+          id: `he-${p}`,
+          x1: r.x,
+          y1: r.y + NODE_H,
+          x2: c.x,
+          y2: c.y,
+          head: 'none',
+          opacity: 0.6,
+        });
       }
       node(shapes, e, c.x, c.y, roles);
     });
   } else if (s.last) {
     shapes.push(
-      text('hh', { x: 0, y: 14 }, s.last.top.length ? `top ${s.last.top.length}, best first` : 'no matches', {
-        size: SIZE,
-        bold: true,
-      }),
+      text(
+        'hh',
+        { x: 0, y: 14 },
+        s.last.top.length ? `top ${s.last.top.length}, best first` : 'no matches',
+        {
+          size: SIZE,
+          bold: true,
+        },
+      ),
     );
     s.last.top.forEach((e, r) => {
       const cx = NODE_W / 2 + r * (NODE_W + 10);
       node(shapes, e, cx, top, roles);
-      shapes.push(text(`hr-${r}`, { x: cx, y: top + NODE_H + 16 }, String(r + 1), { size: SIZE, anchor: 'middle' }));
+      shapes.push(
+        text(`hr-${r}`, { x: cx, y: top + NODE_H + 16 }, String(r + 1), {
+          size: SIZE,
+          anchor: 'middle',
+        }),
+      );
     });
   }
   return { shapes, bounds: { x: 0, y: 0, w: W, h: top + 54 + NODE_H + 4 } };
 }
 
-export function view(step: Step<BmState, BmExtra>, _settings: BmSettings, stage?: StageSize): Scene {
+export function view(
+  step: Step<BmState, BmExtra>,
+  _settings: BmSettings,
+  stage?: StageSize,
+): Scene {
   const { state: s, extra = {} } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const searching = extra.query !== undefined;

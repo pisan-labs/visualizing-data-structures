@@ -3,7 +3,7 @@
   "viz": "bm25",
   "id": "every-document",
   "title": "A word in every document",
-  "notes": "PLACEHOLDER",
+  "notes": "The query \"the cat\". the is in all six documents, so its IDF is ln(0.5 / 6.5) = −2.56: it counts against every document. d5, with one the, comes first at −1.25, ahead of the two documents that mention a cat.",
   "settings": {
     "k1": "1.2",
     "b": "0.75",
@@ -15,10 +15,7 @@
       "add",
       "the cat sat on the mat; the dog sat on the rug; the cat saw the dog; the bird sat on the tree; a dog ate the ball; the fox ran and the dog chased it"
     ],
-    [
-      "search",
-      "the cat"
-    ]
+    ["search", "the cat"]
   ],
   "at": {
     "op": 1,

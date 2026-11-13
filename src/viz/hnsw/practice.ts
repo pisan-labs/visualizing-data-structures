@@ -25,7 +25,8 @@ type Def = VizDef<HnswState, HnswSettings, HnswExtra>;
  * for "Show me".
  */
 export function hnswPractice(def: () => Def): PracticeKind[] {
-  const run = (ops: OpCall[], settings: HnswSettings = defaults) => new Timeline(def(), settings, 1, ops);
+  const run = (ops: OpCall[], settings: HnswSettings = defaults) =>
+    new Timeline(def(), settings, 1, ops);
 
   function graph(rng: Rng, n: number) {
     const pts = randomPoints(rng, n, 0, 10);
@@ -128,21 +129,21 @@ export function hnswPractice(def: () => Def): PracticeKind[] {
       title: 'The level a point draws',
       make(rng) {
         for (;;) {
-        const { ops, s } = graph(rng, rng.int(3, 6));
-        const p = query(rng, s);
-        const watch: OpCall[] = [['insert', `${p.x},${p.y}`]];
-        const t = run([...ops, ...watch]);
-        const draw = t.entries.at(-1)!.steps[0]!.extra!.draw!;
-        const check = levelFor(draw.u, 2);
-        // u is shown to two decimals: keep away from the edges between levels.
-        if ([0.5, 0.25, 0.125].some((edge) => Math.abs(draw.u - edge) < 0.006)) continue;
-        return {
-          prompt: `The next insert draws **u = ${two(draw.u)}**. With M = 2, mL = 1/ln 2 ≈ 1.44, and the level is ⌊−ln(u) · mL⌋ (this page stops at 3). What level does the new point get?`,
-          setup: ops,
-          answer: { kind: 'number', value: draw.level },
-          explain: `−ln(${two(draw.u)}) = ${two(-Math.log(draw.u))}, times 1.44 is ${two(check.raw)}, and the floor is ${Math.floor(check.raw)}${check.capped ? ', stopped at 3' : ''}. Half of all points stay on layer 0 (u above 0.5); a quarter reach layer 2 or more: the coin flips of a skip list.`,
-          watch,
-        };
+          const { ops, s } = graph(rng, rng.int(3, 6));
+          const p = query(rng, s);
+          const watch: OpCall[] = [['insert', `${p.x},${p.y}`]];
+          const t = run([...ops, ...watch]);
+          const draw = t.entries.at(-1)!.steps[0]!.extra!.draw!;
+          const check = levelFor(draw.u, 2);
+          // u is shown to two decimals: keep away from the edges between levels.
+          if ([0.5, 0.25, 0.125].some((edge) => Math.abs(draw.u - edge) < 0.006)) continue;
+          return {
+            prompt: `The next insert draws **u = ${two(draw.u)}**. With M = 2, mL = 1/ln 2 ≈ 1.44, and the level is ⌊−ln(u) · mL⌋ (this page stops at 3). What level does the new point get?`,
+            setup: ops,
+            answer: { kind: 'number', value: draw.level },
+            explain: `−ln(${two(draw.u)}) = ${two(-Math.log(draw.u))}, times 1.44 is ${two(check.raw)}, and the floor is ${Math.floor(check.raw)}${check.capped ? ', stopped at 3' : ''}. Half of all points stay on layer 0 (u above 0.5); a quarter reach layer 2 or more: the coin flips of a skip list.`,
+            watch,
+          };
         }
       },
     },

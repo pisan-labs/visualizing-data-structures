@@ -3,22 +3,14 @@
   "viz": "k-means",
   "id": "long-strips",
   "title": "Two long strips",
-  "notes": "PLACEHOLDER",
+  "notes": "Two rows of six points. k-means with k = 2 cuts them into left and right halves, not top and bottom rows. It is right by its own measure: left against right has WCSS 59, the rows 140. k-means assumes round groups.",
   "settings": {
     "k": 2,
     "seeding": "plus",
     "empty": "farthest"
   },
   "seed": 1,
-  "ops": [
-    [
-      "load",
-      "0,3 2,3 4,3 6,3 8,3 10,3 0,6 2,6 4,6 6,6 8,6 10,6"
-    ],
-    [
-      "run"
-    ]
-  ],
+  "ops": [["load", "0,3 2,3 4,3 6,3 8,3 10,3 0,6 2,6 4,6 6,6 8,6 10,6"], ["run"]],
   "at": {
     "op": 0,
     "step": 0

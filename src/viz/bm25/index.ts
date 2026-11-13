@@ -41,7 +41,8 @@ function shuffle<T>(rng: Rng, xs: readonly T[]): T[] {
 }
 
 /** `n` sentences of the toy corpus, in a random order. */
-export const corpusDocs = (rng: Rng, n: number) => shuffle(rng, CORPUS).slice(0, Math.min(MAX_DOCS, n));
+export const corpusDocs = (rng: Rng, n: number) =>
+  shuffle(rng, CORPUS).slice(0, Math.min(MAX_DOCS, n));
 
 /** One or two words from the documents, none of them "the" or "a". */
 export function someQuery(rng: Rng, docs: readonly string[]): string {
@@ -49,8 +50,15 @@ export function someQuery(rng: Rng, docs: readonly string[]): string {
   return shuffle(rng, words).slice(0, rng.int(1, 2)).join(' ');
 }
 
-const run = (docs: string[], query: string): OpCall[] => [['clear'], ['add', docs.join('; ')], ['search', query]];
-const preset = (label: string, make: (rng: Rng, n: number) => OpCall[]): Preset => ({ label, make });
+const run = (docs: string[], query: string): OpCall[] => [
+  ['clear'],
+  ['add', docs.join('; ')],
+  ['search', query],
+];
+const preset = (label: string, make: (rng: Rng, n: number) => OpCall[]): Preset => ({
+  label,
+  make,
+});
 
 export const bm25: VizDef<BmState, BmSettings, BmExtra> = {
   id: 'bm25',
@@ -130,14 +138,25 @@ export const bm25: VizDef<BmState, BmSettings, BmExtra> = {
       }),
       preset('One word repeated (saturation)', (rng, n) =>
         run(
-          Array.from({ length: n }, (_, i) => (i % 2 ? `the dog ${'cat '.repeat(i).trim()}` : `the dog sat`)),
+          Array.from({ length: n }, (_, i) =>
+            i % 2 ? `the dog ${'cat '.repeat(i).trim()}` : `the dog sat`,
+          ),
           'cat',
         ),
       ),
       preset('Short and long documents', (rng, n) =>
         run(
-          Array.from({ length: n }, (_, i) =>
-            ['the cat', 'the cat sat on the mat', 'a cat', 'the old cat ran under the big tree', 'cat', 'the dog and the cat'][i % 6]!,
+          Array.from(
+            { length: n },
+            (_, i) =>
+              [
+                'the cat',
+                'the cat sat on the mat',
+                'a cat',
+                'the old cat ran under the big tree',
+                'cat',
+                'the dog and the cat',
+              ][i % 6]!,
           ),
           'cat',
         ),
@@ -151,13 +170,29 @@ export const bm25: VizDef<BmState, BmSettings, BmExtra> = {
   complexity: [
     {
       op: 'Add a document of L words',
-      best: { cost: 'Θ(L)', why: 'Count the words, then one hash probe and one append per term.', example: 'cat-mat' },
-      average: { cost: 'Θ(L)', why: 'Postings go on the end: documents arrive in order.', example: 'saturation' },
-      worst: { cost: 'Θ(L)', why: 'Expected time: a hash table with a bad hash could be slower.', example: 'length-matters' },
+      best: {
+        cost: 'Θ(L)',
+        why: 'Count the words, then one hash probe and one append per term.',
+        example: 'cat-mat',
+      },
+      average: {
+        cost: 'Θ(L)',
+        why: 'Postings go on the end: documents arrive in order.',
+        example: 'saturation',
+      },
+      worst: {
+        cost: 'Θ(L)',
+        why: 'Expected time: a hash table with a bad hash could be slower.',
+        example: 'length-matters',
+      },
     },
     {
       op: 'Search for q words',
-      best: { cost: 'Θ(q)', why: 'No query word is in the index: q probes and nothing to score.', example: 'no-match' },
+      best: {
+        cost: 'Θ(q)',
+        why: 'No query word is in the index: q probes and nothing to score.',
+        example: 'no-match',
+      },
       average: {
         cost: 'Θ(q + P + R log k)',
         why: 'P postings on the query words’ lists; R documents met, each offered to a heap of k.',
@@ -172,9 +207,21 @@ export const bm25: VizDef<BmState, BmSettings, BmExtra> = {
     },
     {
       op: 'Keep the best k of R scores',
-      best: { cost: 'Θ(R)', why: 'After the heap fills, a weak score needs one comparison.', example: 'cat-mat' },
-      average: { cost: 'Θ(R log k)', why: 'A newcomer that gets in sifts down at most log k levels.', example: 'saturation' },
-      worst: { cost: 'Θ(R log k)', why: 'Scores that rise as you go: every one gets in.', example: 'length-matters' },
+      best: {
+        cost: 'Θ(R)',
+        why: 'After the heap fills, a weak score needs one comparison.',
+        example: 'cat-mat',
+      },
+      average: {
+        cost: 'Θ(R log k)',
+        why: 'A newcomer that gets in sifts down at most log k levels.',
+        example: 'saturation',
+      },
+      worst: {
+        cost: 'Θ(R log k)',
+        why: 'Scores that rise as you go: every one gets in.',
+        example: 'length-matters',
+      },
     },
   ],
   code: {
@@ -213,10 +260,15 @@ function codeScript(calls: OpCall[], settings: BmSettings) {
     const end = e.end;
     if (end === prev) continue;
     if (op === 'clear') input.push('clear');
-    if (op === 'add') for (const d of end.docs.slice(prev.docs.length)) input.push(`add ${d.words.join(' ')}`);
+    if (op === 'add')
+      for (const d of end.docs.slice(prev.docs.length)) input.push(`add ${d.words.join(' ')}`);
     if (op === 'search' && end.last) {
       input.push(`search ${settings.k1} ${settings.b} ${settings.idf} ${end.last.query.join(' ')}`);
-      expected.push(end.last.top.length ? end.last.top.map((k) => `d${k.doc} ${round3(k.score)}`).join(' ') : 'none');
+      expected.push(
+        end.last.top.length
+          ? end.last.top.map((k) => `d${k.doc} ${round3(k.score)}`).join(' ')
+          : 'none',
+      );
     }
     prev = end;
   }

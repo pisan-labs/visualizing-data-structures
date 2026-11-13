@@ -95,6 +95,8 @@ export interface HnswExtra {
   linked?: { layer: number; ids: number[] };
   dropped?: { layer: number; from: number; to: number };
   dists?: number;
+  /** A search's greedy path down the upper layers so far. */
+  path?: number[];
   /** One insert of several finished (for the code tabs). */
   done?: InsertDone;
 }
@@ -125,7 +127,8 @@ const copy = (s: S): S => ({
 /** (d, id) before (d', id'). */
 const before = (a: [number, number], b: [number, number]) =>
   a[0] < b[0] || (a[0] === b[0] && a[1] < b[1]);
-const byNear = (a: [number, number], b: [number, number]) => (before(a, b) ? -1 : before(b, a) ? 1 : 0);
+const byNear = (a: [number, number], b: [number, number]) =>
+  before(a, b) ? -1 : before(b, a) ? 1 : 0;
 
 /** The level for a draw u in (0, 1]: ⌊−ln(u)/ln(M)⌋, stopped at TOP. */
 export function levelFor(u: number, m: number) {
@@ -152,7 +155,11 @@ const listText = (s: S, xs: readonly [number, number][]) =>
   xs.length ? xs.map(([d, id]) => `${nm(s, id)} ${d}`).join(', ') : 'nothing';
 const pointText = (q: Vec) => `(${q.x}, ${q.y})`;
 
-export function vars(s: S, set: HnswSettings, extra: Record<string, Scalar> = {}): Record<string, Scalar> {
+export function vars(
+  s: S,
+  set: HnswSettings,
+  extra: Record<string, Scalar> = {},
+): Record<string, Scalar> {
   return {
     N: s.nodes.length,
     'top layer': Math.max(0, topOf(s)),
@@ -191,7 +198,13 @@ function* searchLayer(
   const visited = new Set(eps.map(([, id]) => id));
   let cand = [...eps].sort(byNear);
   let found = [...eps].sort(byNear);
-  const step = (say: string, lines: string[], level: 2 | 3, marks: Mark[], o: Partial<X> = {}): HStep => ({
+  const step = (
+    say: string,
+    lines: string[],
+    level: 2 | 3,
+    marks: Mark[],
+    o: Partial<X> = {},
+  ): HStep => ({
     state: s,
     marks,
     say,
@@ -206,6 +219,7 @@ function* searchLayer(
       found: [...found],
       visited: [...visited],
       dists: ctx.dists.n,
+      path: ctx.path ? [...ctx.path] : undefined,
       ...o,
     },
   });
@@ -232,7 +246,7 @@ function* searchLayer(
         );
       break;
     }
-    ctx.path?.push(c[1]);
+    if (ctx.greedy) ctx.path?.push(c[1]);
     const nbrs = s.nodes[c[1]]!.links[layer] ?? [];
     yield step(
       ctx.greedy
@@ -330,7 +344,13 @@ function* insertOne(
   const top = topOf(s);
   s.nodes.push(node);
   s.last = undefined;
-  const step = (say: string, lines: string[], level: 1 | 2 | 3, marks: Mark[], extra: X): HStep => ({
+  const step = (
+    say: string,
+    lines: string[],
+    level: 1 | 2 | 3,
+    marks: Mark[],
+    extra: X,
+  ): HStep => ({
     state: copy(s),
     marks,
     say,
@@ -408,7 +428,9 @@ function* insertOne(
     for (const e of nbrs) {
       const en = s.nodes[e]!;
       if (en.links[layer]!.length <= limit) continue;
-      const ranked = en.links[layer]!.map((j) => [d2(en, s.nodes[j]!), j] as [number, number]).sort(byNear);
+      const ranked = en.links[layer]!.map((j) => [d2(en, s.nodes[j]!), j] as [number, number]).sort(
+        byNear,
+      );
       const gone = ranked[limit]!;
       en.links[layer] = ranked.slice(0, limit).map(([, j]) => j);
       const back = s.nodes[gone[1]]!.links[layer]!.includes(e);
@@ -424,13 +446,20 @@ function* insertOne(
   }
   const newTop = level > top;
   if (newTop) s.entry = id;
-  const done: InsertDone = { kind: 'insert', id, links: node.links.map((l) => [...l]), dists: dists.n };
+  const done: InsertDone = {
+    kind: 'insert',
+    id,
+    links: node.links.map((l) => [...l]),
+    dists: dists.n,
+  };
   s.last = done;
   yield step(
     `${node.name} is in, after ${dists.n} distance computation${dists.n === 1 ? '' : 's'}. Its links: ${node.links
       .map((l, i) => `layer ${i}: ${l.map((j) => nm(s, j)).join(', ') || 'none'}`)
       .reverse()
-      .join('; ')}.${newTop ? ` Its level, ${level}, is above the old top (${top}), so ${node.name} is the new entry point.` : ''}`,
+      .join(
+        '; ',
+      )}.${newTop ? ` Its level, ${level}, is above the old top (${top}), so ${node.name} is the new entry point.` : ''}`,
     [newTop ? 'ientry' : 'iret'],
     many ? 2 : 1,
     [mark(nodeId(0, id), 'found')],
@@ -471,14 +500,21 @@ const insertOp: Op = {
     for (const p of todo) cur = yield* insertOne(cur, settings, p, 1 - rng.next(), todo.length > 1);
     if (todo.length > 1 || skipped.length || fresh.length > todo.length) {
       const out = [
-        ...(skipped.length ? [`${skipped.join(', ')} ${skipped.length === 1 ? 'was' : 'were'} in the graph already`] : []),
-        ...(fresh.length > todo.length ? [`only ${room} fit, so ${fresh.length - todo.length} were left out`] : []),
+        ...(skipped.length
+          ? [`${skipped.join(', ')} ${skipped.length === 1 ? 'was' : 'were'} in the graph already`]
+          : []),
+        ...(fresh.length > todo.length
+          ? [`only ${room} fit, so ${fresh.length - todo.length} were left out`]
+          : []),
       ];
       const levels = [0, 1, 2, 3].map((l) => cur.nodes.filter((n) => n.level >= l).length);
       yield {
         state: cur,
         marks: cur.nodes.slice(s.nodes.length).map((n) => mark(nodeId(0, n.id), 'new')),
-        say: `Inserted ${todo.length} point${todo.length === 1 ? '' : 's'}.${out.length ? ` (${out.join('; ')}.)` : ''} Nodes per layer: ${levels.map((c, l) => `${l}: ${c}`).filter((_, l) => l <= Math.max(0, topOf(cur))).join(', ')}. Each layer up has about 1/M as many, like the levels of a skip list.`,
+        say: `Inserted ${todo.length} point${todo.length === 1 ? '' : 's'}.${out.length ? ` (${out.join('; ')}.)` : ''} Nodes per layer: ${levels
+          .map((c, l) => `${l}: ${c}`)
+          .filter((_, l) => l <= Math.max(0, topOf(cur)))
+          .join(', ')}. Each layer up has about 1/M as many, like the levels of a skip list.`,
         lines: ['iret'],
         level: 1,
         vars: vars(cur, settings),
@@ -492,7 +528,10 @@ const insertOp: Op = {
 export function readQuery(v: Value | undefined): Vec | string {
   if (typeof v !== 'string' || !/^\s*\(?\s*\d+\s*,\s*\d+\s*\)?\s*$/.test(v))
     return 'Search takes one point, such as 4,7.';
-  const [x, y] = v.replace(/[()\s]/g, '').split(',').map(Number) as [number, number];
+  const [x, y] = v
+    .replace(/[()\s]/g, '')
+    .split(',')
+    .map(Number) as [number, number];
   if (x > 10 || y > 10) return 'Keep coordinates from 0 to 10.';
   return { x, y };
 }
@@ -543,14 +582,23 @@ const searchOp: Op = {
       yield {
         state: s,
         marks: [mark(nodeId(0, eps[0]![1]), 'active')],
-        say: `Layer 0 holds every point. Start from ${nm(s, eps[0]![1])} (d² ${eps[0]![0]}) and keep the ef = ${ef} nearest found so far, not just one: a beam, as in beam search.`,
+        say: `Layer 0 holds every point. Start from ${nm(s, eps[0]![1])} (d² ${eps[0]![0]}) and ${ef === 1 ? 'keep only the nearest found so far (ef = 1): plain greedy search, as on the layers above.' : `keep the ef = ${ef} nearest found so far, not just one: a beam, as in beam search.`}`,
         lines: ['sbase'],
         level: 2,
         vars: { ...vars(s, settings), ...vx() },
-        extra: { q, layer: 0, cur: eps[0]![1], cand: eps, found: eps, visited: [eps[0]![1]], dists: dists.n },
+        extra: {
+          q,
+          layer: 0,
+          cur: eps[0]![1],
+          cand: eps,
+          found: eps,
+          visited: [eps[0]![1]],
+          dists: dists.n,
+          path: [...path],
+        },
       };
     const w = yield* searchLayer(
-      { s, set: settings, q, dists, level: 2, greedy: false, greedyLine: 'gdown' },
+      { s, set: settings, q, dists, level: 2, greedy: false, greedyLine: 'gdown', path },
       eps,
       ef,
       0,
@@ -559,7 +607,15 @@ const searchOp: Op = {
     const truth = bruteForce(s.nodes, q);
     const hit = found.filter((id) => truth.includes(id)).length;
     const want = Math.min(K, s.nodes.length);
-    const done: SearchDone = { kind: 'search', q, found, truth, path: dedupe(path), dists: dists.n, ef };
+    const done: SearchDone = {
+      kind: 'search',
+      q,
+      found,
+      truth,
+      path: dedupe(path),
+      dists: dists.n,
+      ef,
+    };
     const next: S = { ...s, last: done };
     const names = (xs: number[]) => xs.map((id) => nm(s, id)).join(', ');
     const missed = truth.filter((id) => !found.includes(id));
@@ -597,29 +653,69 @@ export const ops = { insert: insertOp, search: searchOp, clear: clearOp };
 // ---------------------------------------------------------------------------------------------
 // Pseudocode
 
-const L = (id: string, indent: number, text: string, plain: string) => ({ id, indent, text, plain });
+const L = (id: string, indent: number, text: string, plain: string) => ({
+  id,
+  indent,
+  text,
+  plain,
+});
 
 export function pseudocode(set: HnswSettings): PseudoBlock[] {
   const m = mOf(set);
   const layer = [
     L('lsig', 0, 'SEARCH-LAYER(q, entry points, ef, layer)', 'Search one layer:'),
     L('lpop', 1, 'while C is not empty: c = nearest in C', 'expand the nearest candidate,'),
-    L('lstop', 2, 'if c is farther than the farthest in W: stop', 'unless it is farther than everything kept;'),
+    L(
+      'lstop',
+      2,
+      'if c is farther than the farthest in W: stop',
+      'unless it is farther than everything kept;',
+    ),
     L('lsee', 2, 'for each unvisited neighbour e of c', 'measure each new neighbour;'),
     L('lseen', 3, '(a visited e is skipped)', 'one already seen is skipped.'),
-    L('ladd', 3, 'if e is nearer than the farthest in W, or |W| < ef: add e to C and W; trim W to ef', 'Keep it if it beats the worst kept.'),
+    L(
+      'ladd',
+      3,
+      'if e is nearer than the farthest in W, or |W| < ef: add e to C and W; trim W to ef',
+      'Keep it if it beats the worst kept.',
+    ),
   ];
   return [
     {
       op: 'insert',
       lines: [
         L('isig', 0, `INSERT(q)   // M = ${m}, efConstruction = ${EF_C}`, 'Add a point:'),
-        L('ilevel', 1, 'l = ⌊−ln(u) · mL⌋, mL = 1/ln M', 'draw how many layers it joins, like skip-list coin flips;'),
+        L(
+          'ilevel',
+          1,
+          'l = ⌊−ln(u) · mL⌋, mL = 1/ln M',
+          'draw how many layers it joins, like skip-list coin flips;',
+        ),
         L('istart', 1, 'ep = entry point; L = its level', 'start at the top;'),
-        L('igreedy', 1, 'for layers L down to l + 1: ep = SEARCH-LAYER(q, ep, 1)', 'go greedily down to its top layer;'),
-        L('ilink', 1, 'for layers min(L, l) down to 0: W = SEARCH-LAYER(q, ep, efConstruction); link q to its M nearest in W, both ways', 'on each of its layers, find near points and link to the M nearest;'),
-        L('ishrink', 2, `a neighbour with over M links (2M on layer 0) keeps its nearest`, 'a node with too many links drops its farthest;'),
-        L('ientry', 1, 'if l > L: q is the new entry point', 'a point taller than the rest becomes the entry point.'),
+        L(
+          'igreedy',
+          1,
+          'for layers L down to l + 1: ep = SEARCH-LAYER(q, ep, 1)',
+          'go greedily down to its top layer;',
+        ),
+        L(
+          'ilink',
+          1,
+          'for layers min(L, l) down to 0: W = SEARCH-LAYER(q, ep, efConstruction); link q to its M nearest in W, both ways',
+          'on each of its layers, find near points and link to the M nearest;',
+        ),
+        L(
+          'ishrink',
+          2,
+          `a neighbour with over M links (2M on layer 0) keeps its nearest`,
+          'a node with too many links drops its farthest;',
+        ),
+        L(
+          'ientry',
+          1,
+          'if l > L: q is the new entry point',
+          'a point taller than the rest becomes the entry point.',
+        ),
         L('iret', 1, 'return', 'Done.'),
         ...layer,
       ],
@@ -629,9 +725,19 @@ export function pseudocode(set: HnswSettings): PseudoBlock[] {
       lines: [
         L('ssig', 0, `SEARCH(q, K = ${K}, ef = ${efOf(set)})`, 'Find the nearest points:'),
         L('sstart', 1, 'ep = entry point', 'start at the top;'),
-        L('gdown', 1, 'for layers L down to 1: ep = SEARCH-LAYER(q, ep, 1)', 'go greedily down the upper layers;'),
+        L(
+          'gdown',
+          1,
+          'for layers L down to 1: ep = SEARCH-LAYER(q, ep, 1)',
+          'go greedily down the upper layers;',
+        ),
         L('sbase', 1, 'W = SEARCH-LAYER(q, ep, ef, 0)', 'on layer 0, search with a list of ef;'),
-        L('sret', 1, 'return the K nearest in W', 'answer with the nearest K, and compare with brute force.'),
+        L(
+          'sret',
+          1,
+          'return the K nearest in W',
+          'answer with the nearest K, and compare with brute force.',
+        ),
         ...layer,
       ],
     },
@@ -650,7 +756,8 @@ export const initialVars = (s: S, set: HnswSettings) => vars(s, set);
 
 export function describe(s: S): string {
   if (!s.nodes.length) return 'An empty graph.';
-  if (s.entry === null) return `${s.nodes[0]!.name}(${s.nodes[0]!.x}, ${s.nodes[0]!.y}), the first point, is being inserted.`;
+  if (s.entry === null)
+    return `${s.nodes[0]!.name}(${s.nodes[0]!.x}, ${s.nodes[0]!.y}), the first point, is being inserted.`;
   const layers = Array.from({ length: topOf(s) + 1 }, (_, l) => {
     const on = s.nodes.filter((n) => n.level >= l);
     return `Layer ${l}: ${on.map((n) => `${n.name}(${n.x}, ${n.y}) → ${n.links[l]!.map((j) => s.nodes[j]!.name).join(' ') || 'none'}`).join('; ')}`;

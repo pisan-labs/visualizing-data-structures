@@ -76,17 +76,22 @@ describe('bm25', () => {
             const s = step.state;
             // Every posting points at a document that has the term that many times, in order.
             for (const { term, postings } of s.index) {
-              expect(postings.map((p) => p.doc)).toEqual([...postings.map((p) => p.doc)].sort((a, b) => a - b));
-              for (const p of postings) expect(s.docs[p.doc - 1]!.words.filter((w) => w === term)).toHaveLength(p.tf);
+              expect(postings.map((p) => p.doc)).toEqual(
+                [...postings.map((p) => p.doc)].sort((a, b) => a - b),
+              );
+              for (const p of postings)
+                expect(s.docs[p.doc - 1]!.words.filter((w) => w === term)).toHaveLength(p.tf);
             }
             const total = s.index.reduce((n, t) => n + t.postings.reduce((m, p) => m + p.tf, 0), 0);
-            if (e.call[0] === 'search') expect(total).toBe(s.docs.reduce((n, d) => n + d.words.length, 0));
+            if (e.call[0] === 'search')
+              expect(total).toBe(s.docs.reduce((n, d) => n + d.words.length, 0));
             expect(step.extra?.heap?.length ?? 0).toBeLessThanOrEqual(3);
           }
         // The tf share never exceeds 1, so a word never adds more than its IDF.
         const last = t.endState().last as SearchDone;
         const cap = Object.values(last.idf).reduce((n, w) => n + Math.abs(w), 0);
-        for (const v of Object.values(last.scores)) expect(Math.abs(v)).toBeLessThanOrEqual(cap + 1e-12);
+        for (const v of Object.values(last.scores))
+          expect(Math.abs(v)).toBeLessThanOrEqual(cap + 1e-12);
       }),
       { numRuns: 100 },
     );

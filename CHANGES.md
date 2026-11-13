@@ -477,3 +477,5 @@
 2026-11-13 [doc] Merged the tier-1 fact check: SLP3 2026 drafts no longer end words with "_" (credited to Sennrich et al. 2016), BERT word limit 200 (Hugging Face 100), heap, n-gram, beam and gradient-descent wording fixed to match the models; outside facts confirmed against sources
 
 2026-11-13 [code] Merged wave 9C transformer-block (hand-made weights; pre- or post-norm, LayerNorm or RMSNorm, ReLU, GELU or SwiGLU; residual stream, next-word guess, parameter count) and moe-routing (top-k router, capacity and drops, Switch load-balance loss, token or expert choice)
+
+2026-11-14 [code] Merged wave 9C paged-attention (block tables, free list, reference counts, copy-on-write on fork), continuous-batching (static against iteration-level scheduling, Gantt chart, waiting and idle readouts) and quantization (int8 or int4, absmax or zero-point, per tensor, row or block; the outlier story)

@@ -463,3 +463,5 @@
 2026-11-13 [code] Merged wave 9B kv-cache: prefill and generate with the hand-made head, cache on or off, sliding window, work and memory counters; outputs equal with and without the cache (tested)
 
 2026-11-13 [code] Merged wave 9B backpropagation (expression DAG, topological order, chain rule per edge, the overwrite and forgot-zero bugs) and gradient-descent (plain, momentum, Adam on 1D and 2D losses)
+
+2026-11-13 [code] Merged wave 9B bpe-tokenizer (train, merge, encode; end-of-word marker, tie-break, characters or bytes) and wordpiece (greedy longest match over a trie, the count(ab)/(count(a)count(b)) score); same operations, so compare mode works

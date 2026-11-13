@@ -80,7 +80,7 @@ Avoid reading meaning into the pieces. They are what was frequent, not morphemes
 
 ## At real scale
 
-GPT-2 (2019) uses byte-level BPE with 256 bytes, 50 000 merges and one end-of-text token: 50 257 tokens. Llama 2 (2023) has 32 000 tokens, and Llama 3 (2024) 128 000. The toy here learns 20 merges on top of 22 symbols, on 99 words. Same algorithm, a few orders of magnitude less patience required.
+GPT-2 (2019) uses byte-level BPE with 256 bytes, 50 000 merges and one end-of-text token: 50 257 tokens. Llama 2 (2023) has 32 000 tokens, and Llama 3 (2024) about 128 000. The toy here learns 20 merges on top of 22 symbols, on 99 words. Same algorithm, a few orders of magnitude less patience required.
 
 ## Try this
 

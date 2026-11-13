@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "multi-head-attention",
+  "id": "cat-sat",
+  "title": "Four heads, four patterns",
+  "notes": "Four heads of width 1, each made by hand to look for one thing. Head 1 lets an action find an animal (sat → cat, 0.98), head 3 lets a thing find what happened to it (mat → sat, 0.92), head 4 lets a noun find its article (cat → the, 0.90). One head could not do all three at once.",
+  "settings": {
+    "heads": "4",
+    "kv": "mha"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat on the mat"], ["attend"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

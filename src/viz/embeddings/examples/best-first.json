@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "embeddings",
+  "id": "best-first",
+  "title": "The best words come first",
+  "notes": "Nearest to man: woman, king and queen are the first three words scored, and they are the best three. Every later word is turned away by one comparison with the top of the heap, the cheapest case.",
+  "settings": {
+    "measure": "cosine",
+    "normalize": false,
+    "k": 3
+  },
+  "seed": 1,
+  "ops": [["nearest", "man"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

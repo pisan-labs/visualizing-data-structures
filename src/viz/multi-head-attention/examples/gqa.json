@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "multi-head-attention",
+  "id": "gqa",
+  "title": "Grouped-query: two heads per key",
+  "notes": "The same sentence with grouped-query attention: heads 1 and 2 share one key and value head, heads 3 and 4 another, each the average of the two it replaces. K and V are half as wide, so the KV cache holds 4 numbers per word instead of 8. The patterns blur: sat still finds cat (0.89), but mat no longer finds sat.",
+  "settings": {
+    "heads": "4",
+    "kv": "gqa"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat on the mat"], ["attend"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

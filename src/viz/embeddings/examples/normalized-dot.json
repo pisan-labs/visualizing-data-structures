@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "embeddings",
+  "id": "normalized-dot",
+  "title": "Normalize, and the dot product is the cosine",
+  "notes": "Every arrow is scaled to length 1 before scoring. Now the dot product sees only direction, and cat is back on top: for unit vectors the dot product and the cosine are the same number.",
+  "settings": {
+    "measure": "dot",
+    "normalize": true,
+    "k": 3
+  },
+  "seed": 1,
+  "ops": [["nearest", "kitten"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

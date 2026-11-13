@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "positional-encoding",
+  "id": "alibi-recency",
+  "title": "ALiBi: the nearer word wins",
+  "notes": "On content alone, it matches dog better than ball (1.41 against 0.78). But dog is 5 steps back and ball 2, so the biases are −2.5 and −1. With them ball gets 0.36 of the weight and dog 0.15. ALiBi bets that nearer words matter more: often right, not always.",
+  "settings": {
+    "scheme": "alibi"
+  },
+  "seed": 1,
+  "ops": [["load", "the dog saw the ball and it"], ["encode"], ["score"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

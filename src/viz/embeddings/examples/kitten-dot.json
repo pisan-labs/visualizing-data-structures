@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "embeddings",
+  "id": "kitten-dot",
+  "title": "The dot product rewards length",
+  "notes": "The same question with the raw dot product. dog has the longest arrow, so it beats cat, though cat points the way kitten does. A long arrow wins dot products against everything on its side of the plane.",
+  "settings": {
+    "measure": "dot",
+    "normalize": false,
+    "k": 3
+  },
+  "seed": 1,
+  "ops": [["nearest", "kitten"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

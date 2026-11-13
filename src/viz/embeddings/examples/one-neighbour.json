@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "embeddings",
+  "id": "one-neighbour",
+  "title": "k = 1: a heap of one",
+  "notes": "With k = 1 the heap holds a single word, the best so far, and a newcomer replaces it when it scores higher. That is the plain search for a maximum.",
+  "settings": {
+    "measure": "cosine",
+    "normalize": false,
+    "k": 1
+  },
+  "seed": 1,
+  "ops": [["nearest", "dog"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

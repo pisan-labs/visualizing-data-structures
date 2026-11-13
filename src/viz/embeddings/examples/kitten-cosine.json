@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "embeddings",
+  "id": "kitten-cosine",
+  "title": "Nearest by direction",
+  "notes": "The three words nearest to kitten by cosine similarity. cat points almost exactly the way kitten does, so it wins, though its arrow is twice as long. Watch the heap: the weakest of the best three sits on top, and most words are turned away after one comparison with it.",
+  "settings": {
+    "measure": "cosine",
+    "normalize": false,
+    "k": 3
+  },
+  "seed": 1,
+  "ops": [["nearest", "kitten"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

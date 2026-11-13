@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "multi-head-attention",
+  "id": "pronoun",
+  "title": "Who is \"it\", head by head",
+  "notes": "it is half an action and half a small word, so two heads care about it. Head 1 (who did it) sends it mostly to dog (0.59); head 2 (which thing) gives ball the largest share (0.33). Each head keeps its own reading.",
+  "settings": {
+    "heads": "4",
+    "kv": "mha"
+  },
+  "seed": 1,
+  "ops": [["load", "the dog saw the ball and it"], ["attend"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

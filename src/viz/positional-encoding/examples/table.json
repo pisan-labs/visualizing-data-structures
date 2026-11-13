@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "positional-encoding",
+  "id": "table",
+  "title": "The table of sines and cosines",
+  "notes": "Seven positions, eight numbers each. Pair 0 (the first two columns) turns 1 radian per position, pair 1 a tenth of that, pair 3 a thousandth. By position 6, pair 0 has gone almost all the way round (6 radians; a full turn is 6.28), while pair 3 has hardly moved: sin 0.01, cos 1.",
+  "settings": {
+    "scheme": "sinusoidal"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat on the mat and"], ["encode"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

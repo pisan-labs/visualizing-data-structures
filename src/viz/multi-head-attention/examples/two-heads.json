@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "multi-head-attention",
+  "id": "two-heads",
+  "title": "Two heads of width 2",
+  "notes": "Two heads of width 2. Head 1 is the head from the self-attention page, so sat gives cat 0.93 here as there. Head 2 carries the other two patterns and gives cat → the 0.83.",
+  "settings": {
+    "heads": "2",
+    "kv": "mha"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat on the mat"], ["attend"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "positional-encoding",
+  "id": "one-word",
+  "title": "One word at position 0",
+  "notes": "A single word sits at position 0, where every angle is 0: its encoding is (0, 1) in every pair, and PE(0) · PE(0) = 4, one for each pair.",
+  "settings": {
+    "scheme": "sinusoidal"
+  },
+  "seed": 1,
+  "ops": [["load", "cat"], ["encode"], ["score"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

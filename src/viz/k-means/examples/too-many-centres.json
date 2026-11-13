@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "k-means",
+  "id": "too-many-centres",
+  "title": "Four centres for three groups",
+  "notes": "k = 4 on three groups. The extra centre splits the bottom-left group in two, and WCSS drops from 9.33 to 7.33. More centres always lower WCSS, so a lower WCSS alone cannot tell you the right k.",
+  "settings": {
+    "k": 4,
+    "seeding": "plus",
+    "empty": "farthest"
+  },
+  "seed": 1,
+  "ops": [["load", "1,2 2,1 2,3 3,2 7,7 8,8 9,7 1,8 2,9 3,8"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

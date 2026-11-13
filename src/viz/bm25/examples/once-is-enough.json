@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "bm25",
+  "id": "once-is-enough",
+  "title": "k₁ = 0: once is as good as four times",
+  "notes": "The same documents with k₁ = 0: the share is always 1, however often the word appears. d1 and d3 tie at 0.59, and the tie goes to the lower number.",
+  "settings": {
+    "k1": "0",
+    "b": "0.75",
+    "idf": "rsj"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "add",
+      "the cat sat; the dog saw the bird; cat cat cat cat; the dog sat; the bird sat; a fox ran"
+    ],
+    ["search", "cat"]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

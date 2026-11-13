@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "hnsw",
+  "id": "first-point",
+  "title": "The first point",
+  "notes": "One point in an empty graph: it becomes the entry point, with no links. A search measures it and stops: one distance computation, and it is the answer.",
+  "settings": {
+    "M": 2,
+    "ef": 3
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", "5,5"],
+    ["search", "8,8"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

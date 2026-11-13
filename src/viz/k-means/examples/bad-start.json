@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "k-means",
+  "id": "bad-start",
+  "title": "A bad start that never recovers",
+  "notes": "Random seeding picks B, C and I: two centres in the bottom-left group, one for the other two groups. Lloyd's algorithm converges in 2 rounds to WCSS 63.50, against 9.33 for the good answer, and never gets out.",
+  "settings": {
+    "k": 3,
+    "seeding": "random",
+    "empty": "farthest"
+  },
+  "seed": 8,
+  "ops": [["load", "1,2 2,1 2,3 3,2 7,7 8,8 9,7 1,8 2,9 3,8"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "bm25",
+  "id": "no-match",
+  "title": "A query that matches nothing",
+  "notes": "The query \"cats zebra\". Neither word is in the index: two probes, no postings, nothing to rank. BM25 matches the exact tokens, so \"cats\" does not find \"cat\".",
+  "settings": {
+    "k1": "1.2",
+    "b": "0.75",
+    "idf": "rsj"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "add",
+      "the cat sat on the mat; the dog sat on the rug; the cat saw the dog; the bird sat on the tree; a dog ate the ball; the fox ran and the dog chased it"
+    ],
+    ["search", "cats zebra"]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

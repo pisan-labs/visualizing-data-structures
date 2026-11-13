@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "k-means",
+  "id": "empty-stays",
+  "title": "An empty cluster stays empty",
+  "notes": "The same start with the other rule: the empty centre stays at (10, 0) and never gets a point. The run ends with only two clusters and WCSS 7.60.",
+  "settings": {
+    "k": 3,
+    "seeding": "plus",
+    "empty": "stay"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "1,1 2,1 1,2 2,2 7,7 8,7 7,8 8,8 9,9"],
+    ["place", "1,1 8,8 10,0"],
+    ["assign"],
+    ["update"],
+    ["run"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

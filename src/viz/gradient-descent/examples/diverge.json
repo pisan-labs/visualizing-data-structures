@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "gradient-descent",
+  "id": "diverge",
+  "title": "Too large: it diverges",
+  "notes": "NOTES",
+  "settings": {
+    "surface": "bowl",
+    "method": "gd",
+    "lr": "1.1",
+    "beta1": "0.9",
+    "beta2": "0.999",
+    "bias": true
+  },
+  "seed": 1,
+  "ops": [["start", "3"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

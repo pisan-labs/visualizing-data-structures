@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "gradient-descent",
+  "id": "curved-valley",
+  "title": "A curved valley",
+  "notes": "NOTES",
+  "settings": {
+    "surface": "valley",
+    "method": "adam",
+    "lr": "0.1",
+    "beta1": "0.9",
+    "beta2": "0.999",
+    "bias": true
+  },
+  "seed": 1,
+  "ops": [["start", "-1.5, 2"], ["run"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

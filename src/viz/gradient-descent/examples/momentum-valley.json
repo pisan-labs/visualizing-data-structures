@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "gradient-descent",
+  "id": "momentum-valley",
+  "title": "Momentum damps the zigzag",
+  "notes": "NOTES",
+  "settings": {
+    "surface": "narrow",
+    "method": "momentum",
+    "lr": "0.1",
+    "beta1": "0.5",
+    "beta2": "0.999",
+    "bias": true
+  },
+  "seed": 1,
+  "ops": [["start", "-3.5, 1"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

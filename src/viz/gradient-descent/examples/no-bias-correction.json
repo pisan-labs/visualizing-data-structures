@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "gradient-descent",
+  "id": "no-bias-correction",
+  "title": "Adam without bias correction",
+  "notes": "NOTES",
+  "settings": {
+    "surface": "narrow",
+    "method": "adam",
+    "lr": "0.1",
+    "beta1": "0.9",
+    "beta2": "0.999",
+    "bias": false
+  },
+  "seed": 1,
+  "ops": [["start", "-3.5, 1"], ["step"], ["step"], ["step"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "gradient-descent",
+  "id": "narrow-diverge",
+  "title": "The steep direction sets the limit",
+  "notes": "NOTES",
+  "settings": {
+    "surface": "narrow",
+    "method": "gd",
+    "lr": "0.21",
+    "beta1": "0.9",
+    "beta2": "0.999",
+    "bias": true
+  },
+  "seed": 1,
+  "ops": [["start", "-3.5, 1"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

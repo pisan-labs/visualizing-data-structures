@@ -32,7 +32,7 @@ test('the block guesses a thing after an article that follows an animal', async 
   await op(page, 'Run the block');
   await toEnd(page);
   await expect(narration(page)).toContainText('the block guesses mat');
-  await expect(stage(page).locator('text', { hasText: 'x₂' })).toBeVisible();
+  await expect(stage(page).getByText('x₂', { exact: true })).toBeVisible();
   await expect(page.locator('.vars')).toContainText(/block parameters\s*172/);
 });
 

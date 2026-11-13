@@ -70,6 +70,7 @@ export function blockPractice(def: () => Def): PracticeKind[] {
         return {
           prompt: `In the block, x₂ = x₁ + FFN. For **${last}**, x₁ = ${vec(x1)} and the FFN returns ${vec(f)}. What is x₂ in column ${c + 1} (${COLUMN(c)})? Two decimals.`,
           setup: ops,
+          settings: defaults,
           answer: { kind: 'number', value: r.rows.x2![c]!, tolerance: 0.005 },
           explain: `The residual add is elementwise: ${two(x1[c]!)} + ${two(f[c]!)} = ${two(r.rows.x2![c]!)}. ${c < 4 ? 'The FFN writes nothing into this word’s half, so these four numbers are still the embedding.' : 'The FFN adds its vote to what attention already wrote.'}`,
           watch,
@@ -160,6 +161,7 @@ export function blockPractice(def: () => Def): PracticeKind[] {
         return {
           prompt: `Run the block on "${words.join(' ')}" (pre-norm, LayerNorm, GELU). Which word gets the highest logit?`,
           setup: ops,
+          settings: defaults,
           answer: { kind: 'choice', options, correct: options.indexOf(g) },
           explain: `${g}, with probability ${short(r.probs[r.guess]!)}. ${guessWhy(r, words)}`,
           watch,

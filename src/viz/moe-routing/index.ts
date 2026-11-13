@@ -234,7 +234,7 @@ export const moeRouting: VizDef<MoeState, MoeSettings, MoeExtra> = {
     expertChoiceTight,
   ] as unknown as SavedExample[],
   practice: moePractice(() => moeRouting),
-  preview: { example: 'small-words', level: 2 },
+  preview: { example: 'small-words', level: 2, hide: ['l-'] },
   opening: 'cat-sat',
 };
 

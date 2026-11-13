@@ -236,7 +236,7 @@ export function baseVars(s: S, set: MoeSettings): Record<string, Scalar> {
     tokens: s.words.length,
     experts: E,
     k: Number(set.k),
-    'capacity factor': set.cf,
+    'capacity factor': Number(set.cf),
     capacity: capacity(s.words.length, set),
   };
 }
@@ -247,7 +247,7 @@ function resultVars(s: S, set: MoeSettings, r: Routed): Record<string, Scalar> {
     assignments: r.assignments.length,
     dropped: r.dropped,
     'tokens with no expert': r.orphans.length,
-    'load-balance loss': two(r.loss),
+    'load-balance loss': Math.round(r.loss * 100) / 100,
   };
 }
 

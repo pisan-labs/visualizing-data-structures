@@ -44,7 +44,7 @@ test('expert choice fills every expert, and a bad sentence is refused', async ({
   await op(page, 'Route');
   await toEnd(page);
   await expect(narration(page)).toContainText('Expert choice');
-  await expect(page.locator('.vars')).toContainText(/load-balance loss\s*1\.00/);
+  await expect(page.locator('.vars')).toContainText(/load-balance loss\s*1\s*$/);
   await page.getByLabel('Sentence', { exact: true }).fill('the elephant');
   await page.getByRole('button', { name: 'Load', exact: true }).click();
   await expect(page.getByText('six at most')).toBeVisible();

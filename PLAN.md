@@ -1194,7 +1194,7 @@ Risks:
   attend; settings causal (default on), scale (on) and the head (made by hand, or random); 7
   examples; 4 practice kinds; code tabs that match the model exactly.
 
-### 20.12 Wave 9B (started 13 November, about 19:55 Lisbon)
+### 20.12 Wave 9B (started 13 November, about 21:10 Lisbon)
 
 Yusuf reviewed the slice ("1 yes", trying it locally). Five agents in parallel, each in its own
 worktree from `next` at 457602f (the shared toy corpus, `src/viz/_lm/corpus.ts`, added first),

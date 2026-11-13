@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "multi-head-attention",
+  "id": "one-word",
+  "title": "One word, four heads",
+  "notes": "A single word can only look at itself, so every head gives it weight 1 and its output is its own value, head by head. The smallest case.",
+  "settings": {
+    "heads": "4",
+    "kv": "mha"
+  },
+  "seed": 1,
+  "ops": [["load", "cat"], ["attend"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

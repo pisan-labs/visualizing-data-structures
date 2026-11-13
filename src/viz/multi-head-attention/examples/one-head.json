@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "multi-head-attention",
+  "id": "one-head",
+  "title": "One head does it all",
+  "notes": "One head of width 4 with all four patterns. Its scores add the patterns up, and softmax must split one row of weights between them: sat → cat drops to 0.84 and mat → sat to 0.43. This is why models use several heads.",
+  "settings": {
+    "heads": "1",
+    "kv": "mha"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat on the mat"], ["attend"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

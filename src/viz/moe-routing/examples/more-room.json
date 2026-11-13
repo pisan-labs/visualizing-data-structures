@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "moe-routing",
+  "id": "more-room",
+  "title": "A capacity factor of 2",
+  "notes": "The same sentence with twice the room: 8 slots per expert, nothing dropped. E1 and E3 fill 3 of their 8 slots each, and an expert computes on every slot, full or empty.",
+  "settings": {
+    "k": "2",
+    "cf": "2",
+    "routing": "token"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat and the dog and the fox"], ["route"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

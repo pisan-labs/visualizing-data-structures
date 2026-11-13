@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "moe-routing",
+  "id": "top-one-drop",
+  "title": "Top-1 routing drops a token",
+  "notes": "Top-1 with a capacity factor of 1: ⌈6 / 4⌉ = 2 slots per expert. Three small words want E4: the, on and the second the, which is third in line. It is dropped and passes on by the residual alone. Loss 1.16.",
+  "settings": {
+    "k": "1",
+    "cf": "1",
+    "routing": "token"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat on the mat"], ["route"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

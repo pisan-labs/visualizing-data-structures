@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "moe-routing",
+  "id": "cat-sat",
+  "title": "Top-2 routing with a little room to spare",
+  "notes": "Every token picks two experts, and a softmax over the two scores gives the weights: 0.82 and 0.18 for most tokens, 0.74 and 0.26 for on. E2 and E4 are asked for 4 each, exactly their capacity of ⌈1.25 × 2 × 6 / 4⌉ = 4, so nothing is dropped. The loss is 1.06: small words are common, so E4 is a little too popular.",
+  "settings": {
+    "k": "2",
+    "cf": "1.25",
+    "routing": "token"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat on the mat"], ["route"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

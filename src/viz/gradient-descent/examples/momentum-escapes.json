@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "gradient-descent",
+  "id": "momentum-escapes",
+  "title": "Momentum rolls over the hump",
+  "notes": "The same start with momentum, η = 0.05 and β = 0.9. The velocity carries the point over the hump, and it settles in the deeper valley after 92 steps.",
+  "settings": {
+    "surface": "wells",
+    "method": "momentum",
+    "lr": "0.05",
+    "beta1": "0.9",
+    "beta2": "0.999",
+    "bias": true
+  },
+  "seed": 1,
+  "ops": [["start", "2.5"], ["run"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

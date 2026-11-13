@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "backpropagation",
+  "id": "chain",
+  "title": "Functions inside functions",
+  "notes": "exp, a scaled input, a difference and a sigmoid. The forward pass runs on its own first; the backward pass then uses the stored values: the slope of exp is its own value, 1.65, and the slope of the sigmoid is f × (1 − f) = 0.23.",
+  "settings": {
+    "accumulate": "add",
+    "zero": true
+  },
+  "seed": 1,
+  "ops": [["load", "sigmoid(exp(a) - 2*b); a=0.5, b=0.5"], ["forward"], ["backward"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

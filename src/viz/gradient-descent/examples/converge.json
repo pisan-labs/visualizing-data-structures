@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "gradient-descent",
+  "id": "converge",
+  "title": "Just right: it converges",
+  "notes": "f(x) = x² with η = 0.1. Each step multiplies x by 1 − 2η = 0.8, so the run walks in steadily and converges after 29 steps.",
+  "settings": {
+    "surface": "bowl",
+    "method": "gd",
+    "lr": "0.1",
+    "beta1": "0.9",
+    "beta2": "0.999",
+    "bias": true
+  },
+  "seed": 1,
+  "ops": [["start", "3"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

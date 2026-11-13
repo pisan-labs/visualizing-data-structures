@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "backpropagation",
+  "id": "neuron",
+  "title": "One neuron",
+  "notes": "One tanh neuron with two inputs and a bias. The weighted sum is 0.5, the slope of tanh there is 0.79, and each weight's gradient is 0.79 times the input it multiplies: 0.79 for w1 and −1.57 for w2.",
+  "settings": {
+    "accumulate": "add",
+    "zero": true
+  },
+  "seed": 1,
+  "ops": [["load", "tanh(w1*x1 + w2*x2 + b); w1=0.5, x1=1, w2=0.25, x2=-2, b=0.5"], ["backward"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

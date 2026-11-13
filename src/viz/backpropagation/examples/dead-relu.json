@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "backpropagation",
+  "id": "dead-relu",
+  "title": "A dead ReLU",
+  "notes": "relu gets −5 and outputs 0. Its slope there is 0, so every gradient before it is exactly 0: a dead ReLU.",
+  "settings": {
+    "accumulate": "add",
+    "zero": true
+  },
+  "seed": 1,
+  "ops": [["load", "relu(a*b + c); a=2, b=-3, c=1"], ["backward"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

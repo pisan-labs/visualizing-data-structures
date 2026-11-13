@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "backpropagation",
+  "id": "saturated",
+  "title": "A saturated tanh",
+  "notes": "tanh(7) is 0.999998, where the curve is almost flat. Its slope, 0.0000033, multiplies every gradient before it, so a and b get about 0.00001.",
+  "settings": {
+    "accumulate": "add",
+    "zero": true
+  },
+  "seed": 1,
+  "ops": [["load", "tanh(a*b + 1); a=2, b=3"], ["backward"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "gradient-descent",
+  "id": "round-one-step",
+  "title": "A round bowl in one step",
+  "notes": "On the round bowl (x² + y²)/2 the gradient is the point itself, so η = 1 lands on the minimum in one step; the second step confirms it.",
+  "settings": {
+    "surface": "round",
+    "method": "gd",
+    "lr": "1",
+    "beta1": "0.9",
+    "beta2": "0.999",
+    "bias": true
+  },
+  "seed": 1,
+  "ops": [["start", "-2.5, 2"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "gradient-descent",
+  "id": "local-minimum",
+  "title": "Stuck in the nearer valley",
+  "notes": "Two valleys, and plain gradient descent from x = 2.5 settles in the nearer one at f = −0.59 after 9 steps. The deeper valley to the left, at f = −1.43, never gets a look.",
+  "settings": {
+    "surface": "wells",
+    "method": "gd",
+    "lr": "0.1",
+    "beta1": "0.9",
+    "beta2": "0.999",
+    "bias": true
+  },
+  "seed": 1,
+  "ops": [["start", "2.5"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "format": 1,
+  "viz": "wordpiece",
+  "id": "score-vs-count",
+  "title": "Score, not count",
+  "notes": "NOTES",
+  "settings": {
+    "merges": 5,
+    "maxLen": 12,
+    "trie": true
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "the*12 then*2 hug*3 pug*2 hugs"
+    ],
+    [
+      "train"
+    ],
+    [
+      "encode",
+      "hugs"
+    ],
+    [
+      "encode",
+      "the"
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

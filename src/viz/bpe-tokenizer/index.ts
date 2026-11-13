@@ -28,6 +28,7 @@ import {
   type BpeSettings,
   type BpeState,
 } from './model';
+import { bpePractice } from './practice';
 import { view } from './view';
 
 /** Words of the toy corpus, each once. */
@@ -213,6 +214,7 @@ export const bpe: VizDef<BpeState, BpeSettings, BpeExtra> = {
     noEndMarker,
     overlap,
   ] as unknown as SavedExample[],
+  practice: bpePractice(() => bpe),
   preview: { example: 'suffixes', level: 2, hide: ['pairs', 'pr-', 'vocab', 'vb-', 'vm-'] },
   opening: 'toy-corpus',
 };

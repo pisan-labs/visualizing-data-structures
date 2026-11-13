@@ -165,8 +165,10 @@ export interface PairOptions {
   roles: ReadonlyMap<string, MarkRole>;
   /** Shown when there are no lines yet. */
   empty: string;
-  /** Lines from this index on are set apart by a gap (a row that is not in the ranking). */
+  /** Lines from this index on are set apart (a row that is not in the ranking)... */
   splitAt?: number;
+  /** ...under this caption. */
+  splitLabel?: string;
 }
 
 /** A table of pairs: the two chips, then numbers. Ids pr-<k>-a, pr-<k>-b, pr-<k>-n<j>. */
@@ -180,7 +182,10 @@ export function drawPairs(lines: readonly PairLine[], o: PairOptions): Panel {
   o.heads.forEach((h, j) =>
     label(out, `pairs-h-${j}`, colX[j]!, headY, h, { anchor: 'end', dim: true }),
   );
-  const gap = (k: number) => (o.splitAt !== undefined && k >= o.splitAt ? 10 : 0);
+  const SPLIT = 30;
+  const gap = (k: number) => (o.splitAt !== undefined && k >= o.splitAt ? SPLIT : 0);
+  if (o.splitAt !== undefined && o.splitLabel && lines.length > o.splitAt)
+    label(out, 'pairs-split', 0, top + o.splitAt * PITCH + SPLIT - 10, o.splitLabel, { dim: true });
   lines.forEach((ln, k) => {
     const y = top + k * PITCH + gap(k);
     const role = o.roles.get(`pr-${k}`) ?? ln.role;
@@ -208,8 +213,8 @@ export function drawPairs(lines: readonly PairLine[], o: PairOptions): Panel {
   }
   if (lines.length === 0)
     label(out, 'pairs-empty', 0, top + CHIP_H / 2 + 5, o.empty, { dim: true });
-  const w = Math.max(colX.at(-1) ?? o.pairW, textW(o.title), textW(o.empty));
-  const extra = o.splitAt !== undefined ? 10 : 0;
+  const w = Math.max(colX.at(-1) ?? o.pairW, textW(o.title), textW(o.empty), textW(o.splitLabel ?? ''));
+  const extra = o.splitAt !== undefined ? SPLIT : 0;
   return { shapes: out, w, h: top + o.rows * PITCH + extra - (PITCH - CHIP_H) };
 }
 

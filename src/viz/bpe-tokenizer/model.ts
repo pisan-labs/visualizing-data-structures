@@ -175,10 +175,13 @@ export function show(t: string): string {
 
 const spaced = (ps: readonly Piece[]) => ps.map((p) => show(p.t)).join(' ');
 
-/** The vocabulary: the starting symbols, then one token per merge. */
+/**
+ * The vocabulary: the starting symbols, then one token per merge (two merges can make the same
+ * token, a + bc and ab + c, which then counts once).
+ */
 export function vocabSize(s: S, set: BpeSettings): number {
   const base = set.base === 'bytes' ? 256 + (set.eow ? 1 : 0) : s.base.length;
-  return base + s.merges.length;
+  return base + new Set(s.merges.map((m) => m.ab)).size;
 }
 
 /** Symbols the vocabulary starts with: those in the text, or with bytes all 256. */

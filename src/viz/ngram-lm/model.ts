@@ -319,6 +319,8 @@ function probsSay(d: Dist): string {
 }
 
 const round = (x: number) => String(Math.round(x * 100) / 100);
+/** A readout to two decimals; ±Infinity stays as it is. */
+const hundredths = (x: number) => (Number.isFinite(x) ? Math.round(x * 100) / 100 : x);
 
 /** The walk over the corpus, counting. */
 const countOp: Op = {
@@ -568,7 +570,7 @@ const scoreOp: Op = {
     const vars = () => ({
       ...baseVars(settings),
       N,
-      'ln P': logSum === -Infinity ? '−∞' : two(logSum),
+      'ln P': hundredths(logSum),
     });
     const strip = (to?: number): Strip => ({
       tokens: t,
@@ -624,7 +626,7 @@ const scoreOp: Op = {
         : `The sentence has probability 0, so its perplexity is infinite. Without smoothing, one n-gram the corpus never had is enough. Try add-one smoothing.`,
       lines: ['pp'],
       level: 1,
-      vars: { ...vars(), perplexity: Number.isFinite(pp) ? two(pp) : '∞' },
+      vars: { ...vars(), perplexity: hundredths(pp) },
     };
     return next;
   },

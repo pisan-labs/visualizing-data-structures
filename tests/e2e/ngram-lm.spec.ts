@@ -44,10 +44,10 @@ test('perplexity is finite for a seen sentence and infinite with an unseen pair'
   await op(page, 'Perplexity', 'the cat ate the ball');
   await toEnd(page);
   await expect(narration(page)).toContainText('perplexity is infinite');
-  await expect(page.locator('.vars')).toContainText(/perplexity\s*∞/);
+  await expect(page.locator('.vars')).toContainText(/perplexity\s*Infinity/);
   await page.getByLabel('Words', { exact: true }).fill('the zebra');
   await page.getByRole('button', { name: 'Next word', exact: true }).click();
-  await expect(page.getByText('never appears in the corpus')).toBeVisible();
+  await expect(page.getByRole('alert')).toContainText('never appears in the corpus');
 });
 
 test('generate draws a sentence, one u per word', async ({ page }) => {

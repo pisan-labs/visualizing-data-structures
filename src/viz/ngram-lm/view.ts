@@ -35,6 +35,8 @@ const CELL_H = 34;
 const P_H = 28;
 const GAP = 4;
 const TRACK = 200;
+/** Room after a bar for ".91 in all". */
+const ROOM = 96;
 /** The most rows a table has: nine words seen after "the", and the unseen ones. */
 const MAX_ROWS = 10;
 const WORD_LABEL_W = 9 * 9 + 14;
@@ -177,6 +179,7 @@ function distTable(t: Extract<Table, { kind: 'counts' | 'probs' }>): {
         id: 'p',
         title: `P(w | ${ctx})`,
         track: TRACK,
+        room: ROOM,
         draws: true,
         bar: (r) => {
           const m = mass(r);
@@ -289,7 +292,12 @@ export function view(step: Step<LmState, LmExtra>, settings: LmSettings, stage?:
         h: t.bounds.h - 24,
       });
       // The largest table this page draws, so the frame holds still.
-      boxes.push({ x: tx, y: ty, w: labelW + 48 + 18 + TRACK + 50, h: 28 + MAX_ROWS * ROW_H + 24 });
+      boxes.push({
+        x: tx,
+        y: ty,
+        w: labelW + 48 + 18 + TRACK + ROOM,
+        h: 28 + MAX_ROWS * ROW_H + 24,
+      });
     }
     boxes.push({ x: 0, y: 0, w: 1, h: 1 });
     return { shapes, bounds: padBounds(unionBounds(...boxes), 12) };

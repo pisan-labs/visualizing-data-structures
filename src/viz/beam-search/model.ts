@@ -446,7 +446,7 @@ function searchOp(greedy: boolean): Op {
           ...baseVars(settings, greedy),
           step: rounds.length,
           finished: search.finished.length,
-          ...(best === null ? {} : { 'best P': two(bestP) }),
+          ...(best === null ? {} : { 'best P': Math.round(bestP * 1000) / 1000 }),
         },
       };
       return next;

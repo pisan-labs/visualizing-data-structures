@@ -73,6 +73,8 @@ export interface BarsColumn {
   title: string;
   /** Length of a bar of value 1. Default 160. */
   track?: number;
+  /** Room after the track for the number printed after a full bar. Default 50. */
+  room?: number;
   bar(r: number): BarLook | null;
   /** Reserve a lane under the column for the label of u, so the frame stays still. */
   draws?: boolean;
@@ -93,7 +95,7 @@ const textW = (text: string, size = FONT) => [...text].length * size * 0.6;
 /** A column's width: the bars' track plus room for the number after the longest bar. */
 export function columnWidth(c: Column): number {
   if (c.kind === 'cells') return c.w ?? CELL_W;
-  return (c.track ?? 160) + 50;
+  return (c.track ?? 160) + (c.room ?? 50);
 }
 
 export interface TableOptions {
@@ -158,7 +160,7 @@ export function drawTable(
           shapes.push({
             kind: 'text',
             id: `cut-${g}-t`,
-            x: x + (c.track ?? 160) + 40,
+            x: x + columnWidth(c) - 10,
             y: top + (opts.cut.after + 1) * ROW_H + 16,
             text: opts.cut.label,
             size: SMALL,

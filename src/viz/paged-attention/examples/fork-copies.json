@@ -3,7 +3,7 @@
   "viz": "paged-attention",
   "id": "fork-copies",
   "title": "Without sharing, a fork copies everything",
-  "notes": "NOTES",
+  "notes": "The same forks without sharing: each copies both of A's blocks at once, 4 copies in all, and 9 blocks are in use after three steps instead of 7.",
   "settings": {
     "block": "4",
     "sharing": false

@@ -3,7 +3,7 @@
   "viz": "paged-attention",
   "id": "out-of-blocks",
   "title": "The pool runs out and a request waits",
-  "notes": "NOTES",
+  "notes": "Four requests fill all 12 blocks within two steps. C, then D, need a new block and wait. B finishes, three blocks go back on the free list, and C and D carry on.",
   "settings": {
     "block": "4",
     "sharing": true

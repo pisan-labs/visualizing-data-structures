@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "quantization",
+  "id": "outlier-rows",
+  "title": "A scale per row keeps the damage in one row",
+  "notes": "NOTES",
+  "settings": {
+    "bits": "4",
+    "scheme": "absmax",
+    "group": "row"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "0.31 -0.52 0.08 0.77 -0.14 0.45 -0.66 0.23 -0.39 0.12 0.58 -0.27 0.04 -0.81 0.36 -0.09 0.19 0.63 0.49 -0.05 -0.71 0.28 -0.43 0.15"],
+    ["set", 2, 5, 6.4],
+    ["quantize"]
+  ]
+}

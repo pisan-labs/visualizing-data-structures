@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "continuous-batching",
+  "id": "long-and-short",
+  "title": "Continuous batching fills each free slot",
+  "notes": "NOTES",
+  "settings": {
+    "slots": 3,
+    "policy": "continuous"
+  },
+  "seed": 1,
+  "ops": [
+    ["add", 0, 5, 2],
+    ["add", 0, 3, 6],
+    ["add", 0, 8, 3],
+    ["add", 1, 4, 2],
+    ["add", 2, 6, 3],
+    ["run"]
+  ]
+}

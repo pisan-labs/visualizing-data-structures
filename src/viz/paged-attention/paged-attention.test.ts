@@ -225,6 +225,10 @@ describe('paged-attention', () => {
     expect(stateLine(shares)).toBe('A 0 2 4 / B 0 3 5 / C 0 1 6 | free 7 8 9 10 11 | copies 2');
     expect(end('fork-copies').free).toHaveLength(3);
     expect(wasted(end('big-blocks'), { block: '8', sharing: true })).toBe(9);
+    const big = pagedAttention.examples.find((e) => e.id === 'big-blocks')!;
+    const two = new Timeline(pagedAttention, { block: '2', sharing: true }, 1, big.ops).endState();
+    expect(wasted(two, { block: '2', sharing: true })).toBe(3);
+    expect(two.seqs[1]!.table).toHaveLength(6);
     const short = end('many-short');
     expect(short.seqs).toHaveLength(6);
     expect(wastedContiguous(short)).toBe(69);

@@ -3,7 +3,7 @@
   "viz": "paged-attention",
   "id": "fork-shares",
   "title": "Parallel samples share the prompt",
-  "notes": "NOTES",
+  "notes": "Two forks of A share blocks 0 and 1 (reference count 3). At the first step A and B each copy the partly filled block 1 before writing; C, the last reader, writes in place. Block 0 is full and stays shared. 7 blocks in use after three steps.",
   "settings": {
     "block": "4",
     "sharing": true

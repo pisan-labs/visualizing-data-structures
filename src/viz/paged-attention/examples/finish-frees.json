@@ -3,7 +3,7 @@
   "viz": "paged-attention",
   "id": "finish-frees",
   "title": "A finished request's blocks go to the next one",
-  "notes": "NOTES",
+  "notes": "A finishes and blocks 1 and 0 go back on the free list, 0 on top. D arrives with 9 tokens and gets blocks 0, 1 and 6: not contiguous, and it does not matter, because attention reads through the table.",
   "settings": {
     "block": "4",
     "sharing": true

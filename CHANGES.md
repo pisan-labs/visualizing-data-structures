@@ -459,3 +459,5 @@
 2026-11-13 [note] Plabs: StepWise is registered and on for app-notify. The first run (14 Nov 15:17 UTC) records the 3 releases as seen; after that a new id in notify-feed.json is emailed the next day to readers with notify_new_pages on. Adding a release now sends an email
 
 2026-11-13 [decision] Yusuf (/loop): when tier 1 is finished, build tier 2 (9C) and then tier 3 (9D), without waiting for another go; deploys still only on "deploy"
+
+2026-11-13 [code] Merged wave 9B kv-cache: prefill and generate with the hand-made head, cache on or off, sliding window, work and memory counters; outputs equal with and without the cache (tested)

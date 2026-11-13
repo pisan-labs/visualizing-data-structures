@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "transformer-block",
+  "id": "first-word",
+  "title": "The first word",
+  "notes": "One word with nothing before it. Attention finds no noun, so its two votes cancel, and the FFN's rule for a small word decides: cat (0.20), then dog and fox.",
+  "settings": {
+    "order": "pre",
+    "norm": "layer",
+    "act": "gelu"
+  },
+  "seed": 1,
+  "ops": [["load", "the"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

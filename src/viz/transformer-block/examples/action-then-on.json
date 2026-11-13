@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "transformer-block",
+  "id": "action-then-on",
+  "title": "After an action, on",
+  "notes": "sat is an action, so the FFN votes for a small word (2.50). The unembedding's direct link from an action to on lifts it above the: on 0.38, the 0.16.",
+  "settings": {
+    "order": "pre",
+    "norm": "layer",
+    "act": "gelu"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

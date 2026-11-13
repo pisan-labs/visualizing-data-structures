@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "transformer-block",
+  "id": "post-norm",
+  "title": "Post-norm, as in the original paper",
+  "notes": "The first example's sentence, normalized the original way: after each add, with ReLU. Attention reads x itself, so its weights are softer (cat 0.54). The stream is normalized too: the 1 of the becomes 2.14, then 1.74. The guess is still mat (0.15).",
+  "settings": {
+    "order": "post",
+    "norm": "layer",
+    "act": "relu"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat on the"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

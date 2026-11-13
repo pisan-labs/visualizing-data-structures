@@ -475,3 +475,5 @@
 2026-11-13 [decision] transformer-block uses hand-made weights (question 3 unanswered for 15 minutes; the recommendation stands). Wave 9C started: four agents for the 11 tier-2 pages (PLAN.md 20.13)
 
 2026-11-13 [doc] Merged the tier-1 fact check: SLP3 2026 drafts no longer end words with "_" (credited to Sennrich et al. 2016), BERT word limit 200 (Hugging Face 100), heap, n-gram, beam and gradient-descent wording fixed to match the models; outside facts confirmed against sources
+
+2026-11-13 [code] Merged wave 9C transformer-block (hand-made weights; pre- or post-norm, LayerNorm or RMSNorm, ReLU, GELU or SwiGLU; residual stream, next-word guess, parameter count) and moe-routing (top-k router, capacity and drops, Switch load-balance loss, token or expert choice)

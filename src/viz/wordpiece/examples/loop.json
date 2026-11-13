@@ -3,22 +3,14 @@
   "viz": "wordpiece",
   "id": "loop",
   "title": "BERT’s loop: shorter and shorter",
-  "notes": "NOTES",
+  "notes": "With the trie off, BERT's loop looks up walking, walkin, walki and so on down to w, then ##alking down to ##a, then ##lking and ##lkin, then ##g: 16 lookups. The trie walk takes 10 steps. The pieces are the same: w ##a ##lkin ##g.",
   "settings": {
     "merges": 20,
     "maxLen": 12,
     "trie": false
   },
   "seed": 1,
-  "ops": [
-    [
-      "train"
-    ],
-    [
-      "encode",
-      "walking"
-    ]
-  ],
+  "ops": [["train"], ["encode", "walking"]],
   "at": {
     "op": -1,
     "step": 0

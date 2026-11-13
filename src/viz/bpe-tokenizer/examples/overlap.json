@@ -3,7 +3,7 @@
   "viz": "bpe-tokenizer",
   "id": "overlap",
   "title": "Overlapping pairs count too much",
-  "notes": "NOTES",
+  "notes": "aaaa has three a a pairs, so a a counts 3 × 3 = 9. But a merge joins them two at a time, left to right: aa aa, and the text shrinks from 15 tokens to 9, by 6, not 9. After 3 merges the word is one token and training stops early.",
   "settings": {
     "merges": 20,
     "eow": true,
@@ -11,15 +11,7 @@
     "base": "chars"
   },
   "seed": 1,
-  "ops": [
-    [
-      "load",
-      "aaaa*3"
-    ],
-    [
-      "train"
-    ]
-  ],
+  "ops": [["load", "aaaa*3"], ["train"]],
   "at": {
     "op": -1,
     "step": 0

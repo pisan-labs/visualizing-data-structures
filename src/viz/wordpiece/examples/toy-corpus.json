@@ -3,26 +3,14 @@
   "viz": "wordpiece",
   "id": "toy-corpus",
   "title": "Train on the toy corpus",
-  "notes": "NOTES",
+  "notes": "The toy corpus starts as 30 pieces: 13 first letters and 17 ## letters. After 20 merges there are 50. walking walks the trie of word-start pieces to w, then the ## trie: ##a, ##lkin (there is no ##lking) and ##g. birds is bird ##s.",
   "settings": {
     "merges": 20,
     "maxLen": 12,
     "trie": true
   },
   "seed": 1,
-  "ops": [
-    [
-      "train"
-    ],
-    [
-      "encode",
-      "walking"
-    ],
-    [
-      "encode",
-      "birds"
-    ]
-  ],
+  "ops": [["train"], ["encode", "walking"], ["encode", "birds"]],
   "at": {
     "op": -1,
     "step": 0

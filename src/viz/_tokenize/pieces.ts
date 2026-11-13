@@ -61,8 +61,7 @@ export function countPairs(rows: readonly Row[], upTo = rows.length): PairCount[
 /** How often each piece occurs, weighted by the rows' counts. */
 export function pieceCounts(rows: readonly Row[]): Map<string, number> {
   const out = new Map<string, number>();
-  for (const row of rows)
-    for (const p of row.pieces) out.set(p.t, (out.get(p.t) ?? 0) + row.count);
+  for (const row of rows) for (const p of row.pieces) out.set(p.t, (out.get(p.t) ?? 0) + row.count);
   return out;
 }
 

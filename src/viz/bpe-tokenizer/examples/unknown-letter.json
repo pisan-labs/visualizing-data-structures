@@ -3,7 +3,7 @@
   "viz": "bpe-tokenizer",
   "id": "unknown-letter",
   "title": "A letter never seen becomes [UNK]",
-  "notes": "NOTES",
+  "notes": "No word of the toy corpus has a j, so the vocabulary has no token for it: jumped becomes [UNK] u m p ed_. Switch Start from to UTF-8 bytes and run it again: every byte is in the vocabulary, so nothing is unknown.",
   "settings": {
     "merges": 20,
     "eow": true,
@@ -11,15 +11,7 @@
     "base": "chars"
   },
   "seed": 1,
-  "ops": [
-    [
-      "train"
-    ],
-    [
-      "encode",
-      "jumped"
-    ]
-  ],
+  "ops": [["train"], ["encode", "jumped"]],
   "at": {
     "op": -1,
     "step": 0

@@ -21,7 +21,10 @@ type Def = VizDef<BpeState, BpeSettings, BpeExtra>;
 
 const WORDS = [...new Set(corpusWords())];
 /** Words the corpus does not have, made of its pieces. */
-const NEW_WORDS = 'cats dogs mats rats hat bat sit tin bits tab dots rods sand band talks walks walker bird birds tree trees sat tan nod'.split(' ');
+const NEW_WORDS =
+  'cats dogs mats rats hat bat sit tin bits tab dots rods sand band talks walks walker bird birds tree trees sat tan nod'.split(
+    ' ',
+  );
 
 /** A small training text: four to six words of the corpus, each one to six times. */
 function smallText(rng: Rng): string {
@@ -105,7 +108,9 @@ export function bpePractice(def: () => Def): PracticeKind[] {
           for (let i = 0; i < k; i++) {
             const next = learn(st, 1, 'first');
             const m = next.merges.at(-1)!;
-            parts.push(`merge ${i + 1} joins ${pairName(m)} and saves ${tokenTotal(st.rows) - tokenTotal(next.rows)}`);
+            parts.push(
+              `merge ${i + 1} joins ${pairName(m)} and saves ${tokenTotal(st.rows) - tokenTotal(next.rows)}`,
+            );
             st = next;
           }
           return {

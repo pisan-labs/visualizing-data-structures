@@ -77,7 +77,10 @@ function pairsPanel(x: WpExtra, roles: Map<string, MarkRole>): Panel {
     role: p.bpe ? ('compare' as const) : undefined,
   }));
   const split = rows.findIndex((p) => p.bpe);
-  const pairW = Math.max(chipW('##lk') + 4 + chipW('##i'), ...lines.map((l) => chipW(l.a) + 4 + chipW(l.b)));
+  const pairW = Math.max(
+    chipW('##lk') + 4 + chipW('##i'),
+    ...lines.map((l) => chipW(l.a) + 4 + chipW(l.b)),
+  );
   return drawPairs(lines, {
     title: 'pairs, by score',
     heads: ['ab', 'a', 'b', 'score'],
@@ -91,10 +94,20 @@ function pairsPanel(x: WpExtra, roles: Map<string, MarkRole>): Panel {
   });
 }
 
-function vocabPanel(s: WpState, set: WpSettings, roles: Map<string, MarkRole>, perCol: number, found?: string): Panel {
+function vocabPanel(
+  s: WpState,
+  set: WpSettings,
+  roles: Map<string, MarkRole>,
+  perCol: number,
+  found?: string,
+): Panel {
   const reserve = Math.max(set.merges, s.merges.length);
   const longest = Math.max(1, ...s.rows.map((r) => r.word.length + 2));
-  const tokenW = Math.max(chipW('##ab'), ...s.merges.map((m) => chipW(m.ab)), chipW('x'.repeat(Math.min(longest, 8))));
+  const tokenW = Math.max(
+    chipW('##ab'),
+    ...s.merges.map((m) => chipW(m.ab)),
+    chipW('x'.repeat(Math.min(longest, 8))),
+  );
   const cols = Math.max(1, Math.ceil(reserve / perCol));
   const r = new Map(roles);
   if (found !== undefined) {
@@ -133,8 +146,27 @@ function wordPanel(enc: WpEnc | undefined, roles: Map<string, MarkRole>): Panel 
       else if (i < enc.at) role = 'active';
     } else if (enc?.done) role = enc.unk ? undefined : 'done';
     const id = `wl-${i}`;
-    out.push({ kind: 'rect', id, x: i * CELL, y: TITLE_H, w: CELL - 2, h: CHIP_H, r: 3, cls: 'live', role: roles.get(id) ?? role });
-    out.push({ kind: 'text', id: `${id}-t`, x: i * CELL + (CELL - 2) / 2, y: TITLE_H + CHIP_H / 2 + 5, text: c, size: FONT, anchor: 'middle', mono: true });
+    out.push({
+      kind: 'rect',
+      id,
+      x: i * CELL,
+      y: TITLE_H,
+      w: CELL - 2,
+      h: CHIP_H,
+      r: 3,
+      cls: 'live',
+      role: roles.get(id) ?? role,
+    });
+    out.push({
+      kind: 'text',
+      id: `${id}-t`,
+      x: i * CELL + (CELL - 2) / 2,
+      y: TITLE_H + CHIP_H / 2 + 5,
+      text: c,
+      size: FONT,
+      anchor: 'middle',
+      mono: true,
+    });
   });
   const py = TITLE_H + PITCH + 10;
   label(out, 'pieces-label', 0, py + CHIP_H / 2 + 5, '→', { dim: true });
@@ -148,7 +180,11 @@ function wordPanel(enc: WpEnc | undefined, roles: Map<string, MarkRole>): Panel 
   }
   // Room for the most pieces the word can have: one per letter.
   const most = chars.map((c, i) => (i ? CONT + c : c));
-  return { shapes: out, w: Math.max(chars.length * CELL, x0 + chipsW(most), textW(`encode ${word}`)), h: py + CHIP_H };
+  return {
+    shapes: out,
+    w: Math.max(chars.length * CELL, x0 + chipsW(most), textW(`encode ${word}`)),
+    h: py + CHIP_H,
+  };
 }
 
 function encodedPanel(s: WpState): Panel {
@@ -165,11 +201,17 @@ function encodedPanel(s: WpState): Panel {
     });
     widest = Math.max(widest, x);
   });
-  if (s.encodings.length === 0) label(out, 'done-empty', 0, TITLE_H + CHIP_H / 2 + 5, 'none yet', { dim: true });
+  if (s.encodings.length === 0)
+    label(out, 'done-empty', 0, TITLE_H + CHIP_H / 2 + 5, 'none yet', { dim: true });
   return { shapes: out, w: widest, h: TITLE_H + KEEP * PITCH - (PITCH - CHIP_H) };
 }
 
-function triePanel(t: Tries, enc: WpEnc | undefined, roles: Map<string, MarkRole>, sideways: boolean): Panel {
+function triePanel(
+  t: Tries,
+  enc: WpEnc | undefined,
+  roles: Map<string, MarkRole>,
+  sideways: boolean,
+): Panel {
   const inner = !!enc && enc.start > 0 && !enc.done;
   const opts = () => ({
     label: (u: number) => t.nodes[u]!.ch,
@@ -219,14 +261,23 @@ function triePanel(t: Tries, enc: WpEnc | undefined, roles: Map<string, MarkRole
 }
 
 /** BERT's loop: the substring looked up (cand), and the vocabulary it is looked up in. */
-function lookupPanel(s: WpState, set: WpSettings, enc: WpEnc | undefined, roles: Map<string, MarkRole>, perCol: number): Panel {
+function lookupPanel(
+  s: WpState,
+  set: WpSettings,
+  enc: WpEnc | undefined,
+  roles: Map<string, MarkRole>,
+  perCol: number,
+): Panel {
   const out: Shape[] = [];
   label(out, 'cand-label', 0, CHIP_H / 2 + 5, 'look up', { dim: true });
   const x0 = textW('look up') + 10;
   if (enc?.candidate !== undefined)
     chip(out, 'cand', x0, 0, enc.candidate, roles.get('cand') ?? (enc.hit ? 'found' : undefined));
   const v = vocabPanel(s, set, roles, perCol, enc?.hit ? enc.candidate : undefined);
-  const longest = Math.max(0, ...[...(enc?.word ?? '')].map((_, i, a) => chipW(CONT + a.slice(i).join(''))));
+  const longest = Math.max(
+    0,
+    ...[...(enc?.word ?? '')].map((_, i, a) => chipW(CONT + a.slice(i).join(''))),
+  );
   out.push(...translate(v.shapes, 0, PITCH + 10));
   return { shapes: out, w: Math.max(v.w, x0 + longest), h: PITCH + 10 + v.h };
 }
@@ -275,7 +326,16 @@ function lastEnc(s: WpState): WpEnc | undefined {
   const e = s.encodings.at(-1);
   if (!e) return undefined;
   const n = [...e.word].length;
-  return { word: e.word, pieces: e.pieces, start: n, at: n, last: n, path: [], unk: e.pieces[0] === UNK, done: true };
+  return {
+    word: e.word,
+    pieces: e.pieces,
+    start: n,
+    at: n,
+    last: n,
+    path: [],
+    unk: e.pieces[0] === UNK,
+    done: true,
+  };
 }
 
 /** Two panels, one under the other, as one panel. */
@@ -287,4 +347,3 @@ function stack(a: Panel, b: Panel): Panel {
     h: a.h + gap + b.h,
   };
 }
-

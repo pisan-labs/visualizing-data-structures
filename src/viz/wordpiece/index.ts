@@ -106,7 +106,10 @@ export const wordpiece: VizDef<WpState, WpSettings, WpExtra> = {
     presets: [
       trained('The toy corpus', () => CORPUS_TEXT),
       trained('Random words from the corpus', randomText),
-      trained('Shared suffixes (low, lower, newest...)', () => 'low*5 lowest*2 newer*6 wider*3 new*2'),
+      trained(
+        'Shared suffixes (low, lower, newest...)',
+        () => 'low*5 lowest*2 newer*6 wider*3 new*2',
+      ),
       trained('A common word and rare ones', () => 'the*12 then*2 hug*3 pug*2 hugs'),
       trained('One word, many times', () => 'banana*4'),
     ],
@@ -188,7 +191,11 @@ export const wordpiece: VizDef<WpState, WpSettings, WpExtra> = {
     loop,
   ] as unknown as SavedExample[],
   practice: wordpiecePractice(() => wordpiece),
-  preview: { example: 'toy-corpus', level: 2, hide: ['done', 'er-', 'enc', 'wl-', 'pieces', 'pc-'] },
+  preview: {
+    example: 'toy-corpus',
+    level: 2,
+    hide: ['done', 'er-', 'enc', 'wl-', 'pieces', 'pc-'],
+  },
   opening: 'toy-corpus',
 };
 

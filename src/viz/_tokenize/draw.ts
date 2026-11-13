@@ -213,7 +213,12 @@ export function drawPairs(lines: readonly PairLine[], o: PairOptions): Panel {
   }
   if (lines.length === 0)
     label(out, 'pairs-empty', 0, top + CHIP_H / 2 + 5, o.empty, { dim: true });
-  const w = Math.max(colX.at(-1) ?? o.pairW, textW(o.title), textW(o.empty), textW(o.splitLabel ?? ''));
+  const w = Math.max(
+    colX.at(-1) ?? o.pairW,
+    textW(o.title),
+    textW(o.empty),
+    textW(o.splitLabel ?? ''),
+  );
   const extra = o.splitAt !== undefined ? SPLIT : 0;
   return { shapes: out, w, h: top + o.rows * PITCH + extra - (PITCH - CHIP_H) };
 }
@@ -302,7 +307,10 @@ export function place(parts: readonly { p: Panel; x: number; y: number }[]): Pla
     y2 = Math.max(y2, y + p.h);
   }
   const pad = 12;
-  return { shapes, bounds: { x: x1 - pad, y: y1 - pad, w: x2 - x1 + 2 * pad, h: y2 - y1 + 2 * pad } };
+  return {
+    shapes,
+    bounds: { x: x1 - pad, y: y1 - pad, w: x2 - x1 + 2 * pad, h: y2 - y1 + 2 * pad },
+  };
 }
 
 /** Panels side by side, top-aligned, with `drop` extra room above the last (the zoom buttons). */

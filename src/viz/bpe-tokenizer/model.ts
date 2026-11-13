@@ -151,7 +151,8 @@ export function show(t: string): string {
       const b = run[i]!;
       const len = b >= 0xf0 ? 4 : b >= 0xe0 ? 3 : b >= 0xc0 ? 2 : 1;
       const seq = run.slice(i, i + len);
-      const whole = len > 1 && seq.length === len && seq.slice(1).every((c) => c >= 0x80 && c < 0xc0);
+      const whole =
+        len > 1 && seq.length === len && seq.slice(1).every((c) => c >= 0x80 && c < 0xc0);
       if (whole) {
         out += new TextDecoder().decode(new Uint8Array(seq));
         i += len;
@@ -331,10 +332,7 @@ function startSay(s: S, set: BpeSettings): string {
 }
 
 /** One round of training: count the pairs, pick the best, merge it in every word. */
-function* oneMerge(
-  s: S,
-  set: BpeSettings,
-): Generator<BStep, S | null, void> {
+function* oneMerge(s: S, set: BpeSettings): Generator<BStep, S | null, void> {
   const vars = (st: S) => baseVars(st, set);
   const first = s.merges.length === 0;
   if (first) {
@@ -580,7 +578,11 @@ const encodeOp: Op = {
       say: `${word} → ${spaced(pieces)}: ${pieces.length} token${pieces.length === 1 ? '' : 's'}${applied.length ? `, from ${applied.length} of the ${s.merges.length} merges` : ''}.${orderNote}`,
       lines: ['eret'],
       level: 1,
-      vars: { ...baseVars(next, settings), 'merges tried': s.merges.length, 'word tokens': pieces.length },
+      vars: {
+        ...baseVars(next, settings),
+        'merges tried': s.merges.length,
+        'word tokens': pieces.length,
+      },
       extra: { enc: { word, pieces, rule: s.merges.length, applied } },
     };
     return next;
@@ -623,7 +625,12 @@ export function pseudocode(set: BpeSettings): PseudoBlock[] {
       `Pick the most frequent pair (on a tie, the ${tie}).`,
     ),
     L('none', d, 'if there is no pair: stop', 'If every word is one token, stop.'),
-    L('merge', d, 'replace every a b with ab in every pieces[w]', 'Join it into one token everywhere.'),
+    L(
+      'merge',
+      d,
+      'replace every a b with ab in every pieces[w]',
+      'Join it into one token everywhere.',
+    ),
     L('add', d, 'merges.append(a b → ab); vocabulary.add(ab)', 'Remember the merge, in order.'),
   ];
   return [
@@ -655,8 +662,18 @@ export function pseudocode(set: BpeSettings): PseudoBlock[] {
           `pieces = ${sym} of w${end}${set.base === 'bytes' ? '' : `; any not in the vocabulary is ${UNK}`}`,
           `Split it the way training did${set.base === 'bytes' ? '' : `; a character never seen is ${UNK}`}.`,
         ),
-        L('efor', 1, 'for each a b → ab in merges, in the order learned', 'Replay the merges in order:'),
-        L('erep', 2, 'replace every a b in pieces with ab', 'join a and b wherever they are neighbours.'),
+        L(
+          'efor',
+          1,
+          'for each a b → ab in merges, in the order learned',
+          'Replay the merges in order:',
+        ),
+        L(
+          'erep',
+          2,
+          'replace every a b in pieces with ab',
+          'join a and b wherever they are neighbours.',
+        ),
         L('eret', 1, 'return pieces', 'What is left are the tokens.'),
       ],
     },

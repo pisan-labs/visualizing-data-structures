@@ -3,7 +3,7 @@
   "viz": "bpe-tokenizer",
   "id": "bytes",
   "title": "Bytes: an accent is two bytes",
-  "notes": "NOTES",
+  "notes": "In UTF-8, é is two bytes, C3 A9. They occur together 11 times, so the first merge glues them back into é, and bébé encodes as b é b é_. The ê of fête also starts with C3 but occurs once and never gets a merge: it stays two bytes, ‹C3› ‹AA›, but it is still encoded.",
   "settings": {
     "merges": 10,
     "eow": true,
@@ -12,21 +12,10 @@
   },
   "seed": 1,
   "ops": [
-    [
-      "load",
-      "café*3 thé*2 été*2 bébé crème*2 tête"
-    ],
-    [
-      "train"
-    ],
-    [
-      "encode",
-      "bébé"
-    ],
-    [
-      "encode",
-      "fête"
-    ]
+    ["load", "café*3 thé*2 été*2 bébé crème*2 tête"],
+    ["train"],
+    ["encode", "bébé"],
+    ["encode", "fête"]
   ],
   "at": {
     "op": -1,

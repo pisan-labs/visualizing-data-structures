@@ -24,7 +24,9 @@ const WORDS = [...new Set(corpusWords())];
 /** Words to encode: the corpus's own, new ones made of its letters, and a few with odd letters. */
 const POOL = [
   ...WORDS,
-  ...'cats dogs mats rats hat bat sit tin bits tab dots rods sand band talks walks birds trees tan nod cot rot tar dab'.split(' '),
+  ...'cats dogs mats rats hat bat sit tin bits tab dots rods sand band talks walks birds trees tan nod cot rot tar dab'.split(
+    ' ',
+  ),
   ...'rabbit jump zoo yes very quiz web cab tub ox'.split(' '),
 ];
 
@@ -102,8 +104,9 @@ export function wordpiecePractice(_def: () => Def): PracticeKind[] {
           const options = shuffled(rng, [u, ...shuffled(rng, good).slice(0, 3)]);
           const chars = [...u];
           const vocab = new Set(vocabulary(s));
-          const missing =
-            !vocab.has(chars[0]!) ? `no piece starts with ${chars[0]}` : `the vocabulary has no ##${chars.find((c, i) => i > 0 && !vocab.has(`##${c}`))} piece, so nothing can follow inside the word`;
+          const missing = !vocab.has(chars[0]!)
+            ? `no piece starts with ${chars[0]}`
+            : `the vocabulary has no ##${chars.find((c, i) => i > 0 && !vocab.has(`##${c}`))} piece, so nothing can follow inside the word`;
           return {
             prompt: `WordPiece built the vocabulary shown. Which of these words becomes ${UNK}?`,
             setup: ops,
@@ -138,7 +141,11 @@ export function wordpiecePractice(_def: () => Def): PracticeKind[] {
             prompt: `WordPiece has learned ${s.merges.length} merge${s.merges.length === 1 ? '' : 's'} from these words. Which pair does it merge next? It scores a pair by count(ab) / (count(a) · count(b)), each word counted as often as it occurs.`,
             setup: ops,
             settings,
-            answer: { kind: 'choice', options: options.map(pairName), correct: options.indexOf(best) },
+            answer: {
+              kind: 'choice',
+              options: options.map(pairName),
+              correct: options.indexOf(best),
+            },
             explain: `${pairName(best)} scores ${f(best)}, the best. ${pairName(bpe)} is the most frequent pair, the one BPE would take, but scores only ${f(bpe)}: its halves are common on their own.`,
             watch: [['merge']],
           };

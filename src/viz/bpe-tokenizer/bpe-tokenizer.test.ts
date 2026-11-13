@@ -56,7 +56,11 @@ function reference(text: string, k: number, set: BpeSettings): string[] {
   return merges;
 }
 
-const corpusWord = fc.constantFrom(...'the cat sat on mat dog rug saw ran and walked walking talked is a banana aaaa café été'.split(' '));
+const corpusWord = fc.constantFrom(
+  ...'the cat sat on mat dog rug saw ran and walked walking talked is a banana aaaa café été'.split(
+    ' ',
+  ),
+);
 const textArb = fc
   .array(fc.tuple(corpusWord, fc.integer({ min: 1, max: 6 })), { minLength: 1, maxLength: 8 })
   .map((ws) => ws.map(([w, c]) => (c > 1 ? `${w}*${c}` : w)).join(' '));
@@ -83,7 +87,12 @@ describe('bpe-tokenizer', () => {
   it('keeps its invariants on every step of random runs', () => {
     fc.assert(
       fc.property(textArb, settingsArb, corpusWord, (text, set, word) => {
-        const t = new Timeline(bpe, set, 1, [['load', text], ['train'], ['merge'], ['encode', word]]);
+        const t = new Timeline(bpe, set, 1, [
+          ['load', text],
+          ['train'],
+          ['merge'],
+          ['encode', word],
+        ]);
         let lastTokens = Infinity;
         for (const e of t.entries)
           for (const step of e.steps) {
@@ -122,7 +131,7 @@ describe('bpe-tokenizer', () => {
 
   it('tells the story the examples tell', () => {
     const run = (text: string, k: number, set: Partial<BpeSettings> = {}) => {
-      const s = { ...defaults, ...set };
+      const s = { ...defaults, ...set } as BpeSettings;
       return learn(loadState(text, s) as BpeState, k, s.tie);
     };
     const toy = run(CORPUS_TEXT, 20);
@@ -134,7 +143,9 @@ describe('bpe-tokenizer', () => {
       'th+e_ 29',
     ]);
     const enc = (s: BpeState, w: string, set: Partial<BpeSettings> = {}) =>
-      encodeWord(s, { ...defaults, ...set }, w).map((p) => show(p.t)).join(' ');
+      encodeWord(s, { ...defaults, ...set } as BpeSettings, w)
+        .map((p) => show(p.t))
+        .join(' ');
     expect(enc(toy, 'walked')).toBe('w alked_');
     expect(enc(toy, 'walking')).toBe('w alk i n g_');
     expect(enc(toy, 'jumped')).toBe('[UNK] u m p ed_');
@@ -142,7 +153,10 @@ describe('bpe-tokenizer', () => {
     expect(tokenTotal(toy.rows)).toBe(193);
 
     const suf = run('low*5 lowest*2 newer*6 wider*3 new*2', 10);
-    expect(suf.merges.slice(0, 2).map((m) => `${m.a}+${m.b} ${m.count}`)).toEqual(['e+r 9', 'er+_ 9']);
+    expect(suf.merges.slice(0, 2).map((m) => `${m.a}+${m.b} ${m.count}`)).toEqual([
+      'e+r 9',
+      'er+_ 9',
+    ]);
     expect(enc(suf, 'lower')).toBe('low er_');
     expect(enc(suf, 'newest')).toBe('new e s t _');
 
@@ -156,9 +170,9 @@ describe('bpe-tokenizer', () => {
     expect(longestFirst(order, defaults, 'her').join(' ')).toBe('he r _');
 
     const bytes = run('café*3 thé*2 été*2 bébé crème*2 tête', 10, { base: 'bytes' });
-    expect(`${show(bytes.merges[0]!.a)} ${show(bytes.merges[0]!.b)} ${bytes.merges[0]!.count}`).toBe(
-      '‹C3› ‹A9› 11',
-    );
+    expect(
+      `${show(bytes.merges[0]!.a)} ${show(bytes.merges[0]!.b)} ${bytes.merges[0]!.count}`,
+    ).toBe('‹C3› ‹A9› 11');
     expect(enc(bytes, 'bébé', { base: 'bytes' })).toBe('b é b é_');
     expect(enc(bytes, 'fête', { base: 'bytes' })).toBe('f ‹C3› ‹AA› t e_');
 
@@ -175,6 +189,14 @@ describe('bpe-tokenizer', () => {
       'aa+aa 3',
       'aaaa+_ 3',
     ]);
+    const a3 = loadState('aaaa*3', defaults) as BpeState;
+    expect(tokenTotal(a3.rows)).toBe(15);
+    expect(tokenTotal(learn(a3, 1, 'first').rows)).toBe(9);
+    const a6 = loadState('aaaaaa', defaults) as BpeState;
+    expect(learn(a6, 1, 'first').merges[0]!.count).toBe(5);
+    expect(tokenTotal(a6.rows) - tokenTotal(learn(a6, 1, 'first').rows)).toBe(3);
+    expect(enc(toy, 'talks')).toBe('t alk s _');
+    expect(toy.base).toHaveLength(22);
   });
 
   it('reads texts and words, and refuses what does not fit', () => {
@@ -187,7 +209,10 @@ describe('bpe-tokenizer', () => {
     expect(parseText('cat*0')).toBeInstanceOf(Error);
     expect(parseText('cat*100')).toBeInstanceOf(Error);
     expect(parseText('abcdefghijklm')).toBeInstanceOf(Error);
-    const many = Array.from({ length: 31 }, (_, i) => `w${'abcdefghijklmnopqrstuvwxyz'[i % 26]}${'xy'[Math.floor(i / 26)]}`);
+    const many = Array.from(
+      { length: 31 },
+      (_, i) => `w${'abcdefghijklmnopqrstuvwxyz'[i % 26]}${'xy'[Math.floor(i / 26)]}`,
+    );
     expect(parseText(many.join(' '))).toBeInstanceOf(Error);
     expect(parseText(many.slice(1).join(' '))).not.toBeInstanceOf(Error);
     expect(parseText('café')).toEqual([{ word: 'café', count: 1 }]);

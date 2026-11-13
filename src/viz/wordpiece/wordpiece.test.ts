@@ -86,7 +86,9 @@ function greedy(vocab: Set<string>, word: string): string[] {
 }
 
 const wordArb = fc.constantFrom(
-  ...'the cat sat on mat dog walked walking talked is a banana unable under undo able rabbit jump boat boxes café'.split(' '),
+  ...'the cat sat on mat dog walked walking talked is a banana unable under undo able rabbit jump boat boxes café'.split(
+    ' ',
+  ),
 );
 const textArb = fc
   .array(fc.tuple(wordArb, fc.integer({ min: 1, max: 6 })), { minLength: 1, maxLength: 8 })
@@ -111,7 +113,12 @@ describe('wordpiece', () => {
   it('keeps its invariants on every step, and the trie walk and the loop agree', () => {
     fc.assert(
       fc.property(textArb, settingsArb, wordArb, (text, set: WpSettings, word) => {
-        const t = new Timeline(wordpiece, set, 1, [['load', text], ['train'], ['merge'], ['encode', word]]);
+        const t = new Timeline(wordpiece, set, 1, [
+          ['load', text],
+          ['train'],
+          ['merge'],
+          ['encode', word],
+        ]);
         for (const e of t.entries)
           for (const step of e.steps)
             for (const r of step.state.rows) {
@@ -163,7 +170,7 @@ describe('wordpiece', () => {
     const first = toy.merges[0]!;
     expect(`${first.a} ${first.b} ${first.count}/${first.ca}·${first.cb}`).toBe('r ##u 2/5·2');
     const enc = (s: WpState, w: string, set: Partial<WpSettings> = {}) =>
-      encodeWord(s, { ...defaults, ...set }, w).join(' ');
+      encodeWord(s, { ...defaults, ...set } as WpSettings, w).join(' ');
     expect(enc(toy, 'walking')).toBe('w ##a ##lkin ##g');
     expect(enc(toy, 'birds')).toBe('bird ##s');
     expect(enc(toy, 'the')).toBe('t ##h ##e');
@@ -180,6 +187,19 @@ describe('wordpiece', () => {
     expect(score3(4 / (4 * 6))).toBe('.167');
     expect(score3(14 / (14 * 14))).toBe('.071');
 
+    expect(learn(loadState('the*12 then*2 hug*3 pug*2 hugs') as WpState, 6).merges[5]!.ab).toBe(
+      'th',
+    );
+    expect(toy.alphabet.filter((t) => !t.startsWith(CONT))).toHaveLength(13);
+    // The two cases in Common mistakes, with vocabularies made by hand.
+    const hand = (v: string[]) => ({ ...(loadState('a') as WpState), alphabet: v });
+    expect(
+      enc(hand(['a', 'u', 'un', '##n', '##a', '##b', '##l', '##e', '##ab', '##able']), 'unable'),
+    ).toBe('un ##able');
+    expect(enc(hand(['ab', 'a', '##bcd', '##c', '##d']), 'abcd')).toBe('ab ##c ##d');
+    expect(enc(hand(['ab', 'a', '##bc']), 'abc')).toBe(UNK);
+    const withB = learn(loadState(`${CORPUS_TEXT} rabbit`) as WpState, 20);
+    expect(enc(withB, 'rabbit')).not.toBe(UNK);
     const suf = learn(loadState('low*5 lowest*2 newer*6 wider*3 new*2') as WpState, 10);
     expect(suf.merges[0]!.ab).toBe('##st');
     expect(enc(suf, 'lower')).toBe('low ##er');
@@ -187,7 +207,10 @@ describe('wordpiece', () => {
 
     // The walks the examples narrate: trie steps and lookups for walking.
     const tl = (trie: boolean) => {
-      const t = new Timeline(wordpiece, { ...defaults, trie }, 1, [['train'], ['encode', 'walking']]);
+      const t = new Timeline(wordpiece, { ...defaults, trie }, 1, [
+        ['train'],
+        ['encode', 'walking'],
+      ]);
       return t.at(t.length - 1).step.vars;
     };
     expect(tl(true)?.['trie steps']).toBe(10);

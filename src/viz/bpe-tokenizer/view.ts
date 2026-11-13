@@ -60,8 +60,16 @@ function wordsPanel(s: BpeState, set: BpeSettings, roles: Map<string, MarkRole>)
 }
 
 function pairsPanel(x: BpeExtra, roles: Map<string, MarkRole>, widest: number): Panel {
-  const lines = (x.pairs ?? []).map((p) => ({ a: show(p.a), b: show(p.b), nums: [String(p.count)] }));
-  const pairW = Math.max(2 * chipW('ab') + 4, widest, ...lines.map((l) => chipW(l.a) + 4 + chipW(l.b)));
+  const lines = (x.pairs ?? []).map((p) => ({
+    a: show(p.a),
+    b: show(p.b),
+    nums: [String(p.count)],
+  }));
+  const pairW = Math.max(
+    2 * chipW('ab') + 4,
+    widest,
+    ...lines.map((l) => chipW(l.a) + 4 + chipW(l.b)),
+  );
   return drawPairs(lines, {
     title: 'pairs',
     heads: ['count'],
@@ -76,7 +84,11 @@ function pairsPanel(x: BpeExtra, roles: Map<string, MarkRole>, widest: number): 
 function vocabPanel(s: BpeState, set: BpeSettings, roles: Map<string, MarkRole>): Panel {
   const reserve = Math.max(set.merges, s.merges.length);
   const longest = Math.max(1, ...s.rows.map((r) => splitWord(r.word, set).join('').length));
-  const tokenW = Math.max(chipW('ab'), ...s.merges.map((m) => chipW(show(m.ab))), chipW('x'.repeat(Math.min(longest, 8))));
+  const tokenW = Math.max(
+    chipW('ab'),
+    ...s.merges.map((m) => chipW(show(m.ab))),
+    chipW('x'.repeat(Math.min(longest, 8))),
+  );
   const bytes = set.base === 'bytes';
   return drawVocab({
     title: `vocabulary: ${vocabSize(s, set)}`,
@@ -94,7 +106,12 @@ function vocabPanel(s: BpeState, set: BpeSettings, roles: Map<string, MarkRole>)
 // ---------------------------------------------------------------------------------------------
 // Encoding
 
-function encodePanel(s: BpeState, x: BpeExtra, set: BpeSettings, roles: Map<string, MarkRole>): Panel {
+function encodePanel(
+  s: BpeState,
+  x: BpeExtra,
+  set: BpeSettings,
+  roles: Map<string, MarkRole>,
+): Panel {
   const out: Shape[] = [];
   const enc = x.enc ?? s.encodings.at(-1);
   const word = enc?.word ?? '';
@@ -117,11 +134,14 @@ function encodePanel(s: BpeState, x: BpeExtra, set: BpeSettings, roles: Map<stri
     label(out, `er-${j}`, 0, y + CHIP_H / 2 + 5, e.word, { dim: true });
     let ex = nameW;
     e.pieces.forEach((p, k) => {
-      ex += chip(out, `er-${j}-${k}`, ex, y, show(p.t), p.t === '[UNK]' ? 'error' : undefined) + CHIP_GAP;
+      ex +=
+        chip(out, `er-${j}-${k}`, ex, y, show(p.t), p.t === '[UNK]' ? 'error' : undefined) +
+        CHIP_GAP;
     });
     widest = Math.max(widest, ex);
   });
-  if (list.length === 0) label(out, 'done-empty', 0, y0 + TITLE_H + CHIP_H / 2 + 5, 'none yet', { dim: true });
+  if (list.length === 0)
+    label(out, 'done-empty', 0, y0 + TITLE_H + CHIP_H / 2 + 5, 'none yet', { dim: true });
   return {
     shapes: out,
     w: Math.max(wide, widest, textW('encoded') + 40),
@@ -134,7 +154,10 @@ function rulesPanel(merges: readonly Merge[], x: BpeExtra, roles: Map<string, Ma
   title(out, 'rules', 'merges, in order');
   const perCol = 10;
   const numW = textW(String(Math.max(9, merges.length))) + 6;
-  const pairW = Math.max(2 * chipW('ab') + 4, ...merges.map((m) => chipW(show(m.a)) + 4 + chipW(show(m.b))));
+  const pairW = Math.max(
+    2 * chipW('ab') + 4,
+    ...merges.map((m) => chipW(show(m.a)) + 4 + chipW(show(m.b))),
+  );
   const colW = numW + pairW + 18;
   const enc = x.enc;
   const applied = new Set(enc?.applied ?? []);
@@ -151,7 +174,8 @@ function rulesPanel(merges: readonly Merge[], x: BpeExtra, roles: Map<string, Ma
     const wa = chip(out, `mr-${i}-a`, cx + numW, cy, show(m.a), roles.get(`mr-${i}-a`) ?? base);
     chip(out, `mr-${i}-b`, cx + numW + wa + 4, cy, show(m.b), roles.get(`mr-${i}-b`) ?? base);
   });
-  if (merges.length === 0) label(out, 'rules-empty', 0, TITLE_H + CHIP_H / 2 + 5, 'none learned yet', { dim: true });
+  if (merges.length === 0)
+    label(out, 'rules-empty', 0, TITLE_H + CHIP_H / 2 + 5, 'none learned yet', { dim: true });
   const cols = Math.max(1, Math.ceil(merges.length / perCol));
   return {
     shapes: out,

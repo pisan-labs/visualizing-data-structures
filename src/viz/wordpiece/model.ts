@@ -167,7 +167,15 @@ function pairRows(pairs: readonly ScoredPair[]): PairRow[] {
     .map(({ a, b, count, ca, cb, score }) => ({ a, b, count, ca, cb, score }));
   const bpe = bpePick(pairs);
   if (bpe && !ranked.slice(0, PAIR_ROWS).includes(bpe))
-    rows.push({ a: bpe.a, b: bpe.b, count: bpe.count, ca: bpe.ca, cb: bpe.cb, score: bpe.score, bpe: true });
+    rows.push({
+      a: bpe.a,
+      b: bpe.b,
+      count: bpe.count,
+      ca: bpe.ca,
+      cb: bpe.cb,
+      score: bpe.score,
+      bpe: true,
+    });
   return rows;
 }
 
@@ -500,7 +508,10 @@ const mergeOp: Op = {
     yield {
       state: end,
       marks: next ? [mark(`vm-${end.merges.length - 1}`, 'new')] : [],
-      say: next && m ? `Learned merge ${end.merges.length}: ${pairName(m)} → ${m.ab}.` : 'Nothing to merge: every word is already one piece.',
+      say:
+        next && m
+          ? `Learned merge ${end.merges.length}: ${pairName(m)} → ${m.ab}.`
+          : 'Nothing to merge: every word is already one piece.',
       lines: next ? ['add'] : ['none'],
       level: 1,
       vars: baseVars(end),
@@ -561,7 +572,9 @@ const encodeOp: Op = {
         lines: ['long'],
         level: 1,
         vars: { ...baseVars(next), [counter]: 0, pieces: 1 },
-        extra: { enc: { word, pieces: [UNK], start: 0, at: 0, last: -1, path: [], unk: true, done: true } },
+        extra: {
+          enc: { word, pieces: [UNK], start: 0, at: 0, last: -1, path: [], unk: true, done: true },
+        },
       };
       return next;
     }
@@ -622,7 +635,10 @@ const encodeOp: Op = {
           break;
         }
         const piece = pieceOf(chars, start, last);
-        const back = at > last ? ` The walk went on to ${pieceOf(chars, start, at)}, which is not a piece, so back off to the last ring.` : '';
+        const back =
+          at > last
+            ? ` The walk went on to ${pieceOf(chars, start, at)}, which is not a piece, so back off to the last ring.`
+            : '';
         pieces.push(piece);
         yield step(
           `Take ${piece}.${back}${last < n ? ` Continue at ${chars[last]}.` : ''}`,
@@ -699,7 +715,12 @@ export const ops = { load: loadOp, train: trainOp, merge: mergeOp, encode: encod
 // ---------------------------------------------------------------------------------------------
 // Pseudocode
 
-const L = (id: string, indent: number, text: string, plain: string) => ({ id, indent, text, plain });
+const L = (id: string, indent: number, text: string, plain: string) => ({
+  id,
+  indent,
+  text,
+  plain,
+});
 
 export function pseudocode(set: WpSettings): PseudoBlock[] {
   const split = L(
@@ -709,23 +730,63 @@ export function pseudocode(set: WpSettings): PseudoBlock[] {
     'Split every word into its first letter and ## letters.',
   );
   const round = (d: number) => [
-    L('count', d, 'count every piece and every pair of neighbours, each word count(w) times', 'Count the pieces and the pairs, each word as often as it occurs.'),
-    L('score', d, 'score(a, b) = count(a b) / (count(a) · count(b))', 'Score a pair high when its halves seldom occur apart.'),
+    L(
+      'count',
+      d,
+      'count every piece and every pair of neighbours, each word count(w) times',
+      'Count the pieces and the pairs, each word as often as it occurs.',
+    ),
+    L(
+      'score',
+      d,
+      'score(a, b) = count(a b) / (count(a) · count(b))',
+      'Score a pair high when its halves seldom occur apart.',
+    ),
     L('best', d, '(a, b) = the pair with the best score (ties: first met)', 'Pick the best pair.'),
     L('none', d, 'if there is no pair: stop', 'If every word is one piece, stop.'),
-    L('merge', d, 'replace every a b with ab (##b loses its ##)', 'Join it into one piece everywhere.'),
+    L(
+      'merge',
+      d,
+      'replace every a b with ab (##b loses its ##)',
+      'Join it into one piece everywhere.',
+    ),
     L('add', d, 'vocabulary.add(ab)', 'Add the piece to the vocabulary.'),
   ];
   const find = set.trie
     ? [
-        L('walk', 2, 'u = root of the trie (the ## trie when i > 1); last = none', 'Walk the trie of pieces from its root:'),
-        L('step', 2, 'while u has a child for the next letter: go down', 'follow the letters of the word down the trie,'),
-        L('remember', 3, 'if u ends a piece: last = u', 'and remember the last ring (a whole piece) passed.'),
+        L(
+          'walk',
+          2,
+          'u = root of the trie (the ## trie when i > 1); last = none',
+          'Walk the trie of pieces from its root:',
+        ),
+        L(
+          'step',
+          2,
+          'while u has a child for the next letter: go down',
+          'follow the letters of the word down the trie,',
+        ),
+        L(
+          'remember',
+          3,
+          'if u ends a piece: last = u',
+          'and remember the last ring (a whole piece) passed.',
+        ),
       ]
     : [
-        L('lfor', 2, 'for j = n down to i', 'Try the rest of the word, then one letter shorter, and so on:'),
+        L(
+          'lfor',
+          2,
+          'for j = n down to i',
+          'Try the rest of the word, then one letter shorter, and so on:',
+        ),
         L('look', 3, 'piece = w[i..j] (with ## when i > 1)', 'look up that piece;'),
-        L('hit', 3, 'if piece is in the vocabulary: last = piece; break', 'stop at the first one in the vocabulary.'),
+        L(
+          'hit',
+          3,
+          'if piece is in the vocabulary: last = piece; break',
+          'stop at the first one in the vocabulary.',
+        ),
       ];
   return [
     { op: 'load', lines: [L('lsig', 0, 'LOAD(text)', 'Read a training text:'), split] },
@@ -736,7 +797,12 @@ export function pseudocode(set: WpSettings): PseudoBlock[] {
         split,
         L('loop', 1, 'repeat k times', 'Then, k times:'),
         ...round(2),
-        L('tret', 1, 'return the vocabulary', 'Keep the vocabulary; the merges are not needed again.'),
+        L(
+          'tret',
+          1,
+          'return the vocabulary',
+          'Keep the vocabulary; the merges are not needed again.',
+        ),
       ],
     },
     { op: 'merge', lines: [L('msig', 0, 'MERGE-ONCE()', 'Learn one more piece:'), ...round(1)] },
@@ -744,11 +810,26 @@ export function pseudocode(set: WpSettings): PseudoBlock[] {
       op: 'encode',
       lines: [
         L('esig', 0, 'ENCODE(w)', 'Split a word into pieces:'),
-        L('long', 1, `if length(w) > ${set.maxLen}: return [${UNK}]`, 'A word that is too long is unknown.'),
+        L(
+          'long',
+          1,
+          `if length(w) > ${set.maxLen}: return [${UNK}]`,
+          'A word that is too long is unknown.',
+        ),
         L('eloop', 1, 'i = 1; while i ≤ n', 'From the start of the word:'),
         ...find,
-        L('unk', 2, `if last = none: return [${UNK}]`, 'If no piece fits, the whole word is unknown.'),
-        L('take', 2, 'output last; i = the letter after it', 'Take the longest piece and continue after it.'),
+        L(
+          'unk',
+          2,
+          `if last = none: return [${UNK}]`,
+          'If no piece fits, the whole word is unknown.',
+        ),
+        L(
+          'take',
+          2,
+          'output last; i = the letter after it',
+          'Take the longest piece and continue after it.',
+        ),
         L('ret', 1, 'return the pieces', 'The pieces are the tokens.'),
       ],
     },

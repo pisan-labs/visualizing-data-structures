@@ -3,7 +3,7 @@
   "viz": "bpe-tokenizer",
   "id": "suffixes",
   "title": "Shared pieces become tokens",
-  "notes": "NOTES",
+  "notes": "low ×5, lowest ×2, newer ×6, wider ×3, new ×2. e r occurs 9 times (newer ×6, wider ×3) and is merged first, then er _. lower is not in the text, yet it encodes as low er_; newest is new e s t _, since est never got a merge.",
   "settings": {
     "merges": 10,
     "eow": true,
@@ -12,21 +12,10 @@
   },
   "seed": 1,
   "ops": [
-    [
-      "load",
-      "low*5 lowest*2 newer*6 wider*3 new*2"
-    ],
-    [
-      "train"
-    ],
-    [
-      "encode",
-      "lower"
-    ],
-    [
-      "encode",
-      "newest"
-    ]
+    ["load", "low*5 lowest*2 newer*6 wider*3 new*2"],
+    ["train"],
+    ["encode", "lower"],
+    ["encode", "newest"]
   ],
   "at": {
     "op": -1,

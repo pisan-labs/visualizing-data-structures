@@ -132,7 +132,10 @@ export const bpe: VizDef<BpeState, BpeSettings, BpeExtra> = {
     presets: [
       trained('The toy corpus', () => CORPUS_TEXT),
       trained('Random words from the corpus', randomText),
-      trained('Shared suffixes (low, lower, newest...)', () => 'low*5 lowest*2 newer*6 wider*3 new*2'),
+      trained(
+        'Shared suffixes (low, lower, newest...)',
+        () => 'low*5 lowest*2 newer*6 wider*3 new*2',
+      ),
       trained('Accented letters', () => 'café*3 thé*2 été*2 bébé crème*2 tête'),
       trained('One word, many times', () => 'banana*4'),
       trained('Words that share nothing', strangers),
@@ -240,7 +243,10 @@ function codeScript(calls: OpCall[], settings: BpeSettings) {
   const input: string[] = [];
   const expected: string[] = [];
   const send = (s: BpeState) => {
-    input.push('reset', ...s.rows.map((r) => `word ${r.count} ${r.pieces.map((p) => p.t).join(' ')}`));
+    input.push(
+      'reset',
+      ...s.rows.map((r) => `word ${r.count} ${r.pieces.map((p) => p.t).join(' ')}`),
+    );
     if (settings.base === 'bytes') input.push(`known ${BYTE_SYMBOLS.join(' ')}`);
   };
   let prev = t.initial.state;
@@ -258,7 +264,12 @@ function codeScript(calls: OpCall[], settings: BpeSettings) {
       const word = readWord(arg);
       if (!(word instanceof Error)) {
         input.push(`encode ${splitWord(word, settings).join(' ')}`);
-        expected.push(e.end.encodings.at(-1)!.pieces.map((p) => p.t).join(' '));
+        expected.push(
+          e.end.encodings
+            .at(-1)!
+            .pieces.map((p) => p.t)
+            .join(' '),
+        );
       }
     }
     prev = e.end;

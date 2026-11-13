@@ -461,3 +461,5 @@
 2026-11-13 [decision] Yusuf (/loop): when tier 1 is finished, build tier 2 (9C) and then tier 3 (9D), without waiting for another go; deploys still only on "deploy"
 
 2026-11-13 [code] Merged wave 9B kv-cache: prefill and generate with the hand-made head, cache on or off, sliding window, work and memory counters; outputs equal with and without the cache (tested)
+
+2026-11-13 [code] Merged wave 9B backpropagation (expression DAG, topological order, chain rule per edge, the overwrite and forgot-zero bugs) and gradient-descent (plain, momentum, Adam on 1D and 2D losses)

@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "unigram-tokenizer",
+  "id": "one-letter",
+  "title": "Only letters: one path",
+  "notes": "X",
+  "settings": {
+    "seed": 16,
+    "target": 8,
+    "split": "best",
+    "alpha": "1"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "the cat sat on the mat, the dog sat on the rug, the cat saw the dog, the dog saw the cat, the dog chased the cat, the cat ran under the tree, the bird sat on the tree, a dog ate the ball, the fox ran and the dog chased it, the cat slept on the mat, the dog walked and the cat walked, the cat is walking, the dog is talking, the bird talked and talked, the fox is running, the dog ran to the box, the cat sat in the box, a bird saw a cat"
+    ],
+    ["encode", "fox"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

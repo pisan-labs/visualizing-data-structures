@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "sampling",
+  "id": "flat-top-k",
+  "title": "Top-k on a flat distribution",
+  "notes": "Six words the model likes about equally. Top-k with k = 3 keeps mat, rug and box, only 0.55 of the probability, and drops tree although box and tree have the same logit: box just comes first. On a flat step a fixed k throws away words the model likes almost as much.",
+  "settings": {
+    "strategy": "top-k",
+    "temperature": "1",
+    "k": 3,
+    "p": "0.9",
+    "minP": "0.1"
+  },
+  "seed": 1,
+  "ops": [["load", "1.2 1.1 1 1 0.9 0.8"], ["sample"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "sampling",
+  "id": "given-u",
+  "title": "Where u lands",
+  "notes": "Softmax first, then top-k with k = 3 keeps mat, rug and box, 0.86 of the probability. Renormalized and laid end to end, mat covers 0 to 0.581 and rug 0.581 to 0.842, so u = 0.62 picks rug.",
+  "settings": {
+    "strategy": "top-k",
+    "temperature": "1",
+    "k": 3,
+    "p": "0.9",
+    "minP": "0.1"
+  },
+  "seed": 1,
+  "ops": [["load", "3.2 2.4 1.9 1.1 0.6 0.1 -0.8 -1.5"], ["softmax"], ["draw", "0.62"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

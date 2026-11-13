@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "sampling",
+  "id": "nucleus",
+  "title": "Top-p keeps the nucleus",
+  "notes": "The default: T = 1 and top-p with p = 0.9. Adding up from the top, mat, rug and box make 0.86, not quite enough, so tree joins them at 0.93. The other four words share the last 7% and drop out. Then u = 0.849 lands in box, the third word: top-p still lets a less likely word through.",
+  "settings": {
+    "strategy": "top-p",
+    "temperature": "1",
+    "k": 3,
+    "p": "0.9",
+    "minP": "0.1"
+  },
+  "seed": 12,
+  "ops": [["load", "3.2 2.4 1.9 1.1 0.6 0.1 -0.8 -1.5"], ["sample"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

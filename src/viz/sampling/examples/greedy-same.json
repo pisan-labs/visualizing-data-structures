@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "sampling",
+  "id": "greedy-same",
+  "title": "Greedy: the same word every time",
+  "notes": "Greedy takes the most likely word and never uses a random number. Twenty draws, twenty mats. The same prompt always gets the same answer.",
+  "settings": {
+    "strategy": "greedy",
+    "temperature": "1",
+    "k": 3,
+    "p": "0.9",
+    "minP": "0.1"
+  },
+  "seed": 1,
+  "ops": [["load", "3.2 2.4 1.9 1.1 0.6 0.1 -0.8 -1.5"], ["repeat"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

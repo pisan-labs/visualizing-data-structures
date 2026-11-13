@@ -920,6 +920,250 @@ Built by three agents in parallel with the accounts slice, split by area so they
 same files: stage and Present mode (1 to 3), practice, progress and the home page (4 to 6), and
 the offline app (7).
 
+## 20. Wave 9: AI and LLMs (planned 2026-11-13, waiting for Yusuf's approval)
+
+Yusuf (13 November): lots of interest in LLMs and the AI algorithms behind them; research which
+topics and visualizations would be useful and write a detailed plan, then ask before building.
+Nothing in this section is built. The questions are in 20.9.
+
+### 20.1 What courses teach (surveyed 2026-11-13)
+
+From course pages and syllabi found on 13 November (search summaries; not every page was read
+in full):
+
+| Course | Topics that match this section |
+|---|---|
+| Stanford CS336, Language Modeling from Scratch (2025, 2026) | tokenization, architectures, GPUs, parallelism, inference, scaling laws, alignment (SFT, RLHF, RLVR) |
+| Old Dominion CS 795/895 (spring 2026) | tokenization, self-attention, a KV-cache week (cache growth, sliding-window eviction), decoding |
+| UC Merced CSE 188 (spring 2026) | BPE; efficient generation: KV cache, prefill against decode, memory |
+| Johns Hopkins, ChatGPT from Scratch (2025, 2026) | tokenization, multi-head attention, sampling and inference, quantization |
+| IIT Delhi / NPTEL, Introduction to LLMs (2025) | greedy, beam search, temperature, top-k and nucleus sampling |
+| Stanford CME 295, Transformers (2025) | tokenization, attention, decoding, mixture of experts, scaling laws (from a news summary, not checked against Stanford's site) |
+
+Texts these courses name: Raschka, *Build a Large Language Model (From Scratch)*; Amidi and
+Amidi, *Super Study Guide: Transformers and LLMs*; Jurafsky and Martin, *Speech and Language
+Processing* (3rd edition draft, "SLP3").
+
+What every list shares: tokenization (BPE), attention and the transformer block, decoding and
+sampling, the KV cache. Most add quantization and mixture of experts. Systems courses add
+paged KV memory, batching and FlashAttention.
+
+### 20.2 What other tools do (surveyed 2026-11-13)
+
+As in 13.1, the names are a record of what we looked at; we copy no design, names, examples or
+code.
+
+| Tool | What it shows |
+|---|---|
+| Transformer Explainer (Georgia Tech, IEEE VIS 2024) | a live GPT-2 in the browser: the forward pass, attention, temperature; layers zoom from pipeline to matrix math |
+| AnimatedLLM (Kasner and Dušek, 2026) | precomputed traces of open models on curated inputs, step by step |
+| bbycroft.net/llm | a 3D walk through a tiny GPT (about 85 000 parameters) that sorts letters |
+| Eigenvue | step-by-step pages for BPE, embeddings, self-attention, multi-head attention, transformer block, perceptron, backprop, gradient descent (SGD, momentum, Adam) |
+| BPE demos (Cornell CS 4782, Imperial, Nipun Batra, others) | merges one at a time; Cornell's puts BPE and WordPiece side by side |
+| FlashAttention demos (several blogs) | tiles and the running max and sum of the online softmax |
+| Speculative decoding (Adaptive ML; an LLM inference explorer; a rejection-sampling trace) | draft, verify, accept or reject; speedup against draft length |
+| RoPE demos (Oakland, Cornell, Hugging Face Spaces) | rotating pairs of dimensions; the dot product depends only on the distance |
+| HNSW (Zilliz Feder; a 2026 talk on vector search) | the search path down the layers; quantization in the talk |
+| MoE, GRPO | a few blog widgets (router scores per expert; group-relative advantages) |
+| PagedAttention, constrained decoding | explanations and diagrams only; no step-through tool found |
+
+What they get right:
+- real or realistic model behaviour (Transformer Explainer runs GPT-2 itself);
+- zooming from the whole pipeline down to one matrix product;
+- sliders for temperature, k and p, and accept/reject traces for speculative decoding.
+
+What they leave out, and StepWise already has:
+- stepping back, and pseudocode in step with the picture;
+- code in Python, Java and C++ that CI checks against the model;
+- seeded practice graded in the browser, assignment links, worksheets;
+- compare mode (greedy against beam, BPE against WordPiece, HNSW against brute force);
+- links to the classic data structure each technique rests on;
+- the systems side: paged KV memory, prefix caching, batching and constrained decoding have
+  explanations but almost no step-through visualization.
+
+I could not find studies of what students get wrong about attention; the one paper found
+(arXiv 2601.21631) reports that building a small model moves students from "it's magic" or
+anthropomorphic explanations to technical ones. That supports small models learners can step
+through.
+
+### 20.3 The angle
+
+**The algorithms and data structures inside an LLM.** StepWise should not try to be a second
+Transformer Explainer: we cannot ship GPT-2 weights offline, and others do that well. We do
+what they do not: every number on screen comes from a step a learner can pause, rewind, predict
+and code. Each page links to the classic pages it rests on:
+
+| LLM page | Rests on |
+|---|---|
+| BPE | Huffman, LZW (compression by merging frequent pairs) |
+| WordPiece | trie (greedy longest match) |
+| Unigram tokenizer | dynamic programming (Viterbi over a lattice) |
+| constrained decoding | regex to NFA, NFA to DFA, DFA |
+| beam search, top-k | BFS by layers, binary heap, quickselect |
+| backpropagation | topological sort (DFS) on a DAG |
+| HNSW | skip list, greedy graph search |
+| paged KV cache, prefix cache | free lists, reference counts, compressed trie, LRU cache |
+| MoE routing | load balancing, consistent hashing |
+| IVF, product quantization | k-means |
+| BM25 | inverted index (hashing) |
+| embeddings search | brute-force top-k with a heap |
+
+### 20.4 Conventions
+
+- **Default text:** SLP3 where it defines the method (tokenization, n-grams, decoding,
+  embeddings); otherwise the original paper (Vaswani et al. 2017 for attention, Su et al. for
+  RoPE, Kwon et al. 2023 for PagedAttention, Dao et al. for FlashAttention, Malkov and Yashunin
+  for HNSW, Leviathan et al. 2023 for speculative decoding). Where sources differ, a setting,
+  as everywhere else.
+- **Notation:** row vectors, `X·W`; `Q`, `K`, `V`, `d_k`; scaling by `1/√d_k`; causal mask on
+  in decoder pages; pre-norm (as in GPT-2 and later). Plain-English pseudocode says "how well
+  this word's question matches that word's label" before it says "dot product".
+- **Toy sizes:** at most about 30 vocabulary items, 8 tokens, model width 8 and 4 heads, so
+  every number fits on a phone (an 8 × 8 grid at 360 px gives cells of about 40 px).
+- **Weights:** seeded from `rng.ts` and rounded to one decimal, or set by hand to show a
+  pattern (a head that looks at the previous token). Never real model weights: they are large,
+  have licences, and would break the offline size budget.
+- **Numbers:** float64 in the model, two decimals on screen, three decimals (`round3`, half up,
+  as on the PageRank page) in the code drivers. Java uses `StrictMath` for `exp`, `log` and
+  `sqrt`, so the three tabs agree.
+- **Randomness:** every draw uses the seeded RNG; sampling pages show the uniform number drawn
+  and the cumulative distribution it lands in.
+- **At real scale:** each concept page has a short section with real sizes (for example GPT-2
+  small: 12 layers, 12 heads, width 768, 50 257 tokens), each checked against its paper or
+  model card when written, with the year. No claims about a company's unpublished internals.
+- **A shared toy corpus** we write ourselves (a few dozen short sentences), used by the
+  tokenizers, the n-gram model, word2vec and speculative decoding, so a learner meets the same
+  words across pages.
+
+### 20.5 Shared pieces (new)
+
+1. **Shaded cells:** a `shade` value on `rect` shapes (0 to 1, or −1 to 1 for diverging),
+   drawn from a theme-aware, colour-blind-safe ramp. The number is always printed in the cell,
+   so colour is never the only cue (axe and contrast checks in e2e).
+2. **`src/viz/_matrix/`:** matrix layout with row and column labels; highlight a row, a column
+   and a cell; a matrix product cell by cell at level 3; probability bars with a cut line (top-k,
+   top-p); 2D vectors as arrows. Built on `_grid` where it fits.
+3. **`src/viz/_lm/`:** the toy corpus, a stable softmax (subtract the max), seeded weight
+   matrices, a bigram model, so pages share one toy world.
+4. **Catalog:** a fourth pathway, `ai` ("AI and LLMs"), with the six families below; the
+   catalog gets a fourth pathway button.
+5. **Releases:** each wave is one release in `src/releases.ts`, which since today also feeds
+   the platform's opt-in email (`notify-feed.json`) once deployed.
+
+### 20.6 Pages (29, in three tiers)
+
+Tier 1 is what nearly every course teaches; tier 2 is systems and retrieval; tier 3 is
+advanced (`advanced: true`). Every page meets the definition of done in `CLAUDE.md`.
+
+**Tokenization**
+
+| id | Tier | What it shows | Settings | Practice |
+|---|---|---|---|---|
+| `bpe-tokenizer` | 1 | training: count adjacent pairs, merge the most frequent, the vocabulary grows; encoding: apply merges in the order learned | characters or bytes; end-of-word marker; tie-break (first seen or alphabetical) | the next merge; tokens after k merges; encode a new word |
+| `wordpiece` | 1 | greedy longest match over a trie with `##` pieces; `[UNK]` when nothing matches; training scores pairs by count(ab) / (count(a) · count(b)) | maximum word length; show the trie | the pieces of a word; which word becomes `[UNK]` |
+| `unigram-tokenizer` | 2 | the best split as a shortest path through a lattice (Viterbi); training prunes the pieces that cost least | sample a split (subword regularization) | best split; its score |
+
+**Language models and decoding**
+
+| id | Tier | What it shows | Settings | Practice |
+|---|---|---|---|---|
+| `ngram-lm` | 1 | count bigrams or trigrams from the corpus, turn counts into probabilities, generate by sampling, perplexity of a sentence | n; add-k smoothing or backoff | a probability; the next word distribution; which sentence has lower perplexity |
+| `sampling` | 1 | logits to a stable softmax, temperature, greedy, top-k, top-p, min-p: the cut, the renormalized bars, the draw | strategy; temperature; k; p | which tokens survive; a probability after renormalizing; the token drawn for a given u |
+| `beam-search` | 1 | the tree of hypotheses, keeping the best B each step; a case where greedy misses the best sequence | width; length normalization; end-of-sequence handling | the beam after step t; the final sequence |
+| `speculative-decoding` | 2 | a small model drafts k tokens, the large model checks them in one pass, accept with min(1, p/q), resample from the leftover on a reject; target passes saved | k; greedy or sampling acceptance | how many drafts are accepted; the passes saved |
+| `constrained-decoding` | 2 | a regex compiled to a DFA, then a mask per state over a vocabulary of multi-letter tokens; masked logits set to −∞; the index built once | regex; precompute the index or check each token | allowed tokens in a state; the output |
+
+**Inside the transformer**
+
+| id | Tier | What it shows | Settings | Practice |
+|---|---|---|---|---|
+| `embeddings` | 1 | words as vectors in 2D; dot product against cosine; nearest neighbours by brute force with a heap; analogy arithmetic | similarity measure; normalize | nearest word; which similarity is larger |
+| `self-attention` | 1 (slice) | `Q = XW_Q`, `K`, `V`; scores `QKᵀ`; scale; causal mask; softmax per row; weighted sum of `V`; every dot product at level 3 | causal; scaling on or off (why it matters); `d_k` | a score; which entries are masked; the largest weight in a row |
+| `multi-head-attention` | 1 | split into heads, each with its own pattern; concatenate; output projection; MQA and GQA share K and V heads | heads; KV heads (MHA, GQA, MQA) | head width; KV-cache size for a setting |
+| `positional-encoding` | 1 | sinusoidal, learned, RoPE (rotate pairs; the score depends only on the distance), ALiBi (a linear bias) | scheme; dimensions | the angle for a pair at a position; which pairs spin fastest |
+| `transformer-block` | 2 | one token's vector through norm, attention, residual add, MLP, residual add; then the unembedding to logits and the next token | pre- or post-norm; LayerNorm or RMSNorm; ReLU, GELU or SwiGLU | the residual after a step; parameter count |
+| `moe-routing` | 2 | a router scores experts per token, top-k chosen, softmax over the chosen, capacity and dropped tokens, the load-balance readout | k; capacity factor; token choice or expert choice | which experts a token uses; dropped tokens |
+
+**Learning**
+
+| id | Tier | What it shows | Settings | Practice |
+|---|---|---|---|---|
+| `backpropagation` | 1 | a small expression or neuron as a DAG: forward values, topological order, gradients by the chain rule, gradients that add up when a value is used twice (the classic bug) | expression; zero the gradients or not | a gradient; the order nodes are visited |
+| `gradient-descent` | 1 | a 1D and a 2D loss surface; steps with learning rates that crawl, converge and diverge; momentum; Adam | method; learning rate; β values | the next point; does it converge |
+| `word2vec` | 3 | skip-gram with negative sampling: windows make pairs, each update pulls a pair together and pushes negatives apart, in 2D | window; negatives | the pairs a window makes; the direction of an update |
+| `policy-optimization` | 3 | a policy over four answers as bars; rewards; REINFORCE, PPO's clip and GRPO's group-normalized advantage move the bars; a KL penalty holds them near the reference; DPO from preference pairs | method; clip ε; KL β | the advantages for a group; which bar grows |
+
+**Serving LLMs**
+
+| id | Tier | What it shows | Settings | Practice |
+|---|---|---|---|---|
+| `kv-cache` | 1 | generating with and without a cache: recompute every K and V, or append one row; prefill against decode; work and memory as counters; sliding-window eviction | cache on or off; window | work for token t; cache size |
+| `paged-attention` | 2 | block tables map each sequence's logical blocks to physical blocks; allocation on demand; freeing; shared prompt blocks with reference counts; copy-on-write when samples diverge; waste against contiguous allocation | block size; sharing | blocks in use; the table after a step |
+| `continuous-batching` | 2 | requests of different lengths on a time line; static batching waits for the longest, iteration-level scheduling fills free slots; throughput and waiting time | batch slots; policy | finish time of a request; idle slots |
+| `quantization` | 2 | absmax int8, zero-point (asymmetric), per-tensor against per-block scales; one outlier ruins a per-tensor scale; the error readout | bits; symmetric; block size | the code for a value; the value it decodes to |
+| `prefix-cache` | 3 | a radix tree of token prefixes over cached blocks; matching a new prompt; LRU eviction of leaves | capacity | the length matched; what is evicted |
+| `flash-attention` | 3 | Q blocks against K/V blocks; the running max, sum and rescaled output of the online softmax; the same answer as plain attention; memory reads as a counter | block sizes | the running max after a block; reads saved |
+
+**Retrieval and vector search**
+
+| id | Tier | What it shows | Settings | Practice |
+|---|---|---|---|---|
+| `k-means` | 2 | Lloyd's algorithm: assign, move centres, repeat; empty clusters; k-means++ seeding | k; seeding | the next assignment; the new centre |
+| `bm25` | 2 | an inverted index; scores with term frequency saturation (k₁) and length normalization (b); top documents | k₁; b | a term's score; the top document |
+| `hnsw` | 2 | insertion with a random level (as in a skip list), greedy descent, neighbour lists; search with a candidate list of size ef; recall against brute force | M; ef | the path of a search; neighbours after an insert |
+| `ivf-index` | 3 | k-means cells, search the nprobe nearest cells; the neighbour missed in a cell not probed | lists; nprobe | which cells are searched; is the answer exact |
+| `product-quantization` | 3 | split vectors into pieces, a k-means codebook per piece, codes; distance by table lookups (asymmetric distance) | pieces; codebook size | the code of a vector; an approximate distance |
+
+### 20.7 Considered and left out
+
+- **Real models in the browser:** megabytes of weights, against the offline size budget and
+  our "nothing external" rule; Transformer Explainer already does it well.
+- **RNNs and LSTMs:** courses now mention them only as history; a later page if asked.
+- **CNNs, diffusion, GANs:** not LLM algorithms; good tools exist (CNN Explainer, GAN Lab).
+- **LoRA, scaling laws:** one formula or one plot each, little to step through; a section on
+  the transformer-block or a Foundations-style page later.
+- **Parallel training** (ring all-reduce, tensor and pipeline parallelism): ring all-reduce is a
+  good algorithm page; a candidate for later.
+- **MCTS and search over reasoning steps, interpretability (probes, sparse autoencoders),
+  agents and prompting:** not settled enough or not algorithms we can test.
+
+### 20.8 Order of work and risks
+
+1. **9A, vertical slice:** shared pieces 1 to 4 and `self-attention` only. It tests the new
+   parts end to end: shaded cells, matrix layout, float output in three languages, practice
+   with numbers, the new pathway. Yusuf looks at it on `next` before anything else is built.
+2. **9B, the rest of tier 1** (11 pages), agents in parallel as in wave 7, grouped by shared
+   pieces: tokenization (`bpe-tokenizer`, `wordpiece`); decoding (`ngram-lm`, `sampling`,
+   `beam-search`); transformer (`embeddings`, `multi-head-attention`, `positional-encoding`);
+   learning (`backpropagation`, `gradient-descent`); `kv-cache`.
+3. **9C, tier 2** (11 pages), then **9D, tier 3** (6 pages), each after Yusuf says go.
+4. After each wave, an independent review agent checks the numbers against a reference
+   implementation and the concept pages for overclaims and dated facts.
+
+Risks:
+- **Float agreement across tabs:** `round3`, `StrictMath` in Java; a value that lands exactly
+  on a rounding edge can still differ by 0.001. Code tests compare numbers within 0.0015 for
+  these pages only.
+- **A field that moves fast:** concept pages stick to published algorithms and date their
+  "at real scale" numbers.
+- **Toy sizes mislead about scale:** the "at real scale" sections say how far off we are.
+- **Scope:** 29 pages; the tiers let us stop after any wave.
+- **Cost:** quota only, no paid services; each deploy 15 Netlify credits, only on "deploy".
+
+### 20.9 Questions for Yusuf
+
+1. Scope: build tiers 1 and 2 (23 pages) after the slice, and tier 3 later? Recommended: yes.
+2. Placement: a fourth pathway "AI and LLMs", or these families under Algorithms? Recommended:
+   a fourth pathway, so the section is easy to find and to link to.
+3. Weights: seeded or hand-set toy weights everywhere, or also a tiny model we train ourselves
+   (in TypeScript, deterministic, a few kB committed) so `transformer-block` predicts a
+   sensible next token? Recommended: toy weights now; decide the trained model when
+   `transformer-block` comes up in 9C.
+4. Default text: SLP3 and the original papers, or Raschka's book? Recommended: SLP3 and papers
+   (free to read, and courses name them).
+5. Anything from 20.7 you want in now (RNN/LSTM, LoRA, ring all-reduce, MCTS)?
+6. Approve 9A (the slice) to start?
+
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 
 | Page | Controls |

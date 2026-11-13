@@ -445,3 +445,5 @@
 2026-11-11 [decision] The session relay ends (Yusuf): StepWise routines deleted, session archived; main moves only on "deploy"; HANDOFF.md is the closing handoff
 
 2026-11-13 [code] dist/notify-feed.json (src/notify-feed.ts, built with releases.json) for the platform app-notify daily email, asked by Plabs; "Email me when StepWise adds new pages (at most once a day)" wording; goes live with the next deploy
+
+2026-11-13 [plan] PLAN.md section 20: wave 9, AI and LLMs (29 pages in three tiers, a self-attention slice first), surveyed courses and tools; waiting for Yusuf's approval

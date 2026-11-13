@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "transformer-block",
+  "id": "llama-style",
+  "title": "RMSNorm and SwiGLU, as in Llama",
+  "notes": "Pre-norm with RMSNorm and SwiGLU. RMSNorm leaves the zeros at 0: the 1 of the becomes 2.83. Attention finds dog and votes 2.14 for a thing. mat and box tie at 2.04; a tie goes to the word that comes first in the vocabulary.",
+  "settings": {
+    "order": "pre",
+    "norm": "rms",
+    "act": "swiglu"
+  },
+  "seed": 1,
+  "ops": [["load", "the dog saw the"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

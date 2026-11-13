@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "moe-routing",
+  "id": "small-words",
+  "title": "One busy expert",
+  "notes": "Five of the eight tokens are small words, so E4 is asked for five first choices and has 4 slots. The third the misses out; its second choice, E2, is full too, so it gets no expert at all. 2 of 16 assignments are dropped.",
+  "settings": {
+    "k": "2",
+    "cf": "1",
+    "routing": "token"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat and the dog and the fox"], ["route"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

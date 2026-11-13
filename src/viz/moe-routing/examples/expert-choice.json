@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "moe-routing",
+  "id": "expert-choice",
+  "title": "Experts choose their tokens",
+  "notes": "The sentence of One busy expert, but each expert picks the 4 tokens with the highest p for it. Every expert is full and the loss is exactly 1. E1 has only three animals, so it also takes the first and (0.14), which ends up with all four experts; the last the gets just E4.",
+  "settings": {
+    "k": "2",
+    "cf": "1",
+    "routing": "expert"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat and the dog and the fox"], ["route"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "moe-routing",
+  "id": "expert-choice-tight",
+  "title": "Expert choice leaves a token out",
+  "notes": "Two slots per expert. E2 likes things and there are none, so it takes the two ands. E4 takes the first two thes, and no expert takes the third: it passes by on the residual. E3 takes dog over cat, 0.154 to 0.146. Expert choice balances the experts, not the tokens.",
+  "settings": {
+    "k": "1",
+    "cf": "1",
+    "routing": "expert"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat and the dog and the fox"], ["route"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

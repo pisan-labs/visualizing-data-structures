@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "moe-routing",
+  "id": "animals-only",
+  "title": "The router collapses",
+  "notes": "Six animals, and the router sends every one to E1. It has ⌈1.25 × 6 / 4⌉ = 2 slots, so four tokens are dropped while three experts sit idle. The loss is 2.48, far from 1: this is the collapse the load-balance loss is there to prevent.",
+  "settings": {
+    "k": "1",
+    "cf": "1.25",
+    "routing": "token"
+  },
+  "seed": 1,
+  "ops": [["load", "cat dog fox bird cat dog"], ["route"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

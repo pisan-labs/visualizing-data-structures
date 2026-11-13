@@ -46,8 +46,8 @@ test('"Show me" links load an example and play it', async ({ page }) => {
 });
 
 test('a practice question is graded and Show me plays the answer', async ({ page }) => {
-  await page.goto('/self-attention/#practice=13579&n=4');
-  await expect(page.locator('.question')).toHaveCount(4);
+  await page.goto('/self-attention/#practice=13579&n=5');
+  await expect(page.locator('.question')).toHaveCount(5);
   const first = page.locator('.question').first();
   await first.getByRole('button', { name: 'Check' }).click();
   const verdict = first.locator('.feedback strong');

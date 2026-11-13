@@ -20,6 +20,7 @@ import { pickLayout } from '../../layouts/arrange';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { round3, short } from '../_lm/numbers';
 import { drawTable, type Column, type Row } from '../_decode/bars';
+import { arrange, fromBounds, type Block } from '../_dec2/layout';
 import { chip, chipW, CHIP_H, label, textW, title, TITLE_H, type Panel } from '../_tokenize/draw';
 import {
   colId,
@@ -370,42 +371,7 @@ function barsPanel(f: Focus, roles: Roles): { shapes: Shape[]; bounds: Bounds } 
 
 // ---------------------------------------------------------------------------------------------
 
-function shift(shapes: Shape[], dx: number, dy: number): Shape[] {
-  return shapes.map((s) => {
-    if (s.kind === 'arrow')
-      return {
-        ...s,
-        x1: s.x1 + dx,
-        y1: s.y1 + dy,
-        x2: s.x2 + dx,
-        y2: s.y2 + dy,
-        via: s.via && { x: s.via.x + dx, y: s.via.y + dy },
-      };
-    if (s.kind === 'polygon')
-      return { ...s, points: s.points.map((p) => ({ x: p.x + dx, y: p.y + dy })) };
-    return { ...s, x: s.x + dx, y: s.y + dy };
-  });
-}
-
-interface Block {
-  shapes: Shape[];
-  w: number;
-  h: number;
-}
-
 const asBlock = (p: Panel): Block => ({ shapes: p.shapes, w: p.w, h: p.h });
-const fromBounds = (t: { shapes: Shape[]; bounds: Bounds }): Block => ({
-  shapes: shift(t.shapes, -t.bounds.x - 12, -t.bounds.y - 12),
-  w: t.bounds.w - 24,
-  h: t.bounds.h - 24,
-});
-
-function arrange(parts: { b: Block; x: number; y: number }[]): { shapes: Shape[]; bounds: Bounds } {
-  const shapes = parts.flatMap(({ b, x, y }) => shift(b.shapes, x, y));
-  const x2 = Math.max(...parts.map(({ b, x }) => x + b.w));
-  const y2 = Math.max(...parts.map(({ b, y }) => y + b.h));
-  return { shapes, bounds: { x: -12, y: -12, w: x2 + 24, h: y2 + 24 } };
-}
 
 export function view(
   step: Step<SpecState, SpecExtra>,

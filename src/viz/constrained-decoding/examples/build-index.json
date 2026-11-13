@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "constrained-decoding",
+  "id": "build-index",
+  "title": "The index, built once",
+  "notes": "Every token walked from every state of the DFA for yes|no: 9 of the 70 (state, token) pairs are allowed, for 71 lookups. yes from q0 crosses three moves and ends in q3; only q3 allows </s>.",
+  "settings": {
+    "mask": true,
+    "index": "precompute",
+    "decode": "greedy"
+  },
+  "seed": 1,
+  "ops": [["compile", "yes|no"], ["index"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

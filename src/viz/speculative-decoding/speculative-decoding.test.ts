@@ -170,7 +170,11 @@ describe('speculative decoding', () => {
   });
 
   it('tells the story the examples tell', () => {
-    const end = (prompt: string, seed: number, settings: Partial<SpecSettings> = {}) =>
+    const end = (
+      prompt: string,
+      seed: number,
+      settings: { k?: number; accept?: SpecSettings['accept'] } = {},
+    ) =>
       new Timeline(speculative, { ...defaults, ...settings }, seed, [
         ['start', prompt],
         ['generate'],

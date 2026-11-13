@@ -59,8 +59,7 @@ export interface Req {
 
 /** One slot in one iteration: a request's prefill or decode, or idle. */
 export type Cell =
-  | { req: string; kind: 'prefill' | 'decode' }
-  | { req: null; kind: 'idle'; waiting: boolean };
+  { req: string; kind: 'prefill' | 'decode' } | { req: null; kind: 'idle'; waiting: boolean };
 
 export interface CbState {
   /** In the order added. */
@@ -222,7 +221,16 @@ export const ALL_SETTINGS: CbSettings[] = [2, 3, 4].flatMap((slots) =>
 export function withRequests(settings: CbSettings, specs: readonly Spec[]): S {
   const s = init(settings);
   specs.forEach(([arrive, prompt, out], i) =>
-    s.reqs.push({ name: NAMES[i]!, arrive, prompt, out, start: null, made: 0, last: null, done: null }),
+    s.reqs.push({
+      name: NAMES[i]!,
+      arrive,
+      prompt,
+      out,
+      start: null,
+      made: 0,
+      last: null,
+      done: null,
+    }),
   );
   return s;
 }
@@ -295,11 +303,12 @@ const whole = (v: Value | undefined): number =>
 export function iterationSay(it: Iteration, s: S, settings: CbSettings): string {
   const parts: string[] = [];
   if (it.joined.length) {
-    const who = it.joined.map(([n, i]) => `${n} into slot ${i + 1}`);
+    const who = it.joined.map(([n, i]) => `${n} in slot ${i + 1}`);
+    const takes = it.joined.map(([n, i]) => `${n} takes slot ${i + 1}`);
     parts.push(
       it.newBatch
-        ? `A new batch starts: ${list(who)}. No one else joins until all of ${it.joined.length === 1 ? 'it is' : 'them are'} done.`
-        : `${list(who)}.`,
+        ? `A new batch starts: ${list(who)}. No one else joins until ${it.joined.length === 1 ? 'it is' : 'all of them are'} done.`
+        : `${list(takes)}.`,
     );
   }
   const pre = it.ran.filter((r) => r.kind === 'prefill').map((r) => r.name);
@@ -309,7 +318,9 @@ export function iterationSay(it: Iteration, s: S, settings: CbSettings): string 
       `${list(pre)} ${pre.length === 1 ? 'reads its prompt' : 'read their prompts'} (${pre.map((n) => `${reqOf(s, n).prompt} tokens`).join(', ')}) and ${pre.length === 1 ? 'writes its' : 'write their'} first token.`,
     );
   if (dec.length)
-    parts.push(`${list(dec)} ${dec.length === 1 ? 'writes one more token' : 'each write one more token'}.`);
+    parts.push(
+      `${list(dec)} ${dec.length === 1 ? 'writes one more token' : 'each write one more token'}.`,
+    );
   if (!it.ran.length) parts.push('Every slot is idle: no request is here yet.');
   if (settings.policy === 'continuous') {
     if (it.returned.length)
@@ -323,20 +334,23 @@ export function iterationSay(it: Iteration, s: S, settings: CbSettings): string 
         `${list(held)} ${held.length === 1 ? 'has' : 'have'} written ${held.length === 1 ? 'its' : 'their'} last token, but the slot stays idle until the whole batch is done.`,
       );
     if (it.returned.length)
-      parts.push(
-        `The batch is done: ${list(it.returned)} return together at time ${it.t + 1}.`,
-      );
+      parts.push(`The batch is done: ${list(it.returned)} return together at time ${it.t + 1}.`);
   }
   if (it.waiting.length && it.idle)
     parts.push(
       `${plural(it.idle, 'slot')} idle while ${list(it.waiting)} ${it.waiting.length === 1 ? 'waits' : 'wait'}.`,
     );
-  else if (it.waiting.length) parts.push(`${list(it.waiting)} ${it.waiting.length === 1 ? 'waits' : 'wait'}.`);
+  else if (it.waiting.length)
+    parts.push(`${list(it.waiting)} ${it.waiting.length === 1 ? 'waits' : 'wait'}.`);
   return `Iteration ${it.t}: ${parts.join(' ')}`;
 }
 
 /** One iteration as steps: the scheduler's choice (level 3), then the iteration (level 2). */
-function* iterate(s: S, settings: CbSettings, level: 1 | 2): Generator<CStep, { state: S; it: Iteration }> {
+function* iterate(
+  s: S,
+  settings: CbSettings,
+  level: 1 | 2,
+): Generator<CStep, { state: S; it: Iteration }> {
   const t = s.clock;
   const { state: admitted, joined } = admit(s, settings);
   const newBatch = settings.policy === 'static' && joined.length > 0;
@@ -419,7 +433,16 @@ const addOp: Op = {
     const name = NAMES[s.reqs.length]!;
     const state = (() => {
       const t = clone(s);
-      t.reqs.push({ name, arrive: a, prompt: p, out: n, start: null, made: 0, last: null, done: null });
+      t.reqs.push({
+        name,
+        arrive: a,
+        prompt: p,
+        out: n,
+        start: null,
+        made: 0,
+        last: null,
+        done: null,
+      });
       return t;
     })();
     const end = finishTime(state, settings);
@@ -443,7 +466,8 @@ const addOp: Op = {
 };
 
 function nothingLeft(s: S): string | null {
-  if (!s.reqs.length) return 'No requests yet. Type when one arrives, its prompt and its length, such as 0 5 3, and press Add.';
+  if (!s.reqs.length)
+    return 'No requests yet. Type when one arrives, its prompt and its length, such as 0 5 3, and press Add.';
   if (!unfinished(s).length) return 'Every request is done. Add another to keep going.';
   return null;
 }
@@ -491,7 +515,12 @@ export const ops = { add: addOp, tick: tickOp, run: runOp };
 // ---------------------------------------------------------------------------------------------
 // Pseudocode
 
-const L = (id: string, indent: number, text: string, plain: string) => ({ id, indent, text, plain });
+const L = (id: string, indent: number, text: string, plain: string) => ({
+  id,
+  indent,
+  text,
+  plain,
+});
 
 export function pseudocode(settings: CbSettings): PseudoBlock[] {
   const fill =
@@ -557,7 +586,10 @@ export function pseudocode(settings: CbSettings): PseudoBlock[] {
     },
     {
       op: 'tick',
-      lines: [L('t-sig', 0, 'ITERATION(t)', 'One step of the model for everyone in a slot:'), ...body],
+      lines: [
+        L('t-sig', 0, 'ITERATION(t)', 'One step of the model for everyone in a slot:'),
+        ...body,
+      ],
     },
     {
       op: 'run',

@@ -3,7 +3,7 @@
   "viz": "continuous-batching",
   "id": "equal-lengths",
   "title": "Equal lengths: static batching is enough",
-  "notes": "NOTES",
+  "notes": "Six requests of 3 tokens each, all at once. Two full batches, no idle slot: 3 tokens per iteration. With no stragglers, static batching loses nothing.",
   "settings": {
     "slots": 3,
     "policy": "static"

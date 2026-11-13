@@ -43,7 +43,9 @@ function parseInput(token: string): Value | Error {
   const t = token.trim();
   if (/^\d+$/.test(t)) return Number(t);
   if (/^[a-z]$/i.test(t)) return t.toUpperCase();
-  return new Error(`Type a prompt length (1 to ${MAX_LEN}) for Add, or a request's letter, such as A.`);
+  return new Error(
+    `Type a prompt length (1 to ${MAX_LEN}) for Add, or a request's letter, such as A.`,
+  );
 }
 
 export const pagedAttention: VizDef<PagedState, PagedSettings, PagedExtra> = {

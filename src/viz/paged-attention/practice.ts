@@ -39,7 +39,8 @@ export function pagedPractice(def: () => Def): PracticeKind[] {
       ['add', rng.int(1, short)],
       ['add', rng.int(1, short)],
     ];
-    if (rng.int(0, 1)) calls.push(...steps(rng.int(1, 2)), ['finish', 'A'], ['add', rng.int(1, short)]);
+    if (rng.int(0, 1))
+      calls.push(...steps(rng.int(1, 2)), ['finish', 'A'], ['add', rng.int(1, short)]);
     else calls.push(['add', rng.int(1, short)]);
     return calls;
   }
@@ -110,9 +111,15 @@ export function pagedPractice(def: () => Def): PracticeKind[] {
       id: 'freed',
       title: 'Blocks freed when a request finishes',
       make(rng) {
-        const settings: PagedSettings = { block: pick<BlockSetting>(rng, ['2', '4']), sharing: true };
+        const settings: PagedSettings = {
+          block: pick<BlockSetting>(rng, ['2', '4']),
+          sharing: true,
+        };
         const B = sizeOf(settings);
-        const setup: OpCall[] = [['add', rng.int(B + 1, 3 * B)], ['fork', 'A']];
+        const setup: OpCall[] = [
+          ['add', rng.int(B + 1, 3 * B)],
+          ['fork', 'A'],
+        ];
         if (rng.int(0, 1)) setup.push(['add', rng.int(2, 6)]);
         setup.push(...steps(rng.int(1, B + 1)));
         const who = pick(rng, ['A', 'B']);
@@ -141,7 +148,9 @@ export function pagedPractice(def: () => Def): PracticeKind[] {
         const watch = steps(k);
         const after = run(settings, [...setup, ...watch]);
         const B = sizeOf(settings);
-        const per = after.seqs.map((q) => `${q.name}: ${q.table.length} × ${B} − ${q.len} = ${q.table.length * B - q.len}`);
+        const per = after.seqs.map(
+          (q) => `${q.name}: ${q.table.length} × ${B} − ${q.len} = ${q.table.length * B - q.len}`,
+        );
         return {
           prompt: `Blocks hold ${B} tokens. After ${k === 1 ? 'one more step' : `${k} more steps`}, how many slots are handed out but empty (wasted)? ${RULES}`,
           setup,

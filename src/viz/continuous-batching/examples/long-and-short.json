@@ -3,7 +3,7 @@
   "viz": "continuous-batching",
   "id": "long-and-short",
   "title": "Continuous batching fills each free slot",
-  "notes": "NOTES",
+  "notes": "The same five requests with continuous batching. D takes A's slot at 2, E takes C's at 3, and everyone is done at 6 instead of 9: 2.67 tokens per iteration, and no slot is ever idle while a request waits.",
   "settings": {
     "slots": 3,
     "policy": "continuous"

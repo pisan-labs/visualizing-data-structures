@@ -65,7 +65,9 @@ function drawChart(
   y0: number,
 ): Bounds {
   const x0 = LABEL_W;
-  out.push(text('chart-title', 0, y0 + 17, 'slots over time', { size: TITLE_SIZE, weight: 'bold' }));
+  out.push(
+    text('chart-title', 0, y0 + 17, 'slots over time', { size: TITLE_SIZE, weight: 'bold' }),
+  );
   const lanes = lanesOf(s);
   const arrTop = y0 + TITLE;
   const label = (id: string, y: number, t: string) =>
@@ -85,7 +87,9 @@ function drawChart(
     );
   }
   const axisY = arrTop + lanes * LANE + 16;
-  out.push(text('time-label', x0 - 16, axisY, 'time', { size: SMALL, anchor: 'end', cls: 'label' }));
+  out.push(
+    text('time-label', x0 - 16, axisY, 'time', { size: SMALL, anchor: 'end', cls: 'label' }),
+  );
   for (let t = 0; t <= HORIZON; t++)
     out.push(
       text(`tick-${t}`, x0 + t * CW, axisY, String(t), {
@@ -125,7 +129,9 @@ function drawChart(
           role: roles.get(id) ?? (c.waiting ? 'error' : undefined),
         });
         if (c.waiting)
-          out.push(text(`${id}-t`, x + CW / 2, y + CH / 2 + 5, '–', { anchor: 'middle', cls: 'label' }));
+          out.push(
+            text(`${id}-t`, x + CW / 2, y + CH / 2 + 5, '–', { anchor: 'middle', cls: 'label' }),
+          );
         return;
       }
       out.push({
@@ -154,7 +160,9 @@ function drawChart(
   label('read-label', readY, 'tokens');
   label('queue-label', queueY, 'waiting');
   s.read.forEach((n, t) =>
-    out.push(text(`read-${t}`, x0 + t * CW + CW / 2, readY, String(n), { size: SMALL, anchor: 'middle' })),
+    out.push(
+      text(`read-${t}`, x0 + t * CW + CW / 2, readY, String(n), { size: SMALL, anchor: 'middle' }),
+    ),
   );
   s.queue.forEach((n, t) => {
     if (n > 0)
@@ -247,7 +255,9 @@ function drawTable(out: Shape[], s: CbState, roles: Roles, x0: number, y0: numbe
       });
       if (v !== null)
         out.push(
-          text(`${id}-t`, lx + c * TD_W + TD_W / 2, y + TD_H / 2 + 5, String(v), { anchor: 'middle' }),
+          text(`${id}-t`, lx + c * TD_W + TD_W / 2, y + TD_H / 2 + 5, String(v), {
+            anchor: 'middle',
+          }),
         );
     });
   });

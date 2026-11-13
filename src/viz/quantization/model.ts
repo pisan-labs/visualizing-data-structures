@@ -88,10 +88,14 @@ export const roundHalfAway = (x: number): number =>
   Math.sign(x) * Math.floor(Math.abs(x) + 0.5) + 0;
 
 export const qmaxOf = (settings: QuantSettings): number =>
-  settings.scheme === 'absmax' ? 2 ** (Number(settings.bits) - 1) - 1 : 2 ** Number(settings.bits) - 1;
+  settings.scheme === 'absmax'
+    ? 2 ** (Number(settings.bits) - 1) - 1
+    : 2 ** Number(settings.bits) - 1;
 
 /** Each group's cells, row by row. */
-export function groupCells(settings: QuantSettings): { r: number; k: number; cells: [number, number][] }[] {
+export function groupCells(
+  settings: QuantSettings,
+): { r: number; k: number; cells: [number, number][] }[] {
   const all = (pred: (r: number, c: number) => boolean) => {
     const out: [number, number][] = [];
     for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) if (pred(r, c)) out.push([r, c]);
@@ -226,7 +230,10 @@ export function fine(x: number): string {
   const a = Math.abs(x);
   const k = a < 1 ? Math.round(a * 1000) / 1000 : Math.round(a * 100) / 100;
   if (k === 0) return '0';
-  let t = k.toFixed(k < 1 ? 3 : 2).replace(/0+$/, '').replace(/\.$/, '');
+  let t = k
+    .toFixed(k < 1 ? 3 : 2)
+    .replace(/0+$/, '')
+    .replace(/\.$/, '');
   if (t.startsWith('0.')) t = t.slice(1);
   return x < 0 ? `−${t}` : t;
 }
@@ -316,7 +323,15 @@ const setOp: Op = {
       yield refuse(s, settings, 'Load some weights first, or press Random matrix.');
       return s;
     }
-    if (!Number.isInteger(r) || !Number.isInteger(c) || r < 1 || r > ROWS || c < 1 || c > COLS || v === null) {
+    if (
+      !Number.isInteger(r) ||
+      !Number.isInteger(c) ||
+      r < 1 ||
+      r > ROWS ||
+      c < 1 ||
+      c > COLS ||
+      v === null
+    ) {
       yield refuse(
         s,
         settings,
@@ -332,7 +347,19 @@ const setOp: Op = {
     yield {
       state,
       marks: [mark(`W-${r - 1}-${c - 1}`, 'new')],
-      say: `Row ${r}, column ${c}: ${two(old)} becomes ${two(v)}.${Math.abs(v) === top && Math.abs(v) > 2 * Math.max(...w.flat().filter((_, i) => i !== (r - 1) * COLS + c - 1).map(Math.abs)) ? ' It is now an outlier, more than twice the size of any other weight.' : ''} Press Quantize to see what it does to the codes.`,
+      say: `Row ${r}, column ${c}: ${two(old)} becomes ${two(v)}.${
+        Math.abs(v) === top &&
+        Math.abs(v) >
+          2 *
+            Math.max(
+              ...w
+                .flat()
+                .filter((_, i) => i !== (r - 1) * COLS + c - 1)
+                .map(Math.abs),
+            )
+          ? ' It is now an outlier, more than twice the size of any other weight.'
+          : ''
+      } Press Quantize to see what it does to the codes.`,
       lines: ['e-sig'],
       level: 1,
       vars: vars(state, settings),
@@ -346,7 +373,11 @@ const quantizeOp: Op = {
   arity: 0,
   *run(s, _args, { settings }) {
     if (!s.w) {
-      yield refuse(s, settings, 'Load some weights first: type a few numbers and press Load, or press Random matrix.');
+      yield refuse(
+        s,
+        settings,
+        'Load some weights first: type a few numbers and press Load, or press Random matrix.',
+      );
       return s;
     }
     const w = s.w;
@@ -363,7 +394,10 @@ const quantizeOp: Op = {
       const big = shape.cells.reduce((best, cell) =>
         Math.abs(w[cell[0]]![cell[1]]!) > Math.abs(w[best[0]]![best[1]]!) ? cell : best,
       );
-      const intro = gi === 0 ? `${b}-bit ${abs ? 'absmax' : 'zero-point'} codes, ${plural(shapes.length, 'scale')}. ` : '';
+      const intro =
+        gi === 0
+          ? `${b}-bit ${abs ? 'absmax' : 'zero-point'} codes, ${plural(shapes.length, 'scale')}. `
+          : '';
       const flat = g.hi === g.lo;
       yield {
         state,
@@ -442,7 +476,12 @@ export const ops = { load: loadOp, set: setOp, quantize: quantizeOp };
 // ---------------------------------------------------------------------------------------------
 // Pseudocode
 
-const L = (id: string, indent: number, text: string, plain: string) => ({ id, indent, text, plain });
+const L = (id: string, indent: number, text: string, plain: string) => ({
+  id,
+  indent,
+  text,
+  plain,
+});
 
 export function pseudocode(settings: QuantSettings): PseudoBlock[] {
   const qmax = qmaxOf(settings);
@@ -461,8 +500,18 @@ export function pseudocode(settings: QuantSettings): PseudoBlock[] {
   const scale =
     settings.scheme === 'absmax'
       ? [
-          L('s-abs', 2, `s = ${qmax} / max |w| over G`, `the largest weight in size gets code ${qmax};`),
-          L('q-code', 2, 'for each w in G: q = round(s · w)', 'every weight gets the nearest code.'),
+          L(
+            's-abs',
+            2,
+            `s = ${qmax} / max |w| over G`,
+            `the largest weight in size gets code ${qmax};`,
+          ),
+          L(
+            'q-code',
+            2,
+            'for each w in G: q = round(s · w)',
+            'every weight gets the nearest code.',
+          ),
         ]
       : [
           L(
@@ -482,7 +531,14 @@ export function pseudocode(settings: QuantSettings): PseudoBlock[] {
   return [
     {
       op: 'load',
-      lines: [L('l-sig', 0, `LOAD(weights): W = ${ROWS} × ${COLS}, row by row`, 'Fill the matrix with the weights.')],
+      lines: [
+        L(
+          'l-sig',
+          0,
+          `LOAD(weights): W = ${ROWS} × ${COLS}, row by row`,
+          'Fill the matrix with the weights.',
+        ),
+      ],
     },
     {
       op: 'set',
@@ -491,13 +547,20 @@ export function pseudocode(settings: QuantSettings): PseudoBlock[] {
     {
       op: 'quantize',
       lines: [
-        L('q-sig', 0, `QUANTIZE(W, ${settings.bits} bits)`, `Store every weight in ${settings.bits} bits:`),
+        L(
+          'q-sig',
+          0,
+          `QUANTIZE(W, ${settings.bits} bits)`,
+          `Store every weight in ${settings.bits} bits:`,
+        ),
         L('q-group', 1, `for ${over}:`, plainOver),
         ...scale,
         L(
           'q-deq',
           1,
-          settings.scheme === 'absmax' ? 'ŵ = q / s for every weight' : 'ŵ = (q − z) / s for every weight',
+          settings.scheme === 'absmax'
+            ? 'ŵ = q / s for every weight'
+            : 'ŵ = (q − z) / s for every weight',
           'Decoding turns each code back into a number,',
         ),
         L('q-err', 1, 'error = ŵ − W', 'and the difference is what was lost.'),

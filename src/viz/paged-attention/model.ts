@@ -219,7 +219,11 @@ const addOp: Op = {
       return s;
     }
     if (s.seqs.length >= MAX_SEQS) {
-      yield refuse(s, settings, `This toy runs at most ${MAX_SEQS} requests at once. Finish one first.`);
+      yield refuse(
+        s,
+        settings,
+        `This toy runs at most ${MAX_SEQS} requests at once. Finish one first.`,
+      );
       return s;
     }
     if (s.named >= NAMES.length) {
@@ -254,11 +258,7 @@ const addOp: Op = {
       const q = seqOf(state, name)!;
       yield {
         state,
-        marks: [
-          ...blockMarks(p, B, 'new'),
-          entryMark(name, k, 'new'),
-          mark(`t-${name}`, 'active'),
-        ],
+        marks: [...blockMarks(p, B, 'new'), entryMark(name, k, 'new'), mark(`t-${name}`, 'active')],
         say: `${k === 0 ? `Request ${name} arrives with a prompt of ${plural(n, 'token')}. ` : ''}Pop block ${p} off the free list for ${name}'s logical block ${k}, and write ${span(tokens)} into it.${tokens.length < B ? ` ${plural(B - tokens.length, 'slot')} ${B - tokens.length === 1 ? 'stays' : 'stay'} empty until ${name} writes more.` : ''}`,
         lines: k === 0 ? ['a-sig', 'a-pop', 'a-write'] : ['a-pop', 'a-write'],
         level: 2,
@@ -407,8 +407,7 @@ const stepOp: Op = {
         ? `${list(stalled)} waited for a free block: finish a request to free some.`
         : '',
     ].filter(Boolean);
-    const sum =
-      parts.length > 1 ? `${parts[0]}; ${parts.slice(1).join(' and ')}.` : `${parts[0]}.`;
+    const sum = parts.length > 1 ? `${parts[0]}; ${parts.slice(1).join(' and ')}.` : `${parts[0]}.`;
     yield {
       state,
       marks: wrote.flatMap((n) => [mark(`t-${n}`, 'found')]),
@@ -493,7 +492,11 @@ const forkOp: Op = {
       return s;
     }
     if (s.seqs.length >= MAX_SEQS) {
-      yield refuse(s, settings, `This toy runs at most ${MAX_SEQS} requests at once. Finish one first.`);
+      yield refuse(
+        s,
+        settings,
+        `This toy runs at most ${MAX_SEQS} requests at once. Finish one first.`,
+      );
       return s;
     }
     if (s.named >= NAMES.length) {
@@ -641,7 +644,12 @@ export function pseudocode(settings: PagedSettings): PseudoBlock[] {
     L('f-sig', 0, 'FINISH(r)', 'A request is done:'),
     L('f-loop', 1, 'for each p in r.table, last first:', 'for each of its blocks, last first,'),
     L('f-dec', 2, 'ref[p] −= 1', 'one fewer request reads it;'),
-    L('f-push', 2, 'if ref[p] = 0: PUSH(free, p)', 'if no one does, it goes back on the free list.'),
+    L(
+      'f-push',
+      2,
+      'if ref[p] = 0: PUSH(free, p)',
+      'if no one does, it goes back on the free list.',
+    ),
     L('f-ret', 1, 'remove r', 'The request is gone.'),
   ];
   const fork = settings.sharing

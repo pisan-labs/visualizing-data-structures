@@ -16,4 +16,3 @@ export function outlier(rng: Rng): [number, number, number] {
   const v = (rng.int(0, 1) ? 1 : -1) * (rng.int(40, 80) / 10);
   return [rng.int(1, ROWS), rng.int(1, COLS), v];
 }
-

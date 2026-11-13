@@ -3,7 +3,7 @@
   "viz": "continuous-batching",
   "id": "static-waits",
   "title": "Static batching waits for the longest",
-  "notes": "NOTES",
+  "notes": "A, B and C start a batch at 0. A is done at 2 and C at 3, but their slots idle until B is done at 6, and all three return then. D and E wait for the batch to end and are done at 9: 1.78 tokens per iteration, 7 slot-iterations idle while someone waited.",
   "settings": {
     "slots": 3,
     "policy": "static"

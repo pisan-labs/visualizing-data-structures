@@ -3,7 +3,7 @@
   "viz": "continuous-batching",
   "id": "steady",
   "title": "A steady stream never waits",
-  "notes": "NOTES",
+  "notes": "Requests arrive a few iterations apart, and a slot is always free when one comes: no one waits. Switch to static batching: A starts a batch of one, and B waits 2 iterations beside an empty slot.",
   "settings": {
     "slots": 2,
     "policy": "continuous"

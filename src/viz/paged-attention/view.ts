@@ -116,7 +116,9 @@ function drawPool(
         out.push(
           text(`${id}-t`, x + i * SLOT + SLOT / 2, y + SLOT / 2 + 5, String(tok), {
             anchor: 'middle',
-            ...(copied ? { enterFrom: { x: fromX + i * SLOT + SLOT / 2, y: fromY + SLOT / 2 + 5 } } : {}),
+            ...(copied
+              ? { enterFrom: { x: fromX + i * SLOT + SLOT / 2, y: fromY + SLOT / 2 + 5 } }
+              : {}),
           }),
         );
       }

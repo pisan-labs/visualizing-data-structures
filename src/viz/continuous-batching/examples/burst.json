@@ -3,7 +3,7 @@
   "viz": "continuous-batching",
   "id": "burst",
   "title": "Six requests at once",
-  "notes": "NOTES",
+  "notes": "Six requests arrive at once for 3 slots. Each slot takes the next in line the moment it frees: D at 1, E at 3, F at 5. Done at 8, with 18 tokens: 2.25 per iteration.",
   "settings": {
     "slots": 3,
     "policy": "continuous"

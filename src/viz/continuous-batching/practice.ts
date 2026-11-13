@@ -99,7 +99,9 @@ export function batchingPractice(def: () => Def): PracticeKind[] {
         const end = run(settings, [...setup, ...watch]);
         const late = end.reqs.filter((r) => (wait(r) ?? 0) > 0);
         const r = late.length ? pick(rng, late) : end.reqs.at(-1)!;
-        const ahead = end.reqs.filter((x) => x.start !== null && x.start < r.start! && x.name !== r.name);
+        const ahead = end.reqs.filter(
+          (x) => x.start !== null && x.start < r.start! && x.name !== r.name,
+        );
         return {
           prompt: `With ${policyText(settings.policy, settings.slots)}, how many iterations does request **${r.name}** wait between arriving and getting a slot? ${RULES}`,
           setup,

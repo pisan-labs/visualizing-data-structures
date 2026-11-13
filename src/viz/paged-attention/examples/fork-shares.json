@@ -9,12 +9,5 @@
     "sharing": true
   },
   "seed": 1,
-  "ops": [
-    ["add", 6],
-    ["fork", "A"],
-    ["fork", "A"],
-    ["step"],
-    ["step"],
-    ["step"]
-  ]
+  "ops": [["add", 6], ["fork", "A"], ["fork", "A"], ["step"], ["step"], ["step"]]
 }

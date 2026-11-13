@@ -14,6 +14,7 @@ import {
   idleWaiting,
   made,
   throughput,
+  wait,
   type CbSettings,
   type CbState,
   type Policy,
@@ -48,7 +49,10 @@ function reference(specs: readonly Spec[], slots: number, policy: Policy) {
     let next = 0;
     while (next < order.length) {
       t = Math.max(t, order[next]!.arrive);
-      const batch = order.slice(next).filter((r) => r.arrive <= t).slice(0, slots);
+      const batch = order
+        .slice(next)
+        .filter((r) => r.arrive <= t)
+        .slice(0, slots);
       const end = t + Math.max(...batch.map((r) => r.out));
       batch.forEach((r, k) => {
         start[r.i] = t;
@@ -78,24 +82,28 @@ const runAll = (settings: CbSettings, calls: OpCall[]) =>
 describe('continuous-batching', () => {
   it('matches a request-by-request schedule', () => {
     fc.assert(
-      fc.property(settingsArb, fc.array(specArb, { minLength: 1, maxLength: 6 }), (settings, raw) => {
-        const specs = fitting(raw);
-        const end = runAll(settings, [...specs.map((x): OpCall => ['add', ...x]), ['run']]);
-        expect(end.reqs).toHaveLength(specs.length);
-        const ref = reference(specs, settings.slots, settings.policy);
-        end.reqs.forEach((r, i) => {
-          expect(r.start).toBe(ref.start[i]);
-          expect(r.done).toBe(ref.done[i]);
-          for (let t = r.start!; t < r.start! + r.out; t++)
-            expect(end.chart[t]![ref.slot[i]!]!.req).toBe(r.name);
-        });
-        const total = specs.reduce((t, [, , n]) => t + n, 0);
-        expect(end.clock).toBe(Math.max(...ref.done));
-        expect(made(end)).toBe(total);
-        expect(idleCells(end)).toBe(settings.slots * end.clock - total);
-        // Continuous batching never leaves a slot idle while someone waits.
-        if (settings.policy === 'continuous') expect(idleWaiting(end)).toBe(0);
-      }),
+      fc.property(
+        settingsArb,
+        fc.array(specArb, { minLength: 1, maxLength: 6 }),
+        (settings, raw) => {
+          const specs = fitting(raw);
+          const end = runAll(settings, [...specs.map((x): OpCall => ['add', ...x]), ['run']]);
+          expect(end.reqs).toHaveLength(specs.length);
+          const ref = reference(specs, settings.slots, settings.policy);
+          end.reqs.forEach((r, i) => {
+            expect(r.start).toBe(ref.start[i]);
+            expect(r.done).toBe(ref.done[i]);
+            for (let t = r.start!; t < r.start! + r.out; t++)
+              expect(end.chart[t]![ref.slot[i]!]!.req).toBe(r.name);
+          });
+          const total = specs.reduce((t, [, , n]) => t + n, 0);
+          expect(end.clock).toBe(Math.max(...ref.done));
+          expect(made(end)).toBe(total);
+          expect(idleCells(end)).toBe(settings.slots * end.clock - total);
+          // Continuous batching never leaves a slot idle while someone waits.
+          if (settings.policy === 'continuous') expect(idleWaiting(end)).toBe(0);
+        },
+      ),
       { numRuns: 400 },
     );
   });
@@ -104,9 +112,15 @@ describe('continuous-batching', () => {
     fc.assert(
       fc.property(
         settingsArb,
-        fc.array(fc.oneof(specArb.map((x): OpCall => ['add', ...x]), fc.constant<OpCall>(['tick'])), {
-          maxLength: 30,
-        }),
+        fc.array(
+          fc.oneof(
+            specArb.map((x): OpCall => ['add', ...x]),
+            fc.constant<OpCall>(['tick']),
+          ),
+          {
+            maxLength: 30,
+          },
+        ),
         (settings, calls) => {
           const t = new Timeline(continuousBatching, settings, 1, [...calls, ['run']]);
           const end = t.endState();
@@ -192,6 +206,18 @@ describe('continuous-batching', () => {
     const late = end('late-arrival');
     expect(late.reqs[2]!.start).toBe(6);
     expect(end('late-arrival', 'continuous').reqs[2]!.start).toBe(1);
+    expect(end('late-arrival', 'continuous').reqs[2]!.done).toBe(3);
+    const long = end('one-long');
+    expect([long.clock, idleCells(long), idleWaiting(long)]).toEqual([10, 15, 13]);
+    expect(end('one-long', 'continuous').clock).toBe(8);
+    expect(end('burst').reqs.map((r) => r.start)).toEqual([0, 0, 0, 1, 3, 5]);
+    expect(throughput(end('burst'))).toBe('2.25');
+    expect(end('steady').reqs.every((r) => r.start === r.arrive)).toBe(true);
+    const steady = end('steady', 'static');
+    expect(steady.batches[0]).toBe(0);
+    expect(steady.reqs.map(wait)).toEqual([0, 2, 0, 2, 0]);
+    expect(throughput(end('equal-lengths'))).toBe('3.00');
+    expect(st.read.slice(0, 2)).toEqual([16, 3]);
     expect(iterationLine(st, 0)).toBe('0: A B C | -');
     expect(iterationLine(st, 5)).toBe('5: - B - | A B C');
   });
@@ -206,7 +232,7 @@ describe('continuous-batching', () => {
     expect(say([['add', 0, 13, 3]])).toMatch(/three whole numbers/);
     expect(say([['add', 0, 2, 1], ['tick'], ['add', 0, 2, 2]])).toMatch(/time 1 already/);
     expect(say([['add', 0, 2, 1], ['run'], ['run']])).toMatch(/Every request is done/);
-    const long: OpCall[] = [0, 0, 0, 0, 0].map((a): OpCall => ["add", a, 3, 8]);
+    const long: OpCall[] = [0, 0, 0, 0, 0].map((a): OpCall => ['add', a, 3, 8]);
     expect(say(long)).toMatch(/chart ends at 18/);
     expect(say(long, { slots: 3, policy: 'continuous' })).toMatch(/arrives at time 0/);
   });

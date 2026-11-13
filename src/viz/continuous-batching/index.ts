@@ -21,7 +21,6 @@ import {
   initialVars,
   MAX_OUT,
   MAX_PROMPT,
-  NAMES,
   ops,
   pseudocode,
   type CbSettings,
@@ -112,9 +111,11 @@ export const continuousBatching: VizDef<CbState, CbSettings, unknown> = {
     },
     presets: [
       preset('Random arrivals and lengths', (rng, size) =>
-        Array.from({ length: size }, (): Spec => [rng.int(0, 5), rng.int(1, 9), rng.int(1, 6)]).sort(
-          (a, b) => a[0] - b[0],
-        ),
+        Array.from({ length: size }, (): Spec => [
+          rng.int(0, 5),
+          rng.int(1, 9),
+          rng.int(1, 6),
+        ]).sort((a, b) => a[0] - b[0]),
       ),
       preset('All at once, different lengths', (rng, size) =>
         Array.from({ length: size }, (): Spec => [0, rng.int(2, 9), rng.int(1, 6)]),
@@ -225,7 +226,11 @@ export const continuousBatching: VizDef<CbState, CbSettings, unknown> = {
     equalLengths,
   ] as unknown as SavedExample[],
   practice: batchingPractice(() => continuousBatching),
-  preview: { example: 'long-and-short', level: 2, hide: ['table', 'th-', 'tr-', 'td-', 'read', 'queue'] },
+  preview: {
+    example: 'long-and-short',
+    level: 2,
+    hide: ['table', 'th-', 'tr-', 'td-', 'read', 'queue'],
+  },
   opening: 'long-and-short',
 };
 

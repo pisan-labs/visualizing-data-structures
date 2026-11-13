@@ -32,13 +32,20 @@ const LABELS = Array.from({ length: ROWS }, (_, r) => `row ${r + 1}`);
 
 const maxAbs = (xs: readonly number[]) => Math.max(0, ...xs.map(Math.abs));
 
-export function view(step: Step<QuantState, unknown>, settings: QuantSettings, stage?: StageSize): Scene {
+export function view(
+  step: Step<QuantState, unknown>,
+  settings: QuantSettings,
+  stage?: StageSize,
+): Scene {
   const s = step.state;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const w = s.w;
   const top = w ? maxAbs(w.flat()) : 0;
   const k = groupCells(settings).filter((g) => g.r === 0).length;
-  const blockHeads = k > 1 ? Array.from({ length: k }, (_, i) => `${i * BLOCK + 1}–${i * BLOCK + BLOCK}`) : undefined;
+  const blockHeads =
+    k > 1
+      ? Array.from({ length: k }, (_, i) => `${i * BLOCK + 1}–${i * BLOCK + BLOCK}`)
+      : undefined;
   // Where each group's scale is drawn: every row for the whole matrix, else its own row.
   const groupAt = (r: number, c: number) =>
     s.groups.find((g) => g.k === c && (settings.group === 'tensor' || g.r === r));
@@ -81,7 +88,9 @@ export function view(step: Step<QuantState, unknown>, settings: QuantSettings, s
   };
   const zOf = (r: number, c: number) =>
     s.groups.find((g) => g.cells.some(([gr, gc]) => gr === r && gc === c))?.z ?? 0;
-  const signed = s.q.flatMap((row, r) => row.flatMap((q, c) => (q === null ? [] : [q - zOf(r, c)])));
+  const signed = s.q.flatMap((row, r) =>
+    row.flatMap((q, c) => (q === null ? [] : [q - zOf(r, c)])),
+  );
   const qTop = maxAbs(signed);
   const codes: Panel = {
     id: 'q',
@@ -92,7 +101,9 @@ export function view(step: Step<QuantState, unknown>, settings: QuantSettings, s
     colHeads: HEADS,
     cell: (r, c): CellLook | null => {
       const q = s.q[r]![c];
-      return q === null || q === undefined ? null : { text: String(q), shade: shadeOf(q - zOf(r, c), qTop) };
+      return q === null || q === undefined
+        ? null
+        : { text: String(q), shade: shadeOf(q - zOf(r, c), qTop) };
     },
   };
   const deq = s.deq;
@@ -121,8 +132,14 @@ export function view(step: Step<QuantState, unknown>, settings: QuantSettings, s
   const zp = settings.scheme === 'zeropoint';
   const consts = zp ? [scale, zero] : [scale];
   const arrangements: Panel[][][] = [
-    [[W, ...consts, codes], [dec, error]],
-    [[W, ...consts], [codes, dec, error]],
+    [
+      [W, ...consts, codes],
+      [dec, error],
+    ],
+    [
+      [W, ...consts],
+      [codes, dec, error],
+    ],
     [[W, scale], zp ? [codes, zero] : [codes], [dec], [error]],
     [[W, ...consts], [codes], [dec], [error]],
   ];

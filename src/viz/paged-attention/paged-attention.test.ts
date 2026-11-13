@@ -246,9 +246,21 @@ describe('paged-attention', () => {
     expect(say([['add', 17]])).toMatch(/1 to 16 tokens/);
     expect(say([['add', 'cat']])).toMatch(/prompt length/);
     expect(say([['finish', 'A']])).toMatch(/no running request A/);
-    expect(say([['add', 3], ['fork', 5]])).toMatch(/letter/);
+    expect(
+      say([
+        ['add', 3],
+        ['fork', 5],
+      ]),
+    ).toMatch(/letter/);
     expect(say(Array.from({ length: 7 }, (): OpCall => ['add', 1]))).toMatch(/at most 6/);
-    expect(say([['add', 16], ['add', 16], ['add', 16], ['add', 1]])).toMatch(/none is free/);
+    expect(
+      say([
+        ['add', 16],
+        ['add', 16],
+        ['add', 16],
+        ['add', 1],
+      ]),
+    ).toMatch(/none is free/);
     expect(
       say(
         [

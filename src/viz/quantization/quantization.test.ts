@@ -30,7 +30,10 @@ const matrixArb = fc.oneof(
   // Small weights with one outlier, and all-positive ones.
   fc
     .tuple(
-      fc.array(fc.integer({ min: -90, max: 90 }), { minLength: ROWS * COLS, maxLength: ROWS * COLS }),
+      fc.array(fc.integer({ min: -90, max: 90 }), {
+        minLength: ROWS * COLS,
+        maxLength: ROWS * COLS,
+      }),
       fc.integer({ min: 0, max: ROWS * COLS - 1 }),
       fc.integer({ min: 300, max: 999 }),
     )
@@ -57,7 +60,8 @@ describe('quantization', () => {
         const w = asMatrix(xs);
         const { groups, q, deq } = quantizeMatrix(w, settings);
         const b = Number(settings.bits);
-        const [lo, hi] = settings.scheme === 'absmax' ? [-(2 ** (b - 1) - 1), 2 ** (b - 1) - 1] : [0, 2 ** b - 1];
+        const [lo, hi] =
+          settings.scheme === 'absmax' ? [-(2 ** (b - 1) - 1), 2 ** (b - 1) - 1] : [0, 2 ** b - 1];
         // The groups cover every cell once, as the setting says.
         const seen = new Set<string>();
         for (const g of groups) {
@@ -107,7 +111,10 @@ describe('quantization', () => {
         // Codes fill in as the steps go, and never change once written.
         let filled = 0;
         for (let i = 0; i < t.length; i++) {
-          const now = t.at(i).step.state.q.flat().filter((v) => v !== null).length;
+          const now = t
+            .at(i)
+            .step.state.q.flat()
+            .filter((v) => v !== null).length;
           expect(now).toBeGreaterThanOrEqual(filled);
           filled = now;
         }
@@ -134,6 +141,22 @@ describe('quantization', () => {
     expect(stats('positive-absmax')).toEqual([0.057, 0.71, 2]);
     expect(stats('positive-zeropoint')).toEqual([0.026, 0.312, 0]);
     expect(end('int8-round-trip').q[0]).toEqual([49, -82, 13, 121, -22, 71]);
+    const i8 = end('int8-round-trip');
+    expect(sig3(i8.groups[0]!.s)).toBe('157');
+    expect(fine(i8.deq![0]![0]!)).toBe('.313');
+    expect(fine(1 / i8.groups[0]!.s)).toBe('.006');
+    const ratio = errorStats(end('int4-rough'))!.total / errorStats(i8)!.total;
+    expect(Math.round(ratio)).toBe(18);
+    expect(fine(1 / end('outlier-int8').groups[0]!.s)).toBe('.05');
+    expect(fine(1 / end('outlier-tensor').groups[0]!.s)).toBe('.914');
+    const zp = end('positive-zeropoint');
+    expect([sig3(zp.groups[0]!.s), zp.groups[0]!.z, Math.max(...zp.q.flat().map(Number))]).toEqual([
+      '18.5',
+      0,
+      15,
+    ]);
+    expect(Math.min(...end('positive-absmax').q.flat().map(Number))).toBe(0);
+    expect(bitsPerWeight({ bits: '4', scheme: 'absmax', group: 'row' }).toFixed(2)).toBe('9.33');
     expect(end('outlier-tensor').q[1]).toEqual([-1, 0, 0, 0, 7, 0]);
     expect(bitsPerWeight({ bits: '4', scheme: 'absmax', group: 'tensor' }).toFixed(2)).toBe('5.33');
     expect(bitsPerWeight({ bits: '4', scheme: 'absmax', group: '3' }).toFixed(2)).toBe('14.67');
@@ -143,7 +166,13 @@ describe('quantization', () => {
   });
 
   it('writes scales and small numbers so they fit a cell', () => {
-    expect([157, 19.84, 8.642, 0.7007, 12700].map(sig3)).toEqual(['157', '19.8', '8.64', '.701', '12700']);
+    expect([157, 19.84, 8.642, 0.7007, 12700].map(sig3)).toEqual([
+      '157',
+      '19.8',
+      '8.64',
+      '.701',
+      '12700',
+    ]);
     expect([0.0031, -0.0569, 0, -0.0004, 0.45, 6.4, -4.567].map(fine)).toEqual([
       '.003',
       '−.057',
@@ -157,7 +186,12 @@ describe('quantization', () => {
 
   it('refuses what does not fit', () => {
     const say = (calls: OpCall[]) => {
-      const t = new Timeline(quantization, { bits: '8', scheme: 'absmax', group: 'tensor' }, 1, calls);
+      const t = new Timeline(
+        quantization,
+        { bits: '8', scheme: 'absmax', group: 'tensor' },
+        1,
+        calls,
+      );
       return t.at(t.length - 1).step.say;
     };
     expect(say([['quantize']])).toMatch(/Load some weights first/);
@@ -165,7 +199,12 @@ describe('quantization', () => {
     expect(say([['load', '12']])).toMatch(/up to 24 weights/);
     expect(say([['load', Array(25).fill('1').join(' ')]])).toMatch(/up to 24 weights/);
     expect(say([['set', 1, 1, 1]])).toMatch(/Load some weights first/);
-    expect(say([['load', '1 2'], ['set', 5, 1, 1]])).toMatch(/a row \(1 to 4\)/);
+    expect(
+      say([
+        ['load', '1 2'],
+        ['set', 5, 1, 1],
+      ]),
+    ).toMatch(/a row \(1 to 4\)/);
     expect(say([['load', '1 2']])).toMatch(/the other 22 are 0/);
     // Every weight 0: any scale will do, and nothing is lost.
     const t = new Timeline(quantization, { bits: '4', scheme: 'zeropoint', group: 'row' }, 1, [

@@ -467,3 +467,5 @@
 2026-11-13 [code] Merged wave 9B bpe-tokenizer (train, merge, encode; end-of-word marker, tie-break, characters or bytes) and wordpiece (greedy longest match over a trie, the count(ab)/(count(a)count(b)) score); same operations, so compare mode works
 
 2026-11-13 [code] Merged wave 9B embeddings (2D words, cosine or dot, top-k with a heap, analogies), multi-head-attention (4, 2 or 1 heads; MHA, GQA, MQA with KV-cache readouts) and positional-encoding (sinusoidal, RoPE dials, ALiBi)
+
+2026-11-13 [code] Merged wave 9B ngram-lm (bigrams and trigrams over the toy corpus, smoothing, generate, perplexity), sampling (temperature, greedy, top-k, top-p, min-p, the draw by u) and beam-search (width, length normalization, end-of-sequence handling; greedy misses the best sentence). Tier 1 complete: 12 pages

@@ -455,3 +455,5 @@
 2026-11-13 [note] Deployed 19:47 UTC on Yusuf's "Push next deploy": main 70155fe..2228ae7 (notify-feed.json, the notify toggle wording). Bundle matches; 204 addresses 200 with the footer once; feed 200 application/json, no redirect; no account requests. Plabs told
 
 2026-11-13 [plan] Wave 9B started: five agents for the other 11 tier-1 AI pages (PLAN.md 20.12); Yusuf approved the self-attention slice and is trying it locally
+
+2026-11-13 [note] Plabs: StepWise is registered and on for app-notify. The first run (14 Nov 15:17 UTC) records the 3 releases as seen; after that a new id in notify-feed.json is emailed the next day to readers with notify_new_pages on. Adding a release now sends an email

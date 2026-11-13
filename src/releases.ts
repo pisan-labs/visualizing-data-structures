@@ -6,6 +6,10 @@
  *
  * Add a release at the end. An id never changes once published: readers' browsers and accounts
  * keep the id of the last release they saw, and the email job remembers which ones it sent.
+ *
+ * Adding a release sends an email. Since 13 November the platform's app-notify reads
+ * dist/notify-feed.json (src/notify-feed.ts) every day at 15:17 UTC and emails each new id the
+ * next run to every reader with notify_new_pages on; a changed id is emailed again.
  */
 
 export interface Release {

@@ -224,7 +224,12 @@ export const embeddings: VizDef<EmbState, EmbSettings, EmbExtra> = {
     oneNeighbour,
   ] as unknown as SavedExample[],
   practice: embeddingPractice(() => embeddings),
-  preview: { example: 'king-queen', level: 2 },
+  // The plane alone: the table and the heap are side panels.
+  preview: {
+    example: 'king-queen',
+    level: 2,
+    hide: ['th-', 'tr-', 'tw-', 'tx-', 'ty-', 'ts-', 'h-', 'he-', 'hn-', 'rk-', 'sr-'],
+  },
 };
 
 const ranked = (s: EmbState, q: Search) =>

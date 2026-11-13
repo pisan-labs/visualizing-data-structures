@@ -177,6 +177,7 @@ const mark = (id: string, role: Mark['role']): Mark => ({ id, role });
 const posName = (words: readonly string[], p: number) => `${words[p]} (${p})`;
 /** An angle in radians, at most three decimals: 6, 0.6, 0.06, 0.006. */
 const rad = (x: number) => String(Number(x.toFixed(3)));
+const radians = (x: number) => `${rad(x)} ${x === 1 ? 'radian' : 'radians'}`;
 
 export function baseVars(s: S, set: PosSettings): Record<string, Scalar> {
   return {
@@ -281,7 +282,7 @@ const encodeOp: Op = {
           if (scheme === 'sinusoidal') {
             filled += 2;
             yield step(
-              `Position ${p}, pair ${i}: the angle is ${p} / ${divisor(i)} = ${rad(a)} radians. sin = ${two(table[p]![2 * i]!)}, cos = ${two(table[p]![2 * i + 1]!)}.`,
+              `Position ${p}, pair ${i}: the angle is ${p} / ${divisor(i)} = ${radians(a)}. sin = ${two(table[p]![2 * i]!)}, cos = ${two(table[p]![2 * i + 1]!)}.`,
               ['ang', 'sin'],
               3,
               [
@@ -294,7 +295,7 @@ const encodeOp: Op = {
           } else {
             filled++;
             yield step(
-              `Position ${p}, pair ${i}: turn by ${p} / ${divisor(i)} = ${rad(a)} radians${a >= 2 * Math.PI ? `, more than a full turn (2π ≈ 6.28)` : ''}.`,
+              `Position ${p}, pair ${i}: turn by ${p} / ${divisor(i)} = ${radians(a)}${a >= 2 * Math.PI ? `, more than a full turn (2π ≈ 6.28)` : ''}.`,
               ['ang'],
               3,
               [mark(`e-${p}-${i}`, 'active'), mark(`dial-${i}`, 'active')],
@@ -383,8 +384,9 @@ const scoreOp: Op = {
         const top = r.a[i]!.indexOf(Math.max(...r.a[i]!));
         const plain = softmax(r.content[i]!.map((t, j) => (j > i ? -Infinity : t))).p;
         const ptop = plain.indexOf(Math.max(...plain));
+        const second = Math.max(0, ...plain.filter((_, j) => j !== ptop));
         const changed =
-          ptop !== top
+          ptop !== top && plain[ptop]! - second >= 0.05
             ? ` Without the bias it would have picked ${w(ptop)} (${short(plain[ptop]!)}).`
             : '';
         yield step(
@@ -401,6 +403,9 @@ const scoreOp: Op = {
         );
       }
     } else {
+      const c = scheme === 'rope' ? content(s.x) : undefined;
+      /** A word whose query is (0, 0) in this head asks for nothing. */
+      const silent = (m: number) => Boolean(c?.q[m]!.every((v) => v === 0));
       for (let m = 0; m < n; m++) {
         for (let k = 0; k < n; k++) {
           scored++;
@@ -408,11 +413,13 @@ const scoreOp: Op = {
           const say =
             scheme === 'sinusoidal'
               ? `PE(${m}) · PE(${k}): for each pair sin·sin + cos·cos = cos of the angle between them, and the angles differ by ${Math.abs(m - k)} / 1, ${Math.abs(m - k)} / 10, …. Sum: ${two(v)}.`
-              : `q at ${w(m)} · k at ${w(k)}, each pair turned by its own position: ${two(v)}${
-                  m === k
-                    ? ', as if neither were turned'
-                    : `, the same as for these two words anywhere the key is ${Math.abs(m - k)} ${m > k ? 'before' : 'after'} the query`
-                }.`;
+              : silent(m)
+                ? `${w(m)}'s query is (0, 0) in this head: it asks for nothing, so it scores 0 against every key, turned or not.`
+                : `q at ${w(m)} · k at ${w(k)}, each pair turned by its own position: ${two(v)}${
+                    m === k
+                      ? ', as if neither were turned'
+                      : `, the same as for these two words anywhere the key is ${Math.abs(m - k)} ${m > k ? 'before' : 'after'} the query`
+                  }.`;
           yield step(say, ['score'], 3, [mark(`s-${m}-${k}`, 'active'), mark(`w-${m}`, 'active')], {
             scored,
             focus: [m, k],
@@ -424,7 +431,9 @@ const scoreOp: Op = {
             ? m === 0
               ? `Row 0: PE(0) · PE(0) = 4, one per pair, the most any two encodings can score. The further apart, the lower, with wiggles from the fast pairs.`
               : `Row ${m}: the largest is ${two(row[m]!)}, position ${m} with itself. Each diagonal holds one number: the dot product depends only on the distance.`
-            : `Row ${m}, ${w(m)}'s query turned by its position against every turned key: ${row.map(two).join(', ')}.`,
+            : silent(m)
+              ? `Row ${m}: ${w(m)}'s query is (0, 0), so its row is all 0.`
+              : `Row ${m}, ${w(m)}'s query turned by its position against every turned key: ${row.map(two).join(', ')}.`,
           ['score'],
           2,
           Array.from({ length: n }, (_, k) => mark(`s-${m}-${k}`, 'active')),

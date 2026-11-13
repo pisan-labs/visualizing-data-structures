@@ -28,7 +28,7 @@ import {
 } from './model';
 
 const NUM_W = 40;
-const A_CELL = 46;
+const A_CELL = 50;
 
 const maxAbs = (m: readonly (readonly number[])[]) =>
   Math.max(0, ...m.flat().filter(Number.isFinite).map(Math.abs));

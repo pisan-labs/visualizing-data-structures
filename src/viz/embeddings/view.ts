@@ -14,7 +14,7 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { pickLayout, translate } from '../../layouts/arrange';
 import { drawGrid, makePlane, text, type Plane } from '../../layouts/plane';
-import type { Bounds, Scene, Shape } from '../../render/scene';
+import type { Bounds, Scene, Shape, TextShape } from '../../render/scene';
 import { ZOOM_DROP } from '../../render/stage';
 import { short } from '../_lm/numbers';
 import { shadeOf } from '../_matrix/matrix';
@@ -48,8 +48,99 @@ const HEAP_W = 4 * SLOT;
 /** The window onto the plane: around the words as made, or around the unit circle. */
 function window(normalize: boolean) {
   return normalize
-    ? { xmin: -1.6, xmax: 1.6, ymin: -1.6, ymax: 1.6, span: 3.2 }
+    ? { xmin: -1.5, xmax: 1.5, ymin: -1.5, ymax: 1.5, span: 3 }
     : { xmin: -3.2, xmax: 4.4, ymin: -2.6, ymax: 4.6, span: 7.6 };
+}
+
+const LABEL_SIZE = 13;
+
+interface Box {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+const overlap = (a: Box, b: Box) =>
+  Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) *
+  Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
+
+/** The box a text shape covers, roughly. */
+function textBox(t: TextShape): Box {
+  const size = t.size ?? 16;
+  const w = t.text.length * size * 0.62;
+  const x = t.anchor === 'middle' ? t.x - w / 2 : t.anchor === 'end' ? t.x - w : t.x;
+  return { x, y: t.y - size * 0.8, w, h: size };
+}
+
+/**
+ * Where each word's label goes: the centre of a box near its arrow's tip, chosen greedily from
+ * a few spots around the tip so that labels miss each other, the arrows and the grid's numbers,
+ * and stay inside the window. Depends only on the arrows, so labels hold still between steps.
+ */
+function placeLabels(
+  tips: { x: number; y: number }[],
+  words: string[],
+  o: { x: number; y: number },
+  win: Bounds,
+  texts: TextShape[],
+): { x: number; y: number }[] {
+  const h = LABEL_SIZE + 2;
+  const placed: Box[] = texts.map(textBox);
+  const samples = tips.flatMap((t) =>
+    Array.from({ length: 14 }, (_, k) => ({
+      x: o.x + ((t.x - o.x) * (k + 1)) / 14,
+      y: o.y + ((t.y - o.y) * (k + 1)) / 14,
+    })),
+  );
+  return tips.map((tip, i) => {
+    const w = words[i]!.length * LABEL_SIZE * 0.66 + 4;
+    const len = Math.hypot(tip.x - o.x, tip.y - o.y) || 1;
+    const u = { x: (tip.x - o.x) / len, y: (tip.y - o.y) / len };
+    const p = { x: -u.y, y: u.x };
+    const reach = (d: { x: number; y: number }) =>
+      Math.abs(d.x) * (w / 2) + Math.abs(d.y) * (h / 2);
+    const along = reach(u) + 8;
+    const side = reach(p) + 5;
+    const spots = [
+      [along, 0],
+      [along, 14],
+      [along, -14],
+      [4, side],
+      [4, -side],
+      [along + 18, 0],
+      [-16, side],
+      [-16, -side],
+      [along + 36, 0],
+    ].map(([a, b]) => ({ x: tip.x + u.x * a! + p.x * b!, y: tip.y + u.y * a! + p.y * b! }));
+    let best = spots[0]!;
+    let cost = Infinity;
+    spots.forEach((c, k) => {
+      const box = { x: c.x - w / 2, y: c.y - h / 2, w, h };
+      let score = k * 4;
+      const out =
+        Math.max(0, win.x - box.x) +
+        Math.max(0, box.x + box.w - (win.x + win.w)) +
+        Math.max(0, win.y - box.y) +
+        Math.max(0, box.y + box.h - (win.y + win.h));
+      score += out * 40;
+      for (const b of placed) score += overlap(box, b) * 3;
+      for (const q of samples)
+        if (
+          q.x > box.x - 2 &&
+          q.x < box.x + box.w + 2 &&
+          q.y > box.y - 2 &&
+          q.y < box.y + box.h + 2
+        )
+          score += 60;
+      if (score < cost) {
+        cost = score;
+        best = c;
+      }
+    });
+    placed.push({ x: best.x - w / 2, y: best.y - h / 2, w, h });
+    return best;
+  });
 }
 
 function arc(plane: Plane, from: number, to: number, r: number): { x: number; y: number }[] {
@@ -97,41 +188,28 @@ function drawPlane(
       opacity: 0.6,
     });
 
-  // Labels go just past the tips; on the unit circle, crowded ones alternate between two rings.
-  const order = vs.map((v, i) => [angle(v), i] as const).sort((a, b) => a[0] - b[0]);
-  const ring = new Map<number, number>();
-  let last = -Infinity;
-  let lastRing = 1;
-  for (const [a, i] of order) {
-    const near = settings.normalize && a - last < 0.22;
-    lastRing = near ? 1 - lastRing : 0;
-    ring.set(i, lastRing);
-    last = a;
-  }
-  vs.forEach((v, i) => {
+  const tips = vs.map((v) => plane.at({ x: v[0], y: v[1] }));
+  const spots = placeLabels(
+    tips,
+    s.vocab.map((x) => x.w),
+    o,
+    plane.rect,
+    shapes.filter((x): x is TextShape => x.kind === 'text'),
+  );
+  vs.forEach((_, i) => {
     const word = s.vocab[i]!.w;
     const id = `v-${word}`;
-    const tip = plane.at({ x: v[0], y: v[1] });
+    const tip = tips[i]!;
     const role = roles.get(id);
     shapes.push({ kind: 'arrow', id, x1: o.x, y1: o.y, x2: tip.x, y2: tip.y, role });
-    const a = angle(v);
-    const off = 16 + (ring.get(i) ?? 0) * 22;
-    const lx = tip.x + Math.cos(a) * off;
-    const ly = tip.y - Math.sin(a) * off + 5;
-    const anchor = Math.cos(a) > 0.35 ? 'start' : Math.cos(a) < -0.35 ? 'end' : 'middle';
     shapes.push(
-      text(
-        `${id}-l`,
-        { x: lx - (anchor === 'start' ? 6 : anchor === 'end' ? -6 : 0), y: ly },
-        word,
-        {
-          size: 13,
-          bold: true,
-          anchor,
-          role: role ?? undefined,
-          cls: role ? undefined : '',
-        },
-      ),
+      text(`${id}-l`, { x: spots[i]!.x, y: spots[i]!.y + 5 }, word, {
+        size: LABEL_SIZE,
+        bold: true,
+        anchor: 'middle',
+        role: role ?? undefined,
+        cls: role ? undefined : '',
+      }),
     );
   });
 

@@ -280,7 +280,7 @@ function* searchSteps(
     if (heap.length < k) {
       heap.push(e);
       yield step(
-        `${what}. The heap has room (${heap.length} of ${k}): push ${name(i)}.`,
+        `${what}. The heap has room: push ${name(i)} (${heap.length} of ${k} kept).`,
         ['score', 'room', 'push'],
         2,
         [...seen, hmark(e, 'new')],
@@ -390,7 +390,7 @@ const similarityOp: Op = {
     yield {
       state: s,
       marks,
-      say: `The lengths: |${na}| = √(${two(va[0])}² + ${two(va[1])}²) = ${two(pair.la)}, and |${nb}| = ${two(pair.lb)}.${settings.normalize ? ' Both are 1: the vectors were normalized.' : ''}`,
+      say: `The lengths: |${na}| = √(${signed(va[0])}² + ${signed(va[1])}²) = ${two(pair.la)}, and |${nb}| = ${two(pair.lb)}.${settings.normalize ? ' Both are 1: the vectors were normalized.' : ''}`,
       lines: ['len'],
       level: 2,
       vars: vars({ dot: two(pair.dot) }),

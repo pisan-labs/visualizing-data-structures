@@ -3,7 +3,7 @@
   "viz": "unigram-tokenizer",
   "id": "one-round",
   "title": "One pruning round",
-  "notes": "X",
+  "notes": "low ×5, lowest ×2, newer ×6, wider ×3, new ×2, with a seed of 12 longer pieces. newer is the most expensive to lose (15.69: newer ×6 becomes new er), and eight pieces cost nothing. The round keeps 9 of the 12 and removes ewe, ewer and newe, the rarest of the free ones.",
   "settings": {
     "seed": 12,
     "target": 8,

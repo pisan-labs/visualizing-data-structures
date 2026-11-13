@@ -3,7 +3,7 @@
   "viz": "unigram-tokenizer",
   "id": "flatter",
   "title": "A smaller α: stranger splits",
-  "notes": "X",
+  "notes": "α = 0.2 flattens the chances: at the d of talked, alked drops from 0.98 to 0.36. Three draws give t alked, t alk e d and t a lk ed.",
   "settings": {
     "seed": 16,
     "target": 8,

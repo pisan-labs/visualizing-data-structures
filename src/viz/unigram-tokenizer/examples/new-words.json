@@ -3,7 +3,7 @@
   "viz": "unigram-tokenizer",
   "id": "new-words",
   "title": "Words it never saw",
-  "notes": "X",
+  "notes": "The suffix text trained down to er, new, low and newer. lower, never in the text, becomes low er; newest is new e s t; widest is spelled out letter by letter, because no longer piece fits it.",
   "settings": {
     "seed": 12,
     "target": 4,

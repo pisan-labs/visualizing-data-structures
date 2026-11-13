@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "speculative-decoding",
+  "id": "one-round",
+  "title": "One round, step by step",
+  "notes": "From \"the cat\" the small model drafts saw, the, rug. saw (p/q = 1.11) and the (1.50) are accepted; rug has p = 0 after \"saw the\" and is rejected. The leftover is dog 0.54, cat 0.46, and u = 0.140 picks dog: 3 words for 1 large pass.",
+  "settings": {
+    "k": 3,
+    "accept": "sample"
+  },
+  "seed": 6,
+  "ops": [["start", "the cat"], ["step"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

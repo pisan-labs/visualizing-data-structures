@@ -3,7 +3,7 @@
   "viz": "unigram-tokenizer",
   "id": "lattice",
   "title": "The lattice of talked",
-  "notes": "X",
+  "notes": "The toy corpus's seed vocabulary: 21 letters and the 16 most frequent longer substrings. Eleven pieces occur in talked, and they make 9 possible splits. Viterbi fills best[1] to best[6] from left to right; best[6] = −7.11 comes through alked, so the best split is t alked.",
   "settings": {
     "seed": 16,
     "target": 8,

@@ -3,7 +3,7 @@
   "viz": "unigram-tokenizer",
   "id": "train-corpus",
   "title": "Train on the toy corpus",
-  "notes": "X",
+  "notes": "From the seed's 16 longer pieces, three rounds of pruning leave 8: the, at, cat, dog, sa, alk, an and alked. Round 1 removes lk, og, do and ca, which no best split uses. After training, walking is w alk i n g and talked is t alked (−6.65).",
   "settings": {
     "seed": 16,
     "target": 8,

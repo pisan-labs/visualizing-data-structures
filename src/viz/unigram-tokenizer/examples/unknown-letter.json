@@ -3,7 +3,7 @@
   "viz": "unigram-tokenizer",
   "id": "unknown-letter",
   "title": "A letter never seen becomes [UNK]",
-  "notes": "X",
+  "notes": "The toy corpus has no z, so zebra starts with [UNK], with a log-probability 10 below the rarest piece (p, −6.24): −16.24. The rest is e b r a, for −29.65 in all.",
   "settings": {
     "seed": 16,
     "target": 8,

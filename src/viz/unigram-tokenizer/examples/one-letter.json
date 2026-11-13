@@ -3,7 +3,7 @@
   "viz": "unigram-tokenizer",
   "id": "one-letter",
   "title": "Only letters: one path",
-  "notes": "X",
+  "notes": "No longer piece occurs in fox, so its lattice has one arc into each position and a single path: f o x, −13.76. The best case for Viterbi.",
   "settings": {
     "seed": 16,
     "target": 8,

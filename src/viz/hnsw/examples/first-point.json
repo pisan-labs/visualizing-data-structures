@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "hnsw",
+  "id": "first-point",
+  "title": "The first point",
+  "notes": "PLACEHOLDER",
+  "settings": {
+    "M": 2,
+    "ef": 3
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "insert",
+      "5,5"
+    ],
+    [
+      "search",
+      "8,8"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

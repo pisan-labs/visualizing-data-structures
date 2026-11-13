@@ -242,7 +242,7 @@ export const pagedAttention: VizDef<PagedState, PagedSettings, PagedExtra> = {
     outOfBlocks,
   ] as unknown as SavedExample[],
   practice: pagedPractice(() => pagedAttention),
-  preview: { example: 'fork-shares', level: 2, hide: ['free', 'f-', 'tables-title', 'lb-'] },
+  preview: { example: 'fork-shares', level: 2, hide: ['t-', 'tables', 'lb-', 'free', 'f-'] },
   opening: 'finish-frees',
 };
 

@@ -17,7 +17,7 @@ Each step is Θ(n) for n weights: one pass for the largest weight (or the min an
 
 ## int8: almost nothing lost
 
-Start with [int8 keeps almost everything](#example:int8-round-trip). 24 small weights, the largest .81 in size, one scale for all of them: s = 127 / .81 = 157. The first weight, .31, becomes 157 × .31 = 48.6, which rounds to code 49. Decoding gives 49 / 157 = .313. The error is .003.
+Start with [int8 keeps almost everything](#example:int8-round-trip). 24 small weights, the largest .81 in size, one scale for all of them: s = 127 / .81 = 157. The first weight, .31, becomes 157 × .31 = 48.6, which rounds to code 49. Decoding gives 49 / s = .313. The error is .003.
 
 One code step is 1 / s = .006, and rounding never misses by more than half a step. So no error here is larger than .003, and the 24 of them add up to .040. At two decimals you cannot see the difference between W and ŵ at all.
 

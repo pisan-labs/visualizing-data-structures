@@ -103,7 +103,7 @@ export function view(
       const q = s.q[r]![c];
       return q === null || q === undefined
         ? null
-        : { text: String(q), shade: shadeOf(q - zOf(r, c), qTop) };
+        : { text: q < 0 ? `−${-q}` : String(q), shade: shadeOf(q - zOf(r, c), qTop) };
     },
   };
   const deq = s.deq;

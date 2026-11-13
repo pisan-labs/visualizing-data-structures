@@ -244,6 +244,9 @@ const three = (x: number) => {
   return t.startsWith('-') ? `−${t.slice(1)}` : t;
 };
 
+/** A whole number with a real minus sign. */
+const int = (n: number) => (n < 0 ? `−${-n}` : String(n));
+
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
 export function groupName(g: { r: number; k: number }, settings: QuantSettings): string {
@@ -427,8 +430,8 @@ const quantizeOp: Op = {
           state,
           marks: [mark(`W-${r}-${c}`, 'active'), mark(`q-${r}-${c}`, 'new')],
           say: abs
-            ? `w = ${two(x)}: s · w = ${sig3(g.s)} × ${two(x)} = ${two(g.s * x)}, which rounds to ${code}.`
-            : `w = ${two(x)}: s · w = ${two(g.s * x)} rounds to ${raw}; plus z = ${g.z} gives ${raw + g.z}${clamped ? `, clamped to ${code}` : ''}.`,
+            ? `w = ${two(x)}: s · w = ${sig3(g.s)} × ${two(x)} = ${two(g.s * x)}, which rounds to ${int(code)}.`
+            : `w = ${two(x)}: s · w = ${two(g.s * x)} rounds to ${int(raw)}; plus z = ${g.z} gives ${int(raw + g.z)}${clamped ? `, kept within range: ${code}` : ''}.`,
           lines: ['q-code'],
           level: 3,
           vars: vars(state, settings),
@@ -439,7 +442,7 @@ const quantizeOp: Op = {
       yield {
         state,
         marks: [...cellMarks('q', shape.cells, 'new'), ...scaleMarks(state, g, settings, 'active')],
-        say: `Codes for ${where}: ${codes.join(', ')}. ${plural(few, 'different code')} out of the ${abs ? `${2 * qmax + 1} there are (−${qmax} to ${qmax})` : `${qmax + 1} there are (0 to ${qmax})`}.`,
+        say: `Codes for ${where}: ${codes.map(int).join(', ')}. ${plural(few, 'different code')} out of the ${abs ? `${2 * qmax + 1} there are (−${qmax} to ${qmax})` : `${qmax + 1} there are (0 to ${qmax})`}.`,
         lines: ['q-code'],
         level: 2,
         vars: vars(state, settings),
@@ -462,7 +465,7 @@ const quantizeOp: Op = {
     yield {
       state,
       marks: [...cellMarks('e', all, 'active'), mark(`e-${mr}-${mc}`, 'found')],
-      say: `The error ŵ − w. Total |error| ${three(e.total)}; the largest is ${three(e.max)}, at row ${mr + 1}, column ${mc + 1}, no more than half a code step of its group.${e.zeroed ? ` ${plural(e.zeroed, 'weight')} that ${e.zeroed === 1 ? 'is' : 'are'} not 0 ${e.zeroed === 1 ? 'decodes' : 'decode'} to 0: ${e.zeroed === 1 ? 'it is' : 'they are'} lost.` : ''} Storage: ${bitsPerWeight(settings).toFixed(2)} bits per weight against 16.`,
+      say: `The error, ŵ − W. Total |error| ${three(e.total)}; the largest is ${three(e.max)}, at row ${mr + 1}, column ${mc + 1}, no more than half a code step of its group.${e.zeroed ? ` ${plural(e.zeroed, 'weight')} that ${e.zeroed === 1 ? 'is' : 'are'} not 0 ${e.zeroed === 1 ? 'decodes' : 'decode'} to 0: ${e.zeroed === 1 ? 'it is' : 'they are'} lost.` : ''} Storage: ${bitsPerWeight(settings).toFixed(2)} bits per weight against 16.`,
       lines: ['q-err'],
       level: 1,
       vars: vars(state, settings),

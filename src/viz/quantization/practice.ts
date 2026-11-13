@@ -9,6 +9,7 @@ import {
   groupName,
   groupOfCell,
   qmaxOf,
+  roundHalfAway,
   ROWS,
   sig3,
   type Bits,
@@ -23,6 +24,10 @@ type Def = VizDef<QuantState, QuantSettings, unknown>;
 const pick = <T>(rng: Rng, xs: readonly T[]): T => xs[rng.int(0, xs.length - 1)]!;
 const text = (xs: readonly number[]) => xs.map(String).join(' ');
 const three = (x: number) => (x < 0 ? '−' : '') + Math.abs(x).toFixed(3);
+/** A whole number with a real minus sign. */
+const int = (n: number) => (n < 0 ? `−${-n}` : String(n));
+/** A signed number as it follows a minus: −0.17 in brackets. */
+const after = (t: string) => (t.startsWith('−') ? `(${t})` : t);
 
 function rules(settings: QuantSettings): string {
   const qmax = qmaxOf(settings);
@@ -95,7 +100,7 @@ export function quantPractice(def: () => Def): PracticeKind[] {
           setup: calls,
           settings,
           answer: { kind: 'number', value: p.q },
-          explain: `${scale} ${settings.scheme === 'absmax' ? `s · w = ${two(p.g.s * p.x)}, which rounds to ${p.q}.` : `s · w = ${two(p.g.s * p.x)} rounds to ${Math.sign(p.g.s * p.x) * Math.floor(Math.abs(p.g.s * p.x) + 0.5)}, and adding z gives ${p.q}.`}`,
+          explain: `${scale} ${settings.scheme === 'absmax' ? `s · w = ${two(p.g.s * p.x)}, which rounds to ${int(p.q)}.` : `s · w = ${two(p.g.s * p.x)} rounds to ${int(roundHalfAway(p.g.s * p.x))}; adding z ${roundHalfAway(p.g.s * p.x) + p.g.z === p.q ? 'gives' : 'and keeping it within range gives'} ${int(p.q)}.`}`,
           watch,
         };
       },
@@ -110,7 +115,7 @@ export function quantPractice(def: () => Def): PracticeKind[] {
           setup: calls,
           settings,
           answer: { kind: 'number', value: p.d, tolerance: 0.001 },
-          explain: `${scale} Its code is ${p.q}, so ŵ = ${settings.scheme === 'absmax' ? `${p.q} / ${sig3(p.g.s)}` : `(${p.q} − ${p.g.z}) / ${sig3(p.g.s)}`} = ${three(p.d)}.`,
+          explain: `${scale} Its code is ${int(p.q)}, so ŵ = ${settings.scheme === 'absmax' ? `${int(p.q)} / ${sig3(p.g.s)}` : `(${int(p.q)} − ${p.g.z}) / ${sig3(p.g.s)}`} = ${three(p.d)}.`,
           watch,
         };
       },
@@ -125,7 +130,7 @@ export function quantPractice(def: () => Def): PracticeKind[] {
           setup: calls,
           settings,
           answer: { kind: 'number', value: p.d - p.x, tolerance: 0.001 },
-          explain: `${scale} Its code is ${p.q}, which decodes to ${three(p.d)}. The error is ${three(p.d)} − ${two(p.x)} = ${three(p.d - p.x)}, within half a step, 1 / (2s) = ${three(1 / (2 * p.g.s))}.`,
+          explain: `${scale} Its code is ${int(p.q)}, which decodes to ${three(p.d)}. The error is ${three(p.d)} − ${after(two(p.x))} = ${three(p.d - p.x)}, within half a step, 1 / (2s) = ${three(1 / (2 * p.g.s))}.`,
           watch,
         };
       },

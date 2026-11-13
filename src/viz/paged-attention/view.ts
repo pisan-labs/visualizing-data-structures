@@ -286,7 +286,7 @@ export function view(
     return { shapes, bounds: padBounds(union(p, t, f, { x: 0, y: 0, w: 1, h: 1 }), 12) };
   };
   const rows = [16, 12, 8].filter((r) => r % sizeOf(settings) === 0);
-  const options = [side(16), ...rows.map(column)];
+  const options = [side(16), ...rows.filter((r) => r < 16).map(side), ...rows.map(column)];
   const best = pickLayout(stage, options);
   return { shapes: best.shapes, bounds: best.bounds, label: describe(s, settings) };
 }

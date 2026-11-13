@@ -227,7 +227,7 @@ export const continuousBatching: VizDef<CbState, CbSettings, unknown> = {
   ] as unknown as SavedExample[],
   practice: batchingPractice(() => continuousBatching),
   preview: {
-    example: 'long-and-short',
+    example: 'static-waits',
     level: 2,
     hide: ['table', 'th-', 'tr-', 'td-', 'read', 'queue'],
   },

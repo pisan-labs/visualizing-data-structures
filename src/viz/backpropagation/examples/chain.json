@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "backpropagation",
+  "id": "chain",
+  "title": "Functions inside functions",
+  "notes": "NOTES",
+  "settings": {
+    "accumulate": "add",
+    "zero": true
+  },
+  "seed": 1,
+  "ops": [["load", "sigmoid(exp(a) - 2*b); a=0.5, b=0.5"], ["forward"], ["backward"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "backpropagation",
+  "id": "saturated",
+  "title": "A saturated tanh",
+  "notes": "NOTES",
+  "settings": {
+    "accumulate": "add",
+    "zero": true
+  },
+  "seed": 1,
+  "ops": [["load", "tanh(a*b + 1); a=2, b=3"], ["backward"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "backpropagation",
+  "id": "neuron",
+  "title": "One neuron",
+  "notes": "NOTES",
+  "settings": {
+    "accumulate": "add",
+    "zero": true
+  },
+  "seed": 1,
+  "ops": [["load", "tanh(w1*x1 + w2*x2 + b); w1=0.5, x1=1, w2=0.25, x2=-2, b=0.5"], ["backward"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

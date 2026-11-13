@@ -14,7 +14,7 @@ The words on this page live in two dimensions so you can see them. The numbers a
 | nearest k | score all N words, keep the best k in a heap | Θ(N·d + N log k) |
 | analogy | a − b + c, then the nearest k | Θ(N·d + N log k) |
 
-Here d is the number of dimensions (2 here) and N the number of words (12). The cosine is the cosine of the angle between two arrows: 1 when they point the same way, 0 at right angles, −1 when they point opposite ways. SLP3 (chapter 6) uses it as the standard measure of similarity. [Show me](#play:kitten-cosine)
+Here d is the number of dimensions (2 here) and N the number of words (12). The cosine is the cosine of the angle between two arrows: 1 when they point the same way, 0 at right angles, −1 when they point opposite ways. SLP3 uses it as the standard measure of similarity. [Show me](#play:kitten-cosine)
 
 ## Dot product against cosine
 
@@ -39,7 +39,7 @@ The dot product is not a mistake, though. It is what [self-attention](/self-atte
 
 Finding the k nearest words by brute force is easy: score every word. Keeping the best k as you go is the interesting part. Sorting all N scores would cost Θ(N log N). Instead keep a [min-heap](/binary-heap/) of size k whose top is the *weakest* of the best k so far. A new word only needs one comparison with the top. If it scores lower, it is out. If it scores higher, it replaces the top, which sinks to its place in Θ(log k) swaps.
 
-Step through [Nearest by direction](#example:kitten-cosine) and watch the top of the heap. After the first three words fill it, most words are turned away after one comparison. In [The best words come first](#example:best-first), king, woman and queen are among the first words scored, so after them nothing gets in at all: the cheapest case. With k = 1 ([a heap of one](#example:one-neighbour)) the heap is a single box, and this is just the search for a maximum.
+Step through [Nearest by direction](#example:kitten-cosine) and watch the top of the heap. After the first three words fill it, five of the next eight still get in, because the animals come late in the list. The three food words at the end are each turned away after one comparison. In [The best words come first](#example:best-first), king, woman and queen are among the first words scored, so after them nothing gets in at all: the cheapest case. With k = 1 ([a heap of one](#example:one-neighbour)) the heap is a single box, and this is just the search for a maximum.
 
 ```check
 Q: You keep the best 3 words in a min-heap. Its top holds a score of 0.80. The next word scores 0.75. What happens?
@@ -70,11 +70,11 @@ Embeddings are how text gets into a neural network: a transformer's first step i
 - Keeping the best k in a max-heap. You need fast access to the weakest of the k, so the top must be the smallest.
 - Trusting an analogy because it returned a word. [An analogy with no answer](#example:no-answer) asks for a young fox. There is none, and the search still returns dog with a cosine of 0.27. A nearest word always exists; a good one may not.
 - Reading the two axes as meanings. Dimensions of a trained embedding are not "royal" or "animal"; only directions and distances mean something.
-- Forgetting where the vectors came from. They are learned from text and carry its biases: Bolukbasi et al. (2016) found that word2vec completes "man is to computer programmer as woman is to" with "homemaker".
+- Forgetting where the vectors came from. They are learned from text and carry its biases. Bolukbasi et al. (2016) report that word2vec completes "man is to computer programmer as woman is to" with "homemaker". That answer depends on leaving out the input words: allowed to repeat one, word2vec says "computer programmer" (Nissim et al. 2020). The bias is real, but that analogy overstates it.
 
 ## At real scale
 
-The word2vec vectors trained on Google News (2013) give 3 million words and phrases 300 numbers each. GloVe (2014) comes in sizes from 50 to 300. GPT-2 small (2019) has a table of 50 257 tokens with 768 numbers each, about 38.6 million numbers before the model does anything else. Brute force over 3 million vectors of 300 numbers is about 900 million multiplications per query: fine once, slow for every user.
+The word2vec vectors trained on Google News (2013) give 3 million words and phrases 300 numbers each. GloVe (2014) comes in sizes from 25 to 300. GPT-2 small (2019) has a table of 50 257 tokens with 768 numbers each, about 38.6 million numbers before the model does anything else. Brute force over 3 million vectors of 300 numbers is about 900 million multiplications per query: fine once, slow for every user.
 
 ## Try this
 

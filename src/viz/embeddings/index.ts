@@ -165,7 +165,11 @@ export const embeddings: VizDef<EmbState, EmbSettings, EmbExtra> = {
         example: 'same-way',
       },
       average: { cost: 'Θ(d)', why: 'The same for any pair.', example: 'same-way' },
-      worst: { cost: 'Θ(d)', why: 'd = 2 here; 300 to 4096 in real models.', example: 'same-way' },
+      worst: {
+        cost: 'Θ(d)',
+        why: 'd = 2 here; hundreds to thousands in real models.',
+        example: 'same-way',
+      },
     },
     {
       op: 'nearest(w), k neighbours',

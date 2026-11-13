@@ -1,6 +1,7 @@
 /**
  * Byte-pair encoding (BPE), as a tokenizer: Sennrich, Haddow and Birch (2016), after Gage's
- * 1994 compression algorithm, in the form SLP3 teaches (Jurafsky and Martin, chapter 2).
+ * 1994 compression algorithm, with an end-of-word marker as in earlier drafts of SLP3
+ * (Jurafsky and Martin, chapter 2; the 2026 drafts keep the space before a word instead).
  *
  * Training (the token learner): split every word of a training text into characters, with _
  * marking the end of each word. Then, k times: count every pair of neighbouring tokens, each
@@ -13,10 +14,11 @@
  *
  * Settings
  *   merges  k, the merges Train learns (One merge learns one more)
- *   eow     true: _ ends every word (SLP3, the default), so a token knows where a word ends;
+ *   eow     true: _ ends every word (Sennrich et al., the default), so a token knows where a
+ *           word ends;
  *           false: no marker (GPT-2 style, which instead keeps the space before a word)
  *   tie     'first': of pairs with equal counts, the one met first reading the text (what
- *           Sennrich et al.'s reference code does); 'alpha': the alphabetically first
+ *           the code in Sennrich et al.'s paper does); 'alpha': the alphabetically first
  *   base    'chars': start from characters, so a character never seen in training has no
  *           token ([UNK]); 'bytes': start from UTF-8 bytes (GPT-2), so every word can be
  *           encoded; an accented letter is two bytes, written ‹C3›‹A9› until they merge

@@ -66,7 +66,7 @@ Q: Without smoothing, a sentence contains one bigram that never appears in the c
 
 A bigram model forgets everything but the last word. In [Bigrams forget the start of the sentence](#example:no-memory) it goes "the dog sat in the dog sat on the dog" and is still going when the page stops it at ten words. Each pair is fine. The sentence is not.
 
-Trigrams remember two words. Nine words follow "the cat" in the corpus, seven different ones, and [Two words of context](#example:trigrams) writes "the cat slept on the rug". The catch is data. The longer the context, the fewer times each one shows up, and on a corpus this small a trigram model has seen most contexts once. Generate a few trigram sentences and about half come out word for word from the corpus (with bigrams, about one in thirty). It has stopped predicting and started quoting.
+Trigrams remember two words. Nine words follow "the cat" in the corpus, seven different ones, and [Two words of context](#example:trigrams) writes "the cat slept on the rug". The catch is data. The longer the context, the fewer times each one shows up, and on a corpus this small a trigram model has seen most contexts once. Generate a few trigram sentences and about half come out word for word from the corpus (with bigrams, about one in twenty). It has stopped predicting and started quoting.
 
 ## When to use it
 

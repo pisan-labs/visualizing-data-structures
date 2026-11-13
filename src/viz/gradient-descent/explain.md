@@ -19,7 +19,7 @@ g is the gradient where you stand and η the learning rate. Each step costs Θ(d
 Take f(x) = x². The slope is 2x, so a step takes x to x − η·2x = (1 − 2η)·x. Everything depends on that factor.
 
 - [Too small: it crawls](#example:crawl). With η = 0.01 the factor is 0.98. After 50 steps f has gone from 9 to 1.19, and after 200 it still has not converged.
-- [Just right: it converges](#example:converge). With η = 0.1 the factor is 0.8, and 29 steps get within 0.01 of the bottom.
+- [Just right: it converges](#example:converge). With η = 0.1 the factor is 0.8, and after 29 steps the slope is under 0.01, where the page calls it converged.
 - [Exactly too large: it bounces](#example:bounce). With η = 1 the factor is −1. x goes 3, −3, 3, −3, forever, and f stays at 9.
 - [Too large: it diverges](#example:diverge). With η = 1.1 the factor is −1.2. Every step overshoots by more than the last, and the run leaves the chart after 10 steps.
 
@@ -73,7 +73,7 @@ Adam also takes [a curved valley](#example:curved-valley) in stride: 92 steps fr
 
 ## When to use which
 
-Plain gradient descent is the right first try for a small, well-scaled problem, and it is the one you can analyze. Momentum helps when the loss has long, narrow valleys, which is most of the time. Adam is the default for training neural networks, transformers especially, because it needs the least tuning of the learning rate.
+Plain gradient descent is the right first try for a small, well-scaled problem, and it is the one you can analyze. Momentum helps when the loss has long, narrow valleys, which is common. Adam is the usual default for training neural networks, transformers especially, partly because it needs less tuning of the learning rate.
 
 None of them finds the global minimum of a bumpy loss. Each one goes downhill from where it starts. In large networks this seems to matter less than you would fear: the low valleys that training finds tend to be about as good as each other.
 

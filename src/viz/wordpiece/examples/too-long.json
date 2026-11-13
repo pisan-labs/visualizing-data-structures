@@ -3,7 +3,7 @@
   "viz": "wordpiece",
   "id": "too-long",
   "title": "A word over the length limit",
-  "notes": "The longest word is set to 6 letters. walked (6) splits into w ##a ##lk ##e ##d; walking (7) becomes [UNK] without a look at the vocabulary. BERT's limit is 100 characters.",
+  "notes": "The longest word is set to 6 letters. walked (6) splits into w ##a ##lk ##e ##d; walking (7) becomes [UNK] without a look at the vocabulary. BERT's limit is 200 characters.",
   "settings": {
     "merges": 20,
     "maxLen": 6,

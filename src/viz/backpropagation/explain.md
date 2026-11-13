@@ -2,7 +2,7 @@
 
 Training a network means nudging every weight so the loss goes down. To nudge a weight you need to know which way the loss moves when that weight moves, and by how much: the gradient. A model with a hundred million weights needs a hundred million of those numbers, every step. Backpropagation gets all of them in one pass backwards through the computation, for a small constant times the cost of the forward pass.
 
-The trick is old. Reverse-mode differentiation goes back to Linnainmaa (1970), and Rumelhart, Hinton and Williams (1986) made it the way neural networks learn. Every framework since does the same three things this page does: build a graph, sort it, walk it backwards.
+The trick is old. Reverse-mode differentiation goes back to Linnainmaa (1970), and Rumelhart, Hinton and Williams (1986) made it the way neural networks learn. Frameworks since do some version of the three things this page does: build a graph, put it in order, walk it backwards.
 
 ## The idea
 

@@ -21,7 +21,7 @@
  *
  * Settings
  *   merges  k, the merges Train learns (One merge learns one more)
- *   maxLen  a longer word becomes [UNK] without a look (BERT uses 100 characters)
+ *   maxLen  a longer word becomes [UNK] without a look (BERT uses 200 characters)
  *   trie    true: walk the trie, one pass per piece; false: BERT's loop, which looks up the
  *           rest of the word, then one letter shorter, and so on
  *
@@ -568,7 +568,7 @@ const encodeOp: Op = {
       yield {
         state: next,
         marks: [mark('enc-unk', 'error')],
-        say: `${word} has ${n} letters, more than the maximum of ${settings.maxLen}, so it becomes ${UNK} without a look at the vocabulary. (BERT's limit is 100 characters.)`,
+        say: `${word} has ${n} letters, more than the maximum of ${settings.maxLen}, so it becomes ${UNK} without a look at the vocabulary. (BERT's limit is 200 characters.)`,
         lines: ['long'],
         level: 1,
         vars: { ...baseVars(next), [counter]: 0, pieces: 1 },

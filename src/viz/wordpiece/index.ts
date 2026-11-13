@@ -68,7 +68,7 @@ export const wordpiece: VizDef<WpState, WpSettings, WpExtra> = {
       label: 'Longest word (longer is [UNK])',
       min: 3,
       max: MAX_LEN,
-      help: 'BERT gives up on words over 100 characters. Here words have at most 12 letters.',
+      help: 'BERT gives up on words over 200 characters. Here words have at most 12 letters.',
     },
     {
       kind: 'boolean',
@@ -152,7 +152,7 @@ export const wordpiece: VizDef<WpState, WpSettings, WpExtra> = {
         why: 'n pieces of one letter, each after up to n lookups of up to n letters.',
         example: 'loop',
       },
-      note: 'Counting letters hashed. BERT caps a word at 100 characters, so n stays small.',
+      note: 'Counting letters hashed. BERT caps a word at 200 characters, so n stays small.',
     },
     {
       op: 'Train: k merges',

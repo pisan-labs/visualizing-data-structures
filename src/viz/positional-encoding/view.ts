@@ -165,6 +165,8 @@ function drawDials(
         y2: cy - y * DIAL_R,
         head: len * DIAL_R < 2 ? 'none' : 'end',
         dashed: role === 'compare',
+        // Above the dial, whose fill would hide it when the dial is marked.
+        z: 2,
         role,
       });
       if (!label || len * DIAL_R < 4) return;

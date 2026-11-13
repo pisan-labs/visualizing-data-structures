@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "paged-attention",
+  "id": "finish-frees",
+  "title": "A finished request's blocks go to the next one",
+  "notes": "NOTES",
+  "settings": {
+    "block": "4",
+    "sharing": true
+  },
+  "seed": 1,
+  "ops": [
+    ["add", 6],
+    ["add", 4],
+    ["add", 5],
+    ["step"],
+    ["finish", "A"],
+    ["add", 9],
+    ["step"]
+  ]
+}

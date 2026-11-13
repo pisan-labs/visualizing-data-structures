@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "paged-attention",
+  "id": "big-blocks",
+  "title": "Big blocks waste more",
+  "notes": "NOTES",
+  "settings": {
+    "block": "8",
+    "sharing": true
+  },
+  "seed": 1,
+  "ops": [
+    ["add", 3],
+    ["add", 9],
+    ["add", 5],
+    ["step"],
+    ["step"]
+  ]
+}

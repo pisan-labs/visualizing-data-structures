@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "paged-attention",
+  "id": "out-of-blocks",
+  "title": "The pool runs out and a request waits",
+  "notes": "NOTES",
+  "settings": {
+    "block": "4",
+    "sharing": true
+  },
+  "seed": 1,
+  "ops": [
+    ["add", 8],
+    ["add", 7],
+    ["add", 10],
+    ["add", 9],
+    ["step"],
+    ["step"],
+    ["step"],
+    ["step"],
+    ["finish", "B"],
+    ["step"]
+  ]
+}

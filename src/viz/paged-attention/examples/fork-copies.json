@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "paged-attention",
+  "id": "fork-copies",
+  "title": "Without sharing, a fork copies everything",
+  "notes": "NOTES",
+  "settings": {
+    "block": "4",
+    "sharing": false
+  },
+  "seed": 1,
+  "ops": [
+    ["add", 6],
+    ["fork", "A"],
+    ["fork", "A"],
+    ["step"],
+    ["step"],
+    ["step"]
+  ]
+}

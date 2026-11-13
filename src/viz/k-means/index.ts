@@ -222,7 +222,7 @@ export const kMeans: VizDef<KmState, KmSettings, KmExtra> = {
     longStrips,
   ] as unknown as SavedExample[],
   practice: kmeansPractice(() => kMeans),
-  preview: { example: 'three-groups', level: 2 },
+  preview: { example: 'three-groups', level: 2, hide: ['tr-', 'cl-'] },
   opening: 'three-groups',
 };
 

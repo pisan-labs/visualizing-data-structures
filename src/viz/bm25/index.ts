@@ -241,7 +241,7 @@ export const bm25: VizDef<BmState, BmSettings, BmExtra> = {
     noMatch,
   ] as unknown as SavedExample[],
   practice: bm25Practice(() => bm25),
-  preview: { example: 'cat-mat', level: 2 },
+  preview: { example: 'cat-mat', level: 2, hide: ['d-', 'ds-', 't-', 'h-', 'he-'] },
   opening: 'cat-mat',
 };
 

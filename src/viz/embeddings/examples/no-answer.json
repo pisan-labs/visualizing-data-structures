@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "embeddings",
+  "id": "no-answer",
+  "title": "An analogy with no answer",
+  "notes": "kitten − cat + fox asks for a young fox, and there is no such word here. The arithmetic still lands somewhere, and the search still returns the nearest word: dog, with a cosine of only 0.27. A nearest word always exists; a good one may not.",
+  "settings": {
+    "measure": "cosine",
+    "normalize": false,
+    "k": 3
+  },
+  "seed": 1,
+  "ops": [["analogy", "kitten", "cat", "fox"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

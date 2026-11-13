@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "embeddings",
+  "id": "analogy-dot",
+  "title": "The same analogy by dot product",
+  "notes": "puppy − dog + cat again, scored by the dot product. fox's long arrow beats kitten, and the analogy gives the wrong answer. Analogy tests use the cosine for this reason.",
+  "settings": {
+    "measure": "dot",
+    "normalize": false,
+    "k": 3
+  },
+  "seed": 1,
+  "ops": [["analogy", "puppy", "dog", "cat"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

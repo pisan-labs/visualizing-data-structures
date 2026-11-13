@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "embeddings",
+  "id": "king-queen",
+  "title": "king − man + woman",
+  "notes": "The classic analogy. The step from man to king, taken from woman, lands next to queen. The three input words are left out of the answer, as the usual analogy test does; without that rule the answer here would be woman, the word we started from.",
+  "settings": {
+    "measure": "cosine",
+    "normalize": false,
+    "k": 3
+  },
+  "seed": 1,
+  "ops": [["analogy", "king", "man", "woman"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

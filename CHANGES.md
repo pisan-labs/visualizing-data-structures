@@ -473,3 +473,5 @@
 2026-11-13 [note] Tier 1 green on the merged tree: lint, check, unit 260 files 5212 tests, e2e 243 passed
 
 2026-11-13 [decision] transformer-block uses hand-made weights (question 3 unanswered for 15 minutes; the recommendation stands). Wave 9C started: four agents for the 11 tier-2 pages (PLAN.md 20.13)
+
+2026-11-13 [doc] Merged the tier-1 fact check: SLP3 2026 drafts no longer end words with "_" (credited to Sennrich et al. 2016), BERT word limit 200 (Hugging Face 100), heap, n-gram, beam and gradient-descent wording fixed to match the models; outside facts confirmed against sources

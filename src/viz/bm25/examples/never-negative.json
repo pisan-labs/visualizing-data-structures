@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "viz": "bm25",
+  "id": "never-negative",
+  "title": "An IDF that is never negative",
+  "notes": "PLACEHOLDER",
+  "settings": {
+    "k1": "1.2",
+    "b": "0.75",
+    "idf": "plus1"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "add",
+      "the cat sat on the mat; the dog sat on the rug; the cat saw the dog; the bird sat on the tree; a dog ate the ball; the fox ran and the dog chased it"
+    ],
+    [
+      "search",
+      "the cat"
+    ]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

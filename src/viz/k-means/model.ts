@@ -508,7 +508,7 @@ function* updateSteps(s: S, set: KmSettings, level: 2 | 3): Gen {
   yield {
     state: next,
     marks: moved.map((m) => mark(cId(m.id), 'new')),
-    say: `Round ${s.round}, update: ${moved.length ? `${plural(moved.length, 'centre')} moved` : 'no centre moved'}. WCSS ${after < before - 1e-12 ? `fell from ${two(before)} to ${two(after)}` : `stays ${two(after)}`}: the mean is the spot with the least squared distance to a group of points.`,
+    say: `Round ${s.round}, update: ${moved.length ? `${plural(moved.length, 'centre')} moved` : 'no centre moved'}. WCSS ${after < before - 1e-12 ? `fell from ${two(before)} to ${two(after)}` : `stays ${two(after)}`}.${s.round === 1 ? ' It cannot go up: the mean is the spot with the least total squared distance to a group of points.' : ''}`,
     lines: ['uret'],
     level: level === 3 ? 2 : 1,
     vars: vars(next, set),
@@ -544,13 +544,12 @@ const runOp: Op = {
       if (cur.converged) break;
       cur = yield* updateSteps(cur, settings, 3);
     }
-    const rounds = cur.round - start;
     const sizes = cur.centres.map((_, j) => cur.assign.filter((a) => a === j).length);
     yield {
       state: cur,
-      marks: cur.centres.map((c) => mark(cId(c.id), 'found')),
+      marks: [],
       say: cur.converged
-        ? `Converged after ${plural(rounds, 'round')}: ${cur.centres.map((c, j) => `${cName(c.id)} ${at(c)} with ${plural(sizes[j]!, 'point')}`).join('; ')}. WCSS = ${two(wcss(cur))}, after ${cur.work} distance computations.`
+        ? `Converged: the assignment in round ${cur.round} changed nothing. ${cur.centres.map((c, j) => `${cName(c.id)} ${at(c)} with ${plural(sizes[j]!, 'point')}`).join('; ')}. WCSS = ${two(wcss(cur))}, after ${cur.work} distance computations.`
         : `Stopped after ${MAX_ROUNDS} rounds without converging. WCSS = ${two(wcss(cur))}.`,
       lines: ['rret'],
       level: 1,

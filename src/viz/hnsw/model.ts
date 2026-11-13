@@ -566,7 +566,7 @@ const searchOp: Op = {
     yield {
       state: next,
       marks: [],
-      say: `HNSW returns ${names(found)}, after ${dists.n} distance computation${dists.n === 1 ? '' : 's'}. Brute force measures all ${s.nodes.length} and gets ${names(truth)}. Recall ${hit}/${want}${missed.length ? `: it missed ${names(missed)}${ef < K ? `, and with ef = ${ef} it could return at most ${ef}` : ''}` : ''}.`,
+      say: `HNSW returns ${names(found)}, after ${dists.n} distance computation${dists.n === 1 ? '' : 's'}. Brute force measures ${s.nodes.length === 1 ? 'the one point' : `all ${s.nodes.length}`} and gets ${names(truth)}. Recall ${hit}/${want}${missed.length ? `: it missed ${names(missed)}${ef < K ? `, and with ef = ${ef} it could return at most ${ef}` : ''}` : ''}.`,
       lines: ['sret'],
       level: 1,
       vars: {

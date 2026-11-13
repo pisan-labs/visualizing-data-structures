@@ -143,7 +143,8 @@ describe('hnsw', () => {
               expect(s.nodes[s.entry]!.level).toBe(Math.max(...settled.map((n) => n.level)));
             // The search's list never holds more than ef.
             const w = step.extra?.found;
-            if (w && step.extra?.newId === undefined && step.extra.layer === 0) expect(w.length).toBeLessThanOrEqual(set.ef);
+            if (w && step.extra?.newId === undefined && step.extra?.layer === 0)
+              expect(w.length).toBeLessThanOrEqual(set.ef);
           }
         const last = t.endState().last as SearchDone;
         expect(last.found.length).toBeLessThanOrEqual(Math.min(K, set.ef, pts.length));

@@ -37,6 +37,9 @@ const SIZE = 13;
 const ROW_H = 20;
 const COLS = [28, 64, 46, 52];
 const CW = 14;
+/** A centre's box on the plane, its name inside. */
+const BW = 28;
+const BH = 20;
 
 function drawPlane(s: KmState, roles: Roles, extra: KmExtra, unit: number): Block {
   const plane: Plane = field(unit, 30, 14);
@@ -85,7 +88,7 @@ function drawPlane(s: KmState, roles: Roles, extra: KmExtra, unit: number): Bloc
     });
   }
 
-  // Where moved centres came from.
+  // Where moved centres came from: a dashed box, and an arrow to the edge of the new one.
   for (const m of extra.moved ?? []) {
     const c = s.centres.find((o) => o.id === m.id);
     if (!c) continue;
@@ -94,47 +97,75 @@ function drawPlane(s: KmState, roles: Roles, extra: KmExtra, unit: number): Bloc
     shapes.push({
       kind: 'rect',
       id: `cg-${m.id}`,
-      x: a.x - CW / 2,
-      y: a.y - CW / 2,
-      w: CW,
-      h: CW,
-      r: 2,
+      x: a.x - BW / 2,
+      y: a.y - BH / 2,
+      w: BW,
+      h: BH,
+      r: 4,
       cls: 'ghost',
     });
-    if (Math.hypot(b.x - a.x, b.y - a.y) > CW)
-      shapes.push({ kind: 'arrow', id: `cm-${m.id}`, x1: a.x, y1: a.y, x2: b.x, y2: b.y, role: 'active' });
+    const len = Math.hypot(b.x - a.x, b.y - a.y);
+    if (len > BW) {
+      // Stop where the line meets the new box.
+      const t = Math.min(
+        (BW / 2 + 2) / Math.abs((b.x - a.x) / len || 1e-9),
+        (BH / 2 + 2) / Math.abs((b.y - a.y) / len || 1e-9),
+      );
+      const ux = (b.x - a.x) / len;
+      const uy = (b.y - a.y) / len;
+      shapes.push({
+        kind: 'arrow',
+        id: `cm-${m.id}`,
+        x1: a.x,
+        y1: a.y,
+        x2: b.x - ux * t,
+        y2: b.y - uy * t,
+        role: 'active',
+      });
+    }
   }
 
   s.points.forEach((p, i) => {
     const a = s.assign[i];
-    const group = a === null || a === undefined || !s.centres[a] ? undefined : cRole(s.centres[a]!.id);
+    const group =
+      a === null || a === undefined || !s.centres[a] ? undefined : cRole(s.centres[a]!.id);
     drawPt(shapes, plane, {
       id: ptId(p),
       at: p,
       r: 6,
       role: roles.get(ptId(p)) ?? group,
       label: p.name,
+      // High enough to clear a centre's box sitting on the point.
+      dx: 7,
+      dy: -11,
     });
   });
 
+  // A centre: a box with its name inside, over the points.
   for (const c of s.centres) {
     const q = plane.at(c);
     const id = cId(c.id);
     shapes.push({
       kind: 'rect',
       id,
-      x: q.x - CW / 2,
-      y: q.y - CW / 2,
-      w: CW,
-      h: CW,
-      r: 2,
+      x: q.x - BW / 2,
+      y: q.y - BH / 2,
+      w: BW,
+      h: BH,
+      r: 4,
       cls: 'live',
       role: roles.get(id) ?? cRole(c.id),
       z: 3,
     });
-    shapes.push(
-      text(`${id}-l`, { x: q.x + 10, y: q.y + 17 }, cName(c.id), { size: SIZE, bold: true, cls: '' }),
-    );
+    shapes.push({
+      ...text(`${id}-l`, { x: q.x, y: q.y + 5 }, cName(c.id), {
+        size: SIZE,
+        bold: true,
+        anchor: 'middle',
+        cls: '',
+      }),
+      z: 4,
+    });
   }
 
   const r = plane.rect;
@@ -226,7 +257,11 @@ function drawCentres(s: KmState, roles: Roles): Block {
   return { shapes, bounds: { x: 0, y: 0, w: 150, h: 22 + MAX_K * ROW_H } };
 }
 
-export function view(step: Step<KmState, KmExtra>, _settings: KmSettings, stage?: StageSize): Scene {
+export function view(
+  step: Step<KmState, KmExtra>,
+  _settings: KmSettings,
+  stage?: StageSize,
+): Scene {
   const { state: s, extra = {} } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const table = drawTable(s, roles, extra);

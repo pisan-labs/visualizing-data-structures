@@ -13,7 +13,7 @@ The model on this page is a table made by hand: the probability of each word giv
 | keep | the best B; one that ends with `</s>` is set aside as finished | Θ(B) |
 | finish | the best finished hypothesis, by score or by score per word | Θ(B) |
 
-A hypothesis's score is the log of its probability: the sum of ln P over its words, starting at 0. Logs keep the numbers from underflowing, and adding is cheaper than multiplying. Every score is at most 0, and every word makes it smaller. [Show me](#play:greedy-misses)
+A hypothesis's score is the log of its probability: the sum of ln P over its words, starting at 0. Logs keep the numbers from underflowing, and adding is cheaper than multiplying. Every score is at most 0, and no word can raise it. [Show me](#play:greedy-misses)
 
 ## How it works
 
@@ -34,13 +34,13 @@ This is [BFS](/bfs/) with a budget. BFS explores the tree one layer at a time an
 
 ## Length normalization
 
-Every word adds a negative log-probability, so a longer hypothesis can only score lower. Raw scores favour stopping early. In [Stopping at once scores best](#example:after-dog), starting after "dog", the winner is `</s>`, ending right there (0.35), over "ran away" (0.45 × 0.60 = 0.27).
+Every word adds a log-probability of at most 0, so a longer hypothesis never scores higher. Raw scores favour stopping early. In [Stopping at once scores best](#example:after-dog), starting after "dog", the winner is `</s>`, ending right there (0.35), over "ran away" (0.45 × 0.60 = 0.27).
 
 SLP3 divides each finished hypothesis's score by its length before comparing. In [Length normalization picks the longer sentence](#example:length-norm), "a dog `</s>`" is −2.01 / 3 = −0.67 per word and "a dog ran away `</s>`" is −2.27 / 5 = −0.45, so the longer one wins. Whether that is better depends on what you want. In translation, outputs that stop too early are a real problem.
 
 ```check
 Q: Why do raw log-probability scores favour short outputs?
-* Each extra word adds a negative log-probability, so the score can only go down as a hypothesis grows
+* Each extra word adds a log-probability of at most 0, so the score can never go up as a hypothesis grows
 - Beam search drops long hypotheses first
 - The model gives </s> a high probability
 - Logs of small numbers are positive

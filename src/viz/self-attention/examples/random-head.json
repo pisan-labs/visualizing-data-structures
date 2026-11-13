@@ -3,7 +3,7 @@
   "viz": "self-attention",
   "id": "random-head",
   "title": "An untrained head",
-  "notes": "Random weights, as at the start of training. dog and chased look mostly at themselves, and ball spreads its weight almost evenly: no pattern a person could name. Training adjusts W_Q, W_K and W_V until heads like the hand-made one appear.",
+  "notes": "Random weights, as at the start of training. dog and chased give their largest weight to themselves, and ball spreads its weight almost evenly: no pattern a person could name. Training adjusts W_Q, W_K and W_V until heads like the hand-made one appear.",
   "settings": {
     "causal": true,
     "scale": true,

@@ -61,7 +61,7 @@ Q: With the causal mask, which scores can the 3rd word in a sentence use?
 
 Attention on its own does not know where a word is. In [Attention does not know word order](#example:same-word-twice), with no mask, the two cats get exactly the same row: same embedding, same query, same key, same weights. Shuffle the words and every word's output stays the same; only the order of the rows changes. Attention treats a sentence as a bag of words.
 
-That is why transformers add a position to each word's vector (sinusoids in the original paper, rotations of the queries and keys in many models since). With the mask on the two cats differ, but only because the mask is the one thing here that knows positions.
+That is why transformers tell each word where it is: sinusoids added to its vector in the original paper, rotations of the queries and keys in many models since. With the mask on the two cats differ, but only because the mask is the one thing here that knows positions.
 
 ## When to use it
 

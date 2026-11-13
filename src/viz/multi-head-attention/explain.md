@@ -44,7 +44,7 @@ Q: A model has d_model = 512 and 8 heads, as in Vaswani et al. How wide is each 
 
 ## Sharing keys and values: GQA and MQA
 
-When a model writes text, it keeps K and V for every word so far, so the next word does not have to recompute them. That cache grows with every word, and for long contexts it is often the biggest thing in memory. With h_kv key and value heads of width d, it holds 2 · h_kv · d numbers per word, per layer.
+When a model writes text, it keeps K and V for every word so far, so the next word does not have to recompute them. That cache grows with every word, and with long contexts and many conversations at once it can take more memory than the weights. With h_kv key and value heads of width d, it holds 2 · h_kv · d numbers per word, per layer.
 
 Multi-query attention (Shazeer 2019) keeps all the query heads but gives them one shared key head and one shared value head. Grouped-query attention (Ainslie et al. 2023) sits in between: groups of query heads share a key and value head. Ainslie et al. build a GQA model from a trained multi-head one by averaging the key and value heads in each group, then training a little more. The averaging is what this page does, without the training.
 
@@ -69,7 +69,7 @@ Every transformer uses several heads; the question is how many key and value hea
 - Thinking GQA makes attention compute cheaper. It makes the cache smaller and the reading of it faster. Every query head still scores every word.
 - Forgetting W_O. Without it, head 1's output stays in its own columns and the next layer can't combine the heads.
 - Splitting the wrong way. Heads split the columns (the features) of Q, K and V, never the rows (the words). Every head sees every word.
-- Expecting every head to have a job you can name. A few heads in trained models do (some look at the previous token), most don't.
+- Expecting every head to have a job you can name. A few heads in trained models do (some look at the previous token), many don't.
 - Counting the cache per model instead of per layer. Every layer has its own K and V, so multiply by the number of layers.
 
 ## At real scale

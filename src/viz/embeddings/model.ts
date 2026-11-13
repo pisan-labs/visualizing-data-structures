@@ -1,6 +1,6 @@
 /**
- * Embeddings and similarity (SLP3, chapter 6): words as vectors, here in two dimensions and set
- * by hand so the picture can be read. Similar words point the same way.
+ * Embeddings and similarity (SLP3, the chapter on embeddings): words as vectors, here in two
+ * dimensions and set by hand so the picture can be read. Similar words point the same way.
  *
  *   dot(a, b) = a.x·b.x + a.y·b.y
  *   |a|       = √(a.x² + a.y²)

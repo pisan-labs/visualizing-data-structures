@@ -81,7 +81,7 @@ export const bpe: VizDef<BpeState, BpeSettings, BpeExtra> = {
       kind: 'boolean',
       key: 'eow',
       label: 'End-of-word marker _',
-      help: 'SLP3 ends every word with _, so a token at the end of a word differs from the same letters inside one. GPT-2 has no marker; it keeps the space before a word instead.',
+      help: 'Sennrich et al. end every word with a marker, so a token at the end of a word differs from the same letters inside one. GPT-2 has no end marker; it keeps the space before a word instead, as SLP3 now does.',
     },
     {
       kind: 'choice',
@@ -91,7 +91,7 @@ export const bpe: VizDef<BpeState, BpeSettings, BpeExtra> = {
         { value: 'first', label: 'The pair met first in the text' },
         { value: 'alpha', label: 'The alphabetically first pair' },
       ],
-      help: 'Papers rarely say. Sennrich et al.’s reference code takes the first pair it met; the choice can change every later merge.',
+      help: 'Papers rarely say. The code in Sennrich et al.’s paper takes the first pair it meets; the choice can change every later merge.',
     },
     {
       kind: 'choice',

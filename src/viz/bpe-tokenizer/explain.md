@@ -2,7 +2,7 @@
 
 A language model does not read letters or words. It reads tokens, numbers from a fixed vocabulary. Whole words make a poor vocabulary: there are too many of them, and tomorrow someone types a word the model has never seen. Single letters work for any word, but then every sentence is very long. BPE sits in between. Common words become one token, rare words are spelled out in pieces, and nothing falls through the cracks.
 
-It started as a compression trick. Philip Gage published it in 1994: find the most frequent pair of bytes, replace it with a byte that is not used, repeat. Sennrich, Haddow and Birch picked it up in 2016 for machine translation, and GPT-2 made it the default for language models. This page follows the version in Jurafsky and Martin's *Speech and Language Processing* (SLP3).
+It started as a compression trick. Philip Gage published it in 1994: find the most frequent pair of bytes, replace it with a byte that is not used, repeat. Sennrich, Haddow and Birch picked it up in 2016 for machine translation, and OpenAI's GPT models made it the default for language models. This page follows Sennrich et al.'s version, in which every word ends with a marker (_ here), as earlier drafts of Jurafsky and Martin's *Speech and Language Processing* (SLP3) taught it.
 
 ## The idea
 
@@ -53,9 +53,9 @@ A character that never occurred in training has no token at all. In [A letter ne
 
 ## Variants
 
-**The end-of-word marker.** SLP3 ends each word with _, so at_ at the end of a word and at inside one are different tokens. In [Without an end-of-word marker](#example:no-end-marker), at is merged third (17 times, from cat, sat, mat and ate) and ate becomes at e. With the marker, ate is a t e_. GPT-2 has no marker. It keeps the space in front of a word as part of its first token instead, so "the" at the start of a text and " the" after a space are different tokens.
+**The end-of-word marker.** Sennrich et al. end each word with a marker, so at_ at the end of a word and at inside one are different tokens. In [Without an end-of-word marker](#example:no-end-marker), at is merged third (17 times, from cat, sat, mat and ate) and ate becomes at e. With the marker, ate is a t e_. GPT-2 has no end marker. It keeps the space in front of a word as part of its first token instead, so "the" at the start of a text and " the" after a space are different tokens. SLP3's 2026 drafts do it that way too.
 
-**Ties.** Papers rarely say what happens when two pairs have the same count. Sennrich et al.'s code takes the first one it met, the default here. In [A tie, broken alphabetically](#example:tie-break), after e_ both t h and h e_ occur 29 times; alphabetically h e_ wins, and the is built as t + he_. Same token, different route, and that changes what other words get: that is th a t _ one way and t h a t _ the other. [Show me](#play:tie-break)
+**Ties.** Papers rarely say what happens when two pairs have the same count. The short program in Sennrich et al.'s paper takes the first one it meets, the default here. Their subword-nmt tool takes the pair that sorts last. In [A tie, broken alphabetically](#example:tie-break), after e_ both t h and h e_ occur 29 times; alphabetically h e_ wins, and the is built as t + he_. Same token, different route, and that changes what other words get: that is th a t _ one way and t h a t _ the other. [Show me](#play:tie-break)
 
 **Bytes.** Start from the 256 byte values of UTF-8 instead of characters and no word can ever be unknown. A letter like é is two bytes, C3 and A9. In [Bytes: an accent is two bytes](#example:bytes), they occur together 11 times, so the first merge glues them back into é. The ê of fête also starts with C3 but is rare, so it stays two bytes, ‹C3› ‹AA›. Ugly, but encoded. GPT-2 works this way.
 

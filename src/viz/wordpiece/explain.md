@@ -34,7 +34,7 @@ Q: The vocabulary is a, u, un, ##n, ##a, ##b, ##l, ##e, ##ab and ##able. How doe
 
 ## [UNK]: one missing piece loses the word
 
-If no piece fits at some point, the whole word becomes [UNK], not just the letter. In [One missing piece: [UNK]](#example:unknown-word), no word of the toy corpus has a b inside it, so there is no ##b, and rabbit is lost, although b starts ball, bird and box. jump has a j, which the corpus has nowhere. A word longer than the limit is also [UNK], without a look: [A word over the length limit](#example:too-long) sets it to 6 letters, so walked is split and walking is not. BERT's limit is 100 characters.
+If no piece fits at some point, the whole word becomes [UNK], not just the letter. In [One missing piece: [UNK]](#example:unknown-word), no word of the toy corpus has a b inside it, so there is no ##b, and rabbit is lost, although b starts ball, bird and box. jump has a j, which the corpus has nowhere. A word longer than the limit is also [UNK], without a look: [A word over the length limit](#example:too-long) sets it to 6 letters, so walked is split and walking is not. BERT's limit is 200 characters.
 
 ```check
 Q: With the toy corpus's vocabulary, which one piece would let rabbit be encoded?
@@ -81,7 +81,7 @@ Avoid it when every input must be encoded. Without a byte fallback, one odd char
 
 ## At real scale
 
-BERT (2019) uses WordPiece with a vocabulary of about 30 000 pieces; the released English uncased model has 30 522, including [UNK] and the other special tokens. A word over 100 characters is [UNK]. The toy here starts from 30 pieces, 13 first letters and 17 ## letters, and learns 20 more.
+BERT (2019) uses WordPiece with a vocabulary of about 30 000 pieces; the released English uncased model has 30 522, including [UNK] and the other special tokens. In Google's code a word over 200 characters is [UNK]; Hugging Face's stops at 100. The toy here starts from 30 pieces, 13 first letters and 17 ## letters, and learns 20 more.
 
 ## Try this
 

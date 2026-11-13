@@ -3,7 +3,7 @@
   "viz": "embeddings",
   "id": "kitten-cosine",
   "title": "Nearest by direction",
-  "notes": "The three words nearest to kitten by cosine similarity. cat points almost exactly the way kitten does, so it wins, though its arrow is twice as long. Watch the heap: the weakest of the best three sits on top, and most words are turned away after one comparison with it.",
+  "notes": "The three words nearest to kitten by cosine similarity. cat points almost exactly the way kitten does, so it wins, though its arrow is twice as long. Watch the heap: the weakest of the best three sits on top. The animals come late in the list, so most newcomers still get in; only the food words at the end are turned away after one comparison.",
   "settings": {
     "measure": "cosine",
     "normalize": false,

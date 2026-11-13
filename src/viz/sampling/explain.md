@@ -80,6 +80,6 @@ Real vocabularies are large: GPT-2 (2019) scores 50,257 tokens at every step, an
 
 - [Top-p keeps the nucleus](#example:nucleus): change p to 0.5. How many words survive now?
 - Load `3 3 0 0` and use top-k with k = 1. Which word wins, and why that one?
-- [High temperature: the tail wakes up](#example:hot): switch to top-p. Does ran still get drawn?
+- [High temperature: the tail wakes up](#example:hot): switch to top-p. Can ran still be drawn?
 - Use min-p on the start logits at T = 0.5 and at T = 2. Why does the floor keep more words when it is hot?
 - [Where u lands](#example:given-u): which u would pick box?

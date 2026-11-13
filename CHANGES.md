@@ -453,3 +453,5 @@
 2026-11-13 [code] Wave 9A slice: ai pathway and six families (33 planned pages), shade on rect (heat cells), _lm (numbers, toy vocabulary), _matrix panels, practice number tolerance, self-attention page
 
 2026-11-13 [note] Deployed 19:47 UTC on Yusuf's "Push next deploy": main 70155fe..2228ae7 (notify-feed.json, the notify toggle wording). Bundle matches; 204 addresses 200 with the footer once; feed 200 application/json, no redirect; no account requests. Plabs told
+
+2026-11-13 [plan] Wave 9B started: five agents for the other 11 tier-1 AI pages (PLAN.md 20.12); Yusuf approved the self-attention slice and is trying it locally

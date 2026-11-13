@@ -1194,6 +1194,23 @@ Risks:
   attend; settings causal (default on), scale (on) and the head (made by hand, or random); 7
   examples; 4 practice kinds; code tabs that match the model exactly.
 
+### 20.12 Wave 9B (started 13 November, about 19:55 Lisbon)
+
+Yusuf reviewed the slice ("1 yes", trying it locally). Five agents in parallel, each in its own
+worktree from `next` at 457602f (the shared toy corpus, `src/viz/_lm/corpus.ts`, added first),
+each told not to edit shared files and to report any change it needs:
+
+| Agent | Pages | Own kit | E2E port |
+|---|---|---|---|
+| Tokenization | bpe-tokenizer, wordpiece | `_tokenize` | 4801 |
+| Decoding | ngram-lm, sampling, beam-search | `_decode` | 4802 |
+| Inside the transformer | embeddings, multi-head-attention, positional-encoding | `_transformer` | 4803 |
+| Training | backpropagation, gradient-descent | `_train` | 4804 |
+| Serving | kv-cache | `_serve` | 4805 |
+
+The lead merges each branch into `next`, runs the full suites and the e2e, and pushes `next`.
+A release in `src/releases.ts` comes with the deploy, on Yusuf's "deploy".
+
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 
 | Page | Controls |

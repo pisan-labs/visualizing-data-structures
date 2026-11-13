@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "k-means",
+  "id": "bad-start",
+  "title": "A bad start that never recovers",
+  "notes": "PLACEHOLDER",
+  "settings": {
+    "k": 3,
+    "seeding": "random",
+    "empty": "farthest"
+  },
+  "seed": 8,
+  "ops": [
+    [
+      "load",
+      "1,2 2,1 2,3 3,2 7,7 8,8 9,7 1,8 2,9 3,8"
+    ],
+    [
+      "run"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

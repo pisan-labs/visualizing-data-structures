@@ -1,0 +1,42 @@
+{
+  "format": 1,
+  "viz": "k-means",
+  "id": "by-hand",
+  "title": "Centres placed by hand",
+  "notes": "PLACEHOLDER",
+  "settings": {
+    "k": 2,
+    "seeding": "plus",
+    "empty": "farthest"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "1,1 2,1 1,3 5,4 6,5 7,5"
+    ],
+    [
+      "place",
+      "1,1 2,1"
+    ],
+    [
+      "assign"
+    ],
+    [
+      "update"
+    ],
+    [
+      "assign"
+    ],
+    [
+      "update"
+    ],
+    [
+      "assign"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

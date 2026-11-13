@@ -1211,6 +1211,23 @@ each told not to edit shared files and to report any change it needs:
 The lead merges each branch into `next`, runs the full suites and the e2e, and pushes `next`.
 A release in `src/releases.ts` comes with the deploy, on Yusuf's "deploy".
 
+All five merged by 22:20 Lisbon; on the merged tree lint, svelte-check, the full unit suite
+(260 files, 5212 tests) and e2e for the 12 pages and the catalog (243 passed) passed.
+
+### 20.13 Wave 9C, tier 2 (started 13 November, about 22:40 Lisbon)
+
+Yusuf's loop (13 November): when tier 1 is finished, build tier 2 and then tier 3. The open
+question 3 (a trained model for `transformer-block`) went unanswered for 15 minutes, so the
+recommendation stands: hand-made weights, like every other page (to change it, only that page's
+weights change). Four agents, from `next` at the tier-1 merge:
+
+| Agent | Pages | Own kit | E2E port |
+|---|---|---|---|
+| Decoding and tokenization | unigram-tokenizer, speculative-decoding, constrained-decoding | `_dec2` | 4811 |
+| Transformer | transformer-block, moe-routing | `_block` | 4812 |
+| Serving | paged-attention, continuous-batching, quantization | `_serve2` | 4813 |
+| Retrieval | k-means, bm25, hnsw | `_retrieve` | 4814 |
+
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 
 | Page | Controls |

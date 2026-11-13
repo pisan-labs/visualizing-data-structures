@@ -469,3 +469,7 @@
 2026-11-13 [code] Merged wave 9B embeddings (2D words, cosine or dot, top-k with a heap, analogies), multi-head-attention (4, 2 or 1 heads; MHA, GQA, MQA with KV-cache readouts) and positional-encoding (sinusoidal, RoPE dials, ALiBi)
 
 2026-11-13 [code] Merged wave 9B ngram-lm (bigrams and trigrams over the toy corpus, smoothing, generate, perplexity), sampling (temperature, greedy, top-k, top-p, min-p, the draw by u) and beam-search (width, length normalization, end-of-sequence handling; greedy misses the best sentence). Tier 1 complete: 12 pages
+
+2026-11-13 [note] Tier 1 green on the merged tree: lint, check, unit 260 files 5212 tests, e2e 243 passed
+
+2026-11-13 [decision] transformer-block uses hand-made weights (question 3 unanswered for 15 minutes; the recommendation stands). Wave 9C started: four agents for the 11 tier-2 pages (PLAN.md 20.13)

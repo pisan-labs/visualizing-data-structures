@@ -465,3 +465,5 @@
 2026-11-13 [code] Merged wave 9B backpropagation (expression DAG, topological order, chain rule per edge, the overwrite and forgot-zero bugs) and gradient-descent (plain, momentum, Adam on 1D and 2D losses)
 
 2026-11-13 [code] Merged wave 9B bpe-tokenizer (train, merge, encode; end-of-word marker, tie-break, characters or bytes) and wordpiece (greedy longest match over a trie, the count(ab)/(count(a)count(b)) score); same operations, so compare mode works
+
+2026-11-13 [code] Merged wave 9B embeddings (2D words, cosine or dot, top-k with a heap, analogies), multi-head-attention (4, 2 or 1 heads; MHA, GQA, MQA with KV-cache readouts) and positional-encoding (sinusoidal, RoPE dials, ALiBi)

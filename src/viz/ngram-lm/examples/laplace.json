@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "ngram-lm",
+  "id": "laplace",
+  "title": "Add-one smoothing removes the zero",
+  "notes": "",
+  "settings": {
+    "n": "2",
+    "smoothing": "laplace"
+  },
+  "seed": 1,
+  "ops": [
+    ["score", "the cat ate the ball"],
+    ["next", "cat"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

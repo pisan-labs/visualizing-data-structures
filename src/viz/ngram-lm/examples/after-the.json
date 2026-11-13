@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "ngram-lm",
+  "id": "after-the",
+  "title": "What comes after the",
+  "notes": "",
+  "settings": {
+    "n": "2",
+    "smoothing": "none"
+  },
+  "seed": 1,
+  "ops": [["next", "the"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

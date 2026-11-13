@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "beam-search",
+  "id": "after-dog",
+  "title": "Stopping at once scores best",
+  "notes": "",
+  "settings": {
+    "width": 2,
+    "norm": false,
+    "eos": "shrink",
+    "maxLen": 5
+  },
+  "seed": 1,
+  "ops": [["search", "dog"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

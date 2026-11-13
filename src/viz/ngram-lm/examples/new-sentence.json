@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "ngram-lm",
+  "id": "new-sentence",
+  "title": "A new sentence from familiar pairs",
+  "notes": "",
+  "settings": {
+    "n": "2",
+    "smoothing": "none"
+  },
+  "seed": 1,
+  "ops": [["score", "the dog sat on the mat"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

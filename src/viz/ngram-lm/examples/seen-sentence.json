@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "ngram-lm",
+  "id": "seen-sentence",
+  "title": "A sentence the model has read",
+  "notes": "",
+  "settings": {
+    "n": "2",
+    "smoothing": "none"
+  },
+  "seed": 1,
+  "ops": [["score", "the cat sat on the mat"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

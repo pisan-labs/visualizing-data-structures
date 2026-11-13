@@ -12,7 +12,7 @@
  *   draw u in [0, 1); lay the p′ end to end, most likely first; take the token whose stretch
  *        holds u (src/viz/_decode/draw.ts)
  *
- * Temperature comes first, then the cut, as in SLP3 and the common libraries.
+ * Temperature comes first, then the cut.
  *
  * Operations: load (logits, two to eight numbers, one per candidate word in order), softmax
  * (temperature and probabilities only), sample (the whole pass with a seeded u), draw (the

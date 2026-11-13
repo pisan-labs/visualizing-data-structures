@@ -3,7 +3,7 @@
   "viz": "ngram-lm",
   "id": "laplace",
   "title": "Add-one smoothing removes the zero",
-  "notes": "",
+  "notes": "Add-one smoothing gives P(ate | cat) = 1/40, and the sentence scores 12.95 instead of infinity. Then look at what follows cat: the 23 words that never did now share more than half the probability.",
   "settings": {
     "n": "2",
     "smoothing": "laplace"

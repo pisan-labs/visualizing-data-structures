@@ -3,7 +3,7 @@
   "viz": "ngram-lm",
   "id": "count-bigrams",
   "title": "Learning is counting",
-  "notes": "",
+  "notes": "The window slides along all 18 sentences, two tokens at a time. 99 words and 18 end markers make 117 bigrams, 67 of them different. <s> the leads with 16: most sentences start with the. Use fine detail to watch each count go up.",
   "settings": {
     "n": "2",
     "smoothing": "none"

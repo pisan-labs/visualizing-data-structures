@@ -17,7 +17,7 @@
  * Operations: count (walk the corpus, counting), counts (the words seen after a context),
  * next (counts turned into probabilities), generate, and score (the perplexity of a sentence).
  */
-import type { Mark, OpSpec, PseudoBlock, Scalar, Step } from '../../engine/types';
+import type { Mark, OpSpec, PseudoBlock, Scalar } from '../../engine/types';
 import { CORPUS } from '../_lm/corpus';
 import { round3, two } from '../_lm/numbers';
 import { pickByU } from '../_decode/draw';
@@ -227,7 +227,6 @@ export interface LmExtra {
 type S = LmState;
 type X = LmExtra;
 type Op = OpSpec<S, LmSettings, X>;
-type LStep = Step<S, X>;
 
 const topRows = (c: Counts, size = 10): [string, number][] => c.ngrams.slice(0, size);
 export const maxCount = (c: Counts) => c.ngrams[0]?.[1] ?? 1;

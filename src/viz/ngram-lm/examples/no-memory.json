@@ -3,7 +3,7 @@
   "viz": "ngram-lm",
   "id": "no-memory",
   "title": "Bigrams forget the start of the sentence",
-  "notes": "",
+  "notes": "A bigram model sees only the last word. After on or in it always goes back to the (probability 1), and after the, dog is likely again. It writes the dog sat in the dog sat on the dog and is stopped at ten words.",
   "settings": {
     "n": "2",
     "smoothing": "none"

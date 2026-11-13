@@ -253,7 +253,7 @@ export const ngramLm: VizDef<LmState, LmSettings, LmExtra> = {
     noMemory,
   ] as unknown as SavedExample[],
   practice: ngramPractice(() => ngramLm),
-  preview: { example: 'count-bigrams', level: 2 },
+  preview: { example: 'count-bigrams', level: 2, hide: ['s-', 'sp-'] },
   opening: 'after-the',
 };
 

@@ -3,7 +3,7 @@
   "viz": "ngram-lm",
   "id": "new-sentence",
   "title": "A new sentence from familiar pairs",
-  "notes": "",
+  "notes": "Not in the corpus, but every pair of words is. dog is followed by sat once in 9 times (0.11), so this scores 2.55, a little worse than the cat version's 2.31.",
   "settings": {
     "n": "2",
     "smoothing": "none"

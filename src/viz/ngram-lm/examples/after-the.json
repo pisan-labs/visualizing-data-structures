@@ -3,7 +3,7 @@
   "viz": "ngram-lm",
   "id": "after-the",
   "title": "What comes after the",
-  "notes": "",
+  "notes": "The word the comes up 29 times as a context: followed by cat 9 times, dog 8, and seven other words once or twice. Divide by 29: cat 0.31, dog 0.28. The other 21 words never followed the, so they get 0.",
   "settings": {
     "n": "2",
     "smoothing": "none"

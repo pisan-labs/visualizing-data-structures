@@ -3,7 +3,7 @@
   "viz": "beam-search",
   "id": "length-norm",
   "title": "Length normalization picks the longer sentence",
-  "notes": "",
+  "notes": "The same search, but the finished hypotheses are compared per word: a dog </s> is −2.01 / 3 = −0.67 and a dog ran away </s> is −2.27 / 5 = −0.45, so the longer one wins. Without normalization a dog wins on its raw score.",
   "settings": {
     "width": 2,
     "norm": true,

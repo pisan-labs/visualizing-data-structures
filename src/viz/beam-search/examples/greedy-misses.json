@@ -3,7 +3,7 @@
   "viz": "beam-search",
   "id": "greedy-misses",
   "title": "Greedy misses the most likely sentence",
-  "notes": "",
+  "notes": "Greedy first: it takes the (0.55) over a (0.45) and ends with the cat sat, probability 0.077. Then beam search with B = 2 keeps a as well, and after a the model is sure of dog (0.85). It finishes a dog with probability 0.13 (score −2.01), the best sentence the model can make.",
   "settings": {
     "width": 2,
     "norm": false,

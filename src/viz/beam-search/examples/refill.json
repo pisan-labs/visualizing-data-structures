@@ -3,7 +3,7 @@
   "viz": "beam-search",
   "id": "refill",
   "title": "Keep the beam full: a different answer",
-  "notes": "",
+  "notes": "Here a finished hypothesis is set aside and the beam is refilled, and the search stops once two have finished. It finishes a dog and the cat sat, then stops. Per word, the cat sat (−0.64) beats a dog (−0.67). The narrowing beam of SLP3 would have found a dog ran away (−0.45).",
   "settings": {
     "width": 2,
     "norm": true,

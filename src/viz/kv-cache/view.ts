@@ -10,7 +10,7 @@
  */
 import type { MarkRole, Step, StageSize } from '../../engine/types';
 import { pickLayout } from '../../layouts/arrange';
-import type { Scene } from '../../render/scene';
+import type { Scene, Shape } from '../../render/scene';
 import { matmul, short } from '../_lm/numbers';
 import { CELL_W, drawPanelRows, shadeOf, type CellLook, type Panel } from '../_matrix/matrix';
 import {
@@ -136,12 +136,47 @@ export function view(step: Step<KvState, KvExtra>, settings: KvSettings, stage?:
         [p.q, p.a, p.z, p.work],
       ],
     ] as const
-  ).map((groups) => ({
-    ...drawPanelRows(groups(shown), s.words, roles, stage),
-    bounds: drawPanelRows(groups(frame), blank, roles, stage).bounds,
-  }));
+  ).map((groups) => {
+    const drawn = drawPanelRows(groups(shown), s.words, roles, stage);
+    return {
+      shapes: [...drawn.shapes, ...promptLines(drawn.shapes, groups(shown), s.prompt, n)],
+      bounds: drawPanelRows(groups(frame), blank, roles, stage).bounds,
+    };
+  });
   const best = pickLayout(stage, arrangements);
   return { shapes: best.shapes, bounds: best.bounds, label: describe(s) };
+}
+
+/**
+ * A dashed line under the prompt in each row of panels, between the tokens prefill read and the
+ * ones generated after it. It runs behind the cells, so it shows in the gaps and under the words.
+ */
+function promptLines(
+  shapes: readonly Shape[],
+  groups: readonly (readonly Panel[])[],
+  prompt: number,
+  n: number,
+): Shape[] {
+  if (prompt <= 0 || prompt >= n) return [];
+  const rect = (id: string) => shapes.find((sh) => sh.id === id && sh.kind === 'rect');
+  return groups.flatMap((panels, g) => {
+    const first = rect(`${panels[0]!.id}-${prompt}-0`);
+    const end = panels.at(-1)!;
+    const last = rect(`${end.id}-${prompt}-${end.cols - 1}`);
+    if (first?.kind !== 'rect' || last?.kind !== 'rect') return [];
+    return [
+      {
+        kind: 'arrow' as const,
+        id: `prompt-line-${g}`,
+        x1: 8,
+        y1: first.y,
+        x2: last.x + last.w + 8,
+        y2: first.y,
+        head: 'none' as const,
+        dashed: true,
+      },
+    ];
+  });
 }
 
 /** Width of the one-row drawing, for tests. */

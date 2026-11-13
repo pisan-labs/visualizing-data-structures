@@ -114,7 +114,7 @@ export function kvPractice(def: () => Def): PracticeKind[] {
           setup,
           settings,
           answer: { kind: 'sequence', value: kept },
-          explain: `A window of ${w} keeps the last ${w} tokens: ${kept.join(' ')}. ${gone.length ? `${gone.join(' ')} ${gone.length === 1 ? 'was' : 'were'} evicted, oldest first, and no later token can see ${gone.length === 1 ? 'it' : 'them'}.` : 'Nothing was evicted yet.'}`,
+          explain: `A window of ${w} keeps the last ${w} tokens: ${kept.join(' ')}. ${gone.length === 1 ? `The first token (${gone[0]}) was evicted, and no later token can see it.` : `The first ${gone.length} tokens (${gone.join(' ')}) were evicted, oldest first, and no later token can see them.`}`,
           watch,
         };
       },

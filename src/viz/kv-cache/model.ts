@@ -168,6 +168,18 @@ function seesWhom(names: readonly string[], t: number, lo: number): string {
   return `itself and the ${plural(t, 'token')} before it`;
 }
 
+/** Where a query's weight goes, in words: one favourite, a tie, or an even spread. */
+function favourite(names: readonly string[], r: Attn): string {
+  if (r.a.length === 1) return 'Its one weight is 1.';
+  const top = Math.max(...r.a);
+  const best = r.a.flatMap((a, i) => (top - a < 0.005 ? [names[r.lo + i]!] : []));
+  if (best.length === r.a.length)
+    return `No key stands out, so the weight is spread evenly, ${short(top)} each.`;
+  if (best.length > 1)
+    return `The largest weight, ${short(top)}, goes to ${best.slice(0, -1).join(', ')} and ${best.at(-1)}.`;
+  return `The largest weight goes to ${best[0]}, ${short(top)}.`;
+}
+
 function unknownNote(words: readonly string[]): string {
   const unknown = [...new Set(words.filter((w) => !known(w)))];
   if (!unknown.length) return '';
@@ -225,7 +237,6 @@ const prefillOp: Op = {
       const m = r.t - r.lo + 1;
       op += SEEN_COST * m;
       work.push(tokenCost(m, true));
-      const top = r.lo + r.a.indexOf(Math.max(...r.a));
       const state: S = { ...base, work: [...work] };
       yield {
         state,
@@ -238,7 +249,7 @@ const prefillOp: Op = {
           ...rowMarks('z', r.t, D_K, 'new'),
           mark(`work-${r.t}-0`, 'new'),
         ],
-        say: `${names[r.t]} attends to ${seesWhom(names, r.t, r.lo)}: ${plural(m, 'score')} and a blend of ${plural(m, 'value')}, ${SEEN_COST * m} multiply-adds. Its largest weight is on ${names[top]} (${short(r.a[top - r.lo]!)}).`,
+        say: `${names[r.t]} attends to ${seesWhom(names, r.t, r.lo)}: ${plural(m, 'score')} and a blend of ${plural(m, 'value')}, ${SEEN_COST * m} multiply-adds. ${favourite(names, r)}`,
         lines: ['p-attend'],
         level: 3,
         vars: vars(state, op, op - sum(work)),
@@ -310,7 +321,7 @@ const prefillOp: Op = {
       state: end,
       marks: [...rowMarks('z', n - 1, D_K, 'found'), mark(`w-${n - 1}`, 'found')],
       say: cache
-        ? `Prefill done: ${plural(n, 'token')}, ${op} multiply-adds. The cache holds K and V for ${plural(end.k.length, 'token')} (${end.k.length * ROW_NUMBERS} numbers). ${names[n - 1]}'s output z = ${vec(last.z)} is what a model turns into the next token; here you type it. Press Generate.`
+        ? `Prefill done: ${plural(n, 'token')}, ${op} multiply-adds. The cache holds K and V for ${plural(end.k.length, 'token')} (${end.k.length * ROW_NUMBERS} numbers). The last token's output, z = ${vec(last.z)}, is what a model would turn into the next token; here you type it. Press Generate.`
         : `Prefill done: ${plural(n, 'token')}, ${op} multiply-adds. Without a cache the keys and values are thrown away, so the next token must compute them all again. Type the next word and press Generate.`,
       lines: ['p-ret'],
       level: 1,
@@ -362,7 +373,7 @@ const generateOp: Op = {
     const typed = `Token ${t + 1}: "${word}", the word you typed (a real model would choose it from the last output).${unknownNote([word])}`;
     let op = 0;
 
-    let state: S = mid;
+    let state: S;
     if (cache) {
       op += QKV_COST;
       yield {
@@ -464,7 +475,7 @@ const generateOp: Op = {
       say:
         m === 1
           ? 'Softmax of a single score is 1: the token sees only itself.'
-          : `Softmax turns the scores into weights that add up to 1. ${names[lo + best]} gets the most, ${short(r.a[best]!)}.`,
+          : `Softmax turns the scores into weights that add up to 1. ${favourite(names, r)}`,
       lines: ['d-soft'],
       level: 2,
       vars: vars(state, op, op),

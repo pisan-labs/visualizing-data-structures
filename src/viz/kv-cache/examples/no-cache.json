@@ -3,7 +3,7 @@
   "viz": "kv-cache",
   "id": "no-cache",
   "title": "Without a cache, every token starts over",
-  "notes": "Notes to come.",
+  "notes": "The same text with nothing kept. Every step computes K and V for every token again: 128, 148 and 168 multiply-adds instead of 48, 52 and 56, and 18 rows recomputed. The outputs are exactly the same as with the cache.",
   "settings": {
     "cache": false,
     "window": "all"

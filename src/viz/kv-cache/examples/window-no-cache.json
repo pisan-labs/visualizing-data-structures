@@ -3,7 +3,7 @@
   "viz": "kv-cache",
   "id": "window-no-cache",
   "title": "A window without a cache",
-  "notes": "Notes to come.",
+  "notes": "A window of 3 and no cache: each step computes K and V for the last 3 tokens again, 68 multiply-adds per token, flat. Cheaper than recomputing everything, and still almost twice the 36 a cache needs.",
   "settings": {
     "cache": false,
     "window": "3"

@@ -232,7 +232,7 @@ export const kvCache: VizDef<KvState, KvSettings, KvExtra> = {
     oneByOne,
   ] as unknown as SavedExample[],
   practice: kvPractice(() => kvCache),
-  preview: { example: 'cache-grows', level: 2 },
+  preview: { example: 'cache-grows', level: 2, hide: ['x-', 'q-', 'prompt-line'] },
   opening: 'cache-grows',
 };
 

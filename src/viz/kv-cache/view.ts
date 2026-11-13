@@ -12,7 +12,7 @@ import type { MarkRole, Step, StageSize } from '../../engine/types';
 import { pickLayout } from '../../layouts/arrange';
 import type { Scene, Shape } from '../../render/scene';
 import { matmul, short } from '../_lm/numbers';
-import { CELL_W, drawPanelRows, shadeOf, type CellLook, type Panel } from '../_matrix/matrix';
+import { drawPanelRows, shadeOf, type CellLook, type Panel } from '../_matrix/matrix';
 import {
   D_K,
   DESIGNED,
@@ -178,6 +178,3 @@ function promptLines(
     ];
   });
 }
-
-/** Width of the one-row drawing, for tests. */
-export const oneRowWidth = 66 + (4 + 4 * D_K) * CELL_W + 2 * A_CELL + 6 * 24;

@@ -451,3 +451,5 @@
 2026-11-13 [decision] Yusuf: "Yes to all" to PLAN.md 20.9: tiers 1-2 after the slice, fourth pathway "AI and LLMs", toy weights, SLP3 and papers; rnn-lstm, mcts, lora, ring-allreduce added to tier 3
 
 2026-11-13 [code] Wave 9A slice: ai pathway and six families (33 planned pages), shade on rect (heat cells), _lm (numbers, toy vocabulary), _matrix panels, practice number tolerance, self-attention page
+
+2026-11-13 [note] Deployed 19:47 UTC on Yusuf's "Push next deploy": main 70155fe..2228ae7 (notify-feed.json, the notify toggle wording). Bundle matches; 204 addresses 200 with the footer once; feed 200 application/json, no redirect; no account requests. Plabs told

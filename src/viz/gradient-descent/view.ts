@@ -157,7 +157,7 @@ function draw(
 
   // The curve, or the contours.
   if (sf.dims === 1) {
-    const n = 96;
+    const n = 64;
     let prev = fr.at([sf.xr[0]]);
     for (let k = 1; k <= n; k++) {
       const p = fr.at([sf.xr[0] + ((sf.xr[1] - sf.xr[0]) * k) / n]);
@@ -165,7 +165,7 @@ function draw(
       prev = p;
     }
   } else {
-    const n = 72;
+    const n = 48;
     sf.levels!.forEach((c, i) => {
       let prev = fr.at(sf.contour!(c, 0));
       for (let k = 1; k <= n; k++) {
@@ -199,7 +199,9 @@ function draw(
       head: 'none',
       role: 'found',
     },
-    tickLabel('min-t', m.x + 10, m.y + 18, 'min', SMALL, 'start'),
+    sf.dims === 1
+      ? tickLabel('min-t', m.x, m.y - 12, 'min', SMALL, 'middle')
+      : tickLabel('min-t', m.x + 10, m.y + 18, 'min', SMALL, 'start'),
   );
 
   // The path.

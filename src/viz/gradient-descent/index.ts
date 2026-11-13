@@ -82,7 +82,7 @@ export const gradientDescent: VizDef<GdState, GdSettings, GdExtra> = {
         { value: 'narrow', label: 'f(x, y) = (x² + 10y²)/2: a long, narrow bowl' },
         { value: 'valley', label: 'f(x, y) = (1 − x)² + 5(y − x²)²: a curved valley' },
       ],
-      help: 'Changing the loss starts again from its usual starting point.',
+      help: 'A starting point that does not fit the new loss gives way to its usual one.',
     },
     {
       kind: 'choice',
@@ -240,9 +240,11 @@ export const gradientDescent: VizDef<GdState, GdSettings, GdExtra> = {
     roundOneStep,
   ] as unknown as SavedExample[],
   practice: gdPractice(() => gradientDescent),
+  // Two of the six contours and no dots, so the frames stay small.
   preview: {
     example: 'zigzag',
-    hide: ['lc-', 'tx-', 'ty-', 'title', 'sub', 'min-t', 'ax-xn', 'ax-yn'],
+    level: 2,
+    hide: ['lc-', 'pd-', 'ct-0-', 'ct-1-', 'ct-2-', 'ct-4-'],
   },
   opening: 'converge',
 };

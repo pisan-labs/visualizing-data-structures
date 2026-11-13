@@ -53,7 +53,7 @@ function geometry(g: Graph, across: boolean): Geometry {
   if (hit) return hit;
   const lay = layoutDag(g);
   const W = lay.width;
-  const colPitch = across ? NODE_W + 80 : NODE_W + 16;
+  const colPitch = across ? NODE_W + 80 : NODE_W + 10;
   const rowPitch = across ? NODE_H + 28 : NODE_H + 56;
   /** Top left of slot (layer, index). */
   const slot = (l: number, i: number) => {

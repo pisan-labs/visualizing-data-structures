@@ -157,6 +157,11 @@ describe('bpe-tokenizer', () => {
       'e+r 9',
       'er+_ 9',
     ]);
+    expect(suf.merges.slice(2, 4).map((m) => m.ab)).toEqual(['ne', 'new']);
+    const suf0 = loadState('low*5 lowest*2 newer*6 wider*3 new*2', defaults) as BpeState;
+    expect(suf0.rows.reduce((n, r) => n + r.count, 0)).toBe(18);
+    expect(tokenTotal(suf0.rows)).toBe(96);
+    expect(tokenTotal(suf.rows)).toBe(31);
     expect(enc(suf, 'lower')).toBe('low er_');
     expect(enc(suf, 'newest')).toBe('new e s t _');
 

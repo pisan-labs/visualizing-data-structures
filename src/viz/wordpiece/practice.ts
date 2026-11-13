@@ -132,7 +132,7 @@ export function wordpiecePractice(_def: () => Def): PracticeKind[] {
           const ranked = rankPairs(pairs);
           const best = ranked[0];
           const bpe = bpePick(pairs);
-          if (!best || !bpe || bpe === best || ranked.length < 4) continue;
+          if (!best || !bpe || bpe.count <= best.count || ranked.length < 4) continue;
           if (ranked[1]!.score === best.score) continue;
           const others = ranked.filter((p) => p !== best && p !== bpe).slice(0, 2);
           const options = shuffled(rng, [best, bpe, ...others]);

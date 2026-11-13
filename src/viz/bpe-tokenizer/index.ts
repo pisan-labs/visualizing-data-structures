@@ -10,6 +10,7 @@ import bytes from './examples/bytes.json';
 import noEndMarker from './examples/no-end-marker.json';
 import orderMatters from './examples/order-matters.json';
 import overlap from './examples/overlap.json';
+import newWords from './examples/new-words.json';
 import suffixes from './examples/suffixes.json';
 import tieBreak from './examples/tie-break.json';
 import toyCorpus from './examples/toy-corpus.json';
@@ -210,6 +211,7 @@ export const bpe: VizDef<BpeState, BpeSettings, BpeExtra> = {
   examples: [
     toyCorpus,
     suffixes,
+    newWords,
     tieBreak,
     orderMatters,
     unknownLetter,
@@ -218,7 +220,7 @@ export const bpe: VizDef<BpeState, BpeSettings, BpeExtra> = {
     overlap,
   ] as unknown as SavedExample[],
   practice: bpePractice(() => bpe),
-  preview: { example: 'suffixes', level: 2, hide: ['pairs', 'pr-', 'vocab', 'vb-', 'vm-'] },
+  preview: { example: 'toy-corpus', level: 2, hide: ['pairs', 'pr-'] },
   opening: 'toy-corpus',
 };
 

@@ -191,11 +191,7 @@ export const wordpiece: VizDef<WpState, WpSettings, WpExtra> = {
     loop,
   ] as unknown as SavedExample[],
   practice: wordpiecePractice(() => wordpiece),
-  preview: {
-    example: 'toy-corpus',
-    level: 2,
-    hide: ['done', 'er-', 'enc', 'wl-', 'pieces', 'pc-'],
-  },
+  preview: { example: 'common-word', level: 2, hide: ['vocab', 'vb-', 'vm-'] },
   opening: 'toy-corpus',
 };
 

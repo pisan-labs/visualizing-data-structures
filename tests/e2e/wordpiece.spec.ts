@@ -35,16 +35,19 @@ test('encode walks the tries and takes the longest pieces', async ({ page }) => 
 });
 
 test('training scores pairs, and BPE’s pick is shown apart', async ({ page }) => {
+  const back = page.getByRole('button', { name: 'Step back', exact: true });
+  // On the toy corpus, BPE's pick (t ##h) scores too low for the top five: a row of its own.
+  await op(page, 'One merge');
+  await toEnd(page);
+  await expect(narration(page)).toContainText('Learned merge 1: r ##u → ru');
+  await back.click();
+  await back.click();
+  await expect(narration(page)).toContainText('BPE would take the most frequent pair, t ##h');
+  await expect(stage(page).locator('text', { hasText: 'BPE’s pick' })).toBeVisible();
   await op(page, 'Load text', 'the*12 then*2 hug*3 pug*2 hugs');
   await op(page, 'One merge');
   await toEnd(page);
-  await page.getByRole('button', { name: 'Back to the previous operation' }).click();
-  await toEnd(page);
   await expect(narration(page)).toContainText('Learned merge 1: h ##u → hu');
-  await page.getByRole('button', { name: 'Step back', exact: true }).click();
-  await page.getByRole('button', { name: 'Step back', exact: true }).click();
-  await page.getByRole('button', { name: 'Step back', exact: true }).click();
-  await expect(stage(page).locator('text', { hasText: 'BPE’s pick' })).toBeVisible();
   await page.getByLabel('Word or text', { exact: true }).fill('cat 42');
   await page.getByRole('button', { name: 'Load text', exact: true }).click();
   await expect(page.getByText('Use letters only')).toBeVisible();

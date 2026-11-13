@@ -179,9 +179,10 @@ export function drawPairs(lines: readonly PairLine[], o: PairOptions): Panel {
   const top = TITLE_H + (o.heads.length ? 22 : 0);
   let nx = o.pairW + 10;
   const colX = o.numW.map((w) => (nx += w));
-  o.heads.forEach((h, j) =>
-    label(out, `pairs-h-${j}`, colX[j]!, headY, h, { anchor: 'end', dim: true }),
-  );
+  if (lines.length)
+    o.heads.forEach((h, j) =>
+      label(out, `pairs-h-${j}`, colX[j]!, headY, h, { anchor: 'end', dim: true }),
+    );
   const SPLIT = 30;
   const gap = (k: number) => (o.splitAt !== undefined && k >= o.splitAt ? SPLIT : 0);
   if (o.splitAt !== undefined && o.splitLabel && lines.length > o.splitAt)

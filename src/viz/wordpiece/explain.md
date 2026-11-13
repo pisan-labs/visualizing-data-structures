@@ -53,9 +53,9 @@ score(a, b) = count(a b) / (count(a) · count(b))
 
 with every count weighted by how often its word occurs. A pair scores high when its halves seldom occur apart. In [Score, not count](#example:score-vs-count), the occurs 12 times, so t ##h is the most frequent pair (14 times) and BPE would merge it first. But t and ##h occur 14 times each: 14 / (14 × 14) = .071. h ##u occurs only 4 times and scores 4 / (4 × 6) = .167, so it wins. After 5 merges hug, pug and hugs are pieces, and the is still t ##h ##e. [Show me](#play:score-vs-count)
 
-The toy corpus says the same. The first merge is r ##u, 2 / (5 × 2) = .200, while t ##h, 29 times, scores .027. [The most common word stays in pieces](#example:common-word): after 20 merges the is t ##h ##e and bird, seen 3 times, is one piece.
+The toy corpus says the same. The first merge is r ##u, 2 / (5 × 2) = .200, while t ##h, 29 times, scores .027. [The most common word stays in pieces](#example:common-word): after 20 merges the is still t ##h ##e, while bird, seen 3 times, is one piece.
 
-The pieces it finds are often sensible. [Stems and ## suffixes](#example:suffixes) merges ##s ##t first (2 / (2 × 2) = .5), and after 10 merges lower is low ##er and widest is wid ##est, two words that are not in the text.
+The pieces it finds are often sensible. [Stems and ## suffixes](#example:suffixes) merges ##s ##t first (2 / (2 × 2) = .5), and after 10 merges lower encodes as low ##er and widest as wid ##est, two words that are not in the text.
 
 Google never published how BERT's vocabulary was trained. Schuster and Nakajima chose the merge that most improves a language model of the training text; the score here is the one Hugging Face's course describes. After training, the merges are thrown away. Only the vocabulary is kept.
 
@@ -87,6 +87,7 @@ BERT (2019) uses WordPiece with a vocabulary of about 30 000 pieces; the release
 
 - [Train on the toy corpus](#example:toy-corpus): encode talking and running. Why is running cut into so many pieces?
 - [One missing piece: [UNK]](#example:unknown-word): add a word with a b inside, such as rabbit itself, to the text, train, and encode rabbit again.
-- [Score, not count](#example:score-vs-count): step through the scores. When is t ##h finally merged?
+- [Stems and ## suffixes](#example:suffixes): encode lower, widest and newest.
+- [Score, not count](#example:score-vs-count): set the merges to 6. When is t ##h finally merged?
 - Turn off the trie and encode walking. Where do the 16 lookups go?
 - Press Compare, choose BPE, and encode walking on both. Why do the pieces differ?

@@ -36,7 +36,7 @@ Each merge saves one token for every place it joins a pair. The text starts at 4
 
 ## Encoding: replay the merges in order
 
-To encode a new word, split it the same way and replay the merges, in the order they were learned, each one everywhere in the word. lower is not in that text, but its pieces are: low er_. newest becomes new e s t _, since est never got a merge of its own. [Show me](#play:suffixes)
+To encode a new word, split it the same way and replay the merges, in the order they were learned, each one everywhere in the word. lower is not in that text, but its pieces are: low er_. newest becomes new e s t _, since est never got a merge of its own. [Words it never saw](#example:new-words) [Show me](#play:new-words)
 
 The order matters. In [The order of the merges matters](#example:order-matters), e r is learned before h e (9 times against 6). So in her the e goes with the r first: h er_. Taking the longest token at each place would give he r _. BPE never looks for long tokens. It replays its list. (WordPiece does take the longest piece: see [the WordPiece page](/wordpiece/), and press Compare to run both on the same text.)
 
@@ -86,7 +86,7 @@ GPT-2 (2019) uses byte-level BPE with 256 bytes, 50 000 merges and one end-of-te
 
 - [Train on the toy corpus](#example:toy-corpus): encode talks and boxed. Which merges does each one use?
 - Set the merges to 30 and train again. Does walking get an ing? Why not?
-- [Shared pieces become tokens](#example:suffixes): encode widest. Then change the text to make est a token.
+- [Words it never saw](#example:new-words): encode widest. Then change the text to make est a token.
 - [A tie, broken alphabetically](#example:tie-break): switch the tie rule back and step through the second merge.
 - Load aaaaaa (six a's) and press One merge. Why does a a count 5 but the text shrink by only 3?
 - Switch Start from to UTF-8 bytes, load your name with its accents, and train.

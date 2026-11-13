@@ -1,6 +1,6 @@
 /**
  * Beam search: the tree of hypotheses. Each node is a word with the log-probability of the
- * whole hypothesis up to it; the edge into it carries P(word | the word before). The beam is
+ * whole hypothesis up to it, and P(word | the word before) in its corner. The beam is
  * blue, what was just made is green, dropped candidates have a dashed outline, finished ones
  * (ending with </s>) a green outline, and the answer is marked found, with its path. A list of
  * the finished hypotheses sits beside the tree.
@@ -26,9 +26,9 @@ import {
   type Status,
 } from './model';
 
-const NODE_W = 70;
+const NODE_W = 84;
 const NODE_H = 42;
-const COL = 100;
+const COL = 112;
 const ROW = 50;
 const OUT_W = 160;
 const OUT_ROW = 27;
@@ -182,17 +182,6 @@ function drawTree(
           dashed: lk.dim,
           role: edgeRole,
         });
-        shapes.push({
-          kind: 'text',
-          id: `e-${h.id}-p`,
-          x: x - 3,
-          y: y + NODE_H / 2 - 6,
-          text: short(h.p),
-          size: 14,
-          anchor: 'end',
-          mono: true,
-          cls: 'label',
-        });
       } else {
         const ex = p.x + 10;
         shapes.push({
@@ -239,7 +228,19 @@ function drawTree(
       cls: lk.dim ? 'label' : undefined,
     };
     if (sideways) {
-      shapes.push({ ...tokenText, x: x + w / 2, y: y + 17, anchor: 'middle' });
+      shapes.push({ ...tokenText, x: x + 7, y: y + 17 });
+      if (h.parent !== null)
+        shapes.push({
+          kind: 'text',
+          id: `${id}-p`,
+          x: x + w - 6,
+          y: y + 17,
+          text: short(h.p),
+          size: 14,
+          anchor: 'end',
+          mono: true,
+          cls: 'label',
+        });
       shapes.push({ ...scoreText, x: x + w / 2, y: y + 35, anchor: 'middle' });
     } else {
       shapes.push({ ...tokenText, x: x + 8, y: y + 17 });

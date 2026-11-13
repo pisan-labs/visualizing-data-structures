@@ -102,7 +102,7 @@ export const ngramLm: VizDef<LmState, LmSettings, LmExtra> = {
     input: {
       label: 'Words',
       placeholder: 'e.g. the cat sat',
-      maxLength: 60,
+      maxLength: 80,
       sample: 'the cat sat on the mat',
       parse: (text) => {
         const words = parseWords(text);

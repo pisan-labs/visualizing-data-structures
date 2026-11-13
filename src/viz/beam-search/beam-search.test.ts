@@ -148,7 +148,7 @@ describe('beam search', () => {
 
   it('tells the story the examples tell', () => {
     const at = (start: string, s: Partial<BeamSettings>, greedy = false) => {
-      const { search } = runSearch(start, { ...beamSearch.defaults, ...s }, greedy);
+      const { search } = runSearch(start, { ...beamSearch.defaults, ...s } as BeamSettings, greedy);
       return words(search, search.best!).join(' ');
     };
     expect(at('<s>', {}, true)).toBe('the cat sat </s>');

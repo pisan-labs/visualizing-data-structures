@@ -30,7 +30,7 @@ import {
   type Table,
 } from './model';
 
-const CELL = 72;
+const CELL = 66;
 const CELL_H = 34;
 const P_H = 28;
 const GAP = 4;
@@ -214,7 +214,7 @@ function topTable(t: Extract<Table, { kind: 'top' }>): { rows: Row[]; cols: Colu
 
 function drawCorpus(per: number, top: number): Block {
   const shapes: Shape[] = [];
-  const colW = 300;
+  const colW = 340;
   const lineH = 24;
   const rows = Math.ceil(CORPUS.length / per);
   CORPUS.forEach((s, i) => {
@@ -271,7 +271,7 @@ export function view(step: Step<LmState, LmExtra>, settings: LmSettings, stage?:
     let tx = 0;
     let ty = top;
     if (pic.strip) {
-      const per = side ? 6 : 5;
+      const per = 6;
       const s = drawStrip(pic.strip, roles, 0, side ? 0 : top, per, reserve);
       shapes.push(...s.shapes);
       boxes.push(s.bounds);

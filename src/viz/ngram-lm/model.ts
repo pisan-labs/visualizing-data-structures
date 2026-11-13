@@ -24,7 +24,7 @@ import { pickByU } from '../_decode/draw';
 
 export const BOS = '<s>';
 export const EOS = '</s>';
-export const MAX_WORDS = 8;
+export const MAX_WORDS = 10;
 export const MAX_GEN = 10;
 
 export type Smoothing = 'none' | 'laplace' | 'add-k';

@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "kv-cache",
+  "id": "one-by-one",
+  "title": "The same text one token at a time",
+  "notes": "A one-word prompt and seven words generated: eight passes, one after another, each costing 4 more than the last, from 28 up to 56. The total (336) and the final output are the same as prefilling seven words at once.",
+  "settings": {
+    "cache": true,
+    "window": "all"
+  },
+  "seed": 1,
+  "ops": [
+    ["prefill", "the"],
+    ["generate", "cat"],
+    ["generate", "sat"],
+    ["generate", "on"],
+    ["generate", "the"],
+    ["generate", "mat"],
+    ["generate", "and"],
+    ["generate", "it"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

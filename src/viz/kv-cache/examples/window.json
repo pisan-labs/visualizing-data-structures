@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "kv-cache",
+  "id": "window",
+  "title": "A window keeps the last three tokens",
+  "notes": "A window of 3: the cache stops at 3 rows (12 numbers) and every token from the third on costs 36. But ran no longer sees dog, so its output drops to (0, 0). The cache never changes the answer; the window does.",
+  "settings": {
+    "cache": true,
+    "window": "3"
+  },
+  "seed": 1,
+  "ops": [
+    ["prefill", "the dog saw the ball"],
+    ["generate", "and"],
+    ["generate", "it"],
+    ["generate", "ran"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

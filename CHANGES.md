@@ -479,3 +479,5 @@
 2026-11-13 [code] Merged wave 9C transformer-block (hand-made weights; pre- or post-norm, LayerNorm or RMSNorm, ReLU, GELU or SwiGLU; residual stream, next-word guess, parameter count) and moe-routing (top-k router, capacity and drops, Switch load-balance loss, token or expert choice)
 
 2026-11-14 [code] Merged wave 9C paged-attention (block tables, free list, reference counts, copy-on-write on fork), continuous-batching (static against iteration-level scheduling, Gantt chart, waiting and idle readouts) and quantization (int8 or int4, absmax or zero-point, per tensor, row or block; the outlier story)
+
+2026-11-14 [code] Merged wave 9C k-means (Lloyd, random or k-means++ seeding, empty clusters, WCSS), bm25 (inverted index, Robertson or Lucene IDF, k1 and b, top 3 by a heap) and hnsw (skip-list levels, greedy descent, ef list, recall against brute force)

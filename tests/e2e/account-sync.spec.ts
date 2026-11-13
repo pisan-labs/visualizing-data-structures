@@ -234,7 +234,9 @@ test.describe('signed in', () => {
     const mock = await mockSupabase(page, { preferences: prefRow({ notify_new_pages: false }) });
     await page.goto('/');
     await accountMenu(page).click();
-    const box = header(page).getByRole('checkbox', { name: 'Email me when new pages arrive' });
+    const box = header(page).getByRole('checkbox', {
+      name: 'Email me when StepWise adds new pages (at most once a day)',
+    });
     await expect(box).not.toBeChecked();
     await expect(header(page)).toContainText('You can turn this off here at any time.');
     await expect(header(page)).toContainText(
@@ -273,7 +275,9 @@ test.describe('signed in', () => {
       'Your settings and progress are kept in this browser.',
     );
     await expect(
-      header(page).getByRole('checkbox', { name: 'Email me when new pages arrive' }),
+      header(page).getByRole('checkbox', {
+        name: 'Email me when StepWise adds new pages (at most once a day)',
+      }),
     ).toBeDisabled();
     expect(errors).toEqual([]);
   });

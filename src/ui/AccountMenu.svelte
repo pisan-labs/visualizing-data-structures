@@ -229,7 +229,7 @@
             onchange={setNotify}
             aria-describedby="notify-note"
           />
-          Email me when new pages arrive
+          Email me when StepWise adds new pages (at most once a day)
         </label>
         <p id="notify-note" class="muted small">You can turn this off here at any time.</p>
       </div>

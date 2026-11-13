@@ -443,3 +443,5 @@
 2026-11-11 [note] Final deploy 10:32 Lisbon on Yusuf's word: main b418072..70155fe (manifest type). Live check passed: 204 addresses 200, manifest application/manifest+json
 
 2026-11-11 [decision] The session relay ends (Yusuf): StepWise routines deleted, session archived; main moves only on "deploy"; HANDOFF.md is the closing handoff
+
+2026-11-13 [code] dist/notify-feed.json (src/notify-feed.ts, built with releases.json) for the platform app-notify daily email, asked by Plabs; "Email me when StepWise adds new pages (at most once a day)" wording; goes live with the next deploy

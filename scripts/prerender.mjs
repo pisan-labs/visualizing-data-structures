@@ -98,6 +98,12 @@ try {
     }),
   }));
   fs.writeFileSync(path.join(dist, 'releases.json'), `${JSON.stringify(releaseList, null, 2)}\n`);
+  // The same releases for the platform's daily opt-in email (app-notify): src/notify-feed.ts.
+  const { notifyFeed } = await server.ssrLoadModule('/src/notify-feed.ts');
+  fs.writeFileSync(
+    path.join(dist, 'notify-feed.json'),
+    `${JSON.stringify(notifyFeed(releases), null, 2)}\n`,
+  );
 
   // The installable app: the manifest, then the service worker, with the app shell it keeps on
   // install and every file a reader can keep for offline use, each with its download size

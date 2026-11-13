@@ -59,7 +59,7 @@ const STALE_MS = 60_000;
 
 export class AccountSync {
   status = $state<SyncStatus>('off');
-  /** The account's "Email me when new pages arrive". */
+  /** The account's "Email me when StepWise adds new pages (at most once a day)". */
   notifyNewPages = $state(false);
   /** Why the last sync failed, when status is offline. */
   problem = $state('');

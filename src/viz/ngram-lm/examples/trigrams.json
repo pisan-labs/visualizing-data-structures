@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "ngram-lm",
+  "id": "trigrams",
+  "title": "Two words of context",
+  "notes": "With two words of context, the cat is followed by </s> twice and sat twice, out of 9. Generating writes the cat slept on the rug, a new sentence. About half of all trigram sentences here copy the corpus outright.",
+  "settings": {
+    "n": "3",
+    "smoothing": "none"
+  },
+  "seed": 30,
+  "ops": [["next", "the cat"], ["generate"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

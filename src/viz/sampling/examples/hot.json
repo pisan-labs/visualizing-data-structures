@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "sampling",
+  "id": "hot",
+  "title": "High temperature: the tail wakes up",
+  "notes": "T = 2 halves every logit, so mat drops from 0.50 to 0.31 and the unlikely words grow: ran goes from 0.00 to 0.03. Twenty draws with plain sampling give six different words.",
+  "settings": {
+    "strategy": "pure",
+    "temperature": "2",
+    "k": 3,
+    "p": "0.9",
+    "minP": "0.1"
+  },
+  "seed": 2,
+  "ops": [["load", "3.2 2.4 1.9 1.1 0.6 0.1 -0.8 -1.5"], ["repeat"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

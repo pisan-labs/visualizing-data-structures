@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "beam-search",
+  "id": "after-dog",
+  "title": "Stopping at once scores best",
+  "notes": "Starting after dog, ending right away (</s>, probability 0.35) beats ran away (0.45 × 0.60 = 0.27) on raw score. Every extra word costs a negative log, so raw scores reward stopping early.",
+  "settings": {
+    "width": 2,
+    "norm": false,
+    "eos": "shrink",
+    "maxLen": 5
+  },
+  "seed": 1,
+  "ops": [["search", "dog"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

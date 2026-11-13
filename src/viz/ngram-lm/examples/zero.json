@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "ngram-lm",
+  "id": "zero",
+  "title": "One unseen pair: probability zero",
+  "notes": "cat is never followed by ate in the corpus, so P(ate | cat) = 0 and the whole sentence gets probability 0: its perplexity is infinite. Every other pair in it was seen.",
+  "settings": {
+    "n": "2",
+    "smoothing": "none"
+  },
+  "seed": 1,
+  "ops": [["score", "the cat ate the ball"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "beam-search",
+  "id": "wide-beam",
+  "title": "A wider beam: B = 3",
+  "notes": "B = 3 keeps the dog as well at step 2, ranks 9 candidates at step 3 and finishes three hypotheses: a dog (−2.01), the cat sat (−2.56) and a dog ran away (−2.27). The answer is the same as with B = 2: a dog.",
+  "settings": {
+    "width": 3,
+    "norm": false,
+    "eos": "shrink",
+    "maxLen": 5
+  },
+  "seed": 1,
+  "ops": [["search", "<s>"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

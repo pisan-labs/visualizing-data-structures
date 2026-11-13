@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "sampling",
+  "id": "min-p",
+  "title": "Min-p: a floor that moves with the top word",
+  "notes": "Min-p with ratio 0.2 keeps the words with at least a fifth of the top word's probability. mat has 0.50, so the floor is 0.10, and mat, rug and box stay. A stronger favourite raises the floor and keeps fewer words; a flatter step keeps more.",
+  "settings": {
+    "strategy": "min-p",
+    "temperature": "1",
+    "k": 3,
+    "p": "0.9",
+    "minP": "0.2"
+  },
+  "seed": 6,
+  "ops": [["load", "3.2 2.4 1.9 1.1 0.6 0.1 -0.8 -1.5"], ["sample"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

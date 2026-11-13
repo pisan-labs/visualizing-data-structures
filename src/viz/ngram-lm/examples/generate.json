@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "ngram-lm",
+  "id": "generate",
+  "title": "Write a sentence by drawing words",
+  "notes": "Each word is drawn from the counts of what followed the word before it: u = 0.539 lands in the, u = 0.022 in cat, and so on. The result, the cat ran under the ball, is not in the corpus, but every pair of words in it is.",
+  "settings": {
+    "n": "2",
+    "smoothing": "none"
+  },
+  "seed": 1,
+  "ops": [["generate"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

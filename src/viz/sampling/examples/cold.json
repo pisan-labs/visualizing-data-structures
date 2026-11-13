@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "sampling",
+  "id": "cold",
+  "title": "Low temperature: nearly always the favourite",
+  "notes": "T = 0.5 doubles every logit before the softmax, so mat goes from 0.50 to 0.77 and the tail almost vanishes. Plain sampling, nothing cut: twenty draws give mat 18 times, rug once and box once.",
+  "settings": {
+    "strategy": "pure",
+    "temperature": "0.5",
+    "k": 3,
+    "p": "0.9",
+    "minP": "0.1"
+  },
+  "seed": 2,
+  "ops": [["load", "3.2 2.4 1.9 1.1 0.6 0.1 -0.8 -1.5"], ["repeat"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "sampling",
+  "id": "peaked-top-p",
+  "title": "A confident model: top-p keeps one word",
+  "notes": "mat has 0.93 of the probability on its own, so top-p with p = 0.9 keeps only mat. On a confident step top-p acts like greedy. Top-k with k = 3 would keep rug and box as well, at 0.03 and 0.02.",
+  "settings": {
+    "strategy": "top-p",
+    "temperature": "1",
+    "k": 3,
+    "p": "0.9",
+    "minP": "0.1"
+  },
+  "seed": 1,
+  "ops": [["load", "6 2.5 2 1.5 1 0.5"], ["sample"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

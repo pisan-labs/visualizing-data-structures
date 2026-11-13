@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "beam-search",
+  "id": "short-limit",
+  "title": "A length limit cuts the search",
+  "notes": "With at most 3 tokens, a dog ran is still going when the limit comes and is cut there. It scores −1.76, better than the finished a dog </s> (−2.01), because it never paid for </s>.",
+  "settings": {
+    "width": 2,
+    "norm": false,
+    "eos": "shrink",
+    "maxLen": 3
+  },
+  "seed": 1,
+  "ops": [["search", "<s>"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

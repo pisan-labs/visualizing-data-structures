@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "positional-encoding",
+  "id": "rope-distance",
+  "title": "RoPE: only the distance counts",
+  "notes": "Every query against every key, each turned by its own position. saw at 2 scores dog at 1 at 12.14, and saw at 5 scores dog at 4 at 12.14 too: same words, same distance, same score. dog's rows are 0 because in this head an animal asks for nothing.",
+  "settings": {
+    "scheme": "rope"
+  },
+  "seed": 1,
+  "ops": [["load", "the dog saw the dog saw"], ["encode"], ["score"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

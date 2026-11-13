@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "positional-encoding",
+  "id": "distance",
+  "title": "Same distance, same score",
+  "notes": "PE(m) · PE(n) for every pair of positions. Each diagonal holds one number: distance 1 always scores 3.54, distance 2 always 2.56. The scores do not just fall with distance, though: distance 6 scores 3.78, almost as much as distance 1, because pair 0 has turned nearly a full circle. With 8 numbers, positions far apart can look alike; real models use hundreds.",
+  "settings": {
+    "scheme": "sinusoidal"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat on the mat and"], ["encode"], ["score"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "positional-encoding",
+  "id": "same-word-twice",
+  "title": "The same word twice",
+  "notes": "The sentence that fools plain attention (see the self-attention page). Without positions, saw scores both cats 14.40. Turned by RoPE, saw gives the cat just before it 13.07 and the cat two places after it 8.82: the two cats are no longer the same to it.",
+  "settings": {
+    "scheme": "rope"
+  },
+  "seed": 1,
+  "ops": [["load", "the cat saw the cat"], ["encode"], ["score"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

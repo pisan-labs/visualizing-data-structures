@@ -3,7 +3,7 @@
   "viz": "gradient-descent",
   "id": "momentum-valley",
   "title": "Momentum damps the zigzag",
-  "notes": "NOTES",
+  "notes": "Momentum with η = 0.1 and β = 0.5 on the narrow bowl. The pushes across the valley alternate and cancel; the pushes along it add up. 19 steps.",
   "settings": {
     "surface": "narrow",
     "method": "momentum",

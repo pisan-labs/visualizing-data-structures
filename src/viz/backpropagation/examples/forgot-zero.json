@@ -3,7 +3,7 @@
   "viz": "backpropagation",
   "id": "forgot-zero",
   "title": "Forgetting to zero the gradients",
-  "notes": "NOTES",
+  "notes": "Two backward passes with no zeroing in between. The variables keep the first pass's gradients and add the second's: a ends at −16, b at 8 and c at 4, twice the true gradients.",
   "settings": {
     "accumulate": "add",
     "zero": false

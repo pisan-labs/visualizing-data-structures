@@ -3,7 +3,7 @@
   "viz": "gradient-descent",
   "id": "bounce",
   "title": "Exactly too large: it bounces",
-  "notes": "NOTES",
+  "notes": "η = 1: each step multiplies x by −1. The point jumps between 3 and −3 forever, and f never moves from 9.",
   "settings": {
     "surface": "bowl",
     "method": "gd",

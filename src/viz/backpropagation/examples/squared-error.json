@@ -3,7 +3,7 @@
   "viz": "backpropagation",
   "id": "squared-error",
   "title": "The squared error of one weight",
-  "notes": "NOTES",
+  "notes": "The loss of a one-weight model: the prediction w·x is 1, the target y is 3, the error is −2 and the loss 4. ∂f/∂w = 2 × error × x = −8, so raising w lowers the loss.",
   "settings": {
     "accumulate": "add",
     "zero": true

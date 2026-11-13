@@ -3,7 +3,7 @@
   "viz": "gradient-descent",
   "id": "adam-narrow",
   "title": "Adam: the same step in every direction",
-  "notes": "NOTES",
+  "notes": "Adam divides each coordinate's step by the size of its recent gradients, so the first steps are 0.1 in x and 0.1 in y although y's slope is steeper. No zigzag. 97 steps.",
   "settings": {
     "surface": "narrow",
     "method": "adam",

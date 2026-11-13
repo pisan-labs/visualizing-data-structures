@@ -3,7 +3,7 @@
   "viz": "gradient-descent",
   "id": "crawl",
   "title": "Too small: it crawls",
-  "notes": "NOTES",
+  "notes": "η = 0.01: each step multiplies x by 0.98. After 50 steps f is still 1.19, down from 9. Correct, and far too slow.",
   "settings": {
     "surface": "bowl",
     "method": "gd",

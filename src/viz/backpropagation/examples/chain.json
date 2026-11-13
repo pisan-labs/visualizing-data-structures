@@ -3,7 +3,7 @@
   "viz": "backpropagation",
   "id": "chain",
   "title": "Functions inside functions",
-  "notes": "NOTES",
+  "notes": "exp, a scaled input, a difference and a sigmoid. The forward pass runs on its own first; the backward pass then uses the stored values: the slope of exp is its own value, 1.65, and the slope of the sigmoid is f × (1 − f) = 0.23.",
   "settings": {
     "accumulate": "add",
     "zero": true

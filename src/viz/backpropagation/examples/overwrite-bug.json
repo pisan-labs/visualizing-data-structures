@@ -3,7 +3,7 @@
   "viz": "backpropagation",
   "id": "overwrite-bug",
   "title": "The bug: overwriting instead of adding",
-  "notes": "NOTES",
+  "notes": "The same expression with u.grad = ... instead of +=. When n1 sends a its share of −6, it overwrites the −2 from f, so a ends at −6 instead of −8. b and c are used once and come out right.",
   "settings": {
     "accumulate": "overwrite",
     "zero": true

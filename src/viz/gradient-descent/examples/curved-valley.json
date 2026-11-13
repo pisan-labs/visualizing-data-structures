@@ -3,7 +3,7 @@
   "viz": "gradient-descent",
   "id": "curved-valley",
   "title": "A curved valley",
-  "notes": "NOTES",
+  "notes": "A curved valley (a gentle Rosenbrock function) with its bottom at (1, 1). Adam with η = 0.1 follows the curve and converges after 92 steps.",
   "settings": {
     "surface": "valley",
     "method": "adam",

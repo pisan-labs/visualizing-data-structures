@@ -3,7 +3,7 @@
   "viz": "gradient-descent",
   "id": "diverge",
   "title": "Too large: it diverges",
-  "notes": "NOTES",
+  "notes": "η = 1.1: each step multiplies x by −1.2, so every jump lands farther out than the last. The run leaves the chart after 10 steps.",
   "settings": {
     "surface": "bowl",
     "method": "gd",

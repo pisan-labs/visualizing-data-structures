@@ -3,7 +3,7 @@
   "viz": "gradient-descent",
   "id": "narrow-diverge",
   "title": "The steep direction sets the limit",
-  "notes": "NOTES",
+  "notes": "The same bowl with η = 0.21. Along the valley that is fine, but across it y is multiplied by −1.1 each step, and the run diverges after 19 steps.",
   "settings": {
     "surface": "narrow",
     "method": "gd",

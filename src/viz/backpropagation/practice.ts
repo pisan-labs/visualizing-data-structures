@@ -73,7 +73,7 @@ export function backpropPractice(def: () => Def): PracticeKind[] {
       id: 'order',
       title: 'The backward order',
       make(rng) {
-        const { ops, g, trace, name } = setup(rng);
+        const { ops, trace, name } = setup(rng);
         const forward = trace.order.map(name);
         const back = [...forward].reverse();
         return {

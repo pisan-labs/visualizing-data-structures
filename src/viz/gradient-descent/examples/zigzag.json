@@ -3,7 +3,7 @@
   "viz": "gradient-descent",
   "id": "zigzag",
   "title": "A narrow bowl: the zigzag",
-  "notes": "NOTES",
+  "notes": "A bowl ten times steeper across than along. With η = 0.19, y is multiplied by −0.9 each step and bounces from wall to wall, while x walks in. 66 steps.",
   "settings": {
     "surface": "narrow",
     "method": "gd",

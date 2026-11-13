@@ -3,7 +3,7 @@
   "viz": "gradient-descent",
   "id": "no-bias-correction",
   "title": "Adam without bias correction",
-  "notes": "NOTES",
+  "notes": "Adam without bias correction. Both averages start at 0, and s, the average of g², is still tiny, so the first step is about 0.32 in each coordinate instead of η = 0.1, and the next few are bigger still.",
   "settings": {
     "surface": "narrow",
     "method": "adam",

@@ -3,7 +3,7 @@
   "viz": "backpropagation",
   "id": "dead-relu",
   "title": "A dead ReLU",
-  "notes": "NOTES",
+  "notes": "relu gets −5 and outputs 0. Its slope there is 0, so every gradient before it is exactly 0: a dead ReLU.",
   "settings": {
     "accumulate": "add",
     "zero": true

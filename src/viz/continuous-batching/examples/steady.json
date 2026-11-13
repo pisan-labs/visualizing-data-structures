@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "continuous-batching",
+  "id": "steady",
+  "title": "A steady stream never waits",
+  "notes": "Requests arrive a few iterations apart, and a slot is always free when one comes: no one waits. Switch to static batching: A starts a batch of one, and B waits 2 iterations beside an empty slot.",
+  "settings": {
+    "slots": 2,
+    "policy": "continuous"
+  },
+  "seed": 1,
+  "ops": [
+    ["add", 0, 5, 3],
+    ["add", 1, 3, 3],
+    ["add", 3, 6, 2],
+    ["add", 4, 2, 3],
+    ["add", 6, 4, 2],
+    ["run"]
+  ]
+}

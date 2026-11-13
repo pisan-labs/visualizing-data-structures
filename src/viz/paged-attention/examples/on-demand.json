@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "paged-attention",
+  "id": "on-demand",
+  "title": "Blocks are handed out as tokens arrive",
+  "notes": "A's 5 tokens take blocks 0 and 1, B's 3 take block 2. A request gets a new block only when its last one is full: B gets block 3 at the second step, A gets block 4 at the fourth. 16 tokens in 5 blocks, 4 slots empty, all in last blocks.",
+  "settings": {
+    "block": "4",
+    "sharing": true
+  },
+  "seed": 1,
+  "ops": [["add", 5], ["add", 3], ["step"], ["step"], ["step"], ["step"]]
+}

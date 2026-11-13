@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "paged-attention",
+  "id": "big-blocks",
+  "title": "Big blocks waste more",
+  "notes": "Blocks of 8 tokens: 6 in the pool. Three requests of 5, 11 and 7 tokens use 4 blocks and leave 9 of their 32 slots empty. Try blocks of 2: the waste drops to 3.",
+  "settings": {
+    "block": "8",
+    "sharing": true
+  },
+  "seed": 1,
+  "ops": [["add", 3], ["add", 9], ["add", 5], ["step"], ["step"]]
+}

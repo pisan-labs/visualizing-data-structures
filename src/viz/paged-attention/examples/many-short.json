@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "paged-attention",
+  "id": "many-short",
+  "title": "Six short requests where contiguous memory fits three",
+  "notes": "Six requests of 1 to 4 tokens use 9 of the 12 blocks after two steps. Reserving 16 slots for each would take 96, twice the pool, with 69 of them empty.",
+  "settings": {
+    "block": "4",
+    "sharing": true
+  },
+  "seed": 1,
+  "ops": [
+    ["add", 2],
+    ["add", 3],
+    ["add", 1],
+    ["add", 4],
+    ["add", 2],
+    ["add", 3],
+    ["step"],
+    ["step"]
+  ]
+}

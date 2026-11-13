@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "continuous-batching",
+  "id": "burst",
+  "title": "Six requests at once",
+  "notes": "Six requests arrive at once for 3 slots. Each slot takes the next in line the moment it frees: D at 1, E at 3, F at 5. Done at 8, with 18 tokens: 2.25 per iteration.",
+  "settings": {
+    "slots": 3,
+    "policy": "continuous"
+  },
+  "seed": 1,
+  "ops": [
+    ["add", 0, 4, 5],
+    ["add", 0, 9, 1],
+    ["add", 0, 2, 3],
+    ["add", 0, 6, 4],
+    ["add", 0, 3, 2],
+    ["add", 0, 7, 3],
+    ["run"]
+  ]
+}

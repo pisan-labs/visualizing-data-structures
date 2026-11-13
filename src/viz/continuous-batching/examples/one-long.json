@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "continuous-batching",
+  "id": "one-long",
+  "title": "One long request among short ones",
+  "notes": "A writes 8 tokens; the other five write 1 or 2. Static batching holds two slots idle beside A while D, E and F wait: 13 slot-iterations idle while someone waited, everything done at 10. Continuous batching is done at 8, when A is.",
+  "settings": {
+    "slots": 3,
+    "policy": "static"
+  },
+  "seed": 1,
+  "ops": [
+    ["add", 0, 6, 8],
+    ["add", 0, 3, 1],
+    ["add", 0, 2, 2],
+    ["add", 1, 5, 1],
+    ["add", 1, 4, 2],
+    ["add", 2, 3, 1],
+    ["run"]
+  ]
+}

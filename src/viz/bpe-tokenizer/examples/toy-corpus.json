@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "bpe-tokenizer",
+  "id": "toy-corpus",
+  "title": "Train on the toy corpus",
+  "notes": "The toy corpus: 99 words, 29 of them different, 420 tokens as characters. the occurs 29 times, so e _ (32 times) and t h (29) are merged first, and by merge 3 the_ is one token. After 20 merges the text is 193 tokens. Encode walked (w alked_) and walking (w alk i n g_): ing occurs only three times, so it never gets a merge.",
+  "settings": {
+    "merges": 20,
+    "eow": true,
+    "tie": "first",
+    "base": "chars"
+  },
+  "seed": 1,
+  "ops": [["train"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

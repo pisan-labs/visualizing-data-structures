@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "wordpiece",
+  "id": "suffixes",
+  "title": "Stems and ## suffixes",
+  "notes": "##s ##t scores 2 / (2 × 2) = .5 and is merged first; ##est and ##er follow. After 10 merges, encode lower and widest, which are not in the text: each splits into a stem and a ## suffix, low ##er and wid ##est.",
+  "settings": {
+    "merges": 10,
+    "maxLen": 12,
+    "trie": true
+  },
+  "seed": 1,
+  "ops": [["load", "low*5 lowest*2 newer*6 wider*3 new*2"], ["train"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

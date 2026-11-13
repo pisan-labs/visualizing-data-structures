@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "bpe-tokenizer",
+  "id": "no-end-marker",
+  "title": "Without an end-of-word marker",
+  "notes": "Without _, at in cat, sat, mat and ate is one token, merged third (17 times). ate encodes as at e and atone as at on e. With the marker, at_ at the end of a word and at inside one differ, and ate is a t e_.",
+  "settings": {
+    "merges": 20,
+    "eow": false,
+    "tie": "first",
+    "base": "chars"
+  },
+  "seed": 1,
+  "ops": [["train"], ["encode", "ate"], ["encode", "atone"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

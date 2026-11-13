@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "bpe-tokenizer",
+  "id": "order-matters",
+  "title": "The order of the merges matters",
+  "notes": "e r (9 times) is learned before h e (6 times). Encoding her replays the merges in that order, so the e joins the r first: h er_. Taking the longest token at each place would give he r _. BPE never looks for the longest token.",
+  "settings": {
+    "merges": 8,
+    "eow": true,
+    "tie": "first",
+    "base": "chars"
+  },
+  "seed": 1,
+  "ops": [["load", "newer*6 wider*3 the*4 he*2"], ["train"], ["encode", "her"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

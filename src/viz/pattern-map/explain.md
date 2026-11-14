@@ -80,7 +80,7 @@ Each family groups patterns by where you would look for them. A few pages from o
 | 8. Bit tricks | bits as a set, values that cancel | [XOR tricks](/xor-tricks/), [bitmasks](/bitmask/) |
 | 9. DP patterns | a best or a count from smaller answers | [DP on a grid](/dp-grid-paths/), [states over time](/dp-state-machine/), [DP on trees](/dp-tree/), [DP over subsets](/dp-bitmask/) |
 | 10. Design a data structure | a few operations that must all be fast | [min stack](/min-stack/), [LRU cache](/lru-cache/), [LFU cache](/lfu-cache/), [rate limiter](/rate-limiter/), [trie](/trie/) |
-| 11. Concurrency | threads sharing memory | [race conditions](/race-condition/), [mutex](/mutex/), [semaphores](/semaphore/), [deadlock](/deadlock/) |
+| 11. Concurrency | threads sharing memory | [race conditions](/race-condition/), [mutex](/mutex/), [semaphores](/semaphore/), [producer-consumer](/producer-consumer/), [deadlock](/deadlock/), [dining philosophers](/dining-philosophers/), [readers and writers](/readers-writers/), [barriers](/barrier/), [compare-and-swap](/compare-and-swap/) |
 
 Concurrency is the largest family, with 9 patterns and 15 cues. [Concurrency, the largest family](#example:concurrency-family) The smallest are Intervals and Bit tricks, with two patterns each. [The array and string tricks](#play:array-family) has 7 patterns and 13 cues.
 

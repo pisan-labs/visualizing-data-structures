@@ -3,8 +3,11 @@
   "viz": "pattern-map",
   "id": "halfway-node",
   "title": "One cue is enough",
-  "notes": "NOTES",
-  "settings": { "lookalikes": true, "naive": true },
+  "notes": "Problem 4 has one cue, “Find the node halfway along it”: the middle of a list, so the fast and slow pointers, in one walk.",
+  "settings": {
+    "lookalikes": true,
+    "naive": true
+  },
   "seed": 1,
   "ops": [["which", "4"]]
 }

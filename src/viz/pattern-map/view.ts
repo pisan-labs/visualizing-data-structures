@@ -58,7 +58,7 @@ const GAP = 36;
 const ROW_GAP = 12;
 const CUE_GAP = 6;
 const GROUP_GAP = 30;
-const BOX_W = 236;
+const BOX_W = 252;
 /** The words column of a problem, beside the cue on a wide stage. */
 const WORDS_W = 220;
 
@@ -245,11 +245,11 @@ function assemble(
 function overview(state: PmState, roles: Roles, cols: number, stage?: StageSize): Part {
   const head: Shape[] = [];
   const width = cols * BOX_W + (cols - 1) * 12;
-  const live = NODES.filter((n) => isLiveNode(n.id)).length;
+  const nLive = NODES.filter((n) => live(n.id)).length;
   const top = header(
     head,
     'The pattern map',
-    `${FAMILIES.length} families, ${NODES.length} patterns, ${CUES.length} cues; ${live} pages live`,
+    `${FAMILIES.length} families, ${NODES.length} patterns, ${CUES.length} cues; ${nLive} pages live`,
     width,
     roles,
   );
@@ -277,18 +277,18 @@ function overview(state: PmState, roles: Roles, cols: number, stage?: StageSize)
       id: `${id}-t`,
       x: x + PAD + 2,
       y: baseline(y + 2, 0),
-      text: f.name,
+      text: `${k + 1}. ${f.name}`,
       size: T,
       weight: 'bold',
     });
-    const k2 = f.nodes.filter(isLiveNode).length;
+    const k2 = f.nodes.filter(live).length;
     const n = f.nodes.length;
     body.push({
       kind: 'text',
       id: `${id}-n`,
       x: x + PAD + 2,
       y: baseline(y + 2, 1),
-      text: `${k + 1}. ${n} ${n === 1 ? 'pattern' : 'patterns'}, ${k2 === n ? 'all live' : `${k2} live`}`,
+      text: `${n} ${n === 1 ? 'pattern' : 'patterns'}, ${k2 === n ? 'all live' : `${k2} live`}`,
       size: T,
       cls: 'label',
     });
@@ -297,8 +297,6 @@ function overview(state: PmState, roles: Roles, cols: number, stage?: StageSize)
   const bodyBox: Bounds = { x: 0, y: top, w: width, h: rows * (h + 12) - 12 };
   return assemble(head, headBox, body, bodyBox, stage);
 }
-
-const isLiveNode = (id: string) => live(id);
 
 // ----- A family -----
 
@@ -444,7 +442,7 @@ function problemPart(
     if (read) {
       const wid = wordsId(idx);
       textLines(body, wid, words, 0, wy - PAD + 1, {
-        role: roles.get(wid) ?? (f.trap ? undefined : undefined),
+        role: roles.get(wid),
       });
       cb.draw(body, cueX, cy, roles);
       if (wide)

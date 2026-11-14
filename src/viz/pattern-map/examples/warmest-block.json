@@ -3,8 +3,11 @@
   "viz": "pattern-map",
   "id": "warmest-block",
   "title": "A window that cannot subtract",
-  "notes": "NOTES",
-  "settings": { "lookalikes": true, "naive": true },
+  "notes": "Problem 2. “every block of 10 minutes in a row” looks like a sliding window, but a window subtracts the value that leaves, and a maximum cannot be subtracted. “the highest reading in it” is the maximum of every window: a monotonic queue.",
+  "settings": {
+    "lookalikes": true,
+    "naive": true
+  },
   "seed": 1,
   "ops": [["which", "2"]]
 }

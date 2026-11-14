@@ -820,7 +820,7 @@ export const CUES: readonly Cue[] = [
   c(
     'di-merge',
     'dp-interval',
-    'the best order to merge a row',
+    'best order to merge a row',
     'Solve every interval by the step that happens last in it: two smaller intervals, already solved.',
   ),
   c(
@@ -930,7 +930,7 @@ export const CUES: readonly Cue[] = [
   c(
     'pc-full',
     'producer-consumer',
-    'wait while the buffer is full',
+    'wait for room in a buffer',
     'A lock and two condition variables, not full and not empty, with each wait in a while loop.',
   ),
   c(
@@ -1199,7 +1199,7 @@ export const live = (nodeId: string): boolean => isLive(node(nodeId).page);
 
 /** How a node's page is written on the map: its path, or a note when it is not live yet. */
 export const pageText = (nodeId: string): string =>
-  live(nodeId) ? `/${node(nodeId).page}/` : 'page coming';
+  live(nodeId) ? `/${node(nodeId).page}/` : 'page not live yet';
 
 /** A node's name as Markdown, linked to its page when the page is live. */
 export const nodeLink = (nodeId: string): string => {

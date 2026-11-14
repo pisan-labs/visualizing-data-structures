@@ -3,8 +3,11 @@
   "viz": "pattern-map",
   "id": "concurrency-family",
   "title": "Concurrency, the largest family",
-  "notes": "NOTES",
-  "settings": { "lookalikes": true, "naive": true },
+  "notes": "Nine patterns and 15 cues: race conditions, locks, semaphores, the bounded buffer, deadlock and the classic synchronization problems. A dashed box marks a page that is not live yet.",
+  "settings": {
+    "lookalikes": true,
+    "naive": true
+  },
   "seed": 1,
   "ops": [["family", "Concurrency"]]
 }

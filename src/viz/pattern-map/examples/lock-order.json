@@ -3,8 +3,11 @@
   "viz": "pattern-map",
   "id": "lock-order",
   "title": "Follow “two locks, opposite orders”",
-  "notes": "NOTES",
-  "settings": { "lookalikes": true, "naive": true },
+  "notes": "A cue in the Concurrency family, pointing to Deadlock: each thread holds one lock and waits for the other’s, a cycle in the wait-for graph. The fix is one global lock order.",
+  "settings": {
+    "lookalikes": true,
+    "naive": true
+  },
   "seed": 1,
   "ops": [["pick", "two locks, opposite orders"]]
 }

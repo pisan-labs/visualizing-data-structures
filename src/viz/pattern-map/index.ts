@@ -15,12 +15,11 @@ import riverLevels from './examples/river-levels.json';
 import warmestBlock from './examples/warmest-block.json';
 import wholeMap from './examples/whole-map.json';
 import explain from './explain.md?raw';
-import { CUES, FAMILIES, PROBLEMS, cue, node } from './map';
+import { CUES, FAMILIES, PROBLEMS, cue } from './map';
 import {
   defaults,
   describe,
   findCue,
-  findFamily,
   init,
   initialSay,
   initialVars,

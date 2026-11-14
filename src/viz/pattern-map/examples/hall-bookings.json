@@ -3,8 +3,11 @@
   "viz": "pattern-map",
   "id": "hall-bookings",
   "title": "Overlap is not always merging",
-  "notes": "NOTES",
-  "settings": { "lookalikes": true, "naive": true },
+  "notes": "Problem 3. “some of them overlap” looks like merge intervals, which forgets how many bookings are open at once. “the largest number of bookings in progress at the same moment” is the most open at once: a sweep line.",
+  "settings": {
+    "lookalikes": true,
+    "naive": true
+  },
   "seed": 1,
   "ops": [["which", "3"]]
 }

@@ -3,8 +3,11 @@
   "viz": "pattern-map",
   "id": "k-largest",
   "title": "Follow “the k largest”",
-  "notes": "NOTES",
-  "settings": { "lookalikes": true, "naive": true },
+  "notes": "“the k largest” is a cue in the Heap patterns family. It points to Top k with a heap: keep the best k so far in a min-heap, whose root is the k-th largest. The naive way sorts everything, O(n log n); the heap takes O(n log k).",
+  "settings": {
+    "lookalikes": true,
+    "naive": true
+  },
   "seed": 1,
   "ops": [["pick", "the k largest"]]
 }

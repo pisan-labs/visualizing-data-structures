@@ -543,3 +543,5 @@
 2026-11-14 [doc] Merged the wave-10 interview fact check (16 pages): wrong claims fixed (smallest missing positive is in 1 to n+1, k-way best case O(n + k log k), fast-slow pointers do not save reads, Python 3.14 heapq has max-heap functions), LeetCode-like problem statements rewritten in our own words, large-n figures marked as one seeded run
 
 2026-11-14 [code] Merged wave 10 rate-limiter (fixed window as the naive one, sliding log, sliding window counter, token bucket on the same request times) and lfu-cache (frequency lists with minFreq against scanning every key)
+
+2026-11-14 [code] Merged wave 10 dp-grid-paths (count or cheapest path; bottom-up or memo), dp-state-machine (buy and sell with a cooldown or a fee) and dp-interval (take tiles scored by neighbours, merge piles), each against plain recursion with call counts

@@ -66,6 +66,7 @@ export interface RowOptions {
   /** Name drawn left of the row, right-aligned at nameX (default x0 − 10). */
   name?: string;
   nameX?: number;
+  nameRole?: MarkRole;
   /** Index label under slot i (default i); false draws none. */
   index?: false | ((i: number) => string);
   /** A value drawn as out of play (gray). */
@@ -160,6 +161,7 @@ export function drawRow(o: RowOptions): Row {
       anchor: 'end',
       cls: 'label',
       mono: true,
+      role: o.roles.get(`${o.id}-name`) ?? o.nameRole,
     });
   }
   return {

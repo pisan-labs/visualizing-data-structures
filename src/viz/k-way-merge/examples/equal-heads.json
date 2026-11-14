@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "k-way-merge",
+  "id": "equal-heads",
+  "title": "equal-heads",
+  "notes": "x",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "2 5 | 2 5 | 2 7"
+    ],
+    [
+      "merge"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

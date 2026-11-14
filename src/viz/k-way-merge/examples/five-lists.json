@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "k-way-merge",
+  "id": "five-lists",
+  "title": "five-lists",
+  "notes": "x",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "6 20 | 3 14 | 9 11 | 1 17 | 5 8"
+    ],
+    [
+      "merge"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

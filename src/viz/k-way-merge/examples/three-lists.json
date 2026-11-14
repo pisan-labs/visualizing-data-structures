@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "k-way-merge",
+  "id": "three-lists",
+  "title": "three-lists",
+  "notes": "x",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "1 8 12 | 3 4 10 15 | 2 9 11"
+    ],
+    [
+      "merge"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

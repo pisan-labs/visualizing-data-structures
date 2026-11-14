@@ -11,7 +11,9 @@
  *    put `approach: DEFAULT_APPROACH` ('pattern') in the page's defaults and read it with
  *    `approachOf(settings)`. Both approaches must give the same answer, use the same operation
  *    names and make the pseudocode follow the setting. Compare mode then runs "this page with
- *    other options" side by side on the same input.
+ *    other options" side by side on the same input. Give a unit of work the same detail level
+ *    in both (one step per pair tried, one per value scanned, both at level 2), so the naive
+ *    side also takes longer to play there.
  *
  * 2. WORK COUNTERS IN VARS, so every pattern page reads the same way:
  *    - one live counter per unit of work, named by the unit as a plural noun ('sums',

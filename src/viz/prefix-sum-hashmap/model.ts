@@ -563,7 +563,8 @@ function* naive(s: PSState, k: number, settings: PSSettings): Generator<PSStep, 
           'check',
           ...(hit ? ['hit'] : []),
         ],
-        level: hit || last ? 2 : 3,
+        // Every pair is a step at normal detail: the naive way takes longer to play, too.
+        level: 2,
         vars: vars(i, j),
         extra: extra([
           { ...cur, lane: 0, role: hit ? 'found' : 'visit', label: `sum = ${sum}` },

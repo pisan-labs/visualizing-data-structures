@@ -4,6 +4,7 @@ import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
 import { spotItKind, type SpotRow } from '../_patterns/kit';
 import {
   defaults,
+  fmt,
   prefixSums,
   span,
   spans,
@@ -116,10 +117,10 @@ export function prefixPractice(def: () => Def): PracticeKind[] {
         const count = Number(last.vars?.count);
         const found = last.extra?.found ?? [];
         return {
-          prompt: `How many subarrays of A (stretches of one or more values in a row) sum to k = ${k}?`,
+          prompt: `How many subarrays of A (stretches of one or more values in a row) sum to k = ${fmt(k)}?`,
           setup: [load(vs)],
           answer: { kind: 'number', value: count },
-          explain: `Keep a running sum, and at each value add seen[sum − ${k}]: the earlier running sums that are ${k} less. ${count === 1 ? 'One subarray sums' : `${count} subarrays sum`} to ${k}: ${spans(found, 6)}.`,
+          explain: `Keep a running sum, and at each value add seen[sum − k], the number of earlier running sums equal to sum − k. ${count === 1 ? 'One subarray sums' : `${count} subarrays sum`} to ${fmt(k)}: ${spans(found, 6)}.`,
           watch: [['find', k]],
         };
       },
@@ -141,15 +142,16 @@ export function prefixPractice(def: () => Def): PracticeKind[] {
           .steps.find((s) => s.lines.includes('record') && s.vars?.j === i)!;
         const map = record.extra!.map!;
         const top = Math.max(...map.map((m) => m.value));
-        const pick = rng.int(0, 1)
+        // Mostly the busiest key, so the answer is often more than 1.
+        const pick = rng.int(0, 3)
           ? map.find((m) => m.value === top)!
           : map[rng.int(0, map.length - 1)]!;
         const sums = prefixSums(vs).slice(0, i + 1);
         return {
-          prompt: `Run the pattern with k = ${k}. After the first ${i} values have been added (and their running sums recorded), what is seen[${pick.key}]?`,
+          prompt: `Run the pattern with k = ${fmt(k)}. After the first ${i} values have been added (and their running sums recorded), what is seen[${fmt(pick.key)}]?`,
           setup: [load(vs)],
           answer: { kind: 'number', value: pick.value },
-          explain: `After ${i} values the running sums are ${sums.join(', ')}, the empty prefix’s 0 first. ${pick.key} is among them ${pick.value === 1 ? 'once' : `${pick.value} times`}, so seen[${pick.key}] = ${pick.value}. k plays no part in what is recorded, only in what is looked up.`,
+          explain: `After ${i} values the running sums are ${sums.map(fmt).join(', ')}, the empty prefix’s 0 first. ${fmt(pick.key)} is among them ${pick.value === 1 ? 'once' : `${pick.value} times`}, so seen[${fmt(pick.key)}] = ${pick.value}. k plays no part in what is recorded, only in what is looked up.`,
           watch: [['find', k]],
         };
       },
@@ -166,13 +168,13 @@ export function prefixPractice(def: () => Def): PracticeKind[] {
         const best = Number(last.vars?.best);
         const at = last.extra?.best;
         return {
-          prompt: `How long is the longest subarray of A whose sum is k = ${k}? Type 0 if none sums to ${k}.`,
+          prompt: `How long is the longest subarray of A whose sum is k = ${fmt(k)}? Type 0 if none sums to ${fmt(k)}.`,
           setup: [load(vs)],
           settings,
           answer: { kind: 'number', value: best },
           explain: at
-            ? `Keep where each running sum first appeared. The longest subarray with sum ${k} is ${span(at)}: from the first time the running sum was ${prefixSums(vs)[at.lo]} to the time it was ${prefixSums(vs)[at.hi + 1]}, ${best} values.`
-            : `No two running sums differ by exactly ${k}, so no subarray sums to ${k}.`,
+            ? `Keep where each running sum first appeared. The longest subarray with sum ${fmt(k)} is ${span(at)}: from the first time the running sum was ${fmt(prefixSums(vs)[at.lo]!)} to the time it was ${fmt(prefixSums(vs)[at.hi + 1]!)}, ${best} values.`
+            : `No running sum minus an earlier one comes to ${fmt(k)}, so no subarray sums to ${fmt(k)}.`,
           watch: [['find', k]],
         };
       },

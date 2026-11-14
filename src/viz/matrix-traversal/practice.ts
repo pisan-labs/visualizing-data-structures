@@ -40,9 +40,9 @@ export const SPOT_ROWS: SpotRow[] = [
   },
   {
     problem:
-      'A square image is stored as a grid of pixels. Turn it a quarter turn to the right without making a second image.',
+      'A tile for a floor pattern is a square grid of colors. The next row of the floor needs it a quarter turn clockwise. Change the grid itself, with no copy.',
     pattern: 'matrix-traversal',
-    cue: ['a quarter turn', 'without making a second image'],
+    cue: ['a quarter turn clockwise', 'with no copy'],
     why: 'A rotation in place: four-way swaps ring by ring, or transpose and then reverse each row.',
     near: ['two-pointers', 'dp-grid-paths', 'cyclic-sort'],
   },

@@ -14,7 +14,7 @@ A list where every value comes in pairs except one. Which one is alone? A hash m
 
 XOR works bit by bit: a bit of x ^ y is 1 when the two bits differ. So x ^ x is 0 in every bit, and x ^ 0 leaves x alone. Since XOR is commutative and associative, 4 ^ 1 ^ 6 ^ 4 ^ 9 ^ 6 ^ 1 is the same as (4 ^ 4) ^ (1 ^ 1) ^ (6 ^ 6) ^ 9 = 9, whatever order the values come in. [Show me](#play:single-xor)
 
-The **Approach** option switches to counting with a hash map. Both give the same answer. The variables count the work: `bit ops` is one XOR, AND or negation of two numbers, `lookups` is one hash map read or write, and `kept` is how many numbers each approach holds on to. Watch `kept`: that is where the trick wins.
+The **Approach** option switches to counting with a hash map. Both give the same answer. The variables count the work: `bit ops` is one XOR or AND of two numbers, or one negation, `lookups` is one hash map read or write, and `kept` is how many numbers each approach holds on to. Watch `kept`: that is where the trick wins.
 
 ## The single number
 
@@ -79,7 +79,7 @@ Three problems of our own:
 - Seats 0 to n in a theater, n tickets sold, no seat sold twice. Which seat is empty? (Missing number.)
 - Every student in a list of sign-ups signed up twice, except two who signed up once. Find both, using a few variables. (Two singles.)
 
-Look-alikes that call for something else: "every value appears three times except one" breaks XOR, because three copies do not cancel; count the 1s in each bit position mod 3 instead, as on [bitmasks](/bitmask/). "One value repeats, the list is 1 to n" is a cycle-finding problem when you may not change the list. And "the value that appears most often" needs [frequency counting](/frequency-counting/): XOR only knows odd from even.
+Look-alikes that call for something else: "every value appears three times except one" breaks XOR, because three copies do not cancel; count the 1s in each bit position mod 3 instead, with the bit operations of [bitmasks](/bitmask/). "One value repeats, the list is 1 to n" is a [cycle detection](/floyd-cycle/) problem when you may not change the list. And "the value that appears most often" needs [frequency counting](/frequency-counting/): XOR only knows odd from even.
 
 ## When to use it
 

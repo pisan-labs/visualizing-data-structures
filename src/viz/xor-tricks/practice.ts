@@ -40,25 +40,26 @@ export const SPOT_ROWS: SpotRow[] = [
   },
   {
     problem:
-      'Every value in a list appears three times except one, which appears once. Find it in constant extra space.',
+      'A sensor sends every reading three times, to be safe. One reading got through only once. Find it with a few variables.',
     pattern: 'bitmask',
-    cue: ['three times', 'except one'],
+    cue: ['three times', 'only once'],
     why: 'XOR cancels pairs, not triples. Count the 1s in each bit position mod 3 instead: the bits left over are the single.',
     near: ['xor-tricks', 'frequency-counting', 'cyclic-sort'],
   },
   {
     problem:
-      'A list of n + 1 numbers, each from 1 to n, has one value repeated. Find the repeat without changing the list, in constant extra space.',
+      'A coat check has n hooks, numbered 1 to n, and handed out n + 1 tickets, so one hook number went out twice. The ticket list is read-only. Find that hook with a few variables.',
     pattern: 'floyd-cycle',
-    cue: ['n + 1 numbers', 'from 1 to n', 'without changing the list'],
+    cue: ['n + 1 tickets', 'numbered 1 to n', 'read-only'],
     why: 'Read each value as a pointer to an index: the repeat is where two pointers lead to the same place, the start of a cycle.',
     near: ['xor-tricks', 'two-pointers', 'prefix-sum-hashmap'],
     alsoFits: ['binary-search'],
   },
   {
-    problem: 'Given a list of words, group the ones that are anagrams of each other.',
+    problem:
+      'A word game lists the words players typed. Sort them into piles, each pile holding words made of the same letters in some order.',
     pattern: 'frequency-counting',
-    cue: ['anagrams', 'group'],
+    cue: ['piles', 'the same letters in some order'],
     why: 'Two words are anagrams when their letter counts match, so the counts are the key. XOR of the letters cannot tell "aab" from "b".',
     near: ['xor-tricks', 'trie', 'sliding-window'],
   },

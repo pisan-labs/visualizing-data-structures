@@ -37,13 +37,13 @@ Q: L1 = 2 9, L2 = 4 5, L3 = 1 7. After 1 and 2 have gone out, which values are i
 
 The naive way: put everything in one array and sort it. [Concatenate and sort](#example:concatenate-and-sort) runs merge sort on all 10 values: four passes, 26 comparisons, against the heap's 17. The sort never learns that the lists were sorted. Its passes merge runs of 1, then 2, then 4, building order that was already there.
 
-Each value out of the heap costs a sift in a heap of at most k values, about 2 log₂ k comparisons at worst. Sorting costs about log₂ n per value. With a few long lists that is a big win: on 3 random lists of 1,000 values each, the heap made 5,993 comparisons and sorting 20,464.
+Each value out of the heap costs a sift in a heap of at most k values, about 2 log₂ k comparisons at worst. Sorting costs about log₂ n per value. With a few long lists that is a big win: in one run with 3 random lists of 1,000 values each, the heap made 5,993 comparisons and sorting 20,464.
 
 ## Merge in pairs
 
 There is a way with no heap at all: merge L1 with L2, L3 with L4, and so on, then merge the results the same way. Each merge is the merge step of [merge sort](/merge-sort/). Every round touches every value once, and there are ⌈log₂ k⌉ rounds, so it is O(n log k) too.
 
-[Merge in pairs](#example:merge-in-pairs) merges L1 with L2 in 6 comparisons while L3 waits, then the result with L3 in 8: 14 comparisons, fewer than the heap's 17. That is not an accident of these lists. A merge spends one comparison per value; the heap spends up to two per level as a value sinks. On 10 random lists of 100, the heap made 4,576 comparisons and the pairs 3,589.
+[Merge in pairs](#example:merge-in-pairs) merges L1 with L2 in 6 comparisons while L3 waits, then the result with L3 in 8: 14 comparisons, fewer than the heap's 17. That is not an accident of these lists. A merge spends one comparison per value; the heap spends up to two per level as a value sinks. In one run with 10 random lists of 100, the heap made 4,576 comparisons and the pairs 3,589.
 
 So why the heap? Because it streams. The first value comes out after k pushes, and the heap holds one value per list, nothing else. Merging in pairs has to finish whole rounds and write a new list for every merge. For files too big for memory, or lists that arrive a value at a time, the heap is the one that works.
 
@@ -51,7 +51,7 @@ Merging one list at a time into a growing result is the slow way: the result is 
 
 ## When the heap loses
 
-With many short lists the heap's constant catches up with it. [Five short lists](#example:five-lists) has five lists of two: the heap makes 28 comparisons, more than sorting everything (23) and the pairs (18). The same happens at scale: with 100 random lists of 100, the heap made 105,701 comparisons, about the same as sorting all 10,000 values (107,180); the pairs made 68,591. Two comparisons per level of a heap of 100 is about 13 per value, and sorting 10,000 values costs about 13 per value too.
+With many short lists the heap's constant catches up with it. [Five short lists](#example:five-lists) has five lists of two: the heap makes 28 comparisons, more than sorting everything (23) and the pairs (18). The same happens at scale: in one run with 100 random lists of 100, the heap made 105,701 comparisons, about the same as sorting all 10,000 values (107,180); the pairs made 68,591. Two comparisons per level of a heap of 100 is about 13 per value, and sorting 10,000 values costs about 13 per value too.
 
 With k = 2 the heap is a plain merge with extra steps: [Two lists: a plain merge](#example:two-lists) takes 7 comparisons either way.
 

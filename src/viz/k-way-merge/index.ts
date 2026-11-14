@@ -152,9 +152,9 @@ export const kWayMerge: VizDef<MergeState, MergeSettings, MergeExtra> = {
     {
       op: 'merge, a min-heap of heads',
       best: {
-        cost: 'Θ(n log k)',
-        why: 'Every value goes through a heap of up to k heads; even lists already in order pay a sift each.',
-        example: 'three-lists',
+        cost: 'O(n + k log k)',
+        why: 'Lists in order one after another: each new head is smaller than every other head and stays at the root after two comparisons. Only a list running out costs a full sift.',
+        example: 'a-list-runs-out',
       },
       average: {
         cost: 'Θ(n log k)',

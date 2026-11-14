@@ -58,18 +58,18 @@ export const SPOT_ROWS: SpotRow[] = [
   },
   {
     problem:
-      'A list of n numbers, each from 1 to n. Report every number that appears more than once, using only a few variables of extra memory.',
+      'Each of n students writes a seat number from 1 to n on a card, and some write the same number. Which numbers were written more than once? Use only a few variables of extra memory.',
     pattern: 'cyclic-sort',
-    cue: ['each from 1 to n', 'only a few variables of extra memory'],
+    cue: ['a seat number from 1 to n', 'only a few variables of extra memory'],
     why: 'A count per number would need n counters. Instead, put each value at index value − 1; a value whose home already holds a copy is a repeat.',
     near: ['frequency-counting', 'two-pointers', 'sliding-window'],
   },
   {
     problem:
-      'Given an unsorted list of n whole numbers, some negative, find the smallest positive number that is not in it, in O(n) time and O(1) extra space.',
+      'A box holds n slips: raffle ticket numbers, and junk such as zeros, negatives and numbers bigger than n. What is the lowest positive number not in the box? Use one pass or two, and no second list.',
     pattern: 'cyclic-sort',
-    cue: ['smallest positive number that is not in it', 'O(1) extra space'],
-    why: 'Only 1 to n can be the answer for n values. Swap each of those home, leave the others where they are, and the first slot without its own number is the answer.',
+    cue: ['lowest positive number not in the box', 'no second list'],
+    why: 'For n values only 1 to n + 1 can be the answer. Swap each of 1 to n home, leave the others where they are, and the first slot without its own number is the answer, or n + 1 if every slot has it.',
     near: ['binary-search', 'frequency-counting', 'two-pointers'],
   },
   {
@@ -82,9 +82,9 @@ export const SPOT_ROWS: SpotRow[] = [
   },
   {
     problem:
-      'A read-only list holds n different numbers from 0 to n, so exactly one is missing. Find it in one pass.',
+      'A museum hands out n badges from a set numbered 0 to n, no number twice. The list of badges handed out is read-only. Which badge is still in the box? Find it in one pass.',
     pattern: 'xor-tricks',
-    cue: ['read-only', 'exactly one is missing'],
+    cue: ['read-only', 'still in the box'],
     why: 'The list cannot be changed, so no swaps. XOR every value with every number from 0 to n: the pairs cancel and the missing number is left (or subtract the sum from n(n + 1)/2).',
     near: ['cyclic-sort', 'frequency-counting'],
   },

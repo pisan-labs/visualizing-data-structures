@@ -58,9 +58,9 @@ export const SPOT_ROWS: SpotRow[] = [
   },
   {
     problem:
-      'Move every zero in a list to the end, and keep the other values in the order they were in.',
+      'A shelf is a list: 0 for an empty slot, any other number for a book. Slide the books to the left, keeping the order they stand in, so the empty slots end up on the right.',
     pattern: 'two-pointers',
-    cue: ['every zero', 'keep the other values in the order they were in'],
+    cue: ['0 for an empty slot', 'keeping the order they stand in'],
     why: 'Two kinds, and the order must stay: a slow index writes each nonzero value as a fast one finds it. Three-pointer swaps would scramble the order.',
     near: ['dutch-flag', 'cyclic-sort'],
   },

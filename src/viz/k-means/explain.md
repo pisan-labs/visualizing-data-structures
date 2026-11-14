@@ -61,7 +61,7 @@ A centre can end up with no points. Then it has no mean, and Lloyd's algorithm s
 
 ## Choosing k
 
-You choose k, not the algorithm. More centres always lower WCSS: in [Four centres for three groups](#example:too-many-centres) the fourth centre splits the bottom left group in two and WCSS drops from 9.33 to 7.33. With k = N, every point is its own centre and WCSS is 0. So a lower WCSS does not mean a better k. A common approach is to plot WCSS against k and look for the bend where adding a centre stops helping much (the "elbow"). It is a judgment call, and on real data the bend is often not obvious.
+You choose k, not the algorithm. More centres can always lower WCSS (the best split into k + 1 groups is never worse than the best into k): in [Four centres for three groups](#example:too-many-centres) the fourth centre splits the bottom left group in two and WCSS drops from 9.33 to 7.33. With k = N, every point is its own centre and WCSS is 0. So a lower WCSS does not mean a better k. A common approach is to plot WCSS against k and look for the bend where adding a centre stops helping much (the "elbow"). It is a judgment call, and on real data the bend is often not obvious.
 
 ## When to use it
 
@@ -72,7 +72,7 @@ Avoid it when the groups are not round. [Two long strips](#example:long-strips) 
 ## Common mistakes
 
 - Running once and trusting the answer. Run several seeds and keep the lowest WCSS.
-- Comparing WCSS across different k. It always goes down as k goes up.
+- Comparing WCSS across different k. The best WCSS only goes down as k goes up.
 - Forgetting to scale the features. If x is in metres and y in kilometres, x decides everything.
 - Moving a centre while still assigning points. Assign every point first, then move every centre.
 - Expecting the same groups every time. With random seeding the labels and even the groups change from run to run.

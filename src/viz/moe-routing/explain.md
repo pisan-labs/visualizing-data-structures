@@ -2,7 +2,7 @@
 
 A bigger model knows more, but every parameter costs compute on every token. A mixture of experts breaks that link. The feed-forward network of a [transformer block](/transformer-block/) is replaced by several experts, each its own feed-forward network, and a small router sends each token to only one or two of them. The model has the parameters of all the experts and the cost per token of one or two. Mixtral 8x7B (2024) has 47 billion parameters and uses 13 billion of them per token.
 
-The catch is load balancing, the same problem as spreading requests over servers. If the router likes one expert, that expert gets swamped and the rest sit idle. Each expert has a fixed number of slots, so tokens that arrive at a full expert are dropped. This page has four experts and a router made by hand: expert E1 likes animals, E2 things, E3 actions and E4 small words (the, a, on).
+The catch is load balancing, the same problem as spreading requests over servers. If the router likes one expert, that expert gets swamped and the rest sit idle. Here, as in Switch Transformer, each expert has a fixed number of slots, so tokens that arrive at a full expert are dropped. This page has four experts and a router made by hand: expert E1 likes animals, E2 things, E3 actions and E4 small words (the, a, on).
 
 ## The idea
 
@@ -34,13 +34,13 @@ Q: Eight tokens, four experts, top-2 routing and a capacity factor of 1.25. How 
 
 ## Capacity and dropped tokens
 
-Experts run on hardware in fixed-size batches, so every expert gets the same number of slots, decided before anyone knows where the tokens will go. With a capacity factor of 1 there is room for exactly an even split.
+GShard and Switch Transformer run their experts in fixed-size batches, so every expert gets the same number of slots, decided before anyone knows where the tokens will go. With a capacity factor of 1 there is room for exactly an even split.
 
 In [Top-1 routing drops a token](#example:top-one-drop) each expert has ⌈6 / 4⌉ = 2 slots. Three small words want E4: the, on and the second the. The second the is third in line, so it is dropped. A dropped token isn't lost; the residual add passes it on unchanged, and the next layer gets another chance. But this layer did nothing for it.
 
 [One busy expert](#example:small-words) is worse. Eight tokens, five of them small words (three thes and two ands), and E4 is asked for five first choices. The third the misses out on E4, its second choice E2 is full too, and it gets no expert at all. Two of 16 assignments are dropped.
 
-The fix is more room. [A capacity factor of 2](#example:more-room) gives every expert 8 slots and drops nothing. The price: E1 uses 3 of its 8 slots and still computes all 8. Switch Transformer (Fedus et al. 2022) reports good results with factors of 1 and 1.25.
+The fix is more room. [A capacity factor of 2](#example:more-room) gives every expert 8 slots and drops nothing. The price: E1 uses 3 of its 8 slots and still computes all 8. Switch Transformer (Fedus et al. 2022) reports good results with factors of 1 and 1.25. Not every system drops tokens, though: MegaBlocks (Gale et al. 2023) lets each expert take however many tokens it is sent, and drops none.
 
 ## The load-balance loss
 

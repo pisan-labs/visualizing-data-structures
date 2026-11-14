@@ -21,7 +21,7 @@ Here B is the block size and n a request's length. A request's **block table** m
 
 Start with [Blocks are handed out as tokens arrive](#example:on-demand). A arrives with 5 tokens. That needs two blocks: block 0 holds tokens 1 to 4, block 1 holds token 5 and three empty slots. B arrives with 3 tokens and gets block 2, with one empty slot.
 
-Now press Step. A's token 6 goes into block 1, where there is room. B's token 4 fills block 2. At the next step B's last block is full, so B pops block 3 off the free list. Two steps later A fills block 1 and gets block 4. After four steps A's table is [0, 1, 4] and B's is [2, 3]: 16 tokens in 5 blocks, 4 slots empty.
+Now press Step. A's token 6 goes into block 1, where there is room. B's token 4 fills block 2. At the next step B's last block is full, so B pops block 3 off the free list. At the third step A fills block 1, and at the fourth it gets block 4. After four steps A's table is [0, 1, 4] and B's is [2, 3]: 16 tokens in 5 blocks, 4 slots empty.
 
 The empty slots are only ever in a request's last block. That is the whole trick. Waste is at most B − 1 slots per request, however long it gets.
 

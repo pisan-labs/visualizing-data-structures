@@ -433,9 +433,11 @@ function normSay(key: RowKey, set: BlockSettings, r: BlockResult, input: string)
         ? r.rows.x1!
         : r.rows[key === 'h' ? 'x2' : 's2']!;
   const f = kindOf(src);
+  // After a post-norm add the stream has no zeros left, so say what a 0 would become.
+  const zero = src.includes(0) ? 'every 0 becomes' : 'a 0 would become';
   const how =
     set.norm === 'layer'
-      ? `LayerNorm of ${input}: the mean of its eight numbers is ${two(st.mean)} and the standard deviation ${two(st.scale)}. Subtract the mean, divide by the deviation: ${two(src[f]!)} becomes ${two(out[f]!)}, and every 0 becomes ${two(-st.mean / st.scale)}.`
+      ? `LayerNorm of ${input}: the mean of its eight numbers is ${two(st.mean)} and the standard deviation ${two(st.scale)}. Subtract the mean, divide by the deviation: ${two(src[f]!)} becomes ${two(out[f]!)}, and ${zero} ${two(-st.mean / st.scale)}.`
       : `RMSNorm of ${input}: the root mean square of its eight numbers is ${two(st.scale)}. Divide by it: ${two(src[f]!)} becomes ${two(out[f]!)}, and a 0 stays 0 (nothing is subtracted).`;
   return how;
 }

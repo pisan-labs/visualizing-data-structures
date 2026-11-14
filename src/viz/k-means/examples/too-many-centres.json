@@ -3,7 +3,7 @@
   "viz": "k-means",
   "id": "too-many-centres",
   "title": "Four centres for three groups",
-  "notes": "k = 4 on three groups. The extra centre splits the bottom-left group in two, and WCSS drops from 9.33 to 7.33. More centres always lower WCSS, so a lower WCSS alone cannot tell you the right k.",
+  "notes": "k = 4 on three groups. The extra centre splits the bottom-left group in two, and WCSS drops from 9.33 to 7.33. More centres can always lower WCSS, so a lower WCSS alone cannot tell you the right k.",
   "settings": {
     "k": 4,
     "seeding": "plus",

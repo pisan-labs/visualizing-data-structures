@@ -2,7 +2,7 @@
 
 A GPU is fast at one big matrix product and slow at many small ones. So a server does not run one request at a time: it puts several in a **batch** and moves all of them one token forward in each pass of the model, one **iteration**. The question is when a request may join the batch, and when it may leave.
 
-The old answer is per request. Start a batch, run it until every request in it is done, return the answers, start the next. Yu et al. (2022) asked what happens if you decide again at every iteration instead. Their system, Orca, called it iteration-level scheduling. Everyone else calls it continuous batching.
+The old answer is per request. Start a batch, run it until every request in it is done, return the answers, start the next. Yu et al. (2022) asked what happens if you decide again at every iteration instead. Their system, Orca, called it iteration-level scheduling. Most people now call it continuous batching (NVIDIA says in-flight batching).
 
 ## The idea
 

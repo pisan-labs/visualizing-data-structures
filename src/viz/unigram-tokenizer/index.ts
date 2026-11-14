@@ -66,7 +66,7 @@ export const unigram: VizDef<UniState, UniSettings, UniExtra> = {
       label: 'Seed pieces of two or more letters',
       min: 6,
       max: 24,
-      help: 'Training starts big and prunes. Real seeds have hundreds of thousands of substrings; this one keeps the most frequent few (Load text again after changing it).',
+      help: 'Training starts big and prunes. SentencePiece seeds up to a million substrings by default; this one keeps the most frequent few (Load text again after changing it).',
     },
     {
       kind: 'number',

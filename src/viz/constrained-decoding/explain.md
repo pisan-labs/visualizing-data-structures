@@ -22,7 +22,7 @@ V is the number of tokens, Σ\|t\| their letters in all, and m the length of the
 
 This part is the classic one, and it has pages of its own: [Thompson's construction](/regex-to-nfa/) turns yes|no into an NFA with 12 states, the [subset construction](/nfa-to-dfa/) makes it a DFA with 7, and [minimizing](/dfa-minimization/) leaves 6. One of those is the dead state, the state you fall into after a wrong letter and never leave. Drop it, and a missing move means "this letter would break the match", as on the [DFA page](/dfa/). Five states are left: q0, then q2 after y, q4 after ye, q1 after n, and q3, which accepts.
 
-Every state left can still reach q3. That matters: a token that stays on the DFA can always be finished into a match, so the model can never write itself into a corner.
+Every state left can still reach q3. That matters: a token that stays on the DFA can always be finished into a match, so the model can never write itself into a corner. Almost: some token also has to spell the letters still needed, and [A letter no token has](#example:stuck) shows what happens when none does.
 
 ## Tokens cross several moves
 

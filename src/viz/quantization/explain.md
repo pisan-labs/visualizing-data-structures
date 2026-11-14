@@ -38,7 +38,7 @@ About 18 times the total error, for half the memory. Whether that matters depend
 
 ## One outlier
 
-Now change one weight. [One outlier ruins a shared scale](#example:outlier-tensor) sets row 2, column 5 to 6.4, about eight times the next largest. With one scale for the whole matrix, the outlier sets it: s = 7 / 6.4 = 1.09, a step of .914. Every weight smaller than half a step, .457, rounds to 0. That is 16 of the other 23. The total error jumps from .710 to 5.39. The outlier itself is exact. Everything else is gone.
+Now change one weight. [One outlier ruins a shared scale](#example:outlier-tensor) sets row 2, column 5 to 6.4, about eight times the next largest. With one scale for the whole matrix, the outlier sets it: s = 7 / 6.4 = 1.09, a step of .914. Every weight smaller than half a step, .457, rounds to 0. That is 16 of the other 23. The total error jumps from .710 to 5.39. The outlier itself is exact. Most of the rest is gone.
 
 int8 copes better, but pays too: [The same outlier in int8](#example:outlier-int8) has a step of .050 instead of .006, so the largest error is .025 instead of .003. Eight times worse, because the scale is eight times coarser.
 

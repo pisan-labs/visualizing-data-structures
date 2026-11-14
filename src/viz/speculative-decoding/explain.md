@@ -66,7 +66,7 @@ With greedy decoding the rule is simpler: the small model proposes its top word,
 
 ## When to use it
 
-Use it when a large model is slow because it is memory-bound, which is most single-request decoding, and when a much smaller model that agrees with it often is available: a smaller model of the same family, trained on the same data. The output does not change, so it needs no new evaluation.
+Use it when a large model is slow because it is memory-bound, which is most single-request decoding, and when a much smaller model that agrees with it often is available: a smaller model of the same family, trained on the same data. The text still follows the large model exactly, so it needs no new evaluation.
 
 Avoid it when the draft model disagrees too often (the [Nothing saved](#example:bad-draft) case, with extra cost), when the large model is busy with big batches and is limited by arithmetic rather than memory, or when you cannot afford to keep a second model in memory.
 

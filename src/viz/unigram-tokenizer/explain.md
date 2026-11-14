@@ -2,7 +2,7 @@
 
 [BPE](/bpe-tokenizer/) and [WordPiece](/wordpiece/) start from letters and glue them together. The unigram tokenizer goes the other way. It starts with far too many pieces and throws the useless ones away. Every piece gets a probability, and a word can usually be cut in many ways, so the tokenizer has a real choice to make: which cut is most probable? That is a dynamic programming problem, the same shape as [edit distance](/dp-edit-distance/).
 
-Taku Kudo published it in 2018, together with the trick of sampling a cut instead of always taking the best one (subword regularization). SentencePiece, the library he wrote with John Richardson, has it as one of its two algorithms. This page follows Kudo's paper, with one simplification, flagged below.
+Taku Kudo published it in 2018, together with the trick of sampling a cut instead of always taking the best one (subword regularization). SentencePiece, the library he wrote with John Richardson, has it as one of its two subword algorithms, next to BPE. This page follows Kudo's paper, with one simplification, flagged below.
 
 ## The idea
 
@@ -76,7 +76,7 @@ The setting α raises every probability to a power first. α = 1 follows the mod
 
 ## Unigram, BPE and WordPiece
 
-All three end with a vocabulary of pieces. BPE keeps a list of merges and replays them in order. WordPiece keeps only the vocabulary and takes the longest piece at each place. The unigram tokenizer keeps a probability for each piece and looks at every split. That costs a little more, but it is the only one of the three that can say how likely a split is, and the only one that can draw a different one. Press Compare, choose BPE, and train both on the same text.
+All three end with a vocabulary of pieces. BPE keeps a list of merges and replays them in order. WordPiece keeps only the vocabulary and takes the longest piece at each place. The unigram tokenizer keeps a probability for each piece and looks at every split. That costs a little more, but it is the only one of the three that can say how likely a split is, and the only one whose random splits follow a model of how likely they are. (BPE-dropout, Provilkov et al. 2020, gets random splits out of BPE too, by skipping merges at random.) Press Compare, choose BPE, and train both on the same text.
 
 ## When to use it
 
@@ -95,7 +95,7 @@ Avoid it when encoding speed is all that matters and the model was trained with 
 
 ## At real scale
 
-Kudo's paper (2018) keeps the best 80% of the pieces each round, as here, but starts from a much larger seed found with a suffix array, and re-estimates with EM. SentencePiece (Kudo and Richardson, 2018) implements both unigram and BPE: T5 (2020) uses a SentencePiece vocabulary of 32 000 pieces, and Llama 2 (2023) uses SentencePiece's BPE with 32 000 tokens. The toy here starts from 21 letters and 16 longer pieces and keeps 8. Same idea, rather fewer substrings to argue about.
+Kudo's paper (2018) keeps the best 80% of the pieces each round, as here (SentencePiece keeps 75% by default), but starts from a much larger seed found with a suffix array (SentencePiece's holds up to a million substrings), and re-estimates with EM. SentencePiece (Kudo and Richardson, 2018) implements both unigram and BPE: T5 (2020) uses a SentencePiece vocabulary of 32 000 pieces, and Llama 2 (2023) uses SentencePiece's BPE with 32 000 tokens. The toy here starts from 21 letters and 16 longer pieces and keeps 8. Same idea, rather fewer substrings to argue about.
 
 ## Try this
 

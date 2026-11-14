@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "xor-tricks",
+  "id": "missing-set",
+  "title": "The missing number with a set",
+  "notes": "The same list with a set: 6 values in, then 0, 1, 2, 3 are there and 4 is not. 11 lookups, one fewer than XOR, but the set keeps all 6 values.",
+  "settings": {
+    "approach": "naive",
+    "goal": "missing"
+  },
+  "seed": 1,
+  "ops": [["load", "3 0 6 1 5 2"], ["find"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

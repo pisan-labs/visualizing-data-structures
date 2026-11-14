@@ -348,7 +348,7 @@ function* overlapSweep(st: SLState, settings: SLSettings, totals: Totals): Gen {
   });
   const vars = () => ({
     n,
-    t: at ?? '–',
+    ...(at !== undefined ? { t: at } : {}),
     open: count,
     most: best.count,
     ...workVars(work, totals),
@@ -427,7 +427,7 @@ function* overlapPoints(st: SLState, settings: SLSettings, totals: Totals): Gen 
   });
   const vars = () => ({
     n,
-    t: point?.t ?? '–',
+    ...(point ? { t: point.t } : {}),
     open: point?.count ?? 0,
     most: best.count,
     ...workVars(work, totals),
@@ -539,7 +539,7 @@ function* skylineSweep(st: SLState, settings: SLSettings, totals: Totals): Gen {
   });
   const vars = () => ({
     n,
-    x: at ?? '–',
+    ...(at !== undefined ? { x: at } : {}),
     height,
     ...(naive ? {} : { 'heap size': heap.length }),
     'key points': keys.length,

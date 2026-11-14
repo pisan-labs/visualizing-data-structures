@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "xor-tricks",
+  "id": "two-singles",
+  "title": "Two singles, split by one bit",
+  "notes": "A = 7 10 5 7 9 10. Everything XORs to 12 = 1100, so the lowest 1 is 0100 = 4. 7 and 5 have that bit (group 1, which XORs to 5), 10 and 9 do not (group 0, which XORs to 9).",
+  "settings": {
+    "approach": "pattern",
+    "goal": "two"
+  },
+  "seed": 1,
+  "ops": [["load", "7 10 5 7 9 10"], ["find"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

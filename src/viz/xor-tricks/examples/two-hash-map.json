@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "xor-tricks",
+  "id": "two-hash-map",
+  "title": "Two singles with a hash map",
+  "notes": "The same list, counted: two odd counts, 5 and 9. 16 lookups and 4 counts kept; XOR takes 20 bit ops and keeps four numbers however long the list.",
+  "settings": {
+    "approach": "naive",
+    "goal": "two"
+  },
+  "seed": 1,
+  "ops": [["load", "7 10 5 7 9 10"], ["find"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

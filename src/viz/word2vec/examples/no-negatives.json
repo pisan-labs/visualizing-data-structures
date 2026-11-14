@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "word2vec",
+  "id": "no-negatives",
+  "title": "No noise words: everything collapses",
+  "notes": "NOTES",
+  "settings": {
+    "window": 2,
+    "negatives": 0,
+    "lr": "0.1"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "run"
+    ],
+    [
+      "run"
+    ]
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "word2vec",
+  "id": "window-one",
+  "title": "A window of one word on each side",
+  "notes": "NOTES",
+  "settings": {
+    "window": 1,
+    "negatives": 2,
+    "lr": "0.1"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "pairs",
+      "the cat sat on the mat"
+    ]
+  ]
+}

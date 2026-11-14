@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "word2vec",
+  "id": "one-sentence",
+  "title": "The window slides over one sentence",
+  "notes": "NOTES",
+  "settings": {
+    "window": 2,
+    "negatives": 2,
+    "lr": "0.1"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "train",
+      "the cat sat on the mat"
+    ]
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "word2vec",
+  "id": "one-pass",
+  "title": "One pass over the corpus",
+  "notes": "NOTES",
+  "settings": {
+    "window": 2,
+    "negatives": 2,
+    "lr": "0.1"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "epoch"
+    ]
+  ]
+}

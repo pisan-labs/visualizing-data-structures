@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "word2vec",
+  "id": "one-word",
+  "title": "One word makes no pairs",
+  "notes": "NOTES",
+  "settings": {
+    "window": 2,
+    "negatives": 2,
+    "lr": "0.1"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "train",
+      "cat"
+    ]
+  ]
+}

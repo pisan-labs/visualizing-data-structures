@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "word2vec",
+  "id": "twenty-passes",
+  "title": "Twenty passes: same company, same place",
+  "notes": "NOTES",
+  "settings": {
+    "window": 2,
+    "negatives": 2,
+    "lr": "0.1"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "run"
+    ],
+    [
+      "run"
+    ]
+  ]
+}

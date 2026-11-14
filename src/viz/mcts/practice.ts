@@ -1,7 +1,7 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
-import { short, two } from '../_lm/numbers';
+import { two } from '../_lm/numbers';
 import {
   cText,
   defaults,
@@ -44,7 +44,7 @@ export function mctsPractice(def: () => Def): PracticeKind[] {
   }
 
   const ucbTerms = (s: MctsState, settings: MctsSettings, id: number, u: number) =>
-    `${short(meanOf(s, id))} + ${cText(settings)} × √(ln ${s.n[ROOT]} / ${s.n[id]}) = ${two(u)}`;
+    `${two(meanOf(s, id))} + ${cText(settings)} × √(ln ${s.n[ROOT]} / ${s.n[id]}) = ${two(u)}`;
 
   return [
     {
@@ -78,7 +78,7 @@ export function mctsPractice(def: () => Def): PracticeKind[] {
           setup: ops,
           settings,
           answer: { kind: 'number', value: u, tolerance: 0.01 },
-          explain: `${TREE[id]!.token} has n = ${s.n[id]} and Q = ${short(meanOf(s, id))}: ${ucbTerms(s, settings, id, u)}. The bonus is ${two(u - meanOf(s, id))}.`,
+          explain: `${TREE[id]!.token} has n = ${s.n[id]} and Q = ${two(meanOf(s, id))}: ${ucbTerms(s, settings, id, u)}. The bonus is ${two(u - meanOf(s, id))}.`,
           watch,
         };
       },

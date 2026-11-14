@@ -91,7 +91,7 @@ An RNN or LSTM is a reasonable choice for streams that never end and must be pro
 
 ## At real scale
 
-Hochreiter and Schmidhuber (1997) reported LSTMs bridging time lags of more than 1000 steps on synthetic tasks a plain RNN could not learn. Sutskever, Vinyals and Le (2014) translated with 4 layers of LSTM, 1000 cells per layer and 384 million parameters. Google's translation system (Wu et al. 2016) used 8 LSTM layers in the encoder and 8 in the decoder. The transformer of Vaswani et al. (2017) beat those results, and its base model trained in 12 hours on 8 GPUs, because no step waited for the one before. Same goal, different shape: one memory of width 1000 against a cache that remembers every token.
+Hochreiter and Schmidhuber (1997) reported LSTMs bridging time lags of more than 1000 steps on synthetic tasks a plain RNN could not learn. Sutskever, Vinyals and Le (2014) translated with 4 layers of LSTM, 1000 cells per layer and 384 million parameters. Google's translation system (Wu et al. 2016) used 8 LSTM layers in the encoder and 8 in the decoder. The transformer of Vaswani et al. (2017) did the same job with no recurrence at all. Its base model trained in 12 hours on 8 GPUs, in part because no position waited for the one before. Same goal, different shape: one memory of width 1000 against a cache that remembers every token.
 
 ## Try this
 

@@ -220,12 +220,13 @@ const nameOf = (m: Model) => (m === 'rnn' ? 'h' : 'c');
 
 export function baseVars(s: S): Record<string, Scalar> {
   const last = s.rows.at(-1);
-  const out: Record<string, Scalar> = { 'words read': `${s.rows.length} of ${s.words.length}` };
-  if (s.model === 'rnn') out.w = String(s.w);
+  const out: Record<string, Scalar> = { words: s.words.length, 'words read': s.rows.length };
+  if (s.model === 'rnn') out.w = s.w;
   if (!last) return out;
-  if (last.kind === 'lstm') out.c = two(last.c);
-  out.h = two(last.h);
-  out["word 1's pull"] = pullText(last.pull);
+  const round = (v: number) => Math.round(v * 100) / 100;
+  if (last.kind === 'lstm') out.c = round(last.c);
+  out.h = round(last.h);
+  out["word 1's pull"] = last.pull >= 0.1 ? round(last.pull) : Number(last.pull.toPrecision(2));
   return out;
 }
 

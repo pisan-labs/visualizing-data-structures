@@ -231,9 +231,11 @@ const list = (xs: readonly string[]) =>
 export function baseVars(s: S, settings: MctsSettings): Record<string, Scalar> {
   const best = bestMove(s);
   return {
-    iterations: `${s.iterations} of ${settings.budget}`,
-    c: cText(settings),
-    'most visited': best === null ? '–' : `${TREE[best]!.token} (${s.n[best]})`,
+    iterations: s.iterations,
+    budget: Number(settings.budget),
+    c: Math.round(cOf(settings) * 100) / 100,
+    'most visited': best === null ? '–' : TREE[best]!.token,
+    'its visits': best === null ? 0 : s.n[best]!,
   };
 }
 

@@ -79,7 +79,7 @@ export function rnnPractice(def: () => Def): PracticeKind[] {
           answer: { kind: 'number', value: r.h, tolerance: 0.01 },
           explain: `h = tanh(${w} × ${two(hPrev)} + ${two(r.input)}) = tanh(${two(r.push + r.input)}) = ${two(r.h)}.${
             r.input === 0
-              ? ` ${names[before]} is not an animal, so nothing new comes in and the memory ${Math.abs(r.h) < Math.abs(hPrev) ? 'shrinks' : 'moves'}.`
+              ? ` The word ${names[before]} is not an animal, so nothing new comes in and the memory ${Math.abs(r.h) < Math.abs(hPrev) ? 'shrinks' : 'moves'}.`
               : ''
           }`,
           watch,

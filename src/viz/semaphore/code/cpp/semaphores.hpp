@@ -1,6 +1,7 @@
-// Three patterns from The Little Book of Semaphores, on real threads. limit: a semaphore that
-// starts at k lets at most k threads inside at once. first: a semaphore that starts at 0 makes
-// T2 wait for T1's signal. turns: two semaphores make two threads take turns.
+// Three semaphore patterns on real threads (the first two from The Little Book of Semaphores).
+// limit: a semaphore that starts at k lets at most k threads inside at once. first: a semaphore
+// that starts at 0 makes T2 wait for T1's signal. turns: two semaphores make two threads take
+// turns.
 //
 // C++17 has no semaphore (C++20 adds std::counting_semaphore), so Semaphore builds one from a
 // mutex and a condition variable. Room runs the limit pattern one step at a time instead, so a

@@ -81,7 +81,7 @@ Many languages already have one: Python's `queue.Queue(maxsize)`, Java's `ArrayB
 
 ## Common mistakes
 
-- `if` instead of `while` around the wait. It passes every test you run, and 52 of the 284 schedules here.
+- `if` instead of `while` around the wait. It usually passes your tests, and fails in 52 of the 284 schedules here.
 - Checking the condition without holding the lock. The buffer can change between the check and the wait, and the signal can come in between and be lost.
 - One condition variable for both sides, with signal. The wrong thread wakes up.
 - Forgetting the signal, or signaling the side you are on. A producer that signals room after a put wakes nobody useful.

@@ -39,11 +39,11 @@ Each thread waits for at most one lock, so each has at most one arrow out, and t
 
 ## Every interleaving
 
-[Every interleaving, opposite orders](#example:every-opposite): 14 orders of the steps, and 4 of them deadlock (the ones where each thread takes its first lock before the other is done). With three threads ([Every interleaving of three threads](#example:every-three)), 254 orders: 150 finish, 52 deadlock between T1 and T2 and 52 between T2 and T3. None between T1 and T3, since they take the locks in the same order.
+[Every interleaving, opposite orders](#example:every-opposite): 14 orders of the steps, and 4 of them deadlock (the ones where both threads hold their first lock at the same time). With three threads ([Every interleaving of three threads](#example:every-three)), 254 orders: 150 finish, 52 deadlock between T1 and T2 and 52 between T2 and T3. None between T1 and T3, since they take the locks in the same order.
 
 ## The fix: one global order
 
-OSTEP lists four conditions a deadlock needs: mutual exclusion (a lock has one holder), hold and wait (a thread holds one lock while waiting for another), no preemption (nobody takes a lock away), and circular wait. Remove any one and it can't happen. The easiest to remove is the circular wait: put the locks in one order, a before b, and make every thread take them in that order.
+OSTEP lists four conditions a deadlock needs: mutual exclusion (a lock has one holder), hold and wait (a thread holds one lock while waiting for another), no preemption (nobody takes a lock away), and circular wait. Remove any one and it can't happen. OSTEP calls the circular wait the most practical one to remove: put the locks in one order, a before b, and make every thread take them in that order.
 
 Set Lock order to Everyone takes a first. [One global order](#example:every-global): 8 orders of the steps, and all of them finish. Whoever holds b already holds a, so nobody can hold b while waiting for a, and no arrow can ever point back.
 
@@ -71,7 +71,7 @@ Deadlock needs a thread holding one thing while it waits for another. Look for t
 
 - "Move money from account x to account y: lock both accounts, then update both balances." Two transfers in opposite directions take the same two locks in opposite orders. Lock the lower account number first.
 - "A thread holding the cache lock calls the logger, which takes the log lock. The logger sometimes reads the cache." Two locks, nested both ways round in different code paths.
-- "Five threads sit at a round table; each needs the fork on its left and the fork on its right." A ring of locks, each thread holding one and waiting for the next: the classic cycle.
+- "Five threads stand in a ring with one lock between each pair of neighbours, and each needs the locks on both sides before it can work." Each thread holding one and waiting for the next: the classic cycle.
 
 The question to ask: is there a pair of locks that some code path takes in one order and another code path in the other?
 

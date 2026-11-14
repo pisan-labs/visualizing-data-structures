@@ -150,7 +150,11 @@ export const deadlock: VizDef<DeadlockState, DeadlockSettings> = {
   complexity: [
     {
       op: 'find the cycle in the wait-for graph',
-      best: { cost: 'O(1)', why: 'Nobody waits: no edges to follow.', example: 'one-at-a-time' },
+      best: {
+        cost: 'O(V)',
+        why: 'Nobody waits: building the graph looks at each thread once and finds no edges to follow.',
+        example: 'one-at-a-time',
+      },
       average: {
         cost: 'O(V + E)',
         why: 'Depth-first search visits each thread and each edge once, as on the DFS page.',

@@ -162,15 +162,14 @@ export const mutex: VizDef<MutexState, MutexSettings> = {
       best: {
         cost: 'Θ(k) steps, no waiting',
         why: 'One thread at a time: 5 steps each, and nobody finds m held.',
-        example: 'waits-its-turn',
       },
       average: {
         cost: 'Θ(k) steps',
-        why: 'Each thread runs its 5 steps, plus at most one lock call that waits.',
+        why: 'Each thread runs exactly 5 steps, waiting or not: a lock call that finds m held is one step, and m arrives later without a step of its own.',
       },
       worst: {
         cost: 'Θ(k²) steps spent waiting',
-        why: 'All k ask at once: the i-th in line waits through the 4 steps of each thread ahead of it, about 2k² steps in all.',
+        why: 'All k ask at once: the i-th in line waits through the 4 steps of each thread ahead of it, 2k(k − 1) steps, plus a few while the others line up: 13 for k = 3.',
         example: 'three-in-line',
       },
     },
@@ -187,7 +186,7 @@ export const mutex: VizDef<MutexState, MutexSettings> = {
       },
       worst: {
         cost: 'stuck',
-        why: 'A thread that never unlocks leaves the others waiting for ever, in most orders.',
+        why: 'A thread that never unlocks leaves the others waiting for ever: 4 of the 9 orders get stuck.',
         example: 'every-forget',
       },
     },

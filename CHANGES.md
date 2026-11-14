@@ -523,3 +523,5 @@
 2026-11-14 [code] Merged wave 10 round 1: src/viz/_patterns (approach setting, Work counters, PATTERNS, spotItKind) and prefix-sum-hashmap (count or longest subarray with sum k; every pair of ends against running sums and a map)
 
 2026-11-14 [code] Merged wave 10 round 1: src/viz/_threads (program parser, step machine with OSTEP semantics, interleavings and exact outcome counts, wait-for graph), src/layouts/lanes.ts and race-condition (step threads, run a schedule, every interleaving)
+
+2026-11-14 [code] Merged wave 10 kadane (extend or restart, empty-subarray setting), frequency-counting (letter-count signatures against sorting; first unique letter) and difference-array (+x at l, -x at r+1, one running sum); pages show honestly where the pattern loses on small inputs

@@ -533,3 +533,5 @@
 2026-11-14 [code] Merged wave 10 top-k (heap of size k, sort, quickselect), k-way-merge (heap of heads, pairs, sort) and two-heaps-median (two heaps against a sorted list; even-count median the mean by default, the CLRS lower median as a setting)
 
 2026-11-14 [code] Merged wave 10 merge-intervals (merge, insert, intersect), sweep-line (most open at once, the skyline with a lazy max-heap) and xor-tricks (single, missing, two singles, swap)
+
+2026-11-14 [code] Merged wave 10 mutex (where the lock goes; contention readouts), semaphore (a room of k, ordering, ping-pong turns), producer-consumer (while against if under Mesa; semaphores) and deadlock (opposite lock orders, the wait-for graph cycle by DFS, one global order)

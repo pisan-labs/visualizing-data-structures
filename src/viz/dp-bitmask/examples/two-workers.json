@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "dp-bitmask",
+  "id": "two-workers",
+  "title": "At two workers it is a tie",
+  "notes": "Two workers, the naive way: 2 orders and 4 tries. The DP over masks also makes 4 tries (masks 01, 10 and 11, the last one twice). The masks only pull ahead from three workers on: 12 against 15, then 32 against 64.",
+  "settings": {
+    "approach": "naive"
+  },
+  "seed": 1,
+  "ops": [["load", "3 5 / 4 1"], ["solve"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

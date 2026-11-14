@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "dp-tree",
+  "id": "two-in-a-row",
+  "title": "Two left out in a row",
+  "notes": "A chain 5, 1, 1, 5. Taking every other node gives 6 either way. The best is 10: A and D, with B and C both left out. Not next to each other does not mean every other one.",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [["build", "5 1 _ 1 _ 5"], ["solve"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

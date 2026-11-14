@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "dp-tree",
+  "id": "one-node",
+  "title": "A single node",
+  "notes": "One node of value 7: take = 7, skip = 0, best 7, in one call. Trying every subset makes 3 calls for the 2 subsets, with it and without it.",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [["build", "7"], ["solve"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "dp-bitmask",
+  "id": "all-ties",
+  "title": "Every cost the same",
+  "notes": "Every cost is 5, so every assignment costs 15. The DP still makes all 12 tries. On a tie it keeps the lower task, so walking back from 111 gives C task 0, B task 1 and A task 2. Trying every order would keep the first one it meets: A 0, B 1, C 2. Same total, different assignment.",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [["load", "5 5 5 / 5 5 5 / 5 5 5"], ["solve"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

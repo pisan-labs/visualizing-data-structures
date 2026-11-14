@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "dp-bitmask",
+  "id": "every-order",
+  "title": "Try every order",
+  "notes": "The same table, the naive way: A takes each task in turn, then B each task left, and so on. 24 orders and 64 tries find the same 14. Under each mask, the calls that reached it: the full mask 1111 is reached 24 times, a mask of two tasks twice.",
+  "settings": {
+    "approach": "naive"
+  },
+  "seed": 1,
+  "ops": [["load", "3 7 5 8 / 4 9 2 6 / 6 5 8 3 / 2 8 7 9"], ["solve"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

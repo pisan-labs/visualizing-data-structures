@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "dp-tree",
+  "id": "mixed-levels",
+  "title": "Neither level wins",
+  "notes": "4 9 2 1 3 6 4. Taking the root and the bottom level gives 18, the middle level 11. The best is 19: B, F and G, a mix. The root A and its child C are both left out, two in a row. Seven calls, one per node.",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [["build", "4 9 2 1 3 6 4"], ["solve"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

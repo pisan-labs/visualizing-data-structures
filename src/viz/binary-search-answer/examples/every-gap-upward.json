@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "binary-search-answer",
+  "id": "every-gap-upward",
+  "title": "Every gap upward",
+  "notes": "The same positions and k = 3, the naive way: a gap of 1 always works, so try 2, 3, 4 and so on until one fails. 2 to 11 fit; 12 fails, so the answer is 11. 11 checks and 63 reads, against 5 checks and 34 reads for binary search.",
+  "settings": {
+    "approach": "naive",
+    "problem": "spread"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "1 3 8 12 13 19 24"],
+    ["search", 3]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

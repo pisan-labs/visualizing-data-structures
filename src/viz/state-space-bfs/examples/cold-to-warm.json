@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "state-space-bfs",
+  "id": "cold-to-warm",
+  "title": "Cold to warm",
+  "notes": "Change cold into warm one letter at a time, every step a word in the list. Each word makes 100 letter changes, 25 for each of its 4 letters, and only a few are in the list. BFS finds cold → cord → word → ward → warm, 4 changes, after 7 words and 687 moves.",
+  "settings": {
+    "approach": "pattern",
+    "puzzle": "words"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "cold cord bold colt card word ward warm worm"],
+    ["search", "warm"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

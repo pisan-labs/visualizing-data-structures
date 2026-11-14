@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "state-space-bfs",
+  "id": "walled-in",
+  "title": "A goal walled in",
+  "notes": "55 is walled in: 45, 65, 54 and 56 are all barred. BFS cannot know that until it has visited every combination it can reach, 95 of them, with 380 moves, and the queue runs out. With no visited set the search would never stop.",
+  "settings": {
+    "approach": "pattern",
+    "puzzle": "lock"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "45 65 54 56"],
+    ["search", "55"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

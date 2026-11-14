@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "state-space-bfs",
+  "id": "every-sequence",
+  "title": "Every sequence of moves",
+  "notes": "The same lock and goal with no visited set: every sequence of moves goes in the queue, so 00 comes back from 10, 90 and 09, and so on. It still finds 4 moves, after 34 sequences and 133 moves, against 17 states and 65 moves for BFS. The queue ends with 88 sequences in it.",
+  "settings": {
+    "approach": "naive",
+    "puzzle": "lock"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "01 11 21"],
+    ["search", "02"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

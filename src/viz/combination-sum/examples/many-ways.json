@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "combination-sum",
+  "id": "many-ways",
+  "title": "Many ways to make 5",
+  "notes": "NOTE",
+  "settings": {
+    "approach": "pattern",
+    "reuse": "again"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "3 1 2"],
+    ["search", 5]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

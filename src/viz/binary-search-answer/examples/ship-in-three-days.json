@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "binary-search-answer",
+  "id": "ship-in-three-days",
+  "title": "Ship in three days",
+  "notes": "Packages 4 7 2 6 3 5 1 8 leave in order, and d = 3. The answer lies between 8 (the heaviest package) and 36 (all of them in one day). mid = 22 fits and so does 15; 11 and 13 fail; 14 fits. Capacity 14 ships them as 4 7 2, then 6 3 5, then 1 8. 5 checks and 40 reads, against 7 checks and 49 reads for trying every capacity upward.",
+  "settings": {
+    "approach": "pattern",
+    "problem": "ship"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "4 7 2 6 3 5 1 8"],
+    ["search", 3]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

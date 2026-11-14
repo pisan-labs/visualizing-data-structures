@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "binary-search-answer",
+  "id": "a-day-per-package",
+  "title": "A day for each package",
+  "notes": "d = 8, a day for each package if need be, so the heaviest package, 8, is the answer: the bottom of the range. Binary search still halves its way down through 22, 15, 11, 9 and 8, which all fit: 5 checks and 40 reads. Trying upward gets it on the first check, with 8 reads. Here the naive way wins.",
+  "settings": {
+    "approach": "pattern",
+    "problem": "ship"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "4 7 2 6 3 5 1 8"],
+    ["search", 8]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

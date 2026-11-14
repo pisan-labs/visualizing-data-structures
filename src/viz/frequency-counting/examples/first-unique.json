@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "frequency-counting",
+  "id": "first-unique",
+  "title": "Count, then a second pass",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [["unique", "abracadabra"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

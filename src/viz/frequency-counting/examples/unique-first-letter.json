@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "frequency-counting",
+  "id": "unique-first-letter",
+  "title": "The first letter is unique: rescanning wins",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "naive"
+  },
+  "seed": 1,
+  "ops": [["unique", "banana"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

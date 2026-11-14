@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "frequency-counting",
+  "id": "no-unique-letter",
+  "title": "No letter appears once",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [["unique", "teammate"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "frequency-counting",
+  "id": "sorted-letters",
+  "title": "Group by sorted letters",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "naive"
+  },
+  "seed": 1,
+  "ops": [["load", "night tops thing below spot elbow pots chin"], ["group"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

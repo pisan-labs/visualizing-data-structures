@@ -223,7 +223,7 @@ export const lora: VizDef<LoraState, LoraSettings, unknown> = {
     mergeServe,
   ] as unknown as SavedExample[],
   practice: loraPractice(() => lora),
-  preview: { example: 'rank-one-target', level: 2 },
+  preview: { example: 'rank-one-target', level: 2, hide: ['W', 'plus'] },
   opening: 'rank-one-target',
 };
 

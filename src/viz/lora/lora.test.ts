@@ -21,7 +21,7 @@ import {
 
 /**
  * LoRA training written independently of the page: the parameters as one flat list (B, then
- * A), the gradient by the chain rule entry by entry, and Adam with β powers from Math.pow.
+ * A), the gradient by the chain rule entry by entry, and Adam on that flat list.
  */
 function reference(b0: number[][], a0: number[][], target: number[][], s: number, steps: number) {
   const d = b0.length;
@@ -30,6 +30,8 @@ function reference(b0: number[][], a0: number[][], target: number[][], s: number
   const B = (i: number, k: number) => p[i * r + k]!;
   const A = (k: number, j: number) => p[d * r + k * d + j]!;
   const m = p.map(() => 0);
+  let p1 = 1;
+  let p2 = 1;
   const v = p.map(() => 0);
   for (let t = 1; t <= steps; t++) {
     // Sums in index order, as the page adds them: Adam turns a gradient that is exactly 0 in one
@@ -46,11 +48,15 @@ function reference(b0: number[][], a0: number[][], target: number[][], s: number
         }
       }
     for (let n = 0; n < g.length; n++) g[n] = s * g[n]!;
+    p1 *= 0.9;
+    p2 *= 0.999;
     for (let n = 0; n < p.length; n++) {
-      m[n] = 0.9 * m[n]! + 0.1 * g[n]!;
-      v[n] = 0.999 * v[n]! + 0.001 * g[n]! * g[n]!;
-      const mh = m[n]! / (1 - 0.9 ** t);
-      const vh = v[n]! / (1 - 0.999 ** t);
+      // 1 − 0.9 is not the double 0.1, and β^t by powers is not the running product the page
+      // keeps; a gradient of 0 in one and 1e-17 in the other is a whole Adam step apart.
+      m[n] = 0.9 * m[n]! + (1 - 0.9) * g[n]!;
+      v[n] = 0.999 * v[n]! + (1 - 0.999) * g[n]! * g[n]!;
+      const mh = m[n]! / (1 - p1);
+      const vh = v[n]! / (1 - p2);
       p[n] = p[n]! - (0.1 * mh) / (Math.sqrt(vh) + 1e-8);
     }
   }
@@ -85,8 +91,8 @@ describe('lora', () => {
         const start = t.entries[0]!.end;
         const end = t.endState();
         const ref = reference(start.b, start.a, start.target, scaleOf(settings), 2 * STEPS);
-        end.b.forEach((row, i) => row.forEach((x, k) => expect(x).toBeCloseTo(ref.b[i]![k]!, 6)));
-        end.a.forEach((row, k) => row.forEach((x, j) => expect(x).toBeCloseTo(ref.a[k]![j]!, 6)));
+        end.b.forEach((row, i) => row.forEach((x, k) => expect(x).toBeCloseTo(ref.b[i]![k]!, 9)));
+        end.a.forEach((row, k) => row.forEach((x, j) => expect(x).toBeCloseTo(ref.a[k]![j]!, 9)));
       }),
       { numRuns: 200 },
     );

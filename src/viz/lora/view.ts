@@ -5,7 +5,7 @@
  * at a glance. After a merge, W shows W + ΔW.
  *
  * A laptop draws it all in one row; a phone puts the product on top and W and D under it, side
- * by side or one under the other.
+ * by side or one under the other, D first.
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { pickLayout } from '../../layouts/arrange';
@@ -23,6 +23,8 @@ import {
 } from '../_dist/cells';
 import { describe, DIM, type LoraSettings, type LoraState } from './model';
 
+/** Wide enough for "−1.06" with room to spare. */
+const CELL = 52;
 const GAP = 26;
 const PLUS_W = 34;
 /** Between A's last row and ΔW's title: room for B's title and column numbers. */
@@ -61,6 +63,7 @@ function parts(s: LoraState, settings: LoraSettings): Parts {
       cols: DIM,
       colHeads: HEADS,
       rowHeads: HEADS,
+      cellW: CELL,
       cell: numbers(shownW, maxAbs(shownW)),
     },
     B: {
@@ -69,6 +72,7 @@ function parts(s: LoraState, settings: LoraSettings): Parts {
       rows: DIM,
       cols: r,
       colHeads: ranks,
+      cellW: CELL,
       cell: numbers(s.b, maxAbs(s.b)),
     },
     A: {
@@ -78,6 +82,7 @@ function parts(s: LoraState, settings: LoraSettings): Parts {
       cols: DIM,
       colHeads: HEADS,
       rowHeads: ranks,
+      cellW: CELL,
       cell: numbers(s.a, maxAbs(s.a)),
     },
     dW: {
@@ -85,6 +90,7 @@ function parts(s: LoraState, settings: LoraSettings): Parts {
       title: 'ΔW = (α/r)·B·A',
       rows: DIM,
       cols: DIM,
+      cellW: CELL,
       cell: s.dw ? numbers(s.dw, both) : () => ({ text: '', cls: 'ghost' }),
     },
     D: {
@@ -93,6 +99,7 @@ function parts(s: LoraState, settings: LoraSettings): Parts {
       rows: DIM,
       cols: DIM,
       colHeads: HEADS,
+      cellW: CELL,
       cell: numbers(s.target, both),
     },
   };
@@ -156,12 +163,13 @@ function tall(q: Parts, roles: ReadonlyMap<string, MarkRole>, stack: boolean) {
   const y = productTop(p) + 4;
   const prod = product(out, p, 30, y, roles);
   const boxes = [...prod.boxes];
-  const y2 = y + DIM * CELL_H + 22 + headRoom(p.W);
-  boxes.push(drawGrid(out, p.W, 30, y2, roles));
+  // D first, nearest ΔW, which it is compared with.
+  const y2 = y + DIM * CELL_H + 22 + headRoom(p.D);
+  boxes.push(drawGrid(out, p.D, 30, y2, roles));
   if (stack) {
-    const y3 = y2 + DIM * CELL_H + 22 + headRoom(p.D);
-    boxes.push(drawGrid(out, p.D, 30, y3, roles));
-  } else boxes.push(drawGrid(out, p.D, 30 + gridWidth(p.W) + GAP + 8, y2, roles));
+    const y3 = y2 + DIM * CELL_H + 22 + headRoom(p.W);
+    boxes.push(drawGrid(out, p.W, 30, y3, roles));
+  } else boxes.push(drawGrid(out, p.W, 30 + gridWidth(p.D) + GAP + 8, y2, roles));
   return { shapes: out, bounds: padBounds(unionBounds(...boxes), 12) };
 }
 

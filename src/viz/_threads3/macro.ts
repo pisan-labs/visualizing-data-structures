@@ -181,6 +181,10 @@ export interface MOptions {
   maxSteps?: number;
   outcome?: (s: MachineState) => string;
   from?: MachineState;
+  /** The page's promise that every schedule ends within this many row steps, though threads
+   * loop (a loop that runs twice, a retry that can fail only so often). With it, or with no
+   * loops at all, counts share a state across depths. It must hold, or counts go wrong. */
+  bound?: number;
 }
 
 export const MAX_STEPS = 60;
@@ -250,7 +254,7 @@ export function mcount(
   const outcome = opts.outcome ?? (() => 'done');
   const memo = new Map<string, Map<string, number>>();
   const order: string[] = [];
-  const longest = longestRun(mac);
+  const longest = longestRun(mac) ?? opts.bound ?? null;
   const anyDepth = longest !== null && longest < maxSteps;
   const go = (s: MachineState, depth: number): Map<string, number> => {
     const ready = runnable(s);
@@ -279,7 +283,7 @@ export function mcount(
 export function mfind(
   mac: Macro,
   goal: (s: MachineState) => boolean,
-  opts: Pick<MOptions, 'maxSteps' | 'from'> = {},
+  opts: Pick<MOptions, 'maxSteps' | 'from' | 'bound'> = {},
 ): number[] | null {
   return search(mac, (s, end) => end && goal(s), opts);
 }
@@ -288,7 +292,7 @@ export function mfind(
 export function mfindPath(
   mac: Macro,
   goal: (s: MachineState) => boolean,
-  opts: Pick<MOptions, 'maxSteps' | 'from'> = {},
+  opts: Pick<MOptions, 'maxSteps' | 'from' | 'bound'> = {},
 ): number[] | null {
   return search(mac, (s) => goal(s), opts);
 }
@@ -296,12 +300,12 @@ export function mfindPath(
 function search(
   mac: Macro,
   hit: (s: MachineState, end: boolean) => boolean,
-  opts: Pick<MOptions, 'maxSteps' | 'from'>,
+  opts: Pick<MOptions, 'maxSteps' | 'from' | 'bound'>,
 ): number[] | null {
   const maxSteps = opts.maxSteps ?? MAX_STEPS;
   const failed = new Set<string>();
   const path: number[] = [];
-  const longest = longestRun(mac);
+  const longest = longestRun(mac) ?? opts.bound ?? null;
   const anyDepth = longest !== null && longest < maxSteps;
   const visit = (s: MachineState): boolean => {
     const ready = runnable(s);

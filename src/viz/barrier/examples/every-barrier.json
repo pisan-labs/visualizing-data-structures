@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "barrier",
+  "id": "every-barrier",
+  "title": "Every interleaving of the barrier",
+  "notes": "204,108 orders of the steps, and in every one all three arrive before anyone goes on.",
+  "settings": {
+    "problem": "barrier",
+    "naive": false
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "every"
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

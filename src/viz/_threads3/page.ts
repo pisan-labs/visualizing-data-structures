@@ -149,6 +149,8 @@ export interface RowsSpec<Set extends Settings, S extends RowsState = RowsState>
   init?(mac: Macro, settings: Set): S;
   /** Row steps before "every interleaving" cuts a schedule off (default 60). */
   maxSteps?: number;
+  /** For programs that loop: the most row steps any schedule can take (see MOptions.bound). */
+  bound?(mac: Macro, settings: Set): number | undefined;
 }
 
 export const CAP = 2000;
@@ -579,7 +581,7 @@ export function rowsOps<Set extends Settings, S extends RowsState>(
         counts = new Map();
         for (const r of listed.runs) counts.set(r.outcome, (counts.get(r.outcome) ?? 0) + 1);
       } else {
-        const c = mcount(mac, { from, outcome, maxSteps });
+        const c = mcount(mac, { from, outcome, maxSteps, bound: spec.bound?.(mac, settings) });
         counts = new Map(c.outcomes.map((o) => [o.outcome, o.count]));
       }
       const total = [...counts.values()].reduce((a, b) => a + b, 0);

@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "barrier",
+  "id": "every-reusable",
+  "title": "Every interleaving of two rounds",
+  "notes": "199,314,945,648,000 orders of the steps, counted by state, and nobody goes on early in any of them.",
+  "settings": {
+    "problem": "reusable",
+    "naive": false
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "every"
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

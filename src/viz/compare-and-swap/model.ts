@@ -376,6 +376,10 @@ export const spec: RowsSpec<CasSettings, CasState> = {
   narrate,
   vars,
   lanes: 3,
+  // A thread's cas fails only when another thread's cas worked since its read: with k threads,
+  // at most k tries of 4 rows each. T1 on the stack fails at most once per change T2 makes.
+  bound: (_mac, settings) =>
+    programOf(settings) === 'aba' ? 4 * 4 + 3 : 4 * threadsOf(settings) ** 2,
   ending,
   startText: (_mac, settings) =>
     programOf(settings) === 'aba' ? 'the stack is A B C' : 'n = 0',

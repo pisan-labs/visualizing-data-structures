@@ -3,43 +3,20 @@
   "viz": "two-stack-queue",
   "id": "peeks-are-free",
   "title": "Peeks after the move are free",
-  "notes": "NOTES",
+  "notes": "Enqueue 5 values and peek four times. The first peek moves all five to out (10); the next three cost nothing. Moving everything every time, each peek would cost 20.",
   "settings": {
     "approach": "pattern"
   },
   "seed": 1,
   "ops": [
-    [
-      "enqueue",
-      3
-    ],
-    [
-      "enqueue",
-      1
-    ],
-    [
-      "enqueue",
-      4
-    ],
-    [
-      "enqueue",
-      1
-    ],
-    [
-      "enqueue",
-      5
-    ],
-    [
-      "peek"
-    ],
-    [
-      "peek"
-    ],
-    [
-      "peek"
-    ],
-    [
-      "peek"
-    ]
+    ["enqueue", 3],
+    ["enqueue", 1],
+    ["enqueue", 4],
+    ["enqueue", 1],
+    ["enqueue", 5],
+    ["peek"],
+    ["peek"],
+    ["peek"],
+    ["peek"]
   ]
 }

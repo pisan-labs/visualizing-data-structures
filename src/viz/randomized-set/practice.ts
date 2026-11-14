@@ -35,7 +35,11 @@ export const SPOT_ROWS: SpotRow[] = [
     problem:
       'A raffle keeps a pool of ticket numbers. Tickets are added and withdrawn all day, and at any moment a winner must be drawn from the pool, every ticket equally likely, in constant time.',
     pattern: 'randomized-set',
-    cue: ['added and withdrawn', 'drawn from the pool, every ticket equally likely', 'constant time'],
+    cue: [
+      'added and withdrawn',
+      'drawn from the pool, every ticket equally likely',
+      'constant time',
+    ],
     why: 'A random pick needs an index, so keep the tickets in an array; a withdrawal needs to find its ticket fast, so keep a map from ticket to index, and fill the hole with the last ticket.',
     near: ['lru-cache', 'frequency-counting', 'top-k'],
   },
@@ -128,7 +132,13 @@ export function randomizedSetPractice(def: () => Def): PracticeKind[] {
         const ask = removes([x]);
         const end = run([...setup, ...ask]).endState();
         const moved = vs[vs.length - 1]!;
-        const asked = rng.int(0, 2) ? moved : pick(rng, end.a.map((i) => i.value), 1)[0]!;
+        const asked = rng.int(0, 2)
+          ? moved
+          : pick(
+              rng,
+              end.a.map((i) => i.value),
+              1,
+            )[0]!;
         const at = end.map.find((e) => e.key === asked)!.index;
         return {
           prompt: `Starting from the set shown, run \`remove(${x})\`. What is \`map[${asked}]\` afterwards?`,

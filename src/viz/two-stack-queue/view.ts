@@ -79,11 +79,7 @@ const ARRANGEMENTS = [
   arrange('horizontal', false),
 ];
 
-export function view(
-  step: Step<TQState, TQExtra>,
-  settings: TQSettings,
-  stage?: StageSize,
-): Scene {
+export function view(step: Step<TQState, TQExtra>, settings: TQSettings, stage?: StageSize): Scene {
   const { state, extra } = step;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const a = pickLayout(stage, ARRANGEMENTS);
@@ -111,7 +107,9 @@ export function view(
   );
 
   const costs = extra?.current === undefined ? state.history : [...state.history, extra.current];
-  shapes.push(...chart(a.chart, costs, extra?.current !== undefined, approachOf(settings) === 'naive'));
+  shapes.push(
+    ...chart(a.chart, costs, extra?.current !== undefined, approachOf(settings) === 'naive'),
+  );
 
   if (extra?.label) shapes.push(opLabel(extra.label, roles.get('op-label')));
   return { shapes, bounds: a.bounds, label: label(state, costs) };

@@ -3,35 +3,17 @@
   "viz": "randomized-set",
   "id": "remove-missing",
   "title": "Removing a value that is not there",
-  "notes": "NOTES",
+  "notes": "Insert 1 2 3, then remove 9 (not there), 2 and 2 again. A missing value costs one lookup with the map; the array alone has to look at every value.",
   "settings": {
     "approach": "pattern"
   },
   "seed": 1,
   "ops": [
-    [
-      "insert",
-      1
-    ],
-    [
-      "insert",
-      2
-    ],
-    [
-      "insert",
-      3
-    ],
-    [
-      "remove",
-      9
-    ],
-    [
-      "remove",
-      2
-    ],
-    [
-      "remove",
-      2
-    ]
+    ["insert", 1],
+    ["insert", 2],
+    ["insert", 3],
+    ["remove", 9],
+    ["remove", 2],
+    ["remove", 2]
   ]
 }

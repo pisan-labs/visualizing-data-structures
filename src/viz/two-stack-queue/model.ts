@@ -199,7 +199,11 @@ function running(c: Ctx): string {
   const total = c.work.total;
   const cap = BOUND * c.ops;
   return `Running total: ${plural(total, 'stack operation')} for ${plural(c.ops, 'queue operation')}${
-    c.approach === 'pattern' ? `, within ${BOUND} × ${c.ops} = ${cap}` : total > cap ? `, past ${BOUND} × ${c.ops} = ${cap}` : ''
+    c.approach === 'pattern'
+      ? `, within ${BOUND} × ${c.ops} = ${cap}`
+      : total > cap
+        ? `, past ${BOUND} × ${c.ops} = ${cap}`
+        : ''
   }.`;
 }
 
@@ -247,7 +251,11 @@ const enqueue: Op = {
     const c = context(s, settings, 'enqueue');
     tick(c, 'pushes');
     const uid = s.nextUid;
-    const end = finish({ ...s, inn: [...s.inn, { uid, value: x }], nextUid: uid + 1 }, c, 'enqueue');
+    const end = finish(
+      { ...s, inn: [...s.inn, { uid, value: x }], nextUid: uid + 1 },
+      c,
+      'enqueue',
+    );
     yield step(
       c,
       end,
@@ -339,11 +347,11 @@ function take(op: 'dequeue' | 'peek'): Op {
           op === 'dequeue'
             ? `Pop out's top, ${v}: the oldest value in the queue. ${cost} ${running(c)}`
             : `The front of the queue is out's top, ${v}. It stays there. ${cost} ${running(c)}`,
-          moved
-            ? [`${d}.ret`]
-            : [`${d}.check`, `${d}.ret`],
+          moved ? [`${d}.ret`] : [`${d}.check`, `${d}.ret`],
           1,
-          op === 'dequeue' ? [mark('op-label', 'found')] : [mark(vid(front.uid), 'found'), mark('op-label', 'found')],
+          op === 'dequeue'
+            ? [mark('op-label', 'found')]
+            : [mark(vid(front.uid), 'found'), mark('op-label', 'found')],
           `${op}() → ${v}`,
           { returned: front.value },
           true,
@@ -420,8 +428,18 @@ export function pseudocode(settings: TQSettings): PseudoBlock[] {
       return {
         op,
         lines: [
-          L(`${d}.sig`, 0, `${op}()   // move everything, every time`, op === 'dequeue' ? 'To take the front value off:' : 'To look at the front value:'),
-          L(`${d}.empty`, 1, 'if in is empty: error "queue is empty"', 'If there are no values, stop.'),
+          L(
+            `${d}.sig`,
+            0,
+            `${op}()   // move everything, every time`,
+            op === 'dequeue' ? 'To take the front value off:' : 'To look at the front value:',
+          ),
+          L(
+            `${d}.empty`,
+            1,
+            'if in is empty: error "queue is empty"',
+            'If there are no values, stop.',
+          ),
           L(`${d}.loop`, 1, 'while in is not empty', 'Until in is empty,'),
           L(`${d}.move`, 2, 'out.push(in.pop())', 'move its top onto out.'),
           op === 'dequeue'
@@ -440,11 +458,21 @@ export function pseudocode(settings: TQSettings): PseudoBlock[] {
     return {
       op,
       lines: [
-        L(`${d}.sig`, 0, `${op}()`, op === 'dequeue' ? 'To take the front value off:' : 'To look at the front value:'),
+        L(
+          `${d}.sig`,
+          0,
+          `${op}()`,
+          op === 'dequeue' ? 'To take the front value off:' : 'To look at the front value:',
+        ),
         L(`${d}.check`, 1, 'if out is empty', 'Only if out is empty,'),
         L(`${d}.loop`, 2, 'while in is not empty', 'until in is empty,'),
         L(`${d}.move`, 3, 'out.push(in.pop())', 'move its top onto out.'),
-        L(`${d}.empty`, 1, 'if out is empty: error "queue is empty"', 'If out is still empty, there are no values: stop.'),
+        L(
+          `${d}.empty`,
+          1,
+          'if out is empty: error "queue is empty"',
+          'If out is still empty, there are no values: stop.',
+        ),
         op === 'dequeue'
           ? L(`${d}.ret`, 1, 'return out.pop()', 'Take the top of out off: the oldest value.')
           : L(`${d}.ret`, 1, 'return out.top()', 'Hand back the top of out: the oldest value.'),

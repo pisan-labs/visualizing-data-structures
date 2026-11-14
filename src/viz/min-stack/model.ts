@@ -647,9 +647,7 @@ export function pseudocode(settings: MSSettings): PseudoBlock[] {
 export function describe(s: MSState): string {
   const vs = s.items.map((i) => i.value);
   if (!vs.length) return 'The stack is empty.';
-  const mins = s.mins.length
-    ? ` mins, bottom to top: ${list(s.mins.map((m) => m.value))}.`
-    : '';
+  const mins = s.mins.length ? ` mins, bottom to top: ${list(s.mins.map((m) => m.value))}.` : '';
   return `The stack, bottom to top: ${list(vs)}.${mins}`;
 }
 

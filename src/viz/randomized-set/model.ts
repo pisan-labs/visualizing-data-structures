@@ -291,7 +291,9 @@ const remove: Op = {
         ? `${v} is the last value, so A[${i}] = A[${n - 1}] changes nothing. Drop the last slot.`
         : `Move the last value, A[${n - 1}] = ${fmt(last!.value)}, into the hole: A[${i}] = ${fmt(last!.value)}. Drop the last slot. Nothing else shifts.`;
     const moveMarks = (i: number) =>
-      i === n - 1 ? [mark(cell(i), 'remove')] : [mark(vid(last!.uid), 'active'), mark(cell(i), 'active')];
+      i === n - 1
+        ? [mark(cell(i), 'remove')]
+        : [mark(vid(last!.uid), 'active'), mark(cell(i), 'active')];
 
     if (c.approach === 'naive') {
       let i = 0;
@@ -369,16 +371,10 @@ const remove: Op = {
       { x, i },
     );
     const shifted = moved(s, i);
-    yield step(
-      c,
-      shifted,
-      moveSay(i),
-      ['rm.last', 'rm.move', 'rm.pop'],
-      2,
-      moveMarks(i),
-      call,
-      { x, i },
-    );
+    yield step(c, shifted, moveSay(i), ['rm.last', 'rm.move', 'rm.pop'], 2, moveMarks(i), call, {
+      x,
+      i,
+    });
     c.work.add('lookups');
     const y = last!.value;
     const fixed: RSState = {
@@ -469,7 +465,12 @@ const randomBlock: PseudoBlock = {
     L('rand.sig', 0, 'random()', 'To pick a value at random:'),
     L('rand.check', 1, 'if A is empty', 'If there are no values,'),
     L('rand.empty', 2, 'error "set is empty"', 'stop: there is nothing to pick.'),
-    L('rand.pick', 1, 'i = random index from 0 to n − 1', 'Pick an index, each one equally likely,'),
+    L(
+      'rand.pick',
+      1,
+      'i = random index from 0 to n − 1',
+      'Pick an index, each one equally likely,',
+    ),
     L('rand.ret', 1, 'return A[i]', 'and hand back the value there.'),
   ],
 };

@@ -3,38 +3,18 @@
   "viz": "randomized-set",
   "id": "swap-with-last",
   "title": "Fill the hole with the last value",
-  "notes": "NOTES",
+  "notes": "Insert 4 7 2 9 5, then remove 7. The map says 7 is at index 1, so the last value, 5, moves into that slot and map[5] becomes 1: A = 4 5 2 9. Three lookups, no scan, and nothing else moves. Then a random pick.",
   "settings": {
     "approach": "pattern"
   },
   "seed": 1,
   "ops": [
-    [
-      "insert",
-      4
-    ],
-    [
-      "insert",
-      7
-    ],
-    [
-      "insert",
-      2
-    ],
-    [
-      "insert",
-      9
-    ],
-    [
-      "insert",
-      5
-    ],
-    [
-      "remove",
-      7
-    ],
-    [
-      "random"
-    ]
+    ["insert", 4],
+    ["insert", 7],
+    ["insert", 2],
+    ["insert", 9],
+    ["insert", 5],
+    ["remove", 7],
+    ["random"]
   ]
 }

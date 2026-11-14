@@ -1,14 +1,7 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import type { Scene, Shape } from '../../render/scene';
 import { approachOf } from '../_patterns/kit';
-import {
-  drawStacks,
-  fmt,
-  opLabel,
-  pickStacks,
-  valueAt,
-  type StackView,
-} from '../_design1/kit';
+import { drawStacks, fmt, opLabel, pickStacks, valueAt, type StackView } from '../_design1/kit';
 import { describe, MAX_SIZE, vid, type MSExtra, type MSSettings, type MSState } from './model';
 
 /**
@@ -17,11 +10,7 @@ import { describe, MAX_SIZE, vid, type MSExtra, type MSSettings, type MSState } 
  * the push that put it there: that entry leaves when that value is popped. Pushing every time
  * keeps the two stacks level, so each entry sits beside its own value and needs no line.
  */
-export function view(
-  step: Step<MSState, MSExtra>,
-  settings: MSSettings,
-  stage?: StageSize,
-): Scene {
+export function view(step: Step<MSState, MSExtra>, settings: MSSettings, stage?: StageSize): Scene {
   const { state, extra } = step;
   const pattern = approachOf(settings) === 'pattern';
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));

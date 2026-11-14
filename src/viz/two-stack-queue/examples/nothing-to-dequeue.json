@@ -3,27 +3,10 @@
   "viz": "two-stack-queue",
   "id": "nothing-to-dequeue",
   "title": "Nothing to dequeue",
-  "notes": "NOTES",
+  "notes": "dequeue and peek on an empty queue report it and cost nothing. Enqueue 7, dequeue it (a move and a pop: 3), and the queue is empty again.",
   "settings": {
     "approach": "pattern"
   },
   "seed": 1,
-  "ops": [
-    [
-      "dequeue"
-    ],
-    [
-      "enqueue",
-      7
-    ],
-    [
-      "dequeue"
-    ],
-    [
-      "dequeue"
-    ],
-    [
-      "peek"
-    ]
-  ]
+  "ops": [["dequeue"], ["enqueue", 7], ["dequeue"], ["dequeue"], ["peek"]]
 }

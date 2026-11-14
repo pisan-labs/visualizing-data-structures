@@ -55,7 +55,13 @@ const presets: Preset[] = [
     label: 'Remove the last each time: nothing moves',
     make: (rng, n) => {
       const vs = distinct(rng, n);
-      return [...vs.map(ins), ...[...vs].reverse().slice(0, Math.ceil(n / 2)).map(rem)];
+      return [
+        ...vs.map(ins),
+        ...[...vs]
+          .reverse()
+          .slice(0, Math.ceil(n / 2))
+          .map(rem),
+      ];
     },
   },
   {
@@ -84,7 +90,10 @@ const presets: Preset[] = [
   },
   {
     label: 'Draw at random again and again',
-    make: (rng, n) => [...distinct(rng, n).map(ins), ...Array.from({ length: 4 }, () => ['random'] as OpCall)],
+    make: (rng, n) => [
+      ...distinct(rng, n).map(ins),
+      ...Array.from({ length: 4 }, () => ['random'] as OpCall),
+    ],
   },
 ];
 

@@ -3,39 +3,19 @@
   "viz": "two-stack-queue",
   "id": "alternating",
   "title": "Enqueue, dequeue, enqueue, dequeue",
-  "notes": "NOTES",
+  "notes": "Enqueue one value, dequeue it, four times. Every dequeue moves one value and pops it: 3. With one value at a time, moving everything every time costs exactly the same.",
   "settings": {
     "approach": "pattern"
   },
   "seed": 1,
   "ops": [
-    [
-      "enqueue",
-      6
-    ],
-    [
-      "dequeue"
-    ],
-    [
-      "enqueue",
-      7
-    ],
-    [
-      "dequeue"
-    ],
-    [
-      "enqueue",
-      8
-    ],
-    [
-      "dequeue"
-    ],
-    [
-      "enqueue",
-      9
-    ],
-    [
-      "dequeue"
-    ]
+    ["enqueue", 6],
+    ["dequeue"],
+    ["enqueue", 7],
+    ["dequeue"],
+    ["enqueue", 8],
+    ["dequeue"],
+    ["enqueue", 9],
+    ["dequeue"]
   ]
 }

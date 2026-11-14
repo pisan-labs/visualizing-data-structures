@@ -31,9 +31,7 @@ export const plural = (n: number, one: string, many = `${one}s`): string =>
 
 /** "a", "a and b", "a, b and c". */
 export function and(xs: readonly string[]): string {
-  return xs.length <= 1
-    ? xs.join('')
-    : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`;
+  return xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`;
 }
 
 /** Values as a list for narration: "5, 3 and 7", or "nothing". */
@@ -45,7 +43,8 @@ const INT = /^[-−]?\d+$/;
 export function readInt(arg: unknown, lo: number, hi: number): number | string {
   const t = String(arg ?? '').trim();
   const range = `Use a whole number from ${fmt(lo)} to ${hi}.`;
-  if (!INT.test(t)) return t ? `"${t}" is not a whole number. ${range}` : `Type a value first. ${range}`;
+  if (!INT.test(t))
+    return t ? `"${t}" is not a whole number. ${range}` : `Type a value first. ${range}`;
   const v = Number(t.replace('−', '-'));
   if (v < lo || v > hi) return `${t} is out of range. ${range}`;
   return v === 0 ? 0 : v;

@@ -3,31 +3,16 @@
   "viz": "randomized-set",
   "id": "remove-the-last",
   "title": "Removing the last value moves nothing",
-  "notes": "NOTES",
+  "notes": "Insert 3 8 6, then remove 6 and 8. Each is the last value, so the move into the hole changes nothing; the map still writes and then deletes the entry.",
   "settings": {
     "approach": "pattern"
   },
   "seed": 1,
   "ops": [
-    [
-      "insert",
-      3
-    ],
-    [
-      "insert",
-      8
-    ],
-    [
-      "insert",
-      6
-    ],
-    [
-      "remove",
-      6
-    ],
-    [
-      "remove",
-      8
-    ]
+    ["insert", 3],
+    ["insert", 8],
+    ["insert", 6],
+    ["remove", 6],
+    ["remove", 8]
   ]
 }

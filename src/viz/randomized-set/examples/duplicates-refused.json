@@ -3,31 +3,16 @@
   "viz": "randomized-set",
   "id": "duplicates-refused",
   "title": "A set refuses duplicates",
-  "notes": "NOTES",
+  "notes": "Insert 5 1 5 1 7. The second 5 and the second 1 are already in the map, so one lookup each refuses them.",
   "settings": {
     "approach": "pattern"
   },
   "seed": 1,
   "ops": [
-    [
-      "insert",
-      5
-    ],
-    [
-      "insert",
-      1
-    ],
-    [
-      "insert",
-      5
-    ],
-    [
-      "insert",
-      1
-    ],
-    [
-      "insert",
-      7
-    ]
+    ["insert", 5],
+    ["insert", 1],
+    ["insert", 5],
+    ["insert", 1],
+    ["insert", 7]
   ]
 }

@@ -85,11 +85,7 @@ function columns(map: boolean): Geometry {
 
 const valueSize = 18;
 
-export function view(
-  step: Step<RSState, RSExtra>,
-  settings: RSSettings,
-  stage?: StageSize,
-): Scene {
+export function view(step: Step<RSState, RSExtra>, settings: RSSettings, stage?: StageSize): Scene {
   const { state, extra } = step;
   const map = approachOf(settings) === 'pattern';
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));

@@ -46,15 +46,14 @@ const presets: Preset[] = [
   {
     label: 'Bursts: enqueue 3, dequeue 2',
     make: (rng, n) =>
-      Array.from({ length: Math.ceil(n / 2) }, () => [
-        ...values(rng, 3).map(enq),
-        deq,
-        deq,
-      ]).flat(),
+      Array.from({ length: Math.ceil(n / 2) }, () => [...values(rng, 3).map(enq), deq, deq]).flat(),
   },
   {
     label: 'Enqueue, then peek again and again (worst for moving every time)',
-    make: (rng, n) => [...values(rng, n).map(enq), ...Array.from({ length: 4 }, () => ['peek'] as OpCall)],
+    make: (rng, n) => [
+      ...values(rng, n).map(enq),
+      ...Array.from({ length: 4 }, () => ['peek'] as OpCall),
+    ],
   },
   {
     label: 'Fill, drain half, fill again',

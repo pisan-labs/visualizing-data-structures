@@ -3,67 +3,27 @@
   "viz": "two-stack-queue",
   "id": "one-costly-dequeue",
   "title": "One costly dequeue pays for the rest",
-  "notes": "NOTES",
+  "notes": "Enqueue 8 values, then dequeue all 8. The first dequeue costs 17, sixteen for the move and one for the pop; the other seven cost 1 each. 32 stack operations for 16 operations: 2 each, under the 3 of the dashed line.",
   "settings": {
     "approach": "pattern"
   },
   "seed": 1,
   "ops": [
-    [
-      "enqueue",
-      11
-    ],
-    [
-      "enqueue",
-      12
-    ],
-    [
-      "enqueue",
-      13
-    ],
-    [
-      "enqueue",
-      14
-    ],
-    [
-      "enqueue",
-      15
-    ],
-    [
-      "enqueue",
-      16
-    ],
-    [
-      "enqueue",
-      17
-    ],
-    [
-      "enqueue",
-      18
-    ],
-    [
-      "dequeue"
-    ],
-    [
-      "dequeue"
-    ],
-    [
-      "dequeue"
-    ],
-    [
-      "dequeue"
-    ],
-    [
-      "dequeue"
-    ],
-    [
-      "dequeue"
-    ],
-    [
-      "dequeue"
-    ],
-    [
-      "dequeue"
-    ]
+    ["enqueue", 11],
+    ["enqueue", 12],
+    ["enqueue", 13],
+    ["enqueue", 14],
+    ["enqueue", 15],
+    ["enqueue", 16],
+    ["enqueue", 17],
+    ["enqueue", 18],
+    ["dequeue"],
+    ["dequeue"],
+    ["dequeue"],
+    ["dequeue"],
+    ["dequeue"],
+    ["dequeue"],
+    ["dequeue"],
+    ["dequeue"]
   ]
 }

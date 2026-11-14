@@ -3,47 +3,21 @@
   "viz": "min-stack",
   "id": "falling-values",
   "title": "Falling values: every push is a minimum",
-  "notes": "NOTES",
+  "notes": "Push 9 8 6 5 3 2 1 −1: every push is a new minimum, so mins is as tall as the stack. The worst case for space, still one comparison per push.",
   "settings": {
     "approach": "pattern",
     "track": "le"
   },
   "seed": 1,
   "ops": [
-    [
-      "push",
-      9
-    ],
-    [
-      "push",
-      8
-    ],
-    [
-      "push",
-      6
-    ],
-    [
-      "push",
-      5
-    ],
-    [
-      "push",
-      3
-    ],
-    [
-      "push",
-      2
-    ],
-    [
-      "push",
-      1
-    ],
-    [
-      "push",
-      -1
-    ],
-    [
-      "min"
-    ]
+    ["push", 9],
+    ["push", 8],
+    ["push", 6],
+    ["push", 5],
+    ["push", 3],
+    ["push", 2],
+    ["push", 1],
+    ["push", -1],
+    ["min"]
   ]
 }

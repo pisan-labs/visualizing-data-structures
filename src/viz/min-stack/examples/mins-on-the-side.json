@@ -3,57 +3,25 @@
   "viz": "min-stack",
   "id": "mins-on-the-side",
   "title": "Minimums on the side",
-  "notes": "NOTES",
+  "notes": "Push 5 3 7 3 8 1, then alternate min and pop. mins gets 5 3 3 1: each value that ties or beats the minimum. Every min is one look at its top. The session costs 8 comparisons, one per push after the first and one per pop; scanning would cost 14.",
   "settings": {
     "approach": "pattern",
     "track": "le"
   },
   "seed": 1,
   "ops": [
-    [
-      "push",
-      5
-    ],
-    [
-      "push",
-      3
-    ],
-    [
-      "push",
-      7
-    ],
-    [
-      "push",
-      3
-    ],
-    [
-      "push",
-      8
-    ],
-    [
-      "push",
-      1
-    ],
-    [
-      "min"
-    ],
-    [
-      "pop"
-    ],
-    [
-      "min"
-    ],
-    [
-      "pop"
-    ],
-    [
-      "min"
-    ],
-    [
-      "pop"
-    ],
-    [
-      "min"
-    ]
+    ["push", 5],
+    ["push", 3],
+    ["push", 7],
+    ["push", 3],
+    ["push", 8],
+    ["push", 1],
+    ["min"],
+    ["pop"],
+    ["min"],
+    ["pop"],
+    ["min"],
+    ["pop"],
+    ["min"]
   ]
 }

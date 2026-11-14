@@ -46,7 +46,12 @@ describe('randomized-set', () => {
         expect(new Set(values(end))).toEqual(ref.set);
         expect(values(end)).toHaveLength(ref.set.size);
         // The other design keeps the same array, so it draws the same values.
-        const other = new Timeline(def, { approach: approach === 'naive' ? 'pattern' : 'naive' }, seed, cs);
+        const other = new Timeline(
+          def,
+          { approach: approach === 'naive' ? 'pattern' : 'naive' },
+          seed,
+          cs,
+        );
         expect(values(other.endState())).toEqual(values(end));
         let cost = { naive: 0, pattern: 0 };
         for (const [k, e] of t.entries.entries()) {
@@ -57,9 +62,7 @@ describe('randomized-set', () => {
             expect(i).toBeGreaterThanOrEqual(0);
             expect(i).toBeLessThan(values(before).length);
             expect(last.vars?.returned).toBe(values(before)[i]);
-            expect(last.vars?.returned).toBe(
-              other.entries[k]!.steps.at(-1)!.vars?.returned,
-            );
+            expect(last.vars?.returned).toBe(other.entries[k]!.steps.at(-1)!.vars?.returned);
           }
           if (last.vars?.returned !== undefined && e.call[0] !== 'random') {
             const c = callCost(e.call[0], values(before), Number(e.call[1]));
@@ -98,7 +101,15 @@ describe('randomized-set', () => {
     expect(values(t.endState())).toEqual([4, 5, 2, 9]);
     expect(t.endState().map.find((m) => m.key === 5)!.index).toBe(1);
     const lines = t.entries.at(-1)!.steps.flatMap((s) => s.lines);
-    expect(lines).toEqual(['rm.find', 'rm.last', 'rm.move', 'rm.pop', 'rm.fix', 'rm.del', 'rm.ret']);
+    expect(lines).toEqual([
+      'rm.find',
+      'rm.last',
+      'rm.move',
+      'rm.pop',
+      'rm.fix',
+      'rm.del',
+      'rm.ret',
+    ]);
   });
 
   it('refuses values it cannot read and a ninth value', () => {

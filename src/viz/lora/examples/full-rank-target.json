@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "lora",
+  "id": "full-rank-target",
+  "title": "A full-rank update, a rank-2 adapter",
+  "notes": "D has rank 4, so no rank-2 ΔW can equal it. The loss falls from 28 to 5.36 after 60 steps; the floor is 5.33, the part of D outside its two strongest directions.",
+  "settings": {
+    "rank": 2,
+    "alpha": "1",
+    "init": "paper"
+  },
+  "seed": 14,
+  "ops": [["target","4"],["train"],["train"],["train"]]
+}

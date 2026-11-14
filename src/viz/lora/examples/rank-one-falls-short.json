@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "lora",
+  "id": "rank-one-falls-short",
+  "title": "Rank 1 cannot reach a rank-2 update",
+  "notes": "Now D's first row is (−1, 2, −2, 1) and the other three are (1, 0, 0, −1): two directions. Every row of a rank-1 ΔW is a multiple of the same row, so it cannot make both. The loss falls from 16 and stops at 4.01. The best any rank-1 ΔW can do is 4.00.",
+  "settings": {
+    "rank": 1,
+    "alpha": "1",
+    "init": "paper"
+  },
+  "seed": 14,
+  "ops": [["target","2"],["train"],["train"],["train"]]
+}

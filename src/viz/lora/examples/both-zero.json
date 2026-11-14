@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "lora",
+  "id": "both-zero",
+  "title": "Both start at zero: stuck forever",
+  "notes": "B and A both start at 0. B's gradient is multiplied by A and A's by B, so both gradients are 0 and nothing moves. The loss stays at 16. This is why the paper starts A random.",
+  "settings": {
+    "rank": 1,
+    "alpha": "1",
+    "init": "zero"
+  },
+  "seed": 14,
+  "ops": [["target","1"],["train"]]
+}

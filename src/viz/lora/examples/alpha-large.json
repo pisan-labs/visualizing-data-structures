@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "lora",
+  "id": "alpha-large",
+  "title": "A large α: faster, and bumpier",
+  "notes": "α = 8 with r = 1 multiplies ΔW by 8. The very first step overshoots: the loss goes up, from 16.00 to 16.97. After that it falls fast, and bounces on the way down, like a learning rate that is too large.",
+  "settings": {
+    "rank": 1,
+    "alpha": "8",
+    "init": "paper"
+  },
+  "seed": 14,
+  "ops": [["target","1"],["train"],["train"],["train"]]
+}

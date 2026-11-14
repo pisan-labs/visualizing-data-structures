@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "lora",
+  "id": "rank-two-reaches",
+  "title": "Rank 2 reaches a rank-2 update",
+  "notes": "The same rank-2 D with r = 2: ΔW now has two directions to work with. The loss goes 16, 0.79, 0.11, 0.02 after 0, 20, 40 and 60 steps. At this toy size the adapter trains 16 numbers, as many as W has: LoRA pays only when r is much smaller than d.",
+  "settings": {
+    "rank": 2,
+    "alpha": "1",
+    "init": "paper"
+  },
+  "seed": 14,
+  "ops": [["target","2"],["train"],["train"],["train"]]
+}

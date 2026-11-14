@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "dutch-flag",
+  "id": "three-colors",
+  "title": "Three colors: 0, 1 and 2",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "2 0 1 2 1 0 0 2 1"],
+    ["partition", 1]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

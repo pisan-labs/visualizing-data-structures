@@ -78,10 +78,7 @@ export function rwPractice(): PracticeKind[] {
               who === undefined
                 ? `Nobody: ${ins.length ? `${ins.join(' and ')} ${ins.length > 1 ? 'are' : 'is'} inside, and ` : ''}every one of them would have to wait (for room, for m or at the turnstile).`
                 : `${mac.p.threads[who]!.name}: \`${names(mac, alone(mac, s, who, settings)!)}\` takes it in without waiting. ${who === 0 ? 'The room is empty, so the writer can have it.' : ins.length ? 'Readers are inside already, so another reader may join them.' : 'Nobody is inside, so a reader may take the room.'}`,
-            watch:
-              who === undefined
-                ? [['every']]
-                : stepCalls(alone(mac, s, who, settings) ?? []),
+            watch: who === undefined ? [['every']] : stepCalls(alone(mac, s, who, settings) ?? []),
           };
         }
       },

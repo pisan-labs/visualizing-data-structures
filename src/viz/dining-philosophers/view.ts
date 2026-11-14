@@ -13,13 +13,21 @@ import {
   type DiningState,
 } from './model';
 
-/** Shape ids of the table: a circle per philosopher, the wait arrows. Forks use lockId. */
+/**
+ * Shape ids of the table: a circle per philosopher, its wait arrow, and a line from each fork it
+ * holds. Forks use lockId.
+ */
 export const seatId = (t: number) => `seat-${t}`;
 export const waitId = (t: number) => `seat-${t}-wait`;
+export const holdId = (i: number) => `seat-hold-${i}`;
 
-const R = 15;
-const RING = 44;
+const R = 14;
+const RING = 46;
 const FORKS = 26;
+/** A held fork moves this far toward its holder. */
+const PULL = 0.2;
+const FW = 24;
+const FH = 16;
 
 function caption(s: DiningState, n: number): string {
   const e = eating(s.m, n);
@@ -38,7 +46,7 @@ function table(
   roles: ReadonlyMap<string, MarkRole>,
 ): Shape[] {
   const cx = frame.x + frame.w / 2;
-  const cy = frame.y + 102;
+  const cy = frame.y + 104;
   const angle = (k: number) => ((-90 + (k * 360) / n) * Math.PI) / 180;
   const seat = (t: number) => ({
     x: cx + RING * Math.cos(angle(t)),
@@ -58,7 +66,7 @@ function table(
     const by = h[i];
     if (by === null || by === undefined) return at;
     const q = seat(by);
-    return { x: at.x + (q.x - at.x) * 0.42, y: at.y + (q.y - at.y) * 0.42 };
+    return { x: at.x + (q.x - at.x) * PULL, y: at.y + (q.y - at.y) * PULL };
   });
   for (let t = 0; t < n; t++) {
     const on = s.m.threads[t]!.on;
@@ -82,16 +90,36 @@ function table(
     });
   }
   for (let i = 0; i < n; i++) {
+    const by = h[i];
+    if (by === null || by === undefined) continue;
+    const p = seat(by);
+    const q = forkAt[i]!;
+    const dx = q.x - p.x;
+    const dy = q.y - p.y;
+    const len = Math.hypot(dx, dy) || 1;
+    shapes.push({
+      kind: 'arrow',
+      id: holdId(i),
+      x1: p.x + (dx / len) * R,
+      y1: p.y + (dy / len) * R,
+      x2: q.x,
+      y2: q.y,
+      head: 'none',
+      z: 1,
+      role: cycle.includes(by) ? 'error' : eats.includes(by) ? 'found' : undefined,
+    });
+  }
+  for (let i = 0; i < n; i++) {
     const at = forkAt[i]!;
     const id = lockId(fork(i));
     shapes.push(
       {
         kind: 'rect',
         id,
-        x: at.x - 13,
-        y: at.y - 9,
-        w: 26,
-        h: 18,
+        x: at.x - FW / 2,
+        y: at.y - FH / 2,
+        w: FW,
+        h: FH,
         r: 4,
         cls: h[i] === null ? 'ghost' : 'live',
         z: 2,

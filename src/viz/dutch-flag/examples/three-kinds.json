@@ -3,7 +3,7 @@
   "viz": "dutch-flag",
   "id": "three-kinds",
   "title": "Three of each kind around 5",
-  "notes": "NOTES",
+  "notes": "A = 7 2 5 9 5 1 8 5 3 and p = 5: three values of each kind. One pass makes 9 comparisons and 3 swaps (three more swaps trade a value with itself, which moves nothing). It ends 3 2 1 5 5 5 8 9 7: below, equal, above, but not sorted inside each group.",
   "settings": {
     "approach": "pattern",
     "draw": "bars"

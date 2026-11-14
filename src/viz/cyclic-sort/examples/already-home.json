@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "cyclic-sort",
+  "id": "already-home",
+  "title": "Every value already home",
+  "notes": "1 2 3 4 5 6: every value is home. Cyclic sort checks each once and moves on, 6 comparisons and no swaps, then the scan makes 6 more. Selection sort still makes 15 comparisons to find that out.",
+  "settings": {
+    "approach": "pattern",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "1 2 3 4 5 6"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -3,7 +3,7 @@
   "viz": "dutch-flag",
   "id": "all-equal",
   "title": "Every value is the pivot",
-  "notes": "NOTES",
+  "notes": "Six 4s and p = 4: every value is already where it belongs. mid walks to the end: 6 comparisons and no swaps, the best case.",
   "settings": {
     "approach": "pattern",
     "draw": "bars"

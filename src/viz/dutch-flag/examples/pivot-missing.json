@@ -3,7 +3,7 @@
   "viz": "dutch-flag",
   "id": "pivot-missing",
   "title": "A pivot that is not there",
-  "notes": "NOTES",
+  "notes": "No value is 5, so the equal region stays empty and low = mid the whole way. The result is a two-way split, 3 2 1 then 9 8 7 6, with low = 3 and high = 2 (an empty range). 7 comparisons and 4 swaps.",
   "settings": {
     "approach": "pattern",
     "draw": "bars"

@@ -40,11 +40,12 @@ describe('dutch-flag', () => {
         expect(last.vars?.high).toBe(below + equal - 1);
         // The work: n comparisons and a swap per value not equal to p, or 2n and 2n.
         expect(last.vars?.['naive total']).toBe(4 * n);
-        expect(last.vars?.['pattern total']).toBe(n + n - equal);
+        expect(last.vars?.['pattern total']).toBe(n + partitionValues(vs, p).swaps);
         if (approach === 'pattern') {
           expect(out).toEqual(partitionValues(vs, p).a);
           expect(last.vars?.comparisons).toBe(n);
-          expect(last.vars?.swaps).toBe(n - equal);
+          expect(last.vars?.swaps).toBe(partitionValues(vs, p).swaps);
+          expect(Number(last.vars?.swaps)).toBeLessThanOrEqual(Math.min(n - equal, n - 1));
           expect(last.vars?.writes).toBe(0);
         } else {
           // Counting then rewriting is stable: each kind keeps its order.

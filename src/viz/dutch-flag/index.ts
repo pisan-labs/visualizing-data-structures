@@ -142,10 +142,10 @@ export const dutchFlag: VizDef<ArrayState, FlagSettings, FlagExtra> = {
       },
       worst: {
         cost: 'O(n)',
-        why: 'Every value above p: n comparisons and n swaps, and mid never moves.',
+        why: 'Every value above p: n comparisons and n − 1 swaps (the last is with itself), and mid never moves.',
         example: 'all-above',
       },
-      note: 'The loop runs exactly n times: each step makes the unknown region one smaller.',
+      note: 'The loop runs exactly n times: each step makes the unknown region one smaller. A step on a value equal to p swaps nothing, and with no such value the last step swaps a value with itself, so there are at most n − 1 swaps.',
     },
     {
       op: 'partition, count then rewrite',
@@ -157,7 +157,7 @@ export const dutchFlag: VizDef<ArrayState, FlagSettings, FlagExtra> = {
       average: { cost: 'Θ(n)', why: 'The same 4n steps: nothing stops early.' },
       worst: {
         cost: 'Θ(n)',
-        why: '9 values: 18 comparisons and 18 writes, against 9 comparisons and 6 swaps.',
+        why: '9 values: 18 comparisons and 18 writes, against 9 comparisons and 3 swaps.',
         example: 'count-then-rewrite',
       },
     },

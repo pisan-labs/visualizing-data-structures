@@ -11,7 +11,7 @@
  *   Each step looks at A[mid] and shrinks the unknown region by one: below p, swap it with
  *   A[low] (an equal value, or itself) and move low and mid on; equal, move mid on; above, swap
  *   it with A[high] and move high back, leaving mid where it is, since the value that came from
- *   high is still unknown. n comparisons, at most n swaps, O(1) extra space.
+ *   high is still unknown. n comparisons, at most n − 1 swaps, O(1) extra space.
  * - The naive approach counts, then rewrites: one pass counts each kind, which tells where each
  *   kind starts in an output array B; a second pass copies each value to the next free slot of
  *   its kind in B; then B is copied back into A. That is counting sort with three keys: 2n
@@ -19,9 +19,10 @@
  *   enough only when equal kinds are equal values, as with the colors 0, 1 and 2.)
  *
  * Work, in the units of src/viz/_patterns/kit.ts: a comparison asks whether one value is below,
- * equal to or above p (one three-way comparison); a swap exchanges two slots of A (a swap of a
- * slot with itself counts, as the code does it); a write puts one value in a slot. Both return
- * the same bounds: the values equal to p end in A[low..high].
+ * equal to or above p (one three-way comparison); a swap exchanges two different slots of A (the
+ * code also "swaps" a slot with itself, which moves nothing, so the counter skips it, as on
+ * /quick-sort/); a write puts one value in a slot. Both return the same bounds: the values equal
+ * to p end in A[low..high].
  */
 import type {
   Mark,
@@ -94,37 +95,39 @@ const word: Record<Kind, string> = { below: 'is below', equal: 'equals', above: 
 
 // ----- What each approach costs (computed first, so the totals stay fixed) -----
 
-/** The pattern's swaps on these values: one per value below p and one per value above p. */
-export function patternSwaps(vs: readonly number[], p: number): number {
-  return vs.filter((v) => v !== p).length;
-}
-
-export const totals = (vs: readonly number[], p: number): Totals => ({
-  naive: 4 * vs.length,
-  pattern: vs.length + patternSwaps(vs, p),
-});
-
-/** The pattern on plain numbers: the partitioned values and the bounds (low, high). */
+/**
+ * The pattern on plain numbers: the partitioned values, the bounds (low, high), and the swaps of
+ * two different slots.
+ */
 export function partitionValues(
   vs: readonly number[],
   p: number,
-): { a: number[]; low: number; high: number } {
+): { a: number[]; low: number; high: number; swaps: number } {
   const a = [...vs];
   let low = 0;
   let mid = 0;
   let high = a.length - 1;
+  let swaps = 0;
   while (mid <= high) {
     if (a[mid]! < p) {
+      if (low !== mid) swaps++;
       [a[low], a[mid]] = [a[mid]!, a[low]!];
       low++;
       mid++;
     } else if (a[mid]! > p) {
+      if (mid !== high) swaps++;
       [a[mid], a[high]] = [a[high]!, a[mid]!];
       high--;
     } else mid++;
   }
-  return { a, low, high };
+  return { a, low, high, swaps };
 }
+
+/** What each approach costs: 2n comparisons and 2n writes, against n comparisons and the swaps. */
+export const totals = (vs: readonly number[], p: number): Totals => ({
+  naive: 4 * vs.length,
+  pattern: vs.length + partitionValues(vs, p).swaps,
+});
 
 // ----- Text -----
 
@@ -212,12 +215,12 @@ function* threePointers(s: ArrayState, p: number): Gen {
       const self = low === mid;
       const was = a[low]!.value;
       [a[low], a[mid]] = [a[mid]!, a[low]!];
-      work.add('swaps');
+      if (!self) work.add('swaps');
       low++;
       mid++;
       yield step(
         self
-          ? `${look}. low = mid = ${from}, so the swap trades A[${from}] with itself: nothing moves. low and mid move on to ${mid}.`
+          ? `${look}. low = mid = ${from}, so the swap trades A[${from}] with itself: nothing moves, and swaps stays at ${work.get('swaps')}. low and mid move on to ${mid}.`
           : `${look}: swap it with A[low] = A[${from}] = ${was}, the first ${p}. Now ${x} sits with the values below and the ${p} with the ${p}s. low = ${low}, mid = ${mid}.`,
         ['loop', 'lt', 'swapLow', 'moveLow'],
         self
@@ -229,11 +232,11 @@ function* threePointers(s: ArrayState, p: number): Gen {
       const self = mid === high;
       const was = a[high]!.value;
       [a[mid], a[high]] = [a[high]!, a[mid]!];
-      work.add('swaps');
+      if (!self) work.add('swaps');
       high--;
       yield step(
         self
-          ? `${look}. mid = high = ${from}, so the swap trades A[${from}] with itself. high moves back to ${ix(high)}.`
+          ? `${look}. mid = high = ${from}, so the swap trades A[${from}] with itself: nothing moves, and swaps stays at ${work.get('swaps')}. high moves back to ${ix(high)}.`
           : `${look}: swap it with A[high] = A[${from}] = ${was}. ${x} joins the values above, and high = ${high}. mid stays at ${mid}: ${was} came from the unknown region, so it has not been looked at yet.`,
         ['loop', 'gt', 'swapHigh', 'moveHigh'],
         self
@@ -391,10 +394,7 @@ function* countRewrite(s: ArrayState, p: number): Gen {
   yield {
     state: state(),
     marks: [],
-    say: `${outcome(n, low, high, p)}. Two passes and a copy took ${work.tally()}, and B needed ${plural(n, 'extra slot')}. Three pointers take ${n} comparisons and ${patternSwaps(
-      a.map((x) => x.value),
-      p,
-    )} swaps, in place.`,
+    say: `${outcome(n, low, high, p)}. Two passes and a copy took ${work.tally()}, and B needed ${plural(n, 'extra slot')}. Three pointers take ${n} comparisons and ${plural(tot.pattern - n, 'swap')}, in place.`,
     lines: ['ret'],
     level: 1,
     vars: vars({ low, high }),

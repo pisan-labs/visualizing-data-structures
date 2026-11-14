@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "cyclic-sort",
+  "id": "two-cycles",
+  "title": "Two cycles, and a value already home",
+  "notes": "2 1 5 3 4 6 has two cycles: 2 and 1 sit in each other's homes, and so do 5, 3 and 4, while 6 is already home. A cycle of k values takes k − 1 swaps: 1 + 2 = 3 in all. Nothing is missing.",
+  "settings": {
+    "approach": "pattern",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "2 1 5 3 4 6"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -433,7 +433,7 @@ const searchOp: Op = {
         'distance computations': dists,
         'brute force': n,
         recall: Math.round((100 * hit) / total) / 100,
-        exact: hit === total ? 'yes' : 'no',
+        exact: hit === total,
       }),
     };
     return next;

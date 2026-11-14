@@ -39,7 +39,7 @@ test('the table can swap the two nearest', async ({ page }) => {
   await open(page, link(all('2,5,2,7'), { pieces: '2', size: '4' }));
   await toEnd(page);
   await expect(narration(page)).toContainText(
-    'the nearest are E 16.5, A 19.5; exactly, A 19, E 22',
+    'the nearest are E 16.5, A 19.5, B 62.5; exactly, A 19, E 22, B 69',
   );
 });
 
@@ -53,6 +53,7 @@ test('load, train, encode and search from an empty start; bad input is refused',
   await expect(page.getByText('four numbers with commas')).toBeVisible();
   await input.fill(VECTORS);
   await (await opButton(page, 'Load')).click();
+  await input.fill('9,8,9,2');
   await (await opButton(page, 'Search')).click();
   await expect(narration(page)).toContainText('Train the codebooks and encode the vectors first');
   await (await opButton(page, 'Train')).click();

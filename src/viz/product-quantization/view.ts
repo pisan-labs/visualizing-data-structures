@@ -159,14 +159,24 @@ function drawVectors(s: PqState, m: number, roles: Roles, extra: PqExtra): Block
 /** "1.5, 7.5" for a centre in a cell. */
 const centreText = (c: readonly number[]) => c.map(num).join(', ');
 
-function drawBooks(s: PqState, m: number, ks: number, roles: Roles, extra: PqExtra): Block {
+/** The codebooks, `perRow` pieces side by side (4 pieces wrap into two rows on a phone). */
+function drawBooks(
+  s: PqState,
+  m: number,
+  ks: number,
+  roles: Roles,
+  extra: PqExtra,
+  perRow = m,
+): Block {
   const shapes: Shape[] = [];
   const w = D / m;
-  const cw = w === 1 ? 40 : w === 2 ? 84 : 150;
+  const cw = w === 1 ? 58 : w === 2 ? 84 : 176;
   const dw = 48;
-  const codeW = 34;
-  const colX = (j: number) => codeW + j * (cw + dw + 6);
-  const width = colX(m) - 6;
+  const codeW = 42;
+  const cols = Math.min(m, perRow);
+  const colX = (j: number) => codeW + (j % cols) * (cw + dw + 6);
+  const width = colX(cols - 1) + cw + dw;
+  const bandH = 22 + ks * ROW_H + 12;
   // Whose distances fill the d² columns: the vector being encoded, or the query.
   const subject = extra.vec !== undefined && extra.dd ? s.vecs[extra.vec]! : undefined;
   const q = extra.q ?? s.last?.q;
@@ -177,9 +187,22 @@ function drawBooks(s: PqState, m: number, ks: number, roles: Roles, extra: PqExt
       ? 'codebooks, d² from q’s pieces'
       : 'codebooks';
   shapes.push(t('bh', 0, 14, title, { bold: true }));
-  const top = 24;
-  shapes.push(t('bh-c', 2, top + 14, 'code', { bold: true }));
+  const bands = Math.ceil(m / cols);
+  const max = table ? Math.max(1e-9, ...table.flat()) : 1;
+  for (let b = 0; b < bands; b++) {
+    const top = 24 + b * bandH;
+    shapes.push(t(`bh-c${b}`, 2, top + 14, 'code', { bold: true }));
+    for (let c = 0; c < ks; c++)
+      shapes.push(
+        t(`bc-${b}-${c}`, codeW / 2, top + 22 + c * ROW_H + 15, String(c), {
+          bold: true,
+          anchor: 'middle',
+          mono: true,
+        }),
+      );
+  }
   for (let j = 0; j < m; j++) {
+    const top = 24 + Math.floor(j / cols) * bandH;
     shapes.push(
       t(`bh-${j}`, colX(j) + cw / 2, top + 14, m === 1 ? 'centre' : `piece ${j + 1}`, {
         bold: true,
@@ -189,14 +212,8 @@ function drawBooks(s: PqState, m: number, ks: number, roles: Roles, extra: PqExt
     shapes.push(
       t(`bh-d${j}`, colX(j) + cw + dw / 2, top + 14, 'd²', { bold: true, anchor: 'middle' }),
     );
-  }
-  const max = table ? Math.max(1e-9, ...table.flat()) : 1;
-  for (let c = 0; c < ks; c++) {
-    const y = top + 22 + c * ROW_H;
-    shapes.push(
-      t(`bc-${c}`, codeW / 2, y + 15, String(c), { bold: true, anchor: 'middle', mono: true }),
-    );
-    for (let j = 0; j < m; j++) {
+    for (let c = 0; c < ks; c++) {
+      const y = top + 22 + c * ROW_H;
       const centre = s.books[j]?.[c];
       const kid = centreId(j, c);
       shapes.push({
@@ -240,7 +257,7 @@ function drawBooks(s: PqState, m: number, ks: number, roles: Roles, extra: PqExt
         );
     }
   }
-  return { shapes, bounds: { x: 0, y: 0, w: width, h: top + 22 + ks * ROW_H } };
+  return { shapes, bounds: { x: 0, y: 0, w: width, h: 24 + bands * bandH - 12 } };
 }
 
 /** With 2 pieces: each piece's sub-vectors on a small plane, with its centres and their cells. */
@@ -346,6 +363,8 @@ export function view(step: Step<PqState, PqExtra>, settings: PqSettings, stage?:
   const ks = s.ks || sizeOf(settings);
   const vecs = drawVectors(s, m, roles, extra);
   const books = drawBooks(s, m, ks, roles, extra);
+  // On a phone, four pieces' codebooks go in two rows of two.
+  const narrowBooks = m === 4 ? drawBooks(s, m, ks, roles, extra, 2) : books;
   const planes = m === 2 ? drawPlanes(s, roles, extra) : null;
 
   const compose = (parts: [Block, number, number][]): Block => {
@@ -354,19 +373,20 @@ export function view(step: Step<PqState, PqExtra>, settings: PqSettings, stage?:
     const y2 = Math.max(...parts.map(([b, , dy]) => dy + b.bounds.h));
     return { shapes, bounds: { x: -8, y: -8, w: x2 + 16, h: y2 + 16 } };
   };
-  const right = (x: number, y: number): [Block, number, number][] =>
+  const right = (bk: Block, x: number, y: number): [Block, number, number][] =>
     planes
       ? [
           [planes, x, y],
-          [books, x, y + planes.bounds.h + 6],
+          [bk, x, y + planes.bounds.h + 6],
         ]
-      : [[books, x, y]];
+      : [[bk, x, y]];
   // Below the stage's zoom buttons, which sit over the top right corner on a laptop.
   const wide = compose([
     [vecs, 0, 0],
-    ...right(vecs.bounds.w + 24, stage?.strip ? 0 : ZOOM_DROP + 6),
+    ...right(books, vecs.bounds.w + 24, stage?.strip ? 0 : ZOOM_DROP + 6),
   ]);
-  const tall = compose([[vecs, 0, 0], ...right(0, vecs.bounds.h + 16)]);
-  const best = pickLayout(stage, [wide, tall]);
+  const tall = compose([[vecs, 0, 0], ...right(books, 0, vecs.bounds.h + 16)]);
+  const tallNarrow = compose([[vecs, 0, 0], ...right(narrowBooks, 0, vecs.bounds.h + 16)]);
+  const best = pickLayout(stage, m === 4 ? [wide, tall, tallNarrow] : [wide, tall]);
   return { shapes: best.shapes, bounds: best.bounds, label: describe(s) };
 }

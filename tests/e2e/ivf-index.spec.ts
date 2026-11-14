@@ -29,7 +29,7 @@ test('one probe misses the neighbour across the border, two find it', async ({ p
   await toEnd(page);
   await expect(narration(page)).toContainText('IVF returns E, F, G, after 7 distance computations');
   await expect(narration(page)).toContainText('It missed L (d² 4)');
-  await expect(page.locator('.vars')).toContainText(/exact\s*no/);
+  await expect(page.locator('.vars')).toContainText(/exact\s*false/);
   await open(page, link(across, { lists: 3, nprobe: 2 }));
   await toEnd(page);
   await expect(narration(page)).toContainText(

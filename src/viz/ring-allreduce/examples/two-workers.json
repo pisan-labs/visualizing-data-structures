@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "ring-allreduce",
+  "id": "two-workers",
+  "title": "Two workers: a ring of two",
+  "notes": "With two workers the ring is a swap: each sends one chunk to the other and adds, then sends the finished chunk back. That is 2 chunks of half a vector each, one whole vector, the same as swapping whole gradients. The ring only pays as N grows.",
+  "settings": {
+    "workers": 2
+  },
+  "seed": 1,
+  "ops": [["load", "4 7 / 2 5"], ["allreduce"]]
+}

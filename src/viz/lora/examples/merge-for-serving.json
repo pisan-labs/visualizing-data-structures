@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "lora",
+  "id": "merge-for-serving",
+  "title": "Merge the adapter into W for serving",
+  "notes": "Train the rank-1 adapter, then fold ΔW into W. The layer is one 4 × 4 matrix again: 16 multiply-adds per input, as before LoRA, instead of 24 with the adapter on the side.",
+  "settings": {
+    "rank": 1,
+    "alpha": "1",
+    "init": "paper"
+  },
+  "seed": 14,
+  "ops": [["target", "1"], ["train"], ["train"], ["train"], ["merge"]]
+}

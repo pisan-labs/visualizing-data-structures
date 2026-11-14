@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "ring-allreduce",
+  "id": "same-gradient",
+  "title": "Every worker has the same gradient",
+  "notes": "All three workers have (2, 4, 6), so the sum is three times that, (6, 12, 18). Training wants the average gradient, so each worker divides by N afterwards. The ring itself only adds.",
+  "settings": {
+    "workers": 3
+  },
+  "seed": 1,
+  "ops": [["load", "2 4 6 / 2 4 6 / 2 4 6"], ["allreduce"]]
+}

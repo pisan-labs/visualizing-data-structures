@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "lora",
+  "id": "rank-one-target",
+  "title": "Rank 1 is enough for a rank-1 update",
+  "notes": "Every row of D is (−1, 1, −1, 1) or its negative, so D has rank 1. A rank-1 adapter is a column B times a row A: 8 numbers for a 16-number update. B starts at 0, so the first step moves only B. The loss falls from 16 to 0.11 in 20 steps, and to 0.00 by step 60.",
+  "settings": {
+    "rank": 1,
+    "alpha": "1",
+    "init": "paper"
+  },
+  "seed": 14,
+  "ops": [["target", "1"], ["train"], ["train"], ["train"]]
+}

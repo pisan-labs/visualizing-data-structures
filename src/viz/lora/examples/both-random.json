@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "lora",
+  "id": "both-random",
+  "title": "Both start random: the layer starts changed",
+  "notes": "B starts random too, so ΔW is not 0 before any training: the layer has changed before it has learned anything. The loss starts at 18.81, worse than the 16 of no change at all. Step through the first ΔW at the finest level to see each entry made.",
+  "settings": {
+    "rank": 1,
+    "alpha": "1",
+    "init": "random"
+  },
+  "seed": 14,
+  "ops": [["target", "1"], ["train"], ["train"], ["train"]]
+}

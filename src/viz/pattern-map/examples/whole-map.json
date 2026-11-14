@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "pattern-map",
+  "id": "whole-map",
+  "title": "The whole map",
+  "notes": "NOTES",
+  "settings": { "lookalikes": true, "naive": true },
+  "seed": 1,
+  "ops": [["map"]]
+}

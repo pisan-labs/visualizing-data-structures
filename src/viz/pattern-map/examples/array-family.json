@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "pattern-map",
+  "id": "array-family",
+  "title": "The array and string tricks",
+  "notes": "NOTES",
+  "settings": { "lookalikes": true, "naive": true },
+  "seed": 1,
+  "ops": [["family", "Array and string tricks"]]
+}

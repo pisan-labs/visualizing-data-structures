@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "pattern-map",
+  "id": "hall-bookings",
+  "title": "Overlap is not always merging",
+  "notes": "NOTES",
+  "settings": { "lookalikes": true, "naive": true },
+  "seed": 1,
+  "ops": [["which", "3"]]
+}

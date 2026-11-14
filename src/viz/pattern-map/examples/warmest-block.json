@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "pattern-map",
+  "id": "warmest-block",
+  "title": "A window that cannot subtract",
+  "notes": "NOTES",
+  "settings": { "lookalikes": true, "naive": true },
+  "seed": 1,
+  "ops": [["which", "2"]]
+}

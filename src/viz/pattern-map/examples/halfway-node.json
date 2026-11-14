@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "pattern-map",
+  "id": "halfway-node",
+  "title": "One cue is enough",
+  "notes": "NOTES",
+  "settings": { "lookalikes": true, "naive": true },
+  "seed": 1,
+  "ops": [["which", "4"]]
+}

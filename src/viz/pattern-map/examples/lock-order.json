@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "viz": "pattern-map",
+  "id": "lock-order",
+  "title": "Follow “two locks, opposite orders”",
+  "notes": "NOTES",
+  "settings": { "lookalikes": true, "naive": true },
+  "seed": 1,
+  "ops": [["pick", "two locks, opposite orders"]]
+}

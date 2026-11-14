@@ -175,7 +175,8 @@ function reserveRoom(mac: Macro): number {
   return n;
 }
 
-const shown = (all: string[], pick?: string[]) => (pick ? all.filter((x) => pick.includes(x)) : all);
+const shown = (all: string[], pick?: string[]) =>
+  pick ? all.filter((x) => pick.includes(x)) : all;
 
 /** The lanes drawing's input for a state. */
 export function rowsLanes(
@@ -223,7 +224,9 @@ export function rowsLanes(
         name: l,
         holder: st.holder === null ? null : n(st.holder),
         waiters: st.waiters.map(n),
-        room: users((i) => (i.kind === 'lock' && i.name === l) || (i.kind === 'wait' && i.lock === l)),
+        room: users(
+          (i) => (i.kind === 'lock' && i.name === l) || (i.kind === 'wait' && i.lock === l),
+        ),
       };
     }),
     sems: shown(
@@ -279,7 +282,12 @@ export function rowMarks(
   );
   const varIds = new Map(shownVars.map((v) => [varId(v), varId(d.names?.[v] ?? v)]));
   const locks = new Set([...shown(p.locks, d.locks), ...(d.drawnLocks ?? [])].map(lockId));
-  const sems = new Set(shown(p.sems.map((x) => x.name), d.sems).map(semId));
+  const sems = new Set(
+    shown(
+      p.sems.map((x) => x.name),
+      d.sems,
+    ).map(semId),
+  );
   const regs = new Set(
     p.threads.flatMap((th, u) => (d.regs ? d.regs(u) : th.regs).map((r) => regId(u, r))),
   );
@@ -415,9 +423,7 @@ export function rowsOps<Set extends Settings, S extends RowsState>(
   const nextOf = (s: S, m: MachineState, sched: number[]): S =>
     spec.next ? spec.next(s, m, sched) : { ...s, m, sched };
   const startOf = (mac: Macro, settings: Set, s: S): S =>
-    spec.init
-      ? { ...spec.init(mac, settings), tally: s.tally }
-      : nextOf(s, initState(mac.p), []);
+    spec.init ? { ...spec.init(mac, settings), tally: s.tally } : nextOf(s, initState(mac.p), []);
   const marksOf = (mac: Macro, settings: Set, t: number, row: number, events: StepEvent[]) =>
     rowMarks(mac, t, row, events, spec.display?.(settings));
 

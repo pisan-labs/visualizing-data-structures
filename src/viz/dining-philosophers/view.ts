@@ -23,7 +23,8 @@ const FORKS = 26;
 
 function caption(s: DiningState, n: number): string {
   const e = eating(s.m, n);
-  if (e.length) return `${e.map((t) => `P${t + 1}`).join(' and ')} ${e.length > 1 ? 'eat' : 'eats'}`;
+  if (e.length)
+    return `${e.map((t) => `P${t + 1}`).join(' and ')} ${e.length > 1 ? 'eat' : 'eats'}`;
   if (deadlockCycle(s.m)) return 'deadlock';
   if (s.m.threads.every((x) => x.status === 'done')) return 'everyone ate';
   return 'nobody eats';
@@ -156,11 +157,7 @@ export function describe(s: DiningState, settings: DiningSettings): string {
   return `${describeRows(spec, s, settings)} Forks: ${forks}. ${caption(s, n)}.`;
 }
 
-export function view(
-  step: Step<DiningState>,
-  settings: DiningSettings,
-  stage?: StageSize,
-): Scene {
+export function view(step: Step<DiningState>, settings: DiningSettings, stage?: StageSize): Scene {
   const s = step.state;
   const n = countOf(settings);
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));

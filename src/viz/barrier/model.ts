@@ -76,7 +76,11 @@ const arrive = (reusable: boolean): KRow => ({
     : 'Holding m: add 1 to count, and keep the new count in r.',
   code: [
     { text: 'lock(m)', plain: 'Take the lock that guards count.' },
-    { text: 'count += 1; r = count', plain: 'One more has arrived; r is my place in line.', indent: 1 },
+    {
+      text: 'count += 1; r = count',
+      plain: 'One more has arrived; r is my place in line.',
+      indent: 1,
+    },
     ...(reusable
       ? [
           {
@@ -249,7 +253,10 @@ export function macro(settings: BarrierSettings): Macro {
         ];
   return buildMacro(
     decls,
-    threadRows(settings).map((th) => ({ name: th.name, rows: th.rows.map(({ kind: _k, ...r }) => r) })),
+    threadRows(settings).map((th) => ({
+      name: th.name,
+      rows: th.rows.map(({ kind: _k, ...r }) => r),
+    })),
   );
 }
 
@@ -281,16 +288,12 @@ export function departures(mac: Macro, s: MachineState, settings: BarrierSetting
 
 /** The riders with a seat: past P(seat). */
 export function seated(mac: Macro, s: MachineState): number[] {
-  return mac.p.threads
-    .map((_, t) => t)
-    .filter((t) => t > 0 && rowNow(mac, s, t) > 0);
+  return mac.p.threads.map((_, t) => t).filter((t) => t > 0 && rowNow(mac, s, t) > 0);
 }
 
 export function outcome(mac: Macro, s: MachineState, settings: BarrierSettings): string {
   const d = departures(mac, s, settings);
-  const late = d.early.length
-    ? `${list(d.early.map((t) => name(mac, t)))} went early`
-    : '';
+  const late = d.early.length ? `${list(d.early.map((t) => name(mac, t)))} went early` : '';
   if (problemOf(settings) === 'group') {
     const riders = seated(mac, s).map((t) => name(mac, t));
     const car = `D + ${riders.join(' ')}`;
@@ -301,13 +304,20 @@ export function outcome(mac: Macro, s: MachineState, settings: BarrierSettings):
 
 export const good = (o: string) => !o.includes('early');
 
-export function vars(mac: Macro, st: BarrierState, settings: BarrierSettings): Record<string, Scalar> {
+export function vars(
+  mac: Macro,
+  st: BarrierState,
+  settings: BarrierSettings,
+): Record<string, Scalar> {
   const s = st.m;
   const d = departures(mac, s, settings);
   const v: Record<string, Scalar> = {};
   const problem = problemOf(settings);
   if (problem === 'group') {
-    v.seated = seated(mac, s).map((t) => name(mac, t)).join(' ') || 'nobody';
+    v.seated =
+      seated(mac, s)
+        .map((t) => name(mac, t))
+        .join(' ') || 'nobody';
     v.in = s.mem.ins ?? 0;
   } else v.arrived = problem === 'reusable' ? (s.mem.a ?? 0) : (s.mem.count ?? 0);
   if (problem !== 'reusable')
@@ -338,7 +348,9 @@ export function say(
   const blocked = events.at(-1)!.blocked;
   const resumed = before.threads[t]!.pc > mac.rows[t]![row]!.from;
   const woke = events.flatMap((e) => e.woke ?? []).map((w) => name(mac, w));
-  const wokeText = woke.length ? `, and ${list(woke)}, waiting, ${woke.length > 1 ? 'go' : 'goes'} on` : '';
+  const wokeText = woke.length
+    ? `, and ${list(woke)}, waiting, ${woke.length > 1 ? 'go' : 'goes'} on`
+    : '';
   const r = after.threads[t]!.regs.r ?? 0;
   const count = after.mem.count ?? 0;
   const sem = (i: StepEvent) => (i.instr.kind === 'P' || i.instr.kind === 'V' ? i.instr.name : '');
@@ -381,7 +393,8 @@ export function say(
     case 'sendGo':
       return `D tells the riders to go: go goes from ${semv(before, 'go')} to ${semv(after, 'go')}${wokeText}.`;
     case 'seat':
-      if (blocked) return `${T} wants a seat, but none is free: seat goes to ${semv(after, 'seat')}, and ${T} waits.`;
+      if (blocked)
+        return `${T} wants a seat, but none is free: seat goes to ${semv(after, 'seat')}, and ${T} waits.`;
       return `${T} takes a seat: seat goes from ${semv(before, 'seat')} to ${semv(after, 'seat')}.`;
     case 'in':
       return `${T} gets in and tells the driver: in goes from ${semv(before, 'in')} to ${semv(after, 'in')}${wokeText}.`;
@@ -457,11 +470,17 @@ export const spec: RowsSpec<BarrierSettings, BarrierState> = {
     const problem = problemOf(settings);
     if (problem === 'group')
       return t === 0
-        ? { text: 'D: the driver', plain: 'The driver opens two seats, waits for two riders, and goes:' }
+        ? {
+            text: 'D: the driver',
+            plain: 'The driver opens two seats, waits for two riders, and goes:',
+          }
         : { text: `${T}: a rider`, plain: `${T} takes a seat, gets in, and waits for the driver:` };
     return problem === 'reusable'
       ? { text: `${T}: twice round`, plain: `${T} meets the others at the barrier, twice:` }
-      : { text: `${T}: meet, then go`, plain: `${T} waits until all three have arrived, then goes on:` };
+      : {
+          text: `${T}: meet, then go`,
+          plain: `${T} waits until all three have arrived, then goes on:`,
+        };
   },
 };
 

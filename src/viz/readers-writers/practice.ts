@@ -45,11 +45,16 @@ export function rwPractice(): PracticeKind[] {
       title: 'Who may enter now?',
       make(rng) {
         for (let attempt = 0; ; attempt++) {
-          const settings: RwSettings = { variant: variants[rng.int(0, 3)]!, readers: rng.int(2, 3) };
+          const settings: RwSettings = {
+            variant: variants[rng.int(0, 3)]!,
+            readers: rng.int(2, 3),
+          };
           const mac = macro(settings);
           const prefix = randomRows(rng, mac, rng.int(2, 9));
           const s = mrun(mac, prefix).state;
-          const waiting = mac.p.threads.map((_, t) => t).filter((t) => outside(mac, s, t, settings));
+          const waiting = mac.p.threads
+            .map((_, t) => t)
+            .filter((t) => outside(mac, s, t, settings));
           if (waiting.length < 2) continue;
           const can = waiting.filter((t) => alone(mac, s, t, settings) !== null);
           if (can.length > 1 && attempt < 200) continue;
@@ -63,7 +68,12 @@ export function rwPractice(): PracticeKind[] {
             prompt: `${describeVariant(settings.variant as Variant, settings.readers as number)} The picture shows them after the steps \`${scheduleText(prefix)}\`. Of the threads not yet in the room (${options.slice(0, -1).join(', ')}), which one could get in now, stepping on its own?`,
             setup: stepCalls(prefix),
             settings,
-            answer: { kind: 'choice', options, correct: who === undefined ? options.length - 1 : options.indexOf(mac.p.threads[who]!.name) },
+            answer: {
+              kind: 'choice',
+              options,
+              correct:
+                who === undefined ? options.length - 1 : options.indexOf(mac.p.threads[who]!.name),
+            },
             explain:
               who === undefined
                 ? `Nobody: ${ins.length ? `${ins.join(' and ')} ${ins.length > 1 ? 'are' : 'is'} inside, and ` : ''}every one of them would have to wait (for room, for m or at the turnstile).`
@@ -78,7 +88,10 @@ export function rwPractice(): PracticeKind[] {
       title: 'How many readers are inside?',
       make(rng) {
         for (let attempt = 0; ; attempt++) {
-          const settings: RwSettings = { variant: attempt % 3 ? 'readers' : 'turnstile', readers: rng.int(2, 3) };
+          const settings: RwSettings = {
+            variant: attempt % 3 ? 'readers' : 'turnstile',
+            readers: rng.int(2, 3),
+          };
           const mac = macro(settings);
           const sched = randomRows(rng, mac, rng.int(3, 12));
           const s = mrun(mac, sched).state;

@@ -15,13 +15,7 @@ import type { Scalar } from '../../engine/types';
 import { deadlockCycle, waitFor } from '../_threads/deadlock';
 import { initState, stuck, type MachineState, type StepEvent } from '../_threads/machine';
 import { buildMacro, mfind, rowNow, type Macro, type RowSpec } from '../_threads3/macro';
-import {
-  list,
-  rowsOps,
-  rowsPseudocode,
-  type RowsSpec,
-  type RowsState,
-} from '../_threads3/page';
+import { list, rowsOps, rowsPseudocode, type RowsSpec, type RowsState } from '../_threads3/page';
 
 export type Fix = 'none' | 'order' | 'waiter';
 
@@ -66,8 +60,14 @@ export function threadRows(n: number, fix: Fix, t: number): RowSpec[] {
       plain: `Pick up ${fork(b)}, the ${side(n, t, b)} fork, or wait until it is free.`,
     },
     { text: 'eat', plain: 'Eat, holding both forks.', steps: [`print("${P(t)}")`] },
-    { text: `unlock(${fork(b)})`, plain: `Put ${fork(b)} down; a neighbour waiting for it takes it.` },
-    { text: `unlock(${fork(a)})`, plain: `Put ${fork(a)} down; a neighbour waiting for it takes it.` },
+    {
+      text: `unlock(${fork(b)})`,
+      plain: `Put ${fork(b)} down; a neighbour waiting for it takes it.`,
+    },
+    {
+      text: `unlock(${fork(a)})`,
+      plain: `Put ${fork(a)} down; a neighbour waiting for it takes it.`,
+    },
   ];
   if (fix !== 'waiter') return rows;
   return [
@@ -118,7 +118,11 @@ export function outcome(_mac: Macro, s: MachineState): string {
 
 const names = (ts: number[]) => (ts.length ? ts.map(P).join(' ') : 'nobody');
 
-export function vars(mac: Macro, st: DiningState, settings: DiningSettings): Record<string, Scalar> {
+export function vars(
+  mac: Macro,
+  st: DiningState,
+  settings: DiningSettings,
+): Record<string, Scalar> {
   const s = st.m;
   const n = countOf(settings);
   const c = deadlockCycle(s);
@@ -210,8 +214,7 @@ export function narrate(
 
 export function ending(_mac: Macro, s: MachineState, settings: DiningSettings): string {
   const n = countOf(settings);
-  if (!stuck(s))
-    return `Every philosopher has eaten: ${ate(s).map(P).join(', ')}, in that order.`;
+  if (!stuck(s)) return `Every philosopher has eaten: ${ate(s).map(P).join(', ')}, in that order.`;
   const c = deadlockCycle(s);
   if (c)
     return `Nobody can eat, so nobody ever puts a fork down: they wait for ever.${c.length < n ? ' The others wait behind the cycle.' : ''}`;

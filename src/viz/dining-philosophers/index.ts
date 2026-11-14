@@ -171,8 +171,7 @@ export const diningPhilosophers: VizDef<DiningState, DiningSettings> = {
     python: pythonSource,
     java: javaSource,
     cpp: cppSource,
-    script: (calls: OpCall[], settings: Settings) =>
-      codeScript(calls, settings as DiningSettings),
+    script: (calls: OpCall[], settings: Settings) => codeScript(calls, settings as DiningSettings),
   },
   examples: [
     everyoneLeft,

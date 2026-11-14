@@ -127,9 +127,7 @@ export const readersWriters: VizDef<RwState, RwSettings> = {
     presets: [
       {
         label: 'A random schedule',
-        make: (rng, _size, settings) => [
-          ['run', digits(randomRows(rng, macro(S(settings)), 200))],
-        ],
+        make: (rng, _size, settings) => [['run', digits(randomRows(rng, macro(S(settings)), 200))]],
       },
       {
         label: 'A stream of readers',

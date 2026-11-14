@@ -57,8 +57,7 @@ function counterRows(cas: boolean): RowSpec[] {
     { text: 'r = n', plain: 'Read the shared count n into r.', steps: ['top: r = n'] },
     { text: 's = r + 1', plain: 'Compute the new value in s, in the register only.' },
   ];
-  if (!cas)
-    return [...rows, { text: 'n = s', plain: 'Write s back to n, whatever n is now.' }];
+  if (!cas) return [...rows, { text: 'n = s', plain: 'Write s back to n, whatever n is now.' }];
   return [
     ...rows,
     {
@@ -163,10 +162,13 @@ export function macro(settings: CasSettings): Macro {
   const program = programOf(settings);
   const k = threadsOf(settings);
   if (program === 'aba')
-    return buildMacro(['shared top = 1, an = 2, bn = 3, cn = 0'], [
-      { name: 'T1', rows: abaRows(0) },
-      { name: 'T2', rows: abaRows(1) },
-    ]);
+    return buildMacro(
+      ['shared top = 1, an = 2, bn = 3, cn = 0'],
+      [
+        { name: 'T1', rows: abaRows(0) },
+        { name: 'T2', rows: abaRows(1) },
+      ],
+    );
   return buildMacro(
     ['shared n = 0'],
     Array.from({ length: k }, (_, t) => ({ name: T(t), rows: counterRows(program === 'counter') })),
@@ -178,8 +180,7 @@ export const display = (settings: CasSettings): Display =>
     ? {
         names: NEXT_NAMES,
         regs: (t) => (t === 0 ? ['old', 'nxt', 'ok', 'retries'] : ['a', 'b']),
-        format: (name, v) =>
-          name === 'ok' || name === 'retries' ? String(v) : node(v),
+        format: (name, v) => (name === 'ok' || name === 'retries' ? String(v) : node(v)),
       }
     : {};
 
@@ -273,7 +274,8 @@ export function say(
   const regs = after.threads[t]!.regs;
   if (program !== 'aba') {
     if (ev.instr.kind === 'load') return `${name} reads n = ${regs.r} into r.`;
-    if (ev.instr.kind === 'add') return `${name} computes s = ${regs.r} + 1 = ${regs.s}, in its own register.`;
+    if (ev.instr.kind === 'add')
+      return `${name} computes s = ${regs.r} + 1 = ${regs.s}, in its own register.`;
     if (ev.instr.kind === 'store')
       return `${name} writes s = ${regs.s} into n${ev.before === regs.s ? '' : `, over ${ev.before}`}.`;
     if (ev.instr.kind === 'cas') return ev.say;
@@ -302,8 +304,10 @@ export function say(
     const x = row === 0 ? regs.a : regs.b;
     return `T2 pops ${node(x ?? 0)}: top goes from ${top0} to ${top1}, and T2 has ${node(x ?? 0)} now.`;
   }
-  return `T2 pushes ${node(regs.a ?? 0)} back: ${node(regs.a ?? 0)}.next = ${top0}, and top goes from ${top0} to ${top1}.`
-    .replace('top goes from none', 'top goes from empty');
+  return `T2 pushes ${node(regs.a ?? 0)} back: ${node(regs.a ?? 0)}.next = ${top0}, and top goes from ${top0} to ${top1}.`.replace(
+    'top goes from none',
+    'top goes from empty',
+  );
 }
 
 export function narrate(
@@ -381,17 +385,19 @@ export const spec: RowsSpec<CasSettings, CasState> = {
   bound: (_mac, settings) =>
     programOf(settings) === 'aba' ? 4 * 4 + 3 : 4 * threadsOf(settings) ** 2,
   ending,
-  startText: (_mac, settings) =>
-    programOf(settings) === 'aba' ? 'the stack is A B C' : 'n = 0',
+  startText: (_mac, settings) => (programOf(settings) === 'aba' ? 'the stack is A B C' : 'n = 0'),
   head: (_mac, t, settings) => {
     const program = programOf(settings);
     if (program === 'aba')
       return t === 0
         ? { text: 'T1: pop()', plain: 'T1 pops one node, lock-free:' }
-        : { text: 'T2: pop, pop, push', plain: 'T2 pops two nodes and pushes the first back:' }
+        : { text: 'T2: pop, pop, push', plain: 'T2 pops two nodes and pushes the first back:' };
     return program === 'plain'
       ? { text: `${T(t)}: n = n + 1`, plain: `${T(t)} adds 1 to n with a plain store:` }
-      : { text: `${T(t)}: n = n + 1, lock-free`, plain: `${T(t)} adds 1 to n with compare-and-swap:` };
+      : {
+          text: `${T(t)}: n = n + 1, lock-free`,
+          plain: `${T(t)} adds 1 to n with compare-and-swap:`,
+        };
   },
 };
 

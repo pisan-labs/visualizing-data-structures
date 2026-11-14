@@ -30,9 +30,7 @@ export function casPractice(): PracticeKind[] {
           const end = mrun(mac, sched).state;
           const r = retriesOf(end);
           if (r === 0 && attempt < 20 && rng.int(0, 3) > 0) continue;
-          const each = end.threads
-            .map((x, t) => `${T(t)} ${x.regs.retries ?? 0}`)
-            .join(', ');
+          const each = end.threads.map((x, t) => `${T(t)} ${x.regs.retries ?? 0}`).join(', ');
           return {
             prompt: `${counterText(settings.threads)} Run the schedule \`${scheduleText(sched)}\` from the start: each number is the thread that takes the next step. How many retries are there in all?`,
             setup: [],
@@ -81,7 +79,10 @@ export function casPractice(): PracticeKind[] {
         const want = rng.int(0, 1) === 0;
         for (let attempt = 0; ; attempt++) {
           // T1's first read, then the rest at random: ABA needs T2 to run in T1's window.
-          const sched = want && attempt < 60 ? [0, ...randomRows(rng, mac, 200, mrun(mac, [0]).state)] : randomRows(rng, mac, 200);
+          const sched =
+            want && attempt < 60
+              ? [0, ...randomRows(rng, mac, 200, mrun(mac, [0]).state)]
+              : randomRows(rng, mac, 200);
           const end = mrun(mac, sched).state;
           const d = damaged(mac, end);
           if (d.length > 0 !== want && attempt < 120) continue;

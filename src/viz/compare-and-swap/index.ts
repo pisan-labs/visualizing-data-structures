@@ -119,9 +119,7 @@ export const compareAndSwap: VizDef<CasState, CasSettings> = {
     presets: [
       {
         label: 'A random schedule',
-        make: (rng, _size, settings) => [
-          ['run', digits(randomRows(rng, macro(S(settings)), 200))],
-        ],
+        make: (rng, _size, settings) => [['run', digits(randomRows(rng, macro(S(settings)), 200))]],
       },
       {
         label: 'Every thread reads first',

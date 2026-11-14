@@ -117,9 +117,7 @@ export const barrier: VizDef<BarrierState, BarrierSettings> = {
     presets: [
       {
         label: 'A random schedule',
-        make: (rng, _size, settings) => [
-          ['run', digits(randomRows(rng, macro(S(settings)), 200))],
-        ],
+        make: (rng, _size, settings) => [['run', digits(randomRows(rng, macro(S(settings)), 200))]],
       },
       {
         label: 'Everyone in turn, one step each',
@@ -168,8 +166,7 @@ export const barrier: VizDef<BarrierState, BarrierSettings> = {
     python: pythonSource,
     java: javaSource,
     cpp: cppSource,
-    script: (calls: OpCall[], settings: Settings) =>
-      codeScript(calls, settings as BarrierSettings),
+    script: (calls: OpCall[], settings: Settings) => codeScript(calls, settings as BarrierSettings),
   },
   examples: [
     threeArrive,

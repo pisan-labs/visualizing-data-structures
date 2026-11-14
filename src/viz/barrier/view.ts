@@ -10,6 +10,10 @@ export function describe(s: BarrierState, settings: BarrierSettings): string {
   return `${describeRows(spec, s, settings)} Gone on so far: ${gone.length ? gone.join(', ') : 'nobody'}.`;
 }
 
-export function view(step: Step<BarrierState>, settings: BarrierSettings, stage?: StageSize): Scene {
+export function view(
+  step: Step<BarrierState>,
+  settings: BarrierSettings,
+  stage?: StageSize,
+): Scene {
   return rowsScene(spec, step, settings, stage, { label: describe(step.state, settings) });
 }

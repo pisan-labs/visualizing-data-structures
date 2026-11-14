@@ -56,7 +56,10 @@ export function barrierPractice(): PracticeKind[] {
       title: 'What is count after these steps?',
       make(rng) {
         const reusable = rng.int(0, 2) === 0;
-        const settings: BarrierSettings = { problem: reusable ? 'reusable' : 'barrier', naive: false };
+        const settings: BarrierSettings = {
+          problem: reusable ? 'reusable' : 'barrier',
+          naive: false,
+        };
         const mac = macro(settings);
         const sched = randomRows(rng, mac, rng.int(3, reusable ? 18 : 10));
         const s = mrun(mac, sched).state;

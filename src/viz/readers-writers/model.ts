@@ -113,7 +113,8 @@ function readerRows(v: Variant): KRow[] {
       code: [
         {
           text: 'if n == 1: P(room)',
-          plain: 'The first reader in takes room, locking the writer out (or waits while the writer is in).',
+          plain:
+            'The first reader in takes room, locking the writer out (or waits while the writer is in).',
           indent: 1,
         },
         { text: 'unlock(m)', plain: 'Let go of m.', indent: 0 },
@@ -151,7 +152,8 @@ function readerRows(v: Variant): KRow[] {
     {
       kind: 'turnstile',
       text: 'turnstile',
-      plain: 'Pass the turnstile: P(turn), then V(turn) at once; wait here while the writer holds it.',
+      plain:
+        'Pass the turnstile: P(turn), then V(turn) at once; wait here while the writer holds it.',
       code: [
         { text: 'P(turn)', plain: 'Wait at the turnstile while a writer holds it.' },
         { text: 'V(turn)', plain: 'Let the next one through.', indent: 0 },
@@ -180,7 +182,12 @@ function writerRows(v: Variant): KRow[] {
     plain: 'Take room, or wait until the last reader gives it back.',
     steps: [...(v === 'readers' ? ['wq = 1'] : []), 'P(room)'],
   };
-  const write: KRow = { kind: 'write', text: 'write', plain: 'Write, alone in the room.', steps: ['wq = 0'] };
+  const write: KRow = {
+    kind: 'write',
+    text: 'write',
+    plain: 'Write, alone in the room.',
+    steps: ['wq = 0'],
+  };
   const vroom: KRow = {
     kind: 'Vroom',
     text: 'V(room)',
@@ -323,11 +330,14 @@ export function say(
   const wokeText = woke.length ? `, and ${list(woke)}, waiting, goes on` : '';
   switch (kind) {
     case 'turnstile':
-      if (blocked) return `${T} is stopped at the turnstile: W holds turn, so ${T} waits behind it.`;
-      if (resumed) return `${T} gets through the turnstile and lets the next one through (V(turn)).`;
+      if (blocked)
+        return `${T} is stopped at the turnstile: W holds turn, so ${T} waits behind it.`;
+      if (resumed)
+        return `${T} gets through the turnstile and lets the next one through (V(turn)).`;
       return `${T} passes the turnstile: P(turn), then V(turn) at once.`;
     case 'add':
-      if (blocked) return `${T} wants to add itself to n, but ${holder('m')} holds m, so ${T} waits.`;
+      if (blocked)
+        return `${T} wants to add itself to n, but ${holder('m')} holds m, so ${T} waits.`;
       return `${resumed ? `${T} has m now` : `${T} takes m`} and adds 1 to n: n = ${n}.`;
     case 'first': {
       if (resumed) return `${T} has room now. It lets go of m and goes in.`;
@@ -346,7 +356,8 @@ export function say(
       return `${T} reads${ins.length ? `, with ${list(ins)} inside too` : ''}.`;
     }
     case 'sub':
-      if (blocked) return `${T} is done reading, but ${holder('m')} holds m, so ${T} waits to take itself off n.`;
+      if (blocked)
+        return `${T} is done reading, but ${holder('m')} holds m, so ${T} waits to take itself off n.`;
       return `${resumed ? `${T} has m now` : `${T} is done reading. It takes m`} and takes 1 from n: n = ${n}.`;
     case 'last': {
       const r = after.threads[t]!.regs.r ?? 0;
@@ -356,9 +367,7 @@ export function say(
     }
     case 'lock':
       if (blocked) return `${T} wants the room, but ${holder('m')} holds m, so ${T} waits in line.`;
-      return resumed
-        ? `${T} has m now and goes in.`
-        : `${T} takes m and goes in: nobody else can.`;
+      return resumed ? `${T} has m now and goes in.` : `${T} takes m and goes in: nobody else can.`;
     case 'unlock':
       return `${T} leaves and lets go of m${woke.length ? `, and ${list(woke)}, first in line, takes it` : ''}.`;
     case 'Pturn':
@@ -367,7 +376,9 @@ export function say(
     case 'Proom':
       if (blocked)
         return `W calls P(room), but readers are inside: room goes to ${semWas(after, 'room')} and W waits for the last one out.`;
-      return resumed ? 'W has the room now.' : `W takes room (room = ${semWas(after, 'room')}): it has the room to itself.`;
+      return resumed
+        ? 'W has the room now.'
+        : `W takes room (room = ${semWas(after, 'room')}): it has the room to itself.`;
     case 'write':
       return 'W writes, alone in the room.';
     case 'Vturn':
@@ -425,7 +436,10 @@ export const spec: RowsSpec<RwSettings, RwState> = {
         : { text: 'W: write', plain: 'The writer needs the room to itself:' };
     return v === 'mutex'
       ? { text: `${T}: read`, plain: `${T} takes the one lock, like everyone:` }
-      : { text: `${T}: read`, plain: `${T} goes in through the lightswitch: first in locks, last out unlocks:` };
+      : {
+          text: `${T}: read`,
+          plain: `${T} goes in through the lightswitch: first in locks, last out unlocks:`,
+        };
   },
 };
 
@@ -451,5 +465,4 @@ export function initialSay(_s: RwState, settings: RwSettings): string {
   return `${k} readers and a writer. Readers keep a count n of the readers inside, guarded by lock m. The first reader in takes the semaphore room; the last one out gives it back. The writer takes room for itself. Let a reader in, start the writer, then send in another reader.`;
 }
 
-export const initialVars = (s: RwState, settings: RwSettings) =>
-  vars(macro(settings), s, settings);
+export const initialVars = (s: RwState, settings: RwSettings) => vars(macro(settings), s, settings);

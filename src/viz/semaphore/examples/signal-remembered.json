@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "semaphore",
+  "id": "signal-remembered",
+  "title": "The signal comes first, and a remembers it",
+  "notes": "T1 prints one and calls V(a) before T2 starts, so a goes up to 1. T2's P(a) takes it back to 0 without waiting: the semaphore remembered the signal.",
+  "settings": {
+    "pattern": "first",
+    "sync": true,
+    "room": 2
+  },
+  "seed": 1,
+  "ops": [["run", "1 1 2 2"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

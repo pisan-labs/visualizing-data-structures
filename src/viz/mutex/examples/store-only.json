@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "mutex",
+  "id": "store-only",
+  "title": "Locking only the store still loses an update",
+  "notes": "Both threads load count = 0 before either takes the lock. The lock then lets them store one at a time, but both store 1: one update is lost.",
+  "settings": {
+    "threads": 2,
+    "lock": "store"
+  },
+  "seed": 1,
+  "ops": [["run", "1 2 1 1 1 1 2 2 2 2"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

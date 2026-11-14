@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "semaphore",
+  "id": "one-at-a-time",
+  "title": "One at a time: nobody waits",
+  "notes": "T1 goes in and out, then T2, then T3. Each P(s) finds s at 2, so nobody waits, and at most 1 thread is inside at once.",
+  "settings": {
+    "pattern": "limit",
+    "sync": true,
+    "room": 2
+  },
+  "seed": 1,
+  "ops": [["run", "1 1 1 1 2 2 2 2 3 3 3 3"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

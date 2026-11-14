@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "deadlock",
+  "id": "find-the-cycle",
+  "title": "Find the cycle in the wait-for graph",
+  "notes": "The same deadlock, then Find the cycle. The search enters T1, follows T1 → T2, enters T2, and the edge T2 → T1 leads back to a gray thread. That back edge closes the cycle.",
+  "settings": {
+    "threads": 2,
+    "order": "opposite"
+  },
+  "seed": 1,
+  "ops": [["run", "1 2 1 2"], ["cycle"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

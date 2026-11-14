@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "deadlock",
+  "id": "every-opposite",
+  "title": "Every interleaving, opposite orders",
+  "notes": "14 orders of the steps. 4 of them deadlock: the ones where each thread takes its first lock before the other has finished. The other 10 finish.",
+  "settings": {
+    "threads": 2,
+    "order": "opposite"
+  },
+  "seed": 1,
+  "ops": [["every"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

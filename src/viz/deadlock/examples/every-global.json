@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "deadlock",
+  "id": "every-global",
+  "title": "One global order: every interleaving finishes",
+  "notes": "With everyone taking a first, only 8 orders of the steps are possible, and every one finishes: whoever holds b already holds a.",
+  "settings": {
+    "threads": 2,
+    "order": "global"
+  },
+  "seed": 1,
+  "ops": [["every"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

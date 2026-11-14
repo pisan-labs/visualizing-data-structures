@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "ivf-index",
+  "id": "one-list",
+  "title": "One list is brute force",
+  "notes": "nlist = 1: k-means puts one centre at the mean of all 12 points and every point goes into its list. A search measures the centre and then everything: 13 distance computations. Brute force, plus one.",
+  "settings": {
+    "lists": 1,
+    "nprobe": 1
+  },
+  "seed": 3,
+  "ops": [
+    ["load", "2,1 2,3 3,2 1,4 8,4 8,3 7,2 8,1 4,8 3,9 5,9 6,7"],
+    ["train"],
+    ["search", "6,5"]
+  ],
+  "at": {
+    "op": 2,
+    "step": 0
+  }
+}

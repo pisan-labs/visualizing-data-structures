@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "ivf-index",
+  "id": "three-cells",
+  "title": "Three lists, one probe",
+  "notes": "Twelve points in three groups. k-means settles in 2 rounds: c1 (2, 2.5), c2 (7.75, 2.5), c3 (4.5, 8.25), four points each. The query (7, 3) is deep inside c2's cell, so searching only list c2 finds F, G and E: exact, after 7 distance computations against brute force's 12.",
+  "settings": {
+    "lists": 3,
+    "nprobe": 1
+  },
+  "seed": 3,
+  "ops": [
+    ["load", "2,1 2,3 3,2 1,4 8,4 8,3 7,2 8,1 4,8 3,9 5,9 6,7"],
+    ["train"],
+    ["search", "7,3"]
+  ],
+  "at": {
+    "op": 2,
+    "step": 0
+  }
+}

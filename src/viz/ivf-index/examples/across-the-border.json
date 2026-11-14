@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "ivf-index",
+  "id": "across-the-border",
+  "title": "The nearest neighbour across the border",
+  "notes": "The same index, and the query (6, 5) on c2's side of the border (d² 9.31 to c2, 12.81 to c3). With nprobe = 1 only list c2 is searched, and the answer is E, F, G. The true nearest, L at (6, 7) and d² 4, is filed in list c3. Recall 2/3.",
+  "settings": {
+    "lists": 3,
+    "nprobe": 1
+  },
+  "seed": 3,
+  "ops": [
+    ["load", "2,1 2,3 3,2 1,4 8,4 8,3 7,2 8,1 4,8 3,9 5,9 6,7"],
+    ["train"],
+    ["search", "6,5"]
+  ],
+  "at": {
+    "op": 2,
+    "step": 0
+  }
+}

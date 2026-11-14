@@ -133,7 +133,7 @@ export function stateBfsPractice(def: () => Def): PracticeKind[] {
           prompt: `A lock with 2 wheels starts at 00 and must never show ${barred.join(', ')}. BFS makes each state's moves in this order: first wheel up, first wheel down, second wheel up, second wheel down. ${d === 1 ? 'Which states make up layer 1 (one move away)' : `Layer 1 is ${before.join(', ')}. Which states make up layer 2`}, in the order BFS finds them?`,
           setup: [load(barred)],
           answer: { kind: 'sequence', value: layer },
-          explain: `Take ${d === 1 ? '00' : `the states of layer 1 in turn (${before.join(', ')})`} and make their moves in order, skipping barred combinations and states already visited: ${layer.join(', ')}.`,
+          explain: `Take ${d === 1 ? '00 and make its moves' : `the states of layer 1 in turn (${before.join(', ')}) and make their moves`} in order, skipping barred combinations and states already visited: ${layer.join(', ')}.`,
           watch: [['search', goal]],
         };
       },

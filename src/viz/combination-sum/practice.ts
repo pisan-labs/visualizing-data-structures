@@ -121,18 +121,20 @@ export function combinationPractice(def: () => Def): PracticeKind[] {
         const next = siblings[siblings.indexOf(x) + 1];
         const v = c[x.i]!;
         const after = x.i + 1 < c.length ? c[x.i + 1]! : undefined;
-        const options = [
+        const options =
           after === undefined
-            ? 'Try the next candidate'
-            : `Add ${after}: search with ${parent.left - after} left`,
-          after === undefined
-            ? 'Skip the next candidate'
-            : `Skip ${after}: it is the same value as ${v}`,
-          after === undefined
-            ? 'Stop: the next candidate is too big'
-            : `Stop the loop: ${after} is more than the ${parent.left} left`,
-          'Return: no candidates are left to try',
-        ];
+            ? [
+                'Try the next candidate',
+                'Skip the next candidate as a repeat',
+                'Stop the loop: the next candidate is too big',
+                'Return to its caller: no candidates are left',
+              ]
+            : [
+                `Add ${after} and search on`,
+                `Skip ${after} as a repeat`,
+                `Stop the loop: ${after} is too big`,
+                'Return to its caller: no candidates are left',
+              ];
         const correct = !next ? 3 : next.kind === 'dup' ? 1 : next.kind === 'pruned' ? 2 : 0;
         const why = !next
           ? `${v} was the last candidate, so the call with ${listText(parent.chosen)} returns.`

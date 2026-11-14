@@ -257,7 +257,7 @@ export const stateSpaceBfs: VizDef<SSState, SSSettings, SSExtra> = {
   preview: {
     example: 'around-the-wall',
     level: 2,
-    hide: ['heading', 'puzzle', 'moves-', 'q-', 'queue-'],
+    hide: ['mv-', 'q-', 'queue-'],
   },
 };
 

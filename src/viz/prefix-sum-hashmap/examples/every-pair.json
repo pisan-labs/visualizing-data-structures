@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "prefix-sum-hashmap",
+  "id": "every-pair",
+  "title": "Every pair of ends",
+  "notes": "The same array and k, the naive way: for each start i, extend the end j and keep the sum. Row i of the triangle holds the sums of A[i..j]. 36 sums find the same four subarrays that one pass with a map finds in 8 sums and 16 lookups.",
+  "settings": {
+    "approach": "naive",
+    "goal": "count"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "2 3 -1 2 -4 1 2 -1"],
+    ["find", 3]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

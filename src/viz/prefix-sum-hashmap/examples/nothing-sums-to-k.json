@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "prefix-sum-hashmap",
+  "id": "nothing-sums-to-k",
+  "title": "No subarray sums to k",
+  "notes": "A = 1 2 3 4 and k = 11. All of A sums to only 10, so no subarray reaches 11 and every lookup misses: the count is 0 after 4 sums and 8 lookups.",
+  "settings": {
+    "approach": "pattern",
+    "goal": "count"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "1 2 3 4"],
+    ["find", 11]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

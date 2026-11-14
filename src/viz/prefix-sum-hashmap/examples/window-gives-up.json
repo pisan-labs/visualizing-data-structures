@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "prefix-sum-hashmap",
+  "id": "window-gives-up",
+  "title": "A window would give up too early",
+  "notes": "A = 3 4 −4 2 and k = 5: the whole array sums to 5. A sliding window grows to 3 + 4 = 7, too big, drops the 3, and never gets it back, so it misses A[0..3]. The running sums 0 and 5 find it.",
+  "settings": {
+    "approach": "pattern",
+    "goal": "count"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "3 4 -4 2"],
+    ["find", 5]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

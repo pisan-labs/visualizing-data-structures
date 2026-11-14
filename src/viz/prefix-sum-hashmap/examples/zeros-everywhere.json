@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "prefix-sum-hashmap",
+  "id": "zeros-everywhere",
+  "title": "Zeros: every subarray counts",
+  "notes": "Five zeros and k = 0: all 15 subarrays sum to 0. seen[0] climbs 1, 2, 3, 4, 5, and the count adds each one: 1 + 2 + 3 + 4 + 5 = 15. The answer is n(n + 1)/2, yet the pass is still 5 sums and 10 lookups.",
+  "settings": {
+    "approach": "pattern",
+    "goal": "count"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "0 0 0 0 0"],
+    ["find", 0]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

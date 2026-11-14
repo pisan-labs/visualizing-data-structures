@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "prefix-sum-hashmap",
+  "id": "balanced-run",
+  "title": "As many +1s as −1s",
+  "notes": "Count a win as +1 and a loss as −1, and look for k = 0: a run with as many of each sums to 0. The running sum is 1 after the first value and again at the end, so A[1..8], 8 values, is the longest balanced run.",
+  "settings": {
+    "approach": "pattern",
+    "goal": "longest"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "1 1 -1 -1 -1 1 1 1 -1"],
+    ["find", 0]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

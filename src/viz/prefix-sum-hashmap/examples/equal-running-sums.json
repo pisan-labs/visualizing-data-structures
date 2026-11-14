@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "prefix-sum-hashmap",
+  "id": "equal-running-sums",
+  "title": "k = 0: equal running sums",
+  "notes": "With k = 0 a subarray sums to 0 exactly when its two ends have the same running sum. Here the running sum is 0 four times (at the start and after 2, 4 and 6 values): 4 choose 2 = 6 subarrays. Look up before recording: the other way round, each value would also count itself as an empty subarray, 12 in all.",
+  "settings": {
+    "approach": "pattern",
+    "goal": "count"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "3 -3 2 -2 1 -1"],
+    ["find", 0]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

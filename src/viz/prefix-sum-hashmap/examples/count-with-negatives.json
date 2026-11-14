@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "prefix-sum-hashmap",
+  "id": "count-with-negatives",
+  "title": "Four subarrays sum to 3",
+  "notes": "A = 2 3 −1 2 −4 1 2 −1 and k = 3. Four subarrays sum to 3: A[1], A[0..5], A[1..6] and A[5..6]. At A[6] the running sum is 5, and 5 − 3 = 2 was seen twice (after 1 value and after 5 values), so one lookup finds two subarrays. 8 sums and 16 lookups in all.",
+  "settings": {
+    "approach": "pattern",
+    "goal": "count"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "2 3 -1 2 -4 1 2 -1"],
+    ["find", 3]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

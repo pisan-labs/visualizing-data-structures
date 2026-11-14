@@ -3,7 +3,7 @@
   "viz": "difference-array",
   "id": "many-long-updates",
   "title": "Many long updates",
-  "notes": "NOTES",
+  "notes": "Ten zeros and eight updates that each cover 7 to 10 values: 64 cells in all. The difference array takes 16 writes and one pass of 10 sums; adding to every cell takes 64 writes. Long updates are where it pays.",
   "settings": {
     "approach": "pattern"
   },

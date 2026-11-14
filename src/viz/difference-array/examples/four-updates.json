@@ -3,7 +3,7 @@
   "viz": "difference-array",
   "id": "four-updates",
   "title": "Four updates, one pass",
-  "notes": "NOTES",
+  "notes": "Eight zeros and four updates: A[1..6] += 2, A[0..4] += 3, A[3..7] −= 1, A[5..7] += 4. Each writes two cells of D, so D = 3 2 0 −1 0 1 0 −2 −3, and one pass of running sums gives A = 3 5 5 4 4 5 5 3. 8 writes and 8 sums, against 19 writes for adding to every cell.",
   "settings": {
     "approach": "pattern"
   },

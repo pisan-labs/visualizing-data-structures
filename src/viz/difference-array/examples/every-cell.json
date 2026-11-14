@@ -3,7 +3,7 @@
   "viz": "difference-array",
   "id": "every-cell",
   "title": "Add to every cell",
-  "notes": "NOTES",
+  "notes": "The same four updates, the naive way: add x to every cell from l to r, update by update. 19 writes, one per cell covered, and A is up to date after each update. The difference array takes 8 writes and 8 sums.",
   "settings": {
     "approach": "naive"
   },

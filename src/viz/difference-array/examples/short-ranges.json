@@ -3,7 +3,7 @@
   "viz": "difference-array",
   "id": "short-ranges",
   "title": "Short updates: the naive way wins",
-  "notes": "NOTES",
+  "notes": "Six updates of one or two values on eight zeros. Adding to every cell takes 8 writes; the difference array takes 12 writes and still a pass of 8 sums. With few, short updates the naive way is cheaper.",
   "settings": {
     "approach": "pattern"
   },

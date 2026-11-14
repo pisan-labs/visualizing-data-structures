@@ -168,8 +168,21 @@ function running(
       cls: 'live',
       role: roles.get(id) ?? 'remove',
     });
+    // The cut's meaning in words, not only in color.
+    shapes.push({
+      kind: 'text',
+      id: `${id}-t`,
+      x: cols.x(st),
+      y: r.bottom + 26,
+      text: 'restart',
+      size: 18,
+      anchor: 'middle',
+      cls: 'label',
+      mono: true,
+    });
   }
-  return r.bottom;
+  // Room for the labels even before the first restart, so the frame holds still.
+  return r.bottom + 32;
 }
 
 /** Every pair of ends: the triangle of sums. Returns the bottom. */

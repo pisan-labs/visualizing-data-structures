@@ -3,7 +3,7 @@
   "viz": "difference-array",
   "id": "cancel-out",
   "title": "Updates that cancel leave D at zero",
-  "notes": "NOTES",
+  "notes": "A[1..4] += 3 and then A[1..4] −= 3 write into the same two cells of D and cancel, leaving 0. Only A[2..5] += 2 shows: A = 4 1 3 0 2 5 1 becomes 4 1 5 2 4 7 1. Three updates of 4 values: 12 writes the naive way, 6 writes and 7 sums with D.",
   "settings": {
     "approach": "pattern"
   },

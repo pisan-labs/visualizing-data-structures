@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "dining-philosophers",
+  "id": "every-order",
+  "title": "Every interleaving with one philosopher reversed",
+  "notes": "3,664 orders of the steps, and every one ends with everyone fed. Every philosopher now takes the lower-numbered fork first, so no cycle can form.",
+  "settings": {
+    "philosophers": 3,
+    "fix": "order"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "every"
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

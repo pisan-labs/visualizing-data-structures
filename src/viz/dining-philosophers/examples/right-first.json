@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "dining-philosophers",
+  "id": "right-first",
+  "title": "The last one reaches right first",
+  "notes": "The same start as the deadlock, but P3 picks up f1, its right fork, first. P1 has it, so P3 waits holding nothing, and f3 stays free. P2 takes it and eats, then P1, then P3.",
+  "settings": {
+    "philosophers": 3,
+    "fix": "order"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "run",
+      "1 2 3 1 2 2 2 2 1 1 1 3 3 3 3"
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

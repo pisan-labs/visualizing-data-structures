@@ -2,13 +2,13 @@
   "format": 1,
   "viz": "lora",
   "id": "alpha-large",
-  "title": "A large α: faster, and bumpier",
-  "notes": "α = 8 with r = 1 multiplies ΔW by 8. The very first step overshoots: the loss goes up, from 16.00 to 16.97. After that it falls fast, and bounces on the way down, like a learning rate that is too large.",
+  "title": "A large α: the first step overshoots",
+  "notes": "α = 8 with r = 1 multiplies ΔW by 8. Adam's first step on B is the same size whatever α is, so its effect is 8 times larger and the loss goes up, from 16.00 to 16.97. Then training grows a smaller B (0.08 an entry instead of 0.64 with α = 1) and ends at 0.01 after 60 steps.",
   "settings": {
     "rank": 1,
     "alpha": "8",
     "init": "paper"
   },
   "seed": 14,
-  "ops": [["target","1"],["train"],["train"],["train"]]
+  "ops": [["target", "1"], ["train"], ["train"], ["train"]]
 }

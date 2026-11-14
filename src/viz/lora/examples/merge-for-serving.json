@@ -10,5 +10,5 @@
     "init": "paper"
   },
   "seed": 14,
-  "ops": [["target","1"],["train"],["train"],["train"],["merge"]]
+  "ops": [["target", "1"], ["train"], ["train"], ["train"], ["merge"]]
 }

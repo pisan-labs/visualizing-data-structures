@@ -341,17 +341,20 @@ export function scaleText(settings: LoraSettings): string {
   return `${settings.alpha}/${settings.rank} = ${v}`;
 }
 
+/** Two decimals as a number, for the readouts. */
+const round2 = (x: number) => Math.round(x * 100) / 100;
+
 export function baseVars(s: S, settings: LoraSettings): Record<string, Scalar> {
   const r = settings.rank;
   return {
-    'α/r': scaleText(settings),
+    'α/r': round2(scaleOf(settings)),
     'trained numbers': adapterParams(DIM, r),
     'full fine-tuning': DIM * DIM,
-    'same r at d = 4096': `${two((100 * adapterParams(REAL_D, r)) / (REAL_D * REAL_D))}%`,
+    '% of full at d = 4096': round2((100 * adapterParams(REAL_D, r)) / (REAL_D * REAL_D)),
     'rank of D': rankOf(s.target),
     steps: s.steps,
-    loss: s.loss === null ? '—' : two(s.loss),
-    'best loss at rank r': two(bestLoss(s.target, r)),
+    ...(s.loss === null ? {} : { loss: round2(s.loss) }),
+    'best loss at rank r': round2(bestLoss(s.target, r)),
     'multiply-adds per input': s.merged ? DIM * DIM : DIM * DIM + adapterParams(DIM, r),
   };
 }
@@ -554,24 +557,24 @@ const trainOp: Op = {
     const floor = bestLoss(cur.target, r);
     const k = rankOf(cur.target);
     const [i, j] = worstCell(cur.dw!, cur.target);
+    const gap = Math.abs(cur.dw![i]![j]! - cur.target[i]![j]!);
+    const close = floor === 0 && gap < 0.05;
     const head = `After ${cur.steps} steps the loss is ${two(cur.loss!)} (it was ${two(startLoss)} before these ${STEPS}).`;
     let tail: string;
     if (floor === 0)
-      tail =
-        cur.loss! < 0.005
-          ? ` ΔW matches D to two decimals: a rank-${r} adapter can express this rank-${k} update${adapterParams(DIM, r) < DIM * DIM ? `, with ${adapterParams(DIM, r)} numbers instead of ${DIM * DIM}` : ''}.`
-          : ` D has rank ${k}, no more than ${r}, so ΔW can match it exactly; more training gets closer. The largest gap left is in row ${i + 1}, column ${j + 1}.`;
+      tail = close
+        ? ` Every entry of ΔW is within ${two(gap)} of D: a rank-${r} adapter can express this rank-${k} update${adapterParams(DIM, r) < DIM * DIM ? `, with ${adapterParams(DIM, r)} numbers instead of ${DIM * DIM}` : ''}.`
+        : ` D has rank ${k}, no more than ${r}, so ΔW can match it exactly; more training gets closer. The largest gap left, ${two(gap)}, is in row ${i + 1}, column ${j + 1}.`;
     else
-      tail = ` D has rank ${k} and the adapter only ${r}. The best any rank-${r} ΔW can do is loss ${two(floor)}: the part of D outside its ${r === 1 ? 'strongest direction' : `${r} strongest directions`}. The largest gap is in row ${i + 1}, column ${j + 1}.`;
+      tail = ` D has rank ${k} and the adapter only ${r}. The best any rank-${r} ΔW can do is loss ${two(floor)}: the part of D outside its ${r === 1 ? 'strongest direction' : `${r} strongest directions`}. The largest gap, ${two(gap)}, is in row ${i + 1}, column ${j + 1}.`;
     yield {
       state: cur,
-      marks:
-        cur.loss! < 0.005
-          ? []
-          : [
-              { id: `dW-${i}-${j}`, role: 'compare' },
-              { id: `D-${i}-${j}`, role: 'compare' },
-            ],
+      marks: close
+        ? []
+        : [
+            { id: `dW-${i}-${j}`, role: 'compare' },
+            { id: `D-${i}-${j}`, role: 'compare' },
+          ],
       say: head + tail,
       lines: ['for'],
       level: 1,

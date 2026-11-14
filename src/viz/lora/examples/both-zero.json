@@ -10,5 +10,5 @@
     "init": "zero"
   },
   "seed": 14,
-  "ops": [["target","1"],["train"]]
+  "ops": [["target", "1"], ["train"]]
 }

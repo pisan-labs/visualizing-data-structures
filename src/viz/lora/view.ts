@@ -149,7 +149,9 @@ function wide(p: Parts, roles: ReadonlyMap<string, MarkRole>) {
 }
 
 /** The product on top; W and D under it, side by side (`stack` false) or one under the other. */
-function tall(p: Parts, roles: ReadonlyMap<string, MarkRole>, stack: boolean) {
+function tall(q: Parts, roles: ReadonlyMap<string, MarkRole>, stack: boolean) {
+  // W is no longer on B's and D's left, so they number their own rows.
+  const p = { ...q, B: { ...q.B, rowHeads: HEADS }, D: { ...q.D, rowHeads: HEADS } };
   const out: Shape[] = [];
   const y = productTop(p) + 4;
   const prod = product(out, p, 30, y, roles);

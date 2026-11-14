@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "mcts",
+  "id": "budget-100",
+  "title": "100 iterations find the dog that ran home",
+  "notes": "With 100 iterations dog has 63 visits and a mean of 0.82, against 26 for cat and 11 for fox. Inside dog, ran has 55 of the 63: the tree has grown into the one good path, and once selection keeps choosing it, dog's mean climbs toward 1.",
+  "settings": {
+    "c": "sqrt2",
+    "budget": "100"
+  },
+  "seed": 3,
+  "ops": [["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "mcts",
+  "id": "big-c",
+  "title": "A bigger c spreads the visits",
+  "notes": "With c = 2 the bonus counts for more, so the poor words keep getting tried: after 100 iterations dog has 48 visits, cat 36 and fox 16. Dog still wins, by less than with c = √2.",
+  "settings": {
+    "c": "2",
+    "budget": "100"
+  },
+  "seed": 3,
+  "ops": [["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

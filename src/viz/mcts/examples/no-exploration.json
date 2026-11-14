@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "mcts",
+  "id": "no-exploration",
+  "title": "No exploring: c = 0 locks on",
+  "notes": "With c = 0 selection takes the best mean and nothing else. Dog's one rollout scored 0.2, so dog is never tried again, and cat gets 28 of the 30 visits, 26 of them for cat sat.",
+  "settings": {
+    "c": "0",
+    "budget": "30"
+  },
+  "seed": 3,
+  "ops": [["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

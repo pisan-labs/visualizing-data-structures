@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "mcts",
+  "id": "budget-10",
+  "title": "Ten iterations: a first look",
+  "notes": "Ten iterations give cat 4 visits and dog and fox 3 each. That is barely more than trying each word a few times: the move is cat, the best mean so far.",
+  "settings": {
+    "c": "sqrt2",
+    "budget": "10"
+  },
+  "seed": 3,
+  "ops": [["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

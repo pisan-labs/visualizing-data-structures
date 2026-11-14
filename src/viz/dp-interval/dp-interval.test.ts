@@ -55,7 +55,11 @@ function bracketCost(text: string): { cost: number; size: number; leaves: number
     const l = parse();
     const r = parse();
     pos++; // ')'
-    return { cost: l.cost + r.cost + l.size + r.size, size: l.size + r.size, leaves: [...l.leaves, ...r.leaves] };
+    return {
+      cost: l.cost + r.cost + l.size + r.size,
+      size: l.size + r.size,
+      leaves: [...l.leaves, ...r.leaves],
+    };
   };
   return parse();
 }
@@ -99,7 +103,9 @@ describe('dp-interval', () => {
             );
           if (settings.approach === 'pattern') {
             // The table fills by length: never a stretch longer than one not yet solved.
-            const filled = step.state.best.flatMap((row, a) => row.flatMap((x, b) => (x === null ? [] : [b - a + 1])));
+            const filled = step.state.best.flatMap((row, a) =>
+              row.flatMap((x, b) => (x === null ? [] : [b - a + 1])),
+            );
             const top = Math.max(0, ...filled);
             expect(top).toBeGreaterThanOrEqual(longest);
             longest = top;

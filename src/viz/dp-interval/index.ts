@@ -18,7 +18,6 @@ import {
   initialSay,
   initialVars,
   MAX_N,
-  MAX_PILE,
   ops,
   pseudocode,
   readItems,
@@ -46,7 +45,11 @@ const presets: Preset[] = [
   {
     label: 'Small values among big ones',
     make: (rng, n) =>
-      solveIt(Array.from({ length: Math.min(n, MAX_N) }, (_, i) => (i % 2 ? rng.int(1, 2) : rng.int(6, 9)))),
+      solveIt(
+        Array.from({ length: Math.min(n, MAX_N) }, (_, i) =>
+          i % 2 ? rng.int(1, 2) : rng.int(6, 9),
+        ),
+      ),
   },
   {
     label: 'Sorted, smallest first',
@@ -143,8 +146,16 @@ export const dpInterval: VizDef<IVState, IVSettings, IVExtra> = {
     {
       op: 'trace the order',
       best: { cost: 'Θ(n)', why: 'One step per tile taken, or per merge.', example: 'one-tile' },
-      average: { cost: 'Θ(n)', why: 'Each stretch looks up its k once.', example: 'take-small-first' },
-      worst: { cost: 'Θ(n)', why: 'n − 1 merges, or n tiles, whatever the order.', example: 'equal-piles' },
+      average: {
+        cost: 'Θ(n)',
+        why: 'Each stretch looks up its k once.',
+        example: 'take-small-first',
+      },
+      worst: {
+        cost: 'Θ(n)',
+        why: 'n − 1 merges, or n tiles, whatever the order.',
+        example: 'equal-piles',
+      },
     },
   ],
   code: {

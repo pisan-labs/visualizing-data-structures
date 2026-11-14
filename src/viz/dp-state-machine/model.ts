@@ -21,8 +21,18 @@
  * end. The pattern is the table, filled day by day. The best plan is traced back from the
  * answer: each cell came from one transition. Work units (../_dp2/kit.ts): `calls` and `cells`.
  */
-import type { Mark, MarkRole, OpSpec, PseudoBlock, PseudoLine, Scalar, Step, Value } from '../../engine/types';
+import type {
+  Mark,
+  MarkRole,
+  OpSpec,
+  PseudoBlock,
+  PseudoLine,
+  Scalar,
+  Step,
+  Value,
+} from '../../engine/types';
 import { approachOf, workVars, type Approach, type Totals } from '../_patterns/kit';
+import { plural } from '../_dp/kit';
 import { copy2, dpWork, fmt, nthTime, scalar, zeros } from '../_dp2/kit';
 
 export const MAX_DAYS = 8;
@@ -157,11 +167,14 @@ export function waysInto(q: StateName, p: number, cooldown: boolean, fee: number
 export const startValue = (q: StateName) => (q === 'free' ? 0 : -Infinity);
 
 /** The states the answer may end in, the first preferred on a tie. */
-export const endStates = (cooldown: boolean): StateName[] => (cooldown ? ['free', 'cool'] : ['free']);
+export const endStates = (cooldown: boolean): StateName[] =>
+  cooldown ? ['free', 'cool'] : ['free'];
 
 /** The whole table, bottom-up, without steps: T[row][t]. */
 export function solveTable(prices: number[], cooldown: boolean, fee: number): number[][] {
-  const states = cooldown ? (['free', 'hold', 'cool'] as StateName[]) : (['free', 'hold'] as StateName[]);
+  const states = cooldown
+    ? (['free', 'hold', 'cool'] as StateName[])
+    : (['free', 'hold'] as StateName[]);
   const row = (q: StateName) => states.indexOf(q);
   const T = states.map(() => Array<number>(prices.length + 1).fill(0));
   states.forEach((q, i) => (T[i]![0] = startValue(q)));
@@ -319,7 +332,14 @@ function* bottomUp(s: S, settings: SMSettings): Gen {
     const p = s.prices[t - 1]!;
     for (const q of states) {
       const ways = waysInto(q, p, cooldown, feeOf(settings));
-      const res = rule(q, t, p, settings, (x) => T[row(x)]![t - 1]!, (x) => ref(x, t - 1));
+      const res = rule(
+        q,
+        t,
+        p,
+        settings,
+        (x) => T[row(x)]![t - 1]!,
+        (x) => ref(x, t - 1),
+      );
       T[row(q)]![t] = res.value;
       work.add('cells');
       const reads = ways.map((w, k) => ({
@@ -349,7 +369,7 @@ function* bottomUp(s: S, settings: SMSettings): Gen {
   yield {
     state: end,
     marks: [mark(cellId(row(from), n), 'found')],
-    say: `The answer is ${endText(settings)} = ${best}: ${best === 0 ? 'no trade makes money, so the best is never to trade' : `the most you can end with, from ${from === 'cool' ? 'a sale on the last day' : 'holding nothing at the end'}`}. The table filled ${work.get('cells')} cells, once each; plain recursion would make ${tot.naive} calls.${best > 0 ? ' Press Trace the plan to see the trades.' : ''}`,
+    say: `The answer is ${endText(settings)} = ${best}: ${best === 0 ? 'no trade makes money, so the best is never to trade' : `the most you can end with, from ${from === 'cool' ? 'a sale on the last day' : 'holding nothing at the end'}`}. The table filled ${work.get('cells')} cells, once each; plain recursion would make ${plural(tot.naive, 'call')}.${best > 0 ? ' Press Trace the plan to see the trades.' : ''}`,
     lines: ['b.ret'],
     level: 1,
     vars: { days: n, profit: best, ...workVars(work, tot) },
@@ -427,8 +447,16 @@ function* naive(s: S, settings: SMSettings): Gen {
       extra: extra({ at: q }),
     };
     const got = new Map<StateName, number>();
-    for (const w of ways) if (!got.has(w.from)) got.set(w.from, yield* visit(w.from, t - 1, callOf(q, t)));
-    const res = rule(q, t, p, settings, (x) => got.get(x)!, (x) => callOf(x, t - 1));
+    for (const w of ways)
+      if (!got.has(w.from)) got.set(w.from, yield* visit(w.from, t - 1, callOf(q, t)));
+    const res = rule(
+      q,
+      t,
+      p,
+      settings,
+      (x) => got.get(x)!,
+      (x) => callOf(x, t - 1),
+    );
     seen[r]![t] = res.value;
     const reads = ways.map((w, i) => ({
       from: [row(w.from), t - 1] as Cell,
@@ -438,7 +466,10 @@ function* naive(s: S, settings: SMSettings): Gen {
     }));
     yield {
       state: s,
-      marks: [mark(cellId(r, t), 'new'), ...reads.map((x) => mark(cellId(x.from[0], x.from[1]), 'compare'))],
+      marks: [
+        mark(cellId(r, t), 'new'),
+        ...reads.map((x) => mark(cellId(x.from[0], x.from[1]), 'compare')),
+      ],
       say: `Back in ${callOf(q, t)}: ${res.text}. Return ${fmt(res.value)}.`,
       lines: [`n.${q}`],
       level: 3,
@@ -461,7 +492,7 @@ function* naive(s: S, settings: SMSettings): Gen {
   yield {
     state: s,
     marks: [mark(cellId(row(ends[vals.indexOf(best)]!), n), 'found')],
-    say: `The answer is ${cooldown ? `max(${vals.map(fmt).join(', ')})` : fmt(vals[0]!)} = ${best}. Plain recursion made ${work.get('calls')} calls for ${states.length * (n + 1)} cells: ${callOf(states[mr]!, mt)} alone was called ${most} times. The table fills each cell once.`,
+    say: `The answer is ${cooldown ? `max(${vals.map(fmt).join(', ')})` : fmt(vals[0]!)} = ${best}. Plain recursion made ${plural(work.get('calls'), 'call')} for ${states.length * (n + 1)} cells: ${callOf(states[mr]!, mt)} alone was called ${most === 1 ? 'once' : `${most} times`}. The table fills each cell once.`,
     lines: ['n.top'],
     level: 1,
     vars: { days: n, profit: best, ...workVars(work, tot) },
@@ -474,8 +505,11 @@ const solve: Op = {
   label: 'Solve',
   arity: 0,
   *run(s, _args, { settings }) {
-    if (s.T.length !== statesFor(settings).length) s = { ...s, T: emptyTable(statesFor(settings).length, s.prices.length) };
-    return approachOf(settings) === 'naive' ? yield* naive(s, settings) : yield* bottomUp(s, settings);
+    if (s.T.length !== statesFor(settings).length)
+      s = { ...s, T: emptyTable(statesFor(settings).length, s.prices.length) };
+    return approachOf(settings) === 'naive'
+      ? yield* naive(s, settings)
+      : yield* bottomUp(s, settings);
   },
 };
 
@@ -598,22 +632,58 @@ export function pseudocode(settings: SMSettings): PseudoBlock[] {
     text: `hold = max(${X('hold', 't − 1')}, ${X('free', 't − 1')} − p)`,
     plain: 'holding: keep it, or buy today at p;',
   };
-  const coolLine = { text: `cool = ${X('hold', 't − 1')} + p${f}`, plain: `cooling down: ${sellPlain}.` };
+  const coolLine = {
+    text: `cool = ${X('hold', 't − 1')} + p${f}`,
+    plain: `cooling down: ${sellPlain}.`,
+  };
   const traceBlock: PseudoBlock = {
     op: 'trace',
     lines: [
       L('t.sig', 0, 'tracePlan(T)', 'To find the trades, start at the answer’s cell:'),
       L('t.loop', 1, 'for t = n down to 1', 'go back one day at a time,'),
-      L('t.trade', 2, 'if the way in was a buy or a sell: note it', 'noting a buy or a sell when the way in was one;'),
-      L('t.rest', 2, 'move to the state it came from on day t − 1', 'and move to the state it came from.'),
+      L(
+        't.trade',
+        2,
+        'if the way in was a buy or a sell: note it',
+        'noting a buy or a sell when the way in was one;',
+      ),
+      L(
+        't.rest',
+        2,
+        'move to the state it came from on day t − 1',
+        'and move to the state it came from.',
+      ),
       L('t.ret', 1, 'return the trades, first day first', 'The notes, in order, are the plan.'),
     ],
   };
   const lines = (P: string): PseudoLine[] => [
-    L(`${P}.free`, P === 'b' ? 2 : 1, naiveMode ? `${freeLine.text.replace('free = ', 'free(t) = ')}` : `${freeLine.text.replace('free = ', 'free[t] = ')}`, freeLine.plain),
-    L(`${P}.hold`, P === 'b' ? 2 : 1, naiveMode ? holdLine.text.replace('hold = ', 'hold(t) = ') : holdLine.text.replace('hold = ', 'hold[t] = '), holdLine.plain),
+    L(
+      `${P}.free`,
+      P === 'b' ? 2 : 1,
+      naiveMode
+        ? `${freeLine.text.replace('free = ', 'free(t) = ')}`
+        : `${freeLine.text.replace('free = ', 'free[t] = ')}`,
+      freeLine.plain,
+    ),
+    L(
+      `${P}.hold`,
+      P === 'b' ? 2 : 1,
+      naiveMode
+        ? holdLine.text.replace('hold = ', 'hold(t) = ')
+        : holdLine.text.replace('hold = ', 'hold[t] = '),
+      holdLine.plain,
+    ),
     ...(cooldown
-      ? [L(`${P}.cool`, P === 'b' ? 2 : 1, naiveMode ? coolLine.text.replace('cool = ', 'cool(t) = ') : coolLine.text.replace('cool = ', 'cool[t] = '), coolLine.plain)]
+      ? [
+          L(
+            `${P}.cool`,
+            P === 'b' ? 2 : 1,
+            naiveMode
+              ? coolLine.text.replace('cool = ', 'cool(t) = ')
+              : coolLine.text.replace('cool = ', 'cool[t] = '),
+            coolLine.plain,
+          ),
+        ]
       : []),
   ];
   if (naiveMode)
@@ -629,8 +699,18 @@ export function pseudocode(settings: SMSettings): PseudoBlock[] {
               ? 'The answer is the better of ending free and ending on a sale.'
               : 'The answer is ending with nothing held.',
           ),
-          L('n.sig', 0, 'state(t), for each state', 'Each state on day t, with p the price that day:'),
-          L('n.start', 1, 'if t = 0: return 0 for free, −∞ otherwise', 'before day 1 you are free with 0, and nothing else is possible;'),
+          L(
+            'n.sig',
+            0,
+            'state(t), for each state',
+            'Each state on day t, with p the price that day:',
+          ),
+          L(
+            'n.start',
+            1,
+            'if t = 0: return 0 for free, −∞ otherwise',
+            'before day 1 you are free with 0, and nothing else is possible;',
+          ),
           ...lines('n'),
         ],
       },
@@ -647,13 +727,20 @@ export function pseudocode(settings: SMSettings): PseudoBlock[] {
           `free[0] = 0; hold[0] = −∞${cooldown ? '; cool[0] = −∞' : ''}`,
           'before day 1 you are free with 0, and nothing else is possible;',
         ),
-        L('b.loop', 1, 'for t = 1 to n, with p = p[t]', 'then day by day, with p that day’s price:'),
+        L(
+          'b.loop',
+          1,
+          'for t = 1 to n, with p = p[t]',
+          'then day by day, with p that day’s price:',
+        ),
         ...lines('b'),
         L(
           'b.ret',
           1,
           `return ${endText(settings)}`,
-          cooldown ? 'The answer is the better of ending free and ending on a sale.' : 'The answer is ending with nothing held.',
+          cooldown
+            ? 'The answer is the better of ending free and ending on a sale.'
+            : 'The answer is ending with nothing held.',
         ),
       ],
     },
@@ -664,7 +751,10 @@ export function pseudocode(settings: SMSettings): PseudoBlock[] {
 // ----- Start -----
 
 export function init(settings: SMSettings): S {
-  return { prices: [...START_PRICES], T: emptyTable(statesFor(settings).length, START_PRICES.length) };
+  return {
+    prices: [...START_PRICES],
+    T: emptyTable(statesFor(settings).length, START_PRICES.length),
+  };
 }
 
 export function describe(s: S, settings?: SMSettings): string {

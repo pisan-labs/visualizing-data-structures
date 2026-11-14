@@ -132,7 +132,8 @@ export function gridPractice(def: () => Def): PracticeKind[] {
         // An open cell in the lower right part, so it is made from others.
         const open: [number, number][] = [];
         for (let r = 1; r < 3; r++)
-          for (let c = 1; c < 4; c++) if (!isWall(g, r, c) && T[r]![c] !== Infinity) open.push([r, c]);
+          for (let c = 1; c < 4; c++)
+            if (!isWall(g, r, c) && T[r]![c] !== Infinity) open.push([r, c]);
         const [r, c] = open.length ? open[rng.int(0, open.length - 1)]! : [2, 3];
         const value = T[r]![c]!;
         const src = sources(g, r, c);
@@ -160,7 +161,9 @@ export function gridPractice(def: () => Def): PracticeKind[] {
         let g = grid(rng, 1);
         for (let tries = 0; tries < 50 && cheapestCount(g) !== 1; tries++) g = grid(rng, 1);
         const setup: OpCall[] = [['load', gridText(g)]];
-        const end = run([...setup, ['solve'], ['trace']], settings).entries.at(-1)!.steps.at(-1)!;
+        const end = run([...setup, ['solve'], ['trace']], settings)
+          .entries.at(-1)!
+          .steps.at(-1)!;
         const path = String(end.vars?.path ?? '');
         const cost = Number(end.vars?.cost);
         return {
@@ -181,10 +184,13 @@ export function gridPractice(def: () => Def): PracticeKind[] {
         const settings: GPSettings = { ...defaults, approach: 'naive', problem: 'count' };
         const g = grid(rng, rng.int(0, 1));
         const setup: OpCall[] = [['load', gridText(g)]];
-        const last = run([...setup, ['solve']], settings).entries.at(-1)!.steps.at(-1)!;
+        const last = run([...setup, ['solve']], settings)
+          .entries.at(-1)!
+          .steps.at(-1)!;
         const calls = last.extra!.calls!;
         const picks: [number, number][] = [];
-        for (let r = 0; r < 2; r++) for (let c = 0; c < 3; c++) if (calls[r]![c]! > 0) picks.push([r, c]);
+        for (let r = 0; r < 2; r++)
+          for (let c = 0; c < 3; c++) if (calls[r]![c]! > 0) picks.push([r, c]);
         const [r, c] = picks.length ? picks[rng.int(0, picks.length - 1)]! : [0, 0];
         const k = calls[r]![c]!;
         return {

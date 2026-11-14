@@ -147,7 +147,9 @@ export function smPractice(def: () => Def): PracticeKind[] {
         const settings = rules(rng);
         const p = prices(rng, rng.int(5, 6));
         const setup: OpCall[] = [['load', p.join(' ')]];
-        const end = run([...setup, ['solve'], ['trace']], settings).entries.at(-1)!.steps.at(-1)!;
+        const end = run([...setup, ['solve'], ['trace']], settings)
+          .entries.at(-1)!
+          .steps.at(-1)!;
         const profit = Number(end.vars?.profit);
         const plan = String(end.vars?.plan);
         return {

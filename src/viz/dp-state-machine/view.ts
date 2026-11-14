@@ -1,7 +1,13 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
 import { pickBest, translate } from '../../layouts/arrange';
 import { loopArrow, type Pt } from '../../layouts/route';
-import { boxRow, tableGeometry, tableScene, type TableFrame, type TableLink } from '../../layouts/table';
+import {
+  boxRow,
+  tableGeometry,
+  tableScene,
+  type TableFrame,
+  type TableLink,
+} from '../../layouts/table';
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { approachOf } from '../_patterns/kit';
 import { callsLabel, fmt, shrinkInfinities } from '../_dp2/kit';
@@ -40,7 +46,10 @@ interface Edge {
 }
 
 /** The machine's states and moves, in diagram units with free at (0, 0). */
-function machine(cooldown: boolean, fee: number): { pos: Record<string, Pt>; edges: Edge[]; bounds: Bounds } {
+function machine(
+  cooldown: boolean,
+  fee: number,
+): { pos: Record<string, Pt>; edges: Edge[]; bounds: Bounds } {
   const sell = `sell +p${fee ? ` −${fee}` : ''}`;
   if (cooldown) {
     const pos = { free: { x: 0, y: 0 }, hold: { x: 200, y: 0 }, cool: { x: 100, y: 128 } };
@@ -50,8 +59,20 @@ function machine(cooldown: boolean, fee: number): { pos: Record<string, Pt>; edg
         { move: { from: 'free', to: 'hold' }, label: 'buy −p', at: { x: 100, y: -10 } },
         { move: { from: 'hold', to: 'cool' }, label: sell, at: { x: 166, y: 78 }, anchor: 'start' },
         { move: { from: 'cool', to: 'free' }, label: 'rest', at: { x: 36, y: 78 }, anchor: 'end' },
-        { move: { from: 'free', to: 'free' }, label: 'rest', loop: { x: -1, y: 0 }, at: { x: -60, y: -30 }, anchor: 'middle' },
-        { move: { from: 'hold', to: 'hold' }, label: 'keep', loop: { x: 1, y: 0 }, at: { x: 260, y: -30 }, anchor: 'middle' },
+        {
+          move: { from: 'free', to: 'free' },
+          label: 'rest',
+          loop: { x: -1, y: 0 },
+          at: { x: -60, y: -30 },
+          anchor: 'middle',
+        },
+        {
+          move: { from: 'hold', to: 'hold' },
+          label: 'keep',
+          loop: { x: 1, y: 0 },
+          at: { x: 260, y: -30 },
+          anchor: 'middle',
+        },
       ],
       bounds: { x: -100, y: -56, w: 400, h: 128 + 56 + STATE_R + 14 },
     };
@@ -60,10 +81,32 @@ function machine(cooldown: boolean, fee: number): { pos: Record<string, Pt>; edg
   return {
     pos,
     edges: [
-      { move: { from: 'free', to: 'hold' }, label: 'buy −p', via: { x: 100, y: -54 }, at: { x: 100, y: -36 } },
-      { move: { from: 'hold', to: 'free' }, label: sell, via: { x: 100, y: 54 }, at: { x: 100, y: 52 } },
-      { move: { from: 'free', to: 'free' }, label: 'rest', loop: { x: -1, y: 0 }, at: { x: -60, y: -30 }, anchor: 'middle' },
-      { move: { from: 'hold', to: 'hold' }, label: 'keep', loop: { x: 1, y: 0 }, at: { x: 260, y: -30 }, anchor: 'middle' },
+      {
+        move: { from: 'free', to: 'hold' },
+        label: 'buy −p',
+        via: { x: 100, y: -54 },
+        at: { x: 100, y: -36 },
+      },
+      {
+        move: { from: 'hold', to: 'free' },
+        label: sell,
+        via: { x: 100, y: 54 },
+        at: { x: 100, y: 52 },
+      },
+      {
+        move: { from: 'free', to: 'free' },
+        label: 'rest',
+        loop: { x: -1, y: 0 },
+        at: { x: -60, y: -30 },
+        anchor: 'middle',
+      },
+      {
+        move: { from: 'hold', to: 'hold' },
+        label: 'keep',
+        loop: { x: 1, y: 0 },
+        at: { x: 260, y: -30 },
+        anchor: 'middle',
+      },
     ],
     bounds: { x: -100, y: -62, w: 400, h: 130 },
   };
@@ -105,7 +148,16 @@ function diagram(
     const b = pos[e.move.to]!;
     if (e.loop) {
       const seg = loopArrow(a, e.loop, STATE_R);
-      shapes.push({ kind: 'arrow', id, x1: seg.a.x, y1: seg.a.y, x2: seg.b.x, y2: seg.b.y, via: seg.via, role });
+      shapes.push({
+        kind: 'arrow',
+        id,
+        x1: seg.a.x,
+        y1: seg.a.y,
+        x2: seg.b.x,
+        y2: seg.b.y,
+        via: seg.via,
+        role,
+      });
     } else {
       const toward = e.via ?? b;
       const back = e.via ?? a;
@@ -221,7 +273,14 @@ export function view(step: Step<SMState, SMExtra>, settings: SMSettings, stage?:
           x: g.cx(a.day),
           role: (a.kind === 'buy' ? 'new' : 'found') as MarkRole,
         })),
-        { w: CELL_W - 6, h: PLAN_H, label: 'plan', labelX: g.gridLeft - 10, size: 17, labelSize: 15 },
+        {
+          w: CELL_W - 6,
+          h: PLAN_H,
+          label: 'plan',
+          labelX: g.gridLeft - 10,
+          size: 17,
+          labelSize: 15,
+        },
       ),
     );
   }
@@ -263,6 +322,10 @@ function label(step: Step<SMState, SMExtra>, settings: SMSettings): string {
   const parts = [describe(step.state, settings)];
   const plan = step.extra?.plan;
   if (plan)
-    parts.push(plan.length ? `Plan so far: ${plan.map((a) => `${a.kind} on day ${a.day}`).join(', ')}.` : 'No trades found yet.');
+    parts.push(
+      plan.length
+        ? `Plan so far: ${plan.map((a) => `${a.kind} on day ${a.day}`).join(', ')}.`
+        : 'No trades found yet.',
+    );
   return parts.join(' ');
 }

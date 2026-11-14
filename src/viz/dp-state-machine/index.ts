@@ -47,7 +47,8 @@ const presets: Preset[] = [
   { label: 'Random prices', make: (rng, n) => solveIt(between(rng, n, 1, 9)) },
   {
     label: 'Up and down (the rules matter most)',
-    make: (rng, n) => solveIt(Array.from({ length: n }, (_, i) => (i % 2 ? rng.int(6, 9) : rng.int(1, 4)))),
+    make: (rng, n) =>
+      solveIt(Array.from({ length: n }, (_, i) => (i % 2 ? rng.int(6, 9) : rng.int(1, 4)))),
   },
   {
     label: 'Rising (one trade, first day to last)',
@@ -59,7 +60,8 @@ const presets: Preset[] = [
   },
   {
     label: 'Small wiggles (a fee wipes them out)',
-    make: (rng, n) => solveIt(Array.from({ length: n }, (_, i) => 5 + (i % 2 ? rng.int(0, 1) : -rng.int(0, 1)))),
+    make: (rng, n) =>
+      solveIt(Array.from({ length: n }, (_, i) => 5 + (i % 2 ? rng.int(0, 1) : -rng.int(0, 1)))),
   },
   { label: 'Every price the same', make: (rng, n) => solveIt(Array(n).fill(rng.int(1, 9))) },
 ];
@@ -162,7 +164,11 @@ export const dpStateMachine: VizDef<SMState, SMSettings, SMExtra> = {
         why: 'Each step checks which way in made the cell, at most two.',
         example: 'cooldown-sell-early',
       },
-      worst: { cost: 'Θ(n)', why: 'Still one step per day, however many trades.', example: 'free-trading' },
+      worst: {
+        cost: 'Θ(n)',
+        why: 'Still one step per day, however many trades.',
+        example: 'free-trading',
+      },
     },
   ],
   code: {

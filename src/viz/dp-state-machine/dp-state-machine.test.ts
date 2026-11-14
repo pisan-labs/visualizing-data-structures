@@ -36,7 +36,11 @@ describe('dp-state-machine', () => {
       fc.property(pricesArb, settingsArb, (prices, settings: SMSettings) => {
         const cooldown = settings.cooldown;
         const fee = settings.fee;
-        const t = new Timeline(def, settings, 1, [['load', prices.join(' ')], ['solve'], ['trace']]);
+        const t = new Timeline(def, settings, 1, [
+          ['load', prices.join(' ')],
+          ['solve'],
+          ['trace'],
+        ]);
         const want = reference(prices, cooldown, fee);
         const T = solveTable(prices, cooldown, fee);
         const solve = t.entries[1]!.steps;
@@ -44,7 +48,8 @@ describe('dp-state-machine', () => {
         expect(last.vars?.profit).toBe(want);
         expect(last.vars?.['naive total']).toBe(naiveCalls(prices.length, cooldown));
         expect(last.vars?.['pattern total']).toBe(statesFor(settings).length * (prices.length + 1));
-        if (settings.approach === 'naive') expect(last.vars?.calls).toBe(last.vars?.['naive total']);
+        if (settings.approach === 'naive')
+          expect(last.vars?.calls).toBe(last.vars?.['naive total']);
         else expect(last.vars?.cells).toBe(last.vars?.['pattern total']);
         for (const step of solve) {
           // Every value shown is the true one; the table fills column by column.
@@ -70,7 +75,8 @@ describe('dp-state-machine', () => {
         // The plan keeps to the rules and makes the profit.
         expect(end.vars?.profit).toBe(want);
         const plan = String(end.vars?.plan);
-        const trades = plan === 'none' ? [] : plan.match(/(buy|sell) \d+/g)!.map((x) => x.split(' '));
+        const trades =
+          plan === 'none' ? [] : plan.match(/(buy|sell) \d+/g)!.map((x) => x.split(' '));
         let cash = 0;
         let holding = false;
         let lastSale = -10;

@@ -38,10 +38,16 @@ function reference(grid: number[][]) {
 const grids = fc
   .record({ R: fc.integer({ min: 1, max: 4 }), C: fc.integer({ min: 1, max: 5 }) })
   .chain(({ R, C }) =>
-    fc.array(fc.array(fc.oneof(fc.integer({ min: 0, max: 9 }), fc.constant(WALL)), { minLength: C, maxLength: C }), {
-      minLength: R,
-      maxLength: R,
-    }),
+    fc.array(
+      fc.array(fc.oneof(fc.integer({ min: 0, max: 9 }), fc.constant(WALL)), {
+        minLength: C,
+        maxLength: C,
+      }),
+      {
+        minLength: R,
+        maxLength: R,
+      },
+    ),
   )
   .map((g) => {
     g[0]![0] = Math.max(0, g[0]![0]!);
@@ -92,12 +98,17 @@ describe('dp-grid-paths', () => {
               if (v !== null) expect(v).toBe(T[r]![c]);
             }),
           );
-          if (settings.approach === 'naive') expect(state.T.flat().every((v) => v === null)).toBe(true);
+          if (settings.approach === 'naive')
+            expect(state.T.flat().every((v) => v === null)).toBe(true);
           if (!recursion) {
             // Bottom-up fills a prefix of the cells, row by row.
             const n = state.T.flat().filter((v) => v !== null).length;
             expect(n).toBeGreaterThanOrEqual(filled);
-            expect(state.T.flat().slice(0, n).every((v) => v !== null)).toBe(true);
+            expect(
+              state.T.flat()
+                .slice(0, n)
+                .every((v) => v !== null),
+            ).toBe(true);
             filled = n;
           }
           // The stack is a chain of calls, each one cell up or to the left of its caller.

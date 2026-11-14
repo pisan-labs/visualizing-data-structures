@@ -67,7 +67,8 @@ export function ordinal(k: number): string {
 }
 
 /** "the 3rd time" or "the first time". */
-export const nthTime = (k: number): string => (k === 1 ? 'the first time' : `the ${ordinal(k)} time`);
+export const nthTime = (k: number): string =>
+  k === 1 ? 'the first time' : `the ${ordinal(k)} time`;
 
 /** "×3": how many calls a cell has had, for a corner label. */
 export const callsLabel = (k: number): string => `×${k}`;

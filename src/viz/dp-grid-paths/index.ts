@@ -225,8 +225,15 @@ export const dpGridPaths: VizDef<GPState, GPSettings, GPExtra> = {
     },
     {
       op: 'trace the path',
-      best: { cost: 'Θ(R + C)', why: 'One step per move: R − 1 down and C − 1 right.', example: 'cheapest-path' },
-      average: { cost: 'Θ(R + C)', why: 'Each step compares the cell above with the cell to the left.' },
+      best: {
+        cost: 'Θ(R + C)',
+        why: 'One step per move: R − 1 down and C − 1 right.',
+        example: 'cheapest-path',
+      },
+      average: {
+        cost: 'Θ(R + C)',
+        why: 'Each step compares the cell above with the cell to the left.',
+      },
       worst: {
         cost: 'Θ(R + C)',
         why: 'Every path from corner to corner has R + C − 2 moves.',

@@ -16,7 +16,11 @@ const VALUE = 24;
  * the cell to the left (the cheaper one highlighted); recursion draws the calls on the stack as
  * dashed arrows from each caller to the cell it asks; the trace draws the path, start to target.
  */
-export function view(step: Step<GPState, GPExtra>, settings: GPSettings, _stage?: StageSize): Scene {
+export function view(
+  step: Step<GPState, GPExtra>,
+  settings: GPSettings,
+  _stage?: StageSize,
+): Scene {
   const { state, extra = {} } = step;
   const R = state.grid.length;
   const C = state.grid[0]!.length;
@@ -70,7 +74,8 @@ export function view(step: Step<GPState, GPExtra>, settings: GPSettings, _stage?
 function label(step: Step<GPState, GPExtra>, settings: GPSettings): string {
   const parts = [describe(step.state, settings)];
   const stack = step.extra?.stack ?? [];
-  if (stack.length) parts.push(`Calls on the stack, from the target: ${stack.map(name).join(', ')}.`);
+  if (stack.length)
+    parts.push(`Calls on the stack, from the target: ${stack.map(name).join(', ')}.`);
   const path = step.extra?.path ?? [];
   if (path.length) parts.push(`Path traced back so far: ${path.map(name).join(', ')}.`);
   return parts.join(' ');

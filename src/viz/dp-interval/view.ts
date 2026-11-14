@@ -4,7 +4,15 @@ import { tableGeometry, tableScene, type TableFrame, type TableLink } from '../.
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { approachOf } from '../_patterns/kit';
 import { callsLabel, shrinkInfinities } from '../_dp2/kit';
-import { describe, itemId, sumOf, type IVExtra, type IVSettings, type IVState, type Span } from './model';
+import {
+  describe,
+  itemId,
+  sumOf,
+  type IVExtra,
+  type IVSettings,
+  type IVState,
+  type Span,
+} from './model';
 
 const CELL_W = 60;
 const CELL_H = 56;
@@ -33,7 +41,14 @@ export function view(step: Step<IVState, IVExtra>, settings: IVSettings, stage?:
     const id = `cell-${s.a}-${s.b}`;
     if (!roles.has(id)) roles.set(id, 'visit');
   }
-  const frame: TableFrame = { rows: n, cols: n, colHeads: 2, rowHeads: [30, 40], cellW: CELL_W, cellH: CELL_H };
+  const frame: TableFrame = {
+    rows: n,
+    cols: n,
+    colHeads: 2,
+    rowHeads: [30, 40],
+    cellW: CELL_W,
+    cellH: CELL_H,
+  };
   const g = tableGeometry(frame);
   const idx = Array.from({ length: n }, (_, i) => String(i + 1));
   const vals = state.v.map(String);

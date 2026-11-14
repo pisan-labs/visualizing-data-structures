@@ -16,8 +16,18 @@
  * table, filled bottom-up row by row (the default), or top-down with a memo: the same recursion,
  * remembering each answer. Work units (../_dp2/kit.ts): `calls` and `cells`.
  */
-import type { Mark, MarkRole, OpSpec, PseudoBlock, PseudoLine, Scalar, Step, Value } from '../../engine/types';
+import type {
+  Mark,
+  MarkRole,
+  OpSpec,
+  PseudoBlock,
+  PseudoLine,
+  Scalar,
+  Step,
+  Value,
+} from '../../engine/types';
 import { approachOf, workVars, type Approach, type Totals } from '../_patterns/kit';
+import { plural } from '../_dp/kit';
 import { copy2, dpWork, fmt, nthTime, scalar, zeros } from '../_dp2/kit';
 
 export const MAX_ROWS = 5;
@@ -142,7 +152,10 @@ export function solveTable(grid: number[][], problem: Problem): number[][] {
 }
 
 /** The cheapest path's cells from the start to the target, or null when none gets there. */
-export function cheapestPath(grid: number[][], T: readonly (readonly (number | null)[])[]): Cell[] | null {
+export function cheapestPath(
+  grid: number[][],
+  T: readonly (readonly (number | null)[])[],
+): Cell[] | null {
   const R = grid.length;
   const C = grid[0]!.length;
   const v = (r: number, c: number) => T[r]?.[c] ?? Infinity;
@@ -243,7 +256,11 @@ function rule(
   if (p === 'count') {
     const value = src.reduce((a, cell) => a + get(cell), 0);
     if (src.length === 0)
-      return { value: 0, text: 'no open cell above it or to its left, so 0 paths come in', win: null };
+      return {
+        value: 0,
+        text: 'no open cell above it or to its left, so 0 paths come in',
+        win: null,
+      };
     if (src.length === 1) {
       const from = src[0]![0] < r ? 'above' : 'the left';
       return {
@@ -259,7 +276,11 @@ function rule(
     };
   }
   if (src.length === 0)
-    return { value: Infinity, text: `${cost} + ∞ = ∞: no open cell above it or to its left, so no way in`, win: null };
+    return {
+      value: Infinity,
+      text: `${cost} + ∞ = ∞: no open cell above it or to its left, so no way in`,
+      win: null,
+    };
   if (src.length === 1) {
     const v = get(src[0]!);
     const from = src[0]![0] < r ? 'above' : 'the left';
@@ -286,7 +307,7 @@ function rule(
   };
 }
 
-function readsFor(src: Cell[], to: Cell, win: Cell | null, p: Problem): NonNullable<X["reads"]> {
+function readsFor(src: Cell[], to: Cell, win: Cell | null, p: Problem): NonNullable<X['reads']> {
   return src.map((from) => ({
     from,
     to,
@@ -297,7 +318,14 @@ function readsFor(src: Cell[], to: Cell, win: Cell | null, p: Problem): NonNulla
 // ----- Steps -----
 
 function refuse(s: S, why: string): GPStep {
-  return { state: s, marks: [], say: why, lines: [], level: 1, vars: { rows: rows(s), cols: cols(s) } };
+  return {
+    state: s,
+    marks: [],
+    say: why,
+    lines: [],
+    level: 1,
+    vars: { rows: rows(s), cols: cols(s) },
+  };
 }
 
 const load: Op = {
@@ -379,7 +407,14 @@ function* bottomUp(s: S, settings: GPSettings): Gen {
             : `${name(here)} is the start: the path pays its cost, so ${ref(p, 0, 0)} = ${grid[0]![0]}.`;
         lines = ['b.loop', 'b.start'];
       } else {
-        const res = rule(p, grid, r, c, ([a, b]) => T[a]![b]!, ([a, b]) => ref(p, a, b));
+        const res = rule(
+          p,
+          grid,
+          r,
+          c,
+          ([a, b]) => T[a]![b]!,
+          ([a, b]) => ref(p, a, b),
+        );
         T[r]![c] = res.value;
         say = `${ref(p, r, c)} = ${res.text}.`;
         reads = readsFor(sources(grid, r, c), here, res.win, p);
@@ -403,7 +438,7 @@ function* bottomUp(s: S, settings: GPSettings): Gen {
   yield {
     state: end,
     marks: [mark(cellId(R - 1, C - 1), 'found')],
-    say: `${answerText(p, v, R, C)}. The table filled each of the ${R * C} cells once; plain recursion would make ${tot.naive} calls.${p === 'mincost' && v !== Infinity ? ' Press Trace the path to see it.' : ''}`,
+    say: `${answerText(p, v, R, C)}. The table filled each of the ${R * C} cells once; plain recursion would make ${plural(tot.naive, 'call')}.${p === 'mincost' && v !== Infinity ? ' Press Trace the path to see it.' : ''}`,
     lines: ['b.ret'],
     level: 1,
     vars: { rows: R, cols: C, ...answerVars(p, v), ...workVars(work, tot) },
@@ -515,7 +550,14 @@ function* recursion(s: S, settings: GPSettings, memo: boolean): Gen {
     };
     const got = new Map<string, number>();
     for (const x of src) got.set(name(x), yield* visit(x, cell));
-    const res = rule(p, grid, r, c, (x) => got.get(name(x))!, (x) => call(p, x));
+    const res = rule(
+      p,
+      grid,
+      r,
+      c,
+      (x) => got.get(name(x))!,
+      (x) => call(p, x),
+    );
     if (memo) {
       T[r]![c] = res.value;
       work.add('cells');
@@ -538,13 +580,15 @@ function* recursion(s: S, settings: GPSettings, memo: boolean): Gen {
   const v = yield* visit([R - 1, C - 1], null);
   const end = state();
   const most = Math.max(...calls.flat());
-  const busiest = calls.flatMap((row, r) => row.flatMap((k, c) => (k === most ? [[r, c] as Cell] : [])))[0]!;
+  const busiest = calls.flatMap((row, r) =>
+    row.flatMap((k, c) => (k === most ? [[r, c] as Cell] : [])),
+  )[0]!;
   yield {
     state: end,
     marks: [mark(cellId(R - 1, C - 1), 'found')],
     say: memo
-      ? `${answerText(p, v, R, C)}. With the memo: ${work.tally()}. Plain recursion would make ${tot.naive} calls.${p === 'mincost' && v !== Infinity ? ' Press Trace the path to see it.' : ''}`
-      : `${answerText(p, v, R, C)}. Plain recursion made ${work.get('calls')} calls for ${R * C} cells: ${name(busiest)} alone was called ${most === 1 ? 'once' : `${most} times`}, once for every path from it to the target. The table fills each cell once.`,
+      ? `${answerText(p, v, R, C)}. With the memo: ${work.tally()}. Plain recursion would make ${plural(tot.naive, 'call')}.${p === 'mincost' && v !== Infinity ? ' Press Trace the path to see it.' : ''}`
+      : `${answerText(p, v, R, C)}. Plain recursion made ${plural(work.get('calls'), 'call')} for ${plural(R * C, 'cell')}: ${most === 1 ? 'each cell it reached was called once, since only one path runs through it' : `${name(busiest)} alone was called ${most} times, once for every path from it to the target`}. The table fills each cell once.`,
     lines: [`${P}.top`],
     level: 1,
     vars: { rows: R, cols: C, ...answerVars(p, v), ...workVars(work, tot) },
@@ -558,7 +602,9 @@ const solve: Op = {
   arity: 0,
   *run(s, _args, { settings }) {
     if (approachOf(settings) === 'naive') return yield* recursion(s, settings, false);
-    return settings.fill === 'memo' ? yield* recursion(s, settings, true) : yield* bottomUp(s, settings);
+    return settings.fill === 'memo'
+      ? yield* recursion(s, settings, true)
+      : yield* bottomUp(s, settings);
   },
 };
 
@@ -682,7 +728,10 @@ export function pseudocode(settings: GPSettings): PseudoBlock[] {
     ],
   };
   const join = count
-    ? { text: `${T}[r − 1][c] + ${T}[r][c − 1]`, plain: 'the paths from above plus the paths from the left' }
+    ? {
+        text: `${T}[r − 1][c] + ${T}[r][c − 1]`,
+        plain: 'the paths from above plus the paths from the left',
+      }
     : {
         text: `cost[r][c] + min(${T}[r − 1][c], ${T}[r][c − 1])`,
         plain: 'the cell’s cost plus the cheaper of the cell above and the cell to the left',
@@ -691,10 +740,15 @@ export function pseudocode(settings: GPSettings): PseudoBlock[] {
     const memo = approachOf(settings) !== 'naive';
     const P = memo ? 'm' : 'n';
     const callJoin = count
-      ? { text: `${f}(r − 1, c) + ${f}(r, c − 1)`, plain: 'ask for the paths into the cell above and into the cell to the left, and add them' }
+      ? {
+          text: `${f}(r − 1, c) + ${f}(r, c − 1)`,
+          plain:
+            'ask for the paths into the cell above and into the cell to the left, and add them',
+        }
       : {
           text: `cost[r][c] + min(${f}(r − 1, c), ${f}(r, c − 1))`,
-          plain: 'ask for the cheapest way into the cell above and into the cell to the left, and add this cell’s cost to the cheaper',
+          plain:
+            'ask for the cheapest way into the cell above and into the cell to the left, and add this cell’s cost to the cheaper',
         };
     return [
       {
@@ -710,10 +764,19 @@ export function pseudocode(settings: GPSettings): PseudoBlock[] {
             `${P}.sig`,
             0,
             `${f}(r, c)`,
-            count ? 'To count the paths into cell (r, c):' : 'To find the cheapest way into cell (r, c):',
+            count
+              ? 'To count the paths into cell (r, c):'
+              : 'To find the cheapest way into cell (r, c):',
           ),
           ...(memo
-            ? [L('m.hit', 1, `if ${T}[r][c] is filled: return ${T}[r][c]`, 'if the memo has it, hand it back at once;')]
+            ? [
+                L(
+                  'm.hit',
+                  1,
+                  `if ${T}[r][c] is filled: return ${T}[r][c]`,
+                  'if the memo has it, hand it back at once;',
+                ),
+              ]
             : []),
           L(
             `${P}.start`,
@@ -738,8 +801,18 @@ export function pseudocode(settings: GPSettings): PseudoBlock[] {
       lines: [
         L('b.sig', 0, `fill(grid)`, `To fill ${T} for the whole grid:`),
         L('b.loop', 1, 'for r = 0 to R − 1, for c = 0 to C − 1', 'row by row, left to right:'),
-        L('b.wall', 2, `if (r, c) is a wall: ${T}[r][c] = ${count ? '0' : '∞'}`, count ? 'a wall lets no path through;' : 'a wall has no way in;'),
-        L('b.start', 2, `else if (r, c) = (0, 0): ${T}[r][c] = ${count ? '1' : 'cost[0][0]'}`, count ? 'the start has one path;' : 'the start costs its own cost;'),
+        L(
+          'b.wall',
+          2,
+          `if (r, c) is a wall: ${T}[r][c] = ${count ? '0' : '∞'}`,
+          count ? 'a wall lets no path through;' : 'a wall has no way in;',
+        ),
+        L(
+          'b.start',
+          2,
+          `else if (r, c) = (0, 0): ${T}[r][c] = ${count ? '1' : 'cost[0][0]'}`,
+          count ? 'the start has one path;' : 'the start costs its own cost;',
+        ),
         L(
           'b.rule',
           2,

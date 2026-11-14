@@ -19,8 +19,18 @@
  * rule: a stretch is solved again every time a longer one asks for it, 3^(n − 1) calls for the
  * whole row. Work units (../_dp2/kit.ts): `calls`, `cells` and `choices` (one k tried).
  */
-import type { Mark, MarkRole, OpSpec, PseudoBlock, PseudoLine, Scalar, Step, Value } from '../../engine/types';
+import type {
+  Mark,
+  MarkRole,
+  OpSpec,
+  PseudoBlock,
+  PseudoLine,
+  Scalar,
+  Step,
+  Value,
+} from '../../engine/types';
 import { approachOf, workVars, type Approach, type Totals } from '../_patterns/kit';
+import { plural } from '../_dp/kit';
 import { copy2, dpWork, nthTime, zeros } from '../_dp2/kit';
 
 export const MAX_N = 6;
@@ -84,7 +94,8 @@ const mark = (id: string, role: MarkRole): Mark => ({ id, role });
 export const cellId = (a: number, b: number) => `cell-${a}-${b}`;
 export const itemId = (i: number) => `item-${i}`;
 
-export const square = (n: number) => Array.from({ length: n }, () => Array<number | null>(n).fill(null));
+export const square = (n: number) =>
+  Array.from({ length: n }, () => Array<number | null>(n).fill(null));
 export const stateFor = (v: number[]): S => ({ v, best: square(v.length), K: square(v.length) });
 
 // ----- Input -----
@@ -127,7 +138,15 @@ export const choicesFor = (p: Problem, a: number, b: number): number[] => {
 };
 
 /** A candidate's value from its two sides' values. */
-export function candidate(p: Problem, v: readonly number[], a: number, b: number, k: number, left: number, right: number): number {
+export function candidate(
+  p: Problem,
+  v: readonly number[],
+  a: number,
+  b: number,
+  k: number,
+  left: number,
+  right: number,
+): number {
   return p === 'merge'
     ? left + right + sumOf(v, a, b)
     : left + right + at(v, a - 1) * v[k]! * at(v, b + 1);
@@ -135,7 +154,15 @@ export function candidate(p: Problem, v: readonly number[], a: number, b: number
 
 /** The two sides of k: [a..k − 1] and [k + 1..b] (remove), or [a..k] and [k + 1..b] (merge). */
 export const sides = (p: Problem, a: number, b: number, k: number): [Span, Span] =>
-  p === 'merge' ? [{ a, b: k }, { a: k + 1, b }] : [{ a, b: k - 1 }, { a: k + 1, b }];
+  p === 'merge'
+    ? [
+        { a, b: k },
+        { a: k + 1, b },
+      ]
+    : [
+        { a, b: k - 1 },
+        { a: k + 1, b },
+      ];
 
 /** The whole table, bottom-up by length, and the best k of each stretch (the first on a tie). */
 export function solveTable(v: readonly number[], p: Problem): { best: number[][]; K: number[][] } {
@@ -193,7 +220,11 @@ export function totals(n: number, p: Problem): Totals {
 export const naiveCalls = (n: number, p: Problem) => naiveCount(p, n).calls;
 
 /** The order the best plan takes tiles (1-based), or its merges as brackets of pile sizes. */
-export function planOf(v: readonly number[], K: readonly (readonly (number | null)[])[], p: Problem): string {
+export function planOf(
+  v: readonly number[],
+  K: readonly (readonly (number | null)[])[],
+  p: Problem,
+): string {
   const n = v.length;
   if (p === 'merge') {
     const br = (a: number, b: number): string => {
@@ -299,7 +330,9 @@ const better = (p: Problem, c: number, top: number | null) =>
 const finalText = (p: Problem, v: number, n: number) =>
   p === 'merge'
     ? `Merging all ${n} piles costs at least ${v}`
-    : `The best total for all ${n} ${n === 1 ? 'tile' : 'tiles'} is ${v}`;
+    : n === 1
+      ? `The best total for the one tile is ${v}`
+      : `The best total for all ${n} tiles is ${v}`;
 
 /** The pattern: every stretch, shortest first. */
 function* bottomUp(s: S, settings: IVSettings): Gen {
@@ -396,7 +429,7 @@ function* bottomUp(s: S, settings: IVSettings): Gen {
   yield {
     state: end,
     marks: [mark(cellId(0, n - 1), 'found')],
-    say: `${finalText(p, answer, n)}: ${ref(p, { a: 0, b: n - 1 })}. The table solved ${work.get('cells')} stretches with ${work.get('choices')} choices; plain recursion would take ${tot.naive} calls and choices. Press Trace the order to see it.`,
+    say: `${finalText(p, answer, n)}: ${ref(p, { a: 0, b: n - 1 })}. The table solved ${plural(work.get('cells'), 'stretch', 'stretches')} with ${plural(work.get('choices'), 'choice')}; plain recursion would take ${tot.naive} calls and choices. Press Trace the order to see it.`,
     lines: ['b.ret'],
     level: 1,
     vars: { n, [p === 'merge' ? 'cost' : 'score']: answer, ...workVars(work, tot) },
@@ -502,7 +535,14 @@ function* naive(s: S, settings: IVSettings): Gen {
       const got = new Map<string, number>();
       for (const side of sides(p, a, b, k))
         if (side.a <= side.b) got.set(`${side.a}-${side.b}`, yield* visit(side, span));
-      const c = candText(p, v, span, k, (x) => got.get(`${x.a}-${x.b}`)!, (x) => call(p, x));
+      const c = candText(
+        p,
+        v,
+        span,
+        k,
+        (x) => got.get(`${x.a}-${x.b}`)!,
+        (x) => call(p, x),
+      );
       work.add('choices');
       const wins = better(p, c.value, top);
       if (wins) {
@@ -538,11 +578,12 @@ function* naive(s: S, settings: IVSettings): Gen {
   const most = Math.max(...calls.flat());
   let busy: Span | null = null;
   for (let len = 1; len <= n && !busy; len++)
-    for (let a = 0; a + len - 1 < n && !busy; a++) if (calls[a]![a + len - 1] === most) busy = { a, b: a + len - 1 };
+    for (let a = 0; a + len - 1 < n && !busy; a++)
+      if (calls[a]![a + len - 1] === most) busy = { a, b: a + len - 1 };
   yield {
     state: s,
     marks: [mark(cellId(0, n - 1), 'found')],
-    say: `${finalText(p, answer, n)}. Plain recursion made ${work.get('calls')} calls and tried ${work.get('choices')} choices for ${(n * (n + 1)) / 2} stretches: ${call(p, busy!)} alone was called ${most === 1 ? 'once' : `${most} times`}. The table solves each stretch once.`,
+    say: `${finalText(p, answer, n)}. Plain recursion made ${plural(work.get('calls'), 'call')} and tried ${plural(work.get('choices'), 'choice')} for ${plural((n * (n + 1)) / 2, 'stretch', 'stretches')}: ${call(p, busy!)} alone was called ${most === 1 ? 'once' : `${most} times`}. The table solves each stretch once.`,
     lines: ['n.top'],
     level: 1,
     vars: { n, [p === 'merge' ? 'cost' : 'score']: answer, ...workVars(work, tot) },
@@ -555,7 +596,9 @@ const solve: Op = {
   label: 'Solve',
   arity: 0,
   *run(s, _args, { settings }) {
-    return approachOf(settings) === 'naive' ? yield* naive(s, settings) : yield* bottomUp(s, settings);
+    return approachOf(settings) === 'naive'
+      ? yield* naive(s, settings)
+      : yield* bottomUp(s, settings);
   },
 };
 
@@ -613,7 +656,10 @@ const trace: Op = {
         const x = sumOf(v, a, k);
         const y = sumOf(v, k + 1, b);
         score += x + y;
-        left = left.filter((g) => g.a < a || g.b > b).concat({ a, b }).sort((g, h) => g.a - h.a);
+        left = left
+          .filter((g) => g.a < a || g.b > b)
+          .concat({ a, b })
+          .sort((g, h) => g.a - h.a);
         push(
           `Merge the pile of ${x} (${stretch(p, { a, b: k })}) with the pile of ${y} (${stretch(p, { a: k + 1, b })}): it costs ${x} + ${y} = ${x + y}. Cost so far ${score}.`,
           ['t.do'],
@@ -645,7 +691,9 @@ const trace: Op = {
       say:
         p === 'merge'
           ? `The cheapest merging, as brackets of pile sizes: ${plan}. It costs ${score} = ${ref(p, { a: 0, b: n - 1 })}.`
-          : `The best order takes the tiles ${plan.split(' ').join(', ')} (by position): ${score} in all, ${ref(p, { a: 0, b: n - 1 })}.`,
+          : n === 1
+            ? `Take the one tile: ${score}.`
+            : `The best order takes the tiles ${plan.split(' ').join(', ')} (by position): ${score} in all, ${ref(p, { a: 0, b: n - 1 })}.`,
       lines: ['t.ret'],
       level: 1,
       vars: { [p === 'merge' ? 'cost' : 'score']: score, order: plan },
@@ -676,13 +724,19 @@ export function pseudocode(settings: IVSettings): PseudoBlock[] {
       }
     : {
         text: `${t}[a][k − 1] + ${t}[k + 1][b] + v[a − 1]·v[k]·v[b + 1]`,
-        plain: 'clear each side of k the best way, then take k between the two things outside the stretch',
+        plain:
+          'clear each side of k the best way, then take k between the two things outside the stretch',
       };
   const traceBlock: PseudoBlock = {
     op: 'trace',
     lines: [
       L('t.sig', 0, 'order(a = 1, b = n)', 'To read the order, start with the whole row:'),
-      L('t.loop', 1, 'k = K[a][b]; order(the two sides of k)', 'look up its k and do both sides of it first;'),
+      L(
+        't.loop',
+        1,
+        'k = K[a][b]; order(the two sides of k)',
+        'look up its k and do both sides of it first;',
+      ),
       L(
         't.do',
         1,
@@ -699,7 +753,12 @@ export function pseudocode(settings: IVSettings): PseudoBlock[] {
         op: 'solve',
         lines: [
           L('n.top', 0, `answer = ${f}(1, n)`, 'Ask for the whole row.'),
-          L('n.sig', 0, `${f}(a, b)`, merge ? 'To merge piles a..b at the least cost:' : 'To score tiles a..b best:'),
+          L(
+            'n.sig',
+            0,
+            `${f}(a, b)`,
+            merge ? 'To merge piles a..b at the least cost:' : 'To score tiles a..b best:',
+          ),
           ...(merge ? [L('n.one', 1, 'if a = b: return 0', 'one pile needs no merging;')] : []),
           L(
             'n.try',
@@ -707,7 +766,12 @@ export function pseudocode(settings: IVSettings): PseudoBlock[] {
             `for k = a to ${merge ? 'b − 1' : 'b'}: ${merge ? 'min' : 'max'} of ${rule.text.replace(/[BM]\[(\w[^\]]*)\]\[([^\]]*)\]/g, `${f}($1, $2)`)}`,
             `try every ${merge ? 'split' : 'last tile'} k: ${rule.plain}, asking for the sides again;`,
           ),
-          L('n.ret', 1, `return the ${merge ? 'least' : 'best'}`, `hand back the ${merge ? 'cheapest' : 'best'}.`),
+          L(
+            'n.ret',
+            1,
+            `return the ${merge ? 'least' : 'best'}`,
+            `hand back the ${merge ? 'cheapest' : 'best'}.`,
+          ),
         ],
       },
       traceBlock,
@@ -717,8 +781,18 @@ export function pseudocode(settings: IVSettings): PseudoBlock[] {
     {
       op: 'solve',
       lines: [
-        L('b.sig', 0, merge ? 'mergeAll(v[1..n])' : 'takeAll(v[1..n])', 'To fill the table, shortest stretches first:'),
-        L('b.len', 1, 'for len = 1 to n, for a = 1 to n − len + 1: b = a + len − 1', 'for every stretch a..b, by length:'),
+        L(
+          'b.sig',
+          0,
+          merge ? 'mergeAll(v[1..n])' : 'takeAll(v[1..n])',
+          'To fill the table, shortest stretches first:',
+        ),
+        L(
+          'b.len',
+          1,
+          'for len = 1 to n, for a = 1 to n − len + 1: b = a + len − 1',
+          'for every stretch a..b, by length:',
+        ),
         ...(merge ? [L('b.one', 2, 'if a = b: M[a][a] = 0', 'one pile costs nothing;')] : []),
         L(
           'b.try',

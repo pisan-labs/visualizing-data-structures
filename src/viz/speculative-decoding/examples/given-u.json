@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "speculative-decoding",
+  "id": "given-u",
+  "title": "Your own u values",
+  "notes": "From \"the cat\" the small model drafts </s> (q = 0.30); the large model gives it p = 0.22, so p/q = 0.74. u = 0.8 rejects it, and the leftover (sat 0.29, then 0.14 for each of five words) with u = 0.4 gives is. Try a u below 0.74.",
+  "settings": {
+    "k": 3,
+    "accept": "sample"
+  },
+  "seed": 3,
+  "ops": [["start", "the cat"], ["draft"], ["check", "0.8 0.4"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

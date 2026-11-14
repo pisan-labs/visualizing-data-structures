@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "constrained-decoding",
+  "id": "scan",
+  "title": "Walking every token at every step",
+  "notes": "The same three laughs, but every token is walked from the current state at every step: 145 lookups instead of the index's 47, and the bill grows with every text.",
+  "settings": {
+    "mask": true,
+    "index": "scan",
+    "decode": "sample"
+  },
+  "seed": 2,
+  "ops": [["compile", "(ha)+"], ["generate"], ["generate"], ["generate"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

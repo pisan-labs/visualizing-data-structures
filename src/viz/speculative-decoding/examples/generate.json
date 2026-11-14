@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "speculative-decoding",
+  "id": "generate",
+  "title": "Generate from the",
+  "notes": "From \"the\", k = 3, with sampling. 9 words in 4 large passes, where plain decoding needs 9: 5 saved. The third round accepts all three drafts and gets a bonus word; the small model runs 10 times and 6 of its drafts are accepted.",
+  "settings": {
+    "k": 3,
+    "accept": "sample"
+  },
+  "seed": 1,
+  "ops": [["start", "the"], ["generate"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

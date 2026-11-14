@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "viz": "unigram-tokenizer",
+  "id": "sampled",
+  "title": "Sampling a split",
+  "notes": "Sampling instead of Viterbi, with α = 1. sat has three splits: sa t (58% of draws), s at (34%) and s a t (8%). Four draws give s at, sa t, sa t and s at.",
+  "settings": {
+    "seed": 16,
+    "target": 8,
+    "split": "sample",
+    "alpha": "1"
+  },
+  "seed": 3,
+  "ops": [
+    [
+      "load",
+      "the cat sat on the mat, the dog sat on the rug, the cat saw the dog, the dog saw the cat, the dog chased the cat, the cat ran under the tree, the bird sat on the tree, a dog ate the ball, the fox ran and the dog chased it, the cat slept on the mat, the dog walked and the cat walked, the cat is walking, the dog is talking, the bird talked and talked, the fox is running, the dog ran to the box, the cat sat in the box, a bird saw a cat"
+    ],
+    ["encode", "sat"],
+    ["encode", "sat"],
+    ["encode", "sat"],
+    ["encode", "sat"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

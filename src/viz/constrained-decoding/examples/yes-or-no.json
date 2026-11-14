@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "constrained-decoding",
+  "id": "yes-or-no",
+  "title": "Asked yes or no, it says yes",
+  "notes": "yes|no compiles to a DFA of 5 states. From q0 the index allows yes, ye, y, no and n; yeah, the model's favourite, falls off at its a and is masked. Softmax over the five left gives yes 0.45, so greedy writes yes, and from q3 only </s> is allowed. Building the index took 71 lookups.",
+  "settings": {
+    "mask": true,
+    "index": "precompute",
+    "decode": "greedy"
+  },
+  "seed": 1,
+  "ops": [["compile", "yes|no"], ["generate"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

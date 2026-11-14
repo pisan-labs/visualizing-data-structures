@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "speculative-decoding",
+  "id": "one-draft",
+  "title": "One draft at a time",
+  "notes": "k = 1 from \"the\": each round checks a single draft. The same sentence as in Generate from the takes 6 large passes instead of 4.",
+  "settings": {
+    "k": 1,
+    "accept": "sample"
+  },
+  "seed": 4,
+  "ops": [["start", "the"], ["generate"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "unigram-tokenizer",
+  "id": "unknown-letter",
+  "title": "A letter never seen becomes [UNK]",
+  "notes": "The toy corpus has no z, so zebra starts with [UNK], with a log-probability 10 below the rarest piece (p, −6.24): −16.24. The rest is e b r a, for −29.65 in all.",
+  "settings": {
+    "seed": 16,
+    "target": 8,
+    "split": "best",
+    "alpha": "1"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "the cat sat on the mat, the dog sat on the rug, the cat saw the dog, the dog saw the cat, the dog chased the cat, the cat ran under the tree, the bird sat on the tree, a dog ate the ball, the fox ran and the dog chased it, the cat slept on the mat, the dog walked and the cat walked, the cat is walking, the dog is talking, the bird talked and talked, the fox is running, the dog ran to the box, the cat sat in the box, a bird saw a cat"
+    ],
+    ["encode", "zebra"]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

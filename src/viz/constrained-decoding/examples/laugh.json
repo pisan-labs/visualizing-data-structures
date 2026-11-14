@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "constrained-decoding",
+  "id": "laugh",
+  "title": "Laughter, sampled three times",
+  "notes": "(ha)+ with sampling. The index is built once (47 lookups) and used for all three texts. Each is haha: twice as the token haha, once spelled h a h a.",
+  "settings": {
+    "mask": true,
+    "index": "precompute",
+    "decode": "sample"
+  },
+  "seed": 2,
+  "ops": [["compile", "(ha)+"], ["generate"], ["generate"], ["generate"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

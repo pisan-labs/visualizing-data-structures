@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "speculative-decoding",
+  "id": "rejection",
+  "title": "A rejection and a resample",
+  "notes": "From \"the\" the small model drafts rug (q = 0.03), then </s>. No sentence of the corpus starts with \"the rug\", so the trigram gives p = 0: rejected, and </s> goes with it. The leftover, dog 0.36, cat 0.23, bird 0.20 and fox 0.20, gives fox.",
+  "settings": {
+    "k": 3,
+    "accept": "sample"
+  },
+  "seed": 4,
+  "ops": [["start", "the"], ["step"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

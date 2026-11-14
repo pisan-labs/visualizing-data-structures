@@ -206,7 +206,7 @@ export const dutchFlag: VizDef<ArrayState, FlagSettings, FlagExtra> = {
     pivotMissing,
   ] as unknown as SavedExample[],
   practice: flagPractice(() => dutchFlag),
-  preview: { example: 'three-colors', level: 2, hide: ['heading', 'pivot-'] },
+  preview: { example: 'three-colors', level: 2, hide: ['heading', 'pivot-', 'ptr-'] },
 };
 
 export default dutchFlag;

@@ -195,7 +195,7 @@ export const cyclicSort: VizDef<ArrayState, CyclicSettings, CyclicExtra> = {
     manyRepeats,
   ] as unknown as SavedExample[],
   practice: cyclicPractice(() => cyclicSort),
-  preview: { example: 'one-missing', level: 2, hide: ['heading', 'missing-', 'repeated-'] },
+  preview: { example: 'one-missing', level: 2, hide: ['heading', 'missing-', 'repeated-', 'ptr-'] },
 };
 
 export default cyclicSort;

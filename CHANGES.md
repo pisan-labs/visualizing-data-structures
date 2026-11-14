@@ -549,3 +549,5 @@
 2026-11-14 [code] Merged wave 10 min-stack (a stack of minimums against scanning), two-stack-queue (move on empty, amortized 3 per operation) and randomized-set (array plus index map, remove by swapping with the last)
 
 2026-11-14 [code] Merged wave 10 binary-search-answer (shipping capacity, largest minimum gap), state-space-bfs (a lock with forbidden codes, word ladders; against no visited set) and combination-sum (with or without reuse, duplicates skipped, pruning)
+
+2026-11-14 [code] Merged wave 10 pattern-map: 11 families, 51 patterns, 89 cues of our own; follow a cue, show a family, read a problem for cues (with look-alikes ruled out); pages not live yet drawn unlinked

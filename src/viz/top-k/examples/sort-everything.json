@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "top-k",
+  "id": "sort-everything",
+  "title": "sort-everything",
+  "notes": "x",
+  "settings": { "approach": "naive", "goal": "top" },
+  "seed": 1,
+  "ops": [
+    ["load", "5 12 3 18 7 21 9 14 2"],
+    ["top", 3]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

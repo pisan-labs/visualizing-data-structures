@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "top-k",
+  "id": "kth-largest",
+  "title": "kth-largest",
+  "notes": "x",
+  "settings": { "approach": "pattern", "goal": "kth" },
+  "seed": 1,
+  "ops": [
+    ["load", "5 12 3 18 7 21 9 14 2"],
+    ["top", 4]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

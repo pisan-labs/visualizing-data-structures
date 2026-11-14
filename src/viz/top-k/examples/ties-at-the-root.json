@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "top-k",
+  "id": "ties-at-the-root",
+  "title": "ties-at-the-root",
+  "notes": "x",
+  "settings": { "approach": "pattern", "goal": "top" },
+  "seed": 1,
+  "ops": [
+    ["load", "8 5 8 3 8 5 9 8"],
+    ["top", 3]
+  ],
+  "at": { "op": 0, "step": 0 }
+}

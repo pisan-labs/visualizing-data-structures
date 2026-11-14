@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "binary-search-answer",
+  "id": "every-capacity-upward",
+  "title": "Every capacity upward",
+  "notes": "The same packages and d = 3, the naive way: try 8, 9, 10 and so on until one fits. 8 to 13 each need a fourth day; 14 is the first capacity that fits. 7 checks and 49 reads, against 5 checks and 40 reads for binary search. Close, because 14 sits near the bottom of the range.",
+  "settings": {
+    "approach": "naive",
+    "problem": "ship"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "4 7 2 6 3 5 1 8"
+    ],
+    [
+      "search",
+      3
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

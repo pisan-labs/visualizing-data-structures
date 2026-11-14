@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "binary-search-answer",
+  "id": "two-items-take-the-ends",
+  "title": "Two items take the ends",
+  "notes": "k = 2: the two items go on the two ends, so the answer is the whole span, 24 − 1 = 23, at the top of the range. Trying every gap upward checks 22 of them, 2 to 23, and every one fits: 22 checks and 109 reads. Binary search needs 5 checks and 32 reads.",
+  "settings": {
+    "approach": "naive",
+    "problem": "spread"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "1 3 8 12 13 19 24"
+    ],
+    [
+      "search",
+      2
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

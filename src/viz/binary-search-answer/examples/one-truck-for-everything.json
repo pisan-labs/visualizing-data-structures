@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "binary-search-answer",
+  "id": "one-truck-for-everything",
+  "title": "One day for everything",
+  "notes": "d = 1: one day takes everything, so the answer is the total, 36, at the very top of the range. Trying every capacity upward checks all 29 of them, 8 to 36: 29 checks and 160 reads. Binary search needs 4 checks and 30 reads. This is the worst case for the naive way.",
+  "settings": {
+    "approach": "naive",
+    "problem": "ship"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "4 7 2 6 3 5 1 8"
+    ],
+    [
+      "search",
+      1
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

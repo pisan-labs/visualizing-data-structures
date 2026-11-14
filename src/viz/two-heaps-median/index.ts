@@ -182,7 +182,7 @@ export const twoHeapsMedian: VizDef<MedianState, MedianSettings, MedianExtra> = 
     allTheSame,
   ] as unknown as SavedExample[],
   practice: medianPractice(() => twoHeapsMedian),
-  preview: { example: 'running-median', level: 1 },
+  preview: { example: 'running-median', level: 2, hide: ['in-', 'med-'] },
   opening: 'running-median',
 };
 

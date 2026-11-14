@@ -293,8 +293,9 @@ export function heapPanel(o: HeapPanelOptions): HeapPanel {
   const R = o.R ?? HEAP_R;
   const raw = heapLayout(Math.max(1, o.capacity), {
     radius: R,
-    gap: o.gap ?? 10,
-    levelGap: o.levelGap ?? 58,
+    gap: o.gap ?? (o.label ? 24 : 10),
+    // A label under each value needs room between the edges below it.
+    levelGap: o.levelGap ?? (o.label ? 70 : 58),
   });
   const dy = o.top + TITLE_ROOM + R;
   const at = (p: number) => {

@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "readers-writers",
+  "id": "readers-share",
+  "title": "Two readers inside at once",
+  "notes": "R1 is the first reader in, so it takes room (room = 0). R2 finds n = 1, so it skips P(room) and goes straight in: both read at once. R2 is the last out, so it gives room back, and the writer goes in alone.",
+  "settings": {
+    "variant": "readers",
+    "readers": 2
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "run",
+      "R1 R1 R2 R2 R1 R2 R1 R1 R2 R2 W W W"
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

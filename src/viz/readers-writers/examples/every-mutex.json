@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "readers-writers",
+  "id": "every-mutex",
+  "title": "Every interleaving with one lock",
+  "notes": "72 orders of the steps, and in every one the threads go in one at a time: safe and fair, but nobody shares.",
+  "settings": {
+    "variant": "mutex",
+    "readers": 2
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "every"
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

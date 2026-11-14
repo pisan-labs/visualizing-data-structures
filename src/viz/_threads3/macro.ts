@@ -225,6 +225,22 @@ export function minterleavings(mac: Macro, opts: MOptions = {}): MInterleavings 
   return { runs, outcomes: [...groups.values()], complete };
 }
 
+/**
+ * The most row steps any schedule can take when no thread jumps back (null if one can): a row
+ * step ends by leaving its row (once per row) or by blocking (once per blocking step, since each
+ * runs at most once). When every schedule ends within the step limit, the depth of a state does
+ * not matter, and the counts can share it across depths.
+ */
+export function longestRun(mac: Macro): number | null {
+  let n = 0;
+  for (const [t, th] of mac.p.threads.entries()) {
+    if (th.code.some((i, k) => i.kind === 'jump' && i.target <= k)) return null;
+    n += mac.rows[t]!.length;
+    n += th.code.filter((i) => i.kind === 'lock' || i.kind === 'P' || i.kind === 'wait').length;
+  }
+  return n;
+}
+
 /** How many row schedules end in each outcome, counted over states (no cap). */
 export function mcount(
   mac: Macro,
@@ -234,6 +250,8 @@ export function mcount(
   const outcome = opts.outcome ?? (() => 'done');
   const memo = new Map<string, Map<string, number>>();
   const order: string[] = [];
+  const longest = longestRun(mac);
+  const anyDepth = longest !== null && longest < maxSteps;
   const go = (s: MachineState, depth: number): Map<string, number> => {
     const ready = runnable(s);
     if (ready.length === 0 || depth >= maxSteps) {
@@ -241,7 +259,7 @@ export function mcount(
       if (!order.includes(o)) order.push(o);
       return new Map([[o, 1]]);
     }
-    const key = `${depth}|${stateKey(s)}`;
+    const key = anyDepth ? stateKey(s) : `${depth}|${stateKey(s)}`;
     const known = memo.get(key);
     if (known) return known;
     const acc = new Map<string, number>();
@@ -283,11 +301,13 @@ function search(
   const maxSteps = opts.maxSteps ?? MAX_STEPS;
   const failed = new Set<string>();
   const path: number[] = [];
+  const longest = longestRun(mac);
+  const anyDepth = longest !== null && longest < maxSteps;
   const visit = (s: MachineState): boolean => {
     const ready = runnable(s);
     if (hit(s, ready.length === 0)) return true;
     if (ready.length === 0 || path.length >= maxSteps) return false;
-    const key = `${path.length}|${stateKey(s)}`;
+    const key = anyDepth ? stateKey(s) : `${path.length}|${stateKey(s)}`;
     if (failed.has(key)) return false;
     for (const t of ready) {
       const r = mstep(mac, s, t) as Extract<MStep, { ok: true }>;

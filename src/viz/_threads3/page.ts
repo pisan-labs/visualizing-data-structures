@@ -106,6 +106,10 @@ export interface Display {
   /** Locks the page draws itself (a table of forks): marks on them stay, though the lanes
    * leave them out. */
   drawnLocks?: string[];
+  /** A lane's note instead of the kit's ("reading"); undefined keeps the kit's. */
+  note?: (t: number, s: MachineState) => string | undefined;
+  /** Every note `note` can give, so the lanes keep room for the longest. */
+  notes?: string[];
 }
 
 export interface RowsSpec<Set extends Settings, S extends RowsState = RowsState> {
@@ -191,6 +195,7 @@ export function rowsLanes(
     ...p.locks.map((l) => `waits for ${l}`),
     ...p.sems.map((x) => `waits on ${x.name}`),
     ...p.conds.map((c) => `sleeps on ${c}`),
+    ...(d.notes ?? []),
   ];
   const outs = p.threads.flatMap((t) => t.code).filter((i) => i.kind === 'print');
   return {
@@ -202,7 +207,7 @@ export function rowsLanes(
         steps: mac.rows[t]!.map((r) => r.text),
         pc: rowNow(mac, m, t),
         status: ts.status,
-        note: noteFor(m, t),
+        note: d.note?.(t, m) ?? noteFor(m, t),
         regs: regs.map((r) => ({ name: r, value: fmt(r, ts.regs[r] ?? 0, t) })),
       };
     }),
@@ -799,7 +804,7 @@ export function describeRows<Set extends Settings, S extends RowsState>(
     const where =
       ts.status === 'done'
         ? 'done'
-        : `next step ${row + 1}, ${mac.rows[t]![row]?.text ?? 'end'}${ts.status === 'ready' ? '' : ` (${noteFor(s.m, t)})`}`;
+        : `next step ${row + 1}, ${mac.rows[t]![row]?.text ?? 'end'}${ts.status === 'ready' ? (d.note?.(t, s.m) ? ` (${d.note(t, s.m)})` : '') : ` (${noteFor(s.m, t)})`}`;
     return `${th.name}: ${where}${regs ? `; ${regs}` : ''}.`;
   });
   const mem = shown(

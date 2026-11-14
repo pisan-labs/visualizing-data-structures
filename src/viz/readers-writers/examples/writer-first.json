@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "readers-writers",
+  "id": "writer-first",
+  "title": "The writer is in, the readers wait",
+  "notes": "W takes room first. R1, the first reader, calls P(room) and waits, still holding m, so R2 waits for m. When W gives room back, R1 goes in and lets go of m, and R2 follows it in.",
+  "settings": {
+    "variant": "readers",
+    "readers": 2
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "run",
+      "W R1 R1 R2 W W R1 R2 R2 R1 R2 R1 R1 R2 R2"
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

@@ -7,7 +7,18 @@ choice of 10 November).
 
 ## What is live
 
-**Update, 14 November 2026, 09:50 Lisbon:** `main` is at `9ca8d71`, deployed on Yusuf's
+**Update, 14 November 2026, 22:10 Lisbon:** `main` is at `fb02fc9`, deployed on Yusuf's "deploy
+when done" and "go ahead" after CI run 239 passed: the Coding interviews pathway (39 pages,
+PLAN.md section 21: interview patterns and concurrency), the release
+`2026-11-14-coding-interviews` (emailed to opted-in readers at the next app-notify run, 15 November
+15:17 UTC; its note also names the AI and LLMs pathway, whose release the platform's first run
+absorbed), the HintWise footer with the mark, and stricter placeholder checks. The live check
+passed: the bundle (`index-CMA4VDfy.js`) matches a local build, all 276 addresses return 200 with
+the footer and its mark once, the 39 new pages draw with no page errors, the feed is
+application/json with the new release first, and an ordinary visit sends nothing to
+`auth.hintwise.org`. Follow-up: `state-space-bfs` opens on a bare start state (no `opening`).
+
+**Earlier update, 14 November 2026, 09:50 Lisbon:** `main` is at `9ca8d71`, deployed on Yusuf's
 "deploy" after CI run 215 passed: the AI and LLMs pathway (33 pages, PLAN.md section 20), the
 release `2026-11-14-ai-and-llms` in `notify-feed.json` (emailed to opted-in readers at the next
 app-notify run, 15:17 UTC), and the CI concurrency group. The live check passed: the bundle

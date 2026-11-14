@@ -559,3 +559,5 @@
 2026-11-14 [doc] Merged the last wave-10 fact check (dining-philosophers history per EWD1000, barrier narration and practice explanations, pattern-map cost lines matched to every page, cues and a problem reworded away from LeetCode)
 
 2026-11-14 [code] Release 2026-11-14-coding-interviews ("39 new pages", pattern-map first; the note also names the AI and LLMs pathway, which the email seeding absorbed), pushed to next on Yusuf's "go ahead". Full checks on next green before it: unit 324 files 6510 tests, e2e 1031 passed
+
+2026-11-14 [note] Deployed 22:08 UTC on Yusuf's "deploy when done" and "go ahead": main 9ca8d71..fb02fc9 (Coding interviews pathway, 39 pages; release 2026-11-14-coding-interviews; footer with the HintWise mark). CI 239 green. Bundle matches; 276 addresses 200 with the footer and mark once; 39 pages draw; feed live with the release first; no account requests. Plabs told

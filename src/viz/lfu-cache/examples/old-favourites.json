@@ -3,58 +3,23 @@
   "viz": "lfu-cache",
   "id": "old-favourites",
   "title": "Old favourites hang on",
-  "notes": "TBD",
+  "notes": "7 and 8 are used 3 times each, early. Then 9, 5 and 6 come once each and fight over the one slot left: get(5) misses because 6 has just evicted it. 7 and 8 are never used again, and stay.",
   "settings": {
     "approach": "pattern",
     "capacity": 3
   },
   "seed": 1,
   "ops": [
-    [
-      "put",
-      1,
-      10
-    ],
-    [
-      "get",
-      1
-    ],
-    [
-      "get",
-      1
-    ],
-    [
-      "put",
-      2,
-      20
-    ],
-    [
-      "get",
-      2
-    ],
-    [
-      "get",
-      2
-    ],
-    [
-      "put",
-      3,
-      30
-    ],
-    [
-      "put",
-      4,
-      40
-    ],
-    [
-      "put",
-      5,
-      50
-    ],
-    [
-      "get",
-      4
-    ]
+    ["put", 7, 70],
+    ["get", 7],
+    ["get", 7],
+    ["put", 8, 80],
+    ["get", 8],
+    ["get", 8],
+    ["put", 9, 90],
+    ["put", 5, 50],
+    ["put", 6, 60],
+    ["get", 5]
   ],
   "at": {
     "op": -1,

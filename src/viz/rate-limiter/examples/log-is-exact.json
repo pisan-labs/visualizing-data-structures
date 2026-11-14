@@ -3,7 +3,7 @@
   "viz": "rate-limiter",
   "id": "log-is-exact",
   "title": "The log counts exactly",
-  "notes": "TBD",
+  "notes": "The same requests through a sliding log. 7, 8 and 9 fill the log, so 10, 11, 12 and 13 are refused: the last 10 seconds already hold 3. At 21 the log drops 7, 8 and 9 at once and lets 21 through. Never more than 3 in any 10 seconds, and up to 3 times kept.",
   "settings": {
     "limiter": "log",
     "limit": 3,
@@ -11,38 +11,14 @@
   },
   "seed": 1,
   "ops": [
-    [
-      "request",
-      7
-    ],
-    [
-      "request",
-      8
-    ],
-    [
-      "request",
-      9
-    ],
-    [
-      "request",
-      10
-    ],
-    [
-      "request",
-      11
-    ],
-    [
-      "request",
-      12
-    ],
-    [
-      "request",
-      13
-    ],
-    [
-      "request",
-      21
-    ]
+    ["request", 7],
+    ["request", 8],
+    ["request", 9],
+    ["request", 10],
+    ["request", 11],
+    ["request", 12],
+    ["request", 13],
+    ["request", 21]
   ],
   "at": {
     "op": -1,

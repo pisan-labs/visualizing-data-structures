@@ -20,8 +20,24 @@
  * one, a few pointer changes and the frequency map's entry); a scan is one key looked at while
  * searching for the one to evict.
  */
-import type { Mark, MarkRole, OpSpec, PseudoBlock, PseudoLine, Scalar, Step, Value } from '../../engine/types';
-import { approachOf, DEFAULT_APPROACH, Work, workVars, type Approach, type Totals } from '../_patterns/kit';
+import type {
+  Mark,
+  MarkRole,
+  OpSpec,
+  PseudoBlock,
+  PseudoLine,
+  Scalar,
+  Step,
+  Value,
+} from '../../engine/types';
+import {
+  approachOf,
+  DEFAULT_APPROACH,
+  Work,
+  workVars,
+  type Approach,
+  type Totals,
+} from '../_patterns/kit';
 
 export interface FNode {
   uid: number;
@@ -137,7 +153,7 @@ export function victim(s: S): FNode | null {
 /** "once", "twice", "3 times". */
 export const times = (n: number) => (n === 1 ? 'once' : n === 2 ? 'twice' : `${n} times`);
 
-const entryCount = (n: number) => `${n} ${n === 1 ? "entry" : "entries"}`;
+const entryCount = (n: number) => `${n} ${n === 1 ? 'entry' : 'entries'}`;
 
 /** "freq 1: 4, 2; freq 2: 1", or "empty". */
 export function listsText(s: S): string {
@@ -252,7 +268,11 @@ function* bump(c: Ctx, x: number, lines: { unlink: string; min: string }) {
     [mark(nid(x), 'active'), ...(emptied && wasMin ? [mark('p:min', 'active')] : [])],
   );
   // Append at the tail of list f + 1; the caller narrates it.
-  c.s = appendTo(setNode(c.s, x, (m) => ({ ...m, freq: f + 1, used: c.s.clock })), x, f + 1);
+  c.s = appendTo(
+    setNode(c.s, x, (m) => ({ ...m, freq: f + 1, used: c.s.clock })),
+    x,
+    f + 1,
+  );
   c.work.add('links');
   c.extra.moving = undefined;
 }
@@ -293,7 +313,11 @@ const get: Op = {
     c.s = { ...c.s, hits: c.s.hits + 1 };
     if (c.naive) {
       c.s = appendTo(
-        unlinkFrom(setNode(c.s, x, (m) => ({ ...m, freq: m.freq + 1, used: c.s.clock })), x, n.freq),
+        unlinkFrom(
+          setNode(c.s, x, (m) => ({ ...m, freq: m.freq + 1, used: c.s.clock })),
+          x,
+          n.freq,
+        ),
         x,
         n.freq + 1,
       );
@@ -366,7 +390,11 @@ const put: Op = {
       c.s = setNode(c.s, found, (m) => ({ ...m, value: v }));
       if (c.naive) {
         c.s = appendTo(
-          unlinkFrom(setNode(c.s, found, (m) => ({ ...m, freq: m.freq + 1, used: c.s.clock })), found, n.freq),
+          unlinkFrom(
+            setNode(c.s, found, (m) => ({ ...m, freq: m.freq + 1, used: c.s.clock })),
+            found,
+            n.freq,
+          ),
           found,
           n.freq + 1,
         );
@@ -436,9 +464,7 @@ const put: Op = {
           const what = `${e.key}: used ${times(e.freq)}, last at ${e.used}; ${why}`;
           yield step(
             c,
-            before
-              ? what
-              : `The cache is full, so look at every key for the one to evict. ${what}`,
+            before ? what : `The cache is full, so look at every key for the one to evict. ${what}`,
             ['put.full', 'put.scan'],
             2,
             [
@@ -567,7 +593,12 @@ export function pseudocode(settings: LfuSettings): PseudoBlock[] {
         lines: [
           L('get.sig', 0, 'get(k)   // scan to evict', 'To get the value of k:'),
           L('get.lookup', 1, 'e = map[k]', 'Look k up in the hash map: O(1).'),
-          L('get.miss', 1, 'if e == nil: misses += 1; return −1', 'If it is not there, report a miss.'),
+          L(
+            'get.miss',
+            1,
+            'if e == nil: misses += 1; return −1',
+            'If it is not there, report a miss.',
+          ),
           L('get.hit', 1, 'hits += 1', 'Otherwise count a hit,'),
           L('get.count', 1, 'e.uses += 1; e.used = now', 'and a use, at the current time.'),
           L('get.ret', 1, 'return e.value', 'Hand back the value.'),
@@ -610,7 +641,12 @@ export function pseudocode(settings: LfuSettings): PseudoBlock[] {
       lines: [
         L('get.sig', 0, 'get(k)', 'To get the value of k:'),
         L('get.lookup', 1, 'x = map[k]', 'Look k up in the hash map: O(1).'),
-        L('get.miss', 1, 'if x == nil: misses += 1; return −1', 'If it is not there, report a miss.'),
+        L(
+          'get.miss',
+          1,
+          'if x == nil: misses += 1; return −1',
+          'If it is not there, report a miss.',
+        ),
         L('get.hit', 1, 'hits += 1', 'Otherwise count a hit, and move x up a frequency:'),
         L(
           'get.unlink',
@@ -640,7 +676,12 @@ export function pseudocode(settings: LfuSettings): PseudoBlock[] {
         L('put.sig', 0, 'put(k, v)', 'To store v under k:'),
         L('put.lookup', 1, 'x = map[k]', 'Look k up in the hash map.'),
         L('put.exists', 1, 'if x ≠ nil', 'If k is cached,'),
-        L('put.update', 2, 'x.value = v', 'replace its value, and move x up a frequency, as get does:'),
+        L(
+          'put.update',
+          2,
+          'x.value = v',
+          'replace its value, and move x up a frequency, as get does:',
+        ),
         L('put.unlink', 2, 'unlink x from lists[x.freq]', 'take it out of its list,'),
         L(
           'put.min',
@@ -649,7 +690,12 @@ export function pseudocode(settings: LfuSettings): PseudoBlock[] {
           'move minFreq on if that emptied the smallest list,',
         ),
         L('put.inc', 2, 'x.freq += 1', 'count the use,'),
-        L('put.append', 2, 'append x to lists[x.freq]; return', 'and append it to the next list. Done.'),
+        L(
+          'put.append',
+          2,
+          'append x to lists[x.freq]; return',
+          'and append it to the next list. Done.',
+        ),
         L('put.full', 1, 'if size == capacity', 'If k is new and the cache is full,'),
         L(
           'put.victim',
@@ -658,8 +704,18 @@ export function pseudocode(settings: LfuSettings): PseudoBlock[] {
           'the key to evict is the head of the smallest frequency’s list: the least recently used of the least used. No search;',
         ),
         L('put.evict', 2, 'unlink y; delete map[y.key]', 'unlink it and forget it in the map.'),
-        L('put.new', 1, 'x = node(k, v, freq = 1); map[k] = x', 'Make a node for k, used once, and map k to it.'),
-        L('put.link', 1, 'append x to lists[1]', 'It goes at the tail of the list for frequency 1,'),
+        L(
+          'put.new',
+          1,
+          'x = node(k, v, freq = 1); map[k] = x',
+          'Make a node for k, used once, and map k to it.',
+        ),
+        L(
+          'put.link',
+          1,
+          'append x to lists[1]',
+          'It goes at the tail of the list for frequency 1,',
+        ),
         L('put.min1', 1, 'minFreq = 1', 'and nothing is used less than a new key.'),
       ],
     },

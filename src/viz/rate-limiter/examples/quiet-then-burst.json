@@ -3,7 +3,7 @@
   "viz": "rate-limiter",
   "id": "quiet-then-burst",
   "title": "A long quiet saves only a full bucket",
-  "notes": "TBD",
+  "notes": "Three requests at 0 empty the bucket. 30 quiet seconds are worth 9 tokens, but the bucket holds at most 3, so three of the four requests at 30 pass. A quiet spell saves up a full bucket, no more.",
   "settings": {
     "limiter": "bucket",
     "limit": 3,
@@ -11,34 +11,13 @@
   },
   "seed": 1,
   "ops": [
-    [
-      "request",
-      0
-    ],
-    [
-      "request",
-      0
-    ],
-    [
-      "request",
-      0
-    ],
-    [
-      "request",
-      30
-    ],
-    [
-      "request",
-      30
-    ],
-    [
-      "request",
-      30
-    ],
-    [
-      "request",
-      30
-    ]
+    ["request", 0],
+    ["request", 0],
+    ["request", 0],
+    ["request", 30],
+    ["request", 30],
+    ["request", 30],
+    ["request", 30]
   ],
   "at": {
     "op": -1,

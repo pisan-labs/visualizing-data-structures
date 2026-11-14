@@ -23,7 +23,16 @@
  *
  * Requests arrive in time order, from 0 to MAX_T seconds, at most MAX_SAME at one second.
  */
-import type { Mark, MarkRole, OpSpec, PseudoBlock, PseudoLine, Scalar, Step, Value } from '../../engine/types';
+import type {
+  Mark,
+  MarkRole,
+  OpSpec,
+  PseudoBlock,
+  PseudoLine,
+  Scalar,
+  Step,
+  Value,
+} from '../../engine/types';
 
 export type Kind = 'fixed' | 'log' | 'counter' | 'bucket';
 export const KINDS: readonly Kind[] = ['fixed', 'log', 'counter', 'bucket'];
@@ -119,7 +128,8 @@ const mark = (id: string, role: MarkRole): Mark => ({ id, role });
 export const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
 /** A number of units of 1/W as a short decimal: 24 units with W = 10 is "2.4". */
-export const dec = (units: number, W: number): string => String(Math.round((units / W) * 100) / 100);
+export const dec = (units: number, W: number): string =>
+  String(Math.round((units / W) * 100) / 100);
 
 /** "a", "a and b", "a, b and c". */
 export const and = (xs: string[]) =>
@@ -138,7 +148,8 @@ export const lastW = (t: number, W: number) => `(${fmt(t - W)}, ${t}]`;
 /** A request time: a whole number of seconds from 0 to MAX_T. */
 export function readTime(raw: Value | undefined): number | Error {
   const t = String(raw ?? '').trim();
-  if (!/^\d+$/.test(t)) return new Error(`A time is a whole number of seconds, from 0 to ${MAX_T}.`);
+  if (!/^\d+$/.test(t))
+    return new Error(`A time is a whole number of seconds, from 0 to ${MAX_T}.`);
   const v = Number(t);
   return v > MAX_T ? new Error(`Keep times between 0 and ${MAX_T} seconds.`) : v;
 }

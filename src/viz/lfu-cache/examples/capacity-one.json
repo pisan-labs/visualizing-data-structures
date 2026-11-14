@@ -3,35 +3,18 @@
   "viz": "lfu-cache",
   "id": "capacity-one",
   "title": "Room for one",
-  "notes": "TBD",
+  "notes": "Room for one entry. 7 is used 3 times, but when 8 comes there is nothing else to evict: 7 goes, and get(7) misses. With one slot, every policy evicts the same key.",
   "settings": {
     "approach": "pattern",
     "capacity": 1
   },
   "seed": 1,
   "ops": [
-    [
-      "put",
-      1,
-      10
-    ],
-    [
-      "get",
-      1
-    ],
-    [
-      "get",
-      1
-    ],
-    [
-      "put",
-      2,
-      20
-    ],
-    [
-      "get",
-      1
-    ]
+    ["put", 7, 70],
+    ["get", 7],
+    ["get", 7],
+    ["put", 8, 80],
+    ["get", 7]
   ],
   "at": {
     "op": -1,

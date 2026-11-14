@@ -89,7 +89,11 @@ export const lfuCache: VizDef<LfuState, LfuSettings, LfuExtra> = {
         label: 'A hot key, then a scan of new keys',
         make: (rng, n) => {
           const hot = rng.int(1, 9);
-          const ops: OpCall[] = [['put', hot, hot * 10], ['get', hot], ['get', hot]];
+          const ops: OpCall[] = [
+            ['put', hot, hot * 10],
+            ['get', hot],
+            ['get', hot],
+          ];
           for (let i = 0; ops.length < n; i++) {
             const k = 10 + i;
             ops.push(i % 3 === 2 ? ['get', hot] : ['put', k, k]);
@@ -221,6 +225,7 @@ export const lfuCache: VizDef<LfuState, LfuSettings, LfuExtra> = {
     updateIsAUse,
     capacityOne,
   ] as unknown as SavedExample[],
+  opening: 'evict-least-used',
   preview: { example: 'evict-least-used', level: 2, hide: ['m'] },
 };
 

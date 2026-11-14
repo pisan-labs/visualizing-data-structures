@@ -102,7 +102,7 @@ function listsView(step: LStep): Scene {
     shapes.push(
       text(`${fid(f)}-v`, PAD + FREQ.w / 2, y + 26, String(f), {
         anchor: 'middle',
-        weight: 'bold',
+        mono: true,
         role: fRole,
       }),
     );
@@ -137,7 +137,8 @@ function listsView(step: LStep): Scene {
       );
       const linked = !pending;
       const prev = linked && i > 0 ? uids[i - 1] : undefined;
-      const next = linked && i < uids.length - 1 && uids[i + 1] !== moving ? uids[i + 1] : undefined;
+      const next =
+        linked && i < uids.length - 1 && uids[i + 1] !== moving ? uids[i + 1] : undefined;
       shapes.push(...links(u, b, prev, next));
     });
     if (exists) {
@@ -150,9 +151,7 @@ function listsView(step: LStep): Scene {
   });
 
   // The key map, and an arrow from an entry being looked up to its node.
-  shapes.push(
-    text('map-label', PAD, MAP_Y + 20, 'map', { size: SMALL, cls: 'label', mono: true }),
-  );
+  shapes.push(text('map-label', PAD, MAP_Y + 20, 'map', { size: SMALL, cls: 'label', mono: true }));
   const ex = PAD + 44;
   s.map.forEach((u, slot) => {
     if (u === null) return;
@@ -223,9 +222,7 @@ function links(
   });
   if (next !== undefined) {
     out.push(dot(`${nid(u)}.next:dot`, nextAt));
-    out.push(
-      ...drawLink(`${nid(u)}.next`, [nextAt, { x: b.x + b.w + NODE_GAP - 1, y: nextAt.y }]),
-    );
+    out.push(...drawLink(`${nid(u)}.next`, [nextAt, { x: b.x + b.w + NODE_GAP - 1, y: nextAt.y }]));
   } else {
     out.push(...drawLink(`${nid(u)}.next`, slash({ x: nextAt.x, y: cy }), { head: false }));
   }
@@ -286,7 +283,17 @@ function tableView(step: LStep): Scene {
     const n = node(s, u);
     const mRole = roles.get(mid(u));
     const nRole = roles.get(nid(u));
-    shapes.push({ kind: 'rect', id: mid(u), x: PAD, y, w: T.key, h: T.h, r: 5, cls: 'cell live', role: mRole });
+    shapes.push({
+      kind: 'rect',
+      id: mid(u),
+      x: PAD,
+      y,
+      w: T.key,
+      h: T.h,
+      r: 5,
+      cls: 'cell live',
+      role: mRole,
+    });
     shapes.push(
       text(`${mid(u)}.k`, PAD + T.key / 2, y + 23, String(n.key), {
         anchor: 'middle',
@@ -294,7 +301,17 @@ function tableView(step: LStep): Scene {
         role: mRole,
       }),
     );
-    shapes.push({ kind: 'rect', id: nid(u), x: restX, y, w: T.rest, h: T.h, r: 5, cls: 'cell live', role: nRole });
+    shapes.push({
+      kind: 'rect',
+      id: nid(u),
+      x: restX,
+      y,
+      w: T.rest,
+      h: T.h,
+      r: 5,
+      cls: 'cell live',
+      role: nRole,
+    });
     [n.value, n.freq, n.used].forEach((v, i) =>
       shapes.push(
         text(`${nid(u)}.c${i}`, restX + COLS[i]!.x, y + 23, String(v), {
@@ -305,7 +322,10 @@ function tableView(step: LStep): Scene {
     );
     if (x.pick === u)
       shapes.push(
-        text('pick', restX + T.rest + 10, y + 23, '← fewest so far', { size: SMALL, role: 'found' }),
+        text('pick', restX + T.rest + 10, y + 23, '← fewest so far', {
+          size: SMALL,
+          role: 'found',
+        }),
       );
   });
   return {
@@ -318,7 +338,10 @@ function tableView(step: LStep): Scene {
 function label(step: LStep): string {
   const parts = [describe(step.state)];
   const x = step.extra ?? {};
-  if (x.moving) parts.push(`Key ${node(step.state, x.moving.uid).key} is on its way to the list for frequency ${x.moving.to}.`);
+  if (x.moving)
+    parts.push(
+      `Key ${node(step.state, x.moving.uid).key} is on its way to the list for frequency ${x.moving.to}.`,
+    );
   if (x.scan !== undefined && x.pick !== undefined)
     parts.push(
       `Scanning: looking at ${node(step.state, x.scan).key}; the pick so far is ${node(step.state, x.pick).key}.`,

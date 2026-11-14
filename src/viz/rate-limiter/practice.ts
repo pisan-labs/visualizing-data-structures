@@ -63,8 +63,7 @@ export const SPOT_ROWS: SpotRow[] = [
     alsoFits: ['sliding-window'],
   },
   {
-    problem:
-      'From a day of server logs, list the 10 users who made the most requests.',
+    problem: 'From a day of server logs, list the 10 users who made the most requests.',
     pattern: 'top-k',
     cue: 'the 10 users who made the most',
     why: 'Count each user’s requests, then keep the 10 largest counts in a min-heap of size 10. Nothing is turned away, so it is not rate limiting.',
@@ -107,13 +106,25 @@ export function rlPractice(def: () => Def): PracticeKind[] {
           ask = times(rng, first.at(-1)! + rng.int(0, 4), rng.int(4, 6));
           setup = first.map(req);
           const t = run([...setup, ...ask.map(req)], settings);
-          ok = t.endState().reqs.slice(first.length).map((r) => r.ok === true);
+          ok = t
+            .endState()
+            .reqs.slice(first.length)
+            .map((r) => r.ok === true);
           if (ok.some((x) => x) && ok.some((x) => !x)) break;
         }
         const pass = ask.filter((_, i) => ok[i]);
-        const verdicts = ask.map((t, i) => `${t} ${ok[i] ? 'passes' : 'is refused'}`);
+        // Each request's verdict, in the words of the final step of its operation.
+        const t = run([...setup, ...ask.map(req)], settings);
+        const verdicts = t.entries.slice(setup.length).map(
+          (e, i) =>
+            `at ${ask[i]}, ${e.steps
+              .at(-1)!
+              .say.split(/(?<=[^.]\.) /)[0]!
+              .replace(/\.$/, '')}`,
+        );
         const rule: Record<Kind, string> = {
-          fixed: 'The fixed window counts the requests let through in its window, [0, 10), [10, 20) and so on, and starts over at each edge.',
+          fixed:
+            'The fixed window counts the requests let through in its window, [0, 10), [10, 20) and so on, and starts over at each edge.',
           log: 'The sliding log lets a request through while fewer than 3 times are logged in the last 10 seconds, (t − 10, t].',
           counter:
             'The sliding window counter lets a request through while curr + prev × (10 − (t − start)) / 10 is under 3.',
@@ -125,7 +136,7 @@ export function rlPractice(def: () => Def): PracticeKind[] {
           setup,
           settings: settings as Settings,
           answer: { kind: 'sequence', value: pass.map(String) },
-          explain: `${rule[limiter]} One at a time: ${verdicts.join(', ')}.`,
+          explain: `${rule[limiter]} One at a time: ${verdicts.join('; ')}.`,
           watch: ask.map(req),
         };
       },
@@ -137,8 +148,8 @@ export function rlPractice(def: () => Def): PracticeKind[] {
         const settings = base('bucket');
         const setup = times(rng, rng.int(0, 3), rng.int(2, 4), 2).map(req);
         const last = Number(setup.at(-1)![1]);
-        const a = Math.min(MAX_T, last + rng.int(1, 5));
-        const b = Math.min(MAX_T, a + rng.int(0, 4));
+        const a = Math.min(MAX_T - 4, last + rng.int(1, 5));
+        const b = a + rng.int(1, 4);
         const t = run([...setup, req(a), req(b)], settings);
         const end = t.endState();
         const left = end.units / 10;

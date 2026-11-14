@@ -3,49 +3,21 @@
   "viz": "lfu-cache",
   "id": "scan-every-key",
   "title": "Scanning every key to evict",
-  "notes": "TBD",
+  "notes": "The same calls as Evicting the least used key, the obvious way. put(5, 50) looks at all 3 keys (7 used 3 times, 8 twice, 9 once) to find 9. The whole run takes 13 lookups and 3 scans, 16 in all, against 24 for the lists. With 3 keys the scan is cheaper; it loses when the cache is big.",
   "settings": {
     "approach": "naive",
     "capacity": 3
   },
   "seed": 1,
   "ops": [
-    [
-      "put",
-      1,
-      10
-    ],
-    [
-      "put",
-      2,
-      20
-    ],
-    [
-      "put",
-      3,
-      30
-    ],
-    [
-      "get",
-      1
-    ],
-    [
-      "get",
-      1
-    ],
-    [
-      "get",
-      2
-    ],
-    [
-      "put",
-      4,
-      40
-    ],
-    [
-      "get",
-      3
-    ]
+    ["put", 7, 70],
+    ["put", 8, 80],
+    ["put", 9, 90],
+    ["get", 7],
+    ["get", 7],
+    ["get", 8],
+    ["put", 5, 50],
+    ["get", 9]
   ],
   "at": {
     "op": -1,

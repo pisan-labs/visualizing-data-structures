@@ -3,35 +3,18 @@
   "viz": "lfu-cache",
   "id": "min-freq-moves",
   "title": "minFreq moves up, then back to 1",
-  "notes": "TBD",
+  "notes": "put(7, 70) makes minFreq 1. Each get(7) empties the smallest list, so minFreq goes to 2, then 3. put(8, 80) brings it straight back to 1: a new key has been used once. get(8) empties the freq-1 list again, and minFreq becomes 2, not 3.",
   "settings": {
     "approach": "pattern",
     "capacity": 3
   },
   "seed": 1,
   "ops": [
-    [
-      "put",
-      1,
-      10
-    ],
-    [
-      "get",
-      1
-    ],
-    [
-      "get",
-      1
-    ],
-    [
-      "put",
-      2,
-      20
-    ],
-    [
-      "get",
-      2
-    ]
+    ["put", 7, 70],
+    ["get", 7],
+    ["get", 7],
+    ["put", 8, 80],
+    ["get", 8]
   ],
   "at": {
     "op": -1,

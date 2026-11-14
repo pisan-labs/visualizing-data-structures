@@ -3,49 +3,21 @@
   "viz": "lfu-cache",
   "id": "evict-least-used",
   "title": "Evicting the least used key",
-  "notes": "TBD",
+  "notes": "Put 7, 8 and 9, then use 7 twice and 8 once: 7 has been used 3 times, 8 twice, 9 once. put(5, 50) evicts 9, the head of the freq-1 list (minFreq = 1), with no search, and get(9) then misses. Every call is a lookup and at most two splices.",
   "settings": {
     "approach": "pattern",
     "capacity": 3
   },
   "seed": 1,
   "ops": [
-    [
-      "put",
-      1,
-      10
-    ],
-    [
-      "put",
-      2,
-      20
-    ],
-    [
-      "put",
-      3,
-      30
-    ],
-    [
-      "get",
-      1
-    ],
-    [
-      "get",
-      1
-    ],
-    [
-      "get",
-      2
-    ],
-    [
-      "put",
-      4,
-      40
-    ],
-    [
-      "get",
-      3
-    ]
+    ["put", 7, 70],
+    ["put", 8, 80],
+    ["put", 9, 90],
+    ["get", 7],
+    ["get", 7],
+    ["get", 8],
+    ["put", 5, 50],
+    ["get", 9]
   ],
   "at": {
     "op": -1,

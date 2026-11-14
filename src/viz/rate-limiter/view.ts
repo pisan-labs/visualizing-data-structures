@@ -63,6 +63,11 @@ export function view(step: RLStep, settings: RLSettings): Scene {
   const { kind, L, W } = p;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const T = axisEnd(s.reqs.map((r) => r.t));
+  // The bands are as tall as the highest stack of markers (at least 3), inside a frame that
+  // keeps room for MAX_SAME.
+  const perSecond = new Map<number, number>();
+  for (const r of s.reqs) perSecond.set(r.t, (perSecond.get(r.t) ?? 0) + 1);
+  const bandTop = AXIS_Y - Math.max(3, ...perSecond.values()) * PITCH - 6;
   const px = TL_W / T;
   const at = (t: number) => X0 + t * px;
   const shapes: Shape[] = [];
@@ -92,8 +97,8 @@ export function view(step: RLStep, settings: RLSettings): Scene {
         kind: 'polygon',
         id,
         points: [
-          { x: at(a), y: STACK_TOP - 6 },
-          { x: at(b), y: STACK_TOP - 6 },
+          { x: at(a), y: bandTop },
+          { x: at(b), y: bandTop },
           { x: at(b), y: AXIS_Y },
           { x: at(a), y: AXIS_Y },
         ],
@@ -102,7 +107,7 @@ export function view(step: RLStep, settings: RLSettings): Scene {
       });
       if (kind === 'fixed' && (b - a) * px >= 30) {
         const n = s.reqs.filter((r) => r.ok && r.t >= a && r.t < b).length;
-        text(`wc-${a}`, (at(a) + at(b)) / 2, STACK_TOP + 8, `${n}/${L}`, {
+        text(`wc-${a}`, (at(a) + at(b)) / 2, bandTop - 6, `${n}/${L}`, {
           anchor: 'middle',
           cls: 'label',
           mono: true,
@@ -118,8 +123,8 @@ export function view(step: RLStep, settings: RLSettings): Scene {
       kind: 'polygon',
       id: 'overlap',
       points: [
-        { x: at(a), y: STACK_TOP - 6 },
-        { x: at(b), y: STACK_TOP - 6 },
+        { x: at(a), y: bandTop },
+        { x: at(b), y: bandTop },
         { x: at(b), y: AXIS_Y },
         { x: at(a), y: AXIS_Y },
       ],
@@ -206,7 +211,10 @@ export function view(step: RLStep, settings: RLSettings): Scene {
     const label = `last ${W} s: ${n} let through`;
     const w = label.length * TEXT * CHAR;
     const cx = Math.max(PAD + w / 2, Math.min(WIDTH - PAD - w / 2, (a + b) / 2));
-    text('roll-t', cx, ROLL_Y + 22, label, { anchor: 'middle', role: role === 'error' ? 'error' : undefined });
+    text('roll-t', cx, ROLL_Y + 22, label, {
+      anchor: 'middle',
+      role: role === 'error' ? 'error' : undefined,
+    });
   }
 
   // What the limiter keeps.

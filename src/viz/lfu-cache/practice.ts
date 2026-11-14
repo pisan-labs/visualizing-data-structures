@@ -20,7 +20,8 @@ type Def = VizDef<LfuState, LfuSettings, LfuExtra>;
 const call = ([op, ...args]: OpCall) => `\`${op}(${args.join(', ')})\``;
 const calls = (cs: OpCall[]) => cs.map(call).join(', ');
 const pick = <X>(rng: Rng, xs: X[]): X => xs[rng.int(0, xs.length - 1)]!;
-const KEYS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+/** Keys 4 to 9, so they do not look like the frequencies 1, 2, 3. */
+const KEYS = [4, 5, 6, 7, 8, 9];
 
 /** Our own problem statements, for "spot it". */
 export const SPOT_ROWS: SpotRow[] = [
@@ -133,15 +134,19 @@ export function lfuPractice(def: () => Def): PracticeKind[] {
               : ['get', pick(rng, keys)],
           );
         const end = run([...setup, ...ask]).endState();
-        const present = keys.filter((key) => lookup(end, key) !== null);
-        const key = pick(rng, present.length ? present : [Number(end.nodes[0]!.key)]);
+        // A key the operations touch, if one is still cached, so the picture does not give it away.
+        const touched = keys.filter(
+          (key) => lookup(end, key) !== null && ask.some(([op, k]) => op === 'get' && k === key),
+        );
+        const present = touched.length ? touched : end.nodes.map((n) => n.key);
+        const key = pick(rng, present);
         const freq = node(end, lookup(end, key)!).freq;
         return {
           prompt: `The cache holds at most 3 entries; a put and every hit count as a use. Run ${calls(ask)}. How many times has ${key} been used then?`,
           setup,
           settings: settings as Settings,
           answer: { kind: 'number', value: freq },
-          explain: `${key} sits in the freq-${freq} list at the end: the lists are ${listsText(end)}. A miss does not count, and a key that is evicted and put back starts again at 1.`,
+          explain: `${key} sits in the freq-${freq} list at the end: the lists are ${listsText(end)}. A miss does not count as a use.`,
           watch: ask,
         };
       },

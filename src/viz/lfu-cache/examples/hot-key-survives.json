@@ -3,50 +3,21 @@
   "viz": "lfu-cache",
   "id": "hot-key-survives",
   "title": "A hot key survives a scan",
-  "notes": "TBD",
+  "notes": "7 is used 3 times, then 8, 9, 5 and 6 come once each. Each new key pushes out the oldest of the keys used once, never 7, and get(7) at the end hits. An LRU cache of 3 runs the same calls and misses: it evicted 7 when 5 came in.",
   "settings": {
     "approach": "pattern",
     "capacity": 3
   },
   "seed": 1,
   "ops": [
-    [
-      "put",
-      1,
-      10
-    ],
-    [
-      "get",
-      1
-    ],
-    [
-      "get",
-      1
-    ],
-    [
-      "put",
-      2,
-      20
-    ],
-    [
-      "put",
-      3,
-      30
-    ],
-    [
-      "put",
-      4,
-      40
-    ],
-    [
-      "put",
-      5,
-      50
-    ],
-    [
-      "get",
-      1
-    ]
+    ["put", 7, 70],
+    ["get", 7],
+    ["get", 7],
+    ["put", 8, 80],
+    ["put", 9, 90],
+    ["put", 5, 50],
+    ["put", 6, 60],
+    ["get", 7]
   ],
   "at": {
     "op": -1,

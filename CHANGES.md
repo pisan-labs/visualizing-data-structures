@@ -499,3 +499,5 @@
 2026-11-14 [code] Merged wave 9D word2vec (skip-gram with negative sampling in 2D, separate w and c vectors) and policy-optimization (REINFORCE, PPO clip with a critic, GRPO group advantages, DPO preference pairs; gradient-checked)
 
 2026-11-14 [code] Merged wave 9D lora (frozen W plus (alpha/r)BA, Adam training toward a target, the rank floor, merge into W) and ring-allreduce (reduce-scatter and all-gather on 2 to 5 workers, 2(N-1)/N vectors sent per worker). Tier 3 complete: all 33 AI pages on next
+
+2026-11-14 [doc] Merged the tier-3 fact check: 18 fixes on 7 pages (word2vec subsampling is the paper's formula, LoRA rank study on two tasks, ring bound assumes no compression, rnn-lstm 0.953^7, mcts budget-30 story, policy-optimization "still"); outside facts confirmed

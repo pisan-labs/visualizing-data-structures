@@ -18,7 +18,15 @@
  * The median of an even count is the mean of the two middle values by default; the option
  * "lower" gives the lower of the two, as CLRS defines the median.
  */
-import type { Mark, OpSpec, PseudoBlock, PseudoLine, Scalar, Step, Value } from '../../engine/types';
+import type {
+  Mark,
+  OpSpec,
+  PseudoBlock,
+  PseudoLine,
+  Scalar,
+  Step,
+  Value,
+} from '../../engine/types';
 import { approachOf, Work, workVars, type Approach } from '../_patterns/kit';
 import { mark, value } from '../_heaps2/draw';
 import { CountingHeap, type HItem, type Order, type SiftEvent } from '../_heaps2/heap';
@@ -123,7 +131,12 @@ export function replay(stream: readonly HItem[], even: Even = 'mean'): Rebuilt {
   for (const x of stream) {
     heapsAdd(low, high, x);
     naive += sortedAdd(sorted, x);
-    medians.push(median(sorted.map((y) => y.key), even));
+    medians.push(
+      median(
+        sorted.map((y) => y.key),
+        even,
+      ),
+    );
   }
   return {
     low: low.items,
@@ -467,10 +480,20 @@ export function pseudocode(settings: MedianSettings): PseudoBlock[] {
       {
         op: 'add',
         lines: [
-          L('sig', 0, 'add(x)   // a sorted list S', 'To add x and keep the median, keep every value in a sorted list S:'),
+          L(
+            'sig',
+            0,
+            'add(x)   // a sorted list S',
+            'To add x and keep the median, keep every value in a sorted list S:',
+          ),
           L('add', 1, 'S.append(x); j = len(S) − 1', 'put x at the end;'),
           L('cmp', 1, 'while j > 0 and S[j − 1] > x', 'while the value to its left is bigger,'),
-          L('shift', 2, 'S[j] = S[j − 1]; S[j − 1] = x; j = j − 1', 'that value shifts right and x moves left.'),
+          L(
+            'shift',
+            2,
+            'S[j] = S[j − 1]; S[j − 1] = x; j = j − 1',
+            'that value shifts right and x moves left.',
+          ),
           L(
             'median',
             1,
@@ -488,7 +511,12 @@ export function pseudocode(settings: MedianSettings): PseudoBlock[] {
     {
       op: 'add',
       lines: [
-        L('sig', 0, 'add(x)   // low: a max-heap, high: a min-heap', 'To add x and keep the median:'),
+        L(
+          'sig',
+          0,
+          'add(x)   // low: a max-heap, high: a min-heap',
+          'To add x and keep the median:',
+        ),
         L(
           'cmp',
           1,
@@ -497,9 +525,19 @@ export function pseudocode(settings: MedianSettings): PseudoBlock[] {
         ),
         L('low', 2, 'low.push(x)', 'it goes into the low half, a max-heap;'),
         L('high', 1, 'else: high.push(x)', 'otherwise into the high half, a min-heap.'),
-        L('balance', 1, 'if low.size > high.size + 1', 'If the low half has two more values than the high half,'),
+        L(
+          'balance',
+          1,
+          'if low.size > high.size + 1',
+          'If the low half has two more values than the high half,',
+        ),
         L('moveUp', 2, 'high.push(low.popMax())', 'its top moves to the high half.'),
-        L('balance2', 1, 'else if high.size > low.size', 'If the high half has more than the low half,'),
+        L(
+          'balance2',
+          1,
+          'else if high.size > low.size',
+          'If the high half has more than the low half,',
+        ),
         L('moveDown', 2, 'low.push(high.popMin())', 'its top moves to the low half.'),
         L(
           'median',

@@ -75,7 +75,10 @@ function heapRow(step: TopStep, roles: Roles, top: number): Part {
     top: row.bottom + 2,
   });
   const bottom = row.bottom + pointerRoom(e.lanes);
-  return { shapes: [...row.shapes, ...ptr.shapes], bounds: { x: 0, y: 0, w: row.right + PAD, h: bottom } };
+  return {
+    shapes: [...row.shapes, ...ptr.shapes],
+    bounds: { x: 0, y: 0, w: row.right + PAD, h: bottom },
+  };
 }
 
 /** The sort: rows A and B, with brackets over the two runs being merged. */
@@ -176,7 +179,11 @@ export function view(step: TopStep, settings: TopSettings, stage?: StageSize): S
   const label = labelOf(step, settings);
   if (!e) {
     const row = drawRow({ id: 'a', items: s.a, x0: X0, top: 16, roles, name: 'A' });
-    return { shapes: row.shapes, bounds: { x: 0, y: 0, w: row.right + PAD, h: row.bottom + PAD }, label };
+    return {
+      shapes: row.shapes,
+      bounds: { x: 0, y: 0, w: row.right + PAD, h: row.bottom + PAD },
+      label,
+    };
   }
   const method = methodOf(settings);
   const head = heading('heading', headingText(e, s.a.length, settings), PAD, HEAD_Y);

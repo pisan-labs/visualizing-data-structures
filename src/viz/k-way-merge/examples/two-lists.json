@@ -2,21 +2,13 @@
   "format": 1,
   "viz": "k-way-merge",
   "id": "two-lists",
-  "title": "two-lists",
-  "notes": "x",
+  "title": "Two lists: a plain merge",
+  "notes": "With k = 2 the heap holds two heads, and each value out costs one comparison with the other head: 7 comparisons, the same as merging the two lists directly.",
   "settings": {
     "approach": "pattern"
   },
   "seed": 1,
-  "ops": [
-    [
-      "load",
-      "1 4 6 9 | 2 3 7 8"
-    ],
-    [
-      "merge"
-    ]
-  ],
+  "ops": [["load", "1 4 6 9 | 2 3 7 8"], ["merge"]],
   "at": {
     "op": 0,
     "step": 0

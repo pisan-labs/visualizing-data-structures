@@ -4,14 +4,7 @@ import { Timeline } from '../../engine/timeline';
 import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { smallestText } from '../../render/text-size';
 import { kWayMerge as def } from '.';
-import {
-  formatLists,
-  heapCost,
-  pairsCost,
-  readLists,
-  sortCost,
-  type Method,
-} from './model';
+import { formatLists, heapCost, pairsCost, readLists, sortCost, type Method } from './model';
 
 /** k sorted lists, 1 to 5 values each, at most 12 in all. */
 const lists = fc

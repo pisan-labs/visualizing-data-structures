@@ -2,13 +2,19 @@
   "format": 1,
   "viz": "top-k",
   "id": "quickselect-worst",
-  "title": "quickselect-worst",
-  "notes": "x",
-  "settings": { "approach": "select", "goal": "top" },
+  "title": "Quickselect’s worst case: falling values",
+  "notes": "30 27 … 6 and k = 3, with the last value as pivot. The pivot is the smallest value, then the largest, then the smallest of what is left, and each partition peels off one value: 33 comparisons for 9 values, against 8 for the heap. A random pivot makes this unlikely.",
+  "settings": {
+    "approach": "select",
+    "goal": "top"
+  },
   "seed": 1,
   "ops": [
     ["load", "30 27 24 21 18 15 12 9 6"],
     ["top", 3]
   ],
-  "at": { "op": 0, "step": 0 }
+  "at": {
+    "op": 0,
+    "step": 0
+  }
 }

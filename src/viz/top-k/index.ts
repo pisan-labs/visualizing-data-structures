@@ -2,6 +2,7 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall, Preset, SavedExample, Settings, VizDef } from '../../engine/types';
 import type { Rng } from '../../engine/rng';
 import { approachSetting } from '../_patterns/kit';
+import { withApproach } from '../_heaps2/say';
 import cppSource from './code/cpp/top_k.hpp?raw';
 import javaSource from './code/java/TopK.java?raw';
 import pythonSource from './code/python/top_k.py?raw';
@@ -99,18 +100,14 @@ export const topK: VizDef<TopState, TopSettings, TopExtra> = {
   blurb:
     'The k largest of n values: keep the best k so far in a min-heap and let each new value challenge its root. O(n log k) comparisons, against O(n log n) for sorting everything and O(n) on average for quickselect.',
   settings: [
-    {
-      ...approachSetting({
+    withApproach(
+      approachSetting({
         pattern: 'A min-heap of size k, O(n log k)',
         naive: 'Sort everything, O(n log n)',
         help: 'All three give the same answer. Watch the comparisons, or use Compare with this same page to run two side by side.',
       }),
-      options: [
-        { value: 'pattern', label: 'A min-heap of size k, O(n log k)' },
-        { value: 'naive', label: 'Sort everything, O(n log n)' },
-        { value: 'select', label: 'Quickselect, O(n) on average' },
-      ],
-    },
+      { value: 'select', label: 'Quickselect, O(n) on average' },
+    ),
     {
       kind: 'choice',
       key: 'goal',
@@ -177,7 +174,10 @@ export const topK: VizDef<TopState, TopSettings, TopExtra> = {
         why: 'Merge sort does the whole sort whatever k is, even for k = 1.',
         example: 'sort-everything',
       },
-      average: { cost: 'Θ(n log n)', why: 'Every pass touches every value, and there are about log n passes.' },
+      average: {
+        cost: 'Θ(n log n)',
+        why: 'Every pass touches every value, and there are about log n passes.',
+      },
       worst: { cost: 'Θ(n log n)', why: 'The same passes; at most n − 1 comparisons each.' },
       note: 'Sorting gives the k largest in order for free, and every other rank too.',
     },

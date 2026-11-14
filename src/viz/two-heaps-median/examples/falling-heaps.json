@@ -2,46 +2,22 @@
   "format": 1,
   "viz": "two-heaps-median",
   "id": "falling-heaps",
-  "title": "falling-heaps",
-  "notes": "x",
+  "title": "A falling stream, with two heaps",
+  "notes": "The same 80 70 60 … 10 with two heaps: 23 comparisons, against 28 for the sorted list. Every new value goes into the low half and every other one moves the low half’s top across.",
   "settings": {
     "approach": "pattern",
     "even": "mean"
   },
   "seed": 1,
   "ops": [
-    [
-      "add",
-      80
-    ],
-    [
-      "add",
-      70
-    ],
-    [
-      "add",
-      60
-    ],
-    [
-      "add",
-      50
-    ],
-    [
-      "add",
-      40
-    ],
-    [
-      "add",
-      30
-    ],
-    [
-      "add",
-      20
-    ],
-    [
-      "add",
-      10
-    ]
+    ["add", 80],
+    ["add", 70],
+    ["add", 60],
+    ["add", 50],
+    ["add", 40],
+    ["add", 30],
+    ["add", 20],
+    ["add", 10]
   ],
   "at": {
     "op": 0,

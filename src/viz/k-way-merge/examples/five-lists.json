@@ -2,21 +2,13 @@
   "format": 1,
   "viz": "k-way-merge",
   "id": "five-lists",
-  "title": "five-lists",
-  "notes": "x",
+  "title": "Five short lists",
+  "notes": "Five lists of two values. A heap of 5 heads costs up to 4 comparisons per value out, and with lists this short that never pays: 28 comparisons, against 23 to concatenate and sort and 18 to merge in pairs.",
   "settings": {
     "approach": "pattern"
   },
   "seed": 1,
-  "ops": [
-    [
-      "load",
-      "6 20 | 3 14 | 9 11 | 1 17 | 5 8"
-    ],
-    [
-      "merge"
-    ]
-  ],
+  "ops": [["load", "6 20 | 3 14 | 9 11 | 1 17 | 5 8"], ["merge"]],
   "at": {
     "op": 0,
     "step": 0

@@ -73,8 +73,7 @@ export const SPOT_ROWS: SpotRow[] = [
     alsoFits: ['merge-sorted-lists'],
   },
   {
-    problem:
-      'An unsorted list of a million exam scores. Report the 10 highest scores.',
+    problem: 'An unsorted list of a million exam scores. Report the 10 highest scores.',
     pattern: 'top-k',
     cue: ['unsorted', 'the 10 highest'],
     why: 'One list, not sorted: keep a min-heap of the 10 best so far and let each score challenge its root.',
@@ -131,7 +130,9 @@ export function mergePractice(def: () => Def): PracticeKind[] {
           answer: { kind: 'number', value: root.key },
           explain: `After ${out.join(' ')}, the heap holds each list’s first value not yet taken: ${settled
             .extra!.heap!.map((x) => `${x.key} (${listName(x.src ?? 0)})`)
-            .join(', ')}. The root, ${root.key} from ${listName(root.src ?? 0)}, is the smallest of them, so it goes out next.`,
+            .join(
+              ', ',
+            )}. The root, ${root.key} from ${listName(root.src ?? 0)}, is the smallest of them, so it goes out next.`,
           watch: [['merge']],
         };
       },
@@ -151,7 +152,9 @@ export function mergePractice(def: () => Def): PracticeKind[] {
           answer: { kind: 'sequence', value: heap.map((x) => String(x.key)) },
           explain: `The heap holds one value from each list that still has any: ${heap
             .map((x) => `${x.key} (${listName(x.src ?? 0)})`)
-            .join(', ')}, root first. Each time the root went out, its list’s next value took the root’s place and sank below any smaller child.`,
+            .join(
+              ', ',
+            )}, root first. Each time the root went out, its list’s next value took the root’s place and sank below any smaller child.`,
           watch: [['merge']],
         };
       },

@@ -17,11 +17,19 @@
  * Work, in the units of src/viz/_patterns/kit.ts: one counter, comparisons (two values compared).
  * `naive total`, `pattern total` and `pairs total` are what each way costs on these lists.
  */
-import type { Mark, OpSpec, PseudoBlock, PseudoLine, Scalar, Step, Value } from '../../engine/types';
+import type {
+  Mark,
+  OpSpec,
+  PseudoBlock,
+  PseudoLine,
+  Scalar,
+  Step,
+  Value,
+} from '../../engine/types';
 import { approachOf, Work, workVars, type Totals } from '../_patterns/kit';
 import { mark, value } from '../_heaps2/draw';
 import { CountingHeap, type HItem } from '../_heaps2/heap';
-import { mergeSort, type MergeEvent, type Rows } from '../_heaps2/merge-sort';
+import { mergeSort, mergeSortComparisons, type MergeEvent, type Rows } from '../_heaps2/merge-sort';
 import { and, plural, siftSay } from '../_heaps2/say';
 
 export const MAX_LISTS = 5;
@@ -98,7 +106,8 @@ export function readLists(text: string): number[][] | string {
     .split(/[|;/]/)
     .map((p) => p.trim())
     .filter(Boolean);
-  if (parts.length === 0) return 'Type some sorted lists, split by |, such as 1 8 12 | 3 4 10 | 2 9.';
+  if (parts.length === 0)
+    return 'Type some sorted lists, split by |, such as 1 8 12 | 3 4 10 | 2 9.';
   if (parts.length > MAX_LISTS)
     return `That is ${parts.length} lists. Use at most ${MAX_LISTS}, so the heap stays readable.`;
   const lists: number[][] = [];
@@ -146,7 +155,8 @@ export function heapCost(lists: readonly (readonly number[])[]): number {
   while (h.size) {
     const j = h.top()!.src!;
     at[j]!++;
-    if (at[j]! < lists[j]!.length) h.replaceTop({ uid: uid++, key: lists[j]![at[j]!]!, tie: j, src: j });
+    if (at[j]! < lists[j]!.length)
+      h.replaceTop({ uid: uid++, key: lists[j]![at[j]!]!, tie: j, src: j });
     else h.pop();
   }
   return h.comparisons;
@@ -184,10 +194,7 @@ export function pairsCost(lists: readonly (readonly number[])[]): number {
 }
 
 export const sortCost = (lists: readonly (readonly number[])[]): number =>
-  mergeSort(
-    lists.flat().map((key, uid) => ({ uid, key })),
-    'asc',
-  ).comparisons;
+  mergeSortComparisons(lists.flat(), 'asc');
 
 export interface AllTotals extends Totals {
   pairs: number;
@@ -250,6 +257,9 @@ function varsOf(c: Ctx, own: Record<string, Scalar>): Record<string, Scalar> {
   return { k: c.k, n: c.n, ...own, ...workVars(c.work, c.tot), 'pairs total': c.tot.pairs };
 }
 
+/** Equal values: the one from the earlier list goes first. */
+const TIES = { first: 'its list comes first', later: 'its list comes later' };
+
 const startRows = (s: MergeState): (HItem | null)[][] => s.lists.map((l) => [...l]);
 
 /** The pattern: a min-heap of the lists' heads. */
@@ -306,7 +316,7 @@ function* pattern(c: Ctx): Gen {
     for (const ev of events) {
       sync(ev.comparisons);
       yield step(
-        siftSay(ev, 'min', 'its list comes first'),
+        siftSay(ev, 'min', TIES),
         ['init'],
         [value(ev.challenger, 'active'), value(ev.holder, 'compare')],
         ev.items,
@@ -333,7 +343,7 @@ function* pattern(c: Ctx): Gen {
       for (const ev of events) {
         sync(ev.comparisons);
         yield step(
-          siftSay(ev, 'min', 'its list comes first'),
+          siftSay(ev, 'min', TIES),
           ['next'],
           [value(ev.moving, 'active'), value(ev.challenger, 'compare')],
           ev.items,
@@ -358,7 +368,7 @@ function* pattern(c: Ctx): Gen {
     for (const ev of events) {
       sync(ev.comparisons);
       yield step(
-        siftSay(ev, 'min', 'its list comes first'),
+        siftSay(ev, 'min', TIES),
         ['empty'],
         [value(ev.moving, 'active'), value(ev.challenger, 'compare')],
         ev.items,
@@ -431,7 +441,9 @@ function* naive(c: Ctx): Gen {
         state: s,
         marks: [value(e.taken, 'active'), value(e.other, 'compare')],
         say: `Compare the heads of the two runs, ${e.taken.key} and ${e.other.key}: ${
-          e.taken.key === e.other.key ? `equal, so the left one, ${e.taken.key}` : `${e.taken.key} is smaller, so it`
+          e.taken.key === e.other.key
+            ? `equal, so the left one, ${e.taken.key}`
+            : `${e.taken.key} is smaller, so it`
         } goes to ${dst}[${e.dest}].`,
         lines: ['merge', 'take'],
         level: 2,
@@ -533,7 +545,9 @@ function* pairs(c: Ctx): Gen {
         out.push(taken);
         yield step(
           `Compare the heads of ${listName(a)} and ${listName(b)}, ${x.key} and ${y.key}: ${
-            x.key === y.key ? `equal, so ${listName(a)}’s ${x.key}` : `${taken.key} is smaller, so it`
+            x.key === y.key
+              ? `equal, so ${listName(a)}’s ${x.key}`
+              : `${taken.key} is smaller, so it`
           } goes next.`,
           ['pair', 'take'],
           [value(taken, 'active'), value(left ? y : x, 'compare')],
@@ -637,17 +651,42 @@ export function pseudocode(settings: MergeSettings): PseudoBlock[] {
       {
         op: 'merge',
         lines: [
-          L('sig', 0, 'merge(L1, …, Lk)   // concatenate and sort', 'To merge k sorted lists the obvious way:'),
-          L('concat', 1, 'A = L1 + L2 + … + Lk', 'put all the values in one array, list after list;'),
-          L('pass', 1, 'for w = 1, 2, 4, … while w < n', 'merge sort it, bottom up: runs of length w,'),
+          L(
+            'sig',
+            0,
+            'merge(L1, …, Lk)   // concatenate and sort',
+            'To merge k sorted lists the obvious way:',
+          ),
+          L(
+            'concat',
+            1,
+            'A = L1 + L2 + … + Lk',
+            'put all the values in one array, list after list;',
+          ),
+          L(
+            'pass',
+            1,
+            'for w = 1, 2, 4, … while w < n',
+            'merge sort it, bottom up: runs of length w,',
+          ),
           L(
             'merge',
             2,
             'merge each pair of runs of w into a run of 2w',
             'merge each pair of neighboring runs into one run twice as long,',
           ),
-          L('take', 3, 'move the smaller head; repeat', 'by moving the smaller of the two front values, again and again;'),
-          L('rest', 3, 'move the rest of the other run', 'when one run is used up, the rest of the other follows.'),
+          L(
+            'take',
+            3,
+            'move the smaller head; repeat',
+            'by moving the smaller of the two front values, again and again;',
+          ),
+          L(
+            'rest',
+            3,
+            'move the rest of the other run',
+            'when one run is used up, the rest of the other follows.',
+          ),
           L('ret', 1, 'return A, sorted', 'The sorted array is the merged list.'),
         ],
       },
@@ -657,7 +696,12 @@ export function pseudocode(settings: MergeSettings): PseudoBlock[] {
       {
         op: 'merge',
         lines: [
-          L('sig', 0, 'merge(L1, …, Lk)   // in pairs, round by round', 'To merge k sorted lists two at a time:'),
+          L(
+            'sig',
+            0,
+            'merge(L1, …, Lk)   // in pairs, round by round',
+            'To merge k sorted lists two at a time:',
+          ),
           L('round', 1, 'while more than one list is left', 'while more than one list is left,'),
           L(
             'pair',
@@ -665,8 +709,18 @@ export function pseudocode(settings: MergeSettings): PseudoBlock[] {
             'merge L1 with L2, L3 with L4, …',
             'merge them in pairs, each pair into one list (a list with no partner waits);',
           ),
-          L('take', 3, 'move the smaller head; repeat', 'by moving the smaller of the two front values, again and again;'),
-          L('rest', 3, 'move the rest of the other list', 'when one list is used up, the rest of the other follows.'),
+          L(
+            'take',
+            3,
+            'move the smaller head; repeat',
+            'by moving the smaller of the two front values, again and again;',
+          ),
+          L(
+            'rest',
+            3,
+            'move the rest of the other list',
+            'when one list is used up, the rest of the other follows.',
+          ),
           L('ret', 1, 'return the one list left', 'The last list left is the merged list.'),
         ],
       },
@@ -675,7 +729,12 @@ export function pseudocode(settings: MergeSettings): PseudoBlock[] {
     {
       op: 'merge',
       lines: [
-        L('sig', 0, 'merge(L1, …, Lk)   // a min-heap of heads', 'To merge k sorted lists into one:'),
+        L(
+          'sig',
+          0,
+          'merge(L1, …, Lk)   // a min-heap of heads',
+          'To merge k sorted lists into one:',
+        ),
         L(
           'init',
           1,
@@ -683,7 +742,12 @@ export function pseudocode(settings: MergeSettings): PseudoBlock[] {
           'put each list’s head, its smallest value, into a min-heap;',
         ),
         L('loop', 1, 'while H is not empty', 'while any value is left,'),
-        L('pop', 2, 'x = H.min(); out.append(x)', 'the root is the smallest value left anywhere: it goes out next;'),
+        L(
+          'pop',
+          2,
+          'x = H.min(); out.append(x)',
+          'the root is the smallest value left anywhere: it goes out next;',
+        ),
         L(
           'next',
           2,

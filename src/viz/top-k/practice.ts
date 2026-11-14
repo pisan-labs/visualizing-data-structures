@@ -3,14 +3,7 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
 import { spotItKind, type SpotRow } from '../_patterns/kit';
 import { and } from '../_heaps2/say';
-import {
-  defaults,
-  START_K,
-  totals,
-  type TopExtra,
-  type TopSettings,
-  type TopState,
-} from './model';
+import { defaults, START_K, totals, type TopExtra, type TopSettings, type TopState } from './model';
 
 type Def = VizDef<TopState, TopSettings, TopExtra>;
 
@@ -40,8 +33,7 @@ export const SPOT_ROWS: SpotRow[] = [
     near: ['two-heaps-median', 'k-way-merge', 'sliding-window'],
   },
   {
-    problem:
-      'Given the positions of many delivery vans, find the 5 vans closest to the depot.',
+    problem: 'Given the positions of many delivery vans, find the 5 vans closest to the depot.',
     pattern: 'top-k',
     cue: 'the 5 closest',
     why: 'Keep the 5 closest so far in a max-heap by distance; a van closer than the root (the farthest of the 5) replaces it. The smallest k is the same trick with the order turned around.',

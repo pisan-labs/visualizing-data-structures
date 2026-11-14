@@ -1,9 +1,21 @@
 /**
- * Words shared by the heap pattern pages: one sentence per heap comparison, lists in prose, and
- * input parsing for lists of small whole numbers.
+ * Words shared by the heap pattern pages: one sentence per heap comparison, lists in prose,
+ * input parsing for lists of small whole numbers, and a third approach for the approach setting.
  */
-import type { Value } from '../../engine/types';
+import type { SettingSpec, Value } from '../../engine/types';
 import type { Order, SiftEvent } from './heap';
+
+/**
+ * The approach setting of src/viz/_patterns/kit.ts with one more option, for a page that has a
+ * second way besides the naive one (quickselect for top k, merging in pairs for k-way merge).
+ * The pattern stays first and the default.
+ */
+export function withApproach(
+  spec: SettingSpec,
+  option: { value: string; label: string },
+): SettingSpec {
+  return spec.kind === 'choice' ? { ...spec, options: [...spec.options, option] } : spec;
+}
 
 export const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
@@ -32,16 +44,24 @@ export function words(order: Order) {
 }
 
 /**
- * One sentence for a heap comparison. `tieWord` explains an equal key that still wins (k-way
- * merge: "an earlier list").
+ * One sentence for a heap comparison. `ties` explains equal keys that are ordered by their tie
+ * field (k-way merge: the value from the earlier list goes first).
  */
-export function siftSay(ev: SiftEvent, order: Order, tieWord = 'it came first'): string {
+export function siftSay(
+  ev: SiftEvent,
+  order: Order,
+  ties?: { first: string; later: string },
+): string {
   const w = words(order);
   const c = ev.challenger.key;
   const h = ev.holder.key;
   const v = ev.moving.key;
   const sign =
-    c === h ? (ev.wins ? `${c} = ${h}, but ${tieWord}` : `${c} = ${h}`) : `${c} ${ev.wins ? w.lt : w.notLt} ${h}`;
+    c !== h
+      ? `${c} ${ev.wins ? w.lt : w.notLt} ${h}`
+      : ties
+        ? `${c} = ${h}, but ${ev.wins ? ties.first : ties.later}`
+        : `${c} = ${h}`;
   if (ev.side === 'parent') {
     if (ev.wins)
       return `Compare ${v} with its parent ${h}: ${sign}, so they swap.${ev.settled ? ` ${v} is the root now.` : ''}`;
@@ -88,7 +108,12 @@ export function readList(text: string, rules: ListRules): number[] | string {
 }
 
 /** An operation's whole number from lo to hi, or why it cannot be read. */
-export function readInt(arg: Value | undefined, lo: number, hi: number, what: string): number | string {
+export function readInt(
+  arg: Value | undefined,
+  lo: number,
+  hi: number,
+  what: string,
+): number | string {
   const t = String(arg ?? '').trim();
   if (!INT.test(t)) return `Type ${what} as one whole number, such as ${Math.min(hi, lo + 2)}.`;
   const v = Number(t);

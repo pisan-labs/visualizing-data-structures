@@ -16,11 +16,19 @@
  * Work, in the units of src/viz/_patterns/kit.ts: one counter, comparisons (two values compared).
  * `naive total`, `pattern total` and `quickselect total` are what each way costs on this input.
  */
-import type { Mark, OpSpec, PseudoBlock, PseudoLine, Scalar, Step, Value } from '../../engine/types';
+import type {
+  Mark,
+  OpSpec,
+  PseudoBlock,
+  PseudoLine,
+  Scalar,
+  Step,
+  Value,
+} from '../../engine/types';
 import { approachOf, Work, workVars, type Totals } from '../_patterns/kit';
 import { mark, value } from '../_heaps2/draw';
 import { CountingHeap, type HItem } from '../_heaps2/heap';
-import { mergeSort, type MergeEvent, type Rows } from '../_heaps2/merge-sort';
+import { mergeSort, mergeSortComparisons, type MergeEvent, type Rows } from '../_heaps2/merge-sort';
 import { and, ordinal, plural, readInt, readList, siftSay } from '../_heaps2/say';
 
 export const MAX_N = 12;
@@ -122,11 +130,7 @@ export function heapCost(a: readonly number[], k: number): number {
   return h.comparisons;
 }
 
-export const sortCost = (a: readonly number[]): number =>
-  mergeSort(
-    a.map((key, uid) => ({ uid, key })),
-    'desc',
-  ).comparisons;
+export const sortCost = (a: readonly number[]): number => mergeSortComparisons(a, 'desc');
 
 /** Lomuto partition around the last value until the pivot lands on t = n − k. */
 export function selectCost(a: readonly number[], k: number): number {
@@ -203,7 +207,11 @@ const load: Op = {
 
 /** "the 3 largest" or "the 3rd largest". */
 const what = (k: number, goal: Goal) =>
-  goal === 'kth' ? `the ${k === 1 ? '' : `${ordinal(k)} `}largest` : k === 1 ? 'the largest value' : `the ${k} largest`;
+  goal === 'kth'
+    ? `the ${k === 1 ? '' : `${ordinal(k)} `}largest`
+    : k === 1
+      ? 'the largest value'
+      : `the ${k} largest`;
 
 interface Ctx {
   s: TopState;
@@ -381,7 +389,9 @@ function* naive(c: Ctx): Gen {
     rows: [[...rows[0]], [...rows[1]]],
     width: e?.width ?? 0,
     from: e?.from ?? 0,
-    ...(e && e.kind !== 'pass' && e.kind !== 'alone' ? { merge: { lo: e.lo, mid: e.mid, hi: e.hi } } : {}),
+    ...(e && e.kind !== 'pass' && e.kind !== 'alone'
+      ? { merge: { lo: e.lo, mid: e.mid, hi: e.hi } }
+      : {}),
     lanes,
     ...(answer ? { answer } : {}),
   });
@@ -423,7 +433,9 @@ function* naive(c: Ctx): Gen {
         state: s,
         marks: [value(e.taken, 'active'), value(e.other, 'compare')],
         say: `Compare the heads of the two runs, ${e.taken.key} and ${e.other.key}: ${
-          e.taken.key === e.other.key ? `equal, so the left one, ${e.taken.key}` : `${e.taken.key} is larger, so it`
+          e.taken.key === e.other.key
+            ? `equal, so the left one, ${e.taken.key}`
+            : `${e.taken.key} is larger, so it`
         } goes to ${dst}[${e.dest}].`,
         lines: ['merge', 'take'],
         level: 2,
@@ -481,7 +493,15 @@ function* select(c: Ctx): Gen {
   let p = 0;
   let r = n - 1;
   const lanes = 3;
-  const extra = (o: Partial<TopExtra> = {}): TopExtra => ({ k, work: [...w], p, r, t, lanes, ...o });
+  const extra = (o: Partial<TopExtra> = {}): TopExtra => ({
+    k,
+    work: [...w],
+    p,
+    r,
+    t,
+    lanes,
+    ...o,
+  });
   const vars = (o: Record<string, Scalar> = {}) => varsOf(c, { p, r, t, ...o });
   const at = (i: number) => `A[${i}] = ${w[i]!.key}`;
   const range = (lo: number, hi: number) => (lo === hi ? `A[${lo}]` : `A[${lo}..${hi}]`);
@@ -530,7 +550,8 @@ function* select(c: Ctx): Gen {
           const z = w[i]!;
           [w[i], w[j]] = [w[j]!, w[i]!];
           say = `${y.key} ≤ ${x.key}, so i moves to ${i} and ${y.key} swaps with ${z.key} into the left part.`;
-        } else say = `${y.key} ≤ ${x.key}, so i moves to ${i}; ${y.key} is already in the left part.`;
+        } else
+          say = `${y.key} ≤ ${x.key}, so i moves to ${i}; ${y.key} is already in the left part.`;
       } else say = `${y.key} > ${x.key}, so it stays in the right part.`;
       yield {
         state: s,
@@ -621,7 +642,14 @@ const top: Op = {
         : method === 'naive'
           ? `a min-heap of size ${k} takes ${tot.pattern}, quickselect ${tot.select}`
           : `a min-heap of size ${k} takes ${tot.pattern}, sorting everything ${tot.naive}`;
-    const c: Ctx = { s, k, goal: settings.goal === 'kth' ? 'kth' : 'top', work: new Work(['comparisons']), tot, others };
+    const c: Ctx = {
+      s,
+      k,
+      goal: settings.goal === 'kth' ? 'kth' : 'top',
+      work: new Work(['comparisons']),
+      tot,
+      others,
+    };
     if (method === 'naive') return yield* naive(c);
     if (method === 'select') return yield* select(c);
     return yield* pattern(c);
@@ -653,20 +681,37 @@ export function pseudocode(settings: TopSettings): PseudoBlock[] {
             'topK(A, k)   // sort everything',
             `To find the ${kth ? 'k-th largest value' : 'k largest values'} of A, sort all of A from largest to smallest:`,
           ),
-          L('pass', 1, 'for w = 1, 2, 4, … while w < n', 'merge sort, bottom up: runs of length w,'),
+          L(
+            'pass',
+            1,
+            'for w = 1, 2, 4, … while w < n',
+            'merge sort, bottom up: runs of length w,',
+          ),
           L(
             'merge',
             2,
             'merge each pair of runs of w into a run of 2w',
             'merge each pair of neighboring runs into one run twice as long,',
           ),
-          L('take', 3, 'move the larger head; repeat', 'by moving the larger of the two front values, again and again;'),
-          L('rest', 3, 'move the rest of the other run', 'when one run is used up, the rest of the other follows.'),
+          L(
+            'take',
+            3,
+            'move the larger head; repeat',
+            'by moving the larger of the two front values, again and again;',
+          ),
+          L(
+            'rest',
+            3,
+            'move the rest of the other run',
+            'when one run is used up, the rest of the other follows.',
+          ),
           L(
             'ret',
             1,
             kth ? 'return B[k − 1]' : 'return B[0..k − 1]',
-            kth ? 'The k-th value of the sorted copy is the answer.' : 'The first k values of the sorted copy are the answer.',
+            kth
+              ? 'The k-th value of the sorted copy is the answer.'
+              : 'The first k values of the sorted copy are the answer.',
           ),
         ],
       },
@@ -691,11 +736,26 @@ export function pseudocode(settings: TopSettings): PseudoBlock[] {
           ),
           L('loop', 1, 'while p < r', 'While the range A[p..r] holds more than one value:'),
           L('pivot', 2, 'x = A[r]; i = p − 1', 'take its last value as the pivot x;'),
-          L('cmp', 2, 'for j = p to r − 1: if A[j] ≤ x', 'for each other value, if it is no bigger than x,'),
+          L(
+            'cmp',
+            2,
+            'for j = p to r − 1: if A[j] ≤ x',
+            'for each other value, if it is no bigger than x,',
+          ),
           L('swap', 3, 'i = i + 1; swap A[i], A[j]', 'move it into the left part;'),
-          L('place', 2, 'q = i + 1; swap A[q], A[r]', 'then put the pivot between the parts, at q.'),
+          L(
+            'place',
+            2,
+            'q = i + 1; swap A[q], A[r]',
+            'then put the pivot between the parts, at q.',
+          ),
           L('found', 2, 'if q == t: break', 'If the pivot landed on t, stop.'),
-          L('narrow', 2, 'if t < q: r = q − 1 else p = q + 1', 'Otherwise keep only the side that holds t.'),
+          L(
+            'narrow',
+            2,
+            'if t < q: r = q − 1 else p = q + 1',
+            'Otherwise keep only the side that holds t.',
+          ),
           L(
             'ret',
             1,
@@ -718,11 +778,26 @@ export function pseudocode(settings: TopSettings): PseudoBlock[] {
           'topK(A, k)   // a min-heap of size k',
           `To find the ${kth ? 'k-th largest value' : 'k largest values'} of A, keep the best k so far in a min-heap:`,
         ),
-        L('init', 1, 'H = empty min-heap', 'Start with an empty min-heap. Its root will be the smallest of the best k.'),
+        L(
+          'init',
+          1,
+          'H = empty min-heap',
+          'Start with an empty min-heap. Its root will be the smallest of the best k.',
+        ),
         L('loop', 1, 'for each x in A', 'Go through A once:'),
         L('room', 2, 'if H.size < k', 'while the heap has fewer than k values,'),
-        L('push', 3, 'H.push(x)   // sift up', 'put x in at the end and let it rise past any bigger parent;'),
-        L('beats', 2, 'else if x > H.min()', 'once it is full, compare x with the root, the smallest of the best k:'),
+        L(
+          'push',
+          3,
+          'H.push(x)   // sift up',
+          'put x in at the end and let it rise past any bigger parent;',
+        ),
+        L(
+          'beats',
+          2,
+          'else if x > H.min()',
+          'once it is full, compare x with the root, the smallest of the best k:',
+        ),
         L(
           'replace',
           3,

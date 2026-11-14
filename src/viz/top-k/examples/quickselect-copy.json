@@ -2,13 +2,19 @@
   "format": 1,
   "viz": "top-k",
   "id": "quickselect-copy",
-  "title": "quickselect-copy",
-  "notes": "x",
-  "settings": { "approach": "select", "goal": "top" },
+  "title": "Quickselect with the last value as pivot",
+  "notes": "The 3 largest belong in A[6..8], so quickselect looks for the value that belongs at t = 6. The pivots are 2, 5, 12, 21 and 14, and 14 lands on t: 23 comparisons. The first pivot, 2, is the smallest value, so that partition throws away only itself.",
+  "settings": {
+    "approach": "select",
+    "goal": "top"
+  },
   "seed": 1,
   "ops": [
     ["load", "5 12 3 18 7 21 9 14 2"],
     ["top", 3]
   ],
-  "at": { "op": 0, "step": 0 }
+  "at": {
+    "op": 0,
+    "step": 0
+  }
 }

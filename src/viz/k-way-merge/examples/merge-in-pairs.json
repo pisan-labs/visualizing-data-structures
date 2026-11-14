@@ -2,21 +2,13 @@
   "format": 1,
   "viz": "k-way-merge",
   "id": "merge-in-pairs",
-  "title": "merge-in-pairs",
-  "notes": "x",
+  "title": "Merge in pairs",
+  "notes": "Round 1 merges L1 with L2 in 6 comparisons while L3 waits. Round 2 merges that list of 7 with L3 in 8. 14 comparisons in all, fewer than the heap’s 17: no heap, but a new list for every merge.",
   "settings": {
     "approach": "pairs"
   },
   "seed": 1,
-  "ops": [
-    [
-      "load",
-      "1 8 12 | 3 4 10 15 | 2 9 11"
-    ],
-    [
-      "merge"
-    ]
-  ],
+  "ops": [["load", "1 8 12 | 3 4 10 15 | 2 9 11"], ["merge"]],
   "at": {
     "op": 0,
     "step": 0

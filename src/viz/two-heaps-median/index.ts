@@ -46,7 +46,8 @@ const presets: Preset[] = [
   },
   {
     label: 'Zigzag: low, high, low, high',
-    make: (rng, n) => adds(Array.from({ length: n }, (_, i) => (i % 2 ? rng.int(60, 99) : rng.int(1, 40)))),
+    make: (rng, n) =>
+      adds(Array.from({ length: n }, (_, i) => (i % 2 ? rng.int(60, 99) : rng.int(1, 40)))),
   },
   {
     label: 'Many duplicates',
@@ -138,8 +139,15 @@ export const twoHeapsMedian: VizDef<MedianState, MedianSettings, MedianExtra> = 
     },
     {
       op: 'median(), either way',
-      best: { cost: 'O(1)', why: 'The two tops, or the middle of the sorted list.', example: 'running-median' },
-      average: { cost: 'O(1)', why: 'Nothing is searched; the structure keeps the middle in reach.' },
+      best: {
+        cost: 'O(1)',
+        why: 'The two tops, or the middle of the sorted list.',
+        example: 'running-median',
+      },
+      average: {
+        cost: 'O(1)',
+        why: 'Nothing is searched; the structure keeps the middle in reach.',
+      },
       worst: { cost: 'O(1)', why: 'Reading one or two values and taking their mean.' },
     },
   ],

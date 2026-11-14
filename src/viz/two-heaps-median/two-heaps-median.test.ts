@@ -51,7 +51,9 @@ describe('two-heaps-median', () => {
             if (high.length) expect(Math.max(...low)).toBeLessThanOrEqual(Math.min(...high));
             expect(low.every((v, p) => p === 0 || low[Math.floor((p - 1) / 2)]! >= v)).toBe(true);
             expect(high.every((v, p) => p === 0 || high[Math.floor((p - 1) / 2)]! <= v)).toBe(true);
-            expect([...low, ...high].sort((a, b) => a - b)).toEqual([...seen].sort((a, b) => a - b));
+            expect([...low, ...high].sort((a, b) => a - b)).toEqual(
+              [...seen].sort((a, b) => a - b),
+            );
           } else {
             expect(x.sorted.map((y) => y.key)).toEqual([...seen].sort((a, b) => a - b));
           }

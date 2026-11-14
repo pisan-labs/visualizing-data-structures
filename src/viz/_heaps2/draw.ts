@@ -110,8 +110,7 @@ export function drawRow(o: RowOptions): Row {
       const text = String(item.key);
       const size = valueSize(text, pitch);
       const stale = o.stale?.(item, i) ?? false;
-      const role =
-        o.roles.get(keyId(item.uid)) ?? (stale ? 'stale' : o.valueRole?.(item, i));
+      const role = o.roles.get(keyId(item.uid)) ?? (stale ? 'stale' : o.valueRole?.(item, i));
       shapes.push({
         kind: 'rect',
         id: tileId(item.uid),
@@ -359,7 +358,8 @@ export function heapPanel(o: HeapPanelOptions): HeapPanel {
       baseRole: o.baseRole ? (p) => o.baseRole!(o.items[p]!, p) : undefined,
     },
   );
-  for (const s of tree) shapes.push(s.id.startsWith('hedge-') ? { ...s, id: `${o.prefix}-${s.id}` } : s);
+  for (const s of tree)
+    shapes.push(s.id.startsWith('hedge-') ? { ...s, id: `${o.prefix}-${s.id}` } : s);
   if (o.label) {
     o.items.forEach((it, p) => {
       const text = o.label!(it);

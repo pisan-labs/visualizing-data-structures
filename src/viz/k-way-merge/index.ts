@@ -2,6 +2,7 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall, Preset, SavedExample, Settings, VizDef } from '../../engine/types';
 import type { Rng } from '../../engine/rng';
 import { approachSetting } from '../_patterns/kit';
+import { withApproach } from '../_heaps2/say';
 import cppSource from './code/cpp/k_way_merge.hpp?raw';
 import javaSource from './code/java/KWayMerge.java?raw';
 import pythonSource from './code/python/k_way_merge.py?raw';
@@ -67,7 +68,14 @@ const presets: Preset[] = [
       const vs = random(rng, n).sort((x, y) => x - y);
       const k = kFor(n);
       const size = Math.ceil(n / k);
-      return [load(Array.from({ length: k }, (_, j) => vs.slice(j * size, (j + 1) * size)).filter((l) => l.length)), ['merge']];
+      return [
+        load(
+          Array.from({ length: k }, (_, j) => vs.slice(j * size, (j + 1) * size)).filter(
+            (l) => l.length,
+          ),
+        ),
+        ['merge'],
+      ];
     },
   },
   {
@@ -76,12 +84,23 @@ const presets: Preset[] = [
       const vs = random(rng, n);
       const long = vs.slice(0, 5).sort((x, y) => x - y);
       const rest = vs.slice(5);
-      return [load([long, ...(rest.length ? split(rest, Math.min(3, rest.length)) : [])]), ['merge']];
+      return [
+        load([long, ...(rest.length ? split(rest, Math.min(3, rest.length)) : [])]),
+        ['merge'],
+      ];
     },
   },
   {
     label: 'Many equal values',
-    make: (rng, n) => [load(split(Array.from({ length: n }, () => rng.int(1, 3) * 5), kFor(n))), ['merge']],
+    make: (rng, n) => [
+      load(
+        split(
+          Array.from({ length: n }, () => rng.int(1, 3) * 5),
+          kFor(n),
+        ),
+      ),
+      ['merge'],
+    ],
   },
 ];
 
@@ -92,18 +111,14 @@ export const kWayMerge: VizDef<MergeState, MergeSettings, MergeExtra> = {
   blurb:
     'Merge k sorted lists into one: a min-heap holds each list’s head, and its root is always the next value out. O(n log k), against O(n log n) for putting everything in one array and sorting it.',
   settings: [
-    {
-      ...approachSetting({
+    withApproach(
+      approachSetting({
         pattern: 'A min-heap of heads, O(n log k)',
         naive: 'Concatenate and sort, O(n log n)',
         help: 'All three give the same list. Watch the comparisons, or use Compare with this same page to run two side by side.',
       }),
-      options: [
-        { value: 'pattern', label: 'A min-heap of heads, O(n log k)' },
-        { value: 'naive', label: 'Concatenate and sort, O(n log n)' },
-        { value: 'pairs', label: 'Merge in pairs, round by round, O(n log k)' },
-      ],
-    },
+      { value: 'pairs', label: 'Merge in pairs, round by round, O(n log k)' },
+    ),
   ],
   defaults,
   init,

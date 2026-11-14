@@ -3,12 +3,7 @@ import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
 import { spotItKind, type SpotRow } from '../_patterns/kit';
 import { and } from '../_heaps2/say';
-import {
-  defaults,
-  type MedianExtra,
-  type MedianSettings,
-  type MedianState,
-} from './model';
+import { defaults, type MedianExtra, type MedianSettings, type MedianState } from './model';
 
 type Def = VizDef<MedianState, MedianSettings, MedianExtra>;
 
@@ -89,7 +84,9 @@ export function medianPractice(def: () => Def): PracticeKind[] {
         const first = values(rng, rng.int(3, 5));
         const more = values(rng, 3);
         const t = run(adds([...first, ...more]));
-        const medians = t.entries.slice(first.length).map((e) => String(e.steps.at(-1)!.vars?.median));
+        const medians = t.entries
+          .slice(first.length)
+          .map((e) => String(e.steps.at(-1)!.vars?.median));
         const last = t.entries.at(-1)!.steps.at(-1)!.extra!;
         return {
           prompt: `The heaps hold ${first.length} values, as drawn. Then ${and(more)} arrive, in that order. Type the median after each of them (the mean of the two middle values for an even count, such as 6.5).`,
@@ -101,7 +98,9 @@ export function medianPractice(def: () => Def): PracticeKind[] {
             .join(' ')} and the high half ${last.high
             .map((x) => x.key)
             .sort((a, b) => a - b)
-            .join(' ')}: the median is the low half’s top when it holds one more, or else the mean of the two tops.`,
+            .join(
+              ' ',
+            )}: the median is the low half’s top when it holds one more, or else the mean of the two tops.`,
           watch: adds(more),
         };
       },

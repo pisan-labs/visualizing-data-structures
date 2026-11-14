@@ -2,21 +2,13 @@
   "format": 1,
   "viz": "k-way-merge",
   "id": "three-lists",
-  "title": "three-lists",
-  "notes": "x",
+  "title": "Three lists, one heap of heads",
+  "notes": "L1 = 1 8 12, L2 = 3 4 10 15, L3 = 2 9 11. The heap starts with the heads 1, 3 and 2. Each value out is replaced at the root by the next value of its list. When L3 is used up after 11, the heap’s last value takes the root instead. 17 comparisons; merging in pairs takes 14, concatenating and sorting 26.",
   "settings": {
     "approach": "pattern"
   },
   "seed": 1,
-  "ops": [
-    [
-      "load",
-      "1 8 12 | 3 4 10 15 | 2 9 11"
-    ],
-    [
-      "merge"
-    ]
-  ],
+  "ops": [["load", "1 8 12 | 3 4 10 15 | 2 9 11"], ["merge"]],
   "at": {
     "op": 0,
     "step": 0

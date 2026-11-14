@@ -89,7 +89,11 @@ export function view(step: MergeStep, settings: MergeSettings, stage?: StageSize
   const top = HEAD_Y + 18;
   if (!e) {
     const lists = listRows(s.lists, roles, 16);
-    return { shapes: lists.shapes, bounds: { x: 0, y: 0, w: lists.right + PAD, h: lists.bottom + PAD }, label };
+    return {
+      shapes: lists.shapes,
+      bounds: { x: 0, y: 0, w: lists.right + PAD, h: lists.bottom + PAD },
+      label,
+    };
   }
   const k = s.lists.length;
   const method = methodOf(settings);
@@ -101,9 +105,25 @@ export function view(step: MergeStep, settings: MergeSettings, stage?: StageSize
     const rows = e.sort!;
     const shapes: Shape[] = [head];
     const tops = [top + BRACKET_ROOM, 0];
-    const a = drawRow({ id: 'a', items: rows[0], slots: e.n, x0: X0, top: tops[0]!, roles, name: 'A' });
+    const a = drawRow({
+      id: 'a',
+      items: rows[0],
+      slots: e.n,
+      x0: X0,
+      top: tops[0]!,
+      roles,
+      name: 'A',
+    });
     tops[1] = a.bottom + BRACKET_ROOM + 6;
-    const b = drawRow({ id: 'b', items: rows[1], slots: e.n, x0: X0, top: tops[1], roles, name: 'B' });
+    const b = drawRow({
+      id: 'b',
+      items: rows[1],
+      slots: e.n,
+      x0: X0,
+      top: tops[1],
+      roles,
+      name: 'B',
+    });
     shapes.push(...a.shapes, ...b.shapes);
     if (e.merge) {
       const { lo, mid, hi, from } = e.merge;
@@ -118,7 +138,16 @@ export function view(step: MergeStep, settings: MergeSettings, stage?: StageSize
             : ['L', 'R'];
       shapes.push(
         ...runBracket({ id: 'run-l', lo, hi: mid, x0: X0, y, label: l, role: 'active', clamp }),
-        ...runBracket({ id: 'run-r', lo: mid + 1, hi, x0: X0, y, label: r, role: 'compare', clamp }),
+        ...runBracket({
+          id: 'run-r',
+          lo: mid + 1,
+          hi,
+          x0: X0,
+          y,
+          label: r,
+          role: 'compare',
+          clamp,
+        }),
       );
     }
     return finish(shapes, { x: 0, y: 0, w: width, h: b.bottom }, headW, label);
@@ -185,7 +214,9 @@ function labelOf(step: MergeStep): string {
     const show = (r: (HItem | null)[]) => r.map((x) => (x ? x.key : '_')).join(' ');
     parts.push(`Row A: ${show(e.sort[0])}. Row B: ${show(e.sort[1])}.`);
   }
-  if (e.out) parts.push(e.out.length ? `Out so far: ${e.out.map((x) => x.key).join(' ')}.` : 'Nothing out yet.');
+  if (e.out)
+    parts.push(
+      e.out.length ? `Out so far: ${e.out.map((x) => x.key).join(' ')}.` : 'Nothing out yet.',
+    );
   return parts.join(' ');
 }
-

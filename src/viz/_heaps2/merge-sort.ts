@@ -133,3 +133,29 @@ export function mergeSort(items: readonly HItem[], order: SortOrder): MergeSortR
     comparisons,
   };
 }
+
+/** The comparisons `mergeSort` makes, without recording its events (for large inputs). */
+export function mergeSortComparisons(keys: readonly number[], order: SortOrder): number {
+  const n = keys.length;
+  let src = [...keys];
+  let dst = Array<number>(n).fill(0);
+  let c = 0;
+  const first = (a: number, b: number) => (order === 'asc' ? a <= b : a >= b);
+  for (let width = 1; width < n; width *= 2) {
+    for (let lo = 0; lo < n; lo += 2 * width) {
+      const mid = Math.min(lo + width - 1, n - 1);
+      const hi = Math.min(lo + 2 * width - 1, n - 1);
+      let i = lo;
+      let j = mid + 1;
+      let d = lo;
+      while (i <= mid && j <= hi) {
+        c++;
+        dst[d++] = first(src[i]!, src[j]!) ? src[i++]! : src[j++]!;
+      }
+      while (i <= mid) dst[d++] = src[i++]!;
+      while (j <= hi) dst[d++] = src[j++]!;
+    }
+    [src, dst] = [dst, src];
+  }
+  return c;
+}

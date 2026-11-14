@@ -2,21 +2,13 @@
   "format": 1,
   "viz": "k-way-merge",
   "id": "equal-heads",
-  "title": "equal-heads",
-  "notes": "x",
+  "title": "Equal heads go in list order",
+  "notes": "L1 = 2 5, L2 = 2 5, L3 = 2 7. The heap breaks ties by list number, so the three 2s go out from L1, then L2, then L3, and the two 5s from L1, then L2. Any order gives the same merged list; a fixed rule makes every run the same.",
   "settings": {
     "approach": "pattern"
   },
   "seed": 1,
-  "ops": [
-    [
-      "load",
-      "2 5 | 2 5 | 2 7"
-    ],
-    [
-      "merge"
-    ]
-  ],
+  "ops": [["load", "2 5 | 2 5 | 2 7"], ["merge"]],
   "at": {
     "op": 0,
     "step": 0

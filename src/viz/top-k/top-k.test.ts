@@ -60,7 +60,9 @@ describe('top-k', () => {
             const inHeap = new Set(e.heap!.map((x) => x.uid));
             for (const u of e.out ?? []) expect(inHeap.has(u)).toBe(false);
           } else if (approach === 'naive') {
-            const vals = [...e.rows![0], ...e.rows![1]].filter((x) => x !== null).map((x) => x!.key);
+            const vals = [...e.rows![0], ...e.rows![1]]
+              .filter((x) => x !== null)
+              .map((x) => x!.key);
             expect(vals.sort()).toEqual([...a].sort());
           } else {
             expect(e.work!.map((x) => x.key).sort()).toEqual([...a].sort());

@@ -2,38 +2,20 @@
   "format": 1,
   "viz": "two-heaps-median",
   "id": "all-the-same",
-  "title": "all-the-same",
-  "notes": "x",
+  "title": "All the same value",
+  "notes": "Six 5s. Each goes into the low half (5 ≤ 5), and every other one moves the low half’s top across to keep the sizes even. Nothing climbs or sinks far, but the heaps still make 15 comparisons, against 5 for the sorted list.",
   "settings": {
     "approach": "pattern",
     "even": "mean"
   },
   "seed": 1,
   "ops": [
-    [
-      "add",
-      5
-    ],
-    [
-      "add",
-      5
-    ],
-    [
-      "add",
-      5
-    ],
-    [
-      "add",
-      5
-    ],
-    [
-      "add",
-      5
-    ],
-    [
-      "add",
-      5
-    ]
+    ["add", 5],
+    ["add", 5],
+    ["add", 5],
+    ["add", 5],
+    ["add", 5],
+    ["add", 5]
   ],
   "at": {
     "op": 0,

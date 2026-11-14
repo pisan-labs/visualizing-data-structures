@@ -537,3 +537,5 @@
 2026-11-14 [code] Merged wave 10 mutex (where the lock goes; contention readouts), semaphore (a room of k, ordering, ping-pong turns), producer-consumer (while against if under Mesa; semaphores) and deadlock (opposite lock orders, the wait-for graph cycle by DFS, one global order)
 
 2026-11-14 [doc] Merged the wave-10 concurrency fact check: 14 fixes on mutex, semaphore, producer-consumer and deadlock (counts and Big-O rows matched to the models, Downey credited only for the multiplex and signaling, the deadlock condition stated exactly); all stated interleaving counts verified
+
+2026-11-14 [code] Merged wave 10 dp-tree (take or skip per node, post-order, against every allowed subset) and dp-bitmask (assigning n tasks over subset masks, against every order)

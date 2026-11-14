@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "flash-attention",
+  "id": "q-outside",
+  "title": "Q blocks outside: the loop order of FlashAttention-2",
+  "notes": "NOTES",
+  "settings": {
+    "order": "q",
+    "br": "2",
+    "bc": "2",
+    "causal": true
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat on the mat"], ["flash"]]
+}

@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "flash-attention",
+  "id": "max-grows",
+  "title": "A later tile has the best score",
+  "notes": "NOTES",
+  "settings": {
+    "order": "kv",
+    "br": "2",
+    "bc": "2",
+    "causal": true
+  },
+  "seed": 1,
+  "ops": [["load", "the ball and the cat sat"], ["flash"]]
+}

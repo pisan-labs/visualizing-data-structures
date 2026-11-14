@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "flash-attention",
+  "id": "one-row-blocks",
+  "title": "Blocks of one row: the most traffic",
+  "notes": "NOTES",
+  "settings": {
+    "order": "kv",
+    "br": "1",
+    "bc": "1",
+    "causal": true
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat on the mat"], ["flash"]]
+}

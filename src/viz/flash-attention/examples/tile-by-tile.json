@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "flash-attention",
+  "id": "tile-by-tile",
+  "title": "Three tiles, one at a time",
+  "notes": "NOTES",
+  "settings": {
+    "order": "kv",
+    "br": "2",
+    "bc": "2",
+    "causal": true
+  },
+  "seed": 1,
+  "ops": [["load", "the dog saw the ball and it"], ["tile"], ["tile"], ["tile"]]
+}

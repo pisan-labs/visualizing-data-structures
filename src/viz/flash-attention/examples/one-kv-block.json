@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "flash-attention",
+  "id": "one-kv-block",
+  "title": "One block of keys: nothing to rescale",
+  "notes": "NOTES",
+  "settings": {
+    "order": "kv",
+    "br": "2",
+    "bc": "4",
+    "causal": true
+  },
+  "seed": 1,
+  "ops": [["load", "the dog saw it"], ["flash"]]
+}

@@ -127,7 +127,7 @@ function drawTree(
   sideways: boolean,
 ): { shapes: Shape[]; bounds: Bounds } {
   const extra = step.extra ?? {};
-  const layout = layoutTrie(ROOT, (u) => s.nodes[u]!.kids, {
+  const layout = layoutTrie<number>(ROOT, (u) => s.nodes[u]!.kids, {
     label: (u) => s.nodes[u]!.tokens.join(' '),
     radius: R,
     labelSize: LABEL,

@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "flash-attention",
+  "id": "plain-table",
+  "title": "Plain attention writes the whole table",
+  "notes": "NOTES",
+  "settings": {
+    "order": "kv",
+    "br": "2",
+    "bc": "2",
+    "causal": true
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat on the mat"], ["plain"]]
+}

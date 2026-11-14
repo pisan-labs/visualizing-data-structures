@@ -489,3 +489,5 @@
 2026-11-14 [note] Tier 2 green on the merged tree: lint, check, unit 271 files 5446 tests, e2e 451 passed. Wave 9D (tier 3, 10 pages) started with five agents, and a fact check of tier 2 (PLAN.md 20.14)
 
 2026-11-14 [doc] Merged the tier-2 fact check: all listed outside facts confirmed; overclaims scoped (SentencePiece types, BPE-dropout, speculative sampling keeps the distribution, constrained stuck case, MoE drops are GShard/Switch, k-means WCSS), one wrong narration fixed (transformer-block post-norm)
+
+2026-11-14 [code] Merged wave 9D rnn-lstm (one hand-made memory unit; plain RNN, LSTM with or without the forget gate; the pull of word 1 as a product of factors) and mcts (UCB1 selection, expansion, rollout, backpropagation on a 12-sentence tree)

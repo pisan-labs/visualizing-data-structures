@@ -1228,6 +1228,24 @@ weights change). Four agents, from `next` at the tier-1 merge:
 | Serving | paged-attention, continuous-batching, quantization | `_serve2` | 4813 |
 | Retrieval | k-means, bm25, hnsw | `_retrieve` | 4814 |
 
+All four merged by 00:20 Lisbon on 14 November (the decoding agent was stopped by a container
+restart and resumed from its worktree). On the merged tree lint, svelte-check, the full unit
+suite (271 files, 5446 tests) and e2e for the 23 AI pages and the catalog (451 passed) passed.
+A tier-1 fact check (an independent agent) fixed two wrong facts (SLP3's end-of-word marker,
+BERT's 200-character limit) and about 15 smaller ones.
+
+### 20.14 Wave 9D, tier 3 (started 14 November, about 00:25 Lisbon)
+
+Five agents, two pages each, from `next` at 4b499c4, beside a fact check of tier 2:
+
+| Agent | Pages | Own kit | E2E port |
+|---|---|---|---|
+| Training A | word2vec, policy-optimization | `_train3` | 4821 |
+| Training B | lora, ring-allreduce | `_dist` | 4822 |
+| Serving | prefix-cache, flash-attention | `_serve3` | 4823 |
+| Retrieval | ivf-index, product-quantization | `_retrieve3` | 4824 |
+| Decoding | rnn-lstm, mcts | `_dec3` | 4825 |
+
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 
 | Page | Controls |

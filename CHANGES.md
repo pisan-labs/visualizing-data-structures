@@ -485,3 +485,5 @@
 2026-11-14 [code] Merged wave 9C unigram-tokenizer (Viterbi lattice, sampled splits, pruning), speculative-decoding (bigram draft, trigram target, min(1, p/q) acceptance) and constrained-decoding (regex to DFA, token index, masked logits). Tier 2 complete: 11 pages
 
 2026-11-14 [code] Stage tween clamps t at 0: a frame timestamp can precede the tween start, so the first frame eased backwards and a bar growing from width 0 got a negative width (browser error on /sampling/)
+
+2026-11-14 [note] Tier 2 green on the merged tree: lint, check, unit 271 files 5446 tests, e2e 451 passed. Wave 9D (tier 3, 10 pages) started with five agents, and a fact check of tier 2 (PLAN.md 20.14)

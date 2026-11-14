@@ -71,7 +71,7 @@ export const dpStateMachine: VizDef<SMState, SMSettings, SMExtra> = {
   title: 'DP: states over time (buy and sell)',
   family: 'DP patterns',
   blurb:
-    'Trade one item over days of prices, with a rest day after each sale or a fee on it: a small state machine (free, holding, cooling down) and a table with one row per state and one column per day, then the best plan traced back. The table takes one cell per state per day; plain recursion doubles its calls with every day.',
+    'Trade one item over days of prices, with a rest day after each sale or a fee on it: a small state machine (free, holding, cooling down) and a table with one row per state and one column per day, then the best plan traced back. The table takes one cell per state per day; plain recursion nearly doubles its calls with every day.',
   settings: [
     approachSetting({
       pattern: 'The table, O(n)',
@@ -187,7 +187,7 @@ export const dpStateMachine: VizDef<SMState, SMSettings, SMExtra> = {
     risingPrices,
   ] as unknown as SavedExample[],
   practice: smPractice(() => dpStateMachine),
-  preview: { example: 'cooldown-sell-early', level: 2 },
+  preview: { example: 'cooldown-sell-early', level: 2, hide: ['st-', 'mv-', 'plan-'] },
 };
 
 /**

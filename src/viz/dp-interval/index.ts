@@ -173,7 +173,7 @@ export const dpInterval: VizDef<IVState, IVSettings, IVExtra> = {
     oneTile,
   ] as unknown as SavedExample[],
   practice: ivPractice(() => dpInterval),
-  preview: { example: 'take-small-first', level: 2 },
+  preview: { example: 'take-small-first', level: 2, hide: ['item-', 'post-', 'strip-'] },
 };
 
 /**

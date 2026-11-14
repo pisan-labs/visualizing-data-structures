@@ -111,7 +111,7 @@ export const dpGridPaths: VizDef<GPState, GPSettings, GPExtra> = {
   title: 'DP: paths on a grid',
   family: 'DP patterns',
   blurb:
-    'Count the paths across a grid with walls, moving only right or down, or find the cheapest one: each cell from the cell above and the cell to its left, then the path traced back. A table of R × C cells against plain recursion that solves the same cell once for every path through it.',
+    'Count the paths across a grid with walls, moving only right or down, or find the cheapest one: each cell from the cell above and the cell to its left, then the path traced back. A table of R × C cells against plain recursion that solves a cell once for every path from it to the target.',
   settings: [
     approachSetting({
       pattern: 'The table, O(R × C)',

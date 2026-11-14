@@ -3,7 +3,7 @@
   "viz": "policy-optimization",
   "id": "kl-leash",
   "title": "A heavy KL weight keeps the policy near the start",
-  "notes": "NOTES",
+  "notes": "GRPO with β = 1: after ten steps Canberra is at 0.64 (0.89 with β = 0.1), and after twenty only 0.70. The KL penalty keeps the policy near the reference.",
   "settings": {
     "method": "grpo",
     "clip": "0.2",

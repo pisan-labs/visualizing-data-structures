@@ -3,7 +3,7 @@
   "viz": "policy-optimization",
   "id": "ppo-run",
   "title": "PPO: the critic learns what to expect",
-  "notes": "NOTES",
+  "notes": "Ten PPO steps: the critic's value climbs from 0 to 0.72 while Canberra goes from 0.30 to 0.72.",
   "settings": {
     "method": "ppo",
     "clip": "0.2",

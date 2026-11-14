@@ -204,7 +204,7 @@ export const policyOptimization: VizDef<PoState, PoSettings, PoExtra> = {
   preview: {
     example: 'grpo-run',
     level: 2,
-    hide: ['gr-', 'rw-', 'adv-', 'rho-', 'lr-', 'w-g', 'gb-', 'r-a', 'z-', 'dz-', 'ab-'],
+    hide: ['gr-', 'rw-', 'adv-', 'rho-', 'lr-', 'w-g', 'gb-', 'r-a', 'ref-', 'z-', 'dz-', 'ab-'],
   },
   opening: 'grpo-step',
 };

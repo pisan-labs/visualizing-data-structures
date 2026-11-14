@@ -3,7 +3,7 @@
   "viz": "policy-optimization",
   "id": "all-equal",
   "title": "Equal rewards teach GRPO nothing",
-  "notes": "NOTES",
+  "notes": "Every answer is worth 0.5, so every group has the same rewards, every advantage is 0, and the step changes nothing.",
   "settings": {
     "method": "grpo",
     "clip": "0.2",

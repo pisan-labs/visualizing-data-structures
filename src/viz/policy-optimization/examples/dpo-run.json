@@ -3,7 +3,7 @@
   "viz": "policy-optimization",
   "id": "dpo-run",
   "title": "DPO: twenty preferences",
-  "notes": "NOTES",
+  "notes": "Twenty DPO preferences with β = 0.5, drawn from the reference and judged by the rewards, which DPO never sees: Canberra goes from 0.30 to 0.52 after ten and 0.71 after twenty.",
   "settings": {
     "method": "dpo",
     "clip": "0.2",

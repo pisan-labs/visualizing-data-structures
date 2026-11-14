@@ -3,7 +3,7 @@
   "viz": "policy-optimization",
   "id": "rare-answer",
   "title": "A good answer the policy rarely gives",
-  "notes": "NOTES",
+  "notes": "Only \"not sure\" is rewarded, and the policy gives it 10% of the time. Five of the ten groups have all-equal rewards and teach nothing; \"not sure\" still climbs from 0.10 to 0.36.",
   "settings": {
     "method": "grpo",
     "clip": "0.2",

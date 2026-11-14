@@ -517,3 +517,5 @@
 2026-11-14 [plan] PLAN.md section 21: wave 10, a Coding interviews pathway (30 pattern pages, naive against pattern, a pattern map) and Concurrency (9 pages, a visible scheduler), 39 pages, slices first; LeetCode refused automated reads, survey from search results; waiting for Yusuf's approval
 
 2026-11-14 [code] HintWise footer updated to the current platform markup (footerHtml("stepwise"), 2234 bytes, sha256 487cb295...): adds the HintWise mark (svg class="mark"), missed since 11 Nov; sent by Plabs, Yusuf agreed there. On next; live on Yusuf's "deploy"
+
+2026-11-14 [decision] Yusuf: "1-5 yes. 6 all looks good. Implement all and then merge and deploy": all 39 wave-10 pages, no slice review, one deploy at the end (PLAN.md 21.10, 21.11). Catalog: the interviews pathway, ten families, Techniques listed there too

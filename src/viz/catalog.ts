@@ -13,7 +13,7 @@ export interface CatalogItem {
   advanced?: boolean;
 }
 
-export type Pathway = 'structures' | 'algorithms' | 'computation' | 'ai';
+export type Pathway = 'structures' | 'algorithms' | 'computation' | 'ai' | 'interviews';
 
 export interface Family {
   name: string;
@@ -27,6 +27,7 @@ export const pathways: { id: Pathway; label: string }[] = [
   { id: 'algorithms', label: 'Algorithms' },
   { id: 'computation', label: 'Theory of computation' },
   { id: 'ai', label: 'AI and LLMs' },
+  { id: 'interviews', label: 'Coding interviews' },
 ];
 
 export const families: Family[] = [
@@ -287,7 +288,7 @@ export const families: Family[] = [
   },
   {
     name: 'Techniques',
-    pathways: ['algorithms'],
+    pathways: ['algorithms', 'interviews'],
     items: [
       { id: 'two-pointers', title: 'Two pointers', added: true },
       { id: 'sliding-window', title: 'Sliding window', added: true },
@@ -478,6 +479,107 @@ export const families: Family[] = [
       { id: 'hnsw', title: 'HNSW graph search', added: true },
       { id: 'ivf-index', title: 'IVF index', added: true, advanced: true },
       { id: 'product-quantization', title: 'Product quantization', added: true, advanced: true },
+    ],
+  },
+  // PLAN.md section 21: wave 10, coding interviews and concurrency. Tier 3 is marked advanced.
+  {
+    name: 'Patterns map',
+    pathways: ['interviews'],
+    items: [{ id: 'pattern-map', title: 'Which pattern fits? (a map)', added: true }],
+  },
+  {
+    name: 'Array and string tricks',
+    pathways: ['interviews'],
+    items: [
+      { id: 'prefix-sum-hashmap', title: 'Prefix sums with a hash map', added: true },
+      { id: 'kadane', title: "Kadane's maximum subarray", added: true },
+      { id: 'frequency-counting', title: 'Frequency counting (anagrams)', added: true },
+      { id: 'difference-array', title: 'Difference array', added: true },
+      { id: 'dutch-flag', title: 'Dutch national flag (three-way partition)', added: true },
+      { id: 'cyclic-sort', title: 'Cyclic sort', added: true },
+      { id: 'matrix-traversal', title: 'Matrix traversal (spiral, rotate)', added: true },
+    ],
+  },
+  {
+    name: 'Intervals',
+    pathways: ['interviews'],
+    items: [
+      { id: 'merge-intervals', title: 'Merge intervals', added: true },
+      { id: 'sweep-line', title: 'Sweep line (overlaps, skyline)', added: true },
+    ],
+  },
+  {
+    name: 'Linked list tricks',
+    pathways: ['interviews'],
+    items: [
+      { id: 'fast-slow-pointers', title: 'Fast and slow pointers', added: true },
+      { id: 'merge-sorted-lists', title: 'Merge sorted lists', added: true },
+      { id: 'reverse-k-group', title: 'Reverse a list in groups of k', added: true },
+    ],
+  },
+  {
+    name: 'Heap patterns',
+    pathways: ['interviews'],
+    items: [
+      { id: 'top-k', title: 'Top k elements', added: true },
+      { id: 'k-way-merge', title: 'K-way merge', added: true },
+      { id: 'two-heaps-median', title: 'Running median with two heaps', added: true },
+    ],
+  },
+  {
+    name: 'Search templates',
+    pathways: ['interviews'],
+    items: [
+      { id: 'binary-search-answer', title: 'Binary search on the answer', added: true },
+      { id: 'state-space-bfs', title: 'BFS over states', added: true },
+      { id: 'combination-sum', title: 'Combination sum (backtracking)', added: true },
+    ],
+  },
+  {
+    name: 'Bit tricks',
+    pathways: ['interviews'],
+    items: [{ id: 'xor-tricks', title: 'XOR tricks', added: true }],
+  },
+  {
+    name: 'DP patterns',
+    pathways: ['interviews'],
+    items: [
+      { id: 'dp-grid-paths', title: 'DP: paths on a grid', added: true },
+      { id: 'dp-state-machine', title: 'DP: states over time (buy and sell)', added: true },
+      { id: 'dp-interval', title: 'DP over intervals', added: true },
+      { id: 'dp-tree', title: 'DP on trees', added: true },
+      { id: 'dp-bitmask', title: 'DP over subsets (bitmask)', added: true, advanced: true },
+    ],
+  },
+  {
+    name: 'Design a data structure',
+    pathways: ['interviews'],
+    items: [
+      { id: 'min-stack', title: 'Min stack', added: true },
+      { id: 'two-stack-queue', title: 'Queue from two stacks', added: true },
+      { id: 'randomized-set', title: 'Insert, remove, random in O(1)', added: true },
+      { id: 'rate-limiter', title: 'Rate limiter', added: true },
+      { id: 'lfu-cache', title: 'LFU cache', added: true, advanced: true },
+    ],
+  },
+  {
+    name: 'Concurrency',
+    pathways: ['interviews'],
+    items: [
+      { id: 'race-condition', title: 'Race conditions', added: true },
+      { id: 'mutex', title: 'Mutex (lock)', added: true },
+      { id: 'semaphore', title: 'Semaphores', added: true },
+      { id: 'producer-consumer', title: 'Producer-consumer (bounded buffer)', added: true },
+      { id: 'deadlock', title: 'Deadlock', added: true },
+      { id: 'dining-philosophers', title: 'Dining philosophers', added: true },
+      { id: 'readers-writers', title: 'Readers and writers', added: true },
+      { id: 'barrier', title: 'Barriers', added: true },
+      {
+        id: 'compare-and-swap',
+        title: 'Compare-and-swap (lock-free)',
+        added: true,
+        advanced: true,
+      },
     ],
   },
 ];

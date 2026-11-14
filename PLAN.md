@@ -1275,12 +1275,12 @@ Suggestions the agents made about shared code (none made; for a later cleanup):
 9. A page's opening runs with the reader's seed, so the numbers on arrival differ from the
    curated example's notes (k-means, hnsw, policy-optimization).
 
-## 21. Wave 10: coding interviews and concurrency (planned 2026-11-14, waiting for Yusuf's approval)
+## 21. Wave 10: coding interviews and concurrency (planned 2026-11-14, approved the same day)
 
 Yusuf (14 November): LeetCode's Explore has many algorithms and tricks useful to programmers;
 explore it and suggest new sections. He chose both suggestions (interview patterns, and
 concurrency), a fifth catalog pathway, and a plan for his approval before anything is built.
-Nothing in this section is built. The questions are in 21.9.
+The questions are in 21.9 and the answers in 21.10.
 
 ### 21.1 What LeetCode teaches (surveyed 2026-11-14)
 
@@ -1492,6 +1492,22 @@ Tier 1 is what interviews ask most; tier 2 the rest; tier 3 advanced (`advanced:
 5. Concurrency code tabs as in 21.4 (real primitives shown, tested through deterministic calls)?
    Recommended: yes.
 6. Anything to add or drop from 21.6?
+
+### 21.10 Answers (Yusuf, 14 November: "1-5 yes. 6 all looks good. Implement all and then merge and deploy")
+
+All five recommendations stand, and 21.6 as written. The slice review in 21.7 is dropped: build
+all 39 pages, merge them into `next`, then deploy once (with the footer fix already on `next`,
+and one release, which is emailed).
+
+### 21.11 How it is built
+
+- **Catalog first** (the lead): the `interviews` pathway, its ten families with all 39 ids, and
+  the Techniques family listed under it too.
+- **Round 1, two agents:** the interview kit (`_patterns`) with `prefix-sum-hashmap`, and the
+  concurrency kit (`_threads`, `src/layouts/lanes.ts`) with `race-condition`.
+- **Round 2, five agents, then round 3, four agents,** each building two to six pages on those
+  kits; `pattern-map` last, when every page it links is live.
+- **A fact check per round,** then the full suites and e2e on the merged tree, then the deploy.
 
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 

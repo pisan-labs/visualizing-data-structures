@@ -539,3 +539,5 @@
 2026-11-14 [doc] Merged the wave-10 concurrency fact check: 14 fixes on mutex, semaphore, producer-consumer and deadlock (counts and Big-O rows matched to the models, Downey credited only for the multiplex and signaling, the deadlock condition stated exactly); all stated interleaving counts verified
 
 2026-11-14 [code] Merged wave 10 dp-tree (take or skip per node, post-order, against every allowed subset) and dp-bitmask (assigning n tasks over subset masks, against every order)
+
+2026-11-14 [doc] Merged the wave-10 interview fact check (16 pages): wrong claims fixed (smallest missing positive is in 1 to n+1, k-way best case O(n + k log k), fast-slow pointers do not save reads, Python 3.14 heapq has max-heap functions), LeetCode-like problem statements rewritten in our own words, large-n figures marked as one seeded run

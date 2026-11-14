@@ -3,7 +3,7 @@
   "viz": "barrier",
   "id": "lapped",
   "title": "The one-shot barrier, used twice",
-  "notes": "Round one starts well: T3 is the third to arrive and opens b. But b is left open and count never goes back to 0, so T1 goes on, comes round again and walks through round two before T3 has even passed the turnstile of round one.",
+  "notes": "Round one starts well: T3 is the third to arrive and opens b. But count never goes back to 0, so in round two it goes 4, 5, 6 and nobody is ever the third to arrive. T1 goes on, comes round and waits at b for one step: T2, passing the turnstile of round one, lets it through. T1 goes on in round two before T3 has even reached the turnstile of round one.",
   "settings": {
     "problem": "reusable",
     "naive": true

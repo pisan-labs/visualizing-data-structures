@@ -113,6 +113,6 @@ The map also knows only its own 89 phrases. Type a phrase that contains one, suc
 - [Follow “the k largest”](#example:k-largest), then type "the k-th smallest value" and press Follow cue. Same page; which heap keeps it?
 - [Two cues that agree](#example:river-levels): before you play it, find the cue words yourself.
 - [A window that cannot subtract](#example:warmest-block) with **Rule out look-alike cues** off. Which steps disappear?
-- [Concurrency, the largest family](#example:concurrency-family): which cue would you add for barriers?
+- [Concurrency, the largest family](#example:concurrency-family): three of its pages have only one cue. Which ones, and what second cue would you give each?
 - [The whole map](#play:whole-map): then show the family you know least, by its number.
 - Press Which pattern? with each number from 1 to 12, and guess the pattern before the last step.

@@ -90,7 +90,7 @@ const PATTERN_ROWS: NodeRow[] = [
   { id: 'kadane', naive: 'every pair of ends, O(n²)', gain: 'extend or restart, O(n)' },
   {
     id: 'frequency-counting',
-    naive: 'sort the letters, or rescan for each one',
+    naive: 'sort the letters, or rescan the word',
     gain: 'one counting pass, O(n)',
   },
   {
@@ -105,12 +105,12 @@ const PATTERN_ROWS: NodeRow[] = [
   },
   {
     id: 'cyclic-sort',
-    naive: 'sort, then scan, O(n log n) or worse',
+    naive: 'selection sort, then scan, O(n²)',
     gain: 'swap each value home, O(n)',
   },
   {
     id: 'matrix-traversal',
-    naive: 'a grid of seen marks, or a rotated copy, n² extra cells',
+    naive: 'a second grid, of seen marks or a rotated copy',
     gain: 'four bounds, or swaps in place, O(1) extra',
   },
   { id: 'two-pointers', naive: 'every pair, O(n²)', gain: 'one index at each end, O(n)' },
@@ -131,7 +131,7 @@ const PATTERN_ROWS: NodeRow[] = [
   },
   {
     id: 'merge-intervals',
-    naive: 'check every pair, O(n²)',
+    naive: 'check each against every interval out, O(n²)',
     gain: 'sort by start, then one pass, O(n log n)',
   },
   {
@@ -192,7 +192,7 @@ const PATTERN_ROWS: NodeRow[] = [
   },
   {
     id: 'combination-sum',
-    naive: 'every combination, then check its total',
+    naive: 'every list, then check its sum',
     gain: 'sorted candidates, and stop a branch once it passes the target',
   },
   {
@@ -207,7 +207,7 @@ const PATTERN_ROWS: NodeRow[] = [
   },
   {
     id: 'disjoint-sets',
-    naive: 'search the graph for each question, O(V + E) each',
+    naive: 'naive union can build a chain, O(n) per find',
     gain: 'union by rank and path compression, nearly O(1) each',
   },
   {
@@ -227,7 +227,7 @@ const PATTERN_ROWS: NodeRow[] = [
   },
   {
     id: 'dp-state-machine',
-    naive: 'try every action on every day, exponential',
+    naive: 'plain recursion, exponential',
     gain: 'a few states per day, O(n)',
   },
   {
@@ -252,12 +252,12 @@ const PATTERN_ROWS: NodeRow[] = [
   },
   {
     id: 'two-stack-queue',
-    naive: 'pour everything across on every dequeue, O(n)',
-    gain: 'pour only when the out-stack is empty, O(1) amortized',
+    naive: 'move everything there and back on every dequeue, O(n)',
+    gain: 'move across only when out is empty, O(1) amortized',
   },
   {
     id: 'randomized-set',
-    naive: 'an array removes in O(n); a set cannot pick at random',
+    naive: 'the array alone, scanning to find a value, O(n)',
     gain: 'an array plus an index map, all three O(1) on average',
   },
   {
@@ -267,13 +267,13 @@ const PATTERN_ROWS: NodeRow[] = [
   },
   {
     id: 'lfu-cache',
-    naive: 'scan every count to evict, O(n)',
+    naive: 'scan every key to evict, O(n)',
     gain: 'a list per count and the smallest count, O(1)',
   },
   {
     id: 'rate-limiter',
-    naive: 'keep every request time and recount the window each time',
-    gain: 'a counter or a token bucket, O(1) per request',
+    naive: 'a fixed window count, which lets up to 2L through across a window edge',
+    gain: 'a sliding log (exact, O(1) amortized) or a token bucket (two numbers, O(1))',
   },
   {
     id: 'trie',
@@ -311,13 +311,13 @@ const SYNC_ROWS: (NodeRow & { name: string })[] = [
   {
     id: 'deadlock',
     name: 'Deadlock',
-    naive: 'locks taken in any order make a cycle of waits',
+    naive: 'locks taken in no fixed order can make a cycle of waits',
     gain: 'one global lock order',
   },
   {
     id: 'dining-philosophers',
     name: 'Dining philosophers',
-    naive: 'all take the left fork first, and deadlock',
+    naive: 'all take the left fork first, and can deadlock',
     gain: 'one takes the right first, or a waiter seats n − 1',
   },
   {
@@ -561,7 +561,7 @@ export const CUES: readonly Cue[] = [
   c(
     'ms-rect',
     'monotonic-stack',
-    'largest rectangle in bars',
+    'biggest rectangle under bars',
     'A stack of rising bars: when a lower bar comes, each bar it pops knows how far it reached.',
   ),
   c(
@@ -660,7 +660,7 @@ export const CUES: readonly Cue[] = [
   c(
     'kw-merge',
     'k-way-merge',
-    'merge k sorted lists',
+    'k sorted lists into one',
     'A min-heap holds each list’s front value, and its root is always the next value out.',
   ),
   c(
@@ -771,13 +771,13 @@ export const CUES: readonly Cue[] = [
   c(
     'xr-pairs',
     'xor-tricks',
-    'every value twice but one',
-    'x ^ x = 0 and x ^ 0 = x: XOR everything and the pairs cancel, leaving the single one.',
+    'all in pairs but one',
+    'x ^ x = 0 and x ^ 0 = x: XOR everything and the pairs cancel, leaving the one without a partner.',
   ),
   c(
     'xr-two',
     'xor-tricks',
-    'two values appear once',
+    'two without a partner',
     'XOR them all to get a ^ b, then split the values by a bit where a and b differ.',
   ),
   c(
@@ -789,7 +789,7 @@ export const CUES: readonly Cue[] = [
   c(
     'bm-ones',
     'bitmask',
-    'count the 1 bits',
+    'how many bits are set',
     'x & (x − 1) clears the lowest 1 bit, so the loop runs once per 1 bit.',
   ),
   // DP patterns
@@ -802,8 +802,8 @@ export const CUES: readonly Cue[] = [
   c(
     'dg-walls',
     'dp-grid-paths',
-    'cheapest path around walls',
-    'A wall gets no value; every other cell takes the cheaper of its two neighbours plus its own cost.',
+    'paths around walls',
+    'No path goes through a wall; every other cell combines the two it is reached from: their sum for a count, the cheaper plus its own cost for the cheapest path.',
   ),
   c(
     'dm-day',
@@ -863,8 +863,8 @@ export const CUES: readonly Cue[] = [
   c(
     'rs-random',
     'randomized-set',
-    'insert, delete, random: O(1)',
-    'An array gives the random pick, a map from value to index finds a value, and a remove swaps it with the last.',
+    'pick at random, all O(1)',
+    'Add, remove and pick at random, each O(1): an array gives the random pick, a map from value to index finds a value, and a remove swaps it with the last.',
   ),
   c(
     'lr-evict',
@@ -887,7 +887,7 @@ export const CUES: readonly Cue[] = [
   c(
     'tr-prefix',
     'trie',
-    'words with a given prefix',
+    'every word starting with p',
     'Words that share a prefix share a path, so a query costs one step per letter.',
   ),
   c(
@@ -972,8 +972,8 @@ export const CUES: readonly Cue[] = [
   c(
     'br-round',
     'barrier',
-    'no peeking at the next round',
-    'A barrier between rounds: no thread reads round r + 1 before every thread has written round r.',
+    'rounds in lockstep',
+    'A reusable barrier between rounds: no thread starts round r + 1 until every thread has finished round r.',
   ),
   c(
     'cw-nolock',
@@ -1062,7 +1062,7 @@ export const PROBLEMS: readonly Problem[] = [
   {
     id: 'coin-flips',
     title: 'coin flips',
-    text: 'A row of six coins, each heads or tails. One move flips two coins side by side. What is the fewest moves that make them all heads?',
+    text: 'A row of six coins, each heads or tails. One move flips two coins side by side. What is the fewest moves that make them all heads, if it can be done at all?',
     finds: [
       { words: 'One move flips two coins side by side', cue: 'sb-moves' },
       { words: 'the fewest moves', cue: 'sb-fewest' },
@@ -1087,14 +1087,14 @@ export const PROBLEMS: readonly Problem[] = [
   {
     id: 'lone-sensor',
     title: 'lone sensor',
-    text: 'A log lists sensor IDs. Every ID shows up twice except one, which shows up once. Find it with constant extra memory.',
+    text: 'A log lists sensor IDs. All sensors but one check in twice; the odd one out checks in once. Find it using a fixed amount of memory, however long the log is.',
     finds: [
-      { words: 'Every ID shows up twice except one', cue: 'xr-pairs' },
+      { words: 'All sensors but one check in twice', cue: 'xr-pairs' },
       {
-        words: 'which shows up once',
+        words: 'checks in once',
         cue: 'fc-once',
         trap: true,
-        but: 'counting needs a map as large as the log, and the memory must stay constant',
+        but: 'counting needs a map as large as the log, and the memory must stay fixed',
       },
     ],
     answer: 'xor-tricks',

@@ -36,7 +36,7 @@ Turn on Naive version. Each thread adds 1 to count and goes on. [No barrier: two
 
 ## Using it twice
 
-Threads usually go round: compute, meet, compute, meet. Can the barrier above be used again? Nope. Set Problem to A reusable barrier, with Naive version on. [The one-shot barrier, used twice](#example:lapped): round one works, but b is left open (it ends at 1) and count never goes back to 0, so it never reaches 3 again. T1 comes round, walks straight through, and goes on in round two before T3 has even passed the turnstile of round one.
+Threads usually go round: compute, meet, compute, meet. Can the barrier above be used again? Nope. Set Problem to A reusable barrier, with Naive version on. [The one-shot barrier, used twice](#example:lapped): round one works, but count never goes back to 0. In round two it goes 4, 5, 6 and never equals 3, so nobody opens the turnstile for round two, and the V(b)s left over from round one let threads through instead. T1 comes round and waits at b, and T2, letting the next one through for round one, lets T1 through. T1 goes on in round two before T3 has even reached the turnstile of round one.
 
 Downey's fix is a second turnstile and two phases. On the way in, the third to arrive opens b1 three times, once for each thread (he calls it preloading the turnstile). On the way out, each thread takes 1 from count, and the last to leave opens b2 three times. b2 keeps a fast thread from starting round two until everyone has left round one, and b1 is shut again by then, since its three passes are used up.
 

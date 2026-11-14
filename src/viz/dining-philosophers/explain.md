@@ -2,7 +2,7 @@
 
 A round table, a philosopher at each seat, and one fork between each pair of neighbours. To eat you need both forks, the one on your left and the one on your right. So every philosopher picks up the left fork, then the right one, eats, and puts both down. What could go wrong? Everybody picks up the left fork at the same moment. Then everybody waits for the right one, which the neighbour is holding. For ever.
 
-Dijkstra set this as an exam problem in the 1960s, about computers sharing tape drives; Hoare turned the computers into philosophers. The classic table has five. This page seats three or four, because five lanes don't fit on a phone, and nothing changes but the size of the circle.
+Dijkstra set this as an exam problem in 1965, about computers sharing tape drives, and called it the dining quintuple. Tony Hoare named it the dining philosophers. The classic table has five. This page seats three or four, because five lanes don't fit on a phone, and nothing changes but the size of the circle.
 
 ## The idea
 
@@ -31,11 +31,11 @@ Q: Three philosophers, no fix. P1 holds f1 and P2 holds f2. Which next step make
 
 ## Every interleaving
 
-[Every interleaving, no fix](#example:every-none): 3,051 orders of the steps, and 48 deadlock. That's about 1.6%. The 48 are the runs where all three pick up a left fork before anyone gets a right one. With four philosophers ([Every interleaving of four](#example:every-four)) it is 1,088 out of 16,672,432, which the page counts by state rather than one by one. Rare. Rare is the problem: a program that deadlocks once in a thousand runs passes its tests and freezes in production.
+[Every interleaving, no fix](#example:every-none): 3,051 orders of the steps, and 48 deadlock. That's about 1.6%. The 48 are the runs where all three pick up a left fork before anyone gets a right one. With four philosophers ([Every interleaving of four](#example:every-four)) it is 1,088 out of 16,672,432. Both counts are more than the page lists one by one, so it counts them by state. Rare. Rare is the problem: a program that deadlocks once in a thousand runs passes its tests and freezes in production.
 
 ## Fix 1: one philosopher reaches the other way
 
-Set Fix to The last philosopher takes the right fork first. Now P3 picks up f1 first, then f3. Look at the fork numbers: every philosopher now picks up the lower-numbered of its two forks first. That's one global order, the same fix as on the deadlock page, and a cycle needs somebody to break it. OSTEP fixes the table the same way.
+Set Fix to The last philosopher takes the right fork first. Now P3 picks up f1 first, then f3. Look at the fork numbers: every philosopher now picks up the lower-numbered of its two forks first. That's one global order, the same fix as on the deadlock page. In a cycle of waits, each philosopher would hold a fork and wait for a higher-numbered one, so the numbers would have to climb all the way round the table and come back down. They can't. OSTEP fixes the table the same way.
 
 [The last one reaches right first](#example:right-first) runs the deadlock schedule again. P1 picks up f1 and P2 picks up f2. P3 reaches for f1, finds P1 holding it, and waits with empty hands. So f3 stays on the table, P2 takes it and eats, and everybody else follows. [Every interleaving with one philosopher reversed](#example:every-order): 3,664 orders of the steps, and every one ends with everyone fed.
 

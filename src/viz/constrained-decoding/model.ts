@@ -442,7 +442,10 @@ const indexOp: Op = {
   arity: 0,
   *run(s) {
     if (s.index) {
-      yield err(s, `The index for ${s.c.text} is already built; it is built once per regex.`);
+      yield {
+        ...err(s, `The index for ${s.c.text} is already built: it is built once per regex.`),
+        extra: { work: { stage: 'index', rows: s.index } },
+      };
       return s;
     }
     const next = yield* withIndex(s, 2);

@@ -175,7 +175,7 @@ export const speculative: VizDef<SpecState, SpecSettings, SpecExtra> = {
     oneDraft,
   ] as unknown as SavedExample[],
   practice: speculativePractice(() => speculative),
-  preview: { example: 'generate', level: 2, hide: ['q-', 'p-', 'r-', 'w-', 'u-', 'dist', 'cut'] },
+  preview: { example: 'one-round', level: 2, hide: ['text', 'tok-', 'pl-', 'dist'] },
   opening: 'generate',
 };
 

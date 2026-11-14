@@ -212,7 +212,11 @@ export const unigram: VizDef<UniState, UniSettings, UniExtra> = {
     oneLetter,
   ] as unknown as SavedExample[],
   practice: unigramPractice(() => unigram),
-  preview: { example: 'lattice', level: 2, hide: ['v-', 'vocab', 'encs', 'enc-'] },
+  preview: {
+    example: 'lattice',
+    level: 2,
+    hide: ['v-', 'vocab', 'encs', 'enc-', 'p-', 'wc-', 'words'],
+  },
   opening: 'lattice',
 };
 

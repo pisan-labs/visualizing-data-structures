@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "mutex",
+  "id": "every-locked",
+  "title": "Every interleaving with the lock",
+  "notes": "With the lock, only 10 orders of the steps can happen, and all 10 end with count = 2. Without it there are 20, and 18 lose an update.",
+  "settings": {
+    "threads": 2,
+    "lock": "lock"
+  },
+  "seed": 1,
+  "ops": [["every"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

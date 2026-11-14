@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "mutex",
+  "id": "every-forget",
+  "title": "Forgetting to unlock, in every interleaving",
+  "notes": "9 orders. In the 5 where T2 takes m first, it unlocks, and both threads finish with count = 2. In the other 4, T1 takes m first and the program gets stuck.",
+  "settings": {
+    "threads": 2,
+    "lock": "forget"
+  },
+  "seed": 1,
+  "ops": [["every"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

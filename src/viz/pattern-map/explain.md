@@ -75,11 +75,11 @@ Each family groups patterns by where you would look for them. A few pages from o
 | 3. Intervals | starts and ends | [merge intervals](/merge-intervals/), [sweep line](/sweep-line/) |
 | 4. Linked list tricks | pointers and no index | [fast and slow pointers](/fast-slow-pointers/), [cycle detection](/floyd-cycle/), [reverse in groups](/reverse-k-group/) |
 | 5. Heap patterns | the best few, the next smallest of several | [top k](/top-k/), [k-way merge](/k-way-merge/), [two heaps](/two-heaps-median/) |
-| 6. Search templates | a space of answers or states | [binary search](/binary-search/), [backtracking](/backtracking/), binary search on the answer, BFS over states |
+| 6. Search templates | a space of answers or states | [binary search](/binary-search/), [binary search on the answer](/binary-search-answer/), [BFS over states](/state-space-bfs/), [backtracking](/backtracking/) |
 | 7. Graphs | routes, prerequisites, groups | [Dijkstra](/dijkstra/), [topological sort](/topo-indegree/), [union-find](/disjoint-sets/) |
 | 8. Bit tricks | bits as a set, values that cancel | [XOR tricks](/xor-tricks/), [bitmasks](/bitmask/) |
-| 9. DP patterns | a best or a count from smaller answers | [DP on trees](/dp-tree/), [DP over subsets](/dp-bitmask/), DP on a grid |
-| 10. Design a data structure | a few operations that must all be fast | [LRU cache](/lru-cache/), [trie](/trie/), min stack, rate limiter |
+| 9. DP patterns | a best or a count from smaller answers | [DP on a grid](/dp-grid-paths/), [states over time](/dp-state-machine/), [DP on trees](/dp-tree/), [DP over subsets](/dp-bitmask/) |
+| 10. Design a data structure | a few operations that must all be fast | [min stack](/min-stack/), [LRU cache](/lru-cache/), [LFU cache](/lfu-cache/), [rate limiter](/rate-limiter/), [trie](/trie/) |
 | 11. Concurrency | threads sharing memory | [race conditions](/race-condition/), [mutex](/mutex/), [semaphores](/semaphore/), [deadlock](/deadlock/) |
 
 Concurrency is the largest family, with 9 patterns and 15 cues. [Concurrency, the largest family](#example:concurrency-family) The smallest are Intervals and Bit tricks, with two patterns each. [The array and string tricks](#play:array-family) has 7 patterns and 13 cues.

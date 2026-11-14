@@ -177,13 +177,13 @@ const PATTERN_ROWS: NodeRow[] = [
   },
   {
     id: 'binary-search-answer',
-    naive: 'try every candidate answer in turn',
-    gain: 'binary search over the answers, O(log range) checks',
+    naive: 'try every answer upward, O(n · range)',
+    gain: 'binary search the answers, O(n log range)',
   },
   {
     id: 'state-space-bfs',
-    naive: 'try every sequence of moves, exponential in its length',
-    gain: 'each state once, O(states + moves)',
+    naive: 'every sequence of moves with no visited set, O(bᵈ)',
+    gain: 'BFS with a visited set, O(states × moves)',
   },
   {
     id: 'backtracking',
@@ -232,7 +232,7 @@ const PATTERN_ROWS: NodeRow[] = [
   },
   {
     id: 'dp-interval',
-    naive: 'try every order, n! of them',
+    naive: 'plain recursion, O(3ⁿ)',
     gain: 'every interval by its last step, O(n³)',
   },
   {

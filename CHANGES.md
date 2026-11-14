@@ -555,3 +555,7 @@
 2026-11-14 [doc] Merged the wave-10 round-3 fact check (13 pages): placeholder notes on combination-sum replaced, the sliding window counter can admit 2L (rate-limiter), about 20 LeetCode-like statements rewritten. Conformance now refuses NOTE/TBD/FIXME/XXX and notes shorter than 40 characters. randomized-set retitled "Randomized set (random pick in O(1))" (the old title echoed a LeetCode problem)
 
 2026-11-14 [code] Merged wave 10 dining-philosophers (3 or 4 philosophers; reversed-last and waiter fixes), readers-writers (one lock, readers first, a turnstile), barrier (one-shot, reusable, a car problem of our own) and compare-and-swap (retries, ABA); _threads3 groups machine steps into rows. All 39 wave-10 pages built; pattern-map links the four
+
+2026-11-14 [doc] Merged the last wave-10 fact check (dining-philosophers history per EWD1000, barrier narration and practice explanations, pattern-map cost lines matched to every page, cues and a problem reworded away from LeetCode)
+
+2026-11-14 [code] Release 2026-11-14-coding-interviews ("39 new pages", pattern-map first; the note also names the AI and LLMs pathway, which the email seeding absorbed), pushed to next on Yusuf's "go ahead". Full checks on next green before it: unit 324 files 6510 tests, e2e 1031 passed

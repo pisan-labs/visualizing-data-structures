@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "dp-bitmask",
+  "id": "cheapest-first",
+  "title": "Cheapest first is not cheapest",
+  "notes": "Three workers. A's cheapest task is 0, for 2, and taking it costs 14 in all. The best gives A task 1 for 6, so that B can do task 0 for 3: 6 + 3 + 4 = 13.",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [["load", "2 6 7 / 3 8 9 / 5 9 4"], ["solve"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "dp-bitmask",
+  "id": "one-worker",
+  "title": "One worker",
+  "notes": "One worker, one task, cost 7. Two masks, 0 and 1, and one try: f[1] = f[0] + 7 = 7.",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [["load", "7"], ["solve"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

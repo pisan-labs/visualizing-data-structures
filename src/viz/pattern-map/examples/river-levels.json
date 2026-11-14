@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "pattern-map",
+  "id": "river-levels",
+  "title": "Two cues that agree",
+  "notes": "Problem 1. “rose or fell” says some values are negative, and “Count the stretches of consecutive hours” is a count of stretches with a given sum. Both point to prefix sums with a hash map.",
+  "settings": {
+    "lookalikes": true,
+    "naive": true
+  },
+  "seed": 1,
+  "ops": [["which", "1"]]
+}

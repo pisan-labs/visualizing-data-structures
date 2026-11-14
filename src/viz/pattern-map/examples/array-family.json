@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "pattern-map",
+  "id": "array-family",
+  "title": "The array and string tricks",
+  "notes": "Seven patterns and 13 cues, from prefix sums with a hash map to matrix traversal, one step per pattern with the cues that point to it.",
+  "settings": {
+    "lookalikes": true,
+    "naive": true
+  },
+  "seed": 1,
+  "ops": [["family", "Array and string tricks"]]
+}

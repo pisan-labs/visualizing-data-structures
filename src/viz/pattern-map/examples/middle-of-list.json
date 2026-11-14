@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "pattern-map",
+  "id": "middle-of-list",
+  "title": "Follow “the middle of a list”",
+  "notes": "A cue in the Linked list tricks family, pointing to the fast and slow pointers: one moves two nodes for each one the other moves, so the slow one is halfway when the fast one reaches the end. The naive way counts the length first, or copies the list to an array.",
+  "settings": {
+    "lookalikes": true,
+    "naive": true
+  },
+  "seed": 1,
+  "ops": [["pick", "the middle of a list"]]
+}

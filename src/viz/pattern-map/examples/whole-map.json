@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "pattern-map",
+  "id": "whole-map",
+  "title": "The whole map",
+  "notes": "The 11 families in turn, each with its patterns, then the totals: 51 patterns and 89 cues.",
+  "settings": {
+    "lookalikes": true,
+    "naive": true
+  },
+  "seed": 1,
+  "ops": [["map"]]
+}

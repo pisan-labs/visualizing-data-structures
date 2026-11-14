@@ -2,8 +2,13 @@
  * Threads as lanes: the drawing the concurrency pages share (PLAN.md 21.5 item 4). Each thread is
  * a column of its steps, with its program counter (an arrow at the next step), its status and its
  * registers; shared variables, locks, semaphores, condition variables, the output and any extra
- * panels sit beside the lanes on a wide stage and under them on a tall one; a strip along the
- * bottom shows the schedule so far, one cell per step, named by the thread that took it.
+ * panels sit beside the lanes on a wide stage and under them on a tall one; a strip shows the
+ * schedule so far, one cell per step, named by the thread that took it.
+ *
+ * It draws whichever arrangement is largest on the stage (pickLayout; with no stage, the first):
+ * the panel beside the lanes in one or two columns, with the strip under everything or under the
+ * panel; the panel under the lanes in one to three columns; with three or more threads, the lanes
+ * in two rows too, and an odd lane out leaves a gap the panel can fill.
  *
  * The layout knows nothing about the machine: src/viz/_threads/page.ts turns a machine state into
  * this input. Text is monospace (0.6 em a character), so boxes are sized from their labels.
@@ -49,13 +54,20 @@
  *   step-<t>-end         the end row; pc-<t> the program counter's arrow
  *   reg-<t>-<name>       a register's text
  *   var-<name>           a shared variable's value box; var-<name>-value, var-<name>-name
- *   lock-<name>          a lock's box; lock-<name>-text (holder), lock-<name>-queue (waiters)
- *   sem-<name>           a semaphore's box; sem-<name>-text, sem-<name>-queue
- *   cond-<name>          a condition variable's box; cond-<name>-queue
+ *   lock-<name>          a lock's box; lock-<name>-label (its name), -text (holder), -queue
+ *   sem-<name>           a semaphore's box; sem-<name>-label ("s = 1"), sem-<name>-queue
+ *   cond-<name>          a condition variable's box; cond-<name>-label, cond-<name>-queue
  *   out-<k>              the k-th printed word (a box; out-<k>-text)
  *   panel-<id>           an extra panel's frame; panel-<id>-title, panel-<id>-<k or key> its lines
  *   sched-<k>            the k-th step of the schedule (a box; sched-<k>-text); sched-title
- * Use laneShapeIds(t) and friends below rather than building ids by hand.
+ * Build them with laneId, stepId, endId, pcId, regId, varId, lockId, semId, condId, outId,
+ * panelId and schedId below rather than by hand.
+ *
+ * Text is 13 units or more (thread names 14), so it reads at 11 px on a laptop stage and 9 px on
+ * a phone while the drawing is scaled by at least 0.85 and 0.7. Measured: four lanes of four
+ * short steps draw their smallest text at 14.9 px (laptop) and 11.8 px (phone); two lanes of
+ * eight steps with labels ("top: if items != 0 goto go") at 12.6 and 8.7 px, too small. The
+ * longest step text (labels count) sets every lane's width: keep steps short.
  */
 import type { MarkRole, StageSize } from '../engine/types';
 import type { Bounds, Shape } from '../render/scene';

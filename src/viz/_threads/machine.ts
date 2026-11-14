@@ -3,7 +3,7 @@
  * producer-consumer, deadlock, dining philosophers, readers and writers, barriers,
  * compare-and-swap). PLAN.md 21.5 item 3.
  *
- * A program is 2 to 6 threads, each a short list of steps on shared memory. One step is atomic:
+ * A program is 1 to 6 threads (pages use 2 to 4), each a short list of steps on shared memory. One step is atomic:
  * it reads or writes at most one shared variable (compare-and-swap reads and writes one, as one
  * step). A scheduler picks which thread runs its next step; the pages let the learner be the
  * scheduler, run a given schedule, or try every interleaving.

@@ -44,7 +44,7 @@ export function view(step: BAStep, settings: BASettings): Scene {
   const cols = columns(n, { pitch: PITCH, x0: nameX + 12 });
   const heading = e
     ? ship
-      ? `smallest capacity for d = ${e.param} days`
+      ? `smallest capacity for d = ${e.param} ${e.param === 1 ? 'day' : 'days'}`
       : `largest gap for k = ${e.param} items`
     : '';
   const width = Math.max(

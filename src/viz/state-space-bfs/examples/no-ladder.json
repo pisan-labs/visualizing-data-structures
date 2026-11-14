@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "state-space-bfs",
+  "id": "no-ladder",
+  "title": "No way through",
+  "notes": "pig is not one letter away from any other word, so no ladder reaches it. BFS gives up after 4 words: the queue runs out. With no visited set, cat, cot, cog and dog send each other back and forth for ever; the page stops it after 300 sequences, with 186 still waiting.",
+  "settings": {
+    "approach": "naive",
+    "puzzle": "words"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "cat cot cog dog pig"
+    ],
+    [
+      "search",
+      "pig"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

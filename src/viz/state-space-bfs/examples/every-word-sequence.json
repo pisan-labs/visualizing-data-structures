@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "state-space-bfs",
+  "id": "every-word-sequence",
+  "title": "Every sequence of words",
+  "notes": "The same words with no visited set: cold comes back from bold, cord and colt, and sends them all out again. Still 4 changes, but after 14 sequences and 1,387 moves, against 7 words and 687 moves for BFS.",
+  "settings": {
+    "approach": "naive",
+    "puzzle": "words"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "cold cord bold colt card word ward warm worm"
+    ],
+    [
+      "search",
+      "warm"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

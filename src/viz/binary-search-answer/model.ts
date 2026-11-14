@@ -544,7 +544,7 @@ function* solve(
   const other = cost(s, problem, param, naive ? 'pattern' : 'naive');
   const mine = cost(s, problem, param, approach);
   const best = ship
-    ? `The smallest capacity that ships in ${param} days is ${answer}.`
+    ? `The smallest capacity that ships in ${plural(param, 'day')} is ${answer}.`
     : `The largest gap ${param} items can keep is ${answer}.`;
   const how = naive
     ? `Trying every ${name} upward took ${work.tally()}; binary search takes ${plural(other.checks, 'check')} and ${plural(other.reads, 'read')}.`

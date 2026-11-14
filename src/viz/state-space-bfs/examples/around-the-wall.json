@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "state-space-bfs",
+  "id": "around-the-wall",
+  "title": "Around the wall",
+  "notes": "A 2-wheel lock starts at 00 and must never show 01, 11 or 21: a wall across the second wheel’s 1. The obvious way to 02, through 01, is barred, so BFS goes round the wall: 00 → 90 → 91 → 92 → 02, 4 moves. 17 states leave the queue and make 65 moves; 30 states are visited. With no visited set it takes 34 sequences and 133 moves.",
+  "settings": {
+    "approach": "pattern",
+    "puzzle": "lock"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "01 11 21"
+    ],
+    [
+      "search",
+      "02"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

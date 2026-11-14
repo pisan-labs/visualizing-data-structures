@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "state-space-bfs",
+  "id": "three-wheels",
+  "title": "Three wheels",
+  "notes": "Three wheels start at 000, with 100, 010 and 900 barred. Each state makes 6 moves, so the layers fill fast: BFS visits 81 states to find 110 four moves away, 000 → 001 → 101 → 111 → 110. 32 states and 192 moves, against 56 sequences and 336 moves with no visited set.",
+  "settings": {
+    "approach": "pattern",
+    "puzzle": "lock"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "100 010 900"
+    ],
+    [
+      "search",
+      "110"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

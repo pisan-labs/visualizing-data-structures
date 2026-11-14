@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "state-space-bfs",
+  "id": "round-the-back",
+  "title": "Round the back",
+  "notes": "Only 09 is barred, so the goal 08, two clicks down on the second wheel, is out of reach the short way. BFS finds 00 → 10 → 19 → 18 → 08: step the first wheel aside, come down past 9, and step back. 4 moves, after 16 states and 62 moves.",
+  "settings": {
+    "approach": "pattern",
+    "puzzle": "lock"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "09"
+    ],
+    [
+      "search",
+      "08"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

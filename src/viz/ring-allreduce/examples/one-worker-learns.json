@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "ring-allreduce",
+  "id": "one-worker-learns",
+  "title": "Only one worker has a gradient",
+  "notes": "Only worker 3 has a gradient, (5, 1, 8, 2). The ring still runs every step, adding zeros, and every worker ends with (5, 1, 8, 2). Spreading one worker's vector to everyone costs the same as any other all-reduce.",
+  "settings": {
+    "workers": 4
+  },
+  "seed": 1,
+  "ops": [["load", "0 0 0 0 / 0 0 0 0 / 5 1 8 2 / 0 0 0 0"], ["allreduce"]]
+}

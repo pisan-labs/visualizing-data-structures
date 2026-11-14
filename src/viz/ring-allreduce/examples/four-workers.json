@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "ring-allreduce",
+  "id": "four-workers",
+  "title": "Four workers add up their gradients",
+  "notes": "Four gradients: (3, 1, 4, 1), (5, 9, 2, 6), (5, 3, 5, 8) and (9, 7, 9, 3). In the first step worker 1 sends its a (3) to worker 2, which adds it: 5 + 3 = 8. After three steps each worker owns one finished chunk; three more and every worker holds (22, 20, 20, 18). Each sent 6 chunks, 1.5 vectors' worth.",
+  "settings": {
+    "workers": 4
+  },
+  "seed": 1,
+  "ops": [["load", "3 1 4 1 / 5 9 2 6 / 5 3 5 8 / 9 7 9 3"], ["allreduce"]]
+}

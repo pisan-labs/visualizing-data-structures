@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "ring-allreduce",
+  "id": "scatter-only",
+  "title": "Reduce-scatter alone: one finished chunk each",
+  "notes": "Stop after reduce-scatter. Worker 1 holds the whole sum of b (20), worker 2 of c (20), worker 3 of d (18) and worker 4 of a (22); every other cell is a partial sum. Each worker has sent 3 chunks, 0.75 of its vector. Sharded training can stop here: each worker updates only its own slice.",
+  "settings": {
+    "workers": 4
+  },
+  "seed": 1,
+  "ops": [["load", "3 1 4 1 / 5 9 2 6 / 5 3 5 8 / 9 7 9 3"], ["scatter"]]
+}

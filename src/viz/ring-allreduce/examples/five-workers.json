@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "viz": "ring-allreduce",
+  "id": "five-workers",
+  "title": "Five workers: more steps, smaller chunks",
+  "notes": "Five workers: 4 steps each way, with chunks a fifth of the vector. Each worker sends 8 chunks, 8/5 = 1.6 vectors' worth, against 1.5 for four workers. More workers means more steps, but the data per worker never reaches 2 vectors.",
+  "settings": {
+    "workers": 5
+  },
+  "seed": 1,
+  "ops": [["load", "1 2 3 4 5 / 6 7 8 9 1 / 2 3 4 5 6 / 7 8 9 1 2 / 3 4 5 6 7"], ["allreduce"]]
+}

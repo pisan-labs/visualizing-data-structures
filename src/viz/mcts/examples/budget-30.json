@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "mcts",
+  "id": "budget-30",
+  "title": "30 iterations pick the safe word",
+  "notes": "After 30 iterations cat has 13 visits (mean 0.60), dog 11 (0.55) and fox 6 (0.25), so the move is cat. Dog hides the best sentence, the dog ran home (1.0), among three poor ones, and 30 random rollouts have not found that out yet.",
+  "settings": {
+    "c": "sqrt2",
+    "budget": "30"
+  },
+  "seed": 3,
+  "ops": [["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

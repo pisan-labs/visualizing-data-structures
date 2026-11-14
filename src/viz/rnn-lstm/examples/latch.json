@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "rnn-lstm",
+  "id": "latch",
+  "title": "A latch that cannot learn",
+  "notes": "With w = 1.5 the plain RNN holds on to the cat: h climbs to 0.86 and stays there. Yet word 1's pull is 0.0023 by slept, because in that flat part of tanh every slope 1.5 × (1 − 0.86²) is about 0.4. Remembering and learning to remember are not the same thing.",
+  "settings": {
+    "model": "rnn",
+    "w": "1.5"
+  },
+  "seed": 1,
+  "ops": [["load", "cat sat on the mat and it slept"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

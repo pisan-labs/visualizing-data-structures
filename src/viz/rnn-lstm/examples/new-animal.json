@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "rnn-lstm",
+  "id": "new-animal",
+  "title": "A new animal: the forget gate lets go",
+  "notes": "Cat is written into the cell and kept until dog arrives. Dog closes the forget gate (0.08) and opens the input gate, so the cell now holds the dog and word 1's pull drops from 0.86 to 0.07. Forgetting on purpose is what the forget gate is for.",
+  "settings": {
+    "model": "lstm",
+    "w": "0.8"
+  },
+  "seed": 1,
+  "ops": [["load", "cat sat and the dog ate it"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

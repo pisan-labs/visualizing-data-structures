@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "mcts",
+  "id": "first-rounds",
+  "title": "The first rounds try each word once",
+  "notes": "The first three iterations add cat, dog and fox, one each, with one random rollout each. From the fourth on the root has tried every word, and UCB1 chooses: the best mean plus a bonus for being tried less.",
+  "settings": {
+    "c": "sqrt2",
+    "budget": "30"
+  },
+  "seed": 3,
+  "ops": [["iterate"], ["iterate"], ["iterate"], ["iterate"], ["iterate"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

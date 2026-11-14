@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "rnn-lstm",
+  "id": "step-by-step",
+  "title": "One word at a time",
+  "notes": "Read the first three words one at a time. The memory after a word depends only on the memory before it and the word itself, so the steps must happen in order.",
+  "settings": {
+    "model": "rnn",
+    "w": "0.8"
+  },
+  "seed": 1,
+  "ops": [["load", "cat sat on the mat"], ["step"], ["step"], ["step"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "dp-interval",
+  "id": "take-small-first",
+  "title": "Take the small tile first",
+  "notes": "Tiles 5 6 1 4. Taking the 1 first scores 6 × 1 × 4 = 24 and leaves the 6 between the 5 and the 4, worth 5 × 6 × 4 = 120. The best order is 3, 2, 4, 1 for 169. Taking whichever tile scores most right now gets only 82.",
+  "settings": {
+    "approach": "pattern",
+    "problem": "remove"
+  },
+  "seed": 1,
+  "ops": [["load", "5 6 1 4"], ["solve"], ["trace"]],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

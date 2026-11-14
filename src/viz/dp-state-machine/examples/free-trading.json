@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "dp-state-machine",
+  "id": "free-trading",
+  "title": "No rules: take every rise",
+  "notes": "The same prices with no cooldown and no fee. Every rise can be its own trade, so the best is the sum of the rises: 3 + 5 + 6 = 14, with buy on day 2, sell on day 4, buy on day 5, sell on day 6.",
+  "settings": {
+    "approach": "pattern",
+    "cooldown": false,
+    "fee": 0
+  },
+  "seed": 1,
+  "ops": [["load", "6 1 4 9 1 7"], ["solve"], ["trace"]],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

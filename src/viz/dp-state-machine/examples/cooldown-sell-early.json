@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "dp-state-machine",
+  "id": "cooldown-sell-early",
+  "title": "With a cooldown, sell early",
+  "notes": "Prices 6 1 4 9 1 7 and a rest day after each sale. Holding from 1 to the peak of 9 makes 8, but then the rest day falls on the 1. Selling early at 4 frees day 5 to buy at 1 again: 3 + 6 = 9.",
+  "settings": {
+    "approach": "pattern",
+    "cooldown": true,
+    "fee": 0
+  },
+  "seed": 1,
+  "ops": [["load", "6 1 4 9 1 7"], ["solve"], ["trace"]],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

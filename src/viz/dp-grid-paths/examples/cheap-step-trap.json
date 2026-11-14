@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "dp-grid-paths",
+  "id": "cheap-step-trap",
+  "title": "The cheaper next step is a trap",
+  "notes": "Stepping to the cheaper neighbour each time goes right along the 1s and then has to cross a 9: 14 in all. The table sees the whole grid and pays the 3 first: down, down, then right along the bottom row, 8.",
+  "settings": {
+    "approach": "pattern",
+    "problem": "mincost",
+    "fill": "bottomup"
+  },
+  "seed": 1,
+  "ops": [["load", "1119/3999/1111"], ["solve"], ["trace"]],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

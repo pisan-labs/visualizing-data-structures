@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "merge-intervals",
+  "id": "inside-one",
+  "title": "One interval covers the rest",
+  "notes": "2–14 starts first and covers the other four: each one merges and lies inside, so the end stays 14. Keep the larger end, or 3–5 would shrink it.",
+  "settings": {
+    "approach": "pattern",
+    "touch": "merge"
+  },
+  "seed": 1,
+  "ops": [["load", "4-6 2-14 8-9 3-5 10-12"], ["merge"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

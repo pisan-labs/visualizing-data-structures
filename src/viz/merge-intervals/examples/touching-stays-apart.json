@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "merge-intervals",
+  "id": "touching-stays-apart",
+  "title": "Touching ends stay apart",
+  "notes": "The same list with half-open times: 15–17 starts just as 13–15 ends, and they share no moment, so they stay apart. Four intervals come out instead of three.",
+  "settings": {
+    "approach": "pattern",
+    "touch": "apart"
+  },
+  "seed": 1,
+  "ops": [["load", "4-7 1-3 9-12 2-5 10-11 13-15 15-17"], ["merge"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

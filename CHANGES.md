@@ -507,3 +507,5 @@
 2026-11-14 [code] Release 2026-11-14-ai-and-llms ("33 new pages", the AI and LLMs pathway) added on Yusuf's "deploy"; it is emailed to opted-in readers at the next app-notify run (15:17 UTC) after it goes live
 
 2026-11-14 [code] transformer-block test: LayerNorm and RMSNorm outputs have mean square q/(q+eps), not 1, for a nearly constant input; the property test asserted 1 and failed on CI (run 211, counterexample (0,0,0.1,0,...)). Fixed the test, not the page
+
+2026-11-14 [code] CI: a concurrency group per ref with cancel-in-progress, so a newer push to next or main cancels the older run (two runs had been testing commits a minute apart); asked by Yusuf

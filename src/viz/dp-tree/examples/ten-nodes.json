@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "dp-tree",
+  "id": "ten-nodes",
+  "title": "Ten nodes, every subset",
+  "notes": "Ten nodes in four levels, the naive way: 437 calls score 175 allowed subsets. The best is 21: B and the five nodes F, G, H, I and J. Two values per node take 10 calls.",
+  "settings": {
+    "approach": "naive"
+  },
+  "seed": 1,
+  "ops": [["build", "3 5 2 4 1 6 2 3 _ 4 1"], ["solve"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

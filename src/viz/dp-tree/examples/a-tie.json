@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "dp-tree",
+  "id": "a-tie",
+  "title": "A tie leaves the node out",
+  "notes": "A root of 9 over children 5 and 4. Take A: 9. Skip A: 5 + 4 = 9. Either way the best is 9; on a tie the read-back leaves the node out, so the answer is B and C. Trying every subset keeps the first best it meets, the same one.",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [["build", "9 5 4"], ["solve"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

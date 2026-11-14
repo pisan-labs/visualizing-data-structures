@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "dp-tree",
+  "id": "every-subset",
+  "title": "Try every allowed subset",
+  "notes": "The same tree, the naive way: decide the nodes in level order, each left out, or taken when its parent is not. 97 calls score 41 subsets that follow the rule and find the same 19 (B, F and G) that two values per node find in 7 calls.",
+  "settings": {
+    "approach": "naive"
+  },
+  "seed": 1,
+  "ops": [["build", "4 9 2 1 3 6 4"], ["solve"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "reverse-k-group",
+  "id": "groups-of-three",
+  "title": "Groups of 3, a short group left as it is",
+  "notes": "1 2 3 4 5 6 7 8 with k = 3: [1 2 3] and [4 5 6] are turned around, and [7 8], too short, stays. 3 2 1 6 5 4 7 8, with 18 hops and 8 links; no value is copied.",
+  "settings": {
+    "approach": "pattern",
+    "rest": "keep"
+  },
+  "seed": 1,
+  "ops": [
+    ["build", "1 2 3 4 5 6 7 8"],
+    ["reverse", 3]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

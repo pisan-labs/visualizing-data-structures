@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "reverse-k-group",
+  "id": "copy-to-array",
+  "title": "Copy to an array instead",
+  "notes": "The naive way on 1 2 3 4 5 6 7 8 with k = 3: copy the 8 values, swap the ends of [1 2 3] and [4 5 6], write them back. 16 hops and 20 copies, 36 against 26, and every node keeps its place while its value changes.",
+  "settings": {
+    "approach": "naive",
+    "rest": "keep"
+  },
+  "seed": 1,
+  "ops": [
+    ["build", "1 2 3 4 5 6 7 8"],
+    ["reverse", 3]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

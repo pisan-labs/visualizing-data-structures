@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "fast-slow-pointers",
+  "id": "palindrome-array",
+  "title": "Copy to an array instead",
+  "notes": "The same 1 2 3 4 3 2 1, copied into an array of 7 and compared from both ends: 3 comparisons. 17 in all against 37 in place, but 7 cells against none.",
+  "settings": {
+    "approach": "naive",
+    "middle": "second"
+  },
+  "seed": 1,
+  "ops": [["build", "1 2 3 4 3 2 1"], ["palindrome"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

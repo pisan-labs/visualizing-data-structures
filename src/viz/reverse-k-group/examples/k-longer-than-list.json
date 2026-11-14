@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "reverse-k-group",
+  "id": "k-longer-than-list",
+  "title": "k longer than the list",
+  "notes": "k = 6 on a list of 4: the first walk finds only 4 nodes, a short group, so nothing changes. 4 hops.",
+  "settings": {
+    "approach": "pattern",
+    "rest": "keep"
+  },
+  "seed": 1,
+  "ops": [
+    ["build", "1 2 3 4"],
+    ["reverse", 6]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

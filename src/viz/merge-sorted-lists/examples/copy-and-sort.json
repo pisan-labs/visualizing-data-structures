@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "merge-sorted-lists",
+  "id": "copy-and-sort",
+  "title": "Copy, sort, rebuild",
+  "notes": "A = 1 4 7 9, B = 2 3 8, the naive way: 7 copies into an array, an insertion sort with 13 comparisons, then 7 new nodes. 47 in all, against 13 for the merge.",
+  "settings": {
+    "approach": "naive",
+    "kway": "pairs"
+  },
+  "seed": 1,
+  "ops": [["build", "1 4 7 9 | 2 3 8"], ["merge"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

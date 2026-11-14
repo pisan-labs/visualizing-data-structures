@@ -396,13 +396,14 @@ export function threadsOps<Set extends Settings, S extends ThreadsState>(
         cur = next;
       }
       if (!over(cur.m)) {
-        const left = cur.m.threads.flatMap((x, i) =>
-          x.status === 'done' || x.status === 'fault' ? [] : [threadName(p, i)],
+        const ready = runnable(cur.m).map((t) => threadName(p, t));
+        const blocked = cur.m.threads.flatMap((x, t) =>
+          x.status === 'blocked' ? [threadName(p, t)] : [],
         );
         yield {
           state: cur,
           marks: [],
-          say: `That is the whole schedule. ${list(left)} ${left.length > 1 ? 'have' : 'has'} steps left: step ${left.length > 1 ? 'them' : 'it'} by hand, or try every interleaving from here.`,
+          say: `That is the whole schedule. ${list(ready)} can still step${blocked.length ? ` (${list(blocked)} ${blocked.length > 1 ? 'wait' : 'waits'})` : ''}: step by hand, or try every interleaving from here.`,
           lines: ['run.for'],
           vars: spec.vars(p, cur.m, settings),
           level: 1,

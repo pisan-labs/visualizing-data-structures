@@ -521,3 +521,5 @@
 2026-11-14 [decision] Yusuf: "1-5 yes. 6 all looks good. Implement all and then merge and deploy": all 39 wave-10 pages, no slice review, one deploy at the end (PLAN.md 21.10, 21.11). Catalog: the interviews pathway, ten families, Techniques listed there too
 
 2026-11-14 [code] Merged wave 10 round 1: src/viz/_patterns (approach setting, Work counters, PATTERNS, spotItKind) and prefix-sum-hashmap (count or longest subarray with sum k; every pair of ends against running sums and a map)
+
+2026-11-14 [code] Merged wave 10 round 1: src/viz/_threads (program parser, step machine with OSTEP semantics, interleavings and exact outcome counts, wait-for graph), src/layouts/lanes.ts and race-condition (step threads, run a schedule, every interleaving)

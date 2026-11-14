@@ -501,3 +501,5 @@
 2026-11-14 [code] Merged wave 9D lora (frozen W plus (alpha/r)BA, Adam training toward a target, the rank floor, merge into W) and ring-allreduce (reduce-scatter and all-gather on 2 to 5 workers, 2(N-1)/N vectors sent per worker). Tier 3 complete: all 33 AI pages on next
 
 2026-11-14 [doc] Merged the tier-3 fact check: 18 fixes on 7 pages (word2vec subsampling is the paper's formula, LoRA rank study on two tasks, ring bound assumes no compression, rnn-lstm 0.953^7, mcts budget-30 story, policy-optimization "still"); outside facts confirmed
+
+2026-11-14 [note] AI and LLMs build done: 33 pages on next (tiers 1-3 and three fact checks); final tree green (unit 281 files 5653 tests, e2e 641). Loop stopped; deploy waits for Yusuf. Shared-code suggestions listed in PLAN.md 20.15

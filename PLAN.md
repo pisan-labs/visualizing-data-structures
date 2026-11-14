@@ -1246,6 +1246,35 @@ Five agents, two pages each, from `next` at 4b499c4, beside a fact check of tier
 | Retrieval | ivf-index, product-quantization | `_retrieve3` | 4824 |
 | Decoding | rnn-lstm, mcts | `_dec3` | 4825 |
 
+All five merged by 01:30 Lisbon, then a tier-3 fact check (18 fixes on 7 pages). On the final
+tree (14 November, 01:50) lint, svelte-check, the full unit suite (281 files, 5653 tests) and
+e2e for all 33 AI pages and the catalog (641 passed) passed, and the 7 fact-checked pages again
+(41 unit, 98 conformance and code, 104 e2e).
+
+### 20.15 Done, and what is left
+
+All 33 pages of the AI and LLMs pathway are on `next`, not deployed. A deploy waits for Yusuf's
+"deploy"; it adds one release to `src/releases.ts` (proposed: id `2026-11-14-ai-and-llms`,
+title "33 new pages", the 33 ids), and that release is emailed the next day at 15:17 UTC to
+readers with the notify flag on.
+
+Suggestions the agents made about shared code (none made; for a later cleanup):
+
+1. `pickLayout` compares scale only, which is unfair when arrangements draw the main picture
+   at different sizes in scene units (gradient-descent chooses from the stage's shape).
+2. Previews repeat every static shape in every frame; contour plots make large previews.
+3. A `number` setting takes whole numbers only, so decimals become long choice lists.
+4. `VarsPanel` quotes string values and shows ±Infinity as `Infinity` (perplexity ∞).
+5. `code.test.ts` random scripts cannot make structured arguments ("x,y", a vector), so search
+   operations on hnsw, ivf-index and product-quantization are code-tested on the curated
+   examples only.
+6. `controls.random.make` gets no settings, unlike presets.
+7. `_matrix` panels could take a font size (multi-head-attention is 9.0 px on a phone with 7
+   words).
+8. `src/layouts/trie.ts` edge labels crowd near a root with many children.
+9. A page's opening runs with the reader's seed, so the numbers on arrival differ from the
+   curated example's notes (k-means, hnsw, policy-optimization).
+
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 
 | Page | Controls |

@@ -1,0 +1,40 @@
+{
+  "format": 1,
+  "viz": "randomized-set",
+  "id": "swap-with-last",
+  "title": "Fill the hole with the last value",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "insert",
+      4
+    ],
+    [
+      "insert",
+      7
+    ],
+    [
+      "insert",
+      2
+    ],
+    [
+      "insert",
+      9
+    ],
+    [
+      "insert",
+      5
+    ],
+    [
+      "remove",
+      7
+    ],
+    [
+      "random"
+    ]
+  ]
+}

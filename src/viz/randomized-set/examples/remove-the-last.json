@@ -1,0 +1,33 @@
+{
+  "format": 1,
+  "viz": "randomized-set",
+  "id": "remove-the-last",
+  "title": "Removing the last value moves nothing",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "insert",
+      3
+    ],
+    [
+      "insert",
+      8
+    ],
+    [
+      "insert",
+      6
+    ],
+    [
+      "remove",
+      6
+    ],
+    [
+      "remove",
+      8
+    ]
+  ]
+}

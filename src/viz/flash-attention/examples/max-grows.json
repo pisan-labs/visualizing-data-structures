@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "flash-attention",
+  "id": "max-grows",
+  "title": "A later tile has the best score",
+  "notes": "sat's best key, cat, comes last. After its first tile sat's max is 0.28 (from ball), and the second tile does not beat it. The third has cat at 2.83, so the old ℓ and O are scaled by e^(0.28 − 2.83) = .08 before cat's value goes in. O ends at (.85, .14), plain attention's answer.",
+  "settings": {
+    "order": "kv",
+    "br": "2",
+    "bc": "2",
+    "causal": true
+  },
+  "seed": 1,
+  "ops": [["load", "the ball and the cat sat"], ["flash"]]
+}

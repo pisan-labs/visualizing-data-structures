@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "flash-attention",
+  "id": "tile-by-tile",
+  "title": "Three tiles, one at a time",
+  "notes": "Three presses of Next tile on seven words. K/V block 1 (the, dog) has met Q blocks 1 to 3, so rows 1 to 6 have their first m, ℓ and O, and it (row 7) is still at m = −∞. 96 numbers have moved so far.",
+  "settings": {
+    "order": "kv",
+    "br": "2",
+    "bc": "2",
+    "causal": true
+  },
+  "seed": 1,
+  "ops": [["load", "the dog saw the ball and it"], ["tile"], ["tile"], ["tile"]]
+}

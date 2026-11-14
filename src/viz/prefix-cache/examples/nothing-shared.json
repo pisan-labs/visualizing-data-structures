@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "prefix-cache",
+  "id": "nothing-shared",
+  "title": "Nothing in common: every token is prefilled",
+  "notes": "Three prompts with three different first words. No edge ever matches, every token is prefilled, and the hit rate stays at 0%.",
+  "settings": {
+    "capacity": "16"
+  },
+  "seed": 1,
+  "ops": [
+    ["request", "the cat sat"],
+    ["request", "a dog ran"],
+    ["request", "it ate the ball"],
+    ["finish", "A"],
+    ["finish", "B"],
+    ["finish", "C"]
+  ]
+}

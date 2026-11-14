@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "prefix-cache",
+  "id": "shared-start",
+  "title": "Prompts that start the same way share a path",
+  "notes": "A caches all 6 of its tokens. B shares \"the cat sat on the\" with it, so the edge splits after 5 tokens and only rug is prefilled. C shares \"the cat\": the edge splits again, and 4 tokens are prefilled. In all 7 of 18 prompt tokens came from the cache (39%).",
+  "settings": {
+    "capacity": "16"
+  },
+  "seed": 1,
+  "ops": [
+    ["request", "the cat sat on the mat"],
+    ["finish", "A"],
+    ["request", "the cat sat on the rug"],
+    ["finish", "B"],
+    ["request", "the cat ran under the tree"],
+    ["finish", "C"]
+  ]
+}

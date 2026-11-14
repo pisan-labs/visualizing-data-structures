@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "prefix-cache",
+  "id": "lru-evicts",
+  "title": "A full cache evicts the least recently used leaf",
+  "notes": "The cache holds 12 tokens. After A and B finish, C splits A's edge and the cache is full. D needs one slot. The least recently used leaf that nobody is using is \"mat\" (last used at time 2), so it goes; C is using rug, and B's \"ate the ball\" was used later.",
+  "settings": {
+    "capacity": "12"
+  },
+  "seed": 1,
+  "ops": [
+    ["request", "the cat sat on the mat"],
+    ["finish", "A"],
+    ["request", "a dog ate the ball"],
+    ["finish", "B"],
+    ["request", "the cat sat on the rug"],
+    ["request", "a dog ran"]
+  ]
+}

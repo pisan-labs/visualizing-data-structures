@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "flash-attention",
+  "id": "q-outside",
+  "title": "Q blocks outside: the loop order of FlashAttention-2",
+  "notes": "The same sentence with Q blocks outside, as in FlashAttention-2: each Q block is read once and its O written once, and each tile reads its K and V blocks. 72 numbers move, against 168 with K/V blocks outside and 192 for plain attention. The outputs are the same.",
+  "settings": {
+    "order": "q",
+    "br": "2",
+    "bc": "2",
+    "causal": true
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat on the mat"], ["flash"]]
+}

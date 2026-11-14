@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "viz": "flash-attention",
+  "id": "one-row-blocks",
+  "title": "Blocks of one row: the most traffic",
+  "notes": "Tiles of one score each: 21 tiles. sat's max goes from −1.41 (the) to 2.83 (cat), so its first output shrinks by e^(−1.41 − 2.83) = .01. Tiny tiles mean Q, O, m and ℓ go back and forth for every key: 258 numbers move, against 192 for plain attention.",
+  "settings": {
+    "order": "kv",
+    "br": "1",
+    "bc": "1",
+    "causal": true
+  },
+  "seed": 1,
+  "ops": [["load", "the cat sat on the mat"], ["flash"]]
+}

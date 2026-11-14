@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "prefix-cache",
+  "id": "waits",
+  "title": "No room: the next request waits for one to finish",
+  "notes": "A and B run and hold 11 of the 12 slots. C needs 2 new slots, only 1 is free, and nothing can be evicted, so C waits. Once B finishes, its 5 tokens may go, and C runs.",
+  "settings": {
+    "capacity": "12"
+  },
+  "seed": 1,
+  "ops": [
+    ["request", "the cat sat on the mat"],
+    ["request", "a dog ate the ball"],
+    ["request", "the fox ran"],
+    ["finish", "B"],
+    ["request", "the fox ran"]
+  ]
+}

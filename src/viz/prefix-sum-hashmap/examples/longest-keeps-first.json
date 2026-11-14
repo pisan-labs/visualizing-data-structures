@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "prefix-sum-hashmap",
+  "id": "longest-keeps-first",
+  "title": "The longest keeps the first time",
+  "notes": "The longest subarray with sum 3 is A[0..5], 6 values. The map keeps where each running sum first appeared: the running sum is 2 again after 5 values, and first[2] stays 1. That is why A[1..6] comes out as long as it can, 6 values, though not longer.",
+  "settings": {
+    "approach": "pattern",
+    "goal": "longest"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "2 3 -1 2 -4 1 2 -1"],
+    ["find", 3]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

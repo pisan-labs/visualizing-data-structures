@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "rnn-lstm",
+  "id": "rnn-fades",
+  "title": "The plain RNN forgets the cat",
+  "notes": "Only an animal writes to the memory, so after cat every step just multiplies it by w = 0.8 and squashes it. h falls from 0.76 to 0.12 by slept. Word 1's pull, the product of the slopes w(1 − h²), ends at 0.096.",
+  "settings": {
+    "model": "rnn",
+    "w": "0.8"
+  },
+  "seed": 1,
+  "ops": [["load", "cat sat on the mat and it slept"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

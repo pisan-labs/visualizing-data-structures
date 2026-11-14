@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "rnn-lstm",
+  "id": "no-forget-gate",
+  "title": "Without a forget gate the cell only grows",
+  "notes": "The 1997 LSTM has no forget gate: f is always 1, so word 1's pull stays exactly 1. But nothing ever leaves the cell either. Each new animal adds to it: 0.92 after cat, 1.80 after dog, 2.72 after fox.",
+  "settings": {
+    "model": "lstm97",
+    "w": "0.8"
+  },
+  "seed": 1,
+  "ops": [["load", "cat saw a dog and a fox"], ["run"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

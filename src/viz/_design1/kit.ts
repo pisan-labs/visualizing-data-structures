@@ -50,14 +50,6 @@ export function readInt(arg: unknown, lo: number, hi: number): number | string {
   return v === 0 ? 0 : v;
 }
 
-/** The input box's parser for one whole number from lo to hi. */
-export function intParser(lo: number, hi: number) {
-  return (token: string): number | Error => {
-    const v = readInt(token, lo, hi);
-    return typeof v === 'string' ? new Error(v) : v;
-  };
-}
-
 // ----- Costs over a session -----
 
 /** What each design has cost so far, in the page's work units. */

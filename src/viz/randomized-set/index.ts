@@ -187,7 +187,6 @@ export const randomizedSet: VizDef<RSState, RSSettings, RSExtra> = {
       best: {
         cost: 'O(1)',
         why: 'remove(x) when x is A[0]: one comparison.',
-        example: 'scan-to-find',
       },
       average: { cost: 'Θ(n)', why: 'About n/2 comparisons to find a value that is there.' },
       worst: {

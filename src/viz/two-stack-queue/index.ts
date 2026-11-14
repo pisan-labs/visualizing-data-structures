@@ -163,7 +163,6 @@ export const twoStackQueue: VizDef<TQState, TQSettings, TQExtra> = {
       best: {
         cost: 'O(1)',
         why: 'One value: a move there, a pop, nothing to move back. 3 stack operations.',
-        example: 'nothing-to-dequeue',
       },
       average: { cost: 'Θ(n)', why: '4n − 1 stack operations on n values, every time.' },
       worst: {

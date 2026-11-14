@@ -511,3 +511,5 @@
 2026-11-14 [code] CI: a concurrency group per ref with cancel-in-progress, so a newer push to next or main cancels the older run (two runs had been testing commits a minute apart); asked by Yusuf
 
 2026-11-14 [code] account-sync e2e derives the latest release and the "new since" counts from src/releases.ts instead of hard-coding them; the new release broke 10 of its tests in CI run 214, so main did not move
+
+2026-11-14 [note] Deployed 09:49 UTC on Yusuf's "deploy": main 2228ae7..9ca8d71 (the AI and LLMs pathway, 33 pages; release 2026-11-14-ai-and-llms; CI concurrency). CI 215 green. Bundle matches; 237 addresses 200 with the footer once; 33 new pages draw; feed live with the release first; no account requests

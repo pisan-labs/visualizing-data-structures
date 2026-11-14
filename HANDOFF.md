@@ -7,6 +7,14 @@ choice of 10 November).
 
 ## What is live
 
+**Update, 14 November 2026, 09:50 Lisbon:** `main` is at `9ca8d71`, deployed on Yusuf's
+"deploy" after CI run 215 passed: the AI and LLMs pathway (33 pages, PLAN.md section 20), the
+release `2026-11-14-ai-and-llms` in `notify-feed.json` (emailed to opted-in readers at the next
+app-notify run, 15:17 UTC), and the CI concurrency group. The live check passed: the bundle
+(`index-C8enJsGa.js`) matches a local build, all 237 addresses return 200 with the footer once,
+the 33 new pages draw, the feed is application/json with no redirect, and an ordinary visit sends
+nothing to `auth.hintwise.org`. The notes below are from 11 November.
+
 - `main` is at `70155fe`, live on Netlify at https://stepwise.hintwise.org/ (site
   `stepwise-pisan-labs`), deployed on 11 November at 10:32 on Yusuf's word, after CI on
   `70155fe` passed. The live check passed:

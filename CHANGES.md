@@ -503,3 +503,5 @@
 2026-11-14 [doc] Merged the tier-3 fact check: 18 fixes on 7 pages (word2vec subsampling is the paper's formula, LoRA rank study on two tasks, ring bound assumes no compression, rnn-lstm 0.953^7, mcts budget-30 story, policy-optimization "still"); outside facts confirmed
 
 2026-11-14 [note] AI and LLMs build done: 33 pages on next (tiers 1-3 and three fact checks); final tree green (unit 281 files 5653 tests, e2e 641). Loop stopped; deploy waits for Yusuf. Shared-code suggestions listed in PLAN.md 20.15
+
+2026-11-14 [code] Release 2026-11-14-ai-and-llms ("33 new pages", the AI and LLMs pathway) added on Yusuf's "deploy"; it is emailed to opted-in readers at the next app-notify run (15:17 UTC) after it goes live

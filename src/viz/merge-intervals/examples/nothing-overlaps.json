@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "merge-intervals",
+  "id": "nothing-overlaps",
+  "title": "Nothing overlaps",
+  "notes": "Eight intervals and no overlaps, so the list out grows by one each time: 0 + 1 + … + 7 = 28 checks. Sorting first takes 17 comparisons and 7 checks, 24 in all, and the gap grows with n.",
+  "settings": {
+    "approach": "naive",
+    "touch": "merge"
+  },
+  "seed": 1,
+  "ops": [["load", "10-12 0-2 15-17 5-7 18-19 3-4 13-14 8-9"], ["merge"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

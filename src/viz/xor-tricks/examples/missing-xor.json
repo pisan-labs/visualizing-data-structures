@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "xor-tricks",
+  "id": "missing-xor",
+  "title": "The missing number",
+  "notes": "Six different values from 0 to 6. Start acc at 6 and XOR in each index and each value: everything that is there cancels, and 4 is left after 12 XORs.",
+  "settings": {
+    "approach": "pattern",
+    "goal": "missing"
+  },
+  "seed": 1,
+  "ops": [["load", "3 0 6 1 5 2"], ["find"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "merge-intervals",
+  "id": "one-chain",
+  "title": "Each overlaps the next",
+  "notes": "Each interval overlaps the next, so everything merges into 1–14 as it comes and each new interval meets only one interval out: 5 checks. Sorting first would cost 7 comparisons before its 5 checks.",
+  "settings": {
+    "approach": "naive",
+    "touch": "merge"
+  },
+  "seed": 1,
+  "ops": [["load", "1-4 3-6 5-8 7-10 9-12 11-14"], ["merge"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

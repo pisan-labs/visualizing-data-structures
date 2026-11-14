@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "xor-tricks",
+  "id": "single-xor",
+  "title": "Pairs cancel, one is left",
+  "notes": "A = 4 1 6 4 9 6 1. acc goes 4, 5, 3, 7, 14, 8, 9: after the second 4 it is 1 ^ 6, the values still without a partner. 7 XORs and one number kept leave 9.",
+  "settings": {
+    "approach": "pattern",
+    "goal": "single"
+  },
+  "seed": 1,
+  "ops": [["load", "4 1 6 4 9 6 1"], ["find"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

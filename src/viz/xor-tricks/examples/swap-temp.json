@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "xor-tricks",
+  "id": "swap-temp",
+  "title": "Swap with a temporary",
+  "notes": "The same swap with a temporary: temp = 1, A[1] = 9, A[4] = temp. Three copies and one extra variable.",
+  "settings": {
+    "approach": "naive",
+    "goal": "single"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "4 1 6 4 9 6 1"],
+    ["swap", 1, 4]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

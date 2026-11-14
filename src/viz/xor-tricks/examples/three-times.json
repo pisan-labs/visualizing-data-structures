@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "xor-tricks",
+  "id": "three-times",
+  "title": "Three copies leave one",
+  "notes": "7 appears three times: two copies cancel and one is left, so the answer is 7. XOR only knows odd from even.",
+  "settings": {
+    "approach": "pattern",
+    "goal": "single"
+  },
+  "seed": 1,
+  "ops": [["load", "4 7 4 7 2 7 2"], ["find"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

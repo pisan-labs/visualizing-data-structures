@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "merge-intervals",
+  "id": "every-interval-out",
+  "title": "Check every interval out",
+  "notes": "The same list with no sort: each interval is checked against every interval out so far, absorbing the ones it overlaps. 13 checks give the same 1–7, 9–12 and 13–17. At this size that beats the 17 steps of sorting first.",
+  "settings": {
+    "approach": "naive",
+    "touch": "merge"
+  },
+  "seed": 1,
+  "ops": [["load", "4-7 1-3 9-12 2-5 10-11 13-15 15-17"], ["merge"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

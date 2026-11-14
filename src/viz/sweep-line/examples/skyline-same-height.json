@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "sweep-line",
+  "id": "skyline-same-height",
+  "title": "One roof from two buildings",
+  "notes": "1–4 and 4–8 are both 5 tall. At x = 4 one ends and one starts, the tallest stays 5, and there is no key point: (1, 5) (8, 3) (10, 0).",
+  "settings": {
+    "approach": "pattern",
+    "goal": "skyline",
+    "ties": "ends"
+  },
+  "seed": 1,
+  "ops": [["load", "1-4:5 4-8:5 8-10:3"], ["sweep"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

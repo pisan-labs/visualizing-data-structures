@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "sweep-line",
+  "id": "skyline-every-edge",
+  "title": "A skyline, every building at every edge",
+  "notes": "The same buildings the plain way: at each of the 9 edges, check all 5 buildings for the tallest standing. 18 comparisons to sort and 45 checks, against 37 steps with the heap.",
+  "settings": {
+    "approach": "naive",
+    "goal": "skyline",
+    "ties": "ends"
+  },
+  "seed": 1,
+  "ops": [["load", "1-6:4 2-5:7 4-9:5 7-11:3 9-13:6"], ["sweep"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -312,7 +312,7 @@ function* pattern(s: AssignState): Gen {
       const c = cost[w]![t]!;
       const cand = fp + c;
       work.add('tries');
-      const cur = f[mask];
+      const cur = f[mask] ?? null;
       const first = cur === null;
       const better = first || cand < cur;
       if (better) {

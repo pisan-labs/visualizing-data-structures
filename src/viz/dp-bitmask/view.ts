@@ -326,7 +326,7 @@ export function view(step: AssignStep, settings: AssignSettings, stage?: StageSi
   };
   // Stacked: table on top, lattice under it.
   const w = Math.max(lat.bounds.w, tab.bounds.w);
-  const ly = top + tab.bounds.h + 26;
+  const ly = top + tab.bounds.h + 14;
   const stacked: Arr = {
     shapes: [
       headShape,

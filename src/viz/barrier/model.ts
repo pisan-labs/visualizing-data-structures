@@ -366,7 +366,7 @@ export function say(
     case 'P': {
       const x = sem(events.at(-1)!);
       if (blocked)
-        return `${T} calls P(${x}): ${x} goes to ${semv(after, x)}, so ${T} waits${x === 'b2' ? ' for the last one to leave' : ' for the others to arrive'}.`;
+        return `${T} calls P(${x}): ${x} goes to ${semv(after, x)}, so ${T} waits${x === 'b2' ? ' for the last one to leave' : problemOf(settings) === 'barrier' && count >= 3 ? ' its turn: all three have arrived, and the turnstile lets them through one at a time' : ' for the others to arrive'}.`;
       if (resumed) return `${T} is through.`;
       return `${T} calls P(${x}): ${x} goes from ${semv(before, x)} to ${semv(after, x)}, and ${T} passes.`;
     }

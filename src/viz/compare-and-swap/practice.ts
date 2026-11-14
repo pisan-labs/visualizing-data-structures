@@ -62,7 +62,7 @@ export function casPractice(): PracticeKind[] {
           settings,
           answer: { kind: 'number', value: n },
           explain: cas
-            ? `${n}. With the cas, a thread whose read went stale fails its swap and reads again, so no update is lost${retriesOf(end) ? ` (${retriesOf(end)} retries here)` : ''}.`
+            ? `${n}. With the cas, a thread whose read went stale fails its swap and reads again, so no update is lost${retriesOf(end) ? ` (${retriesOf(end)} ${retriesOf(end) === 1 ? 'retry' : 'retries'} here)` : ''}.`
             : n === k
               ? `${n}. Nothing was lost this time: no thread read n while another was between its read and its write.`
               : `${n}, not ${k}. A plain store writes over whatever is there, so a thread that read a stale n wipes out ${k - n === 1 ? 'an update' : `${k - n} updates`}.`,

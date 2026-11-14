@@ -3,7 +3,7 @@
   "viz": "pattern-map",
   "id": "concurrency-family",
   "title": "Concurrency, the largest family",
-  "notes": "Nine patterns and 15 cues: race conditions, locks, semaphores, the bounded buffer, deadlock and the classic synchronization problems. A dashed box marks a page that is not live yet.",
+  "notes": "Nine patterns and 15 cues: race conditions, locks, semaphores, the bounded buffer, deadlock and the classic synchronization problems.",
   "settings": {
     "lookalikes": true,
     "naive": true

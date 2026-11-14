@@ -30,8 +30,10 @@ export function barrierPractice(): PracticeKind[] {
         let s = mrun(mac, []).state;
         let first = -1;
         let at = 0;
+        const waited = new Set<number>();
         for (const [i, st] of run.steps.entries()) {
           s = mrun(mac, [st.thread], s).state;
+          for (const t of [0, 1, 2]) if (s.threads[t]!.status === 'blocked') waited.add(t);
           const past = [0, 1, 2].find((t) => rowNow(mac, s, t) > pAt);
           if (past !== undefined) {
             first = past;
@@ -46,7 +48,7 @@ export function barrierPractice(): PracticeKind[] {
           setup: [],
           settings,
           answer: { kind: 'choice', options, correct: first },
-          explain: `${T(first)}, at step ${at}. ${last === undefined ? '' : `${T(last)} was the third to arrive, so it opened the turnstile; `}${last === first ? 'nobody was waiting yet, so it walked through itself.' : `${T(first)} was the first waiting at P(b), so it went through first.`}`,
+          explain: `${T(first)}, at step ${at}. ${last === undefined ? '' : `${T(last)} was the third to arrive, so it opened the turnstile; `}${last === first ? 'nobody was waiting yet, so it walked through itself.' : waited.has(first) ? `${T(first)} was the first waiting at P(b), so it went through first.` : `nobody was waiting yet, so b stayed open, and ${T(first)} was the first to reach P(b) and walked through.`}`,
           watch: [['run', digits(sched)]],
         };
       },
@@ -91,7 +93,7 @@ export function barrierPractice(): PracticeKind[] {
           setup: [],
           settings,
           answer: { kind: 'sequence', value: riders },
-          explain: `${riders.join(' and ')}: they got the two seats D opened. ${left} came to P(seat) after both seats were taken, so it waits for the next car.`,
+          explain: `${riders.join(' and ')}: they got the two seats D opened. ${left} was the last of the three to call P(seat), so both seats were gone, and it waits for the next car.`,
           watch: [['run', digits(sched)]],
         };
       },

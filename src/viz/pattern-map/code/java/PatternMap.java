@@ -37,7 +37,7 @@ public final class PatternMap {
             {"no repeats in a stretch", "sliding-window"},
             {"the sum of every window of k", "sliding-window"},
             {"the next greater value", "monotonic-stack"},
-            {"largest rectangle in bars", "monotonic-stack"},
+            {"biggest rectangle under bars", "monotonic-stack"},
             {"the maximum of every window", "monotonic-queue"},
         });
         MAP.put("Intervals", new String[][] {
@@ -59,7 +59,7 @@ public final class PatternMap {
             {"the k largest", "top-k"},
             {"only k fit in memory", "top-k"},
             {"the k-th smallest value", "top-k"},
-            {"merge k sorted lists", "k-way-merge"},
+            {"k sorted lists into one", "k-way-merge"},
             {"a running median", "two-heaps-median"},
             {"a low half and a high half", "two-heaps-median"},
         });
@@ -83,14 +83,14 @@ public final class PatternMap {
             {"merge groups as links arrive", "disjoint-sets"},
         });
         MAP.put("Bit tricks", new String[][] {
-            {"every value twice but one", "xor-tricks"},
-            {"two values appear once", "xor-tricks"},
+            {"all in pairs but one", "xor-tricks"},
+            {"two without a partner", "xor-tricks"},
             {"a set of on/off flags", "bitmask"},
-            {"count the 1 bits", "bitmask"},
+            {"how many bits are set", "bitmask"},
         });
         MAP.put("DP patterns", new String[][] {
             {"only right or down", "dp-grid-paths"},
-            {"cheapest path around walls", "dp-grid-paths"},
+            {"paths around walls", "dp-grid-paths"},
             {"each day: hold, sell or rest", "dp-state-machine"},
             {"a rule about the day before", "dp-state-machine"},
             {"best order to merge a row", "dp-interval"},
@@ -102,11 +102,11 @@ public final class PatternMap {
         MAP.put("Design a data structure", new String[][] {
             {"a stack that knows its min", "min-stack"},
             {"a queue built from stacks", "two-stack-queue"},
-            {"insert, delete, random: O(1)", "randomized-set"},
+            {"pick at random, all O(1)", "randomized-set"},
             {"drop the least recently used", "lru-cache"},
             {"drop the least often used", "lfu-cache"},
             {"at most r per second", "rate-limiter"},
-            {"words with a given prefix", "trie"},
+            {"every word starting with p", "trie"},
             {"suggest as you type", "trie"},
         });
         MAP.put("Concurrency", new String[][] {
@@ -122,7 +122,7 @@ public final class PatternMap {
             {"each needs both neighbours", "dining-philosophers"},
             {"many readers or one writer", "readers-writers"},
             {"wait until all n arrive", "barrier"},
-            {"no peeking at the next round", "barrier"},
+            {"rounds in lockstep", "barrier"},
             {"update without a lock", "compare-and-swap"},
             {"it changed and changed back", "compare-and-swap"},
         });

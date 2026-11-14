@@ -17,7 +17,16 @@
  */
 import type { MarkRole, Scalar, StageSize, Step, Value } from '../../engine/types';
 import { pickLayout } from '../../layouts/arrange';
-import { drawChain, pointerText, type Roles } from '../../layouts/linked';
+import {
+  drawChain,
+  drawLink,
+  fieldAnchor,
+  linkId,
+  pointerText,
+  type Box,
+  type ChainLink,
+  type Roles,
+} from '../../layouts/linked';
 import type { Bounds, Shape } from '../../render/scene';
 
 export const MIN_VALUE = 0;
@@ -261,4 +270,44 @@ export function drawArray(o: {
     });
   }
   return shapes;
+}
+
+/**
+ * drawChain sends a link to a later row out along its own row to the right gutter, which is
+ * right for a row's last node but runs through the nodes after it otherwise: during a reversal
+ * in groups, a group's old first node points past the rest of its group at a node on the next
+ * row. Such links are redrawn here: down into the gap under the row, then into the target from
+ * the left (first in its row) or from above. `boxes` and `links` are drawChain's.
+ */
+export function rerouteSkips(
+  shapes: Shape[],
+  boxes: ReadonlyMap<string, Box>,
+  links: readonly ChainLink[],
+  roles: Roles,
+): Shape[] {
+  const all = [...boxes.values()];
+  const replace = new Map<string, Shape[]>();
+  for (const l of links) {
+    const src = l.to === null ? undefined : boxes.get(l.from);
+    const dst = l.to === null ? undefined : boxes.get(l.to);
+    if (!src || !dst || dst.y <= src.y) continue;
+    if (!all.some((b) => b.y === src.y && b.x > src.x)) continue;
+    const { p, side } = fieldAnchor('single', src, false, 'next');
+    if (side !== 'right') continue;
+    // The gap above the target's row, as drawChain's gap lane (36 above the row, 14 between).
+    const yGap = dst.y - 47;
+    const cy = dst.y + dst.h / 2;
+    const first = !all.some((b) => b.y === dst.y && b.x < dst.x);
+    const pts = first
+      ? [p, { x: p.x, y: yGap }, { x: dst.x - 12, y: yGap }, { x: dst.x - 12, y: cy }, { x: dst.x, y: cy }]
+      : [p, { x: p.x, y: yGap }, { x: dst.x + 10, y: yGap }, { x: dst.x + 10, y: dst.y }];
+    const id = linkId(l.from, 'next');
+    replace.set(id, drawLink(id, pts, { role: roles.get(id), dashed: l.dashed }));
+  }
+  if (!replace.size) return shapes;
+  const base = (id: string) => id.replace(/~\d+$/, '');
+  return [
+    ...shapes.filter((s) => s.kind !== 'arrow' || !replace.has(base(s.id))),
+    ...[...replace.values()].flat(),
+  ];
 }

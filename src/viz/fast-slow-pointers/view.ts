@@ -8,9 +8,22 @@
  * out of its node into A.
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
-import { drawChain, type ChainNode, type NamedPointer } from '../../layouts/linked';
+import {
+  drawChain,
+  type ChainLink,
+  type ChainNode,
+  type NamedPointer,
+} from '../../layouts/linked';
 import type { Scene, Shape } from '../../render/scene';
-import { ARRAY, arrows, chainCols, drawArray, heading, nid } from '../_lists2/kit';
+import {
+  ARRAY,
+  arrows,
+  chainCols,
+  drawArray,
+  heading,
+  nid,
+  rerouteSkips,
+} from '../_lists2/kit';
 import { values, type FSExtra, type FSSettings, type FSState } from './model';
 
 /** Local pointers are drawn below the nodes, in this order when they share a node. */
@@ -41,22 +54,23 @@ export function view(
     pointers.push({ name, to: u === null ? null : nid(u), side: 'below', nullAt: 'after' });
   }
   const cols = chainCols(stage, state.nodes.length, reserved ? ARRAY_ROOM : 0);
+  const links: ChainLink[] = state.nodes.map((n) => ({
+    from: nid(n.uid),
+    field: 'next',
+    to: n.next === null ? null : nid(n.next),
+  }));
   const chain = drawChain(
     {
       kind: 'single',
       nodes,
-      links: state.nodes.map((n) => ({
-        from: nid(n.uid),
-        field: 'next',
-        to: n.next === null ? null : nid(n.next),
-      })),
+      links,
       pointers,
       cols,
       minRows: 1,
     },
     roles,
   );
-  const shapes: Shape[] = [...chain.shapes];
+  const shapes: Shape[] = rerouteSkips(chain.shapes, chain.boxes, links, roles);
   if (extra?.heading) shapes.push(heading(extra.heading, roles.get('ask')));
   let { w, h } = chain.bounds;
   if (reserved) {

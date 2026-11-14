@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "reverse-k-group",
+  "id": "whole-list",
+  "title": "k = n: the whole list turned around",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern",
+    "rest": "keep"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "build",
+      "1 2 3 4 5"
+    ],
+    [
+      "reverse",
+      5
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

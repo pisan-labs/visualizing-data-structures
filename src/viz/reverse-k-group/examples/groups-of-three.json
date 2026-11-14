@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "reverse-k-group",
+  "id": "groups-of-three",
+  "title": "Groups of 3, a short group left as it is",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern",
+    "rest": "keep"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "build",
+      "1 2 3 4 5 6 7 8"
+    ],
+    [
+      "reverse",
+      3
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

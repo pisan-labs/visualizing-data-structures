@@ -119,6 +119,7 @@ function answerColumns(
 
 function groupBlock(
   rec: RlRec | undefined,
+  reinforce: boolean,
   stage: string,
   pass: number | undefined,
   roles: Roles,
@@ -155,7 +156,7 @@ function groupBlock(
       cell: (i) =>
         advShown ? { text: sgn(rec!.adv[i]!), shade: shadeOf(rec!.adv[i]!, advTop) } : null,
     },
-    ...(rec?.method === 'reinforce'
+    ...(reinforce
       ? []
       : [
           {
@@ -224,7 +225,7 @@ export function view(step: Step<PoState, PoExtra>, settings: PoSettings, stage?:
   const group =
     settings.method === 'dpo'
       ? pairBlock(dpo, roles)
-      : groupBlock(rl, work?.stage ?? 'done', work?.pass, roles);
+      : groupBlock(rl, settings.method === 'reinforce', work?.stage ?? 'done', work?.pass, roles);
 
   const prompt = text('prompt', { x: 4, y: 18 }, `Q: ${PROMPT}`, {
     size: TITLE,

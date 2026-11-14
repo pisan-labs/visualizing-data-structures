@@ -545,3 +545,5 @@
 2026-11-14 [code] Merged wave 10 rate-limiter (fixed window as the naive one, sliding log, sliding window counter, token bucket on the same request times) and lfu-cache (frequency lists with minFreq against scanning every key)
 
 2026-11-14 [code] Merged wave 10 dp-grid-paths (count or cheapest path; bottom-up or memo), dp-state-machine (buy and sell with a cooldown or a fee) and dp-interval (take tiles scored by neighbours, merge piles), each against plain recursion with call counts
+
+2026-11-14 [code] Merged wave 10 min-stack (a stack of minimums against scanning), two-stack-queue (move on empty, amortized 3 per operation) and randomized-set (array plus index map, remove by swapping with the last)

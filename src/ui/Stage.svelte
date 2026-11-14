@@ -42,7 +42,9 @@
     let raf = 0;
     const start = performance.now();
     const frame = (now: number) => {
-      const t = Math.min(1, (now - start) / ms);
+      // A frame's timestamp is when the frame began, which can be a moment before `start`:
+      // clamp, or the first frame eases backwards and a bar growing from 0 gets a negative width.
+      const t = Math.min(1, Math.max(0, (now - start) / ms));
       shown = interpolate(from, target, easeInOut(t));
       if (t < 1) raf = requestAnimationFrame(frame);
     };

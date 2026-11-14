@@ -481,3 +481,7 @@
 2026-11-14 [code] Merged wave 9C paged-attention (block tables, free list, reference counts, copy-on-write on fork), continuous-batching (static against iteration-level scheduling, Gantt chart, waiting and idle readouts) and quantization (int8 or int4, absmax or zero-point, per tensor, row or block; the outlier story)
 
 2026-11-14 [code] Merged wave 9C k-means (Lloyd, random or k-means++ seeding, empty clusters, WCSS), bm25 (inverted index, Robertson or Lucene IDF, k1 and b, top 3 by a heap) and hnsw (skip-list levels, greedy descent, ef list, recall against brute force)
+
+2026-11-14 [code] Merged wave 9C unigram-tokenizer (Viterbi lattice, sampled splits, pruning), speculative-decoding (bigram draft, trigram target, min(1, p/q) acceptance) and constrained-decoding (regex to DFA, token index, masked logits). Tier 2 complete: 11 pages
+
+2026-11-14 [code] Stage tween clamps t at 0: a frame timestamp can precede the tween start, so the first frame eased backwards and a bar growing from width 0 got a negative width (browser error on /sampling/)

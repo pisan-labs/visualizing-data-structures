@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "fast-slow-pointers",
+  "id": "not-a-palindrome",
+  "title": "Not a palindrome: stop early, still restore",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern",
+    "middle": "second"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "build",
+      "1 2 3 4 2 1"
+    ],
+    [
+      "palindrome"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "fast-slow-pointers",
+  "id": "first-of-two",
+  "title": "Two middles: the first",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern",
+    "middle": "first"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "build",
+      "3 8 1 9 4 7"
+    ],
+    [
+      "middle"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

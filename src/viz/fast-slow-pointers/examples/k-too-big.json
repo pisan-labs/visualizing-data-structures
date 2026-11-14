@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "fast-slow-pointers",
+  "id": "k-too-big",
+  "title": "k longer than the list",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern",
+    "middle": "second"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "build",
+      "3 8 1 9"
+    ],
+    [
+      "kth",
+      6
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "fast-slow-pointers",
+  "id": "odd-middle",
+  "title": "Slow stops at the middle",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern",
+    "middle": "second"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "build",
+      "3 8 1 9 4 7 2"
+    ],
+    [
+      "middle"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

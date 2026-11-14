@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "fast-slow-pointers",
+  "id": "palindrome-array",
+  "title": "Copy to an array instead",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "naive",
+    "middle": "second"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "build",
+      "1 2 3 4 3 2 1"
+    ],
+    [
+      "palindrome"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

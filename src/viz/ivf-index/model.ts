@@ -292,7 +292,7 @@ const trainOp: Op = {
         const moved = st.extra?.moved ?? [];
         yield {
           state: cur,
-          marks: moved.map((m) => mark(cId(m.id), 'active')),
+          marks: [],
           say: `k-means round ${km.round}: every point joins its nearest centre (${lists.map((l, j) => `${cName(km.centres[j]!.id)} ${l.length}`).join(', ')}), then every centre moves to the mean of its points. ${moved.length ? `${plural(moved.length, 'centre')} moved` : 'No centre moved'}; WCSS ${num(wcss(km))}.`,
           lines: ['tround'],
           level: 2,

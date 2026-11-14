@@ -197,7 +197,7 @@ export const ivfIndex: VizDef<IvfState, IvfSettings, IvfExtra> = {
     crowdedList,
   ] as unknown as SavedExample[],
   practice: ivfPractice(() => ivfIndex),
-  preview: { example: 'across-the-border', level: 2, hide: ['ls-', 'rs-'] },
+  preview: { example: 'across-the-border', level: 3, hide: ['ls-', 'rs-'] },
   opening: 'across-the-border',
 };
 

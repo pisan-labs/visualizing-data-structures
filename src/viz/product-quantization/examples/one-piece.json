@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "product-quantization",
+  "id": "one-piece",
+  "title": "One piece is plain k-means",
+  "notes": "One piece of 4 numbers: plain k-means on whole vectors, 4 centres, 2 bits a vector, and only 4 vectors a code can stand for. The squared errors add up to 175.5. A and E share centre 0, so the table gives both 13.25.",
+  "settings": {
+    "pieces": "1",
+    "size": "4"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "1,9,1,8 2,9,9,9 9,9,1,1 9,8,9,2 1,1,1,9 1,2,9,1 9,1,8,9 8,1,2,1"],
+    ["train"],
+    ["encode"],
+    ["search", "2,8,2,7"]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

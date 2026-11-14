@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "kadane",
+  "id": "tie-at-zero",
+  "title": "A run at exactly 0 keeps going",
+  "notes": "A = 2 −2 3 −1. After the −2 the run is exactly 0: not negative, so it keeps going and A[0..2] reaches 3. A[2] alone is 3 too. The pass restarts only on a negative run, so of two subarrays with the same sum it reports the one that starts first.",
+  "settings": {
+    "approach": "pattern",
+    "empty": false
+  },
+  "seed": 1,
+  "ops": [["load", "2 -2 3 -1"], ["find"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

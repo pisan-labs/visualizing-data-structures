@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "kadane",
+  "id": "every-pair",
+  "title": "Every pair of ends",
+  "notes": "The same array, the naive way: for each start i, extend the end j and keep the sum. Row i of the triangle holds the sums of A[i..j]. 45 sums and 45 comparisons find the same A[2..5] = 8 that one pass finds in 9 sums and 18 comparisons. Each column's largest sum is the run the pass keeps.",
+  "settings": {
+    "approach": "naive",
+    "empty": false
+  },
+  "seed": 1,
+  "ops": [["load", "3 -4 5 -2 -1 6 -7 2 1"], ["find"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

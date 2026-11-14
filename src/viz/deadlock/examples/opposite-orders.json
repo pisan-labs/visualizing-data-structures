@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "deadlock",
+  "id": "opposite-orders",
+  "title": "Opposite orders: each waits for the other",
+  "notes": "T1 takes a and T2 takes b. Now T1 needs b and T2 needs a: T1 waits for T2, T2 waits for T1, and neither can ever go on.",
+  "settings": {
+    "threads": 2,
+    "order": "opposite"
+  },
+  "seed": 1,
+  "ops": [["t1"], ["t2"], ["t1"], ["t2"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

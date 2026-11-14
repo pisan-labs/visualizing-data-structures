@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "deadlock",
+  "id": "one-at-a-time",
+  "title": "One at a time: no deadlock",
+  "notes": "T1 takes both locks and lets go of both before T2 starts, so T2 finds them free. Opposite orders only deadlock when the threads overlap.",
+  "settings": {
+    "threads": 2,
+    "order": "opposite"
+  },
+  "seed": 1,
+  "ops": [["run", "1 1 1 1 2 2 2 2"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

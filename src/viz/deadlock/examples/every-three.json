@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "deadlock",
+  "id": "every-three",
+  "title": "Every interleaving of three threads",
+  "notes": "254 orders. 150 finish; 52 deadlock between T1 and T2, and 52 between T2 and T3. T1 and T3 take the locks in the same order, so they never deadlock with each other.",
+  "settings": {
+    "threads": 3,
+    "order": "opposite"
+  },
+  "seed": 1,
+  "ops": [["every"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

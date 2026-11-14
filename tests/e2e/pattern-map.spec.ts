@@ -73,7 +73,7 @@ test('a practice question is graded and Show me plays the answer', async ({ page
   await expect(page.locator('.question')).toHaveCount(5);
   const first = page.locator('.question').first();
   await first.getByRole('button', { name: 'Check' }).click();
-  const verdict = first.locator('.feedback strong');
+  const verdict = first.locator('.feedback strong').first();
   await expect(verdict).toContainText('Not quite. The answer is');
   const answer = ((await verdict.textContent()) ?? '')
     .replace(/^Not quite\. The answer is /, '')

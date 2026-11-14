@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "compare-and-swap",
+  "id": "aba",
+  "title": "ABA: top goes A, B, C, A",
+  "notes": "T1 reads top = A and its next, B. Then T2 pops A, pops B and pushes A back, so top is A again. T1’s cas(top, A, B) sees A and succeeds, and puts B back on top, though T2 still has B. The stack is B C, and B is in two places.",
+  "settings": {
+    "program": "aba",
+    "threads": 2
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "run",
+      "1 1 2 2 2 1 1"
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

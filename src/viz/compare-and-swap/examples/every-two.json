@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "compare-and-swap",
+  "id": "every-two",
+  "title": "Every interleaving of two threads",
+  "notes": "142 orders of the steps, and every one ends with n = 2: 10 with no retry, 132 with one. The cas never lets an update get lost; it makes a thread read again instead.",
+  "settings": {
+    "program": "counter",
+    "threads": 2
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "every"
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

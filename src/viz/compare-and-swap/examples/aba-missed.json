@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "compare-and-swap",
+  "id": "aba-missed",
+  "title": "A cas that fails, as it should",
+  "notes": "T1 reads top = A. T2 pops A before T1 swaps, so top is B and T1’s cas(top, A, B) fails. T1 starts again and pops B. Then T2 pops C and pushes A back: the stack is A, and nothing is in two places.",
+  "settings": {
+    "program": "aba",
+    "threads": 2
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "run",
+      "1 2 1 1 1 1 1 1 1 2 2"
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

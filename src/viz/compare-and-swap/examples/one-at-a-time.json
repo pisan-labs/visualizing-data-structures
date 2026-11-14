@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "compare-and-swap",
+  "id": "one-at-a-time",
+  "title": "One thread at a time",
+  "notes": "T1 reads, computes and swaps before T2 reads. Nobody changed n in between, so both swaps work the first time: no retries.",
+  "settings": {
+    "program": "counter",
+    "threads": 2
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "run",
+      "1 1 1 1 2 2 2 2"
+    ]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

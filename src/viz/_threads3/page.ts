@@ -266,7 +266,11 @@ export function rowMarks(
   d: Display = {},
 ): Mark[] {
   const p = mac.p;
-  const vars = new Set(shown(p.shared.map((v) => v.name), d.shared).map(varId));
+  const shownVars = shown(
+    p.shared.map((v) => v.name),
+    d.shared,
+  );
+  const varIds = new Map(shownVars.map((v) => [varId(v), varId(d.names?.[v] ?? v)]));
   const locks = new Set([...shown(p.locks, d.locks), ...(d.drawnLocks ?? [])].map(lockId));
   const sems = new Set(shown(p.sems.map((x) => x.name), d.sems).map(semId));
   const regs = new Set(
@@ -281,7 +285,10 @@ export function rowMarks(
     for (const mk of stepMarks(ev)) {
       let id = mk.id;
       if (id.startsWith(`step-${t}-`) && id !== endId(t)) id = stepId(t, row);
-      if (id.startsWith('var-') && !vars.has(id)) continue;
+      if (id.startsWith('var-')) {
+        if (!varIds.has(id)) continue;
+        id = varIds.get(id)!;
+      }
       if (id.startsWith('lock-') && !locks.has(id)) continue;
       if (id.startsWith('sem-') && !sems.has(id)) continue;
       if (id.startsWith('cond-')) continue;

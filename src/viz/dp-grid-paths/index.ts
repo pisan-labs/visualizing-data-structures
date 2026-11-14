@@ -190,8 +190,8 @@ export const dpGridPaths: VizDef<GPState, GPSettings, GPExtra> = {
     {
       op: 'solve, top-down with a memo',
       best: {
-        cost: 'O(R + C)',
-        why: 'One row: each call asks only the cell to its left, so R + C − 1 calls.',
+        cost: 'O(1)',
+        why: 'Walls above and to the left of the target: one call, one cell, and it stops.',
       },
       average: {
         cost: 'O(RC)',
@@ -208,9 +208,9 @@ export const dpGridPaths: VizDef<GPState, GPSettings, GPExtra> = {
     {
       op: 'solve, plain recursion',
       best: {
-        cost: 'Θ(R + C)',
-        why: 'One row or one column: a single path, one call per cell.',
-        example: 'one-row',
+        cost: 'O(1)',
+        why: 'Walls above and to the left of the target: one call, and it stops. With one row or one column, a single path: one call per cell.',
+        example: 'no-way-through',
       },
       average: {
         cost: 'exponential',

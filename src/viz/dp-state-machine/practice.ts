@@ -67,19 +67,19 @@ export const SPOT_ROWS: SpotRow[] = [
   },
   {
     problem:
-      'Given a share’s price on each day, buy it once and sell it once on a later day. What is the most you can make?',
+      'A trader sees the price of a bag of coffee beans every day for a month. She buys one bag on one day and sells it on a later day. What is the largest profit?',
     pattern: 'kadane',
-    cue: ['buy it once and sell it once'],
+    cue: ['buys one bag on one day and sells it on a later day'],
     why: 'One trade is the best stretch of daily changes, or one pass keeping the lowest price so far. A state machine works too, but one running minimum is all it needs.',
     near: ['two-pointers', 'sliding-window'],
     alsoFits: ['dp-state-machine'],
   },
   {
     problem:
-      'For each day in a list of daily temperatures, how many days do you wait for a warmer one?',
+      'A list of daily prices. For each day, find the next day on which the price is higher.',
     pattern: 'monotonic-stack',
-    cue: ['for each day', 'wait for a warmer one'],
-    why: 'Each day asks for the next larger value. Keep the days still waiting on a stack of falling temperatures and settle them when a warmer day comes.',
+    cue: ['for each day', 'the next day on which the price is higher'],
+    why: 'Each day asks for the next larger value. Keep the days still waiting on a stack of falling prices and settle them when a higher price comes.',
     near: ['dp-state-machine', 'sliding-window'],
   },
   {

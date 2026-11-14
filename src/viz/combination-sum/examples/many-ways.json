@@ -3,7 +3,7 @@
   "viz": "combination-sum",
   "id": "many-ways",
   "title": "Many ways to make 5",
-  "notes": "NOTE",
+  "notes": "1, 2 and 3 make 5 in 5 ways: [1, 1, 1, 1, 1], [1, 1, 1, 2], [1, 1, 3], [1, 2, 2] and [2, 3]. Every answer is a path the search has to walk, so pruning saves less here: 16 calls and 7 branches pruned, against 61 calls for every list.",
   "settings": {
     "approach": "pattern",
     "reuse": "again"

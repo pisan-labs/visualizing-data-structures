@@ -162,7 +162,7 @@ export const dpBitmask: VizDef<AssignState, AssignSettings, AssignExtra> = {
         why: 'At n = 2 both take 4 tries; at n = 10 it is close to 10 million against 5 120.',
         example: 'two-workers',
       },
-      note: 'Counting tries, the order search is about e · n!; adding up each finished order from scratch would be n · n!.',
+      note: 'Counting tries, the order search is about e · n!. Each call also runs through all n tasks to find the ones left, which makes Θ(n · n!) steps.',
     },
     {
       op: 'extra space',

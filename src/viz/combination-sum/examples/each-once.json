@@ -3,7 +3,7 @@
   "viz": "combination-sum",
   "id": "each-once",
   "title": "Each candidate once",
-  "notes": "NOTE",
+  "notes": "Each candidate once: 4 2 6 3 sorts to 2 3 4 6, and the target is 9. [2, 6] still needs 1 and [6] still needs 3, with no candidates after them: two dead ends. 11 calls and 4 pruned branches find [2, 3, 4] and [3, 6]. Every subset takes 31 calls.",
   "settings": {
     "approach": "pattern",
     "reuse": "once"

@@ -53,7 +53,7 @@ function cheapestCount(g: number[][]): number {
 export const SPOT_ROWS: SpotRow[] = [
   {
     problem:
-      'A delivery robot crosses a warehouse floor plan, moving only east or south, and some squares hold shelves. How many different routes take it from the northwest corner to the loading dock in the southeast corner?',
+      'A forklift crosses a warehouse floor, moving only east or south, and some squares hold shelves. How many different routes take it from the northwest corner to the loading dock in the southeast corner?',
     pattern: 'dp-grid-paths',
     cue: ['only east or south', 'how many different routes'],
     why: 'Moves that only go right or down never come back to a square, so the routes into a square are the routes into the square above plus those into the square to its left.',
@@ -103,10 +103,10 @@ export const SPOT_ROWS: SpotRow[] = [
   },
   {
     problem:
-      'A satellite photo is a grid of land and water squares. How many separate islands does it show?',
+      'A map marks every square as forest or field. How many separate patches of forest does it show?',
     pattern: 'disjoint-sets',
-    cue: ['how many separate islands'],
-    why: 'Islands are connected groups of squares: join each land square with its land neighbours and count the groups. No path is being counted or priced.',
+    cue: ['how many separate patches'],
+    why: 'Patches are connected groups of squares: join each forest square with its forest neighbours and count the groups. No path is being counted or priced.',
     near: ['dp-grid-paths', 'matrix-traversal'],
     alsoFits: ['state-space-bfs'],
   },

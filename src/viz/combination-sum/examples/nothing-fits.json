@@ -3,7 +3,7 @@
   "viz": "combination-sum",
   "id": "nothing-fits",
   "title": "Nothing fits",
-  "notes": "NOTE",
+  "notes": "Candidates 8 and 9, target 5. The smallest candidate is already too big, so the first loop stops at once: 1 call, 1 branch pruned, no combination. Every list still takes 3 calls.",
   "settings": {
     "approach": "pattern",
     "reuse": "again"

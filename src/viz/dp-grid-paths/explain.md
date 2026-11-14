@@ -1,6 +1,6 @@
 # Paths on a grid
 
-A robot sits in the top left cell of a grid. It moves only right or down, some cells are walls, and it wants the bottom right cell. How many ways are there? Listing them works on a small grid and stops working fast: an open 10 × 10 grid has 48,620 paths. There is a better way. A path into a cell comes from the cell above it or from the cell to its left. That is the whole trick.
+Walk from the top left cell of a grid to the bottom right, one step right or down at a time, and never onto a wall. How many different paths are there? Listing them works on a small grid and stops working fast: an open 10 × 10 grid has 48,620 paths. There is a better way. A path into a cell comes from the cell above it or from the cell to its left. That is the whole trick.
 
 ## The idea
 
@@ -60,7 +60,7 @@ The cells fill in the order the calls finish, not row by row, and only the cells
 
 With costs, the table gives the cost, and a walk back gives the path. Start at the target and step to whichever of the cell above and the cell to the left has the smaller M; on a tie this page goes up. Read the steps backwards and you have the path.
 
-[The cheapest path, traced back](#example:cheapest-path) costs 10 and goes D D R D R R R (D is down, R is right). [The cheaper next step is a trap](#example:cheap-step-trap) is why you need the table. Stepping to the cheaper neighbour each time runs right along the 1s of the top row and then has to cross a 9: 14 in all. The table pays the 3 first, goes down to the bottom row and gets 8.
+[The cheapest path, traced back](#example:cheapest-path) costs 10 and goes D D R D R R R (D is down, R is right). [The cheaper next step is a trap](#example:cheap-step-trap) is why you need the table. Stepping to the cheaper neighbour each time runs right along the 1s of the top row, and from there every way on crosses a 9: 14 at best. The table pays the 3 first, goes down to the bottom row and gets 8.
 
 ```check
 Q: M[r − 1][c] = 7, M[r][c − 1] = 9, and cell (r, c) costs 2. What is M[r][c]?
@@ -81,7 +81,7 @@ Reach for this pattern when the problem says:
 
 Three problems of our own:
 
-- A delivery robot crosses a warehouse floor moving only east or south, and shelves block some squares. How many routes reach the loading dock? (Count, walls as 0.)
+- A forklift crosses a warehouse floor moving only east or south, and shelves block some squares. How many routes reach the loading dock? (Count, walls as 0.)
 - Each square of a field charges a toll. Walking right or down, what is the cheapest crossing? (Min-cost.)
 - Coins lie on a board. A collector steps right or down and picks up what it lands on. What is the most it can collect? (The same table with max.)
 
@@ -99,7 +99,7 @@ Avoid plain recursion beyond a toy grid. Mind the numbers, too: an open 20 × 20
 - Treating a wall as a cell with no value instead of 0 (count) or ∞ (cheapest).
 - Forgetting the edges: the top row has nothing above it, the left column nothing to its left.
 - Filling a cell before the cell above it or the one to its left. Row by row works, and so does column by column; starting from the target does not.
-- Stepping to the cheaper neighbour as you go. [The cheaper next step is a trap](#example:cheap-step-trap) costs 14 that way, 8 with the table.
+- Stepping to the cheaper neighbour as you go. [The cheaper next step is a trap](#example:cheap-step-trap) costs at least 14 that way, 8 with the table.
 - Counting with a 32-bit int on a big grid.
 
 ## Try this

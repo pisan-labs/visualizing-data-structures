@@ -68,10 +68,11 @@ export const SPOT_ROWS: SpotRow[] = [
     near: ['randomized-set', 'two-stack-queue'],
   },
   {
-    problem: 'Given two words, decide whether one is a rearrangement of the letters of the other.',
+    problem:
+      'A word game accepts a guess only if it uses exactly the letter tiles on your rack, in any order. Check a guess.',
     pattern: 'frequency-counting',
-    cue: 'a rearrangement of the letters',
-    why: 'Same letters, any order: count each letter in both words and compare the counts.',
+    cue: ['exactly the letter tiles on your rack', 'in any order'],
+    why: 'Same letters, any order: count each letter in the guess and on the rack, and compare the counts.',
     near: ['randomized-set', 'two-pointers'],
   },
   {

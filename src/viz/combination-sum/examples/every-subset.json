@@ -3,7 +3,7 @@
   "viz": "combination-sum",
   "id": "every-subset",
   "title": "Every subset, then check",
-  "notes": "NOTE",
+  "notes": "The same candidates, the naive way: all 2⁵ = 32 subsets, 63 calls. Equal values make equal lists, so [1, 1, 2] and [1, 3] each turn up twice and the copies are thrown away. Sorted backtracking takes 9 calls.",
   "settings": {
     "approach": "naive",
     "reuse": "once"

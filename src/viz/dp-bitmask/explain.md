@@ -74,9 +74,9 @@ Three problems of our own:
 
 - Four friends split four chores, one each, with a table of how long each friend takes. The least total time. (This page.)
 - A van visits each of 9 addresses once and comes back to the depot. The shortest round trip. (The state is the set visited plus where the van is: Held-Karp, the exact method on [the traveling salesperson page](/tsp/).)
-- A project needs 6 skills, and each of 15 candidates has some. The smallest team with every skill. (f[mask] is the smallest team covering mask; each candidate ORs in their skills.)
+- A camping trip needs 6 pieces of gear, and each of 15 friends owns some of them. The fewest friends to invite so that all the gear comes. (f[mask] is the fewest friends covering mask; each friend ORs in their gear.)
 
-Look-alikes that call for something else: "print every way" means listing all n! of them, which is backtracking. "Fewest moves through a maze collecting 4 keys" keeps a mask of keys in the state, but fewest moves calls for breadth-first search. "Pick items under a weight limit" is a [knapsack](/dp-knapsack/): its subproblem is a capacity, not a set.
+Look-alikes that call for something else: "print every way" means listing all n! of them, which is backtracking. "Fewest moves for a courier who must pick up 4 parcels in a building" keeps a mask of parcels in the state, but fewest moves calls for breadth-first search. "Pick items under a weight limit" is a [knapsack](/dp-knapsack/): its subproblem is a capacity, not a set.
 
 ## When to use it
 

@@ -73,18 +73,18 @@ export const SPOT_ROWS: SpotRow[] = [
   },
   {
     problem:
-      'A project needs 6 skills. Each of 15 candidates has some of them. What is the smallest team that has every skill?',
+      'A camping trip needs 6 pieces of gear. Each of 15 friends owns some of them. What is the fewest friends to invite so that every piece comes along?',
     pattern: 'dp-bitmask',
-    cue: ['needs 6 skills', 'has some of them', 'smallest team'],
-    why: 'A set of skills is a 6-bit mask: f[mask] is the smallest team covering mask, and each candidate ORs in their skills. 64 states, whatever the number of candidates.',
+    cue: ['needs 6 pieces of gear', 'owns some of them', 'the fewest friends'],
+    why: 'A set of gear is a 6-bit mask: f[mask] is the fewest friends covering mask, and each friend ORs in their gear. 64 states, whatever the number of friends.',
     near: ['backtracking', 'frequency-counting', 'sliding-window'],
   },
   {
     problem:
-      'A maze has 4 keys lying around. Find the fewest moves from the entrance to the exit that picks up all 4 keys.',
+      'A courier must pick up 4 parcels, in any order, somewhere in a building of corridors, and then reach the exit. What is the fewest moves?',
     pattern: 'state-space-bfs',
-    cue: ['fewest moves', 'picks up all 4 keys'],
-    why: 'Fewest moves calls for breadth-first search, over states that are a position plus the keys held so far (a 4-bit mask). The mask is part of the state, but the search is BFS.',
+    cue: ['the fewest moves', 'pick up 4 parcels, in any order'],
+    why: 'Fewest moves calls for breadth-first search, over states that are a position plus the parcels held so far (a 4-bit mask). The mask is part of the state, but the search is BFS.',
     near: ['dp-bitmask', 'dp-grid-paths', 'backtracking'],
   },
   {
@@ -104,10 +104,10 @@ export const SPOT_ROWS: SpotRow[] = [
   },
   {
     problem:
-      'Eight courses, and some must be taken before others. Give one order to take all of them.',
+      'A recipe has eight steps, and some must come before others. Give one order to do all of them.',
     pattern: 'topo-indegree',
-    cue: ['must be taken before others', 'one order'],
-    why: 'Any order that respects the rules will do, so take a course whose prerequisites are done, again and again: a topological sort, not a search over subsets.',
+    cue: ['must come before others', 'one order'],
+    why: 'Any order that respects the rules will do, so do a step whose earlier steps are all done, again and again: a topological sort, not a search over subsets.',
     near: ['dp-bitmask', 'backtracking', 'state-space-bfs'],
   },
 ];

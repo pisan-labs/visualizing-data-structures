@@ -76,7 +76,7 @@ Reach for this pattern when the problem says:
 - **the smallest x such that…** or **the largest x such that…**, where x is a number you could just try;
 - **within d days, at most k groups, at least m pieces**: a limit that is easy to check for one x;
 - **more of x only helps** (a bigger truck, a faster speed, a shorter piece): the yes/no answer flips once;
-- **minimize the maximum** or **maximize the minimum**: almost always this pattern.
+- **minimize the maximum** or **maximize the minimum**: often this pattern.
 
 Three problems of our own:
 

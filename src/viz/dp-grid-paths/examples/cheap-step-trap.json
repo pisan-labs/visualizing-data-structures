@@ -3,7 +3,7 @@
   "viz": "dp-grid-paths",
   "id": "cheap-step-trap",
   "title": "The cheaper next step is a trap",
-  "notes": "Stepping to the cheaper neighbour each time goes right along the 1s and then has to cross a 9: 14 in all. The table sees the whole grid and pays the 3 first: down, down, then right along the bottom row, 8.",
+  "notes": "Stepping to the cheaper neighbour each time goes right along the 1s, and from there every way on crosses a 9: 14 at best. The table sees the whole grid and pays the 3 first: down, down, then right along the bottom row, 8.",
   "settings": {
     "approach": "pattern",
     "problem": "mincost",

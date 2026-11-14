@@ -72,7 +72,7 @@ The scan loses when the cache is big. A cache of 10,000 keys looks at 10,000 of 
 
 LFU shines when a few keys stay popular and a stream of one-off keys goes by. [A hot key survives a scan](#example:hot-key-survives): 7 is used 3 times, then 8, 9, 5 and 6 come once each. Each new key pushes out the oldest key used once, and get(7) at the end hits. Run the same calls on the [LRU cache](/lru-cache/) with capacity 3 and get(7) misses: 7 went when 5 came in.
 
-The same memory is LFU's weakness. In [Old favourites hang on](#example:old-favourites), 7 and 8 are used 3 times each early, then never again. The new keys 9, 5 and 6 fight over the one slot left, and get(5) misses because 6 has just evicted it. Popular once means popular forever. One fix is to age the counts, say halve them every so often, so old favourites fade. Nothing fancy, but it changes the bet.
+The same memory is LFU's weakness. In [Old favourites hang on](#example:old-favourites), 7 and 8 are used 3 times each early, then never again. The new keys 9, 5 and 6 fight over the one slot left, and get(5) misses because 6 has just evicted it. Popular once means popular forever. One fix is to age the counts, say halve them every so often, so old favourites fade. TinyLFU, a cache policy by Einziger, Friedman and Manes, does just that: after a fixed number of requests it halves every count. Nothing fancy, but it changes the bet.
 
 And with [Room for one](#example:capacity-one) entry, counts do not matter at all: there is only one key to evict.
 

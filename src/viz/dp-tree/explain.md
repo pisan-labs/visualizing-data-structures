@@ -87,7 +87,7 @@ Look-alikes that call for something else: things in a row ("seats in a row, neve
 
 ## When to use it
 
-Use it whenever the subproblems are subtrees. A node's answer depends only on its children's answers, plus whatever state the parent cares about (here: is the child in or out). Find the smallest state that lets the parent decide, give each node one value per state, and fill them in post-order. Two values here and for the guards; three when a node can also be covered by a child, as with a camera that watches its neighbours; one for subtree sizes.
+Use it whenever the subproblems are subtrees. A node's answer depends only on its children's answers, plus whatever state the parent cares about (here: is the child in or out). Find the smallest state that lets the parent decide, give each node one value per state, and fill them in post-order. Two values here and for the guards; three when a node can also be covered by a child, as with a guard who also watches the rooms next door; one for subtree sizes.
 
 Avoid it when the structure has cycles. Then a node's neighbours are not split into independent subtrees, and the values stop adding up. And if you only need the total for a tree of five nodes, every subset is fine.
 

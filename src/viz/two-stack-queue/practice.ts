@@ -41,9 +41,13 @@ function mix(rng: Rng, start: number, n: number, fresh: number[], keep = 0): OpC
 export const SPOT_ROWS: SpotRow[] = [
   {
     problem:
-      'You may use only stacks: push and pop at the top. Build a first-come, first-served line from them, so that any long run of operations costs O(1) each on average.',
+      'A ticket counter must serve people first come, first served, but all it has for storage are piles: add to the top, take from the top. Over a whole day, each person must cost O(1).',
     pattern: 'two-stack-queue',
-    cue: ['only stacks', 'first-come, first-served', 'on average'],
+    cue: [
+      'first come, first served',
+      'piles: add to the top, take from the top',
+      'over a whole day',
+    ],
     why: 'Pour one stack into the other and the order flips, so the oldest value comes out on top. Pour only when the second stack is empty and each value moves across once.',
     near: ['min-stack', 'monotonic-stack', 'monotonic-queue'],
   },
@@ -79,10 +83,11 @@ export const SPOT_ROWS: SpotRow[] = [
     alsoFits: ['two-stack-queue', 'sliding-window'],
   },
   {
-    problem: 'Find the longest stretch of a string with no letter repeated.',
+    problem:
+      'A radio log lists songs in the order they were played. Find the longest run of plays in which no song comes up twice.',
     pattern: 'sliding-window',
-    cue: ['longest stretch', 'no letter repeated'],
-    why: 'Grow the stretch on the right and shrink it from the left when a letter repeats: two indices, not two stacks.',
+    cue: ['longest run of plays', 'no song comes up twice'],
+    why: 'Grow the run on the right and shrink it from the left when a song repeats: two indices, not two stacks.',
     near: ['two-stack-queue', 'monotonic-queue'],
   },
 ];

@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "randomized-set",
+  "id": "draws-follow-the-array",
+  "title": "Random picks an index",
+  "notes": "Insert 10 20 30 40 50 and draw twice: indices 3 and 2. remove(10) moves 50 into slot 0, and the later draws pick indices 1, 0 and 1: 20, 50, 20. A draw picks an index; the value is whatever lives there now.",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 10,
+  "ops": [
+    ["insert", 10],
+    ["insert", 20],
+    ["insert", 30],
+    ["insert", 40],
+    ["insert", 50],
+    ["random"],
+    ["random"],
+    ["remove", 10],
+    ["random"],
+    ["random"],
+    ["random"]
+  ]
+}

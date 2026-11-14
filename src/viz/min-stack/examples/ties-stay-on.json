@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "min-stack",
+  "id": "ties-stay-on",
+  "title": "Ties go onto mins too",
+  "notes": "Push 4 2 2: both 2s go onto mins, because the test is at most, not less than. Pop one 2 and the other is still the minimum. With a strict less-than, min would wrongly say 4.",
+  "settings": {
+    "approach": "pattern",
+    "track": "le"
+  },
+  "seed": 1,
+  "ops": [["push", 4], ["push", 2], ["push", 2], ["pop"], ["min"], ["pop"], ["min"]]
+}

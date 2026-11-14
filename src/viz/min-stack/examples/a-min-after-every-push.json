@@ -1,0 +1,30 @@
+{
+  "format": 1,
+  "viz": "min-stack",
+  "id": "a-min-after-every-push",
+  "title": "A min after every push",
+  "notes": "Push 6 4 9 2 7 5 1 8, asking for the minimum after every push. mins pays one comparison per push after the first, 7 in all, and answers each min with one look. Scanning would cost 0 + 1 + … + 7 = 28. The best case for the second stack.",
+  "settings": {
+    "approach": "pattern",
+    "track": "le"
+  },
+  "seed": 1,
+  "ops": [
+    ["push", 6],
+    ["min"],
+    ["push", 4],
+    ["min"],
+    ["push", 9],
+    ["min"],
+    ["push", 2],
+    ["min"],
+    ["push", 7],
+    ["min"],
+    ["push", 5],
+    ["min"],
+    ["push", 1],
+    ["min"],
+    ["push", 8],
+    ["min"]
+  ]
+}

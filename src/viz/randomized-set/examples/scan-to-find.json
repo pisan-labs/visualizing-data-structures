@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "randomized-set",
+  "id": "scan-to-find",
+  "title": "The array alone scans",
+  "notes": "The same operations with the array alone. Each insert compares with every value for a duplicate, and remove scans to find 7 before filling the hole the same way: 12 comparisons against 13 lookups with the map. At five values the map does not win yet.",
+  "settings": {
+    "approach": "naive"
+  },
+  "seed": 1,
+  "ops": [
+    ["insert", 4],
+    ["insert", 7],
+    ["insert", 2],
+    ["insert", 9],
+    ["insert", 5],
+    ["remove", 7],
+    ["random"]
+  ]
+}

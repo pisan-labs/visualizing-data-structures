@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "viz": "min-stack",
+  "id": "empty-stack",
+  "title": "Nothing to pop",
+  "notes": "pop and min on an empty stack report it and change nothing. Push 4, read it, pop it: mins empties with the stack.",
+  "settings": {
+    "approach": "pattern",
+    "track": "le"
+  },
+  "seed": 1,
+  "ops": [["pop"], ["min"], ["push", 4], ["top"], ["pop"], ["min"]]
+}

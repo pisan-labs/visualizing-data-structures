@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "viz": "min-stack",
+  "id": "every-push-a-pair",
+  "title": "Push the minimum every time",
+  "notes": "The same operations, pushing the minimum so far onto mins on every push. The two stacks keep the same height, so pops never compare: 5 comparisons instead of 8, but after the pushes mins holds 6 entries instead of 4.",
+  "settings": {
+    "approach": "pattern",
+    "track": "every"
+  },
+  "seed": 1,
+  "ops": [
+    ["push", 5],
+    ["push", 3],
+    ["push", 7],
+    ["push", 3],
+    ["push", 8],
+    ["push", 1],
+    ["min"],
+    ["pop"],
+    ["min"],
+    ["pop"],
+    ["min"],
+    ["pop"],
+    ["min"]
+  ]
+}

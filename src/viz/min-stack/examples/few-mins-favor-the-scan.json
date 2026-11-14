@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "viz": "min-stack",
+  "id": "few-mins-favor-the-scan",
+  "title": "Few mins favor the scan",
+  "notes": "Push 6 values, pop 3, then ask for the minimum once. mins paid on every push and pop, 8 comparisons; one scan of 3 values costs 2. The second stack only pays off when min is asked for often.",
+  "settings": {
+    "approach": "pattern",
+    "track": "le"
+  },
+  "seed": 1,
+  "ops": [
+    ["push", 6],
+    ["push", 4],
+    ["push", 9],
+    ["push", 2],
+    ["push", 7],
+    ["push", 5],
+    ["pop"],
+    ["pop"],
+    ["pop"],
+    ["min"]
+  ]
+}

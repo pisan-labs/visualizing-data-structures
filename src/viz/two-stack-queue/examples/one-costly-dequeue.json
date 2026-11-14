@@ -1,0 +1,69 @@
+{
+  "format": 1,
+  "viz": "two-stack-queue",
+  "id": "one-costly-dequeue",
+  "title": "One costly dequeue pays for the rest",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "enqueue",
+      11
+    ],
+    [
+      "enqueue",
+      12
+    ],
+    [
+      "enqueue",
+      13
+    ],
+    [
+      "enqueue",
+      14
+    ],
+    [
+      "enqueue",
+      15
+    ],
+    [
+      "enqueue",
+      16
+    ],
+    [
+      "enqueue",
+      17
+    ],
+    [
+      "enqueue",
+      18
+    ],
+    [
+      "dequeue"
+    ],
+    [
+      "dequeue"
+    ],
+    [
+      "dequeue"
+    ],
+    [
+      "dequeue"
+    ],
+    [
+      "dequeue"
+    ],
+    [
+      "dequeue"
+    ],
+    [
+      "dequeue"
+    ],
+    [
+      "dequeue"
+    ]
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "format": 1,
+  "viz": "two-stack-queue",
+  "id": "alternating",
+  "title": "Enqueue, dequeue, enqueue, dequeue",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "enqueue",
+      6
+    ],
+    [
+      "dequeue"
+    ],
+    [
+      "enqueue",
+      7
+    ],
+    [
+      "dequeue"
+    ],
+    [
+      "enqueue",
+      8
+    ],
+    [
+      "dequeue"
+    ],
+    [
+      "enqueue",
+      9
+    ],
+    [
+      "dequeue"
+    ]
+  ]
+}

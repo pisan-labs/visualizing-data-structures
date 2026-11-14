@@ -1275,6 +1275,224 @@ Suggestions the agents made about shared code (none made; for a later cleanup):
 9. A page's opening runs with the reader's seed, so the numbers on arrival differ from the
    curated example's notes (k-means, hnsw, policy-optimization).
 
+## 21. Wave 10: coding interviews and concurrency (planned 2026-11-14, waiting for Yusuf's approval)
+
+Yusuf (14 November): LeetCode's Explore has many algorithms and tricks useful to programmers;
+explore it and suggest new sections. He chose both suggestions (interview patterns, and
+concurrency), a fifth catalog pathway, and a plan for his approval before anything is built.
+Nothing in this section is built. The questions are in 21.9.
+
+### 21.1 What LeetCode teaches (surveyed 2026-11-14)
+
+LeetCode refused automated reads (HTTP 403 on every Explore page) and a browser visit was not
+allowed in this session, so this comes from search results (mostly third-party copies of the
+cards) and from what we already knew of the cards; it may be out of date.
+
+- **Learn cards:** Arrays 101, Array and String, Linked List, Hash Table, Queue & Stack, Recursion
+  I and II, Binary Search, Heap, Binary Tree, Binary Search Tree, N-ary Tree, Trie, Graph,
+  Dynamic Programming. The Graph card's chapters include disjoint set, Dijkstra, Bellman-Ford,
+  SPFA and Kahn's topological sort.
+- **Interview Crash Course:** 13 chapters; the core ones are arrays and strings (two pointers,
+  sliding window, prefix sum), hashing, linked lists, stacks and queues, trees and graphs, heaps,
+  greedy, binary search, backtracking and dynamic programming.
+- **Concurrency problems:** printing in order, alternating printers, zero-even-odd, building
+  water molecules from threads, dining philosophers, a bounded blocking queue, a multithreaded
+  crawler, a traffic-light intersection.
+- **Pattern courses elsewhere** (Grokking the Coding Interview and its copies, 14 to 41
+  patterns by version) name the same tricks: two pointers, fast and slow pointers, sliding
+  window, merge intervals, cyclic sort, in-place reversal, tree BFS and DFS, two heaps, subsets,
+  modified binary search, bitwise XOR, top k, k-way merge, knapsack, topological sort.
+- **Concurrency teaching tools:** Deadlock Empire (a browser game: the player schedules two
+  threads to break the code), Threaded Paws, Railway Quest, ParaView (a recorder for C and C++
+  programs), and papers visualizing the classic synchronization problems. As in 13.1, we copy no
+  design, names, examples or code from any of them.
+
+### 21.2 What StepWise already has, and the gap
+
+Already live: two pointers, sliding window, monotonic stack and queue, cycle detection (tortoise
+and hare), linked-list reversal, binary search and its variants, backtracking (subsets,
+permutations, n-queens), bitmasks (including n & (n − 1)), prefix sums and sparse tables (range
+queries), union-find, topological sort, tries, heaps, LRU cache, interval partitioning, activity
+selection, ten classic DP problems, BFS and DFS.
+
+The gap is LeetCode's real angle: the reusable trick and **recognizing which trick a problem
+calls for**. Our pages explain an algorithm; interview prep needs "this problem has these cues,
+so reach for that pattern", the naive solution beside the clever one, and the cost difference.
+
+### 21.3 The angle
+
+**Every pattern page shows the naive solution and the pattern side by side.** A setting switches
+the approach (for example brute force against prefix sums with a hash map), counters show the
+work (O(n²) against O(n)), and compare mode puts the two on the same input. Each concept page has
+a "Spot it" section: the cues in a problem statement that call for this pattern. A **pattern
+map** page ties the pathway together (problem cue → pattern → page, including the pages we
+already have), with practice that asks "which pattern fits this problem?".
+
+**Concurrency pages make the scheduler visible.** Threads are short lists of steps on shared
+memory, one step at a time; the learner can be the scheduler (choose which thread runs next) and
+try to break the code, or let the page enumerate every interleaving and count the outcomes.
+StepWise's step-and-rewind model fits exactly: an interleaving is a timeline.
+
+### 21.4 Conventions
+
+- **Problems are ours.** We write every problem statement ourselves and name pages and examples
+  after patterns and ideas, never after LeetCode problems or their numbers.
+- **Naive first:** every pattern page has the brute force as a setting, so the gain is measured.
+- **Default texts:** CLRS for the algorithms, as everywhere; for concurrency, Arpaci-Dusseau,
+  *Operating Systems: Three Easy Pieces* (OSTEP, free online), and Downey, *The Little Book of
+  Semaphores* (free), for the synchronization patterns.
+- **Toy sizes:** arrays of at most about 12, intervals at most 8, 2 to 4 threads of at most
+  about 6 steps, so every interleaving can be enumerated.
+- **Concurrency code tabs:** the code shown to learners uses real primitives (Python `threading`,
+  Java `synchronized` and `java.util.concurrent`, C++ `std::mutex` and `std::condition_variable`).
+  Real threads are not deterministic, so the drivers test the shown classes through
+  deterministic calls (one thread, non-blocking `try_` operations, or a fixed hand-off order),
+  and the page's model is what explores interleavings. Each page says so.
+
+### 21.5 Shared pieces (new)
+
+1. **Catalog:** a fifth pathway, `interviews` ("Coding interviews"), with the families below.
+   The existing Techniques family (two pointers, sliding window, monotonic stack and queue) also
+   lists `interviews` among its pathways.
+2. **`src/viz/_patterns/`:** the naive-against-pattern setting and its counters, and the "Spot
+   it" practice kind (a problem statement of ours, answer: the pattern).
+3. **`src/viz/_threads/`:** the concurrency engine: a program is a few threads of steps (load,
+   store, add, lock, unlock, wait, signal, P, V, print); a state is the threads' program
+   counters, their registers, shared memory and the locks or semaphores; one operation runs one
+   step of a chosen thread; another enumerates every interleaving (with a cap) and groups the
+   outcomes; a wait-for graph finds deadlock (the DFS cycle check of /dfs/).
+4. **`src/layouts/lanes.ts`:** threads as columns of steps, with the program counter in each,
+   shared variables and locks beside them, and a timeline strip of the schedule so far.
+
+### 21.6 Pages (39)
+
+Tier 1 is what interviews ask most; tier 2 the rest; tier 3 advanced (`advanced: true`).
+
+**Array and string tricks**
+
+| id | Tier | What it shows (naive against pattern) | Practice |
+|---|---|---|---|
+| `prefix-sum-hashmap` | 1 (slice) | count the subarrays with sum k: every pair of ends (O(n²)) against running sums with a hash map of how often each sum was seen (O(n)) | the count; the map after step i; spot it |
+| `difference-array` | 2 | many range additions: add to every cell against +x at l and −x at r + 1, then one prefix sum | an entry after the updates |
+| `kadane` | 1 | maximum subarray: all pairs against "extend or restart" | the best sum; where it restarts |
+| `dutch-flag` | 2 | three-way partition in one pass with three pointers (link /quick-sort/) | the array after step t |
+| `cyclic-sort` | 2 | numbers 1..n: put each at its index by swaps; the missing and the duplicate fall out | the first index out of place |
+| `matrix-traversal` | 2 | spiral order, rotating a square in place by layers, transpose and reverse | the cell visited k-th; a cell after the rotation |
+| `frequency-counting` | 1 | anagrams and "first unique": sort each word against a 26-count signature; grouping by signature | the signature; the groups |
+
+**Intervals**
+
+| id | Tier | What it shows | Practice |
+|---|---|---|---|
+| `merge-intervals` | 1 | sort by start, then merge or start a new one; inserting one interval; intersecting two lists | the merged list; the next action |
+| `sweep-line` | 2 | events sorted by time: the most intervals overlapping at once, and the skyline with a max-heap (link /interval-partitioning/, /binary-heap/) | the maximum overlap; the skyline point |
+
+**Linked list tricks**
+
+| id | Tier | What it shows | Practice |
+|---|---|---|---|
+| `fast-slow-pointers` | 1 | the middle node, the k-th from the end, a palindrome check, beside the cycle check of /floyd-cycle/ | where the slow pointer stops |
+| `reverse-k-group` | 2 | reversing in groups of k by moving pointers (link /linked-list/) | the list after one group |
+| `merge-sorted-lists` | 1 | merging two sorted lists with a dummy head; then k lists | the next node taken |
+
+**Heap patterns**
+
+| id | Tier | What it shows | Practice |
+|---|---|---|---|
+| `top-k` | 1 | the k largest: sort all, a min-heap of size k, quickselect (link /quickselect/), with comparison counts | the heap after step i; the cost of each |
+| `k-way-merge` | 1 | merging k sorted lists with a heap of their heads | the next value out; the heap |
+| `two-heaps-median` | 1 | the running median with a max-heap of the low half and a min-heap of the high half | the median after each value; which heap gets it |
+
+**Search templates**
+
+| id | Tier | What it shows | Practice |
+|---|---|---|---|
+| `binary-search-answer` | 1 | binary search over the answer, not the array: the smallest capacity that ships in d days, the largest minimum distance; the feasibility check | the next mid; the answer |
+| `combination-sum` | 2 | backtracking for combinations with reuse, with duplicates skipped, and pruning by a sorted list (link /backtracking/) | the next branch; the count |
+| `state-space-bfs` | 1 | BFS over states that are not stored as a graph: a combination lock, word changes one letter at a time (link /bfs/, /bidirectional-search/) | the distance; the next layer |
+
+**Bit tricks**
+
+| id | Tier | What it shows | Practice |
+|---|---|---|---|
+| `xor-tricks` | 2 | the single number, the missing number, swapping, splitting two singles by their lowest differing bit (link /bitmask/) | the running XOR; which group a value goes to |
+
+**DP patterns**
+
+| id | Tier | What it shows | Practice |
+|---|---|---|---|
+| `dp-grid-paths` | 1 | paths and minimum-cost paths on a grid with walls, top-down with memo against bottom-up | a cell's value; the path |
+| `dp-state-machine` | 1 | buying and selling with a cooldown or a fee: states (holding, not holding, cooling down) and their transitions per day | a state's value on day t |
+| `dp-interval` | 2 | the best order to merge or remove a row (bursting balloons, merging stones): solving every interval by its last step (link /dp-matrix-chain/) | an interval's value |
+| `dp-tree` | 2 | the best set of non-adjacent nodes in a tree: two values per node, from the leaves up (link /binary-tree/) | a node's two values |
+| `dp-bitmask` | 3 | assigning n tasks to n workers: a DP over subsets (link /bitmask/, /tsp/) | a subset's value |
+
+**Design a data structure**
+
+| id | Tier | What it shows | Practice |
+|---|---|---|---|
+| `min-stack` | 1 | a stack that returns its minimum in O(1): a second stack of minimums | the minimum after the operations |
+| `two-stack-queue` | 1 | a queue from two stacks, with the amortized cost (link /amortized-analysis/) | which stack a value is in; the cost |
+| `randomized-set` | 1 | insert, remove and a random element in O(1): an array plus a map from value to index, removing by swapping with the last | the array and map after a remove |
+| `lfu-cache` | 3 | least-frequently-used eviction in O(1): frequency lists and a minimum frequency (link /lru-cache/) | what is evicted |
+| `rate-limiter` | 2 | fixed window, sliding log, sliding window counter, token bucket on the same request times | which requests pass |
+
+**Patterns map**
+
+| id | Tier | What it shows | Practice |
+|---|---|---|---|
+| `pattern-map` | 1 | a map of problem cues to patterns and pages (new and existing); pick a cue and follow it | which pattern fits this problem (our own problem statements) |
+
+**Concurrency**
+
+| id | Tier | What it shows | Practice |
+|---|---|---|---|
+| `race-condition` | 1 (slice) | `count = count + 1` in two threads is load, add, store; schedule them to lose an update; enumerate every interleaving and count the outcomes | a schedule's final count; how many outcomes lose an update |
+| `mutex` | 1 | a lock around the critical section; waiting threads; the lost update gone; contention as a readout | who holds the lock after step t |
+| `semaphore` | 1 | counting semaphores: limiting to n at once, and making threads take turns (printing in order, alternating) | a semaphore's value; the order printed |
+| `producer-consumer` | 1 | a bounded buffer with a mutex and two condition variables (or two semaphores); why the wait sits in a loop | the buffer after step t; who is waiting |
+| `deadlock` | 1 | two locks taken in opposite orders; the wait-for graph and its cycle; fixing it by one global order | is this schedule deadlocked; the cycle |
+| `dining-philosophers` | 2 | everyone takes the left fork: deadlock; fixes: one philosopher takes the right first, or a waiter (a semaphore of n − 1) | deadlock or not |
+| `readers-writers` | 2 | a read-write lock; readers-first starves writers; a writer-first variant | who may enter |
+| `barrier` | 2 | a barrier and a grouping problem (two of one kind and one of another leave together) built from semaphores | who passes the barrier |
+| `compare-and-swap` | 3 | a lock-free counter with compare-and-swap retries; the ABA problem | how many retries |
+
+### 21.7 Order of work
+
+1. **10A, slices:** shared pieces 1 to 4, `prefix-sum-hashmap` (the naive-against-pattern
+   setting and "Spot it") and `race-condition` (the thread engine and lanes). Yusuf looks at both
+   before anything else is built.
+2. **10B, interview tier 1** (16 pages) and **10C, concurrency tier 1** (4 pages), agents in
+   parallel as in waves 9B to 9D, each followed by an independent fact check.
+3. **10D, tier 2** (14 pages), then **10E, tier 3** (3 pages).
+4. A deploy only on "deploy"; each deploy adds one release, which is emailed.
+
+### 21.8 Risks
+
+- **LeetCode's content:** we cannot read it from here and must not copy it; we teach patterns
+  with our own problems, which is also what makes the pages ours.
+- **Concurrency code tabs** cannot test real thread interleavings deterministically; the drivers
+  test the classes through deterministic calls and the model owns the interleavings (21.4).
+- **Interleaving counts explode:** two threads of 3 steps have 20 interleavings, three threads
+  of 4 have 34 650; keep programs small and cap the enumeration, saying so on the page.
+- **Overlap with existing pages:** each new page links the existing one it extends (merge
+  intervals against interval partitioning, fast and slow pointers against cycle detection).
+- **Scope:** 39 pages; the tiers let us stop after any wave.
+
+### 21.9 Questions for Yusuf
+
+1. Scope: the two slices, then interview tier 1 and concurrency tier 1 (20 pages), then tiers 2
+   and 3 as with the AI pathway? Recommended: yes.
+2. Pathway name "Coding interviews", with Concurrency as one of its families? Or Concurrency as a
+   sixth pathway of its own ("Systems"), where later pages (memory, file systems) could join it?
+   Recommended: a family inside Coding interviews for now; move it if a systems pathway comes.
+3. List the existing Techniques family (two pointers, sliding window, monotonic stack and queue)
+   under Coding interviews too? Recommended: yes.
+4. Concurrency texts: OSTEP and The Little Book of Semaphores (both free)? Recommended: yes.
+5. Concurrency code tabs as in 21.4 (real primitives shown, tested through deterministic calls)?
+   Recommended: yes.
+6. Anything to add or drop from 21.6?
+
 ## Appendix A: Galles/Lucet pages and controls (captured 2026-11-04)
 
 | Page | Controls |

@@ -79,7 +79,7 @@ Three problems of our own:
 - Seats 0 to n in a theater, n tickets sold, no seat sold twice. Which seat is empty? (Missing number.)
 - Every student in a list of sign-ups signed up twice, except two who signed up once. Find both, using a few variables. (Two singles.)
 
-Look-alikes that call for something else: "every value appears three times except one" breaks XOR, because three copies do not cancel; count the 1s in each bit position mod 3 instead, as on [bitmasks](/bitmask/). "One value repeats, the list is 1 to n" is a cycle-finding problem when you may not change the list. And "the value that appears most often" needs counting: XOR only knows odd from even.
+Look-alikes that call for something else: "every value appears three times except one" breaks XOR, because three copies do not cancel; count the 1s in each bit position mod 3 instead, as on [bitmasks](/bitmask/). "One value repeats, the list is 1 to n" is a cycle-finding problem when you may not change the list. And "the value that appears most often" needs [frequency counting](/frequency-counting/): XOR only knows odd from even.
 
 ## When to use it
 

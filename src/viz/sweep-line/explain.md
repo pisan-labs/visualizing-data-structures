@@ -86,7 +86,7 @@ Three problems of our own:
 - Two meeting rooms' bookings, merged into one list. Was there ever a time when three bookings overlapped? (The most open, ≥ 3.)
 - Banners hang along a wall, each from one point to another at some depth. What does the bottom edge of the banners look like from below? (A skyline, with depth as height.)
 
-Look-alikes that call for something else: "report the busy blocks" wants the covered time, not a count, which is [merge intervals](/merge-intervals/). "Give each lecture a room" wants the assignment itself, which is [interval partitioning](/interval-partitioning/) with a min-heap of rooms; the sweep only counts them. And when the times are small whole numbers, a plain array of counts with +1 and −1 at the ends, then one running sum, skips the sort.
+Look-alikes that call for something else: "report the busy blocks" wants the covered time, not a count, which is [merge intervals](/merge-intervals/). "Give each lecture a room" wants the assignment itself, which is [interval partitioning](/interval-partitioning/) with a min-heap of rooms; the sweep only counts them. And when the times are small whole numbers, a plain array of counts with +1 and −1 at the ends, then one running sum, skips the sort: that is a [difference array](/difference-array/).
 
 ## When to use it
 

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "frequency-counting",
+  "id": "rescan",
+  "title": "Rescan for every letter",
+  "notes": "abracadabra the naive way: for each position, count its letter by scanning all 11 letters. a, b and r repeat; the c at index 4 appears once. 5 positions of 11 comparisons, 55 in all.",
+  "settings": {
+    "approach": "naive"
+  },
+  "seed": 1,
+  "ops": [["unique", "abracadabra"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

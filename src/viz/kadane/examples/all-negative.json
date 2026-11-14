@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "kadane",
+  "id": "all-negative",
+  "title": "Every value negative",
+  "notes": "A = −3 −1 −4 −2 −5. Every run is negative, so the pass restarts at every value, and the best is the largest single value: A[1] = −1. A best that starts at 0 instead of −∞ would wrongly report 0.",
+  "settings": {
+    "approach": "pattern",
+    "empty": false
+  },
+  "seed": 1,
+  "ops": [["load", "-3 -1 -4 -2 -5"], ["find"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

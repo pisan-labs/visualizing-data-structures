@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "difference-array",
+  "id": "whole-array",
+  "title": "Updates to the whole array use the spare cell",
+  "notes": "A = 5 3 8 1 4 2 and three updates that all end at the last value, so each writes its stop into D[6], the spare cell past the end, which nothing reads. D holds only the changes (1 at D[0], 3 at D[2]), and the pass adds them to A's own values: 6 4 12 5 8 6.",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "5 3 8 1 4 2"],
+    ["add", 0, 5, 2],
+    ["add", 0, 5, -1],
+    ["add", 2, 5, 3],
+    ["apply"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "frequency-counting",
+  "id": "sorted-letters",
+  "title": "Group by sorted letters",
+  "notes": "The same eight words keyed by their sorted letters: night becomes ghint, tops opst. The same four groups, from 44 comparisons (a merge sort of each word) and 8 lookups. For five letters, sorting is cheaper than 26 counts.",
+  "settings": {
+    "approach": "naive"
+  },
+  "seed": 1,
+  "ops": [["load", "night tops thing below spot elbow pots chin"], ["group"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

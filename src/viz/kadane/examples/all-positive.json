@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "kadane",
+  "id": "all-positive",
+  "title": "All positive: the whole array",
+  "notes": "A = 2 1 3 2 4. The run never goes negative, so it never restarts, and every value is a new best: the whole array, 12. The pass still does 3 steps per value; every pair of ends would do 30.",
+  "settings": {
+    "approach": "pattern",
+    "empty": false
+  },
+  "seed": 1,
+  "ops": [["load", "2 1 3 2 4"], ["find"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

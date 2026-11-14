@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "kadane",
+  "id": "empty-allowed",
+  "title": "The empty subarray wins",
+  "notes": "The same array with the empty subarray allowed: best starts at 0, for the empty one, and no run ever beats it. The answer is 0 and the empty subarray. Same loop, one line different.",
+  "settings": {
+    "approach": "pattern",
+    "empty": true
+  },
+  "seed": 1,
+  "ops": [["load", "-3 -1 -4 -2 -5"], ["find"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "frequency-counting",
+  "id": "first-unique",
+  "title": "Count, then a second pass",
+  "notes": "abracadabra: count every letter in one pass (a5 b2 r2 c1 d1), then a second pass stops at the first count of 1, the c at index 4. 11 counts and 5 reads, against 55 comparisons for rescanning.",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [["unique", "abracadabra"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

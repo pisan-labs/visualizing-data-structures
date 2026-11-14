@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "frequency-counting",
+  "id": "count-signatures",
+  "title": "Group by count signature",
+  "notes": "Eight words keyed by their 26 letter counts: night and thing share g1h1i1n1t1, tops, spot and pots share o1p1s1t1, below and elbow share b1e1l1o1w1, and chin is alone. Four groups, from 244 counts and 8 lookups. On words this short, sorted letters would take 44 comparisons.",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [["load", "night tops thing below spot elbow pots chin"], ["group"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

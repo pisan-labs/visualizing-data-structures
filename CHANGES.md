@@ -493,3 +493,5 @@
 2026-11-14 [code] Merged wave 9D rnn-lstm (one hand-made memory unit; plain RNN, LSTM with or without the forget gate; the pull of word 1 as a product of factors) and mcts (UCB1 selection, expansion, rollout, backpropagation on a 12-sentence tree)
 
 2026-11-14 [code] Merged wave 9D ivf-index (k-means lists, Voronoi cells, nprobe, the neighbour missed in an unprobed list) and product-quantization (pieces, codebooks, codes, the ADC table, bits per vector)
+
+2026-11-14 [code] Merged wave 9D prefix-cache (radix tree of cached prefixes, reference counts, LRU eviction of leaves) and flash-attention (tiles, online softmax m and l, equal to plain attention; 2022 and FlashAttention-2 loop orders; memory traffic counters, which at d = 2 do not always favour tiling, explained on the page)

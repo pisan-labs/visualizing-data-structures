@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "policy-optimization",
+  "id": "kl-leash",
+  "title": "A heavy KL weight keeps the policy near the start",
+  "notes": "NOTES",
+  "settings": {
+    "method": "grpo",
+    "clip": "0.2",
+    "beta": "1"
+  },
+  "seed": 1,
+  "ops": [["run"], ["run"]]
+}

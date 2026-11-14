@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "policy-optimization",
+  "id": "ppo-clip",
+  "title": "The clip stops a second push",
+  "notes": "NOTES",
+  "settings": {
+    "method": "ppo",
+    "clip": "0.2",
+    "beta": "0"
+  },
+  "seed": 3,
+  "ops": [["rewards", "1 0.3 0.2 0.5"], ["step"]]
+}

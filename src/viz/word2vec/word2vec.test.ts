@@ -171,7 +171,7 @@ describe('word2vec', () => {
 
   it('tells the story the examples tell', () => {
     const run = (ops: [string, ...string[]][], set: Partial<W2vSettings> = {}) =>
-      new Timeline(word2vec, { ...word2vec.defaults, ...set }, 1, ops);
+      new Timeline(word2vec, { ...word2vec.defaults, ...set } as W2vSettings, 1, ops);
     const cos = (s: W2vState, a: string, b: string) => cosine(s.w[wordId(a)]!, s.w[wordId(b)]!);
     const start = init();
     expect(cos(start, 'cat', 'dog')).toBeLessThan(0);

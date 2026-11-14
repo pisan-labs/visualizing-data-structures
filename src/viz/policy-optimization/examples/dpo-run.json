@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "policy-optimization",
+  "id": "dpo-run",
+  "title": "DPO: twenty preferences",
+  "notes": "NOTES",
+  "settings": {
+    "method": "dpo",
+    "clip": "0.2",
+    "beta": "0.5"
+  },
+  "seed": 1,
+  "ops": [["run"], ["run"]]
+}

@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "policy-optimization",
+  "id": "grpo-step",
+  "title": "GRPO: one group, step by step",
+  "notes": "NOTES",
+  "settings": {
+    "method": "grpo",
+    "clip": "0.2",
+    "beta": "0.1"
+  },
+  "seed": 1,
+  "ops": [["step"]]
+}

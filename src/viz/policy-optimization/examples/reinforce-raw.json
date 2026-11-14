@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "policy-optimization",
+  "id": "reinforce-raw",
+  "title": "Raw rewards push up every answer drawn",
+  "notes": "NOTES",
+  "settings": {
+    "method": "reinforce",
+    "clip": "0.2",
+    "beta": "0"
+  },
+  "seed": 2,
+  "ops": [["step"]]
+}

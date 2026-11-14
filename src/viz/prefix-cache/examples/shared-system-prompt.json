@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "prefix-cache",
+  "id": "shared-system-prompt",
+  "title": "Four requests behind one long shared prompt",
+  "notes": "Four prompts share their first 7 tokens, the way requests behind one system prompt do. A prefills all 8; B, C and D prefill one token each. The shared node ends with 4 references, and 21 of 32 prompt tokens came from the cache (66%).",
+  "settings": {
+    "capacity": "16"
+  },
+  "seed": 1,
+  "ops": [
+    ["request", "a cat sat on a mat and slept"],
+    ["request", "a cat sat on a mat and ran"],
+    ["request", "a cat sat on a mat and ate"],
+    ["request", "a cat sat on a mat and saw"]
+  ]
+}

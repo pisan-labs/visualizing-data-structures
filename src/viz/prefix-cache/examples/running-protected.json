@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "prefix-cache",
+  "id": "running-protected",
+  "title": "A running request's tokens are never evicted",
+  "notes": "A is still running when C arrives. C needs 4 slots and only 1 is free. A's \"dog saw the ball\" was used longest ago, but A is using it, so it stays: B's \"a cat sat on the mat\" goes instead, all 6 tokens.",
+  "settings": {
+    "capacity": "12"
+  },
+  "seed": 1,
+  "ops": [
+    ["request", "the dog saw the ball"],
+    ["request", "a cat sat on the mat"],
+    ["finish", "B"],
+    ["request", "the fox ran under it"]
+  ]
+}

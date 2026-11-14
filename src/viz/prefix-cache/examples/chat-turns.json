@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "prefix-cache",
+  "id": "chat-turns",
+  "title": "A chat: each turn starts with the one before",
+  "notes": "Each turn starts with the whole of the turn before, so the tree grows as a chain and no edge splits. B finds 3 of its tokens cached, C finds 6. In all 9 of 17 prompt tokens came from the cache (53%).",
+  "settings": {
+    "capacity": "16"
+  },
+  "seed": 1,
+  "ops": [
+    ["request", "the cat sat"],
+    ["finish", "A"],
+    ["request", "the cat sat on the mat"],
+    ["finish", "B"],
+    ["request", "the cat sat on the mat and slept"],
+    ["finish", "C"]
+  ]
+}

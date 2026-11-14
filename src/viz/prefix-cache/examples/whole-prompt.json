@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "viz": "prefix-cache",
+  "id": "whole-prompt",
+  "title": "The same prompt again: only the last token runs",
+  "notes": "B sends A's prompt again. All 5 tokens are cached, yet the last one runs once more, because its output picks the first new token. C sends just \"the dog chased\": the match ends inside the edge, which splits, and again only the last token runs.",
+  "settings": {
+    "capacity": "16"
+  },
+  "seed": 1,
+  "ops": [
+    ["request", "the dog chased the cat"],
+    ["finish", "A"],
+    ["request", "the dog chased the cat"],
+    ["finish", "B"],
+    ["request", "the dog chased"],
+    ["finish", "C"]
+  ]
+}

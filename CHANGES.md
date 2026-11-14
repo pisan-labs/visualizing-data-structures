@@ -547,3 +547,5 @@
 2026-11-14 [code] Merged wave 10 dp-grid-paths (count or cheapest path; bottom-up or memo), dp-state-machine (buy and sell with a cooldown or a fee) and dp-interval (take tiles scored by neighbours, merge piles), each against plain recursion with call counts
 
 2026-11-14 [code] Merged wave 10 min-stack (a stack of minimums against scanning), two-stack-queue (move on empty, amortized 3 per operation) and randomized-set (array plus index map, remove by swapping with the last)
+
+2026-11-14 [code] Merged wave 10 binary-search-answer (shipping capacity, largest minimum gap), state-space-bfs (a lock with forbidden codes, word ladders; against no visited set) and combination-sum (with or without reuse, duplicates skipped, pruning)

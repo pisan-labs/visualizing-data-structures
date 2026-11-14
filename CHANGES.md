@@ -531,3 +531,5 @@
 2026-11-14 [code] Merged wave 10 dutch-flag (three pointers against count and rewrite), cyclic-sort (each swap places one value; then the missing and the duplicate) and matrix-traversal (spiral by four bounds; quarter turn in place by rings or transpose and reverse)
 
 2026-11-14 [code] Merged wave 10 top-k (heap of size k, sort, quickselect), k-way-merge (heap of heads, pairs, sort) and two-heaps-median (two heaps against a sorted list; even-count median the mean by default, the CLRS lower median as a setting)
+
+2026-11-14 [code] Merged wave 10 merge-intervals (merge, insert, intersect), sweep-line (most open at once, the skyline with a lazy max-heap) and xor-tricks (single, missing, two singles, swap)

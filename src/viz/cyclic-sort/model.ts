@@ -313,7 +313,7 @@ function* scanByIndex(
     yield {
       state: state(),
       marks: [
-        mark(vid(a[i]!), home ? 'done' : 'error'),
+        mark(vid(a[i]!), home ? 'done' : 'found'),
         ...homes(a, new Set([i])),
         ...[...out].filter((k) => k !== i).map((k) => mark(vid(a[k]!), 'compare')),
       ],
@@ -483,7 +483,7 @@ function* selection(s: ArrayState): Gen {
       say = gap.length
         ? `${at(i, v)}, but next is ${next}: ${and(gap)} ${gap.length === 1 ? 'is' : 'are'} missing. next = ${v + 1}.`
         : `${at(i, v)}, as expected. next = ${v + 1}.`;
-      role = gap.length ? 'error' : 'done';
+      role = gap.length ? 'found' : 'done';
       lines = gap.length
         ? ['scanLoop', 'scanCheck', 'gap', 'advance']
         : ['scanLoop', 'scanCheck', 'advance'];

@@ -439,6 +439,7 @@ function* spiralWalk(s: MatrixState): Gen {
     `Walk the matrix with a direction, starting right from the top left, and a second ${m} × ${n} grid of seen marks: ${m * n} extra cells. Turn right whenever the next cell is off the matrix or seen.`,
     ['init'],
   );
+  let turned = false;
   for (let k = 1; k <= m * n; k++) {
     const v = s.m[r]![c]!.value;
     work.add('reads');
@@ -448,7 +449,12 @@ function* spiralWalk(s: MatrixState): Gen {
     out.push(v);
     yield step(
       `Visit ${at(r, c, v)}, the ${ordinal(k)} value, and mark it seen.`,
-      ['loop', 'visit'],
+      // The check of the cell ahead and the step forward that led here, unless it was a turn.
+      k === 1
+        ? ['loop', 'visit']
+        : turned
+          ? ['step', 'loop', 'visit']
+          : ['check', 'step', 'loop', 'visit'],
       [
         mark(cellId(r, c), 'active'),
         mark(`seen-cell-${r}-${c}`, 'new'),
@@ -460,6 +466,7 @@ function* spiralWalk(s: MatrixState): Gen {
     const nr = r + DIRS[d]!.dr;
     const nc = c + DIRS[d]!.dc;
     const free = nr >= 0 && nr < m && nc >= 0 && nc < n && !seen[nr]![nc];
+    turned = !free;
     if (!free) {
       const was = DIRS[d]!.name;
       d = (d + 1) % 4;
@@ -645,7 +652,7 @@ function* rotateCopy(s: MatrixState, by: RotateBy): Gen {
       work.add('writes');
       yield {
         state: state(),
-        marks: [mark(`b-cell-${j}-${n - 1 - i}`, 'new')],
+        marks: [mark(cellId(i, j), 'compare'), mark(`b-cell-${j}-${n - 1 - i}`, 'new')],
         say: `${at(i, j, x.value)} goes to B[${j}][${n - 1 - i}].`,
         lines: ['loop', 'copy'],
         level: 2,

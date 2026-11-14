@@ -73,7 +73,7 @@ export function view(step: CyclicStep, settings: CyclicSettings): Scene {
           size: FOUND,
           weight: 'bold',
           mono: true,
-          role: e.found && e.found[name as 'missing' | 'repeated'].length ? 'error' : undefined,
+          role: e.found && e.found[name as 'missing' | 'repeated'].length ? 'found' : undefined,
         },
       );
     });

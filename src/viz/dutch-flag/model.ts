@@ -420,7 +420,8 @@ const partition: Op = {
 
 export const ops: Record<string, Op> = {
   partition,
-  load: loadOp<FlagSettings>({ ready: 'Type a pivot and press Partition.' }),
+  // A load step carries no extra, so the sorting kit's load fits this page's steps too.
+  load: loadOp<FlagSettings>({ ready: 'Type a pivot and press Partition.' }) as unknown as Op,
 };
 
 // ----- Pseudocode -----

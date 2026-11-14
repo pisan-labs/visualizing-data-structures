@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "difference-array",
+  "id": "every-cell",
+  "title": "Add to every cell",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "naive"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "0 0 0 0 0 0 0 0"],
+    ["add", 1, 6, 2],
+    ["add", 0, 4, 3],
+    ["add", 3, 7, -1],
+    ["add", 5, 7, 4],
+    ["apply"]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

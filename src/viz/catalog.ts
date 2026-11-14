@@ -557,7 +557,7 @@ export const families: Family[] = [
     items: [
       { id: 'min-stack', title: 'Min stack', added: true },
       { id: 'two-stack-queue', title: 'Queue from two stacks', added: true },
-      { id: 'randomized-set', title: 'Insert, remove, random in O(1)', added: true },
+      { id: 'randomized-set', title: 'Randomized set (random pick in O(1))', added: true },
       { id: 'rate-limiter', title: 'Rate limiter', added: true },
       { id: 'lfu-cache', title: 'LFU cache', added: true, advanced: true },
     ],

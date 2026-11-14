@@ -551,3 +551,5 @@
 2026-11-14 [code] Merged wave 10 binary-search-answer (shipping capacity, largest minimum gap), state-space-bfs (a lock with forbidden codes, word ladders; against no visited set) and combination-sum (with or without reuse, duplicates skipped, pruning)
 
 2026-11-14 [code] Merged wave 10 pattern-map: 11 families, 51 patterns, 89 cues of our own; follow a cue, show a family, read a problem for cues (with look-alikes ruled out); pages not live yet drawn unlinked
+
+2026-11-14 [doc] Merged the wave-10 round-3 fact check (13 pages): placeholder notes on combination-sum replaced, the sliding window counter can admit 2L (rate-limiter), about 20 LeetCode-like statements rewritten. Conformance now refuses NOTE/TBD/FIXME/XXX and notes shorter than 40 characters. randomized-set retitled "Randomized set (random pick in O(1))" (the old title echoed a LeetCode problem)

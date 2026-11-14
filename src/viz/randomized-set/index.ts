@@ -99,7 +99,7 @@ const presets: Preset[] = [
 
 export const randomizedSet: VizDef<RSState, RSSettings, RSExtra> = {
   id: 'randomized-set',
-  title: 'Insert, remove, random in O(1)',
+  title: 'Randomized set (random pick in O(1))',
   family: 'Design a data structure',
   blurb:
     'A set with insert, remove and a random element, all O(1): the values in an array, so a random index picks one, and a hash map from each value to its index, so remove can fill the hole with the last value. Against the array alone, which scans.',

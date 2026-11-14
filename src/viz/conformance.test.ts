@@ -139,6 +139,13 @@ describe.each(vizzes.map((v) => [v.id, v] as const))('%s', (_id, def) => {
   it('has no placeholder text in what learners read', () => {
     const texts = [def.explain, def.blurb, ...def.examples.map((e) => `${e.title} ${e.notes}`)];
     for (const t of texts) expect(t).not.toMatch(/\bTODO\b|\?\?\?|future work|lorem ipsum/i);
+    // Upper-case markers left by an author ("NOTE", "TBD", "FIXME", "XXX"); case matters, so the
+    // word "note" in prose is fine.
+    for (const t of texts) expect(t).not.toMatch(/\b(?:NOTE|TBD|FIXME|XXX)\b/);
+    // Every curated example explains itself in at least a sentence (seven placeholder notes
+    // reached next on 14 November before this check).
+    for (const e of def.examples)
+      expect((e.notes ?? '').trim().length, `${e.id} notes`).toBeGreaterThanOrEqual(40);
   });
 
   it('has plain-English pseudocode for every line, in every setting', () => {

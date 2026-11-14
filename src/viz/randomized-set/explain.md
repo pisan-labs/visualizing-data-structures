@@ -1,4 +1,4 @@
-# Insert, remove, random in O(1)
+# Randomized set (random pick in O(1))
 
 You want a set that does three things: insert a value, remove a value, and return a random value, each one equally likely. All three in O(1). Each half of the answer is easy on its own. A hash set inserts and removes in O(1) but cannot hand you its i-th value, so a random pick has to walk through it. An array picks a random index in O(1) but has to scan to find a value. So use both: the values in an array, and a hash map from each value to its index.
 

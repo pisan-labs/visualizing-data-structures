@@ -27,7 +27,9 @@ async function options(page: Page, ...labels: string[]) {
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/randomized-set/');
-  await expect(page.getByRole('heading', { name: 'Insert, remove, random in O(1)' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Randomized set (random pick in O(1))' }),
+  ).toBeVisible();
   await page.getByRole('combobox', { name: 'Speed' }).selectOption('4');
 });
 

@@ -412,7 +412,7 @@ function* roundSteps(s: S, floor: number, fine: boolean): Generator<UStep, S | n
   yield {
     state: shown,
     marks: rows.map((row) => mark(rowId(row.t), 'active')),
-    say: `Round ${round}. The text's loss L, minus its log-likelihood under the best splits, is ${two(corpusLoss(s.words, s.vocab))}. For each of the ${n} pieces of two or more letters, ask: how much larger would L be without it? Letters always stay, so every word keeps a split.`,
+    say: `Round ${round}. The text's loss L (minus its log-likelihood under the best splits) is ${two(corpusLoss(s.words, s.vocab))}. For each of the ${n} pieces of two or more letters, ask: how much larger would L be without it? Letters always stay, so every word keeps a split.`,
     lines: ['psig', 'pfor'],
     level: fine ? 2 : 3,
     vars: vars(),

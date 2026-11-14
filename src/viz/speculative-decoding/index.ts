@@ -49,7 +49,7 @@ export const speculative: VizDef<SpecState, SpecSettings, SpecExtra> = {
   title: 'Speculative decoding',
   family: 'Language models and decoding',
   blurb:
-    'A small model guesses the next few words; the large model checks them all in one pass, keeps the ones it agrees with, and fixes the first it does not. Same text, fewer slow passes.',
+    'A small model guesses the next few words; the large model checks them all in one pass, keeps the ones it agrees with, and fixes the first it does not. The large model’s own distribution, in fewer slow passes.',
   settings: [
     {
       kind: 'number',

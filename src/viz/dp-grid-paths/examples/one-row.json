@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "dp-grid-paths",
+  "id": "one-row",
+  "title": "One row: one path, no repeats",
+  "notes": "With one row there is one path, so plain recursion calls each cell once: 6 calls for 6 cells. Repeats need two ways into a cell; the more ways, the more repeats.",
+  "settings": {
+    "approach": "naive",
+    "problem": "count",
+    "fill": "bottomup"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "......"
+    ],
+    [
+      "solve"
+    ]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

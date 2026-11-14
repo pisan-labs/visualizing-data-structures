@@ -80,7 +80,7 @@ Three problems of our own:
 - Plates go on and come off the top of a pile. After every change, report the heaviest plate left. (A max stack: the same trick with ≥.)
 - A game saves checkpoints and loading the latest one discards it. Show the lowest score among the saves left. (A min stack of scores.)
 
-Look-alikes: "how long until a warmer day" wants the next bigger value for each element, a [monotonic stack](/monotonic-stack/). "The smallest of the last k readings" takes values off the other end, so it is a queue, not a stack: a [monotonic queue](/monotonic-queue/), or a [queue from two stacks](/two-stack-queue/) built from two min stacks.
+Look-alikes: "for each day, the next day with more rain" wants the next bigger value for each element, a [monotonic stack](/monotonic-stack/). "The smallest of the last k readings" takes values off the other end, so it is a queue, not a stack: a [monotonic queue](/monotonic-queue/), or a [queue from two stacks](/two-stack-queue/) built from two min stacks.
 
 ## When to use it
 

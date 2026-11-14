@@ -54,7 +54,7 @@ Amortized is not average. The 3m bound holds for every sequence of operations, w
 
 The obvious design keeps the queue on in, oldest at the bottom. To dequeue, it moves all n values to out, pops the oldest, and moves the other n − 1 back: 4n − 1 stack operations. peek moves all n there and back: 4n.
 
-[Move everything every time](#example:move-everything-every-time) runs the same operations as [Move across only when out is empty](#example:move-only-when-empty): its dequeues cost 15, 15, 11, 7 and 3, 56 in all against 20. Draining a full queue of 8 costs 136 this way, Θ(n²) for n dequeues. [Peeks after the move are free](#example:peeks-are-free) is worse still: each peek costs 20 there and back, and 0 once out holds the front.
+[Move everything every time](#example:move-everything-every-time) runs the same operations as [Move across only when out is empty](#example:move-only-when-empty): its dequeues cost 15, 15, 11, 7 and 3, and with the five enqueues the whole run costs 56 against 20. Draining a full queue of 8 costs 136 this way, Θ(n²) for n dequeues. [Peeks after the move are free](#example:peeks-are-free) is worse still: each peek costs 20 there and back, and 0 once out holds the front.
 
 When is the obvious design just as good? [Enqueue, dequeue, enqueue, dequeue](#example:alternating): with one value in the queue, both cost 3 per dequeue. The gap opens as the queue grows.
 
@@ -68,7 +68,7 @@ Reach for two stacks when the problem says:
 
 Three problems of our own:
 
-- You may use only stacks. Build a first-come, first-served line from them, with O(1) per operation on average.
+- A ticket counter must serve people first come, first served, but all it has for storage are piles you add to and take from at the top. Make each person cost O(1) over the day.
 - A language gives you immutable lists that are cheap to use only at the front. Make a first-in, first-out queue with O(1) amortized operations. (Keep the back of the queue in one list, reversed, and the front in the other.)
 - A log only offers push and pop at its end. Deliver its messages in the order they were written, with a constant number of log operations per message overall.
 

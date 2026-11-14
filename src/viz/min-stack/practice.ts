@@ -62,11 +62,10 @@ export const SPOT_ROWS: SpotRow[] = [
     near: ['monotonic-stack', 'sliding-window', 'two-heaps-median'],
   },
   {
-    problem:
-      'For each day of temperature readings, find how many days you wait until a warmer day.',
+    problem: 'A list of daily rainfall. For each day, find the next day with more rain.',
     pattern: 'monotonic-stack',
-    cue: 'until a warmer day',
-    why: 'Each day waits for the next bigger value: keep the days still waiting on a stack in falling order, and pop them when a warmer one comes.',
+    cue: 'the next day with more rain',
+    why: 'Each day waits for the next bigger value: keep the days still waiting on a stack in falling order, and pop them when a wetter one comes.',
     near: ['min-stack', 'two-heaps-median'],
   },
   {

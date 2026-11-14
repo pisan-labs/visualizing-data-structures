@@ -59,17 +59,17 @@ export const SPOT_ROWS: SpotRow[] = [
   },
   {
     problem:
-      'Keep a set of user ids with add, remove and "pick one at random", each in O(1) on average.',
+      'A quiz app keeps a pool of questions that teachers add and retire, and serves one question from the pool at random. Each of the three must take O(1).',
     pattern: 'randomized-set',
-    cue: ['pick one at random', 'O(1)'],
+    cue: ['add and retire', 'at random', 'O(1)'],
     why: 'A random pick needs an array; removing in O(1) needs a map from value to index, and a swap with the last element.',
     near: ['lfu-cache', 'lru-cache'],
   },
   {
     problem:
-      'A stack of numbers that can also tell you its smallest element at any moment, in O(1).',
+      'Trays go on and come off the top of a pile only. At any moment, say how heavy the lightest tray in the pile is, in O(1).',
     pattern: 'min-stack',
-    cue: ['a stack', 'its smallest element at any moment'],
+    cue: ['the top of a pile only', 'the lightest tray in the pile'],
     why: 'A second stack of minimums, pushed and popped with the first, keeps the answer on top.',
     near: ['lfu-cache', 'two-heaps-median', 'monotonic-stack'],
   },

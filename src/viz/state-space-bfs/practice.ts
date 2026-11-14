@@ -46,7 +46,7 @@ export const SPOT_ROWS: SpotRow[] = [
   },
   {
     problem:
-      'Two jugs hold 3 and 5 litres. You may fill one, empty one, or pour one into the other until it is full or empty. What is the fewest steps to have exactly 4 litres in a jug?',
+      'Two jugs hold 4 and 9 litres. You may fill one, empty one, or pour one into the other until it is full or empty. What is the fewest steps to have exactly 6 litres in a jug?',
     pattern: 'state-space-bfs',
     cue: ['fewest steps', 'fill, empty or pour'],
     why: 'A state is how much each jug holds; each action is a move to another state, all costing one step. BFS from (0, 0) finds the fewest.',
@@ -54,10 +54,10 @@ export const SPOT_ROWS: SpotRow[] = [
   },
   {
     problem:
-      'A gene is a string of 8 letters from A, C, G and T. A mutation changes one letter, and only strings in a given bank are allowed. What is the fewest mutations from one gene to another?',
+      'A product code has 6 characters. Each day one character may change, but every code on the way must be on an approved list. What is the fewest days from the old code to the new one?',
     pattern: 'state-space-bfs',
-    cue: ['fewest mutations', 'changes one letter', 'only strings in a given bank'],
-    why: 'The same shape as changing words: each string is a state, its neighbours are the one-letter changes that are in the bank.',
+    cue: ['fewest days', 'one character may change', 'on an approved list'],
+    why: 'The same shape as changing words: each code is a state, and its neighbours are the one-character changes that are on the list.',
     near: ['trie', 'frequency-counting', 'dp-grid-paths'],
   },
   {
@@ -86,9 +86,9 @@ export const SPOT_ROWS: SpotRow[] = [
   },
   {
     problem:
-      'Courses have rules of the form “take this one before that one”. Find an order that keeps every rule.',
+      'Getting dressed comes with rules such as “socks before shoes”. Find an order of the clothes that keeps every rule.',
     pattern: 'topo-indegree',
-    cue: ['before', 'an order that keeps every rule'],
+    cue: ['before', 'an order of the clothes that keeps every rule'],
     why: 'An order of a graph’s vertices that respects its edges is a topological sort; there is no distance to find.',
     near: ['state-space-bfs', 'disjoint-sets'],
   },

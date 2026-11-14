@@ -3,7 +3,7 @@
   "viz": "combination-sum",
   "id": "every-list",
   "title": "Every list, then check",
-  "notes": "NOTE",
+  "notes": "The same candidates and target, the naive way: every count of each candidate, from as many as fit down to none, and only then the sum. 4 × 3 × 3 × 2 = 72 lists and 125 calls find the same 3 combinations that sorted, pruned backtracking finds in 14.",
   "settings": {
     "approach": "naive",
     "reuse": "again"

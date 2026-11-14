@@ -191,8 +191,8 @@ export function searchAnswerPractice(def: () => Def): PracticeKind[] {
           settings: { ...defaults, problem },
           answer: { kind: 'number', value: full.count },
           explain: ship
-            ? `The days are ${parts.join(', ')}: ${plural(full.count, 'day')}. Binary search on the answer runs exactly this check at every mid.`
-            : `Items go on ${parts.join(', ')}: ${plural(full.count, 'item')}. Binary search on the answer runs exactly this check at every mid.`,
+            ? `The days are ${parts.join(', ')}: ${plural(full.count, 'day')}. Binary search on the answer runs this check at every mid, stopping as soon as the outcome is clear.`
+            : `Items go on ${parts.join(', ')}: ${plural(full.count, 'item')}. Binary search on the answer runs this check at every mid, stopping as soon as the outcome is clear.`,
           watch: [['search', param]],
         };
       },

@@ -41,9 +41,9 @@ const rulesText = (p: Problem) =>
 export const SPOT_ROWS: SpotRow[] = [
   {
     problem:
-      'A carpenter must cut a plank at several marked points. Each cut costs the length of the piece being cut. In what order should the cuts go to pay the least?',
+      'A sawmill charges for each cut by the length of the board it saws through. A plank is marked for cutting at several points. In which order should the cuts go to pay the least?',
     pattern: 'dp-interval',
-    cue: ['in what order', 'costs the length of the piece being cut'],
+    cue: ['in which order', 'by the length of the board it saws through'],
     why: 'The cost of a cut depends on what is left around it, so solve every stretch between two marks by the cut made first in it (or, the same thing, the merge done last): shorter stretches first.',
     near: ['merge-intervals', 'binary-search-answer', 'two-pointers'],
   },

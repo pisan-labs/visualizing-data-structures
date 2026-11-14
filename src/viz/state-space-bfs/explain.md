@@ -80,8 +80,8 @@ Reach for this pattern when the problem says:
 
 Three problems of our own:
 
-- Two jugs hold 3 and 5 litres. Fill one, empty one, or pour one into the other. Fewest steps to have exactly 4 litres in a jug? (A state is the pair of amounts.)
-- A gene is 8 letters from A, C, G and T; a mutation changes one letter, and only strings in a bank are allowed. Fewest mutations from one gene to another? (The word puzzle with a 4-letter alphabet.)
+- Two jugs hold 4 and 9 litres. Fill one, empty one, or pour one into the other. Fewest steps to have exactly 6 litres in a jug? (A state is the pair of amounts.)
+- A product code has 6 characters. Each day one character may change, but every code on the way must be on an approved list. Fewest days from the old code to the new one? (The word puzzle with other letters.)
 - A knight on a chessboard: fewest moves to a given square? (Squares are states; the 8 jumps make the neighbours.)
 
 Look-alikes: when moves cost different amounts (driving times, fares), BFS counts the wrong thing; use [Dijkstra](/dijkstra/). When the problem says "list every way", it wants [backtracking](/backtracking/), not the shortest. And a maze already drawn on a grid is [grid BFS](/grid-bfs/), where the neighbours are just the four cells around.

@@ -259,13 +259,13 @@ export const rateLimiter: VizDef<RLState, RLSettings, RLExtra> = {
         example: 'log-is-exact',
       },
       average: {
-        cost: 'a little over L, at times',
-        why: 'The sliding window counter’s estimate can let one or two extra through.',
+        cost: 'about L',
+        why: 'The sliding window counter on smooth traffic: its estimate lets one or two extra through, as at 11 here.',
         example: 'counter-estimate',
       },
       worst: {
         cost: '2L',
-        why: 'The fixed window: L just before an edge and L just after. A full bucket plus its refill comes close too.',
+        why: 'The fixed window: L just before an edge and L just after. The sliding window counter gets there too when the last window’s requests all came at its end (9 9 9, then 18 18 18). A full bucket plus its refill comes close.',
         example: 'edge-burst',
       },
     },

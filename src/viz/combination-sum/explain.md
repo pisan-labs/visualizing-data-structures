@@ -73,7 +73,7 @@ Three problems of our own:
 
 - A shop sells boxes of 3, 5 and 8 pens. List every way to buy exactly 16 pens. (Each again.)
 - A bag holds coins, some of the same value. List every different set of them that makes 50 cents. (Each once, repeats skipped.)
-- Choose k different numbers from 1 to 9 that add up to n. (Each once, with one more prune: stop when too few numbers are left.)
+- A sheet holds one stamp of each value from 1 to 12 cents. List every set of exactly k stamps worth n cents. (Each once, with one more prune: stop when too few stamps are left.)
 
 Look-alikes: "in how many ways" wants a count, and a table of counts is far faster than listing; see [subset sum](/dp-subset-sum/). "Every order" or "every sequence" wants order to matter: that is [permutations](/backtracking/), where each step may pick any candidate, not only later ones.
 

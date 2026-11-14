@@ -3,7 +3,7 @@
   "viz": "two-stack-queue",
   "id": "move-everything-every-time",
   "title": "Move everything every time",
-  "notes": "The same operations, keeping everything on in and moving it all to out and back for every dequeue. The dequeues cost 15, 15, 11, 7 and 3: 56 stack operations against 20.",
+  "notes": "The same operations, keeping everything on in and moving it all to out and back for every dequeue. The dequeues cost 15, 15, 11, 7 and 3; with the five enqueues, 56 stack operations against 20.",
   "settings": {
     "approach": "naive"
   },

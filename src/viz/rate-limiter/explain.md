@@ -10,7 +10,7 @@ Times are whole seconds here, the limit is L = 3 and the window W = 10 seconds u
 |---|---|---|---|
 | fixed window counter | the window's start and a count: 2 numbers | O(1) | 2L |
 | sliding log | the time of each request let through in the last W seconds: up to L | O(1) amortized, O(L) worst | L, exactly |
-| sliding window counter | the window's start, prev and curr: 3 numbers | O(1) | a little over L, at times |
+| sliding window counter | the window's start, prev and curr: 3 numbers | O(1) | near L on smooth traffic, up to 2L at worst |
 | token bucket | the tokens and the last refill: 2 numbers | O(1) | close to 2L, on purpose |
 
 The time line shows each request over its second: a ring once it is let through, a crossed square once it is refused. Under the axis, a bracket covers the last W seconds and says how many got through. The cells below are everything the limiter remembers. [Show me](#play:counter-estimate)
@@ -21,7 +21,7 @@ The **Limiter** option picks the design. The variables count `memory kept` (numb
 
 Cut time into windows [0, 10), [10, 20) and so on, keep a count for the current one, and let a request through while the count is under L. When a request lands in a new window, start the count over. Two numbers, one comparison. This is the naive design on this page.
 
-The trouble is the edge. [The burst at a window edge](#example:edge-burst) sends requests at 7, 8, 9, 10, 11, 12, 13 and 21. 7, 8 and 9 use up [0, 10). At 10 the count starts over, so 10, 11 and 12 pass too. That is 6 requests in the 6 seconds (2, 12], twice the limit, and the limiter never noticed. Any fixed window lets up to 2L through in W seconds: L at the end of one window and L at the start of the next. [Show me](#play:edge-burst)
+The trouble is the edge. [The burst at a window edge](#example:edge-burst) sends requests at 7, 8, 9, 10, 11, 12, 13 and 21. 7, 8 and 9 use up [0, 10). At 10 the count starts over, so 10, 11 and 12 pass too. That is 6 requests in the 10 seconds (2, 12], twice the limit, and the limiter never noticed. Any fixed window lets up to 2L through in W seconds: L at the end of one window and L at the start of the next. [Show me](#play:edge-burst)
 
 ```check
 Q: A fixed window counter allows 3 requests per 10 seconds. Requests arrive at 9, 9, 9, 10, 10, 10. How many pass?
@@ -50,7 +50,7 @@ and let the request through while the estimate is under L.
 
 In [Estimating the last 10 seconds](#example:counter-estimate), the request at 10 starts a new window with prev = 3. It covers all of the previous window: estimate = 0 + 3 × 1 = 3, refused. At 11, e = 1, so estimate = 0 + 3 × 0.9 = 2.7, under 3: it passes. At 12 the estimate is 1 + 3 × 0.8 = 3.4, refused. Three numbers, and much closer to the log than the fixed window: 5 pass, not 7.
 
-It is an estimate, though. It assumes the previous window's requests were spread evenly across it. At 11 it let in a fourth request in (1, 11], since the three before it came late in their window. [The estimate guesses wrong](#example:estimate-too-strict) goes the other way: three requests at 0, then two at 12. The counter still counts 0.8 of those three, so the second request at 12 sees 1 + 2.4 = 3.4 and is refused, though only one request came in (2, 12]. The log lets it through.
+It is an estimate, though. It assumes the previous window's requests were spread evenly across it. At 11 it let in a fourth request in (1, 11], since the three before it came late in their window. Push that to the edge and it is as bad as the fixed window: send requests at 9, 9 and 9, then at 18, 18 and 18. At 18 the counter counts only 0.2 of the three at 9, so all three at 18 pass, 6 in (8, 18]. [The estimate guesses wrong](#example:estimate-too-strict) goes the other way: three requests at 0, then two at 12. The counter still counts 0.8 of those three, so the second request at 12 sees 1 + 2.4 = 3.4 and is refused, though only one request came in (2, 12]. The log lets it through.
 
 ```check
 Q: A sliding window counter allows 5 per 10 seconds. prev = 4 and curr = 1, and a request comes 3 seconds into the current window. What is the estimate, and does it pass?
@@ -73,7 +73,7 @@ The bucket allows bursts on purpose. A client that saved up a full bucket can sp
 
 - **Fixed window:** cheapest of all, fine when a double burst at the edge does no harm (a daily quota, say). Not when "at most L in any W seconds" really matters.
 - **Sliding log:** exact. Use it when L is small, or when being exact is the whole point (sign-in attempts). Avoid it for big limits across many clients.
-- **Sliding window counter:** a sensible default for many clients and big limits: three numbers, and the error is small when traffic is smooth.
+- **Sliding window counter:** a sensible default for many clients and big limits: three numbers, and the error is small when traffic is smooth. Cloudflare, which uses it, checked it on 400 million real requests and found 0.003% let through or refused wrongly.
 - **Token bucket:** when the rule is a rate with room for bursts, "about 600 an hour, up to 20 at once". The capacity and the rate are two separate knobs; this page ties them to L and W so all four designs share one long-run rate.
 
 When every request is evenly spaced under the limit, they all agree: [Evenly spaced: everyone agrees](#example:steady-under-limit) lets all 8 through, whatever the design.

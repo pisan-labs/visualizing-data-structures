@@ -3,7 +3,7 @@
   "viz": "combination-sum",
   "id": "repeats-skipped",
   "title": "Repeats skipped",
-  "notes": "NOTE",
+  "notes": "Each candidate once: 1 2 1 3 2 sorts to 1 1 2 2 3, and the target is 4. At each depth a value equal to the one just tried is skipped, so [1, 3] and [1, 1, 2] come out once each. 9 calls, 3 branches pruned and 4 repeats skipped find [1, 1, 2], [1, 3] and [2, 2].",
   "settings": {
     "approach": "pattern",
     "reuse": "once"

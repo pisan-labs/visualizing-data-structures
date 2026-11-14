@@ -588,7 +588,7 @@ function* recursion(s: S, settings: GPSettings, memo: boolean): Gen {
     marks: [mark(cellId(R - 1, C - 1), 'found')],
     say: memo
       ? `${answerText(p, v, R, C)}. With the memo: ${work.tally()}. Plain recursion would make ${plural(tot.naive, 'call')}.${p === 'mincost' && v !== Infinity ? ' Press Trace the path to see it.' : ''}`
-      : `${answerText(p, v, R, C)}. Plain recursion made ${plural(work.get('calls'), 'call')} for ${plural(R * C, 'cell')}: ${most === 1 ? 'each cell it reached was called once, since only one path runs through it' : `${name(busiest)} alone was called ${most} times, once for every path from it to the target`}. The table fills each cell once.`,
+      : `${answerText(p, v, R, C)}. Plain recursion made ${plural(work.get('calls'), 'call')} for ${plural(R * C, 'cell')}: ${most === 1 ? 'each cell it reached was called once, since none of them has two paths to the target' : `${name(busiest)} alone was called ${most} times, once for every path from it to the target`}. The table fills each cell once.`,
     lines: [`${P}.top`],
     level: 1,
     vars: { rows: R, cols: C, ...answerVars(p, v), ...workVars(work, tot) },

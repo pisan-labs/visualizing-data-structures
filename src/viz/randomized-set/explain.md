@@ -1,6 +1,6 @@
 # Insert, remove, random in O(1)
 
-Design a set with three operations: insert a value, remove a value, and return a random value, each one equally likely. All three in O(1). Each half of the answer is easy on its own. A hash set inserts and removes in O(1) but cannot hand you its i-th value, so a random pick has to walk through it. An array picks a random index in O(1) but has to scan to find a value. So use both: the values in an array, and a hash map from each value to its index.
+You want a set that does three things: insert a value, remove a value, and return a random value, each one equally likely. All three in O(1). Each half of the answer is easy on its own. A hash set inserts and removes in O(1) but cannot hand you its i-th value, so a random pick has to walk through it. An array picks a random index in O(1) but has to scan to find a value. So use both: the values in an array, and a hash map from each value to its index.
 
 ## The idea
 
@@ -84,7 +84,7 @@ Three problems of our own:
 - A game server tracks the players online as they join and leave, and every few seconds gives a bonus to one at random.
 - A music library adds and deletes songs, and a "surprise me" button plays a random one without walking the library.
 
-Look-alikes: "evict the one unused the longest" is an [LRU cache](/lru-cache/): a map plus a linked list, because order of use matters. "Are these two words rearrangements of each other" is counting letters, no random pick at all.
+Look-alikes: "evict the one unused the longest" is an [LRU cache](/lru-cache/): a map plus a linked list, because order of use matters. "Does this guess use exactly the tiles on my rack" is counting letters, no random pick at all.
 
 ## When to use it
 

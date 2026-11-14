@@ -1,6 +1,6 @@
 # DP over intervals
 
-A row of numbered tiles sits between two posts worth 1. Taking a tile scores its number times the numbers of the two things beside it right now, and the row closes up. In what order should you take them? Try the obvious rule, take whatever scores most right now, on 5 6 1 4: it gets 82. The best order gets 169. The trick that finds it is a strange one: decide which tile goes **last**.
+A row of numbered tiles sits between two posts worth 1. Taking a tile scores its number times the numbers of the two things beside it right now, and the row closes up. In what order should you take them? Try the obvious rule, take whatever scores most right now, on 5 6 1 4: it gets 84 at best, depending on how it breaks ties. The best order gets 169. The trick that finds it is a strange one: decide which tile goes **last**.
 
 ## The idea
 
@@ -35,7 +35,7 @@ In [Take the small tile first](#example:take-small-first), tiles 5 6 1 4:
 - B[2][4] = 164: tile 4 last, 5 × 4 × 1 = 20, after B[2][3];
 - B[1][4] = 169: tile 1 last, 1 × 5 × 1 = 5, after B[2][4].
 
-The trace reads the ks back: the order is 3, 2, 4, 1. Taking the 1 first leaves the 6 between the 5 and the 4, worth 120. The greedy rule takes the 5 first instead, and the big 6 never gets two big neighbours.
+The trace reads the ks back: the order is 3, 2, 4, 1. Taking the 1 first leaves the 6 between the 5 and the 4, worth 120. The greedy rule takes the 5 or the 6 first instead (both score 30), and the big 6 never gets two big neighbours.
 
 ```check
 Q: Two tiles, 2 and then 3, between the posts. What is the best total?
@@ -83,7 +83,7 @@ Reach for this pattern when the problem says:
 
 Three problems of our own:
 
-- A carpenter cuts a plank at several marked points, and each cut costs the length of the piece being cut. Which order is cheapest? (Solve every stretch between two marks by its first cut, which splits it like a last merge.)
+- A sawmill charges for each cut by the length of the board it saws through, and a plank is marked at several points. In which order should the cuts go to pay the least? (Solve every stretch between two marks by its first cut, which splits it like a last merge.)
 - Villages along a river join into towns two neighbours at a time, and joining costs their total population. Least cost to one town? (This page's merge.)
 - Cards lie in a row and two players take turns taking a card from either end. How many more points can the first player get if both play well? (What is left is always a stretch.)
 
@@ -92,7 +92,7 @@ Look-alikes that call for something else: "combine the meetings that overlap" ha
 ## Common mistakes
 
 - Choosing the first item instead of the last. The two sides are not independent until something stands between them to the end.
-- Filling row by row. B[1][4] needs B[2][4], which a row-by-row fill has not reached. Fill by length.
+- Filling row by row from the top. B[1][4] needs B[2][4], which that fill has not reached. Fill by length (or row by row from the bottom).
 - Forgetting the posts. A tile at the end of the row scores with a 1.
 - In the merge, adding the halves' sizes twice, or forgetting the last merge's cost. The last merge costs the whole stretch, v[a] + … + v[b]; prefix sums give it in O(1).
 - Letting k reach b in the merge. A split at b leaves an empty right half.

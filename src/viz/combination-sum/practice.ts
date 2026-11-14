@@ -58,10 +58,10 @@ export const SPOT_ROWS: SpotRow[] = [
   },
   {
     problem:
-      'Choose distinct numbers from 1 to 9 so that exactly k of them add up to n. List every choice.',
+      'A sheet holds one stamp of each value from 1 to 12 cents. List every set of exactly k stamps that adds up to n cents.',
     pattern: 'combination-sum',
-    cue: ['list every choice', 'add up to n'],
-    why: 'Backtrack over the sorted numbers, each once; prune when the next number is more than what is left, or when too few are left to choose.',
+    cue: ['list every set', 'exactly k stamps', 'adds up to n'],
+    why: 'Backtrack over the sorted values, each once; prune when the next value is more than what is left, or when too few stamps are left to choose.',
     near: ['two-pointers', 'sliding-window', 'bitmask'],
     alsoFits: ['backtracking'],
   },

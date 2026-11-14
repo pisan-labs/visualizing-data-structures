@@ -3,7 +3,7 @@
   "viz": "rate-limiter",
   "id": "edge-burst",
   "title": "The burst at a window edge",
-  "notes": "Requests at 7, 8, 9, 10, 11, 12, 13 and 21, at most 3 per 10 seconds. The fixed window lets 7, 8 and 9 through in [0, 10), starts over at 10 and lets 10, 11 and 12 through too: 6 requests in the 6 seconds (2, 12], twice the limit. 13 is refused and 21 passes. It keeps two numbers.",
+  "notes": "Requests at 7, 8, 9, 10, 11, 12, 13 and 21, at most 3 per 10 seconds. The fixed window lets 7, 8 and 9 through in [0, 10), starts over at 10 and lets 10, 11 and 12 through too: 6 requests in the 10 seconds (2, 12], twice the limit. 13 is refused and 21 passes. It keeps two numbers.",
   "settings": {
     "limiter": "fixed",
     "limit": 3,

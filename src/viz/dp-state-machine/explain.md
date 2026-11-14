@@ -88,7 +88,7 @@ Three problems of our own:
 - Each hour a delivery drone is flying, charging or idle, and each hour in a mode scores points. After charging it must idle an hour. Best score over a day? (Three states, one missing move.)
 - A painter is offered a day's pay for each day of the month but never works three days in a row. Most she can earn? (States: worked 0, 1 or 2 days in a row.)
 
-Look-alikes that call for something else: "buy once and sell once" needs no table, just the lowest price so far, or [Kadane's algorithm](/kadane/) on the daily changes. "For each day, how long until a warmer one" is the next larger value: a [monotonic stack](/monotonic-stack/).
+Look-alikes that call for something else: "buy once and sell once" needs no table, just the lowest price so far, or [Kadane's algorithm](/kadane/) on the daily changes. "For each day, the next day with a higher price" is the next larger value: a [monotonic stack](/monotonic-stack/).
 
 ## Common mistakes
 

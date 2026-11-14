@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "sweep-line",
+  "id": "skyline-hidden",
+  "title": "Hidden behind a taller one",
+  "notes": "A building 8 tall from 2 to 12 hides 4–6 and 7–10. Their ends pass and nothing leaves the heap; at x = 12 all three are popped, one after another. Two key points: (2, 8) and (12, 0).",
+  "settings": {
+    "approach": "pattern",
+    "goal": "skyline",
+    "ties": "ends"
+  },
+  "seed": 1,
+  "ops": [["load", "2-12:8 4-6:3 7-10:5"], ["sweep"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "sweep-line",
+  "id": "every-start",
+  "title": "Check every start",
+  "notes": "The same intervals the plain way: at each of the 6 starts, check all 6 intervals. 36 checks find the same 3 at time 4; at this size that is one step fewer than the sweep's 37.",
+  "settings": {
+    "approach": "naive",
+    "goal": "overlap",
+    "ties": "ends"
+  },
+  "seed": 1,
+  "ops": [["load", "1-6 2-5 4-9 7-11 9-13 12-14"], ["sweep"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

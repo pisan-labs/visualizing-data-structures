@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "viz": "sweep-line",
+  "id": "skyline-heap",
+  "title": "A skyline with a max-heap",
+  "notes": "Five buildings. At x = 9, 4–9 ends while on top, but 9–13 pushes a 6 above it, so the 5 stays buried until x = 13, when four heights leave in a row. Key points (1, 4) (2, 7) (5, 5) (9, 6) (13, 0), after 27 comparisons and 10 updates.",
+  "settings": {
+    "approach": "pattern",
+    "goal": "skyline",
+    "ties": "ends"
+  },
+  "seed": 1,
+  "ops": [["load", "1-6:4 2-5:7 4-9:5 7-11:3 9-13:6"], ["sweep"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -234,13 +234,14 @@ export function ending(p: Program, s: MachineState, settings: PcSettings): strin
   return `Every thread is done: n = ${n}. Every item that went in came out once.`;
 }
 
-/** The kit's marks, with n in error when it leaves the range 0 to size. */
+/** The kit's marks, with n in error while it is outside the range 0 to size. */
 function marks(_p: Program, ev: StepEvent, after: MachineState, settings: PcSettings): Mark[] {
   const m = stepMarks(ev);
   const n = after.mem.n ?? 0;
-  if (ev.instr.kind === 'store' && (n < 0 || n > sizeOf(settings))) {
+  if (n < 0 || n > sizeOf(settings)) {
     const k = m.findIndex((x) => x.id === varId('n'));
     if (k >= 0) m[k] = { id: varId('n'), role: 'error' };
+    else m.push({ id: varId('n'), role: 'error' });
   }
   return m;
 }

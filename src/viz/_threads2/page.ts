@@ -18,6 +18,12 @@
  *                                     in lane order) or names, "1 2 2 1", "1221", "P1 C1 C1"
  *   randomPrefix(rng, p, len)         a schedule of `len` steps by threads that can run
  *   stepCalls(sched) / scheduleText(sched)   the setup that steps threads by hand; the run text
+ *   finishes(p, from, outcome)        the outcome of every way to finish from a state (for
+ *                                     practice answers and "is it doomed from here?")
+ *   over(s), list(xs), word(n, one), threadName(p, t), tallyRowId(outcome), tallyRows(...)
+ *
+ * The spec's `next` hook lets a page keep or drop its own state when the machine moves (the
+ * deadlock page drops its search); `endsWith` and `verdict` word the tally for the page.
  */
 import type { Rng } from '../../engine/rng';
 import type {
@@ -445,13 +451,16 @@ export function threadsOps<Set extends Settings, S extends ThreadsState>(
       );
       const vars = (m: MachineState) => ({ ...spec.vars(p, m, settings), schedules: total });
       const ends = (o: string) => spec.endsWith?.(o) ?? `with ${o}`;
+      const blocks = p.threads.some((th) =>
+        th.code.some((i) => i.kind === 'lock' || i.kind === 'P' || i.kind === 'wait'),
+      );
       yield {
         state: { ...s, tally: { ...final, rows: [] } },
         marks: [],
         say:
           total === 1
             ? `Every interleaving ${here}: ${over(from) ? 'no thread can step, so' : 'only one thread can step at each point, so'} there is one way to finish.`
-            : `Every interleaving ${here}: try each order of the steps, lowest thread first, and see how each run ends. There are ${total.toLocaleString('en-US')}. A thread that is blocked takes no steps, so blocking cuts the orders down.${byState ? ` That is more than the ${CAP.toLocaleString('en-US')} the page lists one by one, so past the first ${LIST} it counts them by state: schedules that reach the same state are counted together.` : ''}`,
+            : `Every interleaving ${here}: try each order of the steps, lowest thread first, and see how each run ends. There are ${total.toLocaleString('en-US')}.${blocks ? ' A thread that is blocked takes no steps, so blocking cuts the orders down.' : ''}${byState ? ` That is more than the ${CAP.toLocaleString('en-US')} the page lists one by one, so past the first ${LIST} it counts them by state: schedules that reach the same state are counted together.` : ''}`,
         lines: ['every.sig'],
         vars: vars(from),
         level: 2,

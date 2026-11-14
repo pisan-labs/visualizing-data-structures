@@ -18,7 +18,6 @@ import {
   type Program,
   type StepEvent,
 } from '../_threads/machine';
-import { lineId } from '../_threads/page';
 import { parseProgram } from '../_threads/parse';
 import {
   finishes,
@@ -359,8 +358,6 @@ export const pseudocode = (settings: DeadlockSettings) => [
     ],
   },
 ];
-
-export { lineId };
 
 export function init(settings: DeadlockSettings): DeadlockState {
   return { m: initState(program(settings)) };

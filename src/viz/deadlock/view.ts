@@ -13,7 +13,7 @@ import {
   type DeadlockState,
 } from './model';
 
-const R = 13;
+const R = 15;
 
 /** The caption over the graph: the search's result, or how many threads wait. */
 function caption(s: DeadlockState): string {
@@ -23,20 +23,18 @@ function caption(s: DeadlockState): string {
   return n === 0 ? 'no edges' : `${n} ${n === 1 ? 'edge' : 'edges'}`;
 }
 
-/** Where each thread's circle goes inside the panel's frame. */
+/** Where each thread's circle goes inside the panel's frame (room 5 for two, 7 for three). */
 function positions(frame: RectShape, k: number): { x: number; y: number }[] {
-  const top = frame.y + 50 + R;
-  const bottom = frame.y + frame.h - 8 - R;
-  const mid = (top + bottom) / 2;
   if (k === 2)
     return [
-      { x: frame.x + frame.w * 0.28, y: mid },
-      { x: frame.x + frame.w * 0.72, y: mid },
+      { x: frame.x + frame.w * 0.25, y: frame.y + 86 },
+      { x: frame.x + frame.w * 0.75, y: frame.y + 86 },
     ];
+  const top = frame.y + 50 + R;
   return [
     { x: frame.x + frame.w * 0.5, y: top },
-    { x: frame.x + frame.w * 0.22, y: bottom },
-    { x: frame.x + frame.w * 0.78, y: bottom },
+    { x: frame.x + frame.w * 0.2, y: top + 60 },
+    { x: frame.x + frame.w * 0.8, y: top + 60 },
   ];
 }
 
@@ -51,6 +49,8 @@ function graph(s: DeadlockState, frame: RectShape, roles: ReadonlyMap<string, Ma
     const c = s.search?.colors[t];
     return c === 'gray' ? 'active' : c === 'black' ? 'done' : undefined;
   };
+  const cx = at.reduce((acc, q) => acc + q.x, 0) / k;
+  const cy = at.reduce((acc, q) => acc + q.y, 0) / k;
   for (const [a, b, lock] of edges) {
     const p = at[a]!;
     const q = at[b]!;
@@ -75,11 +75,15 @@ function graph(s: DeadlockState, frame: RectShape, roles: ReadonlyMap<string, Ma
       via: both ? { x: (p.x + q.x) / 2 + nx * 1.6, y: (p.y + q.y) / 2 + ny * 1.6 } : undefined,
       role: roles.get(id),
     });
+    // The lock's name: beside its own curve, or on the outer side of a straight edge.
+    const mx = (p.x + q.x) / 2;
+    const my = (p.y + q.y) / 2;
+    const out = (mx - cx) * -uy + (my - cy) * ux >= 0 ? 1 : -1;
     shapes.push({
       kind: 'text',
       id: `${id}-lock`,
-      x: (p.x + q.x) / 2 + (both ? nx * 1.2 : -uy * 11),
-      y: (p.y + q.y) / 2 + (both ? ny * 1.2 : ux * 11) + 4.5,
+      x: mx + (both ? nx * 1.8 : -uy * 12 * out),
+      y: my + (both ? ny * 1.8 : ux * 12 * out) + 4.5,
       text: lock,
       size: 13,
       anchor: 'middle',
@@ -136,8 +140,8 @@ export function view(
         id: 'wfg',
         title: 'wait-for graph',
         rows: [{ key: 'cap', text: caption(s) }],
-        room: k === 2 ? 4 : 5,
-        chars: k === 2 ? 18 : 20,
+        room: k === 2 ? 5 : 7,
+        chars: k === 2 ? 18 : 22,
       },
     ],
     decorate: (shapes) => {

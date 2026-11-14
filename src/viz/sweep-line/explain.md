@@ -36,7 +36,7 @@ Q: The events, sorted, are 1+ 2+ 3− 4+ 5+ 6− 7− 8−. What is the most ope
 
 The naive way checks every point that could be the answer. The most overlap always begins at some interval's start (go left from the busiest moment until something would stop being open: that is a start). So for each start, count the intervals open there. [Check every start](#example:every-start) does 6 × 6 = 36 checks.
 
-The sweep took 37: 25 comparisons to sort 12 events, then 12 updates. So the sort costs more than it saves here? Yes, at six intervals. Around seven they break even, and from eight on the sweep is ahead. At 100 intervals the starts are 10,000 checks, and a merge sort of 200 events is at most 1,345 comparisons, plus 200 updates.
+The sweep took 37: 25 comparisons to sort 12 events, then 12 updates. So the sort costs more than it saves here? Yes, at six intervals. On random intervals like these they break even around seven, and from eight on the sweep is ahead. At 100 intervals the starts are 10,000 checks, and a merge sort of 200 events is at most 1,345 comparisons, plus 200 updates.
 
 ## Ends first, or starts first?
 

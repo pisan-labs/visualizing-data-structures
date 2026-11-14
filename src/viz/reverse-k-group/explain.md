@@ -43,7 +43,7 @@ The first group is special without one: it has no node before it, so instead of 
 
 ## The short last group
 
-Problems differ on the leftovers. Most say a last group shorter than k stays as it is; some say reverse it too. The **A last group shorter than k** option switches. [The short last group reversed too](#example:short-group-reversed) turns 7 8 around as well: 3 2 1 6 5 4 8 7. Read the problem statement twice here. The code change is one line.
+Problems differ on the leftovers. Some say a last group shorter than k stays as it is; others say reverse it too. The **A last group shorter than k** option switches. [The short last group reversed too](#example:short-group-reversed) turns 7 8 around as well: 3 2 1 6 5 4 8 7. Read the problem statement twice here. The code change is one line.
 
 The edge cases are all versions of the same thing. [k = n](#example:whole-list) is one group, the whole list reversed: 5 4 3 2 1. [k longer than the list](#example:k-longer-than-list) is one short group, so with the default nothing changes: 4 hops and done. k = 1 turns every node around on its own, which changes nothing. [Groups of 2](#example:exact-multiple) swaps neighbours: 2 1 4 3 6 5. It often shows up as a problem of its own; it's the same code.
 
@@ -72,9 +72,9 @@ Reach for this pattern when a problem says:
 
 Three problems of our own:
 
-- A list of parcels: turn each block of 4 around, and leave a shorter last block as it is. (k = 4.)
-- Swap every two neighbouring nodes by changing links, not values. (k = 2.)
-- Reverse only positions 3 to 7 of a list, in place. (One group: before is the node at position 2.)
+- A train is a singly linked list of cars. Turn each run of 4 cars around; a run of fewer than 4 at the back keeps its order. (k = 4.)
+- Dancers stand in a singly linked line. The first trades places with the second, the third with the fourth, and so on, by relinking. (k = 2.)
+- A to-do list is singly linked. Put items 3 to 7 in the opposite order and leave the rest alone, with no second list. (One group: before is item 2.)
 
 Look-alikes: reversing an **array** is two indices swapping from both ends. "Does the list read the same both ways" reverses half a list, but the trick there is finding the middle with [fast and slow pointers](/fast-slow-pointers/).
 

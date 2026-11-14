@@ -65,7 +65,7 @@ Q: Rotating a 4 × 4 matrix a quarter turn clockwise, where does the value in ro
 
 - **Counterclockwise:** transpose, then reverse each column. Or reverse each row first, then transpose.
 - **Half a turn:** reverse each row, then reverse the order of the rows.
-- **Not square:** an m × n matrix turns into an n × m one, so it cannot be done in place; write it into a new matrix.
+- **Not square:** an m × n matrix turns into an n × m one, which no longer fits the same grid of rows; write it into a new matrix. (Turning it inside one flat block of memory can be done, by following cycles of positions, but that is a much harder algorithm.)
 - **Spiral the other way, or from the middle out:** the same bounds, walked in a different order of sides.
 
 ## Spot it
@@ -73,14 +73,14 @@ Q: Rotating a 4 × 4 matrix a quarter turn clockwise, where does the value in ro
 Reach for these when the problem says:
 
 - **around the edge**, clockwise, "ring by ring", "spiraling in";
-- **rotate**, a quarter turn, 90 degrees, "turn the image";
+- **rotate**, a quarter turn, 90 degrees, "turn the board";
 - **rows become columns**, transpose, mirror across the diagonal;
 - **in place**, "without a second grid".
 
 Three problems of our own:
 
 - The seats of a cinema are a grid. Hand out tickets starting at the front left corner, going clockwise around the edge, then the next ring in.
-- A square photo is stored as a grid of pixels. Turn it a quarter turn to the right without making a second photo.
+- A square game board is stored as a grid. When the players change seats, turn it a quarter turn clockwise, in the same grid.
 - A square game board is shown to the player on the other side of the table. Show it turned half a turn. (Reverse each row, then the order of the rows.)
 
 Look-alikes: "the fewest steps through a maze on a grid" is a search, [breadth-first search on a grid](/grid-bfs/), not a traversal. "How many paths from one corner to the other, moving right or down" is dynamic programming. "Reverse each row" on its own is [two pointers](/two-pointers/).

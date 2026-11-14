@@ -156,7 +156,7 @@ export const frequencyCounting: VizDef<FState, FSettings, FExtra> = {
       average: { cost: 'Θ(nk log k)', why: 'The sort does about k log k comparisons per word.' },
       worst: {
         cost: 'Θ(nk log k)',
-        why: 'The same: no word is cheaper to sort than another of its length.',
+        why: 'Letters in no useful order: about k log k per word. A word already in order sorts faster, but a merge sort still needs about (k/2) log k.',
       },
     },
     {

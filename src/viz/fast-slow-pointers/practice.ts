@@ -67,9 +67,9 @@ export const SPOT_ROWS: SpotRow[] = [
   },
   {
     problem:
-      'Rotate a singly linked list to the right by k places: the last k nodes move to the front, in order.',
+      'A slideshow is a singly linked list of slides. Move its last k slides to the front, keeping their order, by changing a few links.',
     pattern: 'fast-slow-pointers',
-    cue: ['the last k nodes', 'singly linked'],
+    cue: ['its last k slides', 'singly linked'],
     why: 'The cut is just before the k-th node from the end. A gap of k finds it in one walk; then relink three pointers.',
     near: ['reverse-k-group', 'sliding-window', 'two-pointers'],
   },

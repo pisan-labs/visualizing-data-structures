@@ -45,7 +45,7 @@ Calling a full sort after every value would be worse, O(n log n) each time. Bina
 
 Is two heaps always cheaper? Nope. On the 9 values above, the heaps make 25 comparisons and the sorted list 21. A rising stream is the list's best case: [A rising stream](#example:rising-stream) takes 7 comparisons for 8 values, one each, while the heaps take 20. A falling stream is its worst: [A falling stream](#example:falling-stream) slides each value past all the ones before it, 0 + 1 + … + 7 = 28 comparisons, and [the same stream with two heaps](#example:falling-heaps) takes 23.
 
-The gap opens up with length. On a run of 1,000 random values, the heaps made 13,444 comparisons and the sorted list 243,710. On 10,000, 185,445 against 25,188,880. The heaps grow like n log n, the list like n².
+The gap opens up with length. In one seeded run of 1,000 random values, the heaps made 13,444 comparisons and the sorted list 243,710; in one of 10,000, 185,445 against 25,188,880. The heaps grow like n log n, the list like n².
 
 ## Variants
 
@@ -89,11 +89,11 @@ Look-alikes that call for something else: "the 100 most expensive houses" is a f
 
 Use it when values keep arriving and you need the median, or any split into two halves, after each one: O(log n) per value and O(1) per median, with no sorting.
 
-Avoid it for one median of a list you already have: quickselect, or sorting once. Avoid it for short streams or streams that arrive nearly sorted, where a sorted list is simpler and often cheaper. And it needs every value kept, so for a window that slides you need removal, which plain heaps do not do.
+Avoid it for one median of a list you already have: quickselect, or sorting once. Avoid it for short streams or streams that arrive nearly in rising order, where a sorted list is simpler and often cheaper. And it needs every value kept, so for a window that slides you need removal, which plain heaps do not do.
 
 ## Common mistakes
 
-- Making both heaps min-heaps. The low half needs its largest value on top. Python's heapq only has min-heaps, so store the low half negated.
+- Making both heaps min-heaps. The low half needs its largest value on top. Python's heapq gives min-heaps, so store the low half negated (Python 3.14 and later also have heappush_max and heappop_max).
 - Choosing the half by size instead of by value. A value goes to the half it belongs to first; only then do the sizes get fixed.
 - Rebalancing only one way. The low half can get two ahead, and the high half can get one ahead.
 - Integer division for the mean. (5 + 6) / 2 is 5 in Java or C++ with ints; divide by 2.0.

@@ -26,25 +26,25 @@ const shown = (gs: number[][]) => gs.map((g) => `[${g.join(' ')}]`).join(' ');
 export const SPOT_ROWS: SpotRow[] = [
   {
     problem:
-      'A singly linked list of n parcels. Turn each block of 4 consecutive nodes around, leave a shorter last block as it is, and do not copy any values.',
+      'A train is a singly linked list of cars. Turn each run of 4 cars in a row around by relinking them; a run of fewer than 4 at the back keeps its order.',
     pattern: 'reverse-k-group',
-    cue: ['each block of 4 consecutive nodes', 'turn around', 'do not copy any values'],
+    cue: ['each run of 4 cars in a row', 'around by relinking them'],
     why: 'Find each block’s last node, turn its next pointers around with prev, cur and nxt, and link it in after the node before the block. A dummy head gives the first block a node before it.',
     near: ['two-pointers', 'sliding-window', 'fast-slow-pointers'],
   },
   {
     problem:
-      'Swap every two neighbouring nodes of a singly linked list (the first with the second, the third with the fourth, …) by changing links, not values.',
+      'Dancers stand in a singly linked line. The first trades places with the second, the third with the fourth, and so on. Do it by relinking, not by copying names.',
     pattern: 'reverse-k-group',
-    cue: ['every two neighbouring nodes', 'changing links, not values'],
+    cue: ['the first trades places with the second', 'by relinking'],
     why: 'Swapping neighbours is reversing in groups of 2. The same before, kth and after pointers work; only k changes.',
     near: ['two-pointers', 'cyclic-sort', 'merge-sorted-lists'],
   },
   {
     problem:
-      'In a singly linked list, reverse only the nodes from position 3 to position 7, in place, and leave the rest where it is.',
+      'A to-do list is singly linked. Put items 3 to 7 in the opposite order and leave the rest alone, without a second list.',
     pattern: 'reverse-k-group',
-    cue: ['reverse only the nodes from position 3 to position 7', 'in place'],
+    cue: ['items 3 to 7 in the opposite order', 'without a second list'],
     why: 'One group: walk to the node before position 3, turn the five nodes around with prev starting at the node after position 7, and link them in.',
     near: ['two-pointers', 'sliding-window', 'fast-slow-pointers'],
   },

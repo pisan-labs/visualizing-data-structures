@@ -47,7 +47,7 @@ Is this faster than counting first? Not really. Count the hops.
 
 The middle: counting first walks the 7 nodes (7 hops) and then 3 more, 10 in all ([Count first, then walk](#example:count-first)). Slow and fast take 3 rounds of 3 hops, 9 in all. On 6 nodes it's 9 against 9. The k-th from the end is exactly the same both ways, 2n − k hops: 11 and 11 for k = 3 on 7 nodes.
 
-So what does the pattern buy? One walk instead of two, and no need to know n. That matters when the list is a stream you can only read once, when walking is slow (nodes spread over memory, or over a network), and it matters a lot when the list might not end at all. Counting the length of a list with a cycle never finishes. Slow and fast still work there: that's [cycle detection](/floyd-cycle/), the same two speeds, where the hare laps the tortoise.
+So what does the pattern buy? One loop instead of two, and no need to know n. On a list that ends, that is not much. It matters a lot when the list might not end at all. Counting the length of a list with a cycle never finishes. Slow and fast still work there: that's [cycle detection](/floyd-cycle/), the same two speeds, where the hare laps the tortoise.
 
 ## A palindrome, in place
 
@@ -86,7 +86,7 @@ Three problems of our own:
 
 - A playlist is a singly linked list. Return the song in the middle in one walk. (Slow and fast.)
 - A printer queue is a singly linked list. Remove the job 3 places from the end. (A gap of 3, and keep the node before it.)
-- Rotate a list right by k: the last k nodes move to the front. (A gap of k finds the cut; three links finish it.)
+- A slideshow is a singly linked list of slides. Move its last k slides to the front, in the same order. (A gap of k finds the cut; three links finish it.)
 
 Look-alikes: a sorted **array** and "two values that add up to x" is [two pointers](/two-pointers/) from both ends, which a list can't do. "Combine two sorted lists" is a merge.
 

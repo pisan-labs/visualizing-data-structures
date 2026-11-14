@@ -38,7 +38,7 @@ Q: k = 3, and the heap holds 9, 14 and 20, with 9 at the root. Next comes 11. Wh
 
 The naive way: sort A from largest to smallest and read off the first k. [Sort everything first](#example:sort-everything) uses merge sort, bottom up: four passes and 24 comparisons, against the heap's 16. Sorting does not care what k is. It does the same work for k = 1.
 
-Does the heap always win? Nope. In [Rising values](#example:rising-values) every value beats the root and sinks to a leaf: 3 comparisons each, 20 in all. Merge sort does that input in 13. On 9 values the constants decide. On a run of 1,000 random values with k = 10, the heap made 1,219 comparisons and merge sort 8,702. On 100,000 random values, 100,344 against 1,565,849. Most random values lose to the root, so the heap is close to one comparison per value.
+Does the heap always win? Nope. In [Rising values](#example:rising-values) every value beats the root and sinks to a leaf: 3 comparisons each, 20 in all. Merge sort does that input in 13. On 9 values the constants decide. In one seeded run of 1,000 random values with k = 10, the heap made 1,219 comparisons and merge sort 8,702; in one of 100,000, 100,344 against 1,565,849. Most random values lose to the root, so the heap is close to one comparison per value.
 
 Sorting has one thing going for it: the answer comes out in order, and so does every other rank. If you will ask for the top 10, then the top 50, then the median, sort once.
 

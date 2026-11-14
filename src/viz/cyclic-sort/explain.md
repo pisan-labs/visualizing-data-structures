@@ -75,8 +75,8 @@ Reach for cyclic sort when the problem says:
 Three problems of our own:
 
 - Raffle tickets numbered 1 to n were sold and n stubs came back, but one number came back twice. Which never came back?
-- A list of n numbers, each from 1 to n. Report every number that appears more than once, using only a few variables.
-- An unsorted list of n whole numbers, some negative. Find the smallest positive number that is not in it. (Only 1 to n can be the answer: swap those home, leave the rest where they are, and the first slot without its own number is the answer.)
+- Each of n students writes a seat number from 1 to n on a card, and some write the same number. Which numbers were written more than once? Use only a few variables beyond the cards.
+- A box holds n slips: raffle ticket numbers, and junk such as zeros, negatives and numbers bigger than n. What is the lowest positive number not in the box? (Only 1 to n + 1 can be the answer: swap 1 to n home, leave the rest where they are, and the first slot without its own number is the answer, or n + 1 if every slot has it.)
 
 Look-alikes: "the list is read-only and exactly one of 0 to n is missing" cannot be swapped; add the values up and subtract from n(n + 1)/2, or XOR them. "Group the values below m first" is a partition: [Dutch national flag](/dutch-flag/). "How often does each word appear" has no slots, so count in a hash map.
 

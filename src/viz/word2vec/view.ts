@@ -110,18 +110,14 @@ function placeLabels(pts: { x: number; y: number; text: string }[], win: Bounds)
         best = s;
       }
     });
-    const x = best.anchor === 'start' ? best.x : best.anchor === 'end' ? best.x - w : best.x - w / 2;
+    const x =
+      best.anchor === 'start' ? best.x : best.anchor === 'end' ? best.x - w : best.x - w / 2;
     placed.push({ x, y: best.y - h + 2, w, h });
     return best;
   });
 }
 
-function drawVectors(
-  s: W2vState,
-  work: W2vWork | undefined,
-  roles: Roles,
-  y0: number,
-): Block {
+function drawVectors(s: W2vState, work: W2vWork | undefined, roles: Roles, y0: number): Block {
   const R = s.reach;
   const unit = PLANE / (2 * R);
   const plane: Plane = makePlane({ xmin: -R, xmax: R, ymin: -R, ymax: R, unit, x: 30, y: y0 + 8 });
@@ -187,7 +183,16 @@ function drawVectors(
     const id = `pw-${word}`;
     const role = roles.get(id);
     const p = ws[i]!;
-    shapes.push({ kind: 'circle', id, x: p.x, y: p.y, r: role ? 7 : 5, cls: 'arrowhead', role, z: 3 });
+    shapes.push({
+      kind: 'circle',
+      id,
+      x: p.x,
+      y: p.y,
+      r: role ? 7 : 5,
+      cls: 'arrowhead',
+      role,
+      z: 3,
+    });
     const sp = spots[i]!;
     shapes.push(
       text(`${id}-l`, sp, word, {
@@ -262,7 +267,12 @@ function drawStrip(work: W2vWork | undefined, roles: Roles): Block {
   return { shapes, bounds: { x: 0, y: 0, w: STRIP_W, h: STRIP_H } };
 }
 
-function drawUpdate(rec: PairRec | undefined, work: W2vWork | undefined, k: number, roles: Roles): Block {
+function drawUpdate(
+  rec: PairRec | undefined,
+  work: W2vWork | undefined,
+  k: number,
+  roles: Roles,
+): Block {
   const rows: Row[] = [
     { key: 'pos', label: rec ? `+${VOCAB[rec.context]}` : '+' },
     ...Array.from({ length: k }, (_, m) => ({
@@ -379,11 +389,12 @@ export function view(
     const plane = drawVectors(state, work, roles, STRIP_H);
     const ty = STRIP_H + plane.bounds.h + 10 - table.bounds.y;
     const t = translate(table.shapes, -table.bounds.x, ty);
-    const bounds = unionBounds(
-      { x: 0, y: 0, w: STRIP_W, h: STRIP_H },
-      plane.bounds,
-      { x: 0, y: ty + table.bounds.y, w: table.bounds.w, h: table.bounds.h },
-    );
+    const bounds = unionBounds({ x: 0, y: 0, w: STRIP_W, h: STRIP_H }, plane.bounds, {
+      x: 0,
+      y: ty + table.bounds.y,
+      w: table.bounds.w,
+      h: table.bounds.h,
+    });
     return { shapes: [...strip.shapes, ...plane.shapes, ...t], bounds: padBounds(bounds, 10) };
   })();
 

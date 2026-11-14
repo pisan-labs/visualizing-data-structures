@@ -10,10 +10,5 @@
     "lr": "0.1"
   },
   "seed": 1,
-  "ops": [
-    [
-      "pair",
-      "cat sat"
-    ]
-  ]
+  "ops": [["pair", "cat sat"]]
 }

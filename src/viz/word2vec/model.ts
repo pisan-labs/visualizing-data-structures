@@ -350,9 +350,7 @@ function pairSay(r: PairRec): string {
   const w = name(r.center);
   const head = `${w} → ${c}: w_${w} · c_${c} = ${two(r.dots[0]!)}, so σ = ${two(r.sigs[0]!)}. A real neighbour, so we want 1.`;
   if (!r.negs.length) return `${head} No noise words (k = 0).`;
-  const noise = r.negs
-    .map((n, m) => `${name(n)} ${two(r.sigs[m + 1]!)}`)
-    .join(', ');
+  const noise = r.negs.map((n, m) => `${name(n)} ${two(r.sigs[m + 1]!)}`).join(', ');
   return `${head} Noise ${r.negs.length === 1 ? 'word' : 'words'}, where we want 0: ${noise}.`;
 }
 
@@ -397,7 +395,12 @@ function* pairSteps(
   const cOld = r.states[0]!.c;
   yield {
     state: st(1),
-    marks: [...strip, mark(`pw-${w}`, 'active'), mark(`pc-${c}`, 'found'), mark('coef-pos', 'found')],
+    marks: [
+      ...strip,
+      mark(`pw-${w}`, 'active'),
+      mark(`pc-${c}`, 'found'),
+      mark('coef-pos', 'found'),
+    ],
     say: `Pull: c_${c} gains η(1 − σ) = ${lr} × ${two(1 - r.sigs[0]!)} = ${two(r.coefs[0]!)} of w_${w}, and moves from ${vec(cOld[r.context]!)} to ${vec(r.states[1]!.c[r.context]!)}, toward w_${w}.`,
     lines: ['pos'],
     level: 3,
@@ -487,7 +490,10 @@ const trainOp: Op = {
     const pairs = windowPairs(ids.length, L);
     if (!pairs.length) {
       yield {
-        ...errorStep(s, `One word on its own has no neighbours, so the window makes no pairs and nothing moves. Try "the ${words[0] === 'the' ? 'cat' : words[0]} sat".`),
+        ...errorStep(
+          s,
+          `One word on its own has no neighbours, so the window makes no pairs and nothing moves. Try "the ${words[0] === 'the' ? 'cat' : words[0]} sat".`,
+        ),
         extra: { work: { words: ids, stage: 'idle' }, log: [] },
       };
       return s;
@@ -499,7 +505,10 @@ const trainOp: Op = {
       recs.push(r);
       cur = r.states.at(-1)!;
     }
-    const reach = reachFor(s.reach, recs.flatMap((r) => r.states));
+    const reach = reachFor(
+      s.reach,
+      recs.flatMap((r) => r.states),
+    );
     const start = withReach(s, reach);
     yield {
       state: start,
@@ -611,7 +620,13 @@ const pairOp: Op = {
     const [center, context] = p;
     const r = trainPair(s, center, context, settings, rng);
     const reach = reachFor(s.reach, r.states);
-    yield* pairSteps(r, reach, { words: [center, context], i: 0, j: 1 }, stripMarks(2, 0, 1, 1), Number(settings.lr));
+    yield* pairSteps(
+      r,
+      reach,
+      { words: [center, context], i: 0, j: 1 },
+      stripMarks(2, 0, 1, 1),
+      Number(settings.lr),
+    );
     const end = withReach(r.states.at(-1)!, reach);
     yield {
       state: end,
@@ -648,7 +663,10 @@ const epochOp: Op = {
   arity: 0,
   *run(s, _args, { settings, rng }) {
     const { recs, end: raw } = pass(s, settings, rng);
-    const reach = reachFor(s.reach, recs.flat().flatMap((r) => [r.states[0]!, r.states.at(-1)!]));
+    const reach = reachFor(
+      s.reach,
+      recs.flat().flatMap((r) => [r.states[0]!, r.states.at(-1)!]),
+    );
     const L = settings.window;
     for (const [k, sentence] of SENTENCES.entries()) {
       const ids = sentence.split(' ').map(wordId);
@@ -815,7 +833,9 @@ export function pseudocode(settings: W2vSettings): PseudoBlock[] {
     L(
       'cen',
       d,
-      k > 0 ? 'w ← w − η[(σ(w·c_pos) − 1)·c_pos + Σ σ(w·c_n)·c_n]' : 'w ← w − η(σ(w·c_pos) − 1)·c_pos',
+      k > 0
+        ? 'w ← w − η[(σ(w·c_pos) − 1)·c_pos + Σ σ(w·c_n)·c_n]'
+        : 'w ← w − η(σ(w·c_pos) − 1)·c_pos',
       k > 0
         ? 'Move the word toward its context and away from the fakes.'
         : 'Move the word toward its context.',
@@ -829,7 +849,12 @@ export function pseudocode(settings: W2vSettings): PseudoBlock[] {
       `for each j ≠ i with |i − j| ≤ ${settings.window}`,
       `Pair it with every word at most ${settings.window} away.`,
     ),
-    L('look', d + 2, 'w = W[word_i], c_pos = C[word_j]', 'Take its word vector and the neighbour’s context vector.'),
+    L(
+      'look',
+      d + 2,
+      'w = W[word_i], c_pos = C[word_j]',
+      'Take its word vector and the neighbour’s context vector.',
+    ),
     ...update(d + 2),
   ];
   return [
@@ -855,7 +880,12 @@ export function pseudocode(settings: W2vSettings): PseudoBlock[] {
       op: 'pair',
       lines: [
         L('qsig', 0, 'UPDATE(center, context)', 'Learn from one pair:'),
-        L('look', 1, 'w = W[center], c_pos = C[context]', 'Take the word vector and the context vector.'),
+        L(
+          'look',
+          1,
+          'w = W[center], c_pos = C[context]',
+          'Take the word vector and the context vector.',
+        ),
         ...update(1),
       ],
     },
@@ -865,7 +895,12 @@ export function pseudocode(settings: W2vSettings): PseudoBlock[] {
         L('esig', 0, 'PASS()', 'One pass over the corpus:'),
         L('efor', 1, 'for each sentence s in the corpus', 'Take each sentence in turn,'),
         L('etrain', 2, 'TRAIN(s)', 'and learn from all its pairs.'),
-        L('cen', 2, '(each pair: pull c_pos, push the noise, move w)', 'Every pair moves its vectors.'),
+        L(
+          'cen',
+          2,
+          '(each pair: pull c_pos, push the noise, move w)',
+          'Every pair moves its vectors.',
+        ),
       ],
     },
     {

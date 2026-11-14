@@ -1,7 +1,7 @@
 import type { Rng } from '../../engine/rng';
 import { Timeline } from '../../engine/timeline';
 import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
-import { two } from '../_lm/numbers';
+import { round3, two } from '../_lm/numbers';
 import {
   defaults,
   SENTENCES,
@@ -24,6 +24,11 @@ const DIRECTIONS = [
   'd1 down, d2 down',
 ] as const;
 
+/** A number as the second operand of × or +: negatives in brackets. */
+const par = (x: number) => (x < 0 ? `(${two(x)})` : two(x));
+/** Two decimals, or three for a small number. */
+const fine = (x: number) => (Math.abs(x) < 0.1 ? round3(x).replace('-', '−') : two(x));
+
 const directionOf = (dx: number, dy: number) => (dx > 0 ? 0 : 2) + (dy > 0 ? 0 : 1);
 
 /**
@@ -38,9 +43,12 @@ export function word2vecPractice(def: () => Def): PracticeKind[] {
   /** A starting point and one update after it, with everything it did. */
   function update(rng: Rng, settings: W2vSettings) {
     const setup: OpCall[] = rng.int(0, 1) ? [['reset']] : [];
-    for (;;) {
+    for (let tries = 0; ; tries++) {
       const center = pick(rng, VOCAB);
-      const context = pick(rng, VOCAB.filter((w) => w !== center));
+      const context = pick(
+        rng,
+        VOCAB.filter((w) => w !== center),
+      );
       const watch: OpCall[] = [['pair', `${center} ${context}`]];
       const t = run([...setup, ...watch], settings);
       const before = run(setup, settings).endState();
@@ -49,7 +57,7 @@ export function word2vecPractice(def: () => Def): PracticeKind[] {
       const w = before.w[r.center]!;
       const c = before.c[r.context]!;
       // Skip a pair whose vectors have a 0 in them: its direction would not be clear.
-      if (w[0] === 0 || w[1] === 0 || c[0] === 0 || c[1] === 0) continue;
+      if (tries < 50 && (w[0] === 0 || w[1] === 0 || c[0] === 0 || c[1] === 0)) continue;
       return { setup, watch, r, before, after, center, context, w, c };
     }
   }
@@ -91,7 +99,7 @@ export function word2vecPractice(def: () => Def): PracticeKind[] {
           setup,
           settings,
           answer: { kind: 'number', value: r.sigs[0]!, tolerance: 0.005 },
-          explain: `The dot product is ${two(w[0])} × ${two(c[0])} + ${two(w[1])} × ${two(c[1])} = ${two(d)}, and σ(${two(d)}) = 1 / (1 + e^${two(-d)}) = ${two(r.sigs[0]!)}. Training wants it to be 1.`,
+          explain: `The dot product is ${two(w[0])} × ${par(c[0])} + ${two(w[1])} × ${par(c[1])} = ${two(d)}, and σ(${two(d)}) = 1 / (1 + e^${two(-d)}) = ${two(r.sigs[0]!)}. Training wants it to be 1.`,
           watch,
         };
       },
@@ -135,7 +143,7 @@ export function word2vecPractice(def: () => Def): PracticeKind[] {
           setup,
           settings,
           answer: { kind: 'number', value: dx, tolerance: 0.005 },
-          explain: `σ(w·c) = ${two(r.sigs[0]!)}, so c_${context} gains η(1 − σ) = ${settings.lr} × ${two(1 - r.sigs[0]!)} = ${two(r.coefs[0]!)} of w_${center}. Along d1 that is ${two(r.coefs[0]!)} × ${two(w[0])} = ${two(dx)}.`,
+          explain: `σ(w·c) = ${two(r.sigs[0]!)}, so c_${context} gains η(1 − σ) = ${settings.lr} × ${two(1 - r.sigs[0]!)} = ${two(r.coefs[0]!)} of w_${center}. Along d1 that is ${fine(r.coefs[0]!)} × ${par(w[0])} = ${fine(dx)}.`,
           watch,
         };
       },

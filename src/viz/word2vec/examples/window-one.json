@@ -10,10 +10,5 @@
     "lr": "0.1"
   },
   "seed": 1,
-  "ops": [
-    [
-      "pairs",
-      "the cat sat on the mat"
-    ]
-  ]
+  "ops": [["pairs", "the cat sat on the mat"]]
 }

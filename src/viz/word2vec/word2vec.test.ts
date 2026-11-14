@@ -155,7 +155,8 @@ describe('word2vec', () => {
               if (r) {
                 expect(r.negs).toHaveLength(settings.negatives);
                 // With no noise words, the real context's σ never goes down.
-                if (settings.negatives === 0) expect(r.after[0]).toBeGreaterThanOrEqual(r.sigs[0]! - 1e-12);
+                if (settings.negatives === 0)
+                  expect(r.after[0]).toBeGreaterThanOrEqual(r.sigs[0]! - 1e-12);
               }
             }
             const log = e.steps.at(-1)!.extra?.log ?? [];
@@ -187,7 +188,9 @@ describe('word2vec', () => {
     expect(last).toBeLessThan(0.05);
     const ws = collapsed.endState().w;
     for (const a of ws) for (const b of ws) expect(cosine(a, b)).toBeGreaterThan(0);
-    expect(run([['pairs', 'the cat sat on the mat']], { window: 1 }).at(8).step.vars!.listed).toBe(10);
+    expect(run([['pairs', 'the cat sat on the mat']], { window: 1 }).at(8).step.vars!.listed).toBe(
+      10,
+    );
   });
 
   it('parses sentences and pairs, and refuses what does not fit', () => {

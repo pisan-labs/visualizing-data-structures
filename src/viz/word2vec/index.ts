@@ -76,7 +76,7 @@ export const word2vec: VizDef<W2vState, W2vSettings, W2vExtra> = {
       label: 'Window (words on each side)',
       min: 1,
       max: MAX_WINDOW,
-      help: 'Mikolov et al. used windows of about 5. A wider window makes more pairs, and pairs further apart.',
+      help: 'The original code’s default is 5. A wider window makes more pairs, and pairs further apart.',
     },
     {
       kind: 'number',
@@ -128,11 +128,15 @@ export const word2vec: VizDef<W2vState, W2vSettings, W2vExtra> = {
     presets: [
       train('A corpus sentence', (rng) => pick(rng, SENTENCES)),
       train('Random words', randomSentence),
-      train('Two words: one pair each way', (rng) =>
-        `${pick(rng, ['cat', 'dog'])} ${pick(rng, ['sat', 'saw'])}`,
+      train(
+        'Two words: one pair each way',
+        (rng) => `${pick(rng, ['cat', 'dog'])} ${pick(rng, ['sat', 'saw'])}`,
       ),
       train('One word: no pairs', (rng) => pick(rng, VOCAB)),
-      train('A word used twice', (rng) => `the ${pick(rng, ['cat', 'dog'])} saw the ${pick(rng, ['cat', 'dog'])}`),
+      train(
+        'A word used twice',
+        (rng) => `the ${pick(rng, ['cat', 'dog'])} saw the ${pick(rng, ['cat', 'dog'])}`,
+      ),
       { label: 'The whole corpus, ten passes', make: () => [['run']] },
     ],
     sizes: [3, 5, 8],
@@ -210,7 +214,11 @@ export const word2vec: VizDef<W2vState, W2vSettings, W2vExtra> = {
     oneWord,
   ] as unknown as SavedExample[],
   practice: word2vecPractice(() => word2vec),
-  preview: { example: 'twenty-passes', level: 2, hide: ['s-', 'dot-', 'sig-', 'coef-', 'cap-', 'lg-', 'w-', 'g-t'] },
+  preview: {
+    example: 'twenty-passes',
+    level: 2,
+    hide: ['s-', 'dot-', 'sig-', 'coef-', 'cap-', 'lg-', 'w-', 'g-'],
+  },
   opening: 'one-sentence',
 };
 
@@ -232,11 +240,12 @@ function codeScript(calls: OpCall[], settings: W2vSettings) {
   const t = new Timeline(word2vec, settings, 1, calls);
   const input = VOCAB.map((w, i) => `count ${w} ${COUNTS[i]}`);
   input.push('noise');
-  const expected = [
-    noiseLine(),
-  ];
+  const expected = [noiseLine()];
   const setAll = (s: W2vState) =>
-    VOCAB.flatMap((w, i) => [`w ${w} ${s.w[i]![0]} ${s.w[i]![1]}`, `c ${w} ${s.c[i]![0]} ${s.c[i]![1]}`]);
+    VOCAB.flatMap((w, i) => [
+      `w ${w} ${s.w[i]![0]} ${s.w[i]![1]}`,
+      `c ${w} ${s.c[i]![0]} ${s.c[i]![1]}`,
+    ]);
   input.push(...setAll(t.initial.state));
   for (const e of t.entries) {
     const last = e.steps.at(-1)!;

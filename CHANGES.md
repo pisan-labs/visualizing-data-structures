@@ -515,3 +515,5 @@
 2026-11-14 [note] Deployed 09:49 UTC on Yusuf's "deploy": main 2228ae7..9ca8d71 (the AI and LLMs pathway, 33 pages; release 2026-11-14-ai-and-llms; CI concurrency). CI 215 green. Bundle matches; 237 addresses 200 with the footer once; 33 new pages draw; feed live with the release first; no account requests
 
 2026-11-14 [plan] PLAN.md section 21: wave 10, a Coding interviews pathway (30 pattern pages, naive against pattern, a pattern map) and Concurrency (9 pages, a visible scheduler), 39 pages, slices first; LeetCode refused automated reads, survey from search results; waiting for Yusuf's approval
+
+2026-11-14 [code] HintWise footer updated to the current platform markup (footerHtml("stepwise"), 2234 bytes, sha256 487cb295...): adds the HintWise mark (svg class="mark"), missed since 11 Nov; sent by Plabs, Yusuf agreed there. On next; live on Yusuf's "deploy"

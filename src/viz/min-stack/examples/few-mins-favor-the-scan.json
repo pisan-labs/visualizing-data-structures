@@ -1,0 +1,50 @@
+{
+  "format": 1,
+  "viz": "min-stack",
+  "id": "few-mins-favor-the-scan",
+  "title": "Few mins favor the scan",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern",
+    "track": "le"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "push",
+      6
+    ],
+    [
+      "push",
+      4
+    ],
+    [
+      "push",
+      9
+    ],
+    [
+      "push",
+      2
+    ],
+    [
+      "push",
+      7
+    ],
+    [
+      "push",
+      5
+    ],
+    [
+      "pop"
+    ],
+    [
+      "pop"
+    ],
+    [
+      "pop"
+    ],
+    [
+      "min"
+    ]
+  ]
+}

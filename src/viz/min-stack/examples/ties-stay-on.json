@@ -1,0 +1,38 @@
+{
+  "format": 1,
+  "viz": "min-stack",
+  "id": "ties-stay-on",
+  "title": "Ties go onto mins too",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern",
+    "track": "le"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "push",
+      4
+    ],
+    [
+      "push",
+      2
+    ],
+    [
+      "push",
+      2
+    ],
+    [
+      "pop"
+    ],
+    [
+      "min"
+    ],
+    [
+      "pop"
+    ],
+    [
+      "min"
+    ]
+  ]
+}

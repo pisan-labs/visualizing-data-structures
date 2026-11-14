@@ -1,0 +1,59 @@
+{
+  "format": 1,
+  "viz": "min-stack",
+  "id": "scan-for-the-minimum",
+  "title": "Scan for the minimum",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "naive",
+    "track": "le"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "push",
+      5
+    ],
+    [
+      "push",
+      3
+    ],
+    [
+      "push",
+      7
+    ],
+    [
+      "push",
+      3
+    ],
+    [
+      "push",
+      8
+    ],
+    [
+      "push",
+      1
+    ],
+    [
+      "min"
+    ],
+    [
+      "pop"
+    ],
+    [
+      "min"
+    ],
+    [
+      "pop"
+    ],
+    [
+      "min"
+    ],
+    [
+      "pop"
+    ],
+    [
+      "min"
+    ]
+  ]
+}

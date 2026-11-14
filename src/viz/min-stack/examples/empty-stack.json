@@ -1,0 +1,33 @@
+{
+  "format": 1,
+  "viz": "min-stack",
+  "id": "empty-stack",
+  "title": "Nothing to pop",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern",
+    "track": "le"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "pop"
+    ],
+    [
+      "min"
+    ],
+    [
+      "push",
+      4
+    ],
+    [
+      "top"
+    ],
+    [
+      "pop"
+    ],
+    [
+      "min"
+    ]
+  ]
+}

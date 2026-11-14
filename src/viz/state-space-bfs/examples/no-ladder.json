@@ -10,14 +10,8 @@
   },
   "seed": 1,
   "ops": [
-    [
-      "load",
-      "cat cot cog dog pig"
-    ],
-    [
-      "search",
-      "pig"
-    ]
+    ["load", "cat cot cog dog pig"],
+    ["search", "pig"]
   ],
   "at": {
     "op": 0,

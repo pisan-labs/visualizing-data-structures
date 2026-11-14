@@ -109,7 +109,10 @@ export function view(step: SSStep, settings: SSSettings, stage?: StageSize): Sce
     const x = PAD + leftW + 30;
     shapes.push(...translate(layers.shapes, x, ZOOM_DROP));
     const w = x + layers.w + PAD;
-    return { shapes, bounds: { x: 0, y: 0, w, h: Math.max(leftH, layers.h + ZOOM_DROP + 12) } as Bounds };
+    return {
+      shapes,
+      bounds: { x: 0, y: 0, w, h: Math.max(leftH, layers.h + ZOOM_DROP + 12) } as Bounds,
+    };
   };
   const a = stacked();
   const b = beside();
@@ -183,19 +186,39 @@ function queueBlock(e: SSExtra, roles: ReadonlyMap<string, MarkRole>): Block {
   const shapes: Shape[] = [];
   const nameX = monoWidth('queue', FONT.name);
   const cy = 20;
-  shapes.push(text('queue-name', nameX, cy + FONT.name * 0.36, 'queue', { size: FONT.name, anchor: 'end', label: true }));
+  shapes.push(
+    text('queue-name', nameX, cy + FONT.name * 0.36, 'queue', {
+      size: FONT.name,
+      anchor: 'end',
+      label: true,
+    }),
+  );
   const end = e.goal !== undefined && e.made > e.goal ? e.goal : e.made;
   const waiting: number[] = [];
   for (let u = e.head; u < end; u++) waiting.push(u);
   const slot = chipSize('w'.repeat(Math.max(...e.entries.map((x) => x.state.length))), CHIP).w;
   let x = nameX + 12;
   if (waiting.length === 0)
-    shapes.push(text('queue-empty', x, cy + SMALL * 0.36, e.outcome === 'none' ? 'empty' : '–', { label: true }));
+    shapes.push(
+      text('queue-empty', x, cy + SMALL * 0.36, e.outcome === 'none' ? 'empty' : '–', {
+        label: true,
+      }),
+    );
   const shown = waiting.length > QUEUE_CHIPS ? waiting.slice(0, QUEUE_CHIPS - 1) : waiting;
   for (const u of shown) {
     const en = e.entries[u]!;
     const id = `q-${u}`;
-    shapes.push(...chip({ id, x: x + slot / 2, y: cy, text: en.state, size: CHIP, role: roles.get(id), dashed: en.again }));
+    shapes.push(
+      ...chip({
+        id,
+        x: x + slot / 2,
+        y: cy,
+        text: en.state,
+        size: CHIP,
+        role: roles.get(id),
+        dashed: en.again,
+      }),
+    );
     x += slot + 6;
   }
   if (shown.length < waiting.length) {
@@ -216,7 +239,8 @@ function layersBlock(e: SSExtra, roles: ReadonlyMap<string, MarkRole>): Block {
   const widest = `d=${Math.max(9, e.frame.layers - 1)}`;
   const nameX = monoWidth(widest, FONT.name);
   const slot = chipSize('w'.repeat(Math.max(...e.entries.map((x) => x.state.length))), CHIP).w;
-  const title = top > 0 ? `layers, by distance (${top} above)` : 'layers, by distance from the start';
+  const title =
+    top > 0 ? `layers, by distance (${top} above)` : 'layers, by distance from the start';
   shapes.push(text('layers-title', 0, 18, title, { label: true }));
   const pos = positions(e.entries, e.made);
   const onPath = new Set(e.path ?? []);
@@ -228,7 +252,13 @@ function layersBlock(e: SSExtra, roles: ReadonlyMap<string, MarkRole>): Block {
   for (let r = 0; r < rows; r++) {
     const d = top + r;
     const cy = 30 + r * LINE + 16;
-    shapes.push(text(`ly-${r}-name`, nameX, cy + FONT.name * 0.36, `d=${d}`, { size: FONT.name, anchor: 'end', label: true }));
+    shapes.push(
+      text(`ly-${r}-name`, nameX, cy + FONT.name * 0.36, `d=${d}`, {
+        size: FONT.name,
+        anchor: 'end',
+        label: true,
+      }),
+    );
     const us = byRow.get(d) ?? [];
     let x = nameX + 12;
     for (const u of us) {
@@ -236,8 +266,12 @@ function layersBlock(e: SSExtra, roles: ReadonlyMap<string, MarkRole>): Block {
       const en = e.entries[u]!;
       const id = `st-${u}`;
       const queued = u >= e.head && !(e.goal === u);
-      const role = roles.get(id) ?? (onPath.has(u) ? 'found' : u === e.goal ? 'found' : queued ? 'visit' : undefined);
-      shapes.push(...chip({ id, x: x + slot / 2, y: cy, text: en.state, size: CHIP, role, dashed: en.again }));
+      const role =
+        roles.get(id) ??
+        (onPath.has(u) ? 'found' : u === e.goal ? 'found' : queued ? 'visit' : undefined);
+      shapes.push(
+        ...chip({ id, x: x + slot / 2, y: cy, text: en.state, size: CHIP, role, dashed: en.again }),
+      );
       x += slot + 6;
     }
     if (us.length > ROW_CHIPS) {
@@ -256,8 +290,15 @@ function layersBlock(e: SSExtra, roles: ReadonlyMap<string, MarkRole>): Block {
       : e.outcome === 'stopped'
         ? 'path: not found yet'
         : 'path: –';
-  shapes.push({ ...text('path', 0, py, pathText, { bold: !!e.path, label: !e.path }), role: e.path ? 'found' : undefined });
-  const w = Math.max(nameX + 12 + ROW_CHIPS * (slot + 6) + 20, monoWidth(title, SMALL), monoWidth(pathText, SMALL));
+  shapes.push({
+    ...text('path', 0, py, pathText, { bold: !!e.path, label: !e.path }),
+    role: e.path ? 'found' : undefined,
+  });
+  const w = Math.max(
+    nameX + 12 + ROW_CHIPS * (slot + 6) + 20,
+    monoWidth(title, SMALL),
+    monoWidth(pathText, SMALL),
+  );
   return { shapes, w, h: py + 8 };
 }
 

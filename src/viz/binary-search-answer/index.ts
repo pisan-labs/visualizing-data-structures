@@ -82,8 +82,7 @@ const presets: Preset[] = [
     label: 'Sorted, smallest first',
     make: (rng, n, settings) => {
       const problem = problemOf(settings);
-      const vs =
-        problem === 'ship' ? weights(rng, n).sort((a, b) => a - b) : positions(rng, n);
+      const vs = problem === 'ship' ? weights(rng, n).sort((a, b) => a - b) : positions(rng, n);
       return solve(vs, middle(rng, n, problem));
     },
   },

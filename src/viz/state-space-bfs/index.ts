@@ -31,8 +31,7 @@ import {
 import { stateBfsPractice } from './practice';
 import { view } from './view';
 
-const puzzleOf = (settings?: Settings): Puzzle =>
-  settings?.puzzle === 'words' ? 'words' : 'lock';
+const puzzleOf = (settings?: Settings): Puzzle => (settings?.puzzle === 'words' ? 'words' : 'lock');
 
 const two = (n: number) => String(n).padStart(2, '0');
 
@@ -255,7 +254,11 @@ export const stateSpaceBfs: VizDef<SSState, SSSettings, SSExtra> = {
     noLadder,
   ] as unknown as SavedExample[],
   practice: stateBfsPractice(() => stateSpaceBfs),
-  preview: { example: 'around-the-wall', level: 2, hide: ['heading', 'puzzle', 'moves-', 'q-', 'queue-'] },
+  preview: {
+    example: 'around-the-wall',
+    level: 2,
+    hide: ['heading', 'puzzle', 'moves-', 'q-', 'queue-'],
+  },
 };
 
 export default stateSpaceBfs;

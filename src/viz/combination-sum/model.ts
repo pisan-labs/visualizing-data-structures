@@ -154,7 +154,8 @@ export function readValues(arg: Value | undefined): number[] | string {
     .split(/[\s,;]+/)
     .filter(Boolean);
   if (tokens.length < 2) return 'Type 2 or more candidates, such as 7 3 5 4.';
-  if (tokens.length > MAX_VALUES) return `That is ${tokens.length} candidates. Use at most ${MAX_VALUES}.`;
+  if (tokens.length > MAX_VALUES)
+    return `That is ${tokens.length} candidates. Use at most ${MAX_VALUES}.`;
   const out: number[] = [];
   for (const t of tokens) {
     if (!/^\d+$/.test(t)) return `"${t}" is not a whole number.`;
@@ -199,12 +200,28 @@ export function plan(c: readonly number[], target: number, reuse: Reuse): CNode[
     let children = 0;
     for (let j = start; j < c.length; j++) {
       if (reuse === 'once' && j > start && c[j] === c[j - 1]) {
-        nodes.push({ id: nodes.length, parent: id, depth: depth + 1, chosen: [...chosen, c[j]!], left: left - c[j]!, i: j, kind: 'dup' });
+        nodes.push({
+          id: nodes.length,
+          parent: id,
+          depth: depth + 1,
+          chosen: [...chosen, c[j]!],
+          left: left - c[j]!,
+          i: j,
+          kind: 'dup',
+        });
         children++;
         continue;
       }
       if (c[j]! > left) {
-        nodes.push({ id: nodes.length, parent: id, depth: depth + 1, chosen: [...chosen, c[j]!], left: left - c[j]!, i: j, kind: 'pruned' });
+        nodes.push({
+          id: nodes.length,
+          parent: id,
+          depth: depth + 1,
+          chosen: [...chosen, c[j]!],
+          left: left - c[j]!,
+          i: j,
+          kind: 'pruned',
+        });
         children++;
         break;
       }
@@ -249,6 +266,17 @@ export function totals(c: readonly number[], target: number, reuse: Reuse): Tota
 
 // ----- Steps -----
 
+/** "Done: 3 combinations make 10: [3, 3, 4], [3, 7] and [5, 5]." */
+function doneText(found: number[][], target: number): string {
+  if (found.length === 0) return `Done: no combination makes ${target}.`;
+  const outputs = found.map(listText);
+  const list =
+    outputs.length <= 6
+      ? and(outputs)
+      : `${outputs.slice(0, 5).join(', ')} and ${found.length - 5} more`;
+  return `Done: ${plural(found.length, 'combination')} ${found.length === 1 ? 'makes' : 'make'} ${target}: ${list}.`;
+}
+
 function refuse(s: CSState, why: string): CSStep {
   return { state: s, marks: [], say: `Nothing to do. ${why}`, lines: [], level: 1, vars: {} };
 }
@@ -277,12 +305,19 @@ const load: Op = {
 
 const node = (n: CNode) => callShapeId(String(n.id));
 
-function* pattern(s: CSState, target: number, settings: CSSettings, c: number[], nodes: CNode[]): Generator<CSStep, CSState, void> {
+function* pattern(
+  s: CSState,
+  target: number,
+  settings: CSSettings,
+  c: number[],
+  nodes: CNode[],
+): Generator<CSStep, CSState, void> {
   const reuse = settings.reuse;
   const tot = totals(c, target, reuse);
   const work = new Work(['calls']);
   const kids = new Map<number, CNode[]>();
-  for (const n of nodes) if (n.parent !== null) kids.set(n.parent, [...(kids.get(n.parent) ?? []), n]);
+  for (const n of nodes)
+    if (n.parent !== null) kids.set(n.parent, [...(kids.get(n.parent) ?? []), n]);
   const status: Record<number, 'open' | 'done' | 'cut'> = {};
   const stack: number[] = [];
   let chosen: number[] = [];
@@ -302,7 +337,12 @@ function* pattern(s: CSState, target: number, settings: CSSettings, c: number[],
     finds,
     done,
   });
-  const step = (say: string, lines: string[], level: 1 | 2 | 3, ms: [string, MarkRole][] = []): CSStep => ({
+  const step = (
+    say: string,
+    lines: string[],
+    level: 1 | 2 | 3,
+    ms: [string, MarkRole][] = [],
+  ): CSStep => ({
     state: s,
     marks: ms.map(([id, role]) => mark(id, role)),
     say,
@@ -325,12 +365,19 @@ function* pattern(s: CSState, target: number, settings: CSSettings, c: number[],
     stack.push(x.id);
     if (x.kind === 'leaf') {
       found.push([...chosen]);
-      yield step(`${say} Nothing is left: output ${listText(chosen)}, combination ${found.length}.`, ['choose', 'leaf'], 2, [
-        [node(x), 'found'],
-        [`found-${found.length - 1}`, 'new'],
-      ]);
+      yield step(
+        `${say} Nothing is left: output ${listText(chosen)}, combination ${found.length}.`,
+        ['choose', 'leaf'],
+        2,
+        [
+          [node(x), 'found'],
+          [`found-${found.length - 1}`, 'new'],
+        ],
+      );
     } else {
-      yield step(say, x.parent === null ? ['ret', 'sig'] : ['choose', 'loop'], 2, [[node(x), 'active']]);
+      yield step(say, x.parent === null ? ['ret', 'sig'] : ['choose', 'loop'], 2, [
+        [node(x), 'active'],
+      ]);
       const children = kids.get(x.id) ?? [];
       for (const ch of children) {
         const v = c[ch.i]!;
@@ -364,7 +411,12 @@ function* pattern(s: CSState, target: number, settings: CSSettings, c: number[],
           `Choose ${v}: chosen is ${listText(chosen)}, ${x.left} − ${v} = ${ch.left} left. Search ${next < c.length ? `from c[${next}] = ${c[next]}` : 'with no candidates left'}${reuse === 'again' && ch.left > 0 ? `, ${v} included, since it can be used again` : ''}.`,
         );
         chosen = chosen.slice(0, -1);
-        yield step(`Back at ${listText(chosen)} with ${x.left} left: unchoose ${v} and try the next candidate.`, ['unchoose'], 3, [[node(x), 'active']]);
+        yield step(
+          `Back at ${listText(chosen)} with ${x.left} left: unchoose ${v} and try the next candidate.`,
+          ['unchoose'],
+          3,
+          [[node(x), 'active']],
+        );
       }
       if (x.kind === 'dead')
         yield step(
@@ -382,10 +434,8 @@ function* pattern(s: CSState, target: number, settings: CSSettings, c: number[],
     nodes[0]!,
     `Sort the candidates: ${c.join(', ')}${reuse === 'again' && c.length < s.values.length ? ' (repeats dropped: each can be used again anyway)' : ''}. search(0, ${target}): ${target} to make up, from c[0] on.`,
   );
-  const outputs = found.map(listText);
-  const list = found.length === 0 ? 'none' : outputs.length <= 6 ? and(outputs) : `${outputs.slice(0, 5).join(', ')} and ${found.length - 5} more`;
   const d: CSStep = step(
-    `Done: ${plural(found.length, 'combination')} ${found.length === 1 ? 'makes' : 'make'} ${target}: ${list}. ${plural(work.get('calls'), 'call')}, ${plural(pruned, 'branch', 'branches')} pruned${reuse === 'once' ? `, ${plural(skipped, 'repeat')} skipped` : ''}. Every list without pruning takes ${big(tot.naive)} calls.`,
+    `${doneText(found, target)} ${plural(work.get('calls'), 'call')}, ${plural(pruned, 'branch', 'branches')} pruned${reuse === 'once' && skipped ? `, ${plural(skipped, 'repeat')} skipped` : ''}. Every list without pruning takes ${big(tot.naive)} calls.`,
     ['ret'],
     1,
   );
@@ -394,7 +444,13 @@ function* pattern(s: CSState, target: number, settings: CSSettings, c: number[],
 }
 
 /** The naive way: build every list (a count per candidate), then check its sum. */
-function* naive(s: CSState, target: number, settings: CSSettings, c: number[], nodes: CNode[]): Generator<CSStep, CSState, void> {
+function* naive(
+  s: CSState,
+  target: number,
+  settings: CSSettings,
+  c: number[],
+  nodes: CNode[],
+): Generator<CSStep, CSState, void> {
   const reuse = settings.reuse;
   const tot = totals(c, target, reuse);
   const work = new Work(['calls']);
@@ -417,7 +473,12 @@ function* naive(s: CSState, target: number, settings: CSSettings, c: number[], n
     done,
   });
   const listOf = (counts: number[]) => counts.flatMap((k, i) => Array(k).fill(c[i]!) as number[]);
-  const step = (say: string, lines: string[], level: 1 | 2 | 3, ms: [string, MarkRole][] = []): CSStep => ({
+  const step = (
+    say: string,
+    lines: string[],
+    level: 1 | 2 | 3,
+    ms: [string, MarkRole][] = [],
+  ): CSStep => ({
     state: s,
     marks: ms.map(([id, role]) => mark(id, role)),
     say,
@@ -452,10 +513,21 @@ function* naive(s: CSState, target: number, settings: CSSettings, c: number[], n
           seen.add(key);
           found.push(list);
           say = `Every count is chosen: ${listText(list)} sums to ${sum}, the target. Output it, combination ${found.length}.`;
-        } else say = `Every count is chosen: ${listText(list)} sums to ${target}, but it was found before (from an equal candidate). Skip it.`;
+        } else
+          say = `Every count is chosen: ${listText(list)} sums to ${target}, but it was found before (from an equal candidate). Skip it.`;
       } else say = `Every count is chosen: ${listText(list)} sums to ${sum}, not ${target}.`;
       current = { counts: [...counts], depth, sum, leaf: true, ...(hit ? { hit } : {}) };
-      yield step(say, hit === 'new' ? ['check', 'out'] : ['check'], 2, hit === 'new' ? [[`found-${found.length - 1}`, 'new'], ['sum', 'found']] : [['sum', sum === target ? 'found' : 'remove']]);
+      yield step(
+        say,
+        hit === 'new' ? ['check', 'out'] : ['check'],
+        2,
+        hit === 'new'
+          ? [
+              [`found-${found.length - 1}`, 'new'],
+              ['sum', 'found'],
+            ]
+          : [['sum', sum === target ? 'found' : 'remove']],
+      );
       return;
     }
     current = { counts: [...counts], depth, sum, leaf: false };
@@ -472,12 +544,10 @@ function* naive(s: CSState, target: number, settings: CSSettings, c: number[], n
   }
 
   yield* call([], 0);
-  const outputs = found.map(listText);
-  const list = found.length === 0 ? 'none' : outputs.length <= 6 ? and(outputs) : `${outputs.slice(0, 5).join(', ')} and ${found.length - 5} more`;
   const pat = patternCalls(nodes);
   const say = stopped
     ? `Stop here: ${big(MAX_NAIVE)} calls of the ${big(all)} it takes to build every list. ${plural(found.length, 'combination')} found so far. Sorted, pruned backtracking finds all ${finds} in ${plural(pat, 'call')}.`
-    : `Done: ${plural(found.length, 'combination')} ${found.length === 1 ? 'makes' : 'make'} ${target}: ${list}. Building every list took ${big(work.get('calls'))} calls; sorted, pruned backtracking takes ${plural(pat, 'call')}.`;
+    : `${doneText(found, target)} Building every list took ${big(work.get('calls'))} calls; sorted, pruned backtracking takes ${plural(pat, 'call')}.`;
   current = { counts: [], depth: 0, sum: 0, leaf: false };
   const d = step(say, ['ret'], 1);
   yield { ...d, vars: { ...d.vars, sum: null }, extra: extra(true) };
@@ -530,14 +600,28 @@ export function pseudocode(settings: CSSettings): PseudoBlock[] {
       {
         op: 'search',
         lines: [
-          L('sig', 0, once ? 'every(i, list)   // every subset' : 'every(i, list)   // every count of each', once ? 'To build every subset of the candidates from c[i] on:' : 'To build every list of the candidates from c[i] on:'),
-          L('check', 1, 'if i == n: if sum(list) == target', 'Once every candidate is decided, check the sum;'),
+          L(
+            'sig',
+            0,
+            once ? 'every(i, list)   // every subset' : 'every(i, list)   // every count of each',
+            once
+              ? 'To build every subset of the candidates from c[i] on:'
+              : 'To build every list of the candidates from c[i] on:',
+          ),
+          L(
+            'check',
+            1,
+            'if i == n: if sum(list) == target',
+            'Once every candidate is decided, check the sum;',
+          ),
           L('out', 2, 'output list unless it was output before', 'output the list if it is new.'),
           L(
             'loop',
             1,
             once ? 'for k in 1, 0' : 'for k = target / c[i] down to 0',
-            once ? 'Otherwise take c[i] or leave it,' : 'Otherwise try every count of c[i] that could fit,',
+            once
+              ? 'Otherwise take c[i] or leave it,'
+              : 'Otherwise try every count of c[i] that could fit,',
           ),
           L('rec', 2, 'every(i + 1, list + k copies of c[i])', 'and build the rest of the list.'),
           L('ret', 0, 'every(0, [])', 'Start with nothing chosen.'),
@@ -550,21 +634,52 @@ export function pseudocode(settings: CSSettings): PseudoBlock[] {
     {
       op: 'search',
       lines: [
-        L('sig', 0, 'search(start, left)', 'To find the combinations that make up left, from c[start] on (c sorted):'),
-        L('leaf', 1, 'if left == 0: output chosen; return', 'If nothing is left, chosen is a combination.'),
+        L(
+          'sig',
+          0,
+          'search(start, left)',
+          'To find the combinations that make up left, from c[start] on (c sorted):',
+        ),
+        L(
+          'leaf',
+          1,
+          'if left == 0: output chosen; return',
+          'If nothing is left, chosen is a combination.',
+        ),
         L('loop', 1, 'for i = start to n − 1', 'Try each candidate from c[start] on:'),
         ...(once
-          ? [L('dup', 2, 'if i > start and c[i] == c[i − 1]: continue', 'skip a value just tried at this depth,')]
+          ? [
+              L(
+                'dup',
+                2,
+                'if i > start and c[i] == c[i − 1]: continue',
+                'skip a value just tried at this depth,',
+              ),
+            ]
           : []),
-        L('prune', 2, 'if c[i] > left: break', 'stop at the first one bigger than what is left: the rest are bigger too;'),
+        L(
+          'prune',
+          2,
+          'if c[i] > left: break',
+          'stop at the first one bigger than what is left: the rest are bigger too;',
+        ),
         L(
           'choose',
           2,
-          once ? 'chosen.add(c[i]); search(i + 1, left − c[i])' : 'chosen.add(c[i]); search(i, left − c[i])',
-          once ? 'choose it and search for the rest from the next one,' : 'choose it and search for the rest, it included,',
+          once
+            ? 'chosen.add(c[i]); search(i + 1, left − c[i])'
+            : 'chosen.add(c[i]); search(i, left − c[i])',
+          once
+            ? 'choose it and search for the rest from the next one,'
+            : 'choose it and search for the rest, it included,',
         ),
         L('unchoose', 2, 'chosen.removeLast()', 'then unchoose it.'),
-        L('ret', 0, 'sort c; search(0, target)', 'Sort the candidates and start with all of the target left.'),
+        L(
+          'ret',
+          0,
+          'sort c; search(0, target)',
+          'Sort the candidates and start with all of the target left.',
+        ),
       ],
     },
     loadBlock,

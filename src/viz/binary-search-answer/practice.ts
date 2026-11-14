@@ -178,7 +178,10 @@ export function searchAnswerPractice(def: () => Def): PracticeKind[] {
         const full = ship ? fits(values, values.length, x) : spreads(values, values.length + 1, x);
         const param = ship ? START_D : Math.min(values.length, 3);
         const parts = ship
-          ? groups(values, full.reads.map((r) => r.tag))
+          ? groups(
+              values,
+              full.reads.map((r) => r.tag),
+            )
           : full.reads.filter((r) => r.event).map((r) => String(values[r.i]));
         return {
           prompt: ship

@@ -28,12 +28,27 @@ import {
 import type { Bounds, Scene, Shape } from '../../render/scene';
 import { ZOOM_DROP, zoomCorner } from '../../render/stage';
 import { approachOf } from '../_patterns/kit';
-import { describe, listText, type CNode, type CSExtra, type CSSettings, type CSStep } from './model';
+import {
+  describe,
+  listText,
+  type CNode,
+  type CSExtra,
+  type CSSettings,
+  type CSStep,
+} from './model';
 
 /** Up to 16 boxes get full size; bigger trees get compact boxes. */
 const FULL_LIMIT = 16;
 const FULL: CallTreeOptions = { size: 14, gap: 10, levelGap: 52, twoLines: true, tagMin: 12 };
-const COMPACT: CallTreeOptions = { size: 13, gap: 5, levelGap: 46, twoLines: true, minW: 28, padX: 0.6, tagMin: 12 };
+const COMPACT: CallTreeOptions = {
+  size: 13,
+  gap: 5,
+  levelGap: 46,
+  twoLines: true,
+  minW: 28,
+  padX: 0.6,
+  tagMin: 12,
+};
 const CELL = { w: 30, h: 28, pitch: 33 };
 const LABEL_W = 70;
 const FONT = 13;
@@ -61,12 +76,27 @@ const label = (id: string, x: number, y: number, text: string, size = FONT): Sha
 });
 
 /** The candidates, what is chosen, the counts (every list), and the combinations found. */
-function panel(e: CSExtra | undefined, values: number[], roles: ReadonlyMap<string, MarkRole>, perRow: number): Block {
+function panel(
+  e: CSExtra | undefined,
+  values: number[],
+  roles: ReadonlyMap<string, MarkRole>,
+  perRow: number,
+): Block {
   const shapes: Shape[] = [];
   const c = e?.c ?? [...values].sort((a, b) => a - b);
   let y = 0;
   const cell = (id: string, text: string, x: number, top: number, role?: MarkRole, live = true) => {
-    shapes.push({ kind: 'rect', id, x, y: top, w: CELL.w, h: CELL.h, r: 5, cls: live ? 'live' : undefined, role: roles.get(id) ?? role });
+    shapes.push({
+      kind: 'rect',
+      id,
+      x,
+      y: top,
+      w: CELL.w,
+      h: CELL.h,
+      r: 5,
+      cls: live ? 'live' : undefined,
+      role: roles.get(id) ?? role,
+    });
     if (text)
       shapes.push({
         kind: 'text',
@@ -90,7 +120,14 @@ function panel(e: CSExtra | undefined, values: number[], roles: ReadonlyMap<stri
     shapes.push(label('n-name', 0, y + CELL.h / 2 + 5, 'count'));
     c.forEach((_, i) => {
       const k = n.counts[i];
-      cell(`n-${i}`, k === undefined ? '' : String(k), LABEL_W + i * CELL.pitch, y, undefined, k !== undefined);
+      cell(
+        `n-${i}`,
+        k === undefined ? '' : String(k),
+        LABEL_W + i * CELL.pitch,
+        y,
+        undefined,
+        k !== undefined,
+      );
     });
     y += CELL.h + 10;
   }
@@ -98,23 +135,22 @@ function panel(e: CSExtra | undefined, values: number[], roles: ReadonlyMap<stri
     const sumText = n
       ? `sum = ${n.sum}${n.leaf ? (n.sum === e.target ? ' = target' : ` ≠ ${e.target}`) : ''}`
       : `left = ${e.target - e.chosen.reduce((a, b) => a + b, 0)}`;
-    shapes.push(
-      label('chosen', 0, y + 14, `chosen ${listText(e.chosen)}`),
-      {
-        kind: 'text',
-        id: 'sum',
-        x: 0,
-        y: y + 36,
-        text: sumText,
-        size: FONT,
-        mono: true,
-        weight: 'bold',
-        role: roles.get('sum'),
-      },
-    );
+    shapes.push(label('chosen', 0, y + 14, `chosen ${listText(e.chosen)}`), {
+      kind: 'text',
+      id: 'sum',
+      x: 0,
+      y: y + 36,
+      text: sumText,
+      size: FONT,
+      mono: true,
+      weight: 'bold',
+      role: roles.get('sum'),
+    });
     y += 48;
     if (n && e.callsAll !== undefined) {
-      shapes.push(label('calls', 0, y + 10, `call ${e.callsDone} of ${e.callsAll.toLocaleString('en-US')}`));
+      shapes.push(
+        label('calls', 0, y + 10, `call ${e.callsDone} of ${e.callsAll.toLocaleString('en-US')}`),
+      );
       y += 24;
     }
   }
@@ -123,7 +159,11 @@ function panel(e: CSExtra | undefined, values: number[], roles: ReadonlyMap<stri
   if (e) {
     shapes.push(label('found-name', 0, y + 14, 'found'));
     const texts = e.found.map(listText);
-    const widest = Math.max(60, ...texts.map((t) => monoWidth(t, 12.5) + 12), monoWidth(`[${Array(4).fill(9).join(', ')}]`, 12.5) + 12);
+    const widest = Math.max(
+      60,
+      ...texts.map((t) => monoWidth(t, 12.5) + 12),
+      monoWidth(`[${Array(4).fill(9).join(', ')}]`, 12.5) + 12,
+    );
     const chipW = Math.min(widest, 150);
     if (e.found.length === 0)
       shapes.push(label('found-none', LABEL_W, y + 14, e.done ? 'none' : '(nothing yet)', 12.5));
@@ -166,7 +206,10 @@ export function view(step: CSStep, settings: CSSettings, stage?: StageSize): Sce
     const shapes = [label('title', 0, 15, title, 13.5), ...translate(p.shapes, 0, TITLE_H + 12)];
     return {
       shapes,
-      bounds: padBounds({ x: 0, y: 0, w: Math.max(p.w, monoWidth(title, 13.5)), h: TITLE_H + 12 + p.h }, 12),
+      bounds: padBounds(
+        { x: 0, y: 0, w: Math.max(p.w, monoWidth(title, 13.5)), h: TITLE_H + 12 + p.h },
+        12,
+      ),
       label: labelText(step),
     };
   }
@@ -181,7 +224,8 @@ export function view(step: CSStep, settings: CSSettings, stage?: StageSize): Sce
     id: String(x.id),
     parent: x.parent === null ? null : String(x.parent),
     label: x.parent === null ? String(x.left) : `+${e.c[x.i]}`,
-    value: x.parent === null ? undefined : x.kind === 'dup' ? 'same' : String(x.left).replace('-', '−'),
+    value:
+      x.parent === null ? undefined : x.kind === 'dup' ? 'same' : String(x.left).replace('-', '−'),
     tag: x.kind === 'dead' ? 'dead' : undefined,
     tagRole: 'remove',
     state,
@@ -196,7 +240,11 @@ export function view(step: CSStep, settings: CSSettings, stage?: StageSize): Sce
   const now = nodes.filter((x) => e.status?.[x.id] !== undefined).map((x) => call(x, stateOf(x)));
   const treeRoles = new Map(roles);
   for (const x of nodes)
-    if (x.kind === 'leaf' && e.status?.[x.id] !== undefined && !treeRoles.has(callShapeId(String(x.id))))
+    if (
+      x.kind === 'leaf' &&
+      e.status?.[x.id] !== undefined &&
+      !treeRoles.has(callShapeId(String(x.id)))
+    )
       treeRoles.set(callShapeId(String(x.id)), 'found');
   const legend = 'dashed: pruned or skipped, never called';
 
@@ -229,7 +277,10 @@ export function view(step: CSStep, settings: CSSettings, stage?: StageSize): Sce
         perRow,
         px,
         py,
-        bounds: padBounds(unionBounds({ x: 0, y: 0, w: t.w, h: t.h }, { x: px, y: py, w: p.w, h: p.h }), 12),
+        bounds: padBounds(
+          unionBounds({ x: 0, y: 0, w: t.w, h: t.h }, { x: px, y: py, w: p.w, h: p.h }),
+          12,
+        ),
       });
       options.push(make(0, t.h + VGAP));
       if (stage) options.push(make(t.w + HGAP, drop));
@@ -250,7 +301,9 @@ function labelText(step: CSStep): string {
   const e = step.extra;
   const parts = [describe(step.state)];
   if (!e) return parts.join(' ');
-  parts.push(`Target ${e.target}; sorted candidates ${e.c.join(', ')}; chosen ${listText(e.chosen)}.`);
+  parts.push(
+    `Target ${e.target}; sorted candidates ${e.c.join(', ')}; chosen ${listText(e.chosen)}.`,
+  );
   if (e.nodes && e.status) {
     const made = e.nodes.filter((x) => e.status![x.id] !== undefined).length;
     parts.push(`${made} of ${e.nodes.length} boxes of the tree drawn.`);

@@ -81,7 +81,11 @@ const presets: Preset[] = [
   },
   {
     label: 'Small candidates: many ways (worst case)',
-    make: (_rng, n) => solve(Array.from({ length: Math.min(n, 3) }, (_, i) => i + 1), 6),
+    make: (_rng, n) =>
+      solve(
+        Array.from({ length: Math.min(n, 3) }, (_, i) => i + 1),
+        6,
+      ),
   },
 ];
 

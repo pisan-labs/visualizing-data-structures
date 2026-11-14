@@ -4,7 +4,15 @@ import { Timeline } from '../../engine/timeline';
 import { LAPTOP_STAGE, PHONE_STAGE } from '../../render/stage';
 import { smallestText } from '../../render/text-size';
 import { combinationSum as def } from '.';
-import { candidates, MAX_NAIVE, MAX_TREE, naiveCalls, plan, type CSSettings, type Reuse } from './model';
+import {
+  candidates,
+  MAX_NAIVE,
+  MAX_TREE,
+  naiveCalls,
+  plan,
+  type CSSettings,
+  type Reuse,
+} from './model';
 
 /** The reference: every multiset (again) or sub-multiset (once), kept when it sums to t. */
 function reference(values: number[], target: number, reuse: Reuse): string[] {
@@ -63,18 +71,22 @@ describe('combination-sum', () => {
             [...e.found.map((f) => f.join(','))].sort((a, b) => {
               const x = a.split(',').map(Number);
               const y = b.split(',').map(Number);
-              for (let i = 0; i < Math.min(x.length, y.length); i++) if (x[i] !== y[i]) return x[i]! - y[i]!;
+              for (let i = 0; i < Math.min(x.length, y.length); i++)
+                if (x[i] !== y[i]) return x[i]! - y[i]!;
               return x.length - y.length;
             }),
           );
-          expect(last.vars?.calls).toBe(nodes.filter((n) => n.kind !== 'pruned' && n.kind !== 'dup').length);
+          expect(last.vars?.calls).toBe(
+            nodes.filter((n) => n.kind !== 'pruned' && n.kind !== 'dup').length,
+          );
         } else if (!stopped) expect(last.vars?.calls).toBe(naiveCalls(c, target, reuse));
         let before = 0;
         for (const step of steps) {
           const x = step.extra;
           if (!x) continue;
           // What is chosen plus what is left is always the target.
-          if (approach === 'pattern') expect(Number(step.vars?.left) + x.chosen.reduce((a, b) => a + b, 0)).toBe(target);
+          if (approach === 'pattern')
+            expect(Number(step.vars?.left) + x.chosen.reduce((a, b) => a + b, 0)).toBe(target);
           expect(x.found.length).toBeGreaterThanOrEqual(before);
           before = x.found.length;
           for (const id of x.stack ?? []) expect(x.status?.[id]).toBe('open');

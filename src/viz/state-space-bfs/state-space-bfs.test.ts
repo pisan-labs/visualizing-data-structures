@@ -16,9 +16,12 @@ function refLock(barred: string[], goal: string): number {
     const b = Number(s[1]);
     adj.set(
       s,
-      [`${(a + 1) % 10}${b}`, `${(a + 9) % 10}${b}`, `${a}${(b + 1) % 10}`, `${a}${(b + 9) % 10}`].filter(
-        (t) => !bar.has(t),
-      ),
+      [
+        `${(a + 1) % 10}${b}`,
+        `${(a + 9) % 10}${b}`,
+        `${a}${(b + 1) % 10}`,
+        `${a}${(b + 9) % 10}`,
+      ].filter((t) => !bar.has(t)),
     );
   }
   return bfs('00', goal, adj);
@@ -105,7 +108,8 @@ describe('state-space-bfs', () => {
       fc.property(words, approaches, ({ words, goal }, approach) => {
         const steps = runSteps({ approach, puzzle: 'words' }, words, goal);
         const last = steps.at(-1)!;
-        if (last.extra!.outcome !== 'stopped') expect(last.vars?.distance).toBe(refWords(words, goal));
+        if (last.extra!.outcome !== 'stopped')
+          expect(last.vars?.distance).toBe(refWords(words, goal));
         checkSteps(steps, approach === 'naive');
       }),
       { numRuns: 200 },

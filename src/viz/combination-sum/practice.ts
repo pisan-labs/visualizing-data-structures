@@ -104,10 +104,15 @@ export function combinationPractice(def: () => Def): PracticeKind[] {
         const reuse = pick(rng);
         let { values, target, nodes } = puzzle(rng, reuse);
         // A call that returns, then its parent goes on: the question is what comes next.
-        let calls = nodes.filter((x) => x.parent !== null && (x.kind === 'call' || x.kind === 'leaf' || x.kind === 'dead'));
+        let calls = nodes.filter(
+          (x) => x.parent !== null && (x.kind === 'call' || x.kind === 'leaf' || x.kind === 'dead'),
+        );
         while (calls.length === 0) {
           ({ values, target, nodes } = puzzle(rng, reuse));
-          calls = nodes.filter((x) => x.parent !== null && (x.kind === 'call' || x.kind === 'leaf' || x.kind === 'dead'));
+          calls = nodes.filter(
+            (x) =>
+              x.parent !== null && (x.kind === 'call' || x.kind === 'leaf' || x.kind === 'dead'),
+          );
         }
         const x = calls[rng.int(0, calls.length - 1)]!;
         const parent = nodes[x.parent!]!;
@@ -117,18 +122,18 @@ export function combinationPractice(def: () => Def): PracticeKind[] {
         const v = c[x.i]!;
         const after = x.i + 1 < c.length ? c[x.i + 1]! : undefined;
         const options = [
-          after === undefined ? 'Try the next candidate' : `Add ${after}: search with ${parent.left - after} left`,
-          after === undefined ? 'Skip the next candidate' : `Skip ${after}: it is the same value as ${v}`,
-          after === undefined ? 'Stop: the next candidate is too big' : `Stop the loop: ${after} is more than the ${parent.left} left`,
+          after === undefined
+            ? 'Try the next candidate'
+            : `Add ${after}: search with ${parent.left - after} left`,
+          after === undefined
+            ? 'Skip the next candidate'
+            : `Skip ${after}: it is the same value as ${v}`,
+          after === undefined
+            ? 'Stop: the next candidate is too big'
+            : `Stop the loop: ${after} is more than the ${parent.left} left`,
           'Return: no candidates are left to try',
         ];
-        const correct = !next
-          ? 3
-          : next.kind === 'dup'
-            ? 1
-            : next.kind === 'pruned'
-              ? 2
-              : 0;
+        const correct = !next ? 3 : next.kind === 'dup' ? 1 : next.kind === 'pruned' ? 2 : 0;
         const why = !next
           ? `${v} was the last candidate, so the call with ${listText(parent.chosen)} returns.`
           : next.kind === 'dup'

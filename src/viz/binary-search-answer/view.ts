@@ -163,16 +163,52 @@ function strip(
   const sy = top + 36;
   const mid = sy + STRIP_H / 2 + SMALL * 0.36;
   shapes.push(
-    { kind: 'text', id: 'ax-lo0', x: x0 - 8, y: mid, text: loText, size: SMALL, anchor: 'end', cls: 'label', mono: true },
-    { kind: 'text', id: 'ax-hi0', x: x1 + 8, y: mid, text: hiText, size: SMALL, cls: 'label', mono: true },
+    {
+      kind: 'text',
+      id: 'ax-lo0',
+      x: x0 - 8,
+      y: mid,
+      text: loText,
+      size: SMALL,
+      anchor: 'end',
+      cls: 'label',
+      mono: true,
+    },
+    {
+      kind: 'text',
+      id: 'ax-hi0',
+      x: x1 + 8,
+      y: mid,
+      text: hiText,
+      size: SMALL,
+      cls: 'label',
+      mono: true,
+    },
   );
   const lowWord = ship ? 'fails' : 'fits';
   const highWord = ship ? 'fits' : 'fails';
-  const region = (id: string, a: number, b: number, role: MarkRole | undefined, word: string, cls?: string) => {
+  const region = (
+    id: string,
+    a: number,
+    b: number,
+    role: MarkRole | undefined,
+    word: string,
+    cls?: string,
+  ) => {
     if (b < a) return;
     const x = xOf(a);
     const w = xOf(b + 1) - x;
-    shapes.push({ kind: 'rect', id, x, y: sy, w, h: STRIP_H, r: 3, cls, role: roles.get(id) ?? role });
+    shapes.push({
+      kind: 'rect',
+      id,
+      x,
+      y: sy,
+      w,
+      h: STRIP_H,
+      r: 3,
+      cls,
+      role: roles.get(id) ?? role,
+    });
     if (word && monoWidth(word, SMALL) + 8 <= w)
       shapes.push({
         kind: 'text',
@@ -268,8 +304,27 @@ function strip(
         lx = Math.min(lx, hx - 8);
       }
       shapes.push(
-        { kind: 'text', id: 'ax-lo', x: lx, y: ly, text: lt, size: SMALL, anchor: 'end', mono: true, cls: 'label' },
-        { kind: 'text', id: 'ax-hi', x: hx, y: ly, text: ht, size: SMALL, mono: true, cls: 'label' },
+        {
+          kind: 'text',
+          id: 'ax-lo',
+          x: lx,
+          y: ly,
+          text: lt,
+          size: SMALL,
+          anchor: 'end',
+          mono: true,
+          cls: 'label',
+        },
+        {
+          kind: 'text',
+          id: 'ax-hi',
+          x: hx,
+          y: ly,
+          text: ht,
+          size: SMALL,
+          mono: true,
+          cls: 'label',
+        },
       );
     }
     bottom = ly + 6;
@@ -343,7 +398,9 @@ function label(step: BAStep, settings: BASettings): string {
   const parts = [describe(step.state, settings)];
   if (!e) return parts.join(' ');
   const name = what(e.problem);
-  parts.push(`Possible ${name === 'capacity' ? 'capacities' : 'gaps'}: ${e.lo0} to ${e.hi0}; still open: ${e.lo} to ${e.hi}.`);
+  parts.push(
+    `Possible ${name === 'capacity' ? 'capacities' : 'gaps'}: ${e.lo0} to ${e.hi0}; still open: ${e.lo} to ${e.hi}.`,
+  );
   if (e.mid !== undefined) parts.push(`Checking ${e.mid}.`);
   if (e.tried.length)
     parts.push(`Tried: ${e.tried.map((t) => `${t.x} ${t.ok ? 'fits' : 'fails'}`).join(', ')}.`);

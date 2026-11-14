@@ -22,7 +22,16 @@
  * read is one value it looks at. A check stops early once its answer is known (more days than
  * d, or k items placed), so its reads vary.
  */
-import type { Mark, MarkRole, OpSpec, PseudoBlock, PseudoLine, Scalar, Step, Value } from '../../engine/types';
+import type {
+  Mark,
+  MarkRole,
+  OpSpec,
+  PseudoBlock,
+  PseudoLine,
+  Scalar,
+  Step,
+  Value,
+} from '../../engine/types';
 import { approachOf, Work, workVars, type Approach, type Totals } from '../_patterns/kit';
 
 export type Problem = 'ship' | 'spread';
@@ -143,7 +152,8 @@ export function readList(arg: Value | undefined, problem: Problem): number[] | s
     .split(/[\s,;]+/)
     .filter(Boolean);
   const kind = problem === 'ship' ? 'weights' : 'positions';
-  if (tokens.length < 2) return `Type at least 2 ${kind}, such as ${problem === 'ship' ? '4 7 2 6' : '1 3 8 12'}.`;
+  if (tokens.length < 2)
+    return `Type at least 2 ${kind}, such as ${problem === 'ship' ? '4 7 2 6' : '1 3 8 12'}.`;
   if (tokens.length > MAX_N) return `That is ${tokens.length} values. Use at most ${MAX_N}.`;
   const out: number[] = [];
   for (const t of tokens) {
@@ -166,7 +176,10 @@ export function readList(arg: Value | undefined, problem: Problem): number[] | s
 /** d or k for an operation, or why it cannot be used on this input. */
 export function readParam(arg: Value | undefined, s: BAState, problem: Problem): number | string {
   const t = String(arg ?? '').trim();
-  if (!INT.test(t)) return problem === 'ship' ? 'Type d, the number of days, such as 3.' : 'Type k, the number of items, such as 3.';
+  if (!INT.test(t))
+    return problem === 'ship'
+      ? 'Type d, the number of days, such as 3.'
+      : 'Type k, the number of items, such as 3.';
   const v = Number(t);
   if (v > MAX_PARAM) return `${v} is out of range. Use 1 to ${MAX_PARAM}.`;
   if (problem === 'ship') {
@@ -351,7 +364,14 @@ const at = (problem: Problem, s: BAState, i: number) =>
   problem === 'ship' ? `w[${i}] = ${s.w[i]}` : `p[${i}] = ${s.p[i]}`;
 
 /** Narration for one value a check reads. */
-function readSay(problem: Problem, s: BAState, x: number, r: Read, prev: CheckRun['reads'], param: number): string {
+function readSay(
+  problem: Problem,
+  s: BAState,
+  x: number,
+  r: Read,
+  prev: CheckRun['reads'],
+  param: number,
+): string {
   if (problem === 'ship') {
     const w = s.w[r.i]!;
     if (!r.event) return `${at(problem, s, r.i)} goes on day ${r.tag}: load ${r.amount} of ${x}.`;
@@ -369,11 +389,7 @@ function readSay(problem: Problem, s: BAState, x: number, r: Read, prev: CheckRu
   return `${at(problem, s, r.i)} is only ${p} − ${last} = ${r.amount} < ${x} past the last item: skip it.`;
 }
 
-function* solve(
-  s: BAState,
-  param: number,
-  settings: BASettings,
-): Generator<BAStep, BAState, void> {
+function* solve(s: BAState, param: number, settings: BASettings): Generator<BAStep, BAState, void> {
   const problem = settings.problem;
   const approach = approachOf(settings);
   const naive = approach === 'naive';
@@ -529,7 +545,10 @@ function* solve(
     }
     yield {
       state: s,
-      marks: [mark(`try-${tried.length - 1}`, t.run.ok ? 'new' : 'remove'), mark('ax-mid', 'active')],
+      marks: [
+        mark(`try-${tried.length - 1}`, t.run.ok ? 'new' : 'remove'),
+        mark('ax-mid', 'active'),
+      ],
       say,
       lines,
       level: 2,
@@ -559,7 +578,13 @@ function* solve(
   // items go.
   mid = undefined;
   const final = runCheck(s, problem, param, answer);
-  check = { x: answer, read: final.reads.length, tag: Array(n).fill(0), amount: Array(n).fill(0), ok: final.ok };
+  check = {
+    x: answer,
+    read: final.reads.length,
+    tag: Array(n).fill(0),
+    amount: Array(n).fill(0),
+    ok: final.ok,
+  };
   for (const r of final.reads) {
     check.tag[r.i] = r.tag;
     check.amount[r.i] = r.amount;
@@ -644,18 +669,38 @@ export function pseudocode(settings: BASettings): PseudoBlock[] {
   if (settings.problem === 'ship') {
     const main = naive
       ? [
-          L('sig', 0, 'smallestCapacity(w, d)   // every capacity upward', 'To find the smallest capacity that ships w in d days, try them all:'),
+          L(
+            'sig',
+            0,
+            'smallestCapacity(w, d)   // every capacity upward',
+            'To find the smallest capacity that ships w in d days, try them all:',
+          ),
           L('init', 1, 'c = max(w)', 'Start at the heaviest package: less never fits.'),
           L('loop', 1, 'while not fits(w, d, c)', 'While capacity c needs more than d days,'),
           L('next', 2, 'c = c + 1', 'try one more.'),
           L('ret', 1, 'return c', 'The first capacity that fits is the answer.'),
         ]
       : [
-          L('sig', 0, 'smallestCapacity(w, d)', 'To find the smallest capacity that ships w in d days:'),
-          L('init', 1, 'lo = max(w); hi = sum(w)', 'The heaviest package must fit; one day for everything always works.'),
+          L(
+            'sig',
+            0,
+            'smallestCapacity(w, d)',
+            'To find the smallest capacity that ships w in d days:',
+          ),
+          L(
+            'init',
+            1,
+            'lo = max(w); hi = sum(w)',
+            'The heaviest package must fit; one day for everything always works.',
+          ),
           L('loop', 1, 'while lo < hi', 'While more than one capacity is left,'),
           L('mid', 2, 'mid = (lo + hi) / 2   // rounded down', 'take the one in the middle;'),
-          L('fit', 2, 'if fits(w, d, mid): hi = mid', 'if it ships in time, the answer is mid or less;'),
+          L(
+            'fit',
+            2,
+            'if fits(w, d, mid): hi = mid',
+            'if it ships in time, the answer is mid or less;',
+          ),
           L('fail', 2, 'else: lo = mid + 1', 'if not, the answer is more than mid.'),
           L('ret', 1, 'return lo', 'One capacity is left: the answer.'),
         ];
@@ -663,17 +708,37 @@ export function pseudocode(settings: BASettings): PseudoBlock[] {
   }
   const main = naive
     ? [
-        L('sig', 0, 'largestGap(p, k)   // every gap upward', 'To find the largest gap k items can keep on p, try them all:'),
-        L('init', 1, 'g = 2   // a gap of 1 always works', 'Start at 2: the positions differ, so 1 always works.'),
+        L(
+          'sig',
+          0,
+          'largestGap(p, k)   // every gap upward',
+          'To find the largest gap k items can keep on p, try them all:',
+        ),
+        L(
+          'init',
+          1,
+          'g = 2   // a gap of 1 always works',
+          'Start at 2: the positions differ, so 1 always works.',
+        ),
         L('loop', 1, 'while g <= p[n − 1] − p[0] and spreads(p, k, g)', 'While gap g still works,'),
         L('next', 2, 'g = g + 1', 'try one more.'),
         L('ret', 1, 'return g − 1', 'The last gap that worked is the answer.'),
       ]
     : [
         L('sig', 0, 'largestGap(p, k)', 'To find the largest gap k items can keep on p:'),
-        L('init', 1, 'lo = 1; hi = p[n − 1] − p[0]', 'A gap of 1 always works; no gap is wider than the whole span.'),
+        L(
+          'init',
+          1,
+          'lo = 1; hi = p[n − 1] − p[0]',
+          'A gap of 1 always works; no gap is wider than the whole span.',
+        ),
         L('loop', 1, 'while lo < hi', 'While more than one gap is left,'),
-        L('mid', 2, 'mid = (lo + hi + 1) / 2   // rounded down', 'take the one in the middle, rounding up;'),
+        L(
+          'mid',
+          2,
+          'mid = (lo + hi + 1) / 2   // rounded down',
+          'take the one in the middle, rounding up;',
+        ),
         L('fit', 2, 'if spreads(p, k, mid): lo = mid', 'if it works, the answer is mid or more;'),
         L('fail', 2, 'else: hi = mid − 1', 'if not, the answer is less than mid.'),
         L('ret', 1, 'return lo', 'One gap is left: the answer.'),

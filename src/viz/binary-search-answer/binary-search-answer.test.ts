@@ -111,7 +111,16 @@ describe('binary-search-answer', () => {
   it('finds the largest gap both ways, and every step agrees with the reference', () => {
     fc.assert(
       fc.property(spread, approaches, ({ p, k }, approach) => {
-        checkRun('spread', p, k, approach, refSpread([...p].sort((a, b) => a - b), k));
+        checkRun(
+          'spread',
+          p,
+          k,
+          approach,
+          refSpread(
+            [...p].sort((a, b) => a - b),
+            k,
+          ),
+        );
       }),
       { numRuns: 300 },
     );

@@ -10,14 +10,8 @@
   },
   "seed": 1,
   "ops": [
-    [
-      "load",
-      "cold cord bold colt card word ward warm worm"
-    ],
-    [
-      "search",
-      "warm"
-    ]
+    ["load", "cold cord bold colt card word ward warm worm"],
+    ["search", "warm"]
   ],
   "at": {
     "op": 0,

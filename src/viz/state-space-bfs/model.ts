@@ -147,11 +147,12 @@ export function parseInput(token: string): Value | Error {
     .split(/[\s,;]+/)
     .filter(Boolean)
     .map((t) => t.toLowerCase());
-  if (tokens.length === 0)
-    return new Error('Type a goal, such as 22 or warm, or a list to load.');
+  if (tokens.length === 0) return new Error('Type a goal, such as 22 or warm, or a list to load.');
   for (const t of tokens)
     if (!/^(\d{2,3}|[a-z]{3,5})$/.test(t))
-      return new Error(`"${t}" is neither a combination of 2 or 3 digits nor a word of 3 to 5 letters.`);
+      return new Error(
+        `"${t}" is neither a combination of 2 or 3 digits nor a word of 3 to 5 letters.`,
+      );
   return tokens.join(' ');
 }
 
@@ -162,15 +163,20 @@ const tokensOf = (arg: Value | undefined) =>
     .map((t) => t.toLowerCase());
 
 /** A list to load: barred combinations (lock) or words, or why it cannot be read. */
-export function readList(arg: Value | undefined, puzzle: Puzzle): string | ((s: SSState) => SSState) {
+export function readList(
+  arg: Value | undefined,
+  puzzle: Puzzle,
+): string | ((s: SSState) => SSState) {
   const tokens = tokensOf(arg);
   if (puzzle === 'lock') {
     if (tokens.length === 0) return 'Type the barred combinations, such as 10 01.';
-    if (tokens.length > MAX_BARRED) return `That is ${tokens.length} combinations. Bar at most ${MAX_BARRED}.`;
+    if (tokens.length > MAX_BARRED)
+      return `That is ${tokens.length} combinations. Bar at most ${MAX_BARRED}.`;
     const w = tokens[0]!.length;
     for (const t of tokens) {
       if (!/^\d{2,3}$/.test(t)) return `"${t}" is not a combination of 2 or 3 digits.`;
-      if (t.length !== w) return `${tokens[0]} has ${w} digits but ${t} has ${t.length}. Give every combination the same number of wheels.`;
+      if (t.length !== w)
+        return `${tokens[0]} has ${w} digits but ${t} has ${t.length}. Give every combination the same number of wheels.`;
       if (/^0+$/.test(t)) return `${t} is where the lock starts, so it cannot be barred.`;
     }
     const barred = [...new Set(tokens)];
@@ -181,7 +187,8 @@ export function readList(arg: Value | undefined, puzzle: Puzzle): string | ((s: 
   const len = tokens[0]!.length;
   for (const t of tokens) {
     if (!/^[a-z]{3,5}$/.test(t)) return `"${t}" is not a word of 3 to 5 letters.`;
-    if (t.length !== len) return `${tokens[0]} has ${len} letters but ${t} has ${t.length}. Give every word the same length.`;
+    if (t.length !== len)
+      return `${tokens[0]} has ${len} letters but ${t} has ${t.length}. Give every word the same length.`;
   }
   if (new Set(tokens).size !== tokens.length) return 'A word is there twice. Give each word once.';
   return (s: SSState) => ({ ...s, words: tokens });
@@ -200,7 +207,8 @@ export function targetProblem(t: string, s: SSState, puzzle: Puzzle): string | n
     if (s.barred.includes(t)) return `${t} is barred, so the lock can never show it.`;
     return null;
   }
-  if (!/^[a-z]+$/.test(t)) return 'Type a goal word from the list, such as ' + s.words[s.words.length - 1] + '.';
+  if (!/^[a-z]+$/.test(t))
+    return 'Type a goal word from the list, such as ' + s.words[s.words.length - 1] + '.';
   if (!s.words.includes(t)) return `${t} is not in the word list: ${s.words.join(', ')}.`;
   return null;
 }
@@ -210,11 +218,7 @@ export function targetProblem(t: string, s: SSState, puzzle: Puzzle): string | n
 const turn = (digit: string, by: number) => String((Number(digit) + by + 10) % 10);
 
 /** Every move from a state, in order: the state it makes, and whether that state is allowed. */
-export function movesFrom(
-  s: SSState,
-  puzzle: Puzzle,
-  from: string,
-): { to: string; ok: boolean }[] {
+export function movesFrom(s: SSState, puzzle: Puzzle, from: string): { to: string; ok: boolean }[] {
   const out: { to: string; ok: boolean }[] = [];
   if (puzzle === 'lock') {
     const barred = new Set(s.barred);
@@ -329,7 +333,10 @@ export function naiveCost(s: SSState, puzzle: Puzzle, target: string) {
   const start = startOf(s, puzzle);
   const { distance } = patternCost(s, puzzle, target);
   if (distance === 0) return { states: 0, moves: 0 };
-  const allowed = (st: string) => movesFrom(s, puzzle, st).filter((m) => m.ok).map((m) => m.to);
+  const allowed = (st: string) =>
+    movesFrom(s, puzzle, st)
+      .filter((m) => m.ok)
+      .map((m) => m.to);
   const b = branching(s, puzzle, start);
   if (distance < 0) {
     // No way to the goal: the queue empties only if no sequence can ever grow.
@@ -551,7 +558,10 @@ function* run(s: SSState, target: string, settings: SSSettings): Generator<SSSte
     const kept = x.moves.filter((m) => m.verdict === 'new' || m.verdict === 'again');
     const seq = naive ? ` (the sequence ${pathText(r.entries, x.uid)})` : '';
     const listed = x.moves.length ? `: ${movesText(x.moves)}` : '';
-    const skippedText = !lock && x.skipped ? ` ${plural(x.skipped, 'letter change')} ${x.skipped === 1 ? 'makes' : 'make'} no word in the list.` : '';
+    const skippedText =
+      !lock && x.skipped
+        ? ` ${plural(x.skipped, 'letter change')} ${x.skipped === 1 ? 'makes' : 'make'} no word in the list.`
+        : '';
     const goalText = found ? ` ${target} is the goal: stop.` : '';
     const waste =
       naive && x.moves.some((m) => m.verdict === 'again')
@@ -589,7 +599,10 @@ function* run(s: SSState, target: string, settings: SSSettings): Generator<SSSte
   let goalMarks: [string | null, MarkRole][] = [];
   if (r.outcome === 'found') {
     path = pathOf(r.entries, r.goal!);
-    goalMarks = [['path', 'found'], ...path.map((u): [string | null, MarkRole] => [chip(u), 'found'])];
+    goalMarks = [
+      ['path', 'found'],
+      ...path.map((u): [string | null, MarkRole] => [chip(u), 'found']),
+    ];
     const names = path.map((u) => r.entries[u]!.state);
     say = `${target} is ${plural(r.distance, 'move')} from ${start}: ${names.join(' → ')}. ${
       naive
@@ -598,7 +611,9 @@ function* run(s: SSState, target: string, settings: SSSettings): Generator<SSSte
     }`;
   } else if (r.outcome === 'none') {
     say = `The queue is empty: ${target} cannot be reached from ${start}. BFS visited every ${what} it could reach, ${made} of them, and made ${plural(work.get('moves'), 'move')}. ${
-      naive ? '' : 'With no visited set the search would never stop: sequences can go round and round for ever.'
+      naive
+        ? ''
+        : 'With no visited set the search would never stop: sequences can go round and round for ever.'
     }`;
   } else {
     const p = patternCost(s, puzzle, target);
@@ -616,7 +631,9 @@ function* run(s: SSState, target: string, settings: SSSettings): Generator<SSSte
     level: 1,
     vars: vars(r.outcome === 'found' ? r.distance : null, { distance: r.distance }),
     extra: extra({
-      ...(last ? { current: last.uid, moves: last.moves, ...(lock ? {} : { skipped: last.skipped }) } : {}),
+      ...(last
+        ? { current: last.uid, moves: last.moves, ...(lock ? {} : { skipped: last.skipped }) }
+        : {}),
       ...(r.goal !== undefined ? { goal: r.goal } : {}),
       ...(path ? { path } : {}),
       outcome: r.outcome,
@@ -644,7 +661,12 @@ const find: Op = {
     const puzzle = settings.puzzle;
     const target = readTarget(arg);
     if (!target) {
-      yield refuse(s, puzzle === 'lock' ? 'Type one goal combination, such as 22.' : 'Type one goal word, such as warm.');
+      yield refuse(
+        s,
+        puzzle === 'lock'
+          ? 'Type one goal combination, such as 22.'
+          : 'Type one goal word, such as warm.',
+      );
       return s;
     }
     const problem = targetProblem(target, s, puzzle);
@@ -671,40 +693,102 @@ export function pseudocode(settings: SSSettings): PseudoBlock[] {
   const lock = settings.puzzle !== 'words';
   const naive = approachOf(settings) === 'naive';
   const gen = lock
-    ? L('gen', 2, 'for each wheel i, up then down: t = turn(s, i)', 'turn each wheel up and down, one at a time;')
-    : L('gen', 2, 'for each position i, each letter c: t = s with c at i', 'change each letter to every other letter, one at a time;');
+    ? L(
+        'gen',
+        2,
+        'for each wheel i, up then down: t = turn(s, i)',
+        'turn each wheel up and down, one at a time;',
+      )
+    : L(
+        'gen',
+        2,
+        'for each position i, each letter c: t = s with c at i',
+        'change each letter to every other letter, one at a time;',
+      );
   const allowed = lock ? 't is barred' : 't is not in the list';
   const loadBlock: PseudoBlock = {
     op: 'load',
     lines: [
       lock
-        ? L('load', 0, 'barred = the combinations', 'Remember the combinations the lock must never show.')
-        : L('load', 0, 'words = the list; start = words[0]', 'Remember the word list; the first word is the start.'),
+        ? L(
+            'load',
+            0,
+            'barred = the combinations',
+            'Remember the combinations the lock must never show.',
+          )
+        : L(
+            'load',
+            0,
+            'words = the list; start = words[0]',
+            'Remember the word list; the first word is the start.',
+          ),
     ],
   };
   const main = naive
     ? [
-        L('sig', 0, 'fewestMoves(start, goal)   // no visited set', 'To find the fewest moves, trying every sequence:'),
+        L(
+          'sig',
+          0,
+          'fewestMoves(start, goal)   // no visited set',
+          'To find the fewest moves, trying every sequence:',
+        ),
         L('same', 1, 'if start == goal: return 0', 'The start may already be the goal.'),
         L('init', 1, 'queue = [(start, 0)]', 'Queue the empty sequence, at distance 0.'),
         L('loop', 1, 'while queue is not empty', 'While sequences are waiting,'),
         L('pop', 2, '(s, d) = queue.popFront()', 'take the shortest from the front;'),
         gen,
-        L('skip', 3, `if ${allowed}: continue`, lock ? 'skip a barred combination;' : 'skip a change that makes no word;'),
-        L('goal', 3, 'if t == goal: return d + 1', 'if t is the goal, that sequence is the answer;'),
-        L('push', 3, 'queue.pushBack((t, d + 1))', 'queue the longer sequence, even if t was queued before.'),
+        L(
+          'skip',
+          3,
+          `if ${allowed}: continue`,
+          lock ? 'skip a barred combination;' : 'skip a change that makes no word;',
+        ),
+        L(
+          'goal',
+          3,
+          'if t == goal: return d + 1',
+          'if t is the goal, that sequence is the answer;',
+        ),
+        L(
+          'push',
+          3,
+          'queue.pushBack((t, d + 1))',
+          'queue the longer sequence, even if t was queued before.',
+        ),
         L('none', 1, 'return −1', 'Nothing left: the goal cannot be reached.'),
       ]
     : [
         L('sig', 0, 'fewestMoves(start, goal)', 'To find the fewest moves from start to goal:'),
         L('same', 1, 'if start == goal: return 0', 'The start may already be the goal.'),
-        L('init', 1, 'queue = [start]; dist = {start: 0}', 'Queue the start at distance 0; it is visited.'),
+        L(
+          'init',
+          1,
+          'queue = [start]; dist = {start: 0}',
+          'Queue the start at distance 0; it is visited.',
+        ),
         L('loop', 1, 'while queue is not empty', 'While states are waiting,'),
         L('pop', 2, 's = queue.popFront()', 'take the one at the front;'),
         gen,
-        L('skip', 3, `if ${allowed} or t in dist: continue`, lock ? 'skip a barred combination or one already visited;' : 'skip a change that makes no word, or a word already visited;'),
-        L('goal', 3, 'if t == goal: return dist[s] + 1', 'if t is the goal, its distance is the answer;'),
-        L('push', 3, 'dist[t] = dist[s] + 1; queue.pushBack(t)', 'otherwise visit it, one move further, and queue it.'),
+        L(
+          'skip',
+          3,
+          `if ${allowed} or t in dist: continue`,
+          lock
+            ? 'skip a barred combination or one already visited;'
+            : 'skip a change that makes no word, or a word already visited;',
+        ),
+        L(
+          'goal',
+          3,
+          'if t == goal: return dist[s] + 1',
+          'if t is the goal, its distance is the answer;',
+        ),
+        L(
+          'push',
+          3,
+          'dist[t] = dist[s] + 1; queue.pushBack(t)',
+          'otherwise visit it, one move further, and queue it.',
+        ),
         L('none', 1, 'return −1', 'The queue ran out: the goal cannot be reached.'),
       ];
   return [{ op: 'search', lines: main }, loadBlock];

@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "product-quantization",
+  "id": "four-pieces",
+  "title": "Four pieces of one number",
+  "notes": "Four pieces of 1 number, 4 centres each: 8 bits a vector, and 256 vectors the codes can stand for. Every number here is 1, 2, 8 or 9, so each codebook holds exactly those values and the error is 0.",
+  "settings": {
+    "pieces": "4",
+    "size": "4"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "1,9,1,8 2,9,9,9 9,9,1,1 9,8,9,2 1,1,1,9 1,2,9,1 9,1,8,9 8,1,2,1"],
+    ["train"],
+    ["encode"],
+    ["search", "2,8,2,7"]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

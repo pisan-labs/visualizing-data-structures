@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "ivf-index",
+  "id": "every-list",
+  "title": "Probe every list",
+  "notes": "nprobe = 3 searches all three lists. Always exact, and always more work than brute force: 3 centres and all 12 points, 15 distance computations.",
+  "settings": {
+    "lists": 3,
+    "nprobe": 3
+  },
+  "seed": 3,
+  "ops": [
+    ["load", "2,1 2,3 3,2 1,4 8,4 8,3 7,2 8,1 4,8 3,9 5,9 6,7"],
+    ["train"],
+    ["search", "6,5"]
+  ],
+  "at": {
+    "op": 2,
+    "step": 0
+  }
+}

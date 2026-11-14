@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "ivf-index",
+  "id": "two-probes",
+  "title": "A second list finds it",
+  "notes": "The search for (6, 5) again, with nprobe = 2: lists c2 and c3. L turns up in c3 and the answer L, E, F is exact, after 11 distance computations instead of 7.",
+  "settings": {
+    "lists": 3,
+    "nprobe": 2
+  },
+  "seed": 3,
+  "ops": [
+    ["load", "2,1 2,3 3,2 1,4 8,4 8,3 7,2 8,1 4,8 3,9 5,9 6,7"],
+    ["train"],
+    ["search", "6,5"]
+  ],
+  "at": {
+    "op": 2,
+    "step": 0
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "viz": "product-quantization",
+  "id": "two-centres",
+  "title": "Two centres: one bit a piece",
+  "notes": "Codebooks of 2 centres: 1 bit a piece, 2 bits a vector. The squared errors add up to 230. A and C get the same code, 1 0, so the table gives both 16.75, though A is at 4 from the query and C at 87.",
+  "settings": {
+    "pieces": "2",
+    "size": "2"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "1,9,1,8 2,9,9,9 9,9,1,1 9,8,9,2 1,1,1,9 1,2,9,1 9,1,8,9 8,1,2,1"],
+    ["train"],
+    ["encode"],
+    ["search", "2,8,2,7"]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

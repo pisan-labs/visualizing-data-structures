@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "viz": "ivf-index",
+  "id": "crowded-list",
+  "title": "A crowded list saves nothing",
+  "notes": "Nine points packed into the bottom left corner and three far away. k-means spends one centre on the crowd and two on the stragglers: lists of 9, 2 and 1. The query (3, 4) searches the list of 9, so it costs 12 distance computations, no saving over brute force.",
+  "settings": {
+    "lists": 3,
+    "nprobe": 1
+  },
+  "seed": 3,
+  "ops": [
+    ["load", "1,1 2,1 1,2 2,2 3,1 1,3 3,3 2,3 3,2 8,9 9,8 9,2"],
+    ["train"],
+    ["search", "3,4"]
+  ],
+  "at": {
+    "op": 2,
+    "step": 0
+  }
+}

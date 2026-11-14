@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "combination-sum",
+  "id": "every-list",
+  "title": "Every list, then check",
+  "notes": "NOTE",
+  "settings": {
+    "approach": "naive",
+    "reuse": "again"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "7 3 5 4"
+    ],
+    [
+      "search",
+      10
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

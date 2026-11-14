@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "combination-sum",
+  "id": "each-once",
+  "title": "Each candidate once",
+  "notes": "NOTE",
+  "settings": {
+    "approach": "pattern",
+    "reuse": "once"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "4 2 6 3"
+    ],
+    [
+      "search",
+      9
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "cyclic-sort",
+  "id": "sort-first",
+  "title": "Selection sort first, then a scan",
+  "notes": "The same A, the naive way: selection sort makes 28 comparisons and 6 swaps, then a scan for the value expected next finds the repeated 4 and the missing 5 in 8 more comparisons. 42 in all, against 26 for cyclic sort.",
+  "settings": {
+    "approach": "naive",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "6 4 1 8 4 2 7 3"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

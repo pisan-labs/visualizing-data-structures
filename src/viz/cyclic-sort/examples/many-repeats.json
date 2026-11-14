@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "cyclic-sort",
+  "id": "many-repeats",
+  "title": "Many repeats, many missing",
+  "notes": "5 1 5 2 5 1: three 5s, two 1s and one 2. Only 1 and 2 need sending home, 2 swaps. The 5 in A[4] is home already, and the other 5s and the second 1 find their homes taken: repeats. The scan finds 3, 4 and 6 missing, with 5, 5 and 1 in their slots.",
+  "settings": {
+    "approach": "pattern",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "5 1 5 2 5 1"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

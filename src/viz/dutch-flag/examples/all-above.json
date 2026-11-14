@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "dutch-flag",
+  "id": "all-above",
+  "title": "Every value above the pivot",
+  "notes": "Every value is above p = 2. Each step swaps A[0] with A[high] and moves high back, so mid never leaves 0. 6 comparisons and 5 swaps; the last step trades A[0] with itself, and high ends at −1.",
+  "settings": {
+    "approach": "pattern",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "6 9 7 8 6 9"],
+    ["partition", 2]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

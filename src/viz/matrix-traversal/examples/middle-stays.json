@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "matrix-traversal",
+  "id": "middle-stays",
+  "title": "3 × 3: the middle stays put",
+  "notes": "A 3 × 3 has one ring and a middle cell. 2 four-way swaps turn the ring, 8 reads and 8 writes, and 5 never moves. It ends 7 4 1 / 8 5 2 / 9 6 3.",
+  "settings": {
+    "approach": "pattern",
+    "rotate": "layers"
+  },
+  "seed": 1,
+  "ops": [["load", "3x3"], ["rotate"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

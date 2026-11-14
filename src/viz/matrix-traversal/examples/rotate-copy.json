@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "matrix-traversal",
+  "id": "rotate-copy",
+  "title": "A quarter turn into a copy",
+  "notes": "The same quarter turn into a new matrix B: each value goes from row i, column j to row j, column 3 − i of B. 16 reads and 16 writes, the same as the rings, but 16 extra cells.",
+  "settings": {
+    "approach": "naive",
+    "rotate": "layers"
+  },
+  "seed": 1,
+  "ops": [["load", "4x4"], ["rotate"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

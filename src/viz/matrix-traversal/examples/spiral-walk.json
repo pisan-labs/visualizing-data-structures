@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "matrix-traversal",
+  "id": "spiral-walk",
+  "title": "Walking with seen marks",
+  "notes": "The same 4 × 4, walked with a direction and a second grid of seen marks. It turns right 6 times, when the next cell is off the matrix or seen. Same order, 16 reads, 16 writes (the marks) and 15 checks: 47, against 23 for four bounds.",
+  "settings": {
+    "approach": "naive",
+    "rotate": "layers"
+  },
+  "seed": 1,
+  "ops": [["load", "4x4"], ["spiral"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "cyclic-sort",
+  "id": "one-missing",
+  "title": "One repeated, one missing",
+  "notes": "A = 6 4 1 8 4 2 7 3: 1 to 8 with 4 twice and 5 missing. i stays at 0 for five swaps, and 6, 2, 4, 8 and 3 go home in turn; the 1 that arrives last is home too. Later the 4 in A[4] finds a 4 already home: a repeat. 13 comparisons and 5 swaps to place everything, then 8 for the scan, which stops on A[4] = 4, not 5. 26 in all, against 42 for selection sort and a scan.",
+  "settings": {
+    "approach": "pattern",
+    "draw": "bars"
+  },
+  "seed": 1,
+  "ops": [["load", "6 4 1 8 4 2 7 3"], ["sort"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

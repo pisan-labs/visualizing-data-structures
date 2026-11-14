@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "matrix-traversal",
+  "id": "rotate-rings",
+  "title": "A quarter turn, ring by ring",
+  "notes": "A quarter turn of 1 to 16 in place. The outer ring takes 3 four-way swaps and the inner ring 1: 16 reads and 16 writes, each value moved once. The first row ends 13 9 5 1, the old first column read upward.",
+  "settings": {
+    "approach": "pattern",
+    "rotate": "layers"
+  },
+  "seed": 1,
+  "ops": [["load", "4x4"], ["rotate"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

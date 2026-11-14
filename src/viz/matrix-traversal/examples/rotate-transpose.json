@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "matrix-traversal",
+  "id": "rotate-transpose",
+  "title": "Transpose, then reverse each row",
+  "notes": "The same quarter turn in two passes: 6 swaps across the diagonal, then 8 to reverse the rows. 28 reads and 28 writes, against 16 and 16 for the rings, since most values move twice. The loops are simpler.",
+  "settings": {
+    "approach": "pattern",
+    "rotate": "transpose"
+  },
+  "seed": 1,
+  "ops": [["load", "4x4"], ["rotate"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

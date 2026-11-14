@@ -7,15 +7,19 @@
  *   threadBlock(p, t, op, head?) a pseudocode block for thread t under operation `op`: one line
  *                                per step, with the step's text and a plain-English line
  *   plainStep(instr)             the plain-English line of a step: "Copy count into r."
- *   lanesInput(p, s, extra?)     the input drawLanes takes; extra adds panels and output room
+ *   lanesInput(p, s, extra?)     the input drawLanes takes; extra adds panels (and can hide the
+ *                                printed words); it reserves room from the program (reserveFor)
  *   stepMarks(event)             marks for a step that ran: the step, what it read and wrote,
  *                                a lock or semaphore it used, threads it woke
+ *   pageStep(p, s, t)            step(), with the sentence, marks and pseudocode line a page
+ *                                shows, or why the thread cannot run
  *   noteFor(s, t)                a lane's note: ready, done, "waits for m", "sleeps on c"
  *   describeMachine(p, s)        one paragraph for screen readers
  */
 import type { Mark, PseudoBlock, PseudoLine } from '../../engine/types';
 import {
   condId,
+  endId,
   laneId,
   lockId,
   pcId,
@@ -27,6 +31,7 @@ import {
 } from '../../layouts/lanes';
 import {
   REL_WORDS,
+  step,
   type Instr,
   type MachineState,
   type Operand,
@@ -133,6 +138,39 @@ export interface LanesExtra {
 
 const prints = (p: Program) => p.threads.some((t) => t.code.some((i) => i.kind === 'print'));
 
+/**
+ * Room the lanes keep from the program: a schedule cell for every step, plus one for each step
+ * that can block (a blocked attempt is a step too); a word for every print step, as long as the
+ * longest word printed (3 characters for a value); a lane note as long as the longest it can
+ * show ("waits for m"). Loops can run past this: a page with loops
+ * passes its own `room` to drawLanes.
+ */
+export function reserveFor(p: Program): NonNullable<LanesInput['reserve']> {
+  const all = p.threads.flatMap((t) => t.code);
+  const blocking = all.filter((i) => i.kind === 'lock' || i.kind === 'P' || i.kind === 'wait');
+  const printsOf = all.flatMap((i) => (i.kind === 'print' ? [i] : []));
+  const notes = [
+    'ready',
+    'done',
+    'fault',
+    ...p.locks.map((l) => `waits for ${l}`),
+    ...p.sems.map((x) => `waits on ${x.name}`),
+    ...p.conds.map((c) => `sleeps on ${c}`),
+  ];
+  return {
+    schedule: all.length + blocking.length,
+    noteChars: Math.max(...notes.map((n) => n.length)),
+    output: printsOf.length,
+    outputChars: Math.max(1, ...printsOf.map((i) => ('text' in i.what ? i.what.text.length : 3))),
+  };
+}
+
+/** The names of the threads with a step that passes `uses`: who could ever wait there. */
+const users = (p: Program, uses: (i: Instr) => boolean) =>
+  p.threads.filter((t) => t.code.some(uses)).map((t) => t.name);
+
+const lockOf = (i: Instr) => (i.kind === 'lock' ? i.name : i.kind === 'wait' ? i.lock : '');
+
 /** The lanes drawing's input for a state. */
 export function lanesInput(p: Program, s: MachineState, extra: LanesExtra = {}): LanesInput {
   const n = (t: number) => p.threads[t]!.name;
@@ -161,16 +199,27 @@ export function lanesInput(p: Program, s: MachineState, extra: LanesExtra = {}):
         name: l,
         holder: st.holder === null ? null : n(st.holder),
         waiters: st.waiters.map(n),
+        room: users(p, (i) => (i.kind === 'lock' || i.kind === 'wait') && lockOf(i) === l),
       };
     }),
     sems: p.sems.map((x) => {
       const st = s.sems[x.name]!;
-      return { name: x.name, value: String(st.value), waiters: st.waiters.map(n) };
+      return {
+        name: x.name,
+        value: String(st.value),
+        waiters: st.waiters.map(n),
+        room: users(p, (i) => i.kind === 'P' && i.name === x.name),
+      };
     }),
-    conds: p.conds.map((c) => ({ name: c, waiters: s.conds[c]!.waiters.map(n) })),
+    conds: p.conds.map((c) => ({
+      name: c,
+      waiters: s.conds[c]!.waiters.map(n),
+      room: users(p, (i) => i.kind === 'wait' && i.cond === c),
+    })),
     output: (extra.output ?? prints(p)) ? s.out.map((o) => o.text) : undefined,
     panels: extra.panels,
     schedule: s.schedule.map(n),
+    reserve: reserveFor(p),
   };
 }
 
@@ -195,8 +244,36 @@ export function stepMarks(event: StepEvent): Mark[] {
     marks.push({ id: condId(i.cond), role: 'active' });
   if (i.kind === 'P' || i.kind === 'V') marks.push({ id: semId(i.name), role: 'active' });
   if (event.blocked) marks.push({ id: pcId(t), role: 'compare' });
+  if (event.done) marks.push({ id: endId(t), role: 'done' });
   for (const w of event.woke ?? []) marks.push({ id: laneId(w), role: 'found' });
   return marks;
+}
+
+export type PageStep =
+  | { ok: true; state: MachineState; event: StepEvent; say: string; marks: Mark[]; lines: string[] }
+  | { ok: false; reason: string; say: string; marks: Mark[] };
+
+/**
+ * One step of thread t the way a page shows it: the new state, the machine's sentence, the marks
+ * (stepMarks) and the pseudocode line (lineId). When t cannot run, the reason, with its arrow
+ * marked (compare when blocked, error when done or faulted). Pages add their own sentences.
+ */
+export function pageStep(p: Program, s: MachineState, t: number): PageStep {
+  const r = step(p, s, t);
+  if (r.ok)
+    return {
+      ok: true,
+      state: r.state,
+      event: r.event,
+      say: r.event.say,
+      marks: stepMarks(r.event),
+      lines: [lineId(t, r.event.pc)],
+    };
+  const marks: Mark[] =
+    r.reason === 'no-thread'
+      ? []
+      : [{ id: pcId(t), role: r.reason === 'blocked' ? 'compare' : 'error' }];
+  return { ok: false, reason: r.reason, say: r.message, marks };
 }
 
 /** One paragraph for screen readers. */

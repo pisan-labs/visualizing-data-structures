@@ -1,5 +1,5 @@
 import type { MarkRole, StageSize, Step } from '../../engine/types';
-import { drawLanes } from '../../layouts/lanes';
+import { drawLanes, type PanelRow } from '../../layouts/lanes';
 import type { Scene } from '../../render/scene';
 import { describeMachine, lanesInput } from '../_threads/page';
 import {
@@ -11,14 +11,16 @@ import {
   type Tally,
 } from './model';
 
-/** The tally panel's lines: one per final count, then the total. */
-export function tallyRows(t: Tally, expect: number): string[] {
-  const digits = String(t.total).length;
-  const rows = t.rows.map(
-    (r) =>
-      `count = ${r.count}: ${String(r.schedules).padStart(digits)}${r.count === expect ? '  ok' : '  lost'}`,
-  );
-  return [...rows, `of ${t.total.toLocaleString('en-US')} schedules`];
+/** The tally panel's lines: one per final count (keyed by it), then the total. */
+export function tallyRows(t: Tally, expect: number): PanelRow[] {
+  const n = (x: number) => x.toLocaleString('en-US');
+  const width = n(t.total).length;
+  const rows = t.rows.map((r) => ({
+    key: `c${r.count}`,
+    text: `count = ${r.count}: ${n(r.schedules).padStart(width)}${r.count === expect ? '  ok' : '  lost'}`,
+  }));
+  const of = `of ${n(t.total)} ${t.total === 1 ? 'schedule' : 'schedules'}`;
+  return [...rows, { key: 'total', text: of }];
 }
 
 export function describe(s: RaceState, settings: RaceSettings): string {
@@ -34,15 +36,15 @@ export function view(step: Step<RaceState>, settings: RaceSettings, stage?: Stag
   const s = step.state;
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const e = expected(p);
-  // Room for every count the threads can end with (1 up to the expected count) and the total.
+  // Room for every count the finished tally shows, and the total.
   const panels = s.tally
     ? [
         {
           id: 'every',
           title: s.tally.from ? 'every interleaving from here' : 'every interleaving',
           rows: tallyRows(s.tally, e),
-          room: e + 1,
-          chars: `count = ${e}: ${s.tally.total}  lost`.length,
+          room: s.tally.size + 1,
+          chars: `count = ${e}: ${s.tally.total.toLocaleString('en-US')}  lost`.length,
         },
       ]
     : undefined;

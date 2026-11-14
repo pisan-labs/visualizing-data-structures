@@ -17,21 +17,29 @@
  *                     note    a few words under the name, e.g. "waits for m"; default: the status
  *                     regs    { name, value }[], already formatted
  *     input.shared    { name, value }[]
- *     input.locks     { name, holder, waiters }[]   holder: a thread name or null (free)
- *     input.sems      { name, value, waiters }[]
- *     input.conds     { name, waiters }[]
+ *     input.locks     { name, holder, waiters, room? }[]   holder: a thread name or null (free);
+ *                     room: the threads that could ever wait (default every thread), whose names
+ *                     the waiting list keeps room for
+ *     input.sems      { name, value, waiters, room? }[]
+ *     input.conds     { name, waiters, room? }[]
  *     input.output    the printed words so far, oldest first
  *     input.panels    { id, title, rows, room?, chars? }[]: extra boxes of text lines (a tally of
  *                     outcomes, a wait-for cycle); room is how many lines to reserve (default
  *                     rows.length) and chars how many characters a line may take (default the
- *                     longest line): reserve both so the panel keeps its size while lines change
+ *                     longest line): reserve both so the panel keeps its size while lines change.
+ *                     A row is a string (its shape id ends in its index) or { key, text } (its
+ *                     id ends in the key, so a line keeps its identity when lines are added)
  *     input.schedule  the thread name of every step taken so far
+ *     input.reserve   { schedule?, output?, outputChars?, noteChars? }: schedule cells, printed
+ *                     words, characters per word, and characters of a lane's note to make room
+ *                     for (lanesInput in _threads/page.ts works them out from the program)
  *     options.roles   the step's marks by shape id (a mark overrides the default look)
  *     options.stage   the stage (src/render/stage.ts): beside on a wide stage, under on a tall one
- *     options.room    schedule cells to reserve (default: every step of every lane once); keep it
- *                     fixed for an operation so the camera stays still
- *     options.outputRoom   printed words to reserve (default output.length)
- *     options.noteChars    characters reserved for a lane's note (default 16)
+ *     options.room    schedule cells to reserve (default reserve.schedule, else every step of every
+ *                     lane once); keep it fixed for an operation so the camera stays still
+ *     options.outputRoom   printed words to reserve (default reserve.output); no output section
+ *                     at all when input.output is left out
+ *     options.noteChars    characters reserved for a lane's note (default reserve.noteChars, 16)
  *   The geometry depends only on the names, step texts, and rooms, never on values, so the
  *   picture holds still while a run plays; values are reserved a few characters.
  *
@@ -45,7 +53,7 @@
  *   sem-<name>           a semaphore's box; sem-<name>-text, sem-<name>-queue
  *   cond-<name>          a condition variable's box; cond-<name>-queue
  *   out-<k>              the k-th printed word (a box; out-<k>-text)
- *   panel-<id>           an extra panel's frame; panel-<id>-title, panel-<id>-<k> its lines
+ *   panel-<id>           an extra panel's frame; panel-<id>-title, panel-<id>-<k or key> its lines
  *   sched-<k>            the k-th step of the schedule (a box; sched-<k>-text); sched-title
  * Use laneShapeIds(t) and friends below rather than building ids by hand.
  */
@@ -67,13 +75,21 @@ export interface LaneThread {
 export interface LanesInput {
   threads: LaneThread[];
   shared: { name: string; value: string }[];
-  locks?: { name: string; holder: string | null; waiters: string[] }[];
-  sems?: { name: string; value: string; waiters: string[] }[];
-  conds?: { name: string; waiters: string[] }[];
+  locks?: { name: string; holder: string | null; waiters: string[]; room?: string[] }[];
+  sems?: { name: string; value: string; waiters: string[]; room?: string[] }[];
+  conds?: { name: string; waiters: string[]; room?: string[] }[];
   output?: string[];
-  panels?: { id: string; title: string; rows: string[]; room?: number; chars?: number }[];
+  panels?: { id: string; title: string; rows: PanelRow[]; room?: number; chars?: number }[];
   schedule: string[];
+  /** Room to keep, so the picture holds still as a run fills it (options override these). */
+  reserve?: { schedule?: number; output?: number; outputChars?: number; noteChars?: number };
 }
+
+/** A panel line: plain text (its id is its index), or text with a key that names its shape. */
+export type PanelRow = string | { key: string; text: string };
+
+const rowText = (r: PanelRow) => (typeof r === 'string' ? r : r.text);
+const rowKey = (r: PanelRow, k: number) => (typeof r === 'string' ? String(k) : r.key);
 
 export interface LanesOptions {
   roles?: ReadonlyMap<string, MarkRole>;
@@ -100,7 +116,7 @@ export const schedId = (k: number) => `sched-${k}`;
 /** Font sizes, in scene units. The smallest (SMALL) must stay >= 11 px on a laptop. */
 const STEP = 13;
 const NAME = 14;
-const SMALL = 12;
+const SMALL = 13;
 const VALUE = 14;
 const CH = 0.6;
 const w = (text: string, size: number) => text.length * size * CH;
@@ -120,6 +136,8 @@ interface Part {
   shapes: Shape[];
   w: number;
   h: number;
+  /** Space under this part before the next one in a column (default SECTION_GAP). */
+  after?: number;
 }
 
 /** One lane at (0, 0), `width` wide and `rows` step rows tall (its own steps, then the end). */
@@ -252,105 +270,115 @@ function lane(
 
 const queueText = (ws: string[]) => (ws.length ? `waiting: ${ws.join(', ')}` : 'waiting: none');
 
-/** The panel of shared things, one block under another, `width` wide. */
-function sidePanel(
+/** One block of the panel, drawn from (0, 0) down: a title, then its rows. */
+class Section {
+  shapes: Shape[] = [];
+  y = 0;
+  w = 0;
+  title(id: string, text: string) {
+    this.shapes.push({ kind: 'text', id, x: 0, y: this.y + 12, text, size: SMALL, cls: 'label' });
+    this.w = Math.max(this.w, w(text, SMALL));
+    this.y += 20;
+  }
+  part(): Part {
+    return { shapes: this.shapes, w: this.w, h: Math.max(0, this.y - 4) };
+  }
+}
+
+/**
+ * The blocks of shared things: shared memory, locks, semaphores, condition variables, the output
+ * and the extra panels, in that order, each drawn at (0, 0). `stack` arranges them.
+ */
+function sections(
   input: LanesInput,
   names: string[],
   roles: ReadonlyMap<string, MarkRole>,
   outputRoom: number,
-): Part {
-  const shapes: Shape[] = [];
-  let y = 0;
-  let width = 0;
-  const title = (id: string, text: string) => {
-    shapes.push({ kind: 'text', id, x: 0, y: y + 12, text, size: SMALL, cls: 'label' });
-    width = Math.max(width, w(text, SMALL));
-    y += 20;
-  };
-  // Longest waiting list: every thread's name.
-  const queueW = w(queueText(names), SMALL);
+): Part[] {
+  const parts: Part[] = [];
+  // The longest waiting list each can have: the threads that use it, or every thread.
+  const queueW = (room?: string[]) => w(queueText(room ?? names), SMALL);
 
   if (input.shared.length) {
-    title('shared-title', 'shared memory');
+    const sec = new Section();
+    sec.title('shared-title', 'shared memory');
     const nameW = Math.max(...input.shared.map((v) => w(v.name, STEP)));
     const boxW = Math.max(44, ...input.shared.map((v) => w(v.value, VALUE) + 16));
     for (const v of input.shared) {
       const id = varId(v.name);
-      shapes.push({
-        kind: 'text',
-        id: `${id}-name`,
-        x: nameW,
-        y: y + 16,
-        text: v.name,
-        size: STEP,
-        anchor: 'end',
-        mono: true,
-      });
-      shapes.push({
-        kind: 'rect',
-        id,
-        x: nameW + 8,
-        y,
-        w: boxW,
-        h: 24,
-        r: 4,
-        cls: 'live',
-        role: roles.get(id),
-      });
-      shapes.push({
-        kind: 'text',
-        id: `${id}-value`,
-        x: nameW + 8 + boxW / 2,
-        y: y + 17,
-        text: v.value,
-        size: VALUE,
-        anchor: 'middle',
-        weight: 'bold',
-        mono: true,
-        role: roles.get(`${id}-value`),
-      });
-      width = Math.max(width, nameW + 8 + boxW);
-      y += 30;
+      const y = sec.y;
+      sec.shapes.push(
+        {
+          kind: 'text',
+          id: `${id}-name`,
+          x: nameW,
+          y: y + 16,
+          text: v.name,
+          size: STEP,
+          anchor: 'end',
+          mono: true,
+        },
+        {
+          kind: 'rect',
+          id,
+          x: nameW + 8,
+          y,
+          w: boxW,
+          h: 24,
+          r: 4,
+          cls: 'live',
+          role: roles.get(id),
+        },
+        {
+          kind: 'text',
+          id: `${id}-value`,
+          x: nameW + 8 + boxW / 2,
+          y: y + 17,
+          text: v.value,
+          size: VALUE,
+          anchor: 'middle',
+          weight: 'bold',
+          mono: true,
+          role: roles.get(`${id}-value`),
+        },
+      );
+      sec.w = Math.max(sec.w, nameW + 8 + boxW);
+      sec.y += 30;
     }
-    y += 4;
+    parts.push(sec.part());
   }
 
   const holderW =
     w('held by ', SMALL) + Math.max(...names.map((n) => w(n, SMALL)), w('free', SMALL));
   /** A box with a label (reserved `labelW` wide), a text beside it, and a waiting list under. */
   const block = (
+    sec: Section,
     id: string,
     label: string,
     labelW: number,
     text: string | null,
     textW: number,
     waiters: string[],
+    room?: string[],
   ) => {
     const boxW = labelW + 16;
-    shapes.push({
-      kind: 'rect',
-      id,
-      x: 0,
-      y,
-      w: boxW,
-      h: 24,
-      r: 4,
-      cls: 'live',
-      role: roles.get(id),
-    });
-    shapes.push({
-      kind: 'text',
-      id: `${id}-label`,
-      x: boxW / 2,
-      y: y + 16.5,
-      text: label,
-      size: STEP,
-      anchor: 'middle',
-      mono: true,
-      weight: 'bold',
-    });
-    if (text !== null) {
-      shapes.push({
+    const y = sec.y;
+    sec.shapes.push(
+      { kind: 'rect', id, x: 0, y, w: boxW, h: 24, r: 4, cls: 'live', role: roles.get(id) },
+      {
+        kind: 'text',
+        id: `${id}-label`,
+        x: boxW / 2,
+        y: y + 16.5,
+        text: label,
+        size: STEP,
+        anchor: 'middle',
+        mono: true,
+        weight: 'bold',
+      },
+    );
+    if (text !== null)
+      sec.shapes.push({
         kind: 'text',
         id: `${id}-text`,
         x: boxW + 8,
@@ -359,8 +387,7 @@ function sidePanel(
         size: SMALL,
         role: roles.get(`${id}-text`),
       });
-    }
-    shapes.push({
+    sec.shapes.push({
       kind: 'text',
       id: `${id}-queue`,
       x: 4,
@@ -370,120 +397,152 @@ function sidePanel(
       cls: waiters.length || roles.has(`${id}-queue`) ? undefined : 'label',
       role: roles.get(`${id}-queue`),
     });
-    width = Math.max(width, boxW + (text === null ? 0 : 8 + textW), 4 + queueW);
-    y += 50;
+    sec.w = Math.max(sec.w, boxW + (text === null ? 0 : 8 + textW), 4 + queueW(room));
+    sec.y += 48;
   };
 
-  if (input.locks?.length) {
-    title('locks-title', 'locks');
-    const labelW = Math.max(...input.locks.map((l) => w(l.name, STEP)));
-    for (const l of input.locks)
-      block(
-        lockId(l.name),
-        l.name,
-        labelW,
-        l.holder ? `held by ${l.holder}` : 'free',
-        holderW,
-        l.waiters,
-      );
-  }
-  if (input.sems?.length) {
-    title('sems-title', 'semaphores');
-    // Values are reserved three characters (-10 to 999), so the box keeps its size.
-    const labelW = Math.max(...input.sems.map((x) => w(`${x.name} = -10`, STEP)));
-    for (const x of input.sems)
-      block(semId(x.name), `${x.name} = ${x.value}`, labelW, null, 0, x.waiters);
-  }
-  if (input.conds?.length) {
-    title('conds-title', 'condition variables');
-    const labelW = Math.max(...input.conds.map((c) => w(c.name, STEP)));
-    for (const c of input.conds) block(condId(c.name), c.name, labelW, null, 0, c.waiters);
-  }
+  // Each lock, semaphore or condition variable is a part of its own (the first with the title),
+  // so a long list can run on into a second column.
+  const blocks = <T>(
+    items: T[] | undefined,
+    titleId: string,
+    title: string,
+    draw: (sec: Section, x: T) => void,
+  ) =>
+    (items ?? []).forEach((x, i) => {
+      const sec = new Section();
+      if (i === 0) sec.title(titleId, title);
+      draw(sec, x);
+      parts.push({ ...sec.part(), after: i < items!.length - 1 ? BLOCK_GAP : undefined });
+    });
+  const lockW = Math.max(0, ...(input.locks ?? []).map((l) => w(l.name, STEP)));
+  blocks(input.locks, 'locks-title', 'locks', (sec, l) =>
+    block(
+      sec,
+      lockId(l.name),
+      l.name,
+      lockW,
+      l.holder ? `held by ${l.holder}` : 'free',
+      holderW,
+      l.waiters,
+      l.room,
+    ),
+  );
+  // Values are reserved three characters (-10 to 999), so the box keeps its size.
+  const semW = Math.max(0, ...(input.sems ?? []).map((x) => w(`${x.name} = -10`, STEP)));
+  blocks(input.sems, 'sems-title', 'semaphores', (sec, x) =>
+    block(sec, semId(x.name), `${x.name} = ${x.value}`, semW, null, 0, x.waiters, x.room),
+  );
+  const condW = Math.max(0, ...(input.conds ?? []).map((c) => w(c.name, STEP)));
+  blocks(input.conds, 'conds-title', 'condition variables', (sec, c) =>
+    block(sec, condId(c.name), c.name, condW, null, 0, c.waiters, c.room),
+  );
   if (outputRoom > 0) {
-    title('out-title', 'printed');
+    const sec = new Section();
+    sec.title('out-title', 'printed');
     const out = input.output ?? [];
-    const cellW = Math.max(28, ...out.map((o) => w(o, STEP) + 12));
-    const perRow = Math.max(1, Math.floor((Math.max(width, 160) + 4) / (cellW + 4)));
+    const chars = Math.max(input.reserve?.outputChars ?? 0, ...out.map((o) => o.length));
+    const cellW = Math.max(28, chars * STEP * CH + 12);
+    const perRow = Math.max(1, Math.floor(164 / (cellW + 4)));
     for (let k = 0; k < out.length; k++) {
       const x = (k % perRow) * (cellW + 4);
-      const yy = y + Math.floor(k / perRow) * 26;
+      const y = sec.y + Math.floor(k / perRow) * 26;
       const id = outId(k);
-      shapes.push({
-        kind: 'rect',
-        id,
-        x,
-        y: yy,
-        w: cellW,
-        h: 22,
-        r: 4,
-        cls: 'live',
-        role: roles.get(id),
-      });
-      shapes.push({
-        kind: 'text',
-        id: `${id}-text`,
-        x: x + cellW / 2,
-        y: yy + 15.5,
-        text: out[k]!,
-        size: STEP,
-        anchor: 'middle',
-        mono: true,
-      });
+      sec.shapes.push(
+        { kind: 'rect', id, x, y, w: cellW, h: 22, r: 4, cls: 'live', role: roles.get(id) },
+        {
+          kind: 'text',
+          id: `${id}-text`,
+          x: x + cellW / 2,
+          y: y + 15.5,
+          text: out[k]!,
+          size: STEP,
+          anchor: 'middle',
+          mono: true,
+        },
+      );
     }
-    width = Math.max(width, Math.min(outputRoom, perRow) * (cellW + 4));
-    y += Math.ceil(outputRoom / perRow) * 26 + 4;
+    sec.w = Math.max(sec.w, Math.min(outputRoom, perRow) * (cellW + 4));
+    sec.y += Math.ceil(outputRoom / perRow) * 26 + 4;
+    parts.push(sec.part());
   }
   for (const p of input.panels ?? []) {
     const room = Math.max(p.room ?? p.rows.length, p.rows.length);
     const id = panelId(p.id);
-    const textW = Math.max(
-      w(p.title, SMALL),
-      (p.chars ?? 0) * STEP * CH,
-      ...p.rows.map((r) => w(r, STEP)),
-    );
-    const top = y;
-    shapes.push({
-      kind: 'text',
-      id: `${id}-title`,
-      x: 8,
-      y: top + 16,
-      text: p.title,
-      size: SMALL,
-      cls: 'label',
-    });
+    const width =
+      16 +
+      Math.max(
+        w(p.title, SMALL),
+        (p.chars ?? 0) * STEP * CH,
+        ...p.rows.map((r) => w(rowText(r), STEP)),
+      );
+    const h = 26 + room * 20;
+    const shapes: Shape[] = [
+      { kind: 'rect', id, x: 0, y: 0, w: width, h, r: 8, z: 0, cls: 'ghost', role: roles.get(id) },
+      { kind: 'text', id: `${id}-title`, x: 8, y: 16, text: p.title, size: SMALL, cls: 'label' },
+    ];
     p.rows.forEach((r, k) => {
+      const rid = `${id}-${rowKey(r, k)}`;
       shapes.push({
         kind: 'text',
-        id: `${id}-${k}`,
+        id: rid,
         x: 8,
-        y: top + 36 + k * 20,
-        text: r,
+        y: 36 + k * 20,
+        text: rowText(r),
         size: STEP,
         mono: true,
-        role: roles.get(`${id}-${k}`),
+        role: roles.get(rid),
       });
     });
-    const h = 26 + room * 20;
-    width = Math.max(width, textW + 16);
-    shapes.unshift({
-      kind: 'rect',
-      id,
-      x: 0,
-      y: top,
-      w: 0, // set below, once the panel's width is known
-      h,
-      r: 8,
-      z: 0,
-      cls: 'ghost',
-      role: roles.get(id),
-    });
-    y += h + 8;
+    parts.push({ shapes, w: width, h });
   }
-  // Panels' frames span the panel's width.
-  const framed = shapes.map((s) =>
-    s.kind === 'rect' && s.id.startsWith('panel-') ? { ...s, w: width } : s,
-  );
-  return { shapes: framed, w: width, h: Math.max(0, y - 4) };
+  return parts;
+}
+
+const SECTION_GAP = 12;
+const BLOCK_GAP = 6;
+const COLUMN_GAP = 24;
+
+/**
+ * The sections in `cols` columns, in order, top to bottom and then left to right, split where
+ * the tallest column is shortest.
+ */
+function stack(parts: Part[], cols: number): Part {
+  const height = (ps: Part[]) =>
+    ps.reduce((a, q, i) => a + q.h + (i < ps.length - 1 ? (q.after ?? SECTION_GAP) : 0), 0);
+  // The split into at most `cols` runs whose tallest is shortest (a small DP: parts are few).
+  const n = parts.length;
+  const best: { h: number; cuts: number[] }[][] = [];
+  for (let k = 1; k <= Math.max(1, cols); k++) {
+    best[k] = [];
+    for (let end = 0; end <= n; end++) {
+      if (k === 1) {
+        best[k]![end] = { h: height(parts.slice(0, end)), cuts: [] };
+        continue;
+      }
+      let pick = best[k - 1]![end]!;
+      for (let cut = 1; cut < end; cut++) {
+        const h = Math.max(best[k - 1]![cut]!.h, height(parts.slice(cut, end)));
+        if (h < pick.h) pick = { h, cuts: [...best[k - 1]![cut]!.cuts, cut] };
+      }
+      best[k]![end] = pick;
+    }
+  }
+  const cuts = [0, ...best[Math.max(1, cols)]![n]!.cuts, n];
+  const groups = cuts.slice(1).map((c, i) => parts.slice(cuts[i], c));
+  const shapes: Shape[] = [];
+  let x = 0;
+  let h = 0;
+  for (const g of groups) {
+    let y = 0;
+    for (const q of g) {
+      shapes.push(...move(q.shapes, x, y));
+      y += q.h + (q.after ?? SECTION_GAP);
+    }
+    h = Math.max(h, height(g));
+    x += Math.max(0, ...g.map((q) => q.w)) + COLUMN_GAP;
+  }
+  return { shapes, w: Math.max(0, x - COLUMN_GAP), h };
 }
 
 /** The schedule strip: `room` cells in rows that fit `width`. */
@@ -556,15 +615,19 @@ export function drawLanes(input: LanesInput, opts: LanesOptions = {}): Arrangeme
       Math.max(
         PC_ROOM + 8 + 2 * CELL_PAD + Math.max(0, ...t.steps.map((s) => w(s, STEP))),
         w(t.name, NAME) + 16,
-        (opts.noteChars ?? 16) * SMALL * CH + 16,
+        (opts.noteChars ?? input.reserve?.noteChars ?? 16) * SMALL * CH + 16,
         PC_ROOM + Math.max(0, ...t.regs.map((r) => w(`${r.name} = -00`, STEP))) + 8,
       ),
     ),
   );
   const lanes = input.threads.map((t, i) => lane(i, t, laneW, rows, regRows, roles));
   const laneH = Math.max(...lanes.map((l) => l.h));
-  const room = opts.room ?? input.threads.reduce((a, t) => a + t.steps.length, 0);
-  const panel = sidePanel(input, names, roles, opts.outputRoom ?? input.output?.length ?? 0);
+  const room =
+    opts.room ?? input.reserve?.schedule ?? input.threads.reduce((a, t) => a + t.steps.length, 0);
+  const outputRoom = input.output
+    ? Math.max(opts.outputRoom ?? input.reserve?.output ?? 0, input.output.length)
+    : 0;
+  const parts = sections(input, names, roles, outputRoom);
 
   const lanesRow = (perRow: number) => {
     const shapes: Shape[] = [];
@@ -578,13 +641,36 @@ export function drawLanes(input: LanesInput, opts: LanesOptions = {}): Arrangeme
     return { shapes, w: n * laneW + (n - 1) * GAP, h: lr * laneH + (lr - 1) * GAP };
   };
 
-  const build = (perRow: number, beside: boolean): Arrangement => {
+  /**
+   * Lanes in rows of `perRow`; the panel in `cols` columns beside them (`beside`) or under them;
+   * the strip under everything, or (`stripBeside`, with the panel beside) under the panel.
+   */
+  const build = (
+    perRow: number,
+    beside: boolean,
+    cols: number,
+    stripBeside = false,
+  ): Arrangement => {
     const L = lanesRow(perRow);
+    const panel = stack(parts, cols);
     const shapes: Shape[] = [...move(L.shapes, PAD, PAD)];
     let bottom: number;
     let right: number;
-    if (beside && panel.h > 0) {
-      shapes.push(...move(panel.shapes, PAD + L.w + 2 * GAP, PAD + DROP));
+    if (beside) {
+      const px = PAD + L.w + 2 * GAP;
+      shapes.push(...move(panel.shapes, px, PAD + DROP));
+      if (stripBeside) {
+        const S = strip(input.schedule, names, room, Math.max(panel.w, 220), roles);
+        const sy = PAD + DROP + panel.h + (panel.h > 0 ? GAP + 2 : 0);
+        shapes.push(...move(S.shapes, px, sy));
+        bottom = Math.max(PAD + L.h, sy + S.h);
+        right = px + Math.max(panel.w, S.w);
+        return {
+          shapes,
+          bounds: { x: 0, y: 0, w: right + PAD, h: bottom + PAD },
+          wide: true,
+        };
+      }
       bottom = PAD + Math.max(L.h, DROP + panel.h);
       right = PAD + L.w + 2 * GAP + panel.w;
     } else {
@@ -604,7 +690,40 @@ export function drawLanes(input: LanesInput, opts: LanesOptions = {}): Arrangeme
   };
 
   const n = input.threads.length;
-  const options = [build(n, true), build(n, false)];
-  if (n > 2) options.push(build(Math.ceil(n / 2), false));
+  const half = Math.ceil(n / 2);
+  const options = [
+    build(n, true, 1),
+    build(n, true, 2),
+    build(n, true, 1, true),
+    build(n, false, 1),
+    build(n, false, 2),
+    build(n, false, 3),
+  ];
+  if (n > 2)
+    options.push(
+      build(half, true, 1),
+      build(half, true, 1, true),
+      build(half, false, 1),
+      build(half, false, 2),
+    );
+  // An odd number of lanes in two rows leaves a gap after the last lane: the panel can sit there.
+  if (n > 2 && n % half !== 0) {
+    const L = lanesRow(half);
+    const panel = stack(parts, 1);
+    const px = PAD + (n % half) * (laneW + GAP) + GAP;
+    const py = PAD + (laneH + GAP) * (Math.ceil(n / half) - 1);
+    const right = Math.max(PAD + L.w, px + panel.w);
+    const bottom = Math.max(PAD + L.h, py + panel.h);
+    const S = strip(input.schedule, names, room, right - PAD, roles);
+    options.push({
+      shapes: [
+        ...move(L.shapes, PAD, PAD),
+        ...move(panel.shapes, px, py),
+        ...move(S.shapes, PAD, bottom + GAP + 2),
+      ],
+      bounds: { x: 0, y: 0, w: Math.max(right, PAD + S.w) + PAD, h: bottom + GAP + 2 + S.h + PAD },
+      wide: false,
+    });
+  }
   return pickLayout(opts.stage, options);
 }

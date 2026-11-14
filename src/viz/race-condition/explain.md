@@ -56,11 +56,13 @@ Q: Two threads each run 3 steps, with nothing else in the way. How many interlea
 = Choose which 3 of the 6 positions belong to T1: C(6, 3) = 6! / (3! × 3!) = 20.
 ```
 
-Three threads of two increments have 18! / (6! × 6! × 6!) = 17,153,136 schedules. The page lists at most 2,000 one by one. Past that it counts them by state instead: many schedules reach the same state (the same steps done, the same registers, the same count), and those are counted together. Only 90 of the 17 million end with count = 6. That explosion is also why real tests miss races, and why toy programs like these are the place to look at every schedule.
+Three threads of two increments have 18! / (6! × 6! × 6!) = 17,153,136 schedules. The page goes through at most 2,000 schedules one by one (and draws the first 20). Past that it counts them by state instead: many schedules reach the same state (the same steps done, the same registers, the same count), and those are counted together. Only 90 of the 17 million end with count = 6. That explosion is why no test can try every schedule of a real program, and why toy programs like these are the place to look at all of them.
 
 ## Why tests miss it
 
-18 bad schedules out of 20 make races sound common. On a real machine they are rare. A lost update needs another thread to get in between one thread's load and its store, a window a few instructions wide. When threads touch count once in a while, that almost never happens: run the program a thousand times and it prints 2 a thousand times. Put it on a busy server for a month and it doesn't. Tests pass. The bug ships.
+Eighteen bad schedules out of 20 make races sound common. On a real machine they are rare. A lost update needs another thread to get in between one thread's load and its store, a window a few instructions wide. When threads touch count once in a while, that almost never happens: run the program a thousand times and it prints 2 a thousand times. Put it on a busy server for a month and it doesn't. Tests pass. The bug ships.
+
+## Fixing it
 
 The fix is to make the three steps one. Either a lock around the critical section, so a second thread waits until the first has stored, or an atomic instruction that reads, adds and writes as a single step (fetch-and-add, or a compare-and-swap loop). Both remove the bad schedules from the list instead of making them rarer.
 

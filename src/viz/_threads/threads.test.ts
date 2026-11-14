@@ -16,6 +16,7 @@ import {
   type MachineState,
   type Program,
 } from './machine';
+import { describeMachine, noteFor, pageStep, threadBlock } from './page';
 import { formatProgram, parseProgram } from './parse';
 
 function prog(text: string): Program {
@@ -388,5 +389,32 @@ describe('deadlock', () => {
         [1, 2],
       ]).cycle,
     ).toBeNull();
+  });
+});
+
+describe('page helpers', () => {
+  it('pageStep narrates, marks and points at the pseudocode line', () => {
+    const r = pageStep(LOCKED, run(LOCKED, [0]).state, 1);
+    if (!r.ok) throw new Error(r.say);
+    expect(r.event.blocked).toEqual({ kind: 'lock', name: 'm' });
+    expect(r.lines).toEqual(['t2.0']);
+    expect(r.say).toBe('T2 tries to lock m, but T1 holds it, so T2 waits.');
+    expect(r.marks).toContainEqual({ id: 'pc-1', role: 'compare' });
+    const again = pageStep(LOCKED, r.state, 1);
+    expect(again).toMatchObject({ ok: false, reason: 'blocked' });
+    expect(again.marks).toEqual([{ id: 'pc-1', role: 'compare' }]);
+  });
+
+  it('writes a pseudocode block per thread, with plain English for every step', () => {
+    const b = threadBlock(LOCKED, 0, 't1');
+    expect(b.lines.map((l) => l.id)).toEqual(['t1.0', 't1.1', 't1.2', 't1.3', 't1.4']);
+    expect(b.lines[0]!.plain).toBe('Take lock m, or wait in line until it is free.');
+    expect(b.lines.every((l) => l.plain.length > 0)).toBe(true);
+  });
+
+  it('notes and describes a state in words', () => {
+    const s = run(LOCKED, [0, 1]).state;
+    expect(noteFor(s, 1)).toBe('waits for m');
+    expect(describeMachine(LOCKED, s)).toContain('lock m held by T1');
   });
 });

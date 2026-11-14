@@ -36,6 +36,8 @@ export interface Tally {
   total: number;
   /** Steps already taken when it ran (0: every interleaving from the start). */
   from: number;
+  /** How many rows the finished tally has, so the panel keeps room for them while it fills. */
+  size: number;
 }
 
 export interface RaceState {
@@ -158,7 +160,6 @@ function marks(ev: StepEvent, after: MachineState): Mark[] {
     const i = m.findIndex((x) => x.id === varId('count'));
     if (i >= 0) m[i] = { id: varId('count'), role: 'error' };
   }
-  if (ev.done) m.push({ id: endId(ev.thread), role: 'done' });
   return m;
 }
 
@@ -291,12 +292,16 @@ const runOp: Op = {
   },
 };
 
+/** The tally panel's line for a final count (its shape id). */
+export const tallyRowId = (count: number) => `${panelId('every')}-c${count}`;
+
 /** The tally's rows, lowest count first, with the schedule count of each. */
 function tallyOf(counts: Map<number, number>, from: number): Tally {
   const rows = [...counts.entries()]
     .sort((a, b) => a[0] - b[0])
     .map(([count, schedules]) => ({ count, schedules }));
-  return { rows, total: rows.reduce((a, r) => a + r.schedules, 0), from };
+  const total = rows.reduce((a, r) => a + r.schedules, 0);
+  return { rows, total, from, size: rows.length };
 }
 
 const word = (n: number, one: string, many = `${one}s`) =>
@@ -333,7 +338,7 @@ const everyOp: Op = {
         ? ` (${busy.reduce((a, b) => a + b, 0)}! / (${busy.map((n) => `${n}!`).join(' × ')}))`
         : '';
     yield {
-      state: { ...s, tally: { rows: [], total, from: final.from } },
+      state: { ...s, tally: { ...final, rows: [] } },
       marks: [],
       say:
         total === 1
@@ -351,12 +356,11 @@ const everyOp: Op = {
       const c = end.mem.count!;
       shown.set(c, (shown.get(c) ?? 0) + 1);
       const tally = tallyOf(shown, final.from);
-      const row = tally.rows.findIndex((x) => x.count === c);
       yield {
-        state: { m: end, tally: { ...tally, total } },
+        state: { m: end, tally: { ...tally, total, size: final.size } },
         marks: [
-          { id: varId('count'), role: c === e ? 'found' : 'error' },
-          { id: `${panelId('every')}-${row}`, role: 'active' },
+          { id: varId('count'), role: c === e ? 'found' : 'compare' },
+          { id: tallyRowId(c), role: 'active' },
         ],
         say: `Schedule ${k + 1} of ${total.toLocaleString('en-US')}: ${end.schedule.map(T).join(' ')} ends with count = ${c}${c === e ? ', nothing lost' : `: ${e - c === 1 ? 'an update' : `${e - c} updates`} lost`}.`,
         lines: ['every.done', 'every.record'],
@@ -377,13 +381,14 @@ const everyOp: Op = {
     const good = counts.get(e) ?? 0;
     const bad = total - good;
     const rows = final.rows.map(
-      (r) => `${word(r.schedules, 'schedule')} end with count = ${r.count}`,
+      (r) =>
+        `${word(r.schedules, 'schedule')} end${r.schedules === 1 ? 's' : ''} with count = ${r.count}`,
     );
     yield {
       state: { ...s, tally: final },
-      marks: final.rows.map((r, i) => ({
-        id: `${panelId('every')}-${i}`,
-        role: r.count === e ? 'found' : 'error',
+      marks: final.rows.map((r) => ({
+        id: tallyRowId(r.count),
+        role: r.count === e ? 'found' : 'compare',
       })),
       say:
         total === 1

@@ -8,10 +8,8 @@ import { smallestText } from '../../render/text-size';
 import raceCondition, { parseScheduleInput } from '.';
 import { expected, program, stores, type RaceSettings } from './model';
 
-const settings = (s: Partial<RaceSettings> = {}): RaceSettings => ({
-  ...raceCondition.defaults,
-  ...s,
-});
+const settings = (s: Partial<RaceSettings> = {}): RaceSettings =>
+  ({ ...raceCondition.defaults, ...s }) as RaceSettings;
 
 const timeline = (calls: OpCall[], s: Partial<RaceSettings> = {}) =>
   new Timeline(raceCondition, settings(s), 1, calls);
@@ -77,6 +75,7 @@ describe('race condition', () => {
       ],
       total: 10,
       from: 1,
+      size: 2,
     });
   });
 

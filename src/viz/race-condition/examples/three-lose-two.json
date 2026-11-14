@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "race-condition",
+  "id": "three-lose-two",
+  "title": "Three threads, two updates lost",
+  "notes": "All three threads load count = 0 before any of them stores. Each stores 1, so three increments leave count at 1.",
+  "settings": { "threads": 3, "times": 1 },
+  "seed": 1,
+  "ops": [["run", "123112233"]],
+  "at": { "op": -1, "step": 0 }
+}

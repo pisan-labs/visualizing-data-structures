@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "race-condition",
+  "id": "every-two",
+  "title": "All 20 interleavings of two threads",
+  "notes": "Two threads of three steps can be interleaved in 20 ways. Only the 2 that run one thread completely before the other end with count = 2; the other 18 lose an update.",
+  "settings": { "threads": 2, "times": 1 },
+  "seed": 1,
+  "ops": [["every"]],
+  "at": { "op": -1, "step": 0 }
+}

@@ -40,7 +40,7 @@ Q: in holds 1 2 3 (3 on top) and out is empty. What does dequeue() cost, countin
 = out is empty, so all three values move: three pops off in and three pushes onto out, 6. Then one pop off out takes 1: 7.
 ```
 
-The queue's order is never at risk. Everything on out is older than everything on in, because a value only reaches out when out is empty. [First in, first out survives the split](#example:order-survives) enqueues 4 and 5 while 2 and 3 are still on out: 2 and 3 come off first.
+The queue's order is never at risk. Everything on out is older than everything on in, because a value only reaches out when out is empty. [First in, first out survives the split](#example:order-survives) enqueues 4 and 5 while 2 and 3 are still on out: 2 and 3 come off first. [The queue split across both stacks](#example:split-across-both) stops halfway: 2 3 4 5 on out, 6 7 8 on in, and the front is the top of out.
 
 ## Why it is O(1) amortized
 

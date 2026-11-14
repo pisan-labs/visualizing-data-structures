@@ -55,7 +55,7 @@ So the trade is space for comparisons. Which is better depends on the values. [R
 
 The plain stack does nothing on push and pop, and scans on min: best = the bottom value, then compare with each value above it. [Scan for the minimum](#example:scan-for-the-minimum) runs the same operations as [Minimums on the side](#example:mins-on-the-side). Its four mins scan 6, 5, 4 and 3 values: 5 + 4 + 3 + 2 = 14 comparisons. mins pays one comparison per push (the first one is free) and one per pop instead, 8 in all. [Show me](#play:scan-for-the-minimum)
 
-Is the second stack always cheaper? Nope. It pays on every push and every pop, whether anyone asks for the minimum or not. [Few mins favor the scan](#example:few-mins-favor-the-scan) pushes 6 values, pops 3 and asks for the minimum once: 8 comparisons with mins, 2 for the scan. The scan loses when min is called often on a tall stack. On a million values that is about a million comparisons per call against none, which is why the trick exists.
+Is the second stack always cheaper? Nope. It pays on every push and every pop, whether anyone asks for the minimum or not. [Few mins favor the scan](#example:few-mins-favor-the-scan) pushes 6 values, pops 3 and asks for the minimum once: 8 comparisons with mins, 2 for the scan. The scan loses when min is called often on a tall stack: [A min after every push](#example:a-min-after-every-push) costs 7 comparisons with mins and 28 with the scan. On a million values that is about a million comparisons per call against none, which is why the trick exists.
 
 ```check
 Q: The stack holds 10 values and min() is called once. How many comparisons does the scan make?

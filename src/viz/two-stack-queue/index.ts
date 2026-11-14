@@ -12,6 +12,7 @@ import nothingToDequeue from './examples/nothing-to-dequeue.json';
 import oneCostlyDequeue from './examples/one-costly-dequeue.json';
 import orderSurvives from './examples/order-survives.json';
 import peeksAreFree from './examples/peeks-are-free.json';
+import splitAcrossBoth from './examples/split-across-both.json';
 import explain from './explain.md?raw';
 import {
   defaults,
@@ -201,10 +202,11 @@ export const twoStackQueue: VizDef<TQState, TQSettings, TQExtra> = {
     alternating,
     peeksAreFree,
     orderSurvives,
+    splitAcrossBoth,
     nothingToDequeue,
   ] as unknown as SavedExample[],
   practice: twoStackQueuePractice(() => twoStackQueue),
-  preview: { example: 'move-only-when-empty', level: 2, hide: ['chart', 'bar-'] },
+  preview: { example: 'split-across-both', level: 2, hide: ['chart', 'bar-'] },
 };
 
 export default twoStackQueue;

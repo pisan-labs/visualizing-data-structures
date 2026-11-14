@@ -5,6 +5,7 @@ import { approachSetting } from '../_patterns/kit';
 import cppSource from './code/cpp/min_stack.hpp?raw';
 import javaSource from './code/java/MinStack.java?raw';
 import pythonSource from './code/python/min_stack.py?raw';
+import aMinAfterEveryPush from './examples/a-min-after-every-push.json';
 import emptyStack from './examples/empty-stack.json';
 import everyPushAPair from './examples/every-push-a-pair.json';
 import fallingValues from './examples/falling-values.json';
@@ -238,13 +239,14 @@ export const minStack: VizDef<MSState, MSSettings, MSExtra> = {
     tiesStayOn,
     everyPushAPair,
     scanForTheMinimum,
+    aMinAfterEveryPush,
     fewMins,
     risingValues,
     fallingValues,
     emptyStack,
   ] as unknown as SavedExample[],
   practice: minStackPractice(() => minStack),
-  preview: { example: 'mins-on-the-side', level: 2 },
+  preview: { example: 'a-min-after-every-push' },
 };
 
 export default minStack;

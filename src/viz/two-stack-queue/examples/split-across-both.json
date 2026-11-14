@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "two-stack-queue",
+  "id": "split-across-both",
+  "title": "The queue split across both stacks",
+  "notes": "Enqueue 1 to 5 and dequeue: all five move to out, and 1 comes off. Enqueue 6 7 8 onto in while 2 3 4 5 wait on out, then peek: out's top, 2, for free. 19 stack operations for 10 operations; moving everything every time would cost 55.",
+  "settings": {
+    "approach": "pattern"
+  },
+  "seed": 1,
+  "ops": [
+    ["enqueue", 1],
+    ["enqueue", 2],
+    ["enqueue", 3],
+    ["enqueue", 4],
+    ["enqueue", 5],
+    ["dequeue"],
+    ["enqueue", 6],
+    ["enqueue", 7],
+    ["enqueue", 8],
+    ["peek"]
+  ]
+}

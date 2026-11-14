@@ -1,0 +1,54 @@
+{
+  "format": 1,
+  "viz": "two-heaps-median",
+  "id": "lower-median",
+  "title": "lower-median",
+  "notes": "x",
+  "settings": {
+    "approach": "pattern",
+    "even": "lower"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "add",
+      5
+    ],
+    [
+      "add",
+      15
+    ],
+    [
+      "add",
+      1
+    ],
+    [
+      "add",
+      3
+    ],
+    [
+      "add",
+      8
+    ],
+    [
+      "add",
+      7
+    ],
+    [
+      "add",
+      9
+    ],
+    [
+      "add",
+      10
+    ],
+    [
+      "add",
+      6
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "matrix-traversal",
+  "id": "spiral-bounds",
+  "title": "Spiral order of a 4 × 4",
+  "notes": "1 to 16 in a 4 × 4. The spiral reads 1 2 3 4 8 12 16 15 14 13 9 5, then the inner ring 6 7 11 10. After each side one bound moves in: top, right, bottom, left. 16 reads and 7 bound checks, against 47 steps and 16 extra cells for walking with seen marks.",
+  "settings": {
+    "approach": "pattern",
+    "rotate": "layers"
+  },
+  "seed": 1,
+  "ops": [["load", "4x4"], ["spiral"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

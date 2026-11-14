@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "matrix-traversal",
+  "id": "one-row-left",
+  "title": "A 3 × 5: one row left in the middle",
+  "notes": "A 3 × 5. After the outer ring, 12 values, only the middle of row 1 is left: 7, 8, 9. Then top = 2 is past bottom = 1, so the check before the bottom row stops the walk there. Without that check the spiral would walk row 1 back and list 8 and 7 twice.",
+  "settings": {
+    "approach": "pattern",
+    "rotate": "layers"
+  },
+  "seed": 1,
+  "ops": [["load", "3x5"], ["spiral"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

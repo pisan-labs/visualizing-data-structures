@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "merge-sorted-lists",
+  "id": "interleaved",
+  "title": "Interleaved: every node compared",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern",
+    "kway": "pairs"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "build",
+      "1 3 5 7 9 | 2 4 6 8 10"
+    ],
+    [
+      "merge"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

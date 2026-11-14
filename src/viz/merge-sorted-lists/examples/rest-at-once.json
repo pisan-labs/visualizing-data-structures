@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "merge-sorted-lists",
+  "id": "rest-at-once",
+  "title": "One list runs out: link the rest at once",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern",
+    "kway": "pairs"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "build",
+      "1 2 3 | 5 7 8 9"
+    ],
+    [
+      "merge"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "merge-sorted-lists",
+  "id": "copy-and-sort",
+  "title": "Copy, sort, rebuild",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "naive",
+    "kway": "pairs"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "build",
+      "1 4 7 9 | 2 3 8"
+    ],
+    [
+      "merge"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

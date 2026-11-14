@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "merge-sorted-lists",
+  "id": "empty-list",
+  "title": "Merging with an empty list",
+  "notes": "NOTES",
+  "settings": {
+    "approach": "pattern",
+    "kway": "pairs"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "build",
+      "empty | 3 5 8"
+    ],
+    [
+      "merge"
+    ]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -123,7 +123,7 @@ export const ringAllreduce: VizDef<RingState, RingSettings, RingExtra> = {
       },
       worst: {
         cost: 'Θ(M)',
-        why: 'Approaches 2M as N grows; Patarasuk and Yuan show no all-reduce can do better.',
+        why: 'Approaches 2M as N grows; Patarasuk and Yuan show no all-reduce can do better without compressing the data.',
         example: 'five-workers',
       },
     },

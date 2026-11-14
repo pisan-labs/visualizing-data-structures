@@ -3,7 +3,7 @@
   "viz": "rnn-lstm",
   "id": "lstm-keeps",
   "title": "The LSTM keeps the cat",
-  "notes": "The same sentence through an LSTM. Cat opens the input gate (0.95) and writes 0.92 into the cell. After that every forget gate is 0.95, so the cell keeps most of it: 0.65 at slept, and word 1's pull is 0.95 to the 7th, 0.71. The output gate opens for the verbs, so h shows the cat at sat and slept.",
+  "notes": "The same sentence through an LSTM. Cat opens the input gate (0.95) and writes 0.92 into the cell. After that every forget gate is σ(3) = 0.953, so the cell keeps most of it: 0.65 at slept, and word 1's pull is 0.953 to the 7th, 0.71. The output gate opens for the verbs, so h shows the cat at sat and slept.",
   "settings": {
     "model": "lstm",
     "w": "0.8"

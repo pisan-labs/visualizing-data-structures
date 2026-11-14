@@ -220,7 +220,7 @@ export const prefixCache: VizDef<PrefixState, PrefixSettings, PrefixExtra> = {
         why: 'Nothing is shared: the cache saves nothing.',
         example: 'nothing-shared',
       },
-      note: 'Prefill is the expensive part: every layer runs over every prompt token.',
+      note: 'Prefill is costly for a long prompt: every layer runs over every prompt token.',
     },
     {
       op: 'finish: release a request',

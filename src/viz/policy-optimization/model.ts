@@ -530,8 +530,9 @@ function summary(before: S, end: S): string {
   const p0 = policy(before.z);
   const p1 = policy(end.z);
   const best = p1.indexOf(Math.max(...p1));
+  const was = p0.indexOf(Math.max(...p0));
   const moves = ANSWERS.map((a, k) => `${a} ${two(p0[k]!)} → ${two(p1[k]!)}`).join(', ');
-  return `${moves}. ${Name(best)} is now the most likely answer.`;
+  return `${moves}. ${Name(best)} is ${best === was ? 'still' : 'now'} the most likely answer.`;
 }
 
 const stepOp: Op = {

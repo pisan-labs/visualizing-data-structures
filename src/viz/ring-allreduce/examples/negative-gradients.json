@@ -3,7 +3,7 @@
   "viz": "ring-allreduce",
   "id": "negative-gradients",
   "title": "Gradients that cancel",
-  "notes": "Gradients pull both ways and partly cancel: chunk a is 4 − 5 + 2 = 1, chunk b is −2 + 3 − 6 = −5, chunk c is 7 − 1 + 1 = 7. Each chunk is added up once, by one worker, then copied, so every worker ends with exactly the same numbers.",
+  "notes": "Gradients pull both ways and partly cancel: chunk a is 4 − 5 + 2 = 1, chunk b is −2 + 3 − 6 = −5, chunk c is 7 − 1 + 1 = 7. Each chunk is added up once, along one chain of workers, then copied, so every worker ends with exactly the same numbers.",
   "settings": {
     "workers": 3
   },

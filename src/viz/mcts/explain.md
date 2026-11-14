@@ -22,7 +22,7 @@ Start with [The first rounds try each word once](#example:first-rounds). The roo
 
 Iteration 4 is the first real choice. N = 3, and each child has n = 1. cat scores 0.50 + √2 × √(ln 3 / 1) = 1.98, dog and fox 1.58. Selection goes to cat, expansion adds sat, the rollout ends at "the cat sat down" (0.6), and cat now has Q = 1.1 / 2 = 0.55.
 
-Iteration 5 is the interesting one. cat has the better mean, 0.55 against 0.10. But cat has 2 visits and dog only 1, so dog's bonus is bigger: cat 0.55 + √2 × √(ln 4 / 2) = 1.73, dog 0.10 + √2 × √(ln 4 / 1) = 1.77. Dog wins. A word with a poor first try still gets another look.
+Iteration 5 is the interesting one. cat has the better mean, 0.55 against 0.10. But cat has 2 visits and dog only 1, so dog's bonus is bigger: cat 0.55 + √2 × √(ln 4 / 2) = 1.73, dog 0.10 + √2 × √(ln 4 / 1) = 1.77, and fox the same. Dog wins the tie by coming first. A word with a poor first try still gets another look.
 
 ```check
 Q: A child has Q = 0.5 and n = 4 visits, and its parent has N = 16. With c = √2, what is its UCB1 score?
@@ -43,7 +43,7 @@ c sets the balance. [No exploring: c = 0 locks on](#example:no-exploration) take
 
 The mean at a node is the average of random rollouts below it. That is a fair estimate of how good the node is if you finish at random, and an unfair one if you finish well. Dog's four sentences score 0.1, 0.2, 0.2 and 1.0: a mean of 0.375 at random, and 1.0 if you pick right. Cat's are all around 0.6.
 
-So in [30 iterations pick the safe word](#example:budget-30), cat wins: 13 visits (mean 0.60) against dog's 11 (0.55). The search has not grown deep enough into dog yet. In [100 iterations find the dog that ran home](#example:budget-100) it has. Once "dog ran" and "dog ran home" are in the tree, selection keeps choosing them, the rollouts keep scoring 1, and dog's mean climbs to 0.82. Dog gets 63 visits, 55 of them through ran. Kocsis and Szepesvári proved this in general: with enough iterations, the chance that UCT picks a wrong move at the root goes to 0.
+So in [30 iterations pick the safe word](#example:budget-30), cat wins: 13 visits (mean 0.60) against dog's 11 (0.55). The search has found "the dog ran home" by then, 5 times. But dog's other 6 visits scored 0.1 or 0.2, and they still hold its mean below cat's. In [100 iterations find the dog that ran home](#example:budget-100) that is no longer true. Selection keeps choosing "dog ran" and "dog ran home", the rollouts keep scoring 1, and dog's mean climbs to 0.82. Dog gets 63 visits, 55 of them through ran. Kocsis and Szepesvári proved this in general: with enough iterations, the chance that UCT picks a wrong move at the root goes to 0.
 
 ```check
 Q: Why is the move the most visited child, and not the child with the best mean?

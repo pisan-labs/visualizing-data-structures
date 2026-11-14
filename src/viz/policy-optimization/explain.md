@@ -13,7 +13,7 @@ The toy here has one prompt, "What is the capital of Australia?", and four answe
 | GRPO | reward against the rest of its group; clipped | policy, reference, reward model | Θ(K · G · V) |
 | DPO | no score: which of two answers people preferred | policy, reference | Θ(V) |
 
-G is the size of a group of answers (4 here), V the number of answers (4; in a real model, the vocabulary at every token) and K the passes over each group (2 here). Every method also pays to draw its answers, which in a real model is most of the time. [Show me](#play:grpo-step)
+G is the size of a group of answers (4 here), V the number of answers (4; in a real model, the vocabulary at every token) and K the passes over each group (2 here). REINFORCE, PPO and GRPO also pay to draw their answers, which in a real model is most of the time. DPO draws none. [Show me](#play:grpo-step)
 
 ## One step, the plain way
 
@@ -55,7 +55,7 @@ The group has a blind spot. If every answer in it gets the same reward, every ad
 
 ## The KL leash
 
-Push long enough and the policy puts everything on one answer, forgets how to say anything else, and finds whatever the reward model happens to like too much. So every method adds a penalty for drifting from the reference, β times the KL divergence KL(π ‖ π_ref). REINFORCE and PPO take it off the reward: r − β·log(π(a)/π_ref(a)). GRPO adds it to the loss instead, so it does not get mixed into the group's mean.
+Push long enough and the policy puts everything on one answer, forgets how to say anything else, and finds whatever the reward model happens to like too much. So the reward-based methods add a penalty for drifting from the reference, β times the KL divergence KL(π ‖ π_ref). (DPO has the same leash built into its loss; see below.) REINFORCE and PPO take it off the reward: r − β·log(π(a)/π_ref(a)). GRPO adds it to the loss instead, so it does not get mixed into the group's mean.
 
 In [A heavy KL weight keeps the policy near the start](#example:kl-leash), β = 1. After ten steps Canberra is at 0.64, against 0.89 with β = 0.1, and ten more steps only bring it to 0.70. The KL readout tells you how far you have wandered: 0.35 there, 0.78 for the ten steps at β = 0.1.
 
@@ -69,7 +69,7 @@ In DPO, β is the leash: the loss is happy once h is large, and with a small β 
 
 ## When to use which
 
-GRPO suits answers that can be checked (a math answer, a program that passes its tests): no critic to train, and a group is natural when you draw several answers per prompt anyway. PPO is the classic; the critic costs memory, but it gives a baseline for every prompt and, in a real model, every token. DPO is the cheapest: no sampling during training, no reward model, two models in memory. The price is that it only learns from the pairs it is given, which came from some other model.
+GRPO suits answers that can be checked (a math answer, a program that passes its tests): no critic to train, and a group is natural when you draw several answers per prompt anyway. PPO is the classic; the critic costs memory, but it gives a baseline for every prompt and, in a real model, every token. DPO is the cheapest: no sampling during training, no reward model, two models in memory. The price is that it only learns from the pairs it is given, which usually came from some other model.
 
 REINFORCE with raw rewards is mainly a way to see why the others exist.
 

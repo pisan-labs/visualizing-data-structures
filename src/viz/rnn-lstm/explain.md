@@ -45,7 +45,7 @@ The forget gate f says how much of the old cell to keep. The input gate i says h
 
 [The LSTM keeps the cat](#example:lstm-keeps) runs the same sentence. The hand-made gates read the animal feature. At cat, f = σ(−6 + 3) = 0.05 (let go of any old animal), i = σ(6 − 3) = 0.95 and g = tanh(2) = 0.96, so c = 0.05 × 0 + 0.95 × 0.96 = 0.92. Every word after that has f = 0.95 and i = 0.05 with g = 0: keep the cell, write nothing. At slept the cell still holds 0.65.
 
-Now the pull. Going back through the cell, a step multiplies the gradient by f and nothing else. No tanh slope. So the pull at slept is 0.95⁷ = 0.71, against 0.096 for the plain RNN. A forget gate near 1 is a path the gradient can travel without fading. That is the whole trick.
+Now the pull. Going back through the cell, a step multiplies the gradient by f and nothing else. No tanh slope. Each of those forget gates is σ(3) = 0.953, so the pull at slept is 0.953⁷ = 0.71, against 0.096 for the plain RNN. A forget gate near 1 is a path the gradient can travel without fading. That is the whole trick.
 
 ```check
 Q: Over 20 words, an LSTM's forget gate is 0.95 at every word. About how much of word 1's pull is left?

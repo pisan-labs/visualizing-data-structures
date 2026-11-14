@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "dp-interval",
+  "id": "recursion-repeats",
+  "title": "Plain recursion solves stretches again",
+  "notes": "Five tiles, 5 6 1 4 2, with plain recursion. Each call tries every tile as the last one and asks for both sides, so short stretches are solved over and over: 81 calls and 121 choices, against 15 cells and 35 choices for the table. The best total is 199.",
+  "settings": {
+    "approach": "naive",
+    "problem": "remove"
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "5 6 1 4 2"
+    ],
+    [
+      "solve"
+    ]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

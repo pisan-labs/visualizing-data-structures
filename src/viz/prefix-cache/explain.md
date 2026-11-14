@@ -1,6 +1,6 @@
 # Prefix cache (radix tree)
 
-Prefill is the expensive part of answering a prompt: every layer runs over every prompt token to make its keys and values (the [KV cache](/kv-cache/)). A chat sends the whole conversation again at every turn. A hundred requests behind the same system prompt send the same first tokens a hundred times. Why compute those keys and values more than once?
+Prefill, the first pass over a prompt, is expensive for a long prompt: every layer runs over every prompt token to make its keys and values (the [KV cache](/kv-cache/)). A chat sends the whole conversation again at every turn. A hundred requests behind the same system prompt send the same first tokens a hundred times. Why compute those keys and values more than once?
 
 A prefix cache keeps them. Zheng et al. (2024, the SGLang paper) store them in a radix tree, the same structure as a [compressed trie](/compressed-trie/), with tokens where the trie has letters. They call it RadixAttention. A new prompt walks down the tree as far as its tokens match, reuses everything on the way, and prefills only the rest.
 
@@ -91,7 +91,7 @@ The order of requests matters too. Zheng et al. schedule the waiting requests wi
 
 The toy holds 12 to 24 tokens, each one slot. Llama 2 7B (Touvron et al. 2023) has 32 layers of width 4096, so each token's keys and values are 2 × 32 × 4096 = 262 144 numbers, half a megabyte at 2 bytes each. A shared system prompt of 1000 tokens is about 500 MB of cache, for every request that sends it, unless it is kept once and shared. The tree itself is tiny next to that.
 
-Real systems keep the cached keys and values in blocks, as in [paged attention](/paged-attention/). vLLM's automatic prefix caching finds shared blocks with a hash of each block's tokens and the tokens before it, instead of a tree.
+Real systems keep the cached keys and values in pages, as in [paged attention](/paged-attention/). In the SGLang paper a page is one token, like a slot here. vLLM's pages are blocks of several tokens, and its automatic prefix caching finds shared blocks with a hash of each block's tokens and the tokens before it, instead of a tree.
 
 ## Try this
 

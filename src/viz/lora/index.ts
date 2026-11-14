@@ -52,7 +52,7 @@ export const lora: VizDef<LoraState, LoraSettings, unknown> = {
       label: 'Rank r of the adapter',
       min: 1,
       max: MAX_RANK,
-      help: 'B is 4 × r and A is r × 4, so B·A has rank at most r. The paper found r = 1 or 2 enough for GPT-3 on several tasks.',
+      help: 'B is 4 × r and A is r × 4, so B·A has rank at most r. In the paper’s rank study on GPT-3 (two tasks), r = 1 did about as well as r = 64.',
     },
     {
       kind: 'choice',

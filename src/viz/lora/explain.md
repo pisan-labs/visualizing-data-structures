@@ -84,7 +84,7 @@ Use LoRA when you want to adapt one big model to many tasks and cannot afford a 
 
 Avoid it when the task is far from what the model learned, a new language say. The update may need a high rank, and the paper itself expects full fine-tuning to win there. At toy sizes it saves nothing: here, rank 2 already trains as many numbers as W has. LoRA pays when r is tiny next to d.
 
-Hu et al. adapted only attention weights, W_Q and W_V in [self-attention](/self-attention/). QLoRA found it needed adapters on every linear layer of the [transformer block](/transformer-block/) to match full fine-tuning.
+Hu et al. adapted only attention weights, in most experiments just W_Q and W_V in [self-attention](/self-attention/). QLoRA found it needed adapters on every linear layer of the [transformer block](/transformer-block/) to match full fine-tuning.
 
 ## Common mistakes
 

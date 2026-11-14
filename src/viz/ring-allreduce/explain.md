@@ -44,7 +44,7 @@ Each step a worker sends one chunk, M/N numbers. There are 2(N − 1) steps, so 
 - [Four workers](#example:four-workers): 6/4 = 1.5 vectors.
 - [Five workers](#example:five-workers): 8/5 = 1.6 vectors.
 
-It creeps up towards 2 and never gets there. The parameter server's link, in contrast, carries 2N vectors: 8 for four workers, and it grows with every worker you add. Patarasuk and Yuan (2009) showed you cannot beat the ring on this count: in any all-reduce, some worker has to send at least 2(N − 1)/N · M.
+It creeps up towards 2 and never gets there. The parameter server's link, in contrast, carries 2N vectors: 8 for four workers, and it grows with every worker you add. Patarasuk and Yuan (2009) showed you cannot beat the ring on this count: in any all-reduce that does not compress the data, some worker has to send at least 2(N − 1)/N · M.
 
 ```check
 Q: Five workers each have a 600 MB gradient. In a ring all-reduce, how much does each worker send?

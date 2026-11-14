@@ -65,7 +65,7 @@ The learning rate matters as it always does. [Big steps jitter](#example:big-ste
 
 ## Two vectors per word
 
-Why does each word get two vectors? A word is rarely its own neighbour. With one vector per word, a word's score with itself is its length squared, which is never negative and grows as training makes the vectors longer, so every word would look like its own best neighbour. With two, w_cat · c_cat is free to stay small. After training, the usual choice is to keep W and throw C away; adding w and c is another (SLP3 mentions both). Look at the end of the twenty passes: the dots gathered on one side and the squares on the other, so that each word's w faces the c's of its neighbours.
+Why does each word get two vectors? A word is rarely its own neighbour. With one vector per word, a word's score with itself is its length squared, which is never negative and grows as training makes the vectors longer, so every word would look like its own best neighbour. With two, w_cat · c_cat is free to stay small. After training, the original code keeps W and throws C away; adding w and c is another common choice (SLP3 mentions both). Look at the end of the twenty passes: the dots gathered on one side and the squares on the other, so that each word's w faces the c's of its neighbours.
 
 ## When to use it
 
@@ -84,7 +84,7 @@ Its limits are the flip side. One vector per word means "bank" by the river and 
 
 ## At real scale
 
-The vectors Google released with the 2013 papers have 300 numbers for each of 3 million words and phrases, learned from about 100 billion words of news. This page has 2 numbers for each of 8 words, learned from 22. The paper suggests k from 5 to 20 noise words for small datasets and 2 to 5 for large ones, and the original code's default window is 5. That code also shrinks the window at random for each word, so near neighbours count more often, and skips very common words some of the time (subsampling, with a probability of 1 − √(t / f) for a word of frequency f, t about 10⁻⁵).
+The vectors Google released with the 2013 papers have 300 numbers for each of 3 million words and phrases, learned from about 100 billion words of news. This page has 2 numbers for each of 8 words, learned from 22. The paper suggests k from 5 to 20 noise words for small datasets and 2 to 5 for large ones, and the original code's default window is 5. That code also shrinks the window at random for each word, so near neighbours count more often, and skips very common words some of the time. The paper's rule for that (subsampling) drops a word of frequency f with probability 1 − √(t / f), t about 10⁻⁵; the code uses a slightly different formula, with t = 10⁻³ by default.
 
 ## Try this
 

@@ -279,7 +279,7 @@ function* gatherPart(s: S): Generator<RStep, S, void> {
   yield {
     state: next,
     marks: [],
-    say: `Done: every worker holds the whole sum, ${vecText(total)}. Each sent ${ringChunks(n)} chunks, ${ringChunks(n)}/${n} = ${twoDigits(ringShare(n))} ${ringShare(n) === 1 ? 'vector' : 'vectors'}' worth, and so did every other worker at the same time. A parameter server would take in ${n} whole vectors and send out ${n}.`,
+    say: `Done: every worker holds the whole sum, ${vecText(total)}. Each sent ${ringChunks(n)} chunks, ${ringChunks(n)}/${n} = ${twoDigits(ringShare(n))} ${ringShare(n) === 1 ? "vector's" : "vectors'"} worth, and so did every other worker at the same time. A parameter server would take in ${n} whole vectors and send out ${n}.`,
     lines: ['adone'],
     level: 1,
     vars: baseVars(next),

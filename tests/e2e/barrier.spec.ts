@@ -1,0 +1,90 @@
+import AxeBuilder from '@axe-core/playwright';
+import { expect, test, type Page } from '@playwright/test';
+import { axeFindings, emptyStart, settled, showMe } from './helpers';
+
+const narration = (page: Page) => page.locator('.narration p');
+const stage = (page: Page) => page.locator('.stage > svg');
+
+async function op(page: Page, name: string, value?: string) {
+  if (value !== undefined) await page.getByLabel('Schedule', { exact: true }).fill(value);
+  await page.getByRole('button', { name, exact: true }).click();
+}
+
+async function toEnd(page: Page) {
+  const next = page.getByRole('button', { name: 'Forward to the next operation' });
+  while (!(await next.isDisabled())) await next.click({ force: true });
+}
+
+async function option(page: Page, label: string) {
+  const choice = page.getByLabel(label, { exact: true });
+  if (!(await choice.isVisible())) await page.getByText('Options', { exact: true }).click();
+  await choice.check();
+}
+
+test.beforeEach(async ({ page }) => {
+  await page.goto(emptyStart('barrier'));
+  await expect(page.getByRole('heading', { name: 'Barriers' })).toBeVisible();
+  await page.getByRole('combobox', { name: 'Speed' }).selectOption('4');
+});
+
+test('two wait at the turnstile until the third arrives', async ({ page }) => {
+  await op(page, 'Run schedule', '1 1 1 2 2 2');
+  await toEnd(page);
+  await expect(narration(page)).toContainText('T3 can still step (T1 and T2 wait)');
+  await expect(stage(page).locator('text', { hasText: 'b = -2' })).toBeVisible();
+});
+
+test('every interleaving: nobody goes on early, and the car always leaves full', async ({
+  page,
+}) => {
+  await op(page, 'Every interleaving');
+  await toEnd(page);
+  await expect(narration(page)).toContainText('All 204,108 interleavings');
+  await option(page, 'A car: one driver, two riders');
+  await toEnd(page);
+  await expect(narration(page)).toContainText('Of the 376,200 interleavings');
+  await expect(narration(page)).toContainText('Every one ends as the program means');
+});
+
+test('a bad schedule is refused', async ({ page }) => {
+  await op(page, 'Run schedule', '1 2 7');
+  await expect(page.getByText('Threads are numbered 1 to 4, in lane order.')).toBeVisible();
+});
+
+test('"Show me" links load an example and play it', async ({ page }) => {
+  await page.getByRole('tab', { name: 'Learn' }).click();
+  await showMe(page, page.getByRole('link', { name: 'Show me' }).first());
+});
+
+test('a practice question is graded and Show me plays the answer', async ({ page }) => {
+  await page.goto('/barrier/#practice=13579&n=5');
+  await expect(page.locator('.question')).toHaveCount(5);
+  const first = page.locator('.question').first();
+  await first.getByRole('button', { name: 'Check' }).click();
+  const verdict = first.locator('.feedback strong');
+  await expect(verdict).toContainText('Not quite. The answer is');
+  const answer = ((await verdict.textContent()) ?? '')
+    .replace(/^Not quite\. The answer is /, '')
+    .replace(/\.$/, '');
+  await first.getByRole('button', { name: 'Try again' }).click();
+  const radio = first.getByRole('radio', { name: answer, exact: true });
+  if (await radio.count()) await radio.check();
+  else await first.getByRole('textbox').fill(answer);
+  await first.getByRole('button', { name: 'Check' }).click();
+  await expect(first.locator('.feedback')).toContainText('Yes.');
+  await showMe(page, first.getByRole('button', { name: 'Show me' }));
+});
+
+for (const theme of ['light', 'dark', 'contrast']) {
+  test(`no axe violations with two waiting at the barrier (${theme})`, async ({ page }) => {
+    await page.getByRole('combobox', { name: 'Theme' }).selectOption(theme);
+    await op(page, 'Run schedule', '1 1 1 2 2 2');
+    await op(page, 'Every interleaving');
+    await toEnd(page);
+    await settled(page);
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+      .analyze();
+    expect(axeFindings(results)).toEqual([]);
+  });
+}

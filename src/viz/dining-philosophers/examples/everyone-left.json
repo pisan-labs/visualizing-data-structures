@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "dining-philosophers",
+  "id": "everyone-left",
+  "title": "Everyone holds a left fork",
+  "notes": "P1, P2 and P3 each pick up their left fork. Then each reaches for the right one, which the next philosopher holds, and waits. The wait-for graph is the cycle P1 → P2 → P3 → P1: deadlock.",
+  "settings": {
+    "philosophers": 3,
+    "fix": "none"
+  },
+  "seed": 1,
+  "ops": [["run", "1 2 3 1 2 3"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "compare-and-swap",
+  "id": "every-aba",
+  "title": "Every interleaving of the stack",
+  "notes": "107 orders of the steps. 104 leave a sound stack (A, B or C, depending on who popped what). 3 leave B C with B also in T2’s hands: in those, T1 reads top before T2 starts and reads the next field before T2’s push, and T2 is done before T1’s cas.",
+  "settings": {
+    "program": "aba",
+    "threads": 2
+  },
+  "seed": 1,
+  "ops": [["every"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

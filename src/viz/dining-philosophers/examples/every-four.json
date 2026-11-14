@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "dining-philosophers",
+  "id": "every-four",
+  "title": "Every interleaving of four",
+  "notes": "16,672,432 orders of the steps, far more than the page lists one by one, so it counts them by state. 1,088 deadlock. Rare, but there.",
+  "settings": {
+    "philosophers": 4,
+    "fix": "none"
+  },
+  "seed": 1,
+  "ops": [["every"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

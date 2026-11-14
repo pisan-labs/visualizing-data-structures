@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "dining-philosophers",
+  "id": "one-at-a-time",
+  "title": "One philosopher at a time",
+  "notes": "P1 eats and puts both forks down before P2 starts, and P2 before P3. Nobody ever waits.",
+  "settings": {
+    "philosophers": 3,
+    "fix": "none"
+  },
+  "seed": 1,
+  "ops": [["run", "1 1 1 1 1 2 2 2 2 2 3 3 3 3 3"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

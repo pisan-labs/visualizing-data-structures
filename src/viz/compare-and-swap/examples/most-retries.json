@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "viz": "compare-and-swap",
+  "id": "most-retries",
+  "title": "Three threads, three retries",
+  "notes": "T1 wins the first swap, so T2 and T3 fail and read again. T2 wins the second, so T3 fails again. T3 retries twice and T2 once: 3 retries for 3 increments.",
+  "settings": {
+    "program": "counter",
+    "threads": 3
+  },
+  "seed": 1,
+  "ops": [["run", "1 1 2 2 3 1 1 2 2 2 2 3 3 3 3 2 2 3 3 3 3 3 3 3"]],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

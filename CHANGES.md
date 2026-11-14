@@ -541,3 +541,5 @@
 2026-11-14 [code] Merged wave 10 dp-tree (take or skip per node, post-order, against every allowed subset) and dp-bitmask (assigning n tasks over subset masks, against every order)
 
 2026-11-14 [doc] Merged the wave-10 interview fact check (16 pages): wrong claims fixed (smallest missing positive is in 1 to n+1, k-way best case O(n + k log k), fast-slow pointers do not save reads, Python 3.14 heapq has max-heap functions), LeetCode-like problem statements rewritten in our own words, large-n figures marked as one seeded run
+
+2026-11-14 [code] Merged wave 10 rate-limiter (fixed window as the naive one, sliding log, sliding window counter, token bucket on the same request times) and lfu-cache (frequency lists with minFreq against scanning every key)

@@ -527,3 +527,5 @@
 2026-11-14 [code] Merged wave 10 kadane (extend or restart, empty-subarray setting), frequency-counting (letter-count signatures against sorting; first unique letter) and difference-array (+x at l, -x at r+1, one running sum); pages show honestly where the pattern loses on small inputs
 
 2026-11-14 [code] Merged wave 10 fast-slow-pointers (middle, k-th from the end, palindrome in place), merge-sorted-lists (dummy head; k lists in pairs or one at a time) and reverse-k-group (in place by moving pointers; short last group as a setting)
+
+2026-11-14 [code] Merged wave 10 dutch-flag (three pointers against count and rewrite), cyclic-sort (each swap places one value; then the missing and the duplicate) and matrix-traversal (spiral by four bounds; quarter turn in place by rings or transpose and reverse)

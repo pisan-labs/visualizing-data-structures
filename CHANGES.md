@@ -509,3 +509,5 @@
 2026-11-14 [code] transformer-block test: LayerNorm and RMSNorm outputs have mean square q/(q+eps), not 1, for a nearly constant input; the property test asserted 1 and failed on CI (run 211, counterexample (0,0,0.1,0,...)). Fixed the test, not the page
 
 2026-11-14 [code] CI: a concurrency group per ref with cancel-in-progress, so a newer push to next or main cancels the older run (two runs had been testing commits a minute apart); asked by Yusuf
+
+2026-11-14 [code] account-sync e2e derives the latest release and the "new since" counts from src/releases.ts instead of hard-coding them; the new release broke 10 of its tests in CI run 214, so main did not move

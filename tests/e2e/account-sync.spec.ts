@@ -18,8 +18,10 @@ import {
   type Mock,
   type PrefRow,
 } from './supabase-mock';
+// The release list itself (it imports nothing), so these tests follow each new release.
+import { releases, releasesSince } from '../../src/releases';
 
-const LATEST = '2026-11-10-features';
+const LATEST = releases.at(-1)!.id;
 const header = (page: Page) => page.locator('header.site');
 const signIn = (page: Page) => header(page).getByRole('button', { name: 'Sign in' });
 const accountMenu = (page: Page) => header(page).locator('summary', { hasText: 'Account' });
@@ -85,15 +87,18 @@ test.describe('new since your last visit', () => {
     await page.goto('/');
     await expect(card(page)).toBeVisible();
     const items = card(page).locator('.releases > li');
-    await expect(items).toHaveCount(2);
-    await expect(items.nth(0)).toContainText('Sign in, Present tools, worksheets and more');
-    await expect(items.nth(1)).toContainText('12 new pages, and the older pages reviewed');
-    await expect(items.nth(1).getByRole('link')).toHaveCount(12);
-    await expect(items.nth(1).getByRole('link', { name: 'Two pointers' })).toHaveAttribute(
+    // Newest first: every release after wave 7.
+    const since = releasesSince('2026-11-08-wave-7');
+    await expect(items).toHaveCount(since.length);
+    await expect(items.nth(0)).toContainText(since[0]!.title);
+    const features = items.filter({ hasText: 'Sign in, Present tools, worksheets and more' });
+    const wave8 = items.filter({ hasText: '12 new pages, and the older pages reviewed' });
+    await expect(wave8.getByRole('link')).toHaveCount(12);
+    await expect(wave8.getByRole('link', { name: 'Two pointers' })).toHaveAttribute(
       'href',
       '/two-pointers/',
     );
-    await expect(items.nth(0).getByRole('link')).toHaveCount(0);
+    await expect(features.getByRole('link')).toHaveCount(0);
     await axe(page, 'section.new-since');
     await fits(page);
 
@@ -110,7 +115,7 @@ test.describe('new since your last visit', () => {
   test('folds a long list of new pages behind its count', async ({ page }) => {
     await storeOnce(page, { 'last-release': '2026-11-01-start' });
     await page.goto('/');
-    const wave7 = card(page).locator('.releases > li').nth(2);
+    const wave7 = card(page).locator('.releases > li').filter({ hasText: '62 new pages' });
     await expect(wave7).toContainText('62 new pages');
     const fold = wave7.locator('summary', { hasText: 'The 62 new pages' });
     await expect(fold).toBeVisible();
@@ -175,9 +180,11 @@ test.describe('signed in', () => {
     });
     const mock = await mockSupabase(page, { preferences: prefRow() });
     await page.goto('/');
-    // The account's later theme applies, and its release: only 10 Nov is new.
+    // The account's later theme applies, and its release (wave 8): what came after it is new.
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-    await expect(card(page).locator('.releases > li')).toHaveCount(1);
+    await expect(card(page).locator('.releases > li')).toHaveCount(
+      releasesSince('2026-11-09-wave-8').length,
+    );
     await expect(card(page)).toContainText('Sign in, Present tools, worksheets and more');
     // The account's progress shows on the home page.
     await expect(page.getByRole('heading', { name: 'Your progress' })).toBeVisible();

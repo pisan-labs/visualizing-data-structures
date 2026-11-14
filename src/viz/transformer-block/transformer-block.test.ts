@@ -10,6 +10,7 @@ import {
   B_1,
   B_2,
   D,
+  EPS,
   HEAD,
   normalize,
   OUT_WORDS,
@@ -154,20 +155,28 @@ describe('transformer-block', () => {
   });
 
   it('normalizes to mean 0 and spread 1, or to a root mean square of 1', () => {
+    // With ε under the square root the output's mean square is q / (q + ε), where q is the
+    // input's variance (LayerNorm) or mean square (RMSNorm): 1 for any real spread, less for a
+    // nearly constant vector such as (0, 0, 0.1, 0, ...), whose variance is only 0.0011.
     fc.assert(
       fc.property(
         fc.array(fc.double({ min: -3, max: 3, noNaN: true }), { minLength: D, maxLength: D }),
         (v) => {
-          fc.pre(v.some((t) => Math.abs(t) > 0.1));
+          const m = v.reduce((s, t) => s + t, 0) / D;
+          const variance = v.reduce((s, t) => s + (t - m) ** 2, 0) / D;
+          const square = v.reduce((s, t) => s + t * t, 0) / D;
           const ln = normalize(v, 'layer').out;
           const mean = ln.reduce((s, t) => s + t, 0) / D;
           expect(mean).toBeCloseTo(0, 9);
-          expect(ln.reduce((s, t) => s + t * t, 0) / D).toBeCloseTo(1, 2);
+          expect(ln.reduce((s, t) => s + t * t, 0) / D).toBeCloseTo(variance / (variance + EPS), 9);
           const rms = normalize(v, 'rms').out;
-          expect(rms.reduce((s, t) => s + t * t, 0) / D).toBeCloseTo(1, 2);
+          expect(rms.reduce((s, t) => s + t * t, 0) / D).toBeCloseTo(square / (square + EPS), 9);
+          if (variance > 0.01) expect(ln.reduce((s, t) => s + t * t, 0) / D).toBeCloseTo(1, 2);
         },
       ),
     );
+    const flat = normalize([0, 0, 0.1, 0, 0, 0, 0, 0], 'layer').out;
+    expect(flat.reduce((s, t) => s + t * t, 0) / D).toBeCloseTo(0.991, 3);
   });
 
   it('counts the parameters of every setting from the weights themselves', () => {

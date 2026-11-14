@@ -3,7 +3,7 @@
   "viz": "flash-attention",
   "id": "no-mask",
   "title": "Without the mask: every tile, and a max that grows",
-  "notes": "NOTES",
+  "notes": "Without the mask all 9 tiles run. The second the finally sees mat in the last tile: its max grows from 0.14 to 1.41, and its old sum and output shrink by .28. At this toy size 228 numbers move, more than plain attention's 192: with 2 numbers per row, m and ℓ cost as much to move as O.",
   "settings": {
     "order": "kv",
     "br": "2",

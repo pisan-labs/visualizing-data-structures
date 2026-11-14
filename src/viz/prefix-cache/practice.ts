@@ -63,7 +63,7 @@ function walkText(s: PrefixState, tokens: readonly string[]): string {
   const parts = edges.map((e) =>
     e.all
       ? `"${e.run}" matches in full (${e.k})`
-      : `"${e.run}" matches only its first ${plural(e.k, 'token')}`,
+      : `"${e.run}" matches only its first ${e.k === 1 ? 'token' : `${e.k} tokens`}`,
   );
   const total = edges.reduce((t, e) => t + e.k, 0);
   return `Walk down from the root: ${parts.join(', then ')}. In all ${plural(total, 'token')}.`;
@@ -219,7 +219,7 @@ export function prefixPractice(def: () => Def): PracticeKind[] {
             setup,
             settings,
             answer: { kind: 'number', value: evicted },
-            explain: `${req.matched} of its ${req.tokens.length} tokens are cached, so it needs ${plural(need, 'new slot')}. The cache holds ${used} of 12, so ${plural(Math.max(0, 12 - used), 'slot')} ${12 - used === 1 ? 'is' : 'are'} free. ${evicted === 0 ? 'That is enough: nothing is evicted.' : `Least recently used leaves go, whole, until the rest fits: ${plural(evicted, 'token')}.`}`,
+            explain: `${req.matched} of its ${req.tokens.length} tokens ${req.matched === 1 ? 'is' : 'are'} cached, so it needs ${plural(need, 'new slot')}. The cache holds ${used} of 12, so ${plural(Math.max(0, 12 - used), 'slot')} ${12 - used === 1 ? 'is' : 'are'} free. ${evicted === 0 ? 'That is enough: nothing is evicted.' : `Least recently used leaves go, whole, until the rest fits: ${plural(evicted, 'token')}.`}`,
             watch: [['request', prompt]],
           };
         }

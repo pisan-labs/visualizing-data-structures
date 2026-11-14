@@ -3,7 +3,7 @@
   "viz": "flash-attention",
   "id": "plain-table",
   "title": "Plain attention writes the whole table",
-  "notes": "NOTES",
+  "notes": "Plain attention writes all 36 scores to HBM, reads them back, writes the 36 weights and reads those back too: 144 of the 192 numbers it moves are the table. Its row max and row sum are FlashAttention's final m and ℓ.",
   "settings": {
     "order": "kv",
     "br": "2",

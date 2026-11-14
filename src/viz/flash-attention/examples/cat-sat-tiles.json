@@ -3,7 +3,7 @@
   "viz": "flash-attention",
   "id": "cat-sat-tiles",
   "title": "Six tiles instead of one table",
-  "notes": "NOTES",
+  "notes": "Blocks of 2 cut the 6 × 6 table into 9 tiles, and the mask skips the 3 above the diagonal. Watch sat: its first tile (keys the and cat) gives m = 2.83 and O = (.99, .1); its second (sat itself, score 0) adds e^(0 − 2.83) = .06 to ℓ, and O ends at (.93, .09), as on the self-attention page. 168 numbers move to and from HBM, against 192 for plain attention.",
   "settings": {
     "order": "kv",
     "br": "2",

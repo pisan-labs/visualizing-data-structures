@@ -255,7 +255,7 @@ export const prefixCache: VizDef<PrefixState, PrefixSettings, PrefixExtra> = {
     sharedSystemPrompt,
   ] as unknown as SavedExample[],
   practice: prefixPractice(() => prefixCache),
-  preview: { example: 'shared-start', level: 2, hide: ['cap', 'run-', 'lru-', 'req-', 'tok-'] },
+  preview: { example: 'shared-system-prompt', level: 2, hide: ['cap', 'run-', 'lru-', 'req-'] },
   opening: 'shared-start',
 };
 

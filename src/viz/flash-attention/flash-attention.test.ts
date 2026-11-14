@@ -188,7 +188,14 @@ describe('flash-attention', () => {
     expect(totalOf(plainTraffic(6))).toBe(192);
     const grows = end('max-grows').flash!;
     expect(short(grows.m[5]!)).toBe('2.83');
-    expect(end('tile-by-tile').flash!.done).toBe(3);
+    expect(grows.o[5]!.map(short)).toEqual(['.85', '.14']);
+    const three = end('tile-by-tile').flash!;
+    expect(three.done).toBe(3);
+    expect(three.m[6]).toBe(-Infinity);
+    expect(three.m.slice(0, 6).every((m) => m > -Infinity)).toBe(true);
+    expect(totalOf(three.traffic)).toBe(96);
+    expect(short(end('no-mask').flash!.m[4]!)).toBe('1.41');
+    expect(short(end('plain-table').plain!.m[2]!)).toBe('2.83');
     const cat = end('cat-sat-tiles').flash!;
     expect(short(cat.o[2]![0]!)).toBe('.93');
     expect(init().words).toHaveLength(6);

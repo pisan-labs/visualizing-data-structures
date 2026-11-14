@@ -3,7 +3,7 @@
   "viz": "flash-attention",
   "id": "one-kv-block",
   "title": "One block of keys: nothing to rescale",
-  "notes": "NOTES",
+  "notes": "K/V blocks of 4 hold all four keys, so each Q block meets every key in one tile and nothing is ever rescaled: a plain softmax, one block of rows at a time. 72 numbers move, against 96 for plain attention.",
   "settings": {
     "order": "kv",
     "br": "2",

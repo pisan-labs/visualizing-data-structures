@@ -74,7 +74,12 @@ export function flashPractice(def: () => Def): PracticeKind[] {
         (i) => s.flash!.m[i]! > -Infinity && updateRow(s, i, t, settings.causal, s.flash!),
       );
       if (!rows.length) continue;
-      const i = pick(rng, rows);
+      // Mostly a row whose max grows, so the old sum has to be rescaled.
+      const grows = rows.filter(
+        (i) => updateRow(s, i, t, settings.causal, s.flash!)!.m > s.flash!.m[i]!,
+      );
+      if (!grows.length && rng.int(0, 3) > 0) continue;
+      const i = pick(rng, grows.length ? grows : rows);
       const u = updateRow(s, i, t, settings.causal, s.flash!)!;
       return { settings, setup, s, k, t, i, u, order };
     }
@@ -167,7 +172,7 @@ export function flashPractice(def: () => Def): PracticeKind[] {
           const rowsB = Math.ceil(n / Number(settings.br));
           const colsB = Math.ceil(n / Number(settings.bc));
           return {
-            prompt: `${n} words, Q blocks of ${settings.br} rows and K/V blocks of ${settings.bc}: ${rowsB} × ${colsB} = ${all} tiles. With the causal mask, how many tiles are skipped because every score in them is masked?`,
+            prompt: `${n} words, Q blocks of ${settings.br} ${settings.br === '1' ? 'row' : 'rows'} and K/V blocks of ${settings.bc}: ${rowsB} × ${colsB} = ${all} tiles. With the causal mask, how many tiles are skipped because every score in them is masked?`,
             setup: [['load', text]],
             settings,
             answer: { kind: 'number', value: all - kept },

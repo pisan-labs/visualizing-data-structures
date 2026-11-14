@@ -18,7 +18,7 @@
  */
 import type { Mark, MarkRole, OpSpec, PseudoBlock, PseudoLine, Scalar, Step, Value } from '../../engine/types';
 import { approachOf, workVars, type Approach, type Totals } from '../_patterns/kit';
-import { copy2, dpWork, fmt, nthTime, zeros } from '../_dp2/kit';
+import { copy2, dpWork, fmt, nthTime, scalar, zeros } from '../_dp2/kit';
 
 export const MAX_ROWS = 5;
 export const MAX_COLS = 6;
@@ -394,7 +394,7 @@ function* bottomUp(s: S, settings: GPSettings): Gen {
         say,
         lines,
         level: rowDone && r < R - 1 ? 1 : 2,
-        vars: vars(r, c, { [tableName(p)]: fmt(T[r]![c]!) }),
+        vars: vars(r, c, { [tableName(p)]: scalar(T[r]![c]!) }),
         extra: { reads },
       };
     }
@@ -528,7 +528,7 @@ function* recursion(s: S, settings: GPSettings, memo: boolean): Gen {
       lines: [`${P}.rule`],
       // Storing a cell is a unit of work (level 2); plain recursion's return is fine detail.
       level: memo ? 2 : 3,
-      vars: vars(cell, { [fnName(p)]: fmt(res.value) }),
+      vars: vars(cell, { [fnName(p)]: scalar(res.value) }),
       extra: extra({ reads }),
     };
     stack.pop();

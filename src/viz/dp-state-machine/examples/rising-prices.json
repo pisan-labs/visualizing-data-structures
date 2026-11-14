@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "viz": "dp-state-machine",
+  "id": "rising-prices",
+  "title": "Rising prices: one trade",
+  "notes": "Prices that only go up. Buy on the first day and sell on the last: 8 − 2 = 6. Splitting it into smaller trades never makes more, and with the cooldown it would cost a day.",
+  "settings": {
+    "approach": "pattern",
+    "cooldown": true,
+    "fee": 0
+  },
+  "seed": 1,
+  "ops": [
+    [
+      "load",
+      "2 3 5 6 8"
+    ],
+    [
+      "solve"
+    ],
+    [
+      "trace"
+    ]
+  ],
+  "at": {
+    "op": 1,
+    "step": 0
+  }
+}

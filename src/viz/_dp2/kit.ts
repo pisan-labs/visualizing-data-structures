@@ -31,6 +31,29 @@ export function fmt(v: number): string {
   return v < 0 ? `−${-v}` : String(v);
 }
 
+/** A value for vars: the number itself, or "∞" / "−∞" (vars cannot hold infinities). */
+export const scalar = (v: number): number | string => (Number.isFinite(v) ? v : fmt(v));
+
+/**
+ * The ∞ glyph is about twice as wide as a digit, so "−∞" overflows a cell sized for two
+ * digits. Draw cell values that hold an infinity smaller, keeping them centered on the same
+ * line: `shapes` from tableScene (value ids val-r-c), `cy(r)` the row's center.
+ */
+export function shrinkInfinities<T extends { kind: string; id: string }>(
+  shapes: T[],
+  cy: (r: number) => number,
+  size = 18,
+): T[] {
+  for (const s of shapes) {
+    const m = /^val-(\d+)-(\d+)$/.exec(s.id);
+    const t = s as unknown as { kind: string; text?: string; size?: number; y?: number };
+    if (!m || t.kind !== 'text' || !t.text?.includes('∞')) continue;
+    t.size = Math.min(t.size ?? size, size);
+    t.y = cy(Number(m[1])) + t.size * 0.36;
+  }
+  return shapes;
+}
+
 /** "a + b", with a true minus for a negative b: "5 − 3". */
 export const plus = (a: number, b: number): string =>
   b < 0 ? `${fmt(a)} − ${fmt(-b)}` : `${fmt(a)} + ${fmt(b)}`;

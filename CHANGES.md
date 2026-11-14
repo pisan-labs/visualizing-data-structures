@@ -491,3 +491,5 @@
 2026-11-14 [doc] Merged the tier-2 fact check: all listed outside facts confirmed; overclaims scoped (SentencePiece types, BPE-dropout, speculative sampling keeps the distribution, constrained stuck case, MoE drops are GShard/Switch, k-means WCSS), one wrong narration fixed (transformer-block post-norm)
 
 2026-11-14 [code] Merged wave 9D rnn-lstm (one hand-made memory unit; plain RNN, LSTM with or without the forget gate; the pull of word 1 as a product of factors) and mcts (UCB1 selection, expansion, rollout, backpropagation on a 12-sentence tree)
+
+2026-11-14 [code] Merged wave 9D ivf-index (k-means lists, Voronoi cells, nprobe, the neighbour missed in an unprobed list) and product-quantization (pieces, codebooks, codes, the ADC table, bits per vector)

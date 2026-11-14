@@ -3,7 +3,7 @@
   "viz": "word2vec",
   "id": "one-word",
   "title": "One word makes no pairs",
-  "notes": "NOTES",
+  "notes": "A sentence of one word has no neighbours, so the window makes no pairs and nothing moves.",
   "settings": {
     "window": 2,
     "negatives": 2,

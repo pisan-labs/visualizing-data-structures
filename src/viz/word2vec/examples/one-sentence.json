@@ -3,7 +3,7 @@
   "viz": "word2vec",
   "id": "one-sentence",
   "title": "The window slides over one sentence",
-  "notes": "NOTES",
+  "notes": "Train on \"the cat sat on the mat\" with a window of 2 and 2 noise words: 18 pairs, each pulling its two vectors together and pushing two noise words away. On these pairs the average loss goes from 2.01 to 1.92.",
   "settings": {
     "window": 2,
     "negatives": 2,

@@ -3,7 +3,7 @@
   "viz": "word2vec",
   "id": "wide-window",
   "title": "A wide window pairs a word with itself",
-  "notes": "NOTES",
+  "notes": "A window of 3 on \"the cat saw the dog\" makes 18 pairs, including (the, the): the two thes are three apart. w_the and c_the are different vectors, so that is fine.",
   "settings": {
     "window": 3,
     "negatives": 2,

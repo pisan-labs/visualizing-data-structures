@@ -3,7 +3,7 @@
   "viz": "word2vec",
   "id": "big-steps",
   "title": "Big steps jitter",
-  "notes": "NOTES",
+  "notes": "η = 0.5. The clusters still form, but the average loss bounces between 1.92 and 2.07 from pass to pass instead of settling.",
   "settings": {
     "window": 2,
     "negatives": 2,

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "race-condition",
+  "id": "one-at-a-time",
+  "title": "One thread at a time: nothing is lost",
+  "notes": "T1 runs all three steps before T2 starts, so T2 loads 1, not 0, and count ends at 2. That is what the code means, and only 2 of the 20 schedules do it.",
+  "settings": { "threads": 2, "times": 1 },
+  "seed": 1,
+  "ops": [["run", "111222"]],
+  "at": { "op": -1, "step": 0 }
+}

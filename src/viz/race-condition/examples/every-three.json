@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "race-condition",
+  "id": "every-three",
+  "title": "Three threads: 1,680 interleavings",
+  "notes": "Three threads of three steps have 9! / (3! × 3! × 3!) = 1,680 schedules. The page draws the first 20 and counts the rest.",
+  "settings": { "threads": 3, "times": 1 },
+  "seed": 1,
+  "ops": [["every"]],
+  "at": { "op": -1, "step": 0 }
+}

@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "viz": "race-condition",
+  "id": "lost-update",
+  "title": "Both load 0: an update is lost",
+  "notes": "T1 loads count = 0, and T2 loads it too before T1 stores. Each adds 1 to its own copy and stores 1, so count ends at 1, not 2.",
+  "settings": { "threads": 2, "times": 1 },
+  "seed": 1,
+  "ops": [["t1"], ["t2"], ["t1"], ["t1"], ["t2"], ["t2"]],
+  "at": { "op": -1, "step": 0 }
+}

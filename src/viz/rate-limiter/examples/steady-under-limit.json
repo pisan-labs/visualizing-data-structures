@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "viz": "rate-limiter",
+  "id": "steady-under-limit",
+  "title": "Evenly spaced: everyone agrees",
+  "notes": "One request every 4 seconds, from 0 to 28: 2.5 per 10 seconds, under the limit of 3. All four limiters let all 8 through. Here the counter's estimate never goes above 2.4.",
+  "settings": {
+    "limiter": "counter",
+    "limit": 3,
+    "window": "10"
+  },
+  "seed": 1,
+  "ops": [
+    ["request", 0],
+    ["request", 4],
+    ["request", 8],
+    ["request", 12],
+    ["request", 16],
+    ["request", 20],
+    ["request", 24],
+    ["request", 28]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

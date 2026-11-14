@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "rate-limiter",
+  "id": "flood",
+  "title": "A flood at one second",
+  "notes": "Six requests at 5, then one at 20. The log takes the first three and refuses the rest. At 20 one request drops all three logged times at once, the worst case for one request: O(L) work. All four limiters let the same 3 of the 6 through.",
+  "settings": {
+    "limiter": "log",
+    "limit": 3,
+    "window": "10"
+  },
+  "seed": 1,
+  "ops": [
+    ["request", 5],
+    ["request", 5],
+    ["request", 5],
+    ["request", 5],
+    ["request", 5],
+    ["request", 5],
+    ["request", 20]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

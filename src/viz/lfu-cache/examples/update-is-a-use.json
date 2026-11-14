@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "viz": "lfu-cache",
+  "id": "update-is-a-use",
+  "title": "A put counts as a use",
+  "notes": "Put 7, 8 and 9, then put(7, 71): 7 is cached, so its value changes and, as a use, it moves up to the freq-2 list. put(5, 50) then evicts 8, the least recently used of the keys used once.",
+  "settings": {
+    "approach": "pattern",
+    "capacity": 3
+  },
+  "seed": 1,
+  "ops": [
+    ["put", 7, 70],
+    ["put", 8, 80],
+    ["put", 9, 90],
+    ["put", 7, 71],
+    ["put", 5, 50]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "viz": "lfu-cache",
+  "id": "tie-goes-to-lru",
+  "title": "A tie goes to the least recent",
+  "notes": "Put 7, 8 and 9, then get 8, 9 and 7. All three have been used twice, so the freq-2 list holds 8, 9, 7, least recent first, and minFreq = 2. put(5, 50) evicts its head, 8: on a tie, the least recently used goes.",
+  "settings": {
+    "approach": "pattern",
+    "capacity": 3
+  },
+  "seed": 1,
+  "ops": [
+    ["put", 7, 70],
+    ["put", 8, 80],
+    ["put", 9, 90],
+    ["get", 8],
+    ["get", 9],
+    ["get", 7],
+    ["put", 5, 50]
+  ],
+  "at": {
+    "op": -1,
+    "step": 0
+  }
+}

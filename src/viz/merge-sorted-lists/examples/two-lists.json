@@ -3,21 +3,13 @@
   "viz": "merge-sorted-lists",
   "id": "two-lists",
   "title": "Two sorted lists, one dummy head",
-  "notes": "NOTES",
+  "notes": "A = 1 4 7 9, B = 2 3 8. Six comparisons take 1, 2, 3, 4, 7 and 8; then B is used up and 9 is linked at once. 6 comparisons and 7 links, no copies. Copying, sorting and rebuilding costs 47.",
   "settings": {
     "approach": "pattern",
     "kway": "pairs"
   },
   "seed": 1,
-  "ops": [
-    [
-      "build",
-      "1 4 7 9 | 2 3 8"
-    ],
-    [
-      "merge"
-    ]
-  ],
+  "ops": [["build", "1 4 7 9 | 2 3 8"], ["merge"]],
   "at": {
     "op": 0,
     "step": 0

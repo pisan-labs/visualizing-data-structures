@@ -103,8 +103,7 @@ const setNext = (s: RKState, uid: number, next: number | null): RKState => ({
   nodes: s.nodes.map((x) => (x.uid === uid ? { ...x, next } : x)),
 });
 
-export const values = (s: RKState) =>
-  order(s.nodes, s.head).map((u) => nodeOf(s, u).value);
+export const values = (s: RKState) => order(s.nodes, s.head).map((u) => nodeOf(s, u).value);
 
 /** Redraw in list order from the dummy: what the list looks like once a group is linked in. */
 const tidy = (s: RKState): RKState => ({
@@ -121,7 +120,9 @@ export function groups(vs: readonly number[], k: number): number[][] {
 
 /** The answer, from the values alone. */
 export function reversedInGroups(vs: readonly number[], k: number, rest: Rest): number[] {
-  return groups(vs, k).flatMap((g) => (g.length === k || rest === 'reverse' ? [...g].reverse() : g));
+  return groups(vs, k).flatMap((g) =>
+    g.length === k || rest === 'reverse' ? [...g].reverse() : g,
+  );
 }
 
 // ----- Steps -----
@@ -153,9 +154,7 @@ function step(
     extra: {
       heading: o.heading ?? r.heading,
       ptrs: { ...r.ptrs },
-      ...(r.array
-        ? { array: { cells: [...r.array.cells], markers: { ...r.array.markers } } }
-        : {}),
+      ...(r.array ? { array: { cells: [...r.array.cells], markers: { ...r.array.markers } } } : {}),
       frame: r.frame,
     },
   };
@@ -180,9 +179,9 @@ function* pattern(s0: RKState, k: number, settings: RKSettings, tot: Totals) {
   const reverseRest = settings.rest === 'reverse';
   let before: number = DUMMY;
   let kth: number | null = null;
-  let after: number | null = null;
-  let prev: number | null = null;
-  let cur: number | null = null;
+  let after: number | null;
+  let prev: number | null;
+  let cur: number | null;
   let count = 0;
   let done = 0;
   const r: Run = {
@@ -205,7 +204,9 @@ function* pattern(s0: RKState, k: number, settings: RKSettings, tot: Totals) {
     r,
     `Reverse ${arrows(vs)} in groups of ${k}: ${groups(vs, k)
       .map((g) => `[${g.join(' ')}]`)
-      .join(' ')}. A dummy node in front gives the first group a node before it, like every other group. before = dummy.`,
+      .join(
+        ' ',
+      )}. A dummy node in front gives the first group a node before it, like every other group. before = dummy.`,
     ['sig', 'init'],
     { marks: [mark(nid(DUMMY), 'new'), ptrMark('before')] },
   );
@@ -398,16 +399,21 @@ function* naive(s: RKState, k: number, settings: RKSettings, tot: Totals) {
     r.work.add('hops');
     r.work.add('copies');
     r.ptrs = { cur };
-    yield step(r, `Write vals[${t}] = ${v} into the ${t === 0 ? 'first' : 'next'} node.`, ['write'], {
-      marks: [mark(`${nid(u)}.v`, 'new'), mark(`cp-${cells[t]!.uid}`, 'active')],
-    });
+    yield step(
+      r,
+      `Write vals[${t}] = ${v} into the ${t === 0 ? 'first' : 'next'} node.`,
+      ['write'],
+      {
+        marks: [mark(`${nid(u)}.v`, 'new'), mark(`cp-${cells[t]!.uid}`, 'active')],
+      },
+    );
     t++;
   }
   r.ptrs = {};
   r.page = () => ({ k, groups: done });
   yield step(
     r,
-    `return head: ${arrows(values(r.s))}. ${r.work.tally()} and an array of ${plural(n, 'cell')}; every node is where it was, holding another value. Relinking in place costs ${tot.pattern} and no array.`,
+    `return head: ${arrows(values(r.s))}. ${plural(r.work.get('hops'), 'hop')} and ${plural(r.work.get('copies'), 'copy', 'copies')}, with an array of ${plural(n, 'cell')}. Every node is where it was, holding another value. Relinking in place costs ${tot.pattern}, and no array.`,
     ['ret'],
     { level: 1, heading: `Groups of ${k}: done`, marks: [ptrMark('head', 'found')] },
   );
@@ -495,9 +501,16 @@ export function pseudocode(settings: RKSettings): PseudoBlock[] {
             'short',
             2,
             keep ? 'if it has fewer than k values: stop' : 'a last group shorter than k too',
-            keep ? 'a last group shorter than k stays as it is;' : 'reverse a short last group too;',
+            keep
+              ? 'a last group shorter than k stays as it is;'
+              : 'reverse a short last group too;',
           ),
-          L('swap', 2, 'swap its ends, moving inward', 'reverse the group by swapping from both ends.'),
+          L(
+            'swap',
+            2,
+            'swap its ends, moving inward',
+            'reverse the group by swapping from both ends.',
+          ),
           L(
             'write',
             1,

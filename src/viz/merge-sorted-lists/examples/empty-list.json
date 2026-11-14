@@ -3,21 +3,13 @@
   "viz": "merge-sorted-lists",
   "id": "empty-list",
   "title": "Merging with an empty list",
-  "notes": "NOTES",
+  "notes": "A is empty and B = 3 5 8. No comparisons: tail.next = b links all of B after the dummy. 1 link.",
   "settings": {
     "approach": "pattern",
     "kway": "pairs"
   },
   "seed": 1,
-  "ops": [
-    [
-      "build",
-      "empty | 3 5 8"
-    ],
-    [
-      "merge"
-    ]
-  ],
+  "ops": [["build", "empty | 3 5 8"], ["merge"]],
   "at": {
     "op": 0,
     "step": 0

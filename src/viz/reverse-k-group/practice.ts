@@ -91,9 +91,7 @@ export function reverseKPractice(def: () => Def): PracticeKind[] {
         const k = rng.int(2, Math.min(4, n - 1));
         const steps = run([build(vs), ['reverse', k]]).entries.at(-1)!.steps;
         const linked = steps.find((s) => s.lines.includes('next'))!;
-        const value = linked.state.nodes
-          .filter((x) => x.uid !== DUMMY)
-          .map((x) => String(x.value));
+        const value = linked.state.nodes.filter((x) => x.uid !== DUMMY).map((x) => String(x.value));
         return {
           prompt: `Reverse this list in groups of k = ${k}. What does the list read once the first group is turned around and linked in? Type the values from the head.`,
           setup: [build(vs)],

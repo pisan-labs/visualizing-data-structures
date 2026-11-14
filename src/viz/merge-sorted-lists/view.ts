@@ -59,8 +59,7 @@ function bands(extra: MExtra, rows: number[], approach: string): Band[] {
   const list: Band[] = rows.map((slots, r) => ({ kind: 'row', r, slots }));
   const out: Band[] = extra.frame.out ? [{ kind: 'out', slots: extra.frame.out }] : [];
   const arr: Band[] = extra.frame.array ? [{ kind: 'array', cells: extra.frame.array }] : [];
-  if (approach !== 'naive' && rows.length === 2 && out.length)
-    return [list[0]!, ...out, list[1]!];
+  if (approach !== 'naive' && rows.length === 2 && out.length) return [list[0]!, ...out, list[1]!];
   return [...list, ...arr, ...out];
 }
 
@@ -78,8 +77,7 @@ function sizeFor(bs: Band[], cols: number): Bounds {
   return { x: 0, y: 0, w, h: h + 4 };
 }
 
-const maxSlots = (bs: Band[]) =>
-  Math.max(1, ...bs.map((b) => (b.kind === 'array' ? 0 : b.slots)));
+const maxSlots = (bs: Band[]) => Math.max(1, ...bs.map((b) => (b.kind === 'array' ? 0 : b.slots)));
 
 /** One line when that draws text at least 0.8 of its size, else whichever of 4 to 6 is largest. */
 function colsFor(bs: Band[], stage?: StageSize): number {
@@ -213,7 +211,14 @@ export function view(step: Step<MState, MExtra>, settings: MSettings, stage?: St
       const xR = rightEdge + 12;
       const xL = X0 - 12;
       const cy = target.y + H / 2;
-      pts = [p, { x: xR, y: p.y }, { x: xR, y: yGap }, { x: xL, y: yGap }, { x: xL, y: cy }, { x: target.x, y: cy }];
+      pts = [
+        p,
+        { x: xR, y: p.y },
+        { x: xR, y: yGap },
+        { x: xL, y: yGap },
+        { x: xL, y: cy },
+        { x: target.x, y: cy },
+      ];
     } else {
       pts = [p, boxExit(target, p, 1)];
     }
@@ -311,7 +316,15 @@ function label(state: MState, extra: MExtra): string {
   });
   if (extra.out) parts.push(`Out: ${text(extra.out).join(', ') || 'empty'}.`);
   const cells = extra.array?.cells.filter((c) => c !== null) ?? [];
-  if (extra.array) parts.push(`vals holds ${cells.length ? cells.map((c) => c!.value).join(', ') : 'nothing yet'}.`);
-  if (!parts.length) parts.push(listValues(state).map((l, i) => `${NAMES[i]}: ${l.join(', ') || 'empty'}`).join('. '));
+  if (extra.array)
+    parts.push(
+      `vals holds ${cells.length ? cells.map((c) => c!.value).join(', ') : 'nothing yet'}.`,
+    );
+  if (!parts.length)
+    parts.push(
+      listValues(state)
+        .map((l, i) => `${NAMES[i]}: ${l.join(', ') || 'empty'}`)
+        .join('. '),
+    );
   return parts.join(' ');
 }

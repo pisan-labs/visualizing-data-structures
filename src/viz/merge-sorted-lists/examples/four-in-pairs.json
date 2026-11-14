@@ -3,21 +3,13 @@
   "viz": "merge-sorted-lists",
   "id": "four-in-pairs",
   "title": "Four lists in pairs",
-  "notes": "NOTES",
+  "notes": "1 5 9, 2 6 10, 3 7 and 4 8, merged in pairs: A with B (5 comparisons) and C with D (3), then the two results (8). 16 comparisons, and every node is in two merges.",
   "settings": {
     "approach": "pattern",
     "kway": "pairs"
   },
   "seed": 1,
-  "ops": [
-    [
-      "build",
-      "1 5 9 | 2 6 10 | 3 7 | 4 8"
-    ],
-    [
-      "merge"
-    ]
-  ],
+  "ops": [["build", "1 5 9 | 2 6 10 | 3 7 | 4 8"], ["merge"]],
   "at": {
     "op": 0,
     "step": 0

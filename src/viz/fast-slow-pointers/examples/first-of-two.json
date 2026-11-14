@@ -3,21 +3,13 @@
   "viz": "fast-slow-pointers",
   "id": "first-of-two",
   "title": "Two middles: the first",
-  "notes": "NOTES",
+  "notes": "The same six nodes with while fast.next and fast.next.next: fast stops on the second to last node after two rounds, and slow on the first middle, 1, at index 2. 6 hops; counting first takes 8.",
   "settings": {
     "approach": "pattern",
     "middle": "first"
   },
   "seed": 1,
-  "ops": [
-    [
-      "build",
-      "3 8 1 9 4 7"
-    ],
-    [
-      "middle"
-    ]
-  ],
+  "ops": [["build", "3 8 1 9 4 7"], ["middle"]],
   "at": {
     "op": 0,
     "step": 0

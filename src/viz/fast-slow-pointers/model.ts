@@ -140,9 +140,7 @@ function step(
     extra: {
       heading: o.heading ?? r.heading,
       ptrs: { ...r.ptrs },
-      ...(r.array
-        ? { array: { cells: [...r.array.cells], markers: { ...r.array.markers } } }
-        : {}),
+      ...(r.array ? { array: { cells: [...r.array.cells], markers: { ...r.array.markers } } } : {}),
       frame: r.frame,
     },
   };
@@ -205,9 +203,6 @@ const build: Op = {
 };
 
 // ----- middle -----
-
-const middleWhich = (settings: FSSettings) =>
-  settings.middle === 'first' ? 'the first of two middles' : 'the second of two middles';
 
 /** The index the middle is at: n / 2, or (n − 1) / 2 for the first of two, rounded down. */
 export const middleIndex = (n: number, middle: Middle) =>
@@ -523,6 +518,20 @@ const kth: Op = {
 
 const PAL_UNITS = ['hops', 'links', 'copies', 'comparisons'] as const;
 
+/** "25 hops, 8 links and 4 comparisons": the counters that moved. */
+function tallyNonZero(work: Work): string {
+  const parts = work.units
+    .filter((u) => work.get(u) > 0)
+    .map((u) => {
+      const v = work.get(u);
+      return v === 1 ? `1 ${u === 'copies' ? 'copy' : u.slice(0, -1)}` : `${v} ${u}`;
+    });
+  if (!parts.length) return 'No work';
+  const text =
+    parts.length > 1 ? `${parts.slice(0, -1).join(', ')} and ${parts.at(-1)}` : parts[0]!;
+  return text[0]!.toUpperCase() + text.slice(1);
+}
+
 function* palindromePattern(s0: FSState, settings: FSSettings, tot: Totals) {
   const first = settings.middle === 'first';
   const s = s0;
@@ -600,7 +609,8 @@ function* palindromePattern(s0: FSState, settings: FSSettings, tot: Totals) {
   // 3. Compare.
   let left: number | null = s.head;
   let right: number | null = back;
-  r.ptrs = { left, right };
+  // prev keeps the turned-around half, so it can be put back.
+  r.ptrs = { prev: back, left, right };
   r.page = () => ({ left: valueVar(s.nodes, left), right: valueVar(s.nodes, right), same });
   yield step(
     r,
@@ -632,7 +642,7 @@ function* palindromePattern(s0: FSState, settings: FSSettings, tot: Totals) {
     const was = right;
     right = nextOf(r.s, right);
     r.work.add('hops', 2);
-    r.ptrs = { left, right };
+    r.ptrs = { prev: back, left, right };
     yield step(
       r,
       self
@@ -678,7 +688,7 @@ function* palindromePattern(s0: FSState, settings: FSSettings, tot: Totals) {
   r.page = () => ({ n, palindrome: same! });
   yield step(
     r,
-    `return ${same}: the list ${same ? 'is' : 'is not'} a palindrome, and it is back as it was: head → ${arrows(values(r.s))}. ${r.work.tally()}, and no extra memory. Copying to an array takes ${tot.naive} steps of work but ${plural(n, 'cell')}.`,
+    `return ${same}: the list ${same ? 'is' : 'is not'} a palindrome, and it is back as it was: head → ${arrows(values(r.s))}. ${tallyNonZero(r.work)}: ${tot.pattern} in all, and no extra memory. Copying to an array costs ${tot.naive}, but needs ${plural(n, 'cell')}.`,
     ['ret'],
     {
       level: 1,
@@ -765,7 +775,7 @@ function* palindromeNaive(s: FSState, _settings: FSSettings, tot: Totals) {
   r.page = () => ({ n, palindrome: same! });
   yield step(
     r,
-    `return ${same}: the list ${same ? 'is' : 'is not'} a palindrome. ${r.work.tally()}, with an array of ${plural(n, 'cell')}. Reversing the second half in place takes ${tot.pattern} steps of work and no array.`,
+    `return ${same}: the list ${same ? 'is' : 'is not'} a palindrome. ${tallyNonZero(r.work)}: ${tot.naive} in all, with an array of ${plural(n, 'cell')}. Reversing the second half in place costs ${tot.pattern}, and no array.`,
     ['ret'],
     {
       level: 1,
@@ -848,7 +858,12 @@ export function pseudocode(settings: FSSettings): PseudoBlock[] {
           L('inc', 2, 'n = n + 1; cur = cur.next', 'count the node and move on.'),
           L('short', 1, 'if k > n: return null', 'A list shorter than k has no k-th from the end.'),
           L('reset', 1, 'cur = head', 'Start again at the head.'),
-          L('walk', 1, 'repeat n − k times', 'The k-th from the end is n − k steps from the front:'),
+          L(
+            'walk',
+            1,
+            'repeat n − k times',
+            'The k-th from the end is n − k steps from the front:',
+          ),
           L('step', 2, 'cur = cur.next', 'move to the next node.'),
           L('ret', 1, 'return cur', 'That node is k from the end.'),
         ],
@@ -892,7 +907,12 @@ export function pseudocode(settings: FSSettings): PseudoBlock[] {
         L('sig', 0, 'kthFromEnd(head, k)', 'To find the k-th node from the end:'),
         L('init', 1, 'fast = head', 'Start fast at the head.'),
         L('gap', 1, 'repeat k times', 'Move it k nodes ahead:'),
-        L('short', 2, 'if fast == null: return null', 'if the list runs out first, it is too short;'),
+        L(
+          'short',
+          2,
+          'if fast == null: return null',
+          'if the list runs out first, it is too short;',
+        ),
         L('ahead', 2, 'fast = fast.next', 'otherwise move fast one node.'),
         L('slow0', 1, 'slow = head', 'Start slow at the head, k behind fast.'),
         L('loop', 1, 'while fast != null', 'Until fast falls off the end:'),

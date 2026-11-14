@@ -3,21 +3,13 @@
   "viz": "merge-sorted-lists",
   "id": "interleaved",
   "title": "Interleaved: every node compared",
-  "notes": "NOTES",
+  "notes": "A = 1 3 5 7 9, B = 2 4 6 8 10: the values take turns, so every node but the last is compared. 9 comparisons for 10 nodes, the most a merge of 10 can make.",
   "settings": {
     "approach": "pattern",
     "kway": "pairs"
   },
   "seed": 1,
-  "ops": [
-    [
-      "build",
-      "1 3 5 7 9 | 2 4 6 8 10"
-    ],
-    [
-      "merge"
-    ]
-  ],
+  "ops": [["build", "1 3 5 7 9 | 2 4 6 8 10"], ["merge"]],
   "at": {
     "op": 0,
     "step": 0

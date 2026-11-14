@@ -3,21 +3,13 @@
   "viz": "merge-sorted-lists",
   "id": "ties-keep-order",
   "title": "Equal values: A's first",
-  "notes": "NOTES",
+  "notes": "A = 2 4 4, B = 1 4 6. On a tie the merge takes from A (a.value <= b.value), so both 4s from A come before B's 4. The result is 1 2 4 4 4 6, after 4 comparisons.",
   "settings": {
     "approach": "pattern",
     "kway": "pairs"
   },
   "seed": 1,
-  "ops": [
-    [
-      "build",
-      "2 4 4 | 1 4 6"
-    ],
-    [
-      "merge"
-    ]
-  ],
+  "ops": [["build", "2 4 4 | 1 4 6"], ["merge"]],
   "at": {
     "op": 0,
     "step": 0

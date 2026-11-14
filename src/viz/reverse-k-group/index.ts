@@ -171,7 +171,8 @@ function codeScript(calls: OpCall[], settings: RKSettings) {
   for (const e of t.entries) {
     const [op, arg] = e.call;
     if (op === 'build') {
-      if (typeof readValues(arg, MAX_N) !== 'string') input.push(`build ${values(e.end).join(' ')}`);
+      if (typeof readValues(arg, MAX_N) !== 'string')
+        input.push(`build ${values(e.end).join(' ')}`);
     } else if (op === 'reverse' && typeof readK(arg, MAX_K) === 'number') {
       input.push(`reverse ${readK(arg, MAX_K)}${settings.rest === 'reverse' ? ' all' : ''}`);
       expected.push(values(e.end).join(' '));

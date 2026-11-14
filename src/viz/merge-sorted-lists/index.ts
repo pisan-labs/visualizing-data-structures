@@ -54,7 +54,10 @@ const presets: Preset[] = [
     label: 'Interleaved (most comparisons)',
     make: (_rng, n) => {
       const vs = Array.from({ length: Math.min(n, 2 * MAX_LEN) }, (_, i) => 10 + 5 * i);
-      return [build([vs.filter((_, i) => i % 2 === 0), vs.filter((_, i) => i % 2 === 1)]), ['merge']];
+      return [
+        build([vs.filter((_, i) => i % 2 === 0), vs.filter((_, i) => i % 2 === 1)]),
+        ['merge'],
+      ];
     },
   },
   {

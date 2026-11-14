@@ -132,7 +132,8 @@ export const listValues = (s: MState) =>
   s.lists.map((h) => order(s.nodes, h).map((u) => valOf(s, u)));
 
 /** "1 → 4 → 7 → null". */
-const chainOf = (s: MState, head: number | null) => arrows(order(s.nodes, head).map((u) => valOf(s, u)));
+const chainOf = (s: MState, head: number | null) =>
+  arrows(order(s.nodes, head).map((u) => valOf(s, u)));
 
 // ----- Input -----
 
@@ -360,11 +361,7 @@ function* pattern(s0: MState, settings: MSettings, tot: Totals): Generator<MStep
     const round = rounds.findIndex((rd) => rd.some(([x, y]) => x === i && y === j));
     if (k > 2 && settings.kway === 'pairs' && rounds[round]![0]![0] === i && round > 0) {
       const these = rounds[round]!.map(([x, y]) => `${NAMES[x]} with ${NAMES[y]}`);
-      yield step(
-        bd,
-        `Round ${round + 1}: merge ${and(these)}.`,
-        ['round', 'pairs'],
-      );
+      yield step(bd, `Round ${round + 1}: merge ${and(these)}.`, ['round', 'pairs']);
     }
     // The dummy comes in.
     bd.s = { ...bd.s, nodes: [...bd.s.nodes, { uid: DUMMY, value: -1, next: null }] };
@@ -600,9 +597,14 @@ function* naive(s0: MState, settings: MSettings, tot: Totals): Generator<MStep, 
     bd.work.add('links');
     tail = u;
     bd.ptrs = { tail };
-    yield step(bd, `A new node for vals[${t}] = ${v}, linked after tail; tail moves onto it.`, ['bloop', 'build'], {
-      marks: [mark(nid(u), 'new'), mark(`cp-${cells[t]!.uid}`, 'active')],
-    });
+    yield step(
+      bd,
+      `A new node for vals[${t}] = ${v}, linked after tail; tail moves onto it.`,
+      ['bloop', 'build'],
+      {
+        marks: [mark(nid(u), 'new'), mark(`cp-${cells[t]!.uid}`, 'active')],
+      },
+    );
   }
   const head = total ? uid0 : null;
   const made = order(bd.s.nodes, head);
@@ -700,7 +702,12 @@ export function pseudocode(settings: MSettings): PseudoBlock[] {
             'for i = 1 to length(vals) − 1: key = vals[i]; j = i − 1',
             'Sort it by insertion: lift out each value in turn,',
           ),
-          L('cmp', 2, 'while j ≥ 0 and vals[j] > key', 'and while the value before the gap is bigger,'),
+          L(
+            'cmp',
+            2,
+            'while j ≥ 0 and vals[j] > key',
+            'and while the value before the gap is bigger,',
+          ),
           L('shift', 3, 'vals[j + 1] = vals[j]; j = j − 1', 'shift it one cell right;'),
           L('place', 2, 'vals[j + 1] = key', 'then put the value in the gap.'),
           L('binit', 1, 'dummy = new node; tail = dummy', 'Build a new list after a dummy head:'),
@@ -731,7 +738,9 @@ export function pseudocode(settings: MSettings): PseudoBlock[] {
         L(
           'pairs',
           2,
-          one ? 'lists[1] = merge(lists[1], lists[i])' : 'merge them in pairs: 1 with 2, 3 with 4, …',
+          one
+            ? 'lists[1] = merge(lists[1], lists[i])'
+            : 'merge them in pairs: 1 with 2, 3 with 4, …',
           one
             ? 'merge the next one into the first list.'
             : 'merge them two at a time; an odd one out waits for the next round.',

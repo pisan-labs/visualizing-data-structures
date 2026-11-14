@@ -7,22 +7,9 @@
  * naive approach draws the array of copies (vals) under the list.
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
-import {
-  drawChain,
-  type ChainLink,
-  type ChainNode,
-  type NamedPointer,
-} from '../../layouts/linked';
+import { drawChain, type ChainLink, type ChainNode, type NamedPointer } from '../../layouts/linked';
 import type { Scene, Shape } from '../../render/scene';
-import {
-  ARRAY,
-  arrows,
-  chainCols,
-  drawArray,
-  heading,
-  nid,
-  rerouteSkips,
-} from '../_lists2/kit';
+import { ARRAY, arrows, chainCols, drawArray, heading, nid, rerouteSkips } from '../_lists2/kit';
 import { DUMMY, values, type RKExtra, type RKSettings, type RKState } from './model';
 
 const ABOVE = ['before', 'kth', 'after'];
@@ -64,8 +51,10 @@ export function view(
       pointers.push({ name, to: u === null ? null : nid(u), side, nullAt: 'after' });
     }
   // The same columns with and without the dummy, so nodes do not jump between rows.
+  // (The naive approach never has a dummy, so it reserves no slot for one.)
   const real = state.nodes.length - (dummy ? 1 : 0);
-  const cols = chainCols(stage, real + 1, reserved ? ARRAY_ROOM : 0);
+  const room = real + (reserved ? 0 : 1);
+  const cols = chainCols(stage, room, reserved ? ARRAY_ROOM : 0);
   const links: ChainLink[] = state.nodes.map((n) => ({
     from: nid(n.uid),
     field: 'next',
@@ -78,7 +67,7 @@ export function view(
       links,
       pointers,
       cols,
-      minRows: Math.ceil((real + 1) / cols),
+      minRows: Math.ceil(room / cols),
     },
     roles,
   );

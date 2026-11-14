@@ -231,7 +231,8 @@ function codeScript(calls: OpCall[], settings: FSSettings) {
     const v = e.steps.at(-1)!.vars ?? {};
     const [op, arg] = e.call;
     if (op === 'build') {
-      if (typeof readValues(arg, MAX_N) !== 'string') input.push(`build ${values(e.end).join(' ')}`);
+      if (typeof readValues(arg, MAX_N) !== 'string')
+        input.push(`build ${values(e.end).join(' ')}`);
     } else if (op === 'middle') {
       input.push(settings.middle === 'first' ? 'middle first' : 'middle');
       expected.push(String(v.middle));

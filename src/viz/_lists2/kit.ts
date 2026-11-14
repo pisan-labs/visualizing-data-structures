@@ -43,8 +43,7 @@ export const nid = (uid: number) => `n${uid}`;
 
 // ----- Text -----
 
-export const plural = (n: number, one: string, many = `${one}s`) =>
-  `${n} ${n === 1 ? one : many}`;
+export const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
 /** "a", "a and b", "a, b and c". */
 export const and = (xs: string[]) =>
@@ -76,7 +75,8 @@ export function readValues(arg: Value | undefined, max: number): number[] | stri
   for (const t of tokens) {
     if (!INT.test(t)) return `"${t}" is not a whole number from ${MIN_VALUE} to ${MAX_VALUE}.`;
     const v = Number(t);
-    if (v > MAX_VALUE) return `${t} is too big. Use whole numbers from ${MIN_VALUE} to ${MAX_VALUE}.`;
+    if (v > MAX_VALUE)
+      return `${t} is too big. Use whole numbers from ${MIN_VALUE} to ${MAX_VALUE}.`;
     out.push(v);
   }
   return out;
@@ -299,7 +299,13 @@ export function rerouteSkips(
     const cy = dst.y + dst.h / 2;
     const first = !all.some((b) => b.y === dst.y && b.x < dst.x);
     const pts = first
-      ? [p, { x: p.x, y: yGap }, { x: dst.x - 12, y: yGap }, { x: dst.x - 12, y: cy }, { x: dst.x, y: cy }]
+      ? [
+          p,
+          { x: p.x, y: yGap },
+          { x: dst.x - 12, y: yGap },
+          { x: dst.x - 12, y: cy },
+          { x: dst.x, y: cy },
+        ]
       : [p, { x: p.x, y: yGap }, { x: dst.x + 10, y: yGap }, { x: dst.x + 10, y: dst.y }];
     const id = linkId(l.from, 'next');
     replace.set(id, drawLink(id, pts, { role: roles.get(id), dashed: l.dashed }));

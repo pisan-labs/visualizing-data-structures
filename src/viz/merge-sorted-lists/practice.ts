@@ -4,14 +4,7 @@ import type { OpCall, PracticeKind, VizDef } from '../../engine/types';
 import { spotItKind, type SpotRow } from '../_patterns/kit';
 import { choice } from '../_lists/practice-util';
 import { DUMMY } from './model';
-import {
-  defaults,
-  formatLists,
-  NAMES,
-  type MExtra,
-  type MSettings,
-  type MState,
-} from './model';
+import { defaults, formatLists, NAMES, type MExtra, type MSettings, type MState } from './model';
 
 type Def = VizDef<MState, MSettings, MExtra>;
 

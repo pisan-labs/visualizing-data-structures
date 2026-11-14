@@ -3,28 +3,13 @@
   "viz": "fast-slow-pointers",
   "id": "one-node",
   "title": "One node",
-  "notes": "NOTES",
+  "notes": "A list of one node, 5. The middle is 5 with no hops, the 1st from the end is 5, and a one-node list is a palindrome.",
   "settings": {
     "approach": "pattern",
     "middle": "second"
   },
   "seed": 1,
-  "ops": [
-    [
-      "build",
-      "5"
-    ],
-    [
-      "middle"
-    ],
-    [
-      "kth",
-      1
-    ],
-    [
-      "palindrome"
-    ]
-  ],
+  "ops": [["build", "5"], ["middle"], ["kth", 1], ["palindrome"]],
   "at": {
     "op": 0,
     "step": 0

@@ -3,21 +3,15 @@
   "viz": "fast-slow-pointers",
   "id": "gap-of-k",
   "title": "A gap of k",
-  "notes": "NOTES",
+  "notes": "k = 3 on 3 8 1 9 4 7 2. fast goes 3 nodes ahead, then both move 4 times; when fast is null, slow is on 4, the 3rd from the end. 11 hops, exactly what counting first takes.",
   "settings": {
     "approach": "pattern",
     "middle": "second"
   },
   "seed": 1,
   "ops": [
-    [
-      "build",
-      "3 8 1 9 4 7 2"
-    ],
-    [
-      "kth",
-      3
-    ]
+    ["build", "3 8 1 9 4 7 2"],
+    ["kth", 3]
   ],
   "at": {
     "op": 0,

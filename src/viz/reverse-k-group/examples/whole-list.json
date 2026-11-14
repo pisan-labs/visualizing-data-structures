@@ -3,21 +3,15 @@
   "viz": "reverse-k-group",
   "id": "whole-list",
   "title": "k = n: the whole list turned around",
-  "notes": "NOTES",
+  "notes": "k = 5 on a list of 5: one group, the whole list turned around: 5 4 3 2 1.",
   "settings": {
     "approach": "pattern",
     "rest": "keep"
   },
   "seed": 1,
   "ops": [
-    [
-      "build",
-      "1 2 3 4 5"
-    ],
-    [
-      "reverse",
-      5
-    ]
+    ["build", "1 2 3 4 5"],
+    ["reverse", 5]
   ],
   "at": {
     "op": 0,

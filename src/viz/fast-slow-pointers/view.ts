@@ -8,22 +8,9 @@
  * out of its node into A.
  */
 import type { MarkRole, StageSize, Step } from '../../engine/types';
-import {
-  drawChain,
-  type ChainLink,
-  type ChainNode,
-  type NamedPointer,
-} from '../../layouts/linked';
+import { drawChain, type ChainLink, type ChainNode, type NamedPointer } from '../../layouts/linked';
 import type { Scene, Shape } from '../../render/scene';
-import {
-  ARRAY,
-  arrows,
-  chainCols,
-  drawArray,
-  heading,
-  nid,
-  rerouteSkips,
-} from '../_lists2/kit';
+import { ARRAY, arrows, chainCols, drawArray, heading, nid, rerouteSkips } from '../_lists2/kit';
 import { values, type FSExtra, type FSSettings, type FSState } from './model';
 
 /** Local pointers are drawn below the nodes, in this order when they share a node. */
@@ -107,7 +94,8 @@ function label(step: Step<FSState, FSExtra>): string {
       `Pointers: ${locals.map(([k, u]) => `${k} → ${u === null ? 'null' : byUid.get(u)}`).join(', ')}.`,
     );
   const cells = extra?.array?.cells.filter((c) => c !== null) ?? [];
-  if (extra?.array) parts.push(`A holds ${cells.length ? cells.map((c) => c!.value).join(', ') : 'nothing yet'}.`);
+  if (extra?.array)
+    parts.push(`A holds ${cells.length ? cells.map((c) => c!.value).join(', ') : 'nothing yet'}.`);
   if (extra?.heading) parts.unshift(`${extra.heading}.`);
   return parts.join(' ');
 }

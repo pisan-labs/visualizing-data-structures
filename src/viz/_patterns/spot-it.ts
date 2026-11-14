@@ -61,7 +61,9 @@ function shuffle<T>(rng: Rng, xs: readonly T[]): T[] {
 /** “a” and “b”. */
 function quote(cue: string | readonly string[]): string {
   const cues = (typeof cue === 'string' ? [cue] : [...cue]).map((c) => `“${c}”`);
-  return cues.length > 1 ? `${cues.slice(0, -1).join(', ')} and ${cues[cues.length - 1]}` : cues[0]!;
+  return cues.length > 1
+    ? `${cues.slice(0, -1).join(', ')} and ${cues[cues.length - 1]}`
+    : cues[0]!;
 }
 
 export function spotItKind(o: SpotItOptions): PracticeKind {

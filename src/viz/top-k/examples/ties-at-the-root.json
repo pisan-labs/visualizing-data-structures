@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "top-k",
+  "id": "ties-at-the-root",
+  "title": "Ties at the root",
+  "notes": "A = 8 5 8 3 8 5 9 8 and k = 3. A value equal to the root does not replace it, so the last 8 is skipped with one comparison. The answer is 9 8 8; which of the four 8s are in the heap does not matter.",
+  "settings": {
+    "approach": "pattern",
+    "goal": "top"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "8 5 8 3 8 5 9 8"],
+    ["top", 3]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

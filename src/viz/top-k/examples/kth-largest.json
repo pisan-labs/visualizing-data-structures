@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "top-k",
+  "id": "kth-largest",
+  "title": "The 4th largest",
+  "notes": "The same 9 values with k = 4 and Find set to the k-th largest. The heap of the 4 largest (21, 18, 14 and 12) ends with 12 at its root, so 12 is the 4th largest: 17 comparisons.",
+  "settings": {
+    "approach": "pattern",
+    "goal": "kth"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "5 12 3 18 7 21 9 14 2"],
+    ["top", 4]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

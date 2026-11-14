@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "viz": "two-heaps-median",
+  "id": "rising-stream",
+  "title": "A rising stream",
+  "notes": "10 20 30 … 80. Each value is the largest so far: the sorted list takes one comparison per value, 7 in all, while every other value makes the heaps move a top across, 20 comparisons.",
+  "settings": {
+    "approach": "pattern",
+    "even": "mean"
+  },
+  "seed": 1,
+  "ops": [
+    ["add", 10],
+    ["add", 20],
+    ["add", 30],
+    ["add", 40],
+    ["add", 50],
+    ["add", 60],
+    ["add", 70],
+    ["add", 80]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

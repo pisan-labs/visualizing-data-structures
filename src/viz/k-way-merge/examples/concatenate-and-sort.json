@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "k-way-merge",
+  "id": "concatenate-and-sort",
+  "title": "Concatenate and sort",
+  "notes": "The same three lists put in one array, list after list, and merge sorted bottom up as if they were not sorted: four passes and 26 comparisons.",
+  "settings": {
+    "approach": "naive"
+  },
+  "seed": 1,
+  "ops": [["load", "1 8 12 | 3 4 10 15 | 2 9 11"], ["merge"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "viz": "two-heaps-median",
+  "id": "running-median",
+  "title": "A running median",
+  "notes": "5 15 1 3 8 7 9 10 6, one at a time. The medians are 5, 10, 5, 4, 5, 6, 7, 7.5 and 7. Watch 3: it goes into the low half, which then has two more than the high half, so the low half’s top, 5, moves over. After all 9 values the heaps have made 25 comparisons and a sorted list 21: at this size the list wins.",
+  "settings": {
+    "approach": "pattern",
+    "even": "mean"
+  },
+  "seed": 1,
+  "ops": [
+    ["add", 5],
+    ["add", 15],
+    ["add", 1],
+    ["add", 3],
+    ["add", 8],
+    ["add", 7],
+    ["add", 9],
+    ["add", 10],
+    ["add", 6]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

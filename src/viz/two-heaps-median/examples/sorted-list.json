@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "viz": "two-heaps-median",
+  "id": "sorted-list",
+  "title": "A sorted list instead",
+  "notes": "The same stream, kept in one sorted list S: each value goes at the end and slides left past every bigger value. 6 slides past 15, 10, 9, 8 and 7 and stops after 5. The median is the middle of S: 21 comparisons for 9 values.",
+  "settings": {
+    "approach": "naive",
+    "even": "mean"
+  },
+  "seed": 1,
+  "ops": [
+    ["add", 5],
+    ["add", 15],
+    ["add", 1],
+    ["add", 3],
+    ["add", 8],
+    ["add", 7],
+    ["add", 9],
+    ["add", 10],
+    ["add", 6]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

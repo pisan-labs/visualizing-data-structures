@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "top-k",
+  "id": "sort-everything",
+  "title": "Sort everything first",
+  "notes": "The same values, sorted from largest to smallest by merge sort, bottom up: four passes, 24 comparisons. Then the first 3 are read off. The sort puts all 9 values in order when only 3 were asked for.",
+  "settings": {
+    "approach": "naive",
+    "goal": "top"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "5 12 3 18 7 21 9 14 2"],
+    ["top", 3]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "viz": "top-k",
+  "id": "falling-values",
+  "title": "Falling values: the heap’s best case",
+  "notes": "30 27 24 … 6 and k = 3. The first three values are the answer. Every later value loses to the root, 24, with one comparison: 8 comparisons in all, against 20 to sort and 33 for quickselect.",
+  "settings": {
+    "approach": "pattern",
+    "goal": "top"
+  },
+  "seed": 1,
+  "ops": [
+    ["load", "30 27 24 21 18 15 12 9 6"],
+    ["top", 3]
+  ],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "viz": "k-way-merge",
+  "id": "already-in-order",
+  "title": "Lists already in order",
+  "notes": "L1 = 1 2 3, L2 = 4 5 6, L3 = 7 8 9, merged in pairs. Each merge stops as soon as the list with the smaller values is used up: 3 comparisons, then 6, 9 in all. The heap of heads also takes 9; sorting everything takes 20.",
+  "settings": {
+    "approach": "pairs"
+  },
+  "seed": 1,
+  "ops": [["load", "1 2 3 | 4 5 6 | 7 8 9"], ["merge"]],
+  "at": {
+    "op": 0,
+    "step": 0
+  }
+}

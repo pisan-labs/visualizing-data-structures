@@ -69,8 +69,7 @@ const presets: Preset[] = [
   },
   {
     label: 'Alternating signs',
-    make: (rng, n) =>
-      solve(Array.from({ length: n }, (_, i) => (i % 2 ? -1 : 1) * rng.int(1, 6))),
+    make: (rng, n) => solve(Array.from({ length: n }, (_, i) => (i % 2 ? -1 : 1) * rng.int(1, 6))),
   },
 ];
 

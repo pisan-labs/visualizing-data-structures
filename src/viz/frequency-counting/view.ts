@@ -6,9 +6,9 @@
  * - the current word's key ("key: g1h1i1n1t1", or its sorted letters);
  * - the pattern: the 26 letter counts, a to m over n to z;
  * - the map: one row per key, the key's chip and then its words.
- * On a wide stage the map sits right of the rest; on a tall one, under it. Every word's key is
- * known when the operation starts, so the map's rows have fixed places and the camera holds
- * still.
+ * On a wide stage the map sits right of the rest; otherwise it comes under the words, with the
+ * key and the counts under it. Every word's key is known when the operation starts, so the
+ * map's rows have fixed places and the camera holds still.
  *
  * The first unique letter:
  * - the word, one letter per cell, with indices;
@@ -20,13 +20,7 @@ import { cellRow, chip, chipSize, columns, FONT, monoWidth, pitchFor } from '../
 import type { Scene, Shape } from '../../render/scene';
 import { ALPHABET } from '../_arr1/kit';
 import { approachOf } from '../_patterns/kit';
-import {
-  describe,
-  type FSettings,
-  type FStep,
-  type GroupExtra,
-  type UniqueExtra,
-} from './model';
+import { describe, type FSettings, type FStep, type GroupExtra, type UniqueExtra } from './model';
 
 const PAD = 10;
 const CHIP = FONT.chip;
@@ -43,7 +37,9 @@ export function view(step: FStep, settings: FSettings, stage?: StageSize): Scene
   const roles = new Map<string, MarkRole>(step.marks.map((m) => [m.id, m.role]));
   const e = step.extra;
   if (e?.kind === 'unique') return uniqueView(step, e, roles, settings, stage);
-  const wide = stage ? stage.w > 1.4 * stage.h : true;
+  // A laptop's stage is more than twice as wide as tall; a phone's, a thumbnail's and one side
+  // of compare mode are not.
+  const wide = stage !== undefined && stage.w > 1.8 * stage.h;
   return groupView(step, e, roles, settings, wide);
 }
 
@@ -71,7 +67,13 @@ function flow(texts: string[], left: number, right: number): Placed[] {
 }
 
 /** The 26 counts at (x, top), two rows of 13. Returns the bottom. */
-function strip(shapes: Shape[], counts: readonly number[], roles: Roles, x: number, top: number): number {
+function strip(
+  shapes: Shape[],
+  counts: readonly number[],
+  roles: Roles,
+  x: number,
+  top: number,
+): number {
   for (let i = 0; i < 26; i++) {
     const ch = ALPHABET[i]!;
     const row = Math.floor(i / 13);
@@ -166,9 +168,67 @@ function groupView(
     } else chipAt.set(t, { x: p.x + p.w / 2, y: cy });
   });
   y += (Math.max(0, ...slots.map((p) => p.line)) + 1) * LINE;
-  let leftBottom = y;
 
+  // The map: rows in the order the keys first appear (fixed for the operation). Returns its
+  // bottom, and widens `right` to its right edge.
+  let right = PAD + leftW;
+  const drawMap = (x: GroupExtra, mapX: number, top: number): number => {
+    const order: string[] = [];
+    for (const k of x.allKeys) if (!order.includes(k)) order.push(k);
+    const keyW = Math.max(...order.map((k) => chipSize(k, CHIP).w));
+    shapes.push({
+      kind: 'text',
+      id: 'map-title',
+      x: mapX,
+      y: top + 20,
+      text: 'map: key → words',
+      size: TITLE,
+      cls: 'label',
+      mono: true,
+    });
+    const my = top + 32;
+    order.forEach((k, g) => {
+      const cy = my + g * LINE + 14;
+      if (g < x.map.length) {
+        shapes.push(
+          ...chip({
+            id: `k-${g}`,
+            x: mapX + keyW / 2,
+            y: cy,
+            text: k,
+            size: CHIP,
+            role: roles.get(`k-${g}`),
+          }),
+        );
+      } else {
+        shapes.push({
+          kind: 'rect',
+          id: `k-${g}`,
+          x: mapX,
+          y: cy - 13,
+          w: keyW,
+          h: 26,
+          r: 7,
+          cls: 'ghost',
+        });
+      }
+      // Its words, left to right, in the room the whole group will need.
+      let wx = mapX + keyW + 14;
+      x.allKeys.forEach((kk, t) => {
+        if (kk !== k) return;
+        const w = chipSize(words[t]!, CHIP).w;
+        if (placed.has(t)) chipAt.set(t, { x: wx + w / 2, y: cy });
+        wx += w + 10;
+      });
+      right = Math.max(right, wx);
+    });
+    return my + order.length * LINE;
+  };
+
+  let bottom = y;
   if (e) {
+    // On a tall stage the map comes right under the words, and the counts under the map.
+    if (!wide) y = drawMap(e, PAD, y) + 4;
     const cur = e.cur;
     const key = cur === undefined ? null : e.keys[cur];
     shapes.push({
@@ -188,60 +248,8 @@ function groupView(
       role: roles.get('key'),
     });
     y += 36;
-    leftBottom = y;
-    if (!naive) leftBottom = strip(shapes, e.counts ?? Array(26).fill(0), roles, PAD, y + 4);
-  }
-
-  // The map: rows in the order the keys first appear (fixed for the operation).
-  let right = PAD + leftW;
-  let bottom = leftBottom;
-  if (e) {
-    const order: string[] = [];
-    for (const k of e.allKeys) if (!order.includes(k)) order.push(k);
-    const keyW = Math.max(...order.map((k) => chipSize(k, CHIP).w));
-    const mapX = wide ? PAD + leftW + 40 : PAD;
-    let my = wide ? 40 : leftBottom + 12;
-    shapes.push({
-      kind: 'text',
-      id: 'map-title',
-      x: mapX,
-      y: my + 20,
-      text: 'map: key → words',
-      size: TITLE,
-      cls: 'label',
-      mono: true,
-    });
-    my += 32;
-    order.forEach((k, g) => {
-      const cy = my + g * LINE + 14;
-      const made = g < e.map.length;
-      if (made) {
-        shapes.push(
-          ...chip({ id: `k-${g}`, x: mapX + keyW / 2, y: cy, text: k, size: CHIP, role: roles.get(`k-${g}`) }),
-        );
-      } else {
-        shapes.push({
-          kind: 'rect',
-          id: `k-${g}`,
-          x: mapX,
-          y: cy - 13,
-          w: keyW,
-          h: 26,
-          r: 7,
-          cls: 'ghost',
-        });
-      }
-      // Its words, left to right, in the room the whole group will need.
-      let x = mapX + keyW + 14;
-      e.allKeys.forEach((kk, t) => {
-        if (kk !== k) return;
-        const w = chipSize(words[t]!, CHIP).w;
-        if (placed.has(t)) chipAt.set(t, { x: x + w / 2, y: cy });
-        x += w + 10;
-      });
-      right = Math.max(right, x);
-    });
-    bottom = Math.max(bottom, my + order.length * LINE);
+    bottom = naive ? y : strip(shapes, e.counts ?? Array(26).fill(0), roles, PAD, y + 4);
+    if (wide) bottom = Math.max(bottom, drawMap(e, PAD + leftW + 40, 40));
   }
 
   for (const [t, at] of chipAt) {
@@ -341,7 +349,8 @@ function groupLabel(step: FStep, e: GroupExtra | undefined): string {
   const parts = [describe(step.state)];
   if (!e) return parts.join(' ');
   const words = step.state.words;
-  if (e.cur !== undefined) parts.push(`Looking at ${words[e.cur]}${e.keys[e.cur] ? `, key ${e.keys[e.cur]}` : ''}.`);
+  if (e.cur !== undefined)
+    parts.push(`Looking at ${words[e.cur]}${e.keys[e.cur] ? `, key ${e.keys[e.cur]}` : ''}.`);
   if (e.map.length)
     parts.push(
       `The map holds ${e.map.map((m) => `${m.key}: ${m.words.map((t) => words[t]).join(' ')}`).join('; ')}.`,

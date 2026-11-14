@@ -101,14 +101,11 @@ export function kadanePractice(def: () => Def): PracticeKind[] {
       make(rng) {
         const negative = rng.int(0, 4) === 0;
         const n = rng.int(6, 9);
-        const vs = negative
-          ? Array.from({ length: n }, () => -rng.int(1, 9))
-          : values(rng, n);
+        const vs = negative ? Array.from({ length: n }, () => -rng.int(1, 9)) : values(rng, n);
         const last = result(vs);
         const b = last.extra!.best!;
         return {
-          prompt:
-            'What is the largest sum of a subarray of A (one or more values in a row)?',
+          prompt: 'What is the largest sum of a subarray of A (one or more values in a row)?',
           setup: [load(vs)],
           answer: { kind: 'number', value: b.sum },
           explain: negative
@@ -135,9 +132,10 @@ export function kadanePractice(def: () => Def): PracticeKind[] {
             'The pass starts its first run at A[0], and restarts at A[j] whenever the run so far is negative. At which indices does a run start? Type them in order, 0 first.',
           setup: [load(vs)],
           answer: { kind: 'sequence', value: starts.map(String) },
-          explain: starts.length > 1
-            ? `Runs start at ${starts.join(', ')}. The run just before each restart is negative: ${why}. A run at exactly 0 keeps going.`
-            : 'Only at 0: the run never goes negative, so it never restarts.',
+          explain:
+            starts.length > 1
+              ? `Runs start at ${starts.join(', ')}. The run just before each restart is negative: ${why}. A run at exactly 0 keeps going.`
+              : 'Only at 0: the run never goes negative, so it never restarts.',
           watch: [['find']],
         };
       },

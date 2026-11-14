@@ -53,14 +53,17 @@ describe('frequency-counting', () => {
         const tot = groupTotals(words);
         expect(last.vars?.['naive total']).toBe(tot.naive);
         expect(last.vars?.['pattern total']).toBe(tot.pattern);
-        const total = Number(last.vars?.comparisons) + Number(last.vars?.counts) + Number(last.vars?.lookups);
+        const total =
+          Number(last.vars?.comparisons) + Number(last.vars?.counts) + Number(last.vars?.lookups);
         expect(total).toBe(approach === 'naive' ? tot.naive : tot.pattern);
         for (const step of ss) {
           const x = step.extra as GroupExtra;
           // Keys made so far are right, and every placed word is in its key's group.
           x.keys.forEach((k, t) => {
             if (k === null) return;
-            expect(k).toBe(approach === 'naive' ? [...words[t]!].sort().join('') : signature(words[t]!));
+            expect(k).toBe(
+              approach === 'naive' ? [...words[t]!].sort().join('') : signature(words[t]!),
+            );
           });
           x.group.forEach((g, t) => {
             if (g === null) return;
@@ -70,7 +73,9 @@ describe('frequency-counting', () => {
           if (x.counts && x.cur !== undefined) {
             const w = words[x.cur]!.slice(0, x.counted);
             expect(x.counts.join(',')).toBe(
-              [...'abcdefghijklmnopqrstuvwxyz'].map((c) => [...w].filter((d) => d === c).length).join(','),
+              [...'abcdefghijklmnopqrstuvwxyz']
+                .map((c) => [...w].filter((d) => d === c).length)
+                .join(','),
             );
           }
         }

@@ -34,7 +34,11 @@ const cases = fc
 const approaches = fc.constantFrom('pattern' as const, 'naive' as const);
 
 function runBatch(a: number[], us: Update[], settings: DSettings) {
-  const calls: OpCall[] = [['load', a.join(' ')], ...us.map((u): OpCall => ['add', u.l, u.r, u.x]), ['apply']];
+  const calls: OpCall[] = [
+    ['load', a.join(' ')],
+    ...us.map((u): OpCall => ['add', u.l, u.r, u.x]),
+    ['apply'],
+  ];
   return new Timeline(def, settings, 1, calls);
 }
 

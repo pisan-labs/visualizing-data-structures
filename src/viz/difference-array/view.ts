@@ -192,7 +192,8 @@ function label(step: DStep): string {
   const e = step.extra;
   const parts = [describe(step.state)];
   if (!e) return parts.join(' ');
-  if (e.cur !== undefined) parts.push(`Applying update ${e.cur + 1}: ${updateText(e.batch[e.cur]!)}.`);
+  if (e.cur !== undefined)
+    parts.push(`Applying update ${e.cur + 1}: ${updateText(e.batch[e.cur]!)}.`);
   if (e.d) parts.push(`D holds ${e.d.map(fmt).join(', ')}.`);
   if (e.run) {
     const known = e.run.filter((v): v is number => v !== null);

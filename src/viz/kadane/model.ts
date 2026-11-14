@@ -87,7 +87,12 @@ export const span = (s: Span): string => (s.hi < s.lo ? 'the empty subarray' : s
 
 /** "A[2..5] = 5, −2, −1, 6". */
 const spelled = (a: readonly number[], s: Span) =>
-  s.hi < s.lo ? 'the empty subarray' : `${span(s)} = ${a.slice(s.lo, s.hi + 1).map(fmt).join(', ')}`;
+  s.hi < s.lo
+    ? 'the empty subarray'
+    : `${span(s)} = ${a
+        .slice(s.lo, s.hi + 1)
+        .map(fmt)
+        .join(', ')}`;
 
 // ----- Input -----
 
@@ -248,7 +253,14 @@ function* pattern(s: KState, settings: KSettings): Generator<KStep, KState, void
         ...(restart && j > 0 ? [mark(`cut-${j}`, 'new')] : []),
       ],
       say: how + verdict,
-      lines: ['loop', 'check', ...(restart ? ['restart'] : []), 'extend', 'better', ...(better ? ['keep'] : [])],
+      lines: [
+        'loop',
+        'check',
+        ...(restart ? ['restart'] : []),
+        'extend',
+        'better',
+        ...(better ? ['keep'] : []),
+      ],
       level: 2,
       vars: vars(j),
       extra: extra(),
@@ -317,7 +329,9 @@ function* naive(s: KState, settings: KSettings): Generator<KStep, KState, void> 
       const better = !best || sum > best.sum;
       if (better) best = { lo: i, hi: j, sum };
       const rowDone =
-        j === n - 1 ? ` That was the last end for start ${i}: row ${i} has its ${plural(n - i, 'sum')}.` : '';
+        j === n - 1
+          ? ` That was the last end for start ${i}: row ${i} has its ${plural(n - i, 'sum')}.`
+          : '';
       yield {
         state: s,
         marks: [mark(`a-${j}`, 'active'), mark(`t-${i}-${j}`, better ? 'found' : 'new')],
@@ -365,7 +379,9 @@ const find: Op = {
       yield refuse(s, 'A is empty. Load some values first.');
       return s;
     }
-    return approachOf(settings) === 'naive' ? yield* naive(s, settings) : yield* pattern(s, settings);
+    return approachOf(settings) === 'naive'
+      ? yield* naive(s, settings)
+      : yield* pattern(s, settings);
   },
 };
 
@@ -411,7 +427,12 @@ export function pseudocode(settings: KSettings): PseudoBlock[] {
     {
       op: 'find',
       lines: [
-        L('sig', 0, 'maxSubarray(A)', 'To find the subarray of A with the largest sum, in one pass:'),
+        L(
+          'sig',
+          0,
+          'maxSubarray(A)',
+          'To find the subarray of A with the largest sum, in one pass:',
+        ),
         init,
         L('run', 1, 'run = 0; start = 0', 'The run, the best subarray ending here, starts empty.'),
         L('loop', 1, 'for j = 0 to n − 1', 'Go through A once, left to right:'),

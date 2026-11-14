@@ -135,8 +135,13 @@ export function differencePractice(def: () => Def): PracticeKind[] {
           setup: [load(Array(n).fill(0)), ...us.map(addCall)],
           answer: { kind: 'sequence', value: d.map(String) },
           explain: `Each update adds x at D[l] and takes it away at D[r + 1]: ${us
-            .map((u) => `${updateText(u)} writes ${fmt(u.x)} at D[${u.l}] and ${fmt(-u.x)} at D[${u.r + 1}]`)
-            .join('; ')}. Where two land on the same cell they add up: D = ${d.map(fmt).join(', ')}.`,
+            .map(
+              (u) =>
+                `${updateText(u)} writes ${fmt(u.x)} at D[${u.l}] and ${fmt(-u.x)} at D[${u.r + 1}]`,
+            )
+            .join(
+              '; ',
+            )}. Where two land on the same cell they add up: D = ${d.map(fmt).join(', ')}.`,
           watch: [['apply']],
         };
       },

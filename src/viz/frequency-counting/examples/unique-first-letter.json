@@ -3,7 +3,7 @@
   "viz": "frequency-counting",
   "id": "unique-first-letter",
   "title": "The first letter is unique: rescanning wins",
-  "notes": "NOTES",
+  "notes": "banana: the b at index 0 appears once, so one rescan of 6 comparisons settles it. Counting first takes 6 counts and 1 read, 7. When the answer is the first letter, the naive way wins.",
   "settings": {
     "approach": "naive"
   },

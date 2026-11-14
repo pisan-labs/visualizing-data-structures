@@ -49,7 +49,9 @@ function shuffle<T>(rng: Rng, xs: readonly T[]): T[] {
 /** Six to eight words from two to four anagram sets, a set sometimes down to one word. */
 function wordList(rng: Rng): string[] {
   const sets = shuffle(rng, ANAGRAM_SETS).slice(0, rng.int(2, 4));
-  const words = sets.flatMap((set) => shuffle(rng, set).slice(0, rng.int(1, Math.min(3, set.length))));
+  const words = sets.flatMap((set) =>
+    shuffle(rng, set).slice(0, rng.int(1, Math.min(3, set.length))),
+  );
   return shuffle(rng, words).slice(0, 8);
 }
 
@@ -102,8 +104,7 @@ export const SPOT_ROWS: SpotRow[] = [
     near: ['frequency-counting', 'sliding-window'],
   },
   {
-    problem:
-      'Find every place in a long text where some rearrangement of the word “stone” begins.',
+    problem: 'Find every place in a long text where some rearrangement of the word “stone” begins.',
     pattern: 'sliding-window',
     cue: ['every place in a long text', 'some rearrangement'],
     why: 'A window as long as the word slides along the text, keeping its letter counts: one letter comes in and one goes out at each step, and a match is equal counts.',
@@ -126,7 +127,8 @@ export const SPOT_ROWS: SpotRow[] = [
 export function frequencyPractice(def: () => Def): PracticeKind[] {
   const run = (ops: OpCall[], settings: FSettings = defaults) =>
     new Timeline(def(), settings, 1, ops);
-  const lastExtra = (t: Timeline<FState, FSettings, FExtra>) => t.entries.at(-1)!.steps.at(-1)!.extra!;
+  const lastExtra = (t: Timeline<FState, FSettings, FExtra>) =>
+    t.entries.at(-1)!.steps.at(-1)!.extra!;
 
   return [
     {
@@ -155,12 +157,15 @@ export function frequencyPractice(def: () => Def): PracticeKind[] {
         const t = run([load(ws), ['group']]);
         const map = (lastExtra(t) as GroupExtra).map;
         return {
-          prompt: 'Group these words by anagram (the same letters, the same number of times). How many groups are there?',
+          prompt:
+            'Group these words by anagram (the same letters, the same number of times). How many groups are there?',
           setup: [load(ws)],
           answer: { kind: 'number', value: map.length },
           explain: `Words with the same signature go together: ${map
             .map((m) => m.words.map((i) => ws[i]).join(' '))
-            .join('; ')}. That is ${map.length} ${map.length === 1 ? 'group' : 'groups'}; a word with no anagram here is a group of its own.`,
+            .join(
+              '; ',
+            )}. That is ${map.length} ${map.length === 1 ? 'group' : 'groups'}; a word with no anagram here is a group of its own.`,
           watch: [['group']],
         };
       },

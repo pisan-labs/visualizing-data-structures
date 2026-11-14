@@ -466,7 +466,11 @@ function* unique(s: FState, w: string, settings: FSettings): Generator<FStep, FS
       if (c === 1) answer = i;
       yield {
         state: s,
-        marks: [mark(`s-${i}`, 'active'), mark(`c-${ch}`, c === 1 ? 'found' : 'active'), mark(`n-${i}`, c === 1 ? 'found' : 'new')],
+        marks: [
+          mark(`s-${i}`, 'active'),
+          mark(`c-${ch}`, c === 1 ? 'found' : 'active'),
+          mark(`n-${i}`, c === 1 ? 'found' : 'new'),
+        ],
         say: `${i === 0 ? 'Pass 2. ' : ''}s[${i}] = “${ch}”: count[${ch}] = ${c}${
           c === 1 ? `. It appears once: the first unique letter is at index ${i}.` : ', not unique.'
         }`,

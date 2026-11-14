@@ -3,7 +3,7 @@
   "viz": "frequency-counting",
   "id": "no-unique-letter",
   "title": "No letter appears once",
-  "notes": "NOTES",
+  "notes": "teammate: every letter appears twice, so the answer is −1. The pattern takes 8 counts and 8 reads; rescanning takes 8 positions of 8 comparisons, 64, the worst case.",
   "settings": {
     "approach": "pattern"
   },

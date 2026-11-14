@@ -42,7 +42,8 @@ function pick<T>(rng: Rng, xs: readonly T[]): T {
 function fromSets(rng: Rng, n: number, sets: number): string[] {
   const chosen: string[][] = [];
   const pool = [...ANAGRAM_SETS];
-  for (let k = 0; k < sets && pool.length; k++) chosen.push([...pool.splice(rng.int(0, pool.length - 1), 1)[0]!]);
+  for (let k = 0; k < sets && pool.length; k++)
+    chosen.push([...pool.splice(rng.int(0, pool.length - 1), 1)[0]!]);
   const out: string[] = [];
   for (let k = 0; out.length < n && k < 40; k++) {
     const set = chosen[k % chosen.length]!;
@@ -153,7 +154,10 @@ export const frequencyCounting: VizDef<FState, FSettings, FExtra> = {
         example: 'sorted-letters',
       },
       average: { cost: 'Θ(nk log k)', why: 'The sort does about k log k comparisons per word.' },
-      worst: { cost: 'Θ(nk log k)', why: 'The same: no word is cheaper to sort than another of its length.' },
+      worst: {
+        cost: 'Θ(nk log k)',
+        why: 'The same: no word is cheaper to sort than another of its length.',
+      },
     },
     {
       op: 'first unique letter, count then scan',
@@ -162,7 +166,11 @@ export const frequencyCounting: VizDef<FState, FSettings, FExtra> = {
         why: 'The counting pass reads every letter, even when the first is unique.',
         example: 'unique-first-letter',
       },
-      average: { cost: 'Θ(n)', why: 'Two passes at most: n counts, then up to n reads.', example: 'first-unique' },
+      average: {
+        cost: 'Θ(n)',
+        why: 'Two passes at most: n counts, then up to n reads.',
+        example: 'first-unique',
+      },
       worst: {
         cost: 'Θ(n)',
         why: 'No letter is unique: 2n counts, and the answer is −1.',
@@ -176,7 +184,11 @@ export const frequencyCounting: VizDef<FState, FSettings, FExtra> = {
         why: 'The first letter is unique: one scan of n comparisons, and it wins.',
         example: 'unique-first-letter',
       },
-      average: { cost: 'Θ(n²)', why: 'n comparisons for every position it checks.', example: 'rescan' },
+      average: {
+        cost: 'Θ(n²)',
+        why: 'n comparisons for every position it checks.',
+        example: 'rescan',
+      },
       worst: {
         cost: 'Θ(n²)',
         why: 'No letter is unique: n positions of n comparisons each.',
@@ -220,7 +232,7 @@ export const frequencyCounting: VizDef<FState, FSettings, FExtra> = {
     uniqueFirstLetter,
   ] as unknown as SavedExample[],
   practice: frequencyPractice(() => frequencyCounting),
-  preview: { example: 'count-signatures', level: 2 },
+  preview: { example: 'count-signatures', level: 2, hide: ['c-'] },
 };
 
 export default frequencyCounting;

@@ -13,7 +13,15 @@
  * picture (the start, a load, practice) draws A alone.
  */
 import type { MarkRole } from '../../engine/types';
-import { bracket, cellRow, columns, FONT, monoWidth, pitchFor, type Cols } from '../../layouts/columns';
+import {
+  bracket,
+  cellRow,
+  columns,
+  FONT,
+  monoWidth,
+  pitchFor,
+  type Cols,
+} from '../../layouts/columns';
 import type { Scene, Shape } from '../../render/scene';
 import { approachOf } from '../_patterns/kit';
 import { describe, fmt, span, type KExtra, type KSettings, type KStep } from './model';
@@ -35,7 +43,11 @@ export function view(step: KStep, settings: KSettings): Scene {
 
   const nameX = PAD + monoWidth(naive ? 'i=11' : 'run', FONT.name);
   const cols = columns(n, { pitch: pitchFor(n), x0: nameX + 12 });
-  const heading = e ? (settings.empty ? 'maximum subarray, empty allowed' : 'maximum subarray') : '';
+  const heading = e
+    ? settings.empty
+      ? 'maximum subarray, empty allowed'
+      : 'maximum subarray'
+    : '';
   const title = e && naive ? 'sum of A[i..j]: row i, column j' : '';
   const width = Math.max(
     cols.x(n) + PAD,
@@ -237,9 +249,11 @@ function label(step: KStep, settings: KSettings): string {
   if (!e) return parts.join(' ');
   if (e.run) {
     const known = e.run.filter((v): v is number => v !== null);
-    if (known.length) parts.push(`Best sums ending at each value so far: ${known.map(fmt).join(', ')}.`);
+    if (known.length)
+      parts.push(`Best sums ending at each value so far: ${known.map(fmt).join(', ')}.`);
     const restarts = (e.starts ?? []).filter((x) => x > 0);
-    if (restarts.length) parts.push(`Runs restarted at ${restarts.map((x) => `A[${x}]`).join(', ')}.`);
+    if (restarts.length)
+      parts.push(`Runs restarted at ${restarts.map((x) => `A[${x}]`).join(', ')}.`);
   }
   if (e.tri) {
     const done = e.tri.flat().filter((v) => v !== null).length;

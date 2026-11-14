@@ -68,7 +68,12 @@ export function readInts(arg: Value | undefined, o: IntLimits): number[] | strin
 }
 
 /** An operation's single whole number from lo to hi, or why it cannot be read. */
-export function readInt(arg: Value | undefined, lo: number, hi: number, what: string): number | string {
+export function readInt(
+  arg: Value | undefined,
+  lo: number,
+  hi: number,
+  what: string,
+): number | string {
   const t = String(arg ?? '').trim();
   if (!INT.test(t)) return `Type ${what} as one whole number, such as ${lo === 0 ? 1 : lo}.`;
   const v = num(t);

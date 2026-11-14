@@ -86,7 +86,10 @@ export interface DExtra {
 export type DStep = Step<DState, DExtra>;
 type Op = OpSpec<DState, DSettings, DExtra>;
 
-export const init = (): DState => ({ a: [...START.a], updates: START.updates.map((u) => ({ ...u })) });
+export const init = (): DState => ({
+  a: [...START.a],
+  updates: START.updates.map((u) => ({ ...u })),
+});
 
 const mark = (id: string, role: MarkRole): Mark => ({ id, role });
 
@@ -226,7 +229,11 @@ function* naive(s: DState): Generator<DStep, DState, void> {
   let k = 0;
   let i = 0;
   const vars = (): Record<string, Scalar> => ({ update: k + 1, i, ...workVars(work, tot) });
-  const extra = (cur?: number): DExtra => ({ batch, done: k, ...(cur === undefined ? {} : { cur }) });
+  const extra = (cur?: number): DExtra => ({
+    batch,
+    done: k,
+    ...(cur === undefined ? {} : { cur }),
+  });
 
   yield {
     state: s,
@@ -426,7 +433,10 @@ export function pseudocode(settings: DSettings): PseudoBlock[] {
         ];
   return [
     { op: 'apply', lines },
-    { op: 'add', lines: [L('queue', 0, 'updates.append((l, r, x))', 'Queue the update for later.')] },
+    {
+      op: 'add',
+      lines: [L('queue', 0, 'updates.append((l, r, x))', 'Queue the update for later.')],
+    },
   ];
 }
 
@@ -435,7 +445,9 @@ export function pseudocode(settings: DSettings): PseudoBlock[] {
 export function describe(s: DState): string {
   const q = s.updates.length;
   return `A holds ${plural(s.a.length, 'value')}: ${s.a.map(fmt).join(', ')}. ${
-    q ? `${plural(q, 'update')} queued: ${s.updates.map(updateText).join(', ')}.` : 'No updates queued.'
+    q
+      ? `${plural(q, 'update')} queued: ${s.updates.map(updateText).join(', ')}.`
+      : 'No updates queued.'
   }`;
 }
 

@@ -207,7 +207,10 @@ export const differenceArray: VizDef<DState, DSettings, DExtra> = {
     script: (calls: OpCall[], settings: Settings) => {
       const t = new Timeline(differenceArray, settings as DSettings, 1, calls);
       const s0 = t.initial.state;
-      const input = [`load ${s0.a.join(' ')}`, ...s0.updates.map((u) => `add ${u.l} ${u.r} ${u.x}`)];
+      const input = [
+        `load ${s0.a.join(' ')}`,
+        ...s0.updates.map((u) => `add ${u.l} ${u.r} ${u.x}`),
+      ];
       const expected: string[] = [];
       let before = s0;
       for (const e of t.entries) {

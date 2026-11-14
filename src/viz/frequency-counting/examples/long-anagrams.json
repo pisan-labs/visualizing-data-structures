@@ -3,7 +3,7 @@
   "viz": "frequency-counting",
   "id": "long-anagrams",
   "title": "Longer words, bigger groups",
-  "notes": "NOTES",
+  "notes": "integral, triangle, relating and altering share one signature; listen, silent and enlist another. Two groups. Words of six and eight letters still sort more cheaply (95 comparisons) than they count (232 counts); around 15 letters, counting starts to win.",
   "settings": {
     "approach": "pattern"
   },

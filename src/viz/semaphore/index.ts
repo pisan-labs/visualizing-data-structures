@@ -96,7 +96,7 @@ export const semaphore: VizDef<SemState, SemSettings> = {
         { value: 'first', label: 'T1 prints first' },
         { value: 'turns', label: 'Take turns: ping, pong' },
       ],
-      help: 'Three patterns from The Little Book of Semaphores.',
+      help: 'The multiplex and signaling patterns from The Little Book of Semaphores, and two threads taking turns.',
     },
     {
       kind: 'boolean',

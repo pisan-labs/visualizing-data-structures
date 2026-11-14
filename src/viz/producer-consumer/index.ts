@@ -174,8 +174,8 @@ export const producerConsumer: VizDef<PcState, PcSettings> = {
       op: 'gets that find no item, with if',
       best: { cost: '0', why: 'One consumer, or no consumer waiting when the item arrives.' },
       average: {
-        cost: 'rare',
-        why: 'It needs another consumer to get the lock between the signal and the woken one.',
+        cost: '52 of 284 schedules',
+        why: 'It needs another consumer to get the lock between the signal and the woken one. On a real machine that window is tiny, so it is rare.',
         example: 'every-if',
       },
       worst: {

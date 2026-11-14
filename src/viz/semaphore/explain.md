@@ -49,7 +49,7 @@ Two semaphores, one per thread: a is T1's turn and starts at 1, b is T2's and st
 - T1: `P(a)`, `print("ping")`, `V(b)`, twice;
 - T2: `P(b)`, `print("pong")`, `V(a)`, twice.
 
-[Every interleaving of ping and pong](#example:every-turns): 43 orders of the steps, and every one prints ping pong ping pong. Without the semaphores ([No semaphores: no turns](#example:no-turns)) the four prints come out in 6 orders, and only 1 of them alternates.
+[Every interleaving of ping and pong](#example:every-turns): 43 orders of the steps, and every one prints ping pong ping pong. Without the semaphores ([No semaphores: no turns](#example:no-turns)) the four prints come out in 6 orders. Two of them alternate, and only 1 is ping pong ping pong: the other starts with pong.
 
 ```check
 Q: In the turns program, both semaphores start at 0 instead. What happens?

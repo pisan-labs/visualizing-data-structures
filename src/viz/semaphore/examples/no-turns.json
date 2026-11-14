@@ -3,7 +3,7 @@
   "viz": "semaphore",
   "id": "no-turns",
   "title": "No semaphores: no turns",
-  "notes": "Without the semaphores, the four prints can come out in 6 orders, and only one of them alternates.",
+  "notes": "Without the semaphores, the four prints can come out in 6 orders, and only one of them is ping pong ping pong.",
   "settings": {
     "pattern": "turns",
     "sync": false,

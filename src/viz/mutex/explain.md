@@ -57,7 +57,7 @@ Q: Each thread runs r = count; r = r + 1; then lock(m); count = r; unlock(m). Ca
 
 In [T1 forgets to unlock](#example:forgot-unlock), T1 increments and finishes, still holding m. T2 calls `lock(m)` and waits for a thread that will never run again. No thread can run, and nothing is wrong with count: it is 1, and the program is stuck.
 
-The nasty part is that it doesn't always happen. [Every interleaving](#example:every-forget) gives 9 schedules: in 5 of them T2 goes first, unlocks, and both finish with count = 2. The other 4 get stuck. A bug that shows up in 4 runs out of 9 on the page shows up once a month on a real machine. That is why the code tabs use `with self.lock:`, `synchronized` and `std::lock_guard`: the unlock happens when the block ends, even if the code in it throws.
+The nasty part is that it doesn't always happen. [Every interleaving](#example:every-forget) gives 9 schedules: in 5 of them T2 goes first, unlocks, and both finish with count = 2. The other 4 get stuck. Which thread gets to m first decides it, so the same program can finish one run and hang the next. Real forgotten unlocks hide better still: they sit on a path that rarely runs, an early return or an exception, so the program can pass its tests and still hang once in a while. That is why the code tabs use `with self.lock:`, `synchronized` and `std::lock_guard`: the unlock happens when the block ends, even if the code in it throws.
 
 ## The code
 

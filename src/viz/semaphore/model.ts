@@ -1,8 +1,8 @@
 /**
  * Semaphores: a counter with two operations, P (take one, wait if there is none) and V (give one
  * back, waking a waiter), as Dijkstra named them and as OSTEP and Downey's Little Book of
- * Semaphores draw them: the value goes below 0 to count the waiting threads. Three of Downey's
- * patterns, each a setting:
+ * Semaphores draw them: the value goes below 0 to count the waiting threads. Three patterns,
+ * each a setting (the first two are Downey's):
  *   limit  a semaphore that starts at k lets at most k threads inside at once (a multiplex);
  *          each thread prints "in" when it enters and "out" when it leaves
  *   first  a semaphore that starts at 0 makes T2 wait until T1 has printed (signaling)

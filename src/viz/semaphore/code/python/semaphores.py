@@ -1,4 +1,4 @@
-"""Three patterns from The Little Book of Semaphores, on real threads.
+"""Three semaphore patterns on real threads (the first two from The Little Book of Semaphores).
 
 limit: a semaphore that starts at k lets at most k threads inside at once.
 first: a semaphore that starts at 0 makes T2 wait for T1's signal.

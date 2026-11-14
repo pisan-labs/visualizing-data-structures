@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "policy-optimization",
+  "id": "all-equal",
+  "title": "Equal rewards teach GRPO nothing",
+  "notes": "Every answer is worth 0.5, so every group has the same rewards, every advantage is 0, and the step changes nothing.",
+  "settings": {
+    "method": "grpo",
+    "clip": "0.2",
+    "beta": "0.1"
+  },
+  "seed": 1,
+  "ops": [["rewards", "0.5 0.5 0.5 0.5"], ["step"]]
+}

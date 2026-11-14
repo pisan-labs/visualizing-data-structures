@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "policy-optimization",
+  "id": "grpo-run",
+  "title": "GRPO: ten steps toward Canberra",
+  "notes": "Ten GRPO steps with β = 0.1: Canberra goes from 0.30 to 0.89, and the KL from the reference reaches 0.78.",
+  "settings": {
+    "method": "grpo",
+    "clip": "0.2",
+    "beta": "0.1"
+  },
+  "seed": 1,
+  "ops": [["run"]]
+}

@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "word2vec",
+  "id": "no-negatives",
+  "title": "No noise words: everything collapses",
+  "notes": "No noise words (k = 0). The loss falls to 0.02, but only because every vector points roughly the same way and grows: cat ends as close to mat (0.88) as to dog (0.87).",
+  "settings": {
+    "window": 2,
+    "negatives": 0,
+    "lr": "0.1"
+  },
+  "seed": 1,
+  "ops": [["run"], ["run"]]
+}

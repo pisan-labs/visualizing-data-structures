@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "policy-optimization",
+  "id": "dpo-pairs",
+  "title": "DPO: one preference, no reward model",
+  "notes": "DPO with β = 0.5. The pair is Canberra over Sydney, both still at the reference, so h = 0 and σ(h) = 0.5: Canberra's logit goes up and Sydney's down by 0.5 × 0.5 × 0.5 = 0.125.",
+  "settings": {
+    "method": "dpo",
+    "clip": "0.2",
+    "beta": "0.5"
+  },
+  "seed": 1,
+  "ops": [["step"]]
+}

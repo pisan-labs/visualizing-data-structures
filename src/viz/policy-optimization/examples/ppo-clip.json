@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "policy-optimization",
+  "id": "ppo-clip",
+  "title": "The clip stops a second push",
+  "notes": "PPO with a critic that knows nothing yet (V = 0). The group is Canberra three times and Sydney once. After the first pass Canberra's ratio is 1.26, past 1 + ε = 1.2, so its three samples add nothing in the second; Sydney's (0.86, with a positive advantage) still counts.",
+  "settings": {
+    "method": "ppo",
+    "clip": "0.2",
+    "beta": "0"
+  },
+  "seed": 3,
+  "ops": [["rewards", "1 0.3 0.2 0.5"], ["step"]]
+}

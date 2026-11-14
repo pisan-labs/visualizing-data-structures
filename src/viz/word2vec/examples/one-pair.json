@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "word2vec",
+  "id": "one-pair",
+  "title": "One update, step by step",
+  "notes": "One update for (cat, sat). w_cat · c_sat = 0.15, so σ = 0.54. c_sat gains 0.05 of w_cat, the noise words on and the are pushed away, w_cat moves last, and σ rises to 0.542.",
+  "settings": {
+    "window": 2,
+    "negatives": 2,
+    "lr": "0.1"
+  },
+  "seed": 1,
+  "ops": [["pair", "cat sat"]]
+}

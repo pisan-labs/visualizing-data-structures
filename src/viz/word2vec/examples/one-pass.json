@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "word2vec",
+  "id": "one-pass",
+  "title": "One pass over the corpus",
+  "notes": "One pass over the four sentences: 64 updates. The cosine of w_cat and w_dog goes from −0.52 to −0.12. A start, not much more.",
+  "settings": {
+    "window": 2,
+    "negatives": 2,
+    "lr": "0.1"
+  },
+  "seed": 1,
+  "ops": [["epoch"]]
+}

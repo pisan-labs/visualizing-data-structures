@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "policy-optimization",
+  "id": "grpo-step",
+  "title": "GRPO: one group, step by step",
+  "notes": "GRPO draws Sydney, Canberra, Sydney, Melbourne (rewards 0.3, 1, 0.3, 0.2). Mean 0.45, standard deviation 0.32, so the advantages are −0.47, +1.72, −0.47 and −0.78. The second pass clips Canberra (ratio 1.23), and after the step Canberra leads with 0.39.",
+  "settings": {
+    "method": "grpo",
+    "clip": "0.2",
+    "beta": "0.1"
+  },
+  "seed": 1,
+  "ops": [["step"]]
+}

@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "viz": "policy-optimization",
+  "id": "reinforce-raw",
+  "title": "Raw rewards push up every answer drawn",
+  "notes": "REINFORCE with raw rewards draws Melbourne three times and Sydney once. Every reward is positive, so each sample pushes its own wrong answer up: Melbourne rises from 0.20 to 0.21 and Canberra falls from 0.30 to 0.29.",
+  "settings": {
+    "method": "reinforce",
+    "clip": "0.2",
+    "beta": "0"
+  },
+  "seed": 2,
+  "ops": [["step"]]
+}

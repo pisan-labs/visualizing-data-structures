@@ -27,16 +27,18 @@ describe('learning paths', () => {
         expect(path.stages.every((s) => s.steps.length > 0)).toBe(true);
       });
 
-      it('steps on live pages, each page once, in 12 to 25 steps', () => {
+      it('steps on live pages, each page once, in 8 to 25 steps', () => {
         for (const s of steps) expect(byId.has(s.viz), s.viz).toBe(true);
         expect(new Set(steps.map((s) => s.viz)).size).toBe(steps.length);
-        expect(steps.length).toBeGreaterThanOrEqual(12);
+        expect(steps.length).toBeGreaterThanOrEqual(8);
         expect(steps.length).toBeLessThanOrEqual(25);
       });
 
       it('states its own number of steps, if it states one', () => {
-        for (const [, n] of path.blurb.matchAll(/\b(\d+) (?:pages|steps|small pictures)\b/g))
-          expect(Number(n)).toBe(steps.length);
+        for (const [, n] of path.blurb.matchAll(
+          /\b(\d+|Ten) (?:of the most watchable )?(?:pages|steps|small pictures)\b/g,
+        ))
+          expect(n === 'Ten' ? 10 : Number(n)).toBe(steps.length);
       });
 
       it('suggests examples the pages have', () => {

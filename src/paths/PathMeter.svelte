@@ -2,7 +2,11 @@
   import type { PathProgress } from './paths';
 
   /** A path's progress: a bar, the percent, and the count of steps done. */
-  let { state, compact = false }: { state: PathProgress; compact?: boolean } = $props();
+  let {
+    state,
+    compact = false,
+    label = 'Path progress',
+  }: { state: PathProgress; compact?: boolean; label?: string } = $props();
 </script>
 
 <div class="meter" class:compact>
@@ -13,7 +17,7 @@
     aria-valuemax="100"
     aria-valuenow={state.percent}
     aria-valuetext="{state.percent}% complete, {state.finished} of {state.total} steps done"
-    aria-label="Path progress"
+    aria-label={label}
   >
     <span class="fill" style:width="{state.percent}%"></span>
   </div>

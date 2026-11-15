@@ -65,8 +65,14 @@ test('a path shows the share of steps finished and the next step', async ({ page
   // The home page card shows it too.
   await page.goto('/');
   await expect(
-    page.getByRole('region', { name: 'Learning paths' }).getByRole('progressbar'),
+    page
+      .getByRole('region', { name: 'Learning paths' })
+      .getByRole('progressbar', { name: 'A first data structures course: progress' }),
   ).toHaveAttribute('aria-valuenow', '21');
+  // big-o-lab is a step of the tour too: 1 of its 10.
+  await expect(
+    page.getByRole('progressbar', { name: 'A tour for the curious: progress' }),
+  ).toHaveAttribute('aria-valuenow', '10');
 
   // No horizontal scroll, on any viewport.
   await page.goto('/path/data-structures/');

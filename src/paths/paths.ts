@@ -5,6 +5,7 @@ import computation from './data/computation';
 import dataStructures from './data/data-structures';
 import interviews from './data/interviews';
 import llms from './data/llms';
+import tour from './data/tour';
 
 /**
  * Learning paths: a short, ordered route through the site for one kind of learner (a first data
@@ -41,7 +42,7 @@ export interface PathDef {
 }
 
 /** Every path, in the order the home page shows them. */
-export const paths: PathDef[] = [dataStructures, algorithms, interviews, llms, computation];
+export const paths: PathDef[] = [tour, dataStructures, algorithms, interviews, llms, computation];
 
 export const findPath = (id: string): PathDef | undefined => paths.find((p) => p.id === id);
 

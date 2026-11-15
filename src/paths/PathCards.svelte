@@ -19,7 +19,7 @@
           <span class="blurb">{path.blurb}</span>
         </a>
         {#if state.started}
-          <PathMeter {state} compact />
+          <PathMeter {state} compact label="{path.title}: progress" />
         {:else}
           <p class="muted steps">{state.total} steps</p>
         {/if}
@@ -44,8 +44,11 @@
 
   ul {
     display: grid;
-    /* Five paths fit on one row of a wide screen. */
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+    /* Three paths a row on a wide screen (six paths, two even rows). */
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(100%, max(240px, calc((100% - 20px) / 3))), 1fr)
+    );
     gap: 10px;
     list-style: none;
     margin: 8px 0 0;

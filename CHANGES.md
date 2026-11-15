@@ -571,3 +571,7 @@
 2026-11-15 [decision] Learning paths: 5 curated routes (data structures, algorithms, interviews, LLMs, theory of computation), 15 to 20 pages each; recommended answers taken after 15 min without a reply, open to reversal
 
 2026-11-15 [code] Learning paths (src/paths): /path/<id>/ pages (prerendered, in sitemap and offline list), cards on the home page, a step bar on pages opened with #path=<id>; step done = page finished
+
+2026-11-15 [decision] Yusuf: add a curious-beginner tour as a sixth path; practice scores do not count toward a step; path copy reviewed and accepted
+
+2026-11-15 [code] Path "A tour for the curious" (/path/tour/, 10 steps, first on the home page); paths may be 8 to 25 steps; each card's progress bar is named after its path; cards three a row

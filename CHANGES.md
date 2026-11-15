@@ -575,3 +575,5 @@
 2026-11-15 [decision] Yusuf: add a curious-beginner tour as a sixth path; practice scores do not count toward a step; path copy reviewed and accepted
 
 2026-11-15 [code] Path "A tour for the curious" (/path/tour/, 10 steps, first on the home page); paths may be 8 to 25 steps; each card's progress bar is named after its path; cards three a row
+
+2026-11-15 [note] Deployed 12:44 UTC on Yusuf's "deploy": main 17bd730..db951f3 (six learning paths). Live bundle matches the local build; 282 addresses 200 with footer and mark once; 6 paths draw; no account requests

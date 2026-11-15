@@ -19,6 +19,12 @@ goes out with the last deploy of the session; `CHANGES.md` logs its commit and l
     interval, linked-list, heap, search, bit and DP patterns, design pages, concurrency, and the
     pattern map. Every pattern page sets the naive approach beside the pattern with work
     counters, and says where the pattern loses at small sizes.
+- **Six learning paths** (`src/paths/`, live since 15 November 12:45): guided routes at
+  `/path/<id>/`, linked from cards on the home page: a 10-step tour for the curious, then a first
+  data structures course, an algorithms course, coding interview prep, how LLMs work and theory
+  of computation (15 to 20 steps each). A step is done when its page is finished (every lesson
+  read, every check right); practice scores do not count. No release was added for them, so no
+  email went out.
 - Every page of the three new waves was fact-checked by an independent agent (seven reviews);
   their fixes are in `CHANGES.md`.
 - **The opt-in email about new pages is live** (the platform's app-notify, registered 14

@@ -40,23 +40,39 @@ try {
   if (!template.includes('<div id="app"></div>')) throw new Error('Unexpected dist/index.html');
   fs.writeFileSync(path.join(dist, 'index.html'), template);
 
-  for (const def of vizzes) {
-    const title = `${def.title} · ${SITE_NAME}`;
-    const url = `${SITE_URL}/${def.id}/`;
+  // A page of the app at /<dir>/ with its own title, description, preview tags and canonical URL.
+  const writePage = (dir, name, blurb, needs) => {
+    const title = `${name} · ${SITE_NAME}`;
+    const url = `${SITE_URL}/${dir}/`;
     let html = template.replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`);
-    html = setMeta(html, 'name', 'description', def.blurb);
+    html = setMeta(html, 'name', 'description', blurb);
     html = setMeta(html, 'property', 'og:title', title);
-    html = setMeta(html, 'property', 'og:description', def.blurb);
+    html = setMeta(html, 'property', 'og:description', blurb);
     html = setMeta(html, 'property', 'og:url', url);
     html = html.replace('</head>', `  <link rel="canonical" href="${url}" />\n  </head>`);
     html = html.replace(
       '<div id="app"></div>',
-      `<div id="app"></div>\n    <noscript><h1>${esc(def.title)}</h1><p>${esc(def.blurb)}</p>` +
-        `<p>This interactive visualization needs JavaScript.</p></noscript>`,
+      `<div id="app"></div>\n    <noscript><h1>${esc(name)}</h1><p>${esc(blurb)}</p>` +
+        `<p>${needs} needs JavaScript.</p></noscript>`,
     );
-    fs.mkdirSync(path.join(dist, def.id), { recursive: true });
-    fs.writeFileSync(path.join(dist, def.id, 'index.html'), html);
+    fs.mkdirSync(path.join(dist, dir), { recursive: true });
+    fs.writeFileSync(path.join(dist, dir, 'index.html'), html);
+  };
+  for (const def of vizzes)
+    writePage(def.id, def.title, def.blurb, 'This interactive visualization');
+
+  // Learning paths (src/paths): /path/<id>/. A step on a page that is not live fails the build.
+  const { paths, pathSteps } = await server.ssrLoadModule('/src/paths/paths.ts');
+  const liveIds = new Set(vizzes.map((d) => d.id));
+  for (const p of paths) {
+    const missing = pathSteps(p).filter((s) => !liveIds.has(s.viz));
+    if (missing.length)
+      throw new Error(
+        `src/paths: path "${p.id}" has steps on pages not live: ${missing.map((s) => s.viz)}`,
+      );
+    writePage(`path/${p.id}`, p.title, p.blurb, 'This learning path');
   }
+  const pathDirs = paths.map((p) => `path/${p.id}`);
 
   // Catalog thumbnails: the steps of one example per page, stripped to bare shapes.
   // previews.json holds the still pictures; previews/<id>.json the frames, fetched on first play.
@@ -70,7 +86,11 @@ try {
   }
   fs.writeFileSync(path.join(dist, 'previews.json'), JSON.stringify(posters));
 
-  const urls = [`${SITE_URL}/`, ...vizzes.map((d) => `${SITE_URL}/${d.id}/`)];
+  const urls = [
+    `${SITE_URL}/`,
+    ...pathDirs.map((d) => `${SITE_URL}/${d}/`),
+    ...vizzes.map((d) => `${SITE_URL}/${d.id}/`),
+  ];
   fs.writeFileSync(
     path.join(dist, 'sitemap.xml'),
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
@@ -82,7 +102,7 @@ try {
     `User-agent: *\nAllow: /\nSitemap: ${SITE_URL}/sitemap.xml\n`,
   );
   console.log(
-    `prerendered ${vizzes.length} visualization pages, ${Object.keys(previews).length} previews`,
+    `prerendered ${vizzes.length} visualization pages, ${pathDirs.length} paths, ${Object.keys(previews).length} previews`,
   );
 
   // The releases (src/releases.ts), for the platform's email about new pages: each page with its
@@ -120,10 +140,7 @@ try {
     .readdirSync(dist, { recursive: true })
     .map((f) => String(f).split(path.sep).join('/'))
     .filter((f) => fs.statSync(path.join(dist, f)).isFile());
-  const entries = offlineList(
-    files,
-    vizzes.map((d) => d.id),
-  );
+  const entries = offlineList(files, [...vizzes.map((d) => d.id), ...pathDirs]);
   const read = (f) => fs.readFileSync(path.join(dist, f));
   const shell = shellList(entries, read('index.html').toString('utf8'));
   const worker = fs.readFileSync(path.resolve('src/pwa/sw.js'), 'utf8');

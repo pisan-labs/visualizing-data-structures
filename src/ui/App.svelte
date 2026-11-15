@@ -6,6 +6,7 @@
   import type { AnyVizDef, SavedExample } from '../engine/types';
   import { REPO_URL, SITE_NAME } from '../site';
   import ListsRoute from '../lists/ListsRoute.svelte';
+  import PathPage from '../paths/PathPage.svelte';
   import { loadViz } from '../viz/registry';
   import AccountMenu from './AccountMenu.svelte';
   import AppStatus from './AppStatus.svelte';
@@ -175,6 +176,8 @@
     <Catalog />
   {:else if route.kind === 'lists' || route.kind === 'list'}
     {#key route.key}<ListsRoute {route} />{/key}
+  {:else if route.kind === 'path'}
+    {#key route.key}<PathPage id={route.id} />{/key}
   {:else if route.kind === 'viz'}
     {#if unavailable}
       <PageUnavailable />
@@ -207,6 +210,7 @@
           practiceCount={route.practiceCount}
           list={route.list}
           item={route.item}
+          path={route.path}
         />
       {/key}
     {:else if viz === null}

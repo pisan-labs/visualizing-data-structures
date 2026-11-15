@@ -44,6 +44,11 @@ the browser, exported as files, and embedded in Canvas.
   save examples on the server, sync preferences and hear about new pages. Signing in is never
   required; signed out, the site works as before and sends nothing. `PLAN.md` section 18.
 
+- **Learning paths (2026-11-15, defaults taken, awaiting Yusuf):** five curated routes for kinds
+  of learner, each a page at `/path/<id>/` (`src/paths/`), with stages of 15 to 20 steps. A step is
+  one page, done when the page is finished (every lesson read, every check right), so progress
+  comes from what the site already stores and syncs. Free order with a highlighted next step.
+
 ## Non-goals (v1)
 
 - LTI grade passback

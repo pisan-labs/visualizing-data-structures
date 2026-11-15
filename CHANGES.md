@@ -567,3 +567,7 @@
 2026-11-15 [doc] HANDOFF.md rewritten as the closing handoff of this session, with a to-do list (shared-code suggestions, two page fixes, CI time); PR to main, merged by fast-forward once CI passes, on Yusuf's "create pr, merge"
 
 2026-11-15 [note] Deployed 08:18 UTC on Yusuf's "create pr, merge": main fb02fc9..17bd730 by fast-forward, which merged PR #2 (footer credit, closing handoff). CI 243 green. Bundle index-Dwyn5AT1.js matches; 276 addresses 200 with the footer and mark once; the footer reads "Created by Yusuf Pisan" with the link; no account requests. Session ready to archive
+
+2026-11-15 [decision] Learning paths: 5 curated routes (data structures, algorithms, interviews, LLMs, theory of computation), 15 to 20 pages each; recommended answers taken after 15 min without a reply, open to reversal
+
+2026-11-15 [code] Learning paths (src/paths): /path/<id>/ pages (prerendered, in sitemap and offline list), cards on the home page, a step bar on pages opened with #path=<id>; step done = page finished

@@ -20,8 +20,12 @@ export type Route =
       /** A lesson list being played (#list=<id>&item=<n>, 1 for its first example). */
       list: string | null;
       item: number;
+      /** A learning path the reader came from (#path=<id>), for the step bar. */
+      path: string | null;
       key: string;
     }
+  /** A learning path's page, /path/<id>/ (src/paths). */
+  | { kind: 'path'; id: string; key: string }
   /** "My lesson lists" (/#lists), and a lesson list's link (/#list=<id>), on the home page. */
   | { kind: 'lists'; key: string }
   | { kind: 'list'; id: string; key: string }
@@ -32,7 +36,8 @@ export type Route =
  * Each visualization has its own page, /<id>/. The hash carries only state:
  * #ex=<code> (a saved example), &embed=1, &lesson=<section>, and for compare mode
  * #compare=<other id>&ex=<code>&exb=<code for the other page>, #saved=<id> for an example
- * shared from an account, and &list=<id>&item=<n> while a lesson list plays. On the home page,
+ * shared from an account, &list=<id>&item=<n> while a lesson list plays, and &path=<id> when
+ * the reader came from a learning path (/path/<id>/). On the home page,
  * #lists is "My lesson lists" and #list=<id> a lesson list's link.
  */
 export function parseLocation(pathname: string, hash: string): Route {
@@ -40,7 +45,9 @@ export function parseLocation(pathname: string, hash: string): Route {
     const [path = '', query = ''] = hash.slice(2).split('?');
     if (path) return { kind: 'legacy', target: `/${path}/${query ? `#${query}` : ''}` };
   }
-  const id = pathname.split('/').filter(Boolean)[0];
+  const parts = pathname.split('/').filter(Boolean);
+  const id = parts[0];
+  if (id === 'path') return { kind: 'path', id: decodeURIComponent(parts[1] ?? ''), key: pathname };
   const params = new URLSearchParams(hash.replace(/^#/, ''));
   if (!id) {
     const list = params.get('list');
@@ -63,6 +70,7 @@ export function parseLocation(pathname: string, hash: string): Route {
     saved: params.get('saved'),
     list: params.get('list'),
     item: Math.max(1, Math.floor(Number(params.get('item'))) || 1),
+    path: params.get('path'),
     key: `${pathname}${hash}`,
   };
 }
@@ -80,6 +88,7 @@ export function vizHref(
     saved?: string;
     list?: string | null;
     item?: number;
+    path?: string | null;
   } = {},
 ): string {
   const params = [
@@ -92,6 +101,7 @@ export function vizHref(
     state.embed && state.autoplay ? 'autoplay=1' : '',
     state.list ? `list=${encodeURIComponent(state.list)}` : '',
     state.list && state.item ? `item=${state.item}` : '',
+    !state.list && state.path ? `path=${encodeURIComponent(state.path)}` : '',
   ].filter(Boolean);
   return `/${id}/${params.length ? `#${params.join('&')}` : ''}`;
 }

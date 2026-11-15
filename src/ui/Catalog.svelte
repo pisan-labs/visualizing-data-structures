@@ -5,6 +5,7 @@
   import { pageSummary } from '../progress/progress';
   import { families, isLive, pathways, type Pathway } from '../viz/catalog';
   import NewSince from './NewSince.svelte';
+  import PathCards from '../paths/PathCards.svelte';
   import PreviewThumb from './PreviewThumb.svelte';
   import ProgressMark from './ProgressMark.svelte';
   import ProgressOverview from './ProgressOverview.svelte';
@@ -76,6 +77,7 @@
 
   <NewSince />
   <RecentPages {posters} />
+  <PathCards />
   <ProgressOverview />
 
   <form class="filters" role="search" onsubmit={(e) => e.preventDefault()}>

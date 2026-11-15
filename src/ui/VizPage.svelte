@@ -13,6 +13,8 @@
   import { Ink } from './ink.svelte';
   import LearnPanel from './LearnPanel.svelte';
   import ListBar from '../lists/ListBar.svelte';
+  import PathBar from '../paths/PathBar.svelte';
+  import { findPath, stepOf } from '../paths/paths';
   import { carry, itemHref, ListPlay, takePresent } from '../lists/player.svelte';
   import Narration from './Narration.svelte';
   import OpControls from './OpControls.svelte';
@@ -44,6 +46,7 @@
     practiceCount = 5,
     list = null,
     item = 1,
+    path = null,
   }: {
     def: AnyVizDef;
     code: string | null;
@@ -56,6 +59,8 @@
     /** A lesson list playing (#list=<id>&item=<n>); not in embeds. */
     list?: string | null;
     item?: number;
+    /** The learning path the reader came from (#path=<id>); not in embeds or lesson lists. */
+    path?: string | null;
   } = $props();
 
   const session = untrack(() => new Session(def, { speed: prefs.speed, detail: prefs.detail }));
@@ -71,6 +76,9 @@
   // A lesson list playing on this page; null once the reader leaves it.
   let play = $state(untrack(() => (list && !embed ? new ListPlay(list, item) : null)));
   let listBar: ListBar | undefined = $state();
+
+  // The learning path the reader came from; null once they leave it.
+  let onPath = $state(untrack(() => (path && !embed && !list ? (findPath(path) ?? null) : null)));
 
   /** Open the list's example for this page, once the list has loaded. */
   async function openListItem(p: ListPlay): Promise<'moved' | void> {
@@ -110,6 +118,10 @@
       }
     } else if (listing && play) {
       if ((await openListItem(play)) === 'moved') return;
+    } else if (onPath && stepOf(onPath, def.id)?.step.example) {
+      // A path's step opens on its suggested example.
+      const ex = def.examples.find((e) => e.id === stepOf(onPath!, def.id)?.step.example);
+      if (ex) session.load(ex);
     } else if (def.opening) {
       const ex = def.examples.find((e) => e.id === def.opening);
       if (ex) session.fill(ex.ops);
@@ -178,7 +190,7 @@
     void session.version;
     void session.cursor;
     const settings = session.settings;
-    const inList = play ? { list: play.id, item: play.n } : {};
+    const inList = play ? { list: play.id, item: play.n } : onPath ? { path: onPath.id } : {};
     if (!ready) return;
     clearTimeout(syncTimer);
     syncTimer = setTimeout(async () => {
@@ -348,6 +360,8 @@
     {#if !embed}<p class="blurb muted">{def.blurb}</p>{/if}
     {#if play}
       <ListBar bind:this={listBar} {play} {presenting} onleave={() => (play = null)} />
+    {:else if onPath && !presenting}
+      <PathBar path={onPath} viz={def.id} onleave={() => (onPath = null)} />
     {/if}
   </header>
 

@@ -565,3 +565,5 @@
 2026-11-15 [code] Site footer: "Created by Yusuf Pisan (link to pisanorg.github.io/yusuf), inspired by the visualizations of David Galles and Yves Lucet", asked by Yusuf; on next, live with the next deploy
 
 2026-11-15 [doc] HANDOFF.md rewritten as the closing handoff of this session, with a to-do list (shared-code suggestions, two page fixes, CI time); PR to main, merged by fast-forward once CI passes, on Yusuf's "create pr, merge"
+
+2026-11-15 [note] Deployed 08:18 UTC on Yusuf's "create pr, merge": main fb02fc9..17bd730 by fast-forward, which merged PR #2 (footer credit, closing handoff). CI 243 green. Bundle index-Dwyn5AT1.js matches; 276 addresses 200 with the footer and mark once; the footer reads "Created by Yusuf Pisan" with the link; no account requests. Session ready to archive

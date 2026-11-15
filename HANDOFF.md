@@ -1,126 +1,146 @@
 # StepWise handoff
 
-The closing handoff. The session relay ended on Wednesday 11 November 2026: Yusuf asked for a
-final deploy, the routines to be deleted, and the last session (`session_01JyJzMVTxpUGw93ZHHXr69v`)
-to be archived. No session takes over, and nothing is scheduled. Times are Lisbon time (Yusuf's
-choice of 10 November).
+The closing handoff of the session of 13 to 15 November 2026 (`session_01JyJzMZ3W1yMJWwuFJ1PTXM`),
+written before it is archived. No session takes over and nothing is scheduled. Times are Lisbon
+time (Yusuf's choice of 10 November; Lisbon is on UTC in November).
 
 ## What is live
 
-**Update, 14 November 2026, 22:10 Lisbon:** `main` is at `fb02fc9`, deployed on Yusuf's "deploy
-when done" and "go ahead" after CI run 239 passed: the Coding interviews pathway (39 pages,
-PLAN.md section 21: interview patterns and concurrency), the release
-`2026-11-14-coding-interviews` (emailed to opted-in readers at the next app-notify run, 15 November
-15:17 UTC; its note also names the AI and LLMs pathway, whose release the platform's first run
-absorbed), the HintWise footer with the mark, and stricter placeholder checks. The live check
-passed: the bundle (`index-CMA4VDfy.js`) matches a local build, all 276 addresses return 200 with
-the footer and its mark once, the 39 new pages draw with no page errors, the feed is
-application/json with the new release first, and an ordinary visit sends nothing to
-`auth.hintwise.org`. Follow-up: `state-space-bfs` opens on a bare start state (no `opening`).
+https://stepwise.hintwise.org/ (Netlify site `stepwise-pisan-labs`) serves `main`. This handoff
+goes out with the last deploy of the session; `CHANGES.md` logs its commit and live check.
 
-**Earlier update, 14 November 2026, 09:50 Lisbon:** `main` is at `9ca8d71`, deployed on Yusuf's
-"deploy" after CI run 215 passed: the AI and LLMs pathway (33 pages, PLAN.md section 20), the
-release `2026-11-14-ai-and-llms` in `notify-feed.json` (emailed to opted-in readers at the next
-app-notify run, 15:17 UTC), and the CI concurrency group. The live check passed: the bundle
-(`index-C8enJsGa.js`) matches a local build, all 237 addresses return 200 with the footer once,
-the 33 new pages draw, the feed is application/json with no redirect, and an ordinary visit sends
-nothing to `auth.hintwise.org`. The notes below are from 11 November.
+- **275 visualizations in five pathways**, every page in `src/viz/catalog.ts`, each with a
+  concept page, curated examples, practice, code tabs (Python, Java, C++) tested against the
+  model, and a catalog thumbnail:
+  - Data structures, Algorithms, Theory of computation (203 pages, built by 11 November);
+  - **AI and LLMs** (33 pages, `PLAN.md` section 20, live since 14 November 09:49): tokenizers,
+    language models and decoding, inside the transformer, training, serving, retrieval;
+  - **Coding interviews** (39 pages, `PLAN.md` section 21, live since 14 November 22:08): array,
+    interval, linked-list, heap, search, bit and DP patterns, design pages, concurrency, and the
+    pattern map. Every pattern page sets the naive approach beside the pattern with work
+    counters, and says where the pattern loses at small sizes.
+- Every page of the three new waves was fact-checked by an independent agent (seven reviews);
+  their fixes are in `CHANGES.md`.
+- **The opt-in email about new pages is live** (the platform's app-notify, registered 14
+  November): it reads `notify-feed.json` daily at 15:17 UTC and emails each new release id to
+  readers with `notify_new_pages` on. The first run only seeded, so the AI release
+  (`2026-11-14-ai-and-llms`) was never emailed; the `2026-11-14-coding-interviews` release names
+  both pathways and is the first one emailed (15 November 15:17 UTC). **Adding a release to
+  `src/releases.ts` sends an email; never change a published id.**
+- The HintWise footer (with the HintWise mark since 14 November) on every page, and our own
+  footer line: "Created by Yusuf Pisan, inspired by the visualizations of David Galles and Yves
+  Lucet".
+- Accounts, saved and shared examples, lesson lists, sync, Present tools, worksheets, progress,
+  the offline app: as in `PLAN.md` sections 18 and 19, unchanged this session.
 
-- `main` is at `70155fe`, live on Netlify at https://stepwise.hintwise.org/ (site
-  `stepwise-pisan-labs`), deployed on 11 November at 10:32 on Yusuf's word, after CI on
-  `70155fe` passed. The live check passed:
-  - the bundle (`index-HsjKBzBp.js`) is the same as at `b418072`, because no source changed;
-  - all 204 addresses (the home page and 203 pages) return 200, each with the HintWise footer
-    once;
-  - the manifest is served as `application/manifest+json`;
-  - an ordinary visit sends nothing to `auth.hintwise.org`.
-- 203 visualizations (every page in `src/viz/catalog.ts`), each with its concept page,
-  examples, practice, code tabs (Python, Java, C++) and a catalog thumbnail.
-- Since 10 November:
-  - optional accounts on the shared HintWise Supabase project (`app_stepwise` schema,
-    migrations 0001 to 0003 applied), with Google and magic-link sign-in;
-  - saved and shared examples, lesson lists, preferences and progress that follow the account;
-  - "New since your last visit", and "Delete my StepWise data";
-  - Present-mode pen and pointer, Save picture, the shortcuts list;
-  - printable worksheets, progress, recent pages;
-  - the offline app;
-  - the HintWise footer on every page, and a Google button that follows Google's branding
-    guidelines.
-- Magic links go only through the platform's sign-in-link service: the email hook is on since
-  11 November, and Yusuf's first live magic-link sign-in worked.
-- `next` is one commit ahead of `main`: this handoff and its log lines (docs only, not part of
-  the site). Deploy it with the next real change.
+## How deploys work
 
-## How deploys work now
+`main` moves only when Yusuf says "deploy" (or approves a merge to `main`): fast-forward it to a
+commit on `next` whose CI is green (`git merge-base --is-ancestor origin/main <sha>`, then
+`git push origin <sha>:refs/heads/main`). Each deploy costs 15 Netlify credits.
 
-`main` moves only when Yusuf says "deploy": fast-forward it to a commit on `next` whose CI is
-green (`git push origin <sha>:refs/heads/main`, after `git merge-base --is-ancestor origin/main
-<sha>`). Each deploy costs 15 Netlify credits. The daily 17:27 Berlin deploy routine was deleted
-on 11 November. Then check the live site:
+- CI (`.github/workflows/ci.yml`) now takes about 100 minutes: lint 2, check 1, unit tests 17 and
+  e2e about 80. A newer push to the same branch cancels the older run (the concurrency group),
+  so do not push `next` while waiting for a run you mean to deploy.
+- The live check: the bundle name in https://stepwise.hintwise.org/ equals a local
+  `npm run build` made with the `VITE_` values from `netlify.toml`; every sitemap address returns
+  200 with `data-site-footer` once and `class="mark"` once; the new pages draw in a headless
+  browser; `notify-feed.json` is `application/json` with no redirect; an ordinary visit sends
+  nothing to `auth.hintwise.org`. The scripts used are simple loops over `dist/sitemap.xml`
+  with curl and Playwright; rewrite them as needed.
+- On 14 November the permission system refused, once, a push to `next` that carried a release
+  when a timer (not Yusuf) started it. Pushes that lead to an email need a person's yes in the
+  session.
 
-- the bundle name in https://stepwise.hintwise.org/ matches a local `npm run build` made with
-  the `VITE_` values from `netlify.toml` (when only docs or headers changed, the bundle name
-  does not change, so check the header or page that did);
-- every page returns 200;
-- an ordinary visit sends nothing to `auth.hintwise.org`.
+## To do
 
-## Branches to delete (Yusuf; this session could not)
+None of these blocks anything; all pages are built.
 
-GitHub refused this session's branch deletes (HTTP 403); pushes work. All 19 leftover branches
-on origin were checked on 11 November and are safe to delete:
+**Shared code** (suggested by the page agents; none was made, since agents were told not to edit
+shared files):
 
-- 9 are fully merged into `next`: `dev`, `wip/accounts-slice1`, `wip/lesson-lists`,
-  `wip/offline-app`, `wip/present-tools`, `wip/slice2-sync`,
-  `worktree-agent-a821abc5bc340c0ac`, `worktree-agent-aa205b40a571e95f4` and
-  `worktree-agent-aa81297ea160adf81`.
-- 10 hold only work-in-progress snapshots whose work reached `next` in later commits:
-  `wip/followup-practice`, `wip/followup-wording`, `wip/practice-progress`,
-  `worktree-agent-a0c892cfc943adc5f`, `worktree-agent-a363cfb926bbc7c1f`,
-  `worktree-agent-a4a2653da0afe3f55`, `worktree-agent-a623f1d5e970be25f`,
-  `worktree-agent-a64e7be82dd66d736`, `worktree-agent-a69c97199f92c789d` and
-  `worktree-agent-abea496d65b7d74bd`.
-  - Every file they touch is on `next`, identical or later edited there.
-  - What differs: a debug print in a tsp test, a 5 November Master theorem phone layout that
-    was later redone, and `prim/mst.ts`, which moved to `src/viz/_graph/mst.ts`.
+1. `src/viz/code.test.ts`: random scripts cannot make structured arguments ("x,y", a vector),
+   so the search operations of `hnsw`, `ivf-index` and `product-quantization` are code-tested on
+   the curated examples only. Generate such arguments from each page's presets.
+2. `VarsPanel.svelte` quotes string values and shows ±Infinity as `Infinity` (perplexity,
+   unreachable goals): show ∞.
+3. A `number` setting takes whole numbers only, so decimals (learning rates, k₁, b) became long
+   choice lists: add a decimal setting or a dropdown for long choices.
+4. Previews repeat every static shape in every frame (contour plots made the largest previews):
+   a static layer shared by all frames.
+5. `pickLayout` compares scale only, which is unfair when arrangements draw the main picture at
+   different sizes; `lanes.ts` prefers its first arrangement within 5%, which hurts tall side
+   panels on a laptop.
+6. `controls.random.make` gets no settings, unlike presets.
+7. `_matrix` panels could take a font size (multi-head-attention is 9.0 px on a phone with 7
+   words); `table.ts` could take per-cell corner labels, and its `valueSize` counts "−∞" as two
+   characters.
+8. `src/layouts/linked.ts`: a link from a node that is not last in its row to a later row runs
+   through the nodes after it (`_lists2` reroutes it; move the fix into the layout).
+9. Duplication to fold back: `_threads3/page.ts` repeats much of `_threads2/page.ts` (let
+   `_threads2` run on rows); `_heaps2` has its own heap because the binary-heap page's sift is not
+   exported; `trie.ts` edge labels crowd near a root with many children.
+10. `src/viz/_patterns/patterns.ts` has no entries for `grid-bfs` or for counting with DP
+    (`dp-subset-sum`, coin change), so some "spot it" look-alikes had no right answer.
 
-From a checkout with push rights:
+**Pages:**
+
+11. `state-space-bfs` opens on a bare start state: give it an `opening` example.
+12. `two-heaps-median` defaults the even-count median to the mean, with CLRS's lower median as
+    a setting; `CLAUDE.md` says default to CLRS. Decide and, if CLRS, change the default and its
+    examples.
+13. A learner's own input at the size limits can draw text below the 11 px laptop minimum on a
+    few pages (backpropagation with 5 variables and 6 operations; prefix-sum-hashmap with 12
+    values naive): the checks cover curated examples only.
+
+**People:**
+
+14. Yusuf: skim the 72 new concept pages (written in his voice by agents, fact-checked by other
+    agents); the catalog keeps the generic titles "Min stack" and "Combination sum (backtracking)".
+15. Check with the Plabs session that the first email (15 November 15:17 UTC) went out.
+
+**Process:**
+
+16. CI is close to 100 minutes: shard the e2e step across jobs if it grows further.
+
+## Branches
+
+Only `main`, `next` and this session's `claude/keen-pascal-m2i3lo` are on origin. The session
+branch is merged into `main` with this handoff and can be deleted after archiving:
 
 ```
-git push origin --delete dev wip/accounts-slice1 wip/lesson-lists wip/offline-app wip/present-tools wip/slice2-sync wip/followup-practice wip/followup-wording wip/practice-progress worktree-agent-a821abc5bc340c0ac worktree-agent-aa205b40a571e95f4 worktree-agent-aa81297ea160adf81 worktree-agent-a0c892cfc943adc5f worktree-agent-a363cfb926bbc7c1f worktree-agent-a4a2653da0afe3f55 worktree-agent-a623f1d5e970be25f worktree-agent-a64e7be82dd66d736 worktree-agent-a69c97199f92c789d worktree-agent-abea496d65b7d74bd
-git ls-remote --heads origin
+git push origin --delete claude/keen-pascal-m2i3lo
 ```
-
-The second command should list only `main` and `next`.
 
 ## Waiting on others
 
-- **Opt-in emails about new pages:** they wait for the platform's daily sender. It reads
-  `dist/releases.json` and `preferences.notify_new_pages`, and sends through Yusuf's Resend
-  account (`supabase/README.md`). StepWise's side is live; StepWise has no sending code.
-- **Self-service deletion of a whole HintWise account:** this is a platform feature. "Delete my
-  StepWise data" already removes StepWise's rows.
-- The platform side (the Supabase project, the sign-in-link service, the email hook, the footer
-  markup) belongs to the Plabs session for `pisanuw/claude-built-apps`. Its `HANDOFF.md` names
-  its current session.
+- The platform side (the Supabase project, the sign-in-link service, the email hook, app-notify,
+  the footer markup) belongs to the Plabs session for `pisanuw/claude-built-apps`, now
+  `session_01JyJzMVhQhwQ7Ea3HMyJ3FN`. It was told on 15 November that the footer mark is live
+  and that the coding-interviews release is first in the feed.
+- Self-service deletion of a whole HintWise account is a platform feature; "Delete my StepWise
+  data" already removes StepWise's rows.
 
 ## Not verified
 
 - **The factorial axe scan:** on 8 November it found one color-contrast node, once, then passed
-  32 runs in a row. Every axe check now prints the failing elements (`PLAN.md` section 15.1,
-  item 11), so the next failure will show the cause.
+  every run since. Every axe check prints the failing elements, so a failure would show the
+  cause.
+- SLP3's August 2026 chapter 2 could not be fetched (Stanford returned 503), so the BPE page says
+  "SLP3's 2026 drafts" rather than naming one.
 
 ## Starting again
 
-Start a session by hand at https://claude.ai/code with `pisan-labs/visualizing-data-structures`
-on the branch `next`. Read `CLAUDE.md` (commands, definition of done, branches), `BRIEFING.md`,
-the end of `CHANGES.md`, then this file. Work on `next`; before committing run `npm run lint &&
-npm run check && npm test`, and `npm run e2e` when `src/ui`, `src/render` or a view changed.
+Start a session at https://claude.ai/code with `pisan-labs/visualizing-data-structures` on the
+branch `next`. Read `CLAUDE.md` (commands, definition of done, branches), `BRIEFING.md`, the end
+of `CHANGES.md`, `PLAN.md` sections 20 and 21, then this file. Work on `next`; before committing
+run `npm run lint && npm run check && npm test`, and `npm run e2e` when `src/ui`, `src/render` or
+a view changed.
 
+- New pages follow the wave pattern of sections 20 and 21: a slice first, then agents in
+  parallel in worktrees (each told not to edit shared files and to report needed changes), a
+  fact check per wave, the full suites, one release, CI, then the deploy.
 - The SQL tests (`supabase/tests/`) need a local PostgreSQL 16 with
-  `supabase/tests/supabase-stub.sql`; `supabase/README.md` has the steps.
-- New migrations go in `supabase/migrations/0004_...`; never edit an applied one. The Plabs
-  session applies them on Yusuf's yes.
+  `supabase/tests/supabase-stub.sql`; `supabase/README.md` has the steps. New migrations go in
+  `supabase/migrations/0004_...`; never edit an applied one.
 - A cloud clone can be shallow: run `git fetch --unshallow origin` before comparing branches.
-- To run the relay again, the `anthropic-skills:session-relay` skill sets up the routines. The
-  deleted ones were the hourly status report, the handover check (15:56 Berlin), the session
-  start (16:52 Berlin) and the daily deploy (17:27 Berlin).

@@ -228,7 +228,8 @@
       Code under the MIT license, text under CC BY 4.0. <a href={REPO_URL}>Source on GitHub</a>.
     </p>
     <p>
-      Inspired by the visualizations of
+      Created by <a href="https://pisanorg.github.io/yusuf/">Yusuf Pisan</a>, inspired by the
+      visualizations of
       <a href="https://www.cs.usfca.edu/~galles/visualization/">David Galles</a> and
       <a href="https://cmps-people.ok.ubc.ca/ylucet/DS/Algorithms.html">Yves Lucet</a>.
     </p>

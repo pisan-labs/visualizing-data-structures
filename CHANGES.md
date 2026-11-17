@@ -579,3 +579,4 @@
 2026-11-15 [note] Deployed 12:44 UTC on Yusuf's "deploy": main 17bd730..db951f3 (six learning paths). Live bundle matches the local build; 282 addresses 200 with footer and mark once; 6 paths draw; no account requests
 2026-11-17 [code] First-party, cookieless analytics (owner): index.html loads public/hw-events.js (HintWise app-events, app stepwise); track() for op_run, example_load, play, practice_answer, check_answer; account privacy text updated
 2026-11-17 [decision] Owner chose first-party analytics through the platform, replacing the "no analytics" non-goal (CLAUDE.md, BRIEFING.md)
+2026-11-17 [code] Emailed sign-in links wait for a "Finish signing in" click when nobody is signed in (account.finishLink and a dialog): mail scanners such as Safe Links were spending the single-use links on page load

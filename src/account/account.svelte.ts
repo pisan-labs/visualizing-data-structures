@@ -28,6 +28,13 @@ export const account = $state({
    * asks before switching. `hint` is the link's address, partly hidden (a***@example.com).
    */
   switchTo: null as { hint: string; ret: AuthReturn } | null,
+  /**
+   * An emailed sign-in link came back while nobody is signed in here: the account menu asks the
+   * reader to finish. The link is used only on that click, because mail scanners (Microsoft Safe
+   * Links among them) open links in a browser that runs scripts, and a single-use link they
+   * verified would be spent before the reader clicks it.
+   */
+  finishLink: null as { hint: string; ret: AuthReturn } | null,
 });
 
 const userChanges = listeners<[AccountUser | null]>();
@@ -155,6 +162,11 @@ async function finishSignIn(ret: AuthReturn, ask = true): Promise<void> {
   account.checking = true;
   try {
     const b = await connect();
+    // An emailed link while nobody is signed in here: wait for the reader's click (finishLink).
+    if (ask && ret.kind === 'token' && !hasStoredSession()) {
+      account.finishLink = { hint: ret.emailHint, ret };
+      return;
+    }
     // An emailed link for someone else, while a reader is signed in here: ask first.
     if (ask && ret.kind === 'token' && hasStoredSession()) {
       const current = await b.currentUser().catch(() => null);
@@ -187,6 +199,18 @@ export async function confirmSwitch(): Promise<void> {
 /** The reader chose to stay signed in as they are: the link is left unused. */
 export function declineSwitch(): void {
   account.switchTo = null;
+}
+
+/** The reader clicked Finish signing in: now the emailed link is used. */
+export async function confirmFinish(): Promise<void> {
+  const pending = account.finishLink;
+  account.finishLink = null;
+  if (pending) await finishSignIn(pending.ret, false);
+}
+
+/** The reader closed the question: the link is left unused (it can be opened again). */
+export function declineFinish(): void {
+  account.finishLink = null;
 }
 
 const here = () => location.origin + location.pathname;

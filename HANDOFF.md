@@ -52,7 +52,8 @@ commit on `next` whose CI is green (`git merge-base --is-ancestor origin/main <s
   `npm run build` made with the `VITE_` values from `netlify.toml`; every sitemap address returns
   200 with `data-site-footer` once and `class="mark"` once; the new pages draw in a headless
   browser; `notify-feed.json` is `application/json` with no redirect; an ordinary visit sends
-  nothing to `auth.hintwise.org`. The scripts used are simple loops over `dist/sitemap.xml`
+  nothing to `auth.hintwise.org` except `POST /functions/v1/app-events` (the first-party analytics
+  beacons, since 17 November). The scripts used are simple loops over `dist/sitemap.xml`
   with curl and Playwright; rewrite them as needed.
 - On 14 November the permission system refused, once, a push to `next` that carried a release
   when a timer (not Yusuf) started it. Pushes that lead to an email need a person's yes in the

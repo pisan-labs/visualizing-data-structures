@@ -291,7 +291,9 @@ test.describe('signed out', () => {
     expect(errors).toEqual([]);
   });
 
-  test('an emailed link signs in, in any browser, and puts the page back', async ({ page }) => {
+  test('an emailed link signs in on the reader’s click, in any browser, and puts the page back', async ({
+    page,
+  }) => {
     const errors = pageErrors(page);
     const mock = await mockSupabase(page);
     await page.addInitScript(() => {
@@ -303,6 +305,11 @@ test.describe('signed out', () => {
       );
     });
     await page.goto('/stack-array/?token_hash=abc123&type=email&email_hint=r***%40example.com');
+    // Opening the link uses nothing (a mail scanner would spend it); the reader's click does.
+    const finish = page.getByRole('dialog', { name: 'Finish signing in' });
+    await expect(finish).toContainText('Your sign-in link for r***@example.com is ready.');
+    expect(callsTo(mock, '/auth/v1/verify')).toHaveLength(0);
+    await finish.getByRole('button', { name: 'Finish signing in' }).click();
     await expect(accountMenu(page)).toBeVisible();
     await expect(page.getByText(`Signed in as ${USER.email}.`)).toBeVisible();
     const [verify] = callsTo(mock, '/auth/v1/verify');
@@ -318,10 +325,25 @@ test.describe('signed out', () => {
   test('an old emailed link says so', async ({ page }) => {
     await mockSupabase(page);
     await page.goto('/stack-array/?token_hash=used&type=email&email_hint=r***%40example.com');
+    await page
+      .getByRole('dialog', { name: 'Finish signing in' })
+      .getByRole('button', { name: 'Finish signing in' })
+      .click();
     await expect(
       page.getByText('That sign-in link has expired or was already used. Ask for a new one.'),
     ).toBeVisible();
     await expect(signIn(page)).toBeVisible();
+    expect(new URL(page.url()).search).toBe('');
+  });
+
+  test('Not now leaves an emailed link unused', async ({ page }) => {
+    const mock = await mockSupabase(page);
+    await page.goto('/stack-array/?token_hash=abc123&type=email&email_hint=r***%40example.com');
+    const finish = page.getByRole('dialog', { name: 'Finish signing in' });
+    await finish.getByRole('button', { name: 'Not now' }).click();
+    await expect(finish).toHaveCount(0);
+    await expect(signIn(page)).toBeVisible();
+    expect(callsTo(mock, '/auth/v1/verify')).toHaveLength(0);
     expect(new URL(page.url()).search).toBe('');
   });
 

@@ -2,9 +2,11 @@
   import { tick } from 'svelte';
   import {
     account,
+    confirmFinish,
     confirmSwitch,
     connect,
     continueWithGoogle,
+    declineFinish,
     declineSwitch,
     sendSignInLink,
     signOut,
@@ -211,6 +213,13 @@
     if (account.switchTo && !switchDialog?.open) switchDialog?.showModal();
     else if (!account.switchTo && switchDialog?.open) switchDialog.close();
   });
+
+  // An emailed link came back while nobody is signed in: it is used only when the reader clicks.
+  let finishDialog: HTMLDialogElement | undefined = $state();
+  $effect(() => {
+    if (account.finishLink && !finishDialog?.open) finishDialog?.showModal();
+    else if (!account.finishLink && finishDialog?.open) finishDialog.close();
+  });
 </script>
 
 {#if account.user}
@@ -391,6 +400,30 @@
       <div class="actions">
         <button class="btn" onclick={() => void confirmSwitch()}>Switch accounts</button>
         <button class="btn" onclick={() => declineSwitch()}>Stay signed in</button>
+      </div>
+    </div>
+  {/if}
+</dialog>
+
+<dialog
+  bind:this={finishDialog}
+  class="ask card"
+  aria-labelledby="finish-title"
+  oncancel={() => declineFinish()}
+>
+  {#if account.finishLink}
+    <div class="box">
+      <h2 id="finish-title">Finish signing in</h2>
+      <p>
+        {#if account.finishLink.hint}
+          Your sign-in link for <strong class="email">{account.finishLink.hint}</strong> is ready.
+        {:else}
+          Your sign-in link is ready.
+        {/if}
+      </p>
+      <div class="actions">
+        <button class="btn" onclick={() => void confirmFinish()}>Finish signing in</button>
+        <button class="btn" onclick={() => declineFinish()}>Not now</button>
       </div>
     </div>
   {/if}

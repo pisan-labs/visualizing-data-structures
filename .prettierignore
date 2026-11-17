@@ -8,3 +8,6 @@ test-results
 
 # The HintWise footer: the platform's markup, byte for byte (src/site-footer.test.ts checks its sha256).
 scripts/site-footer.html
+
+# The HintWise analytics script: the platform's file, byte for byte (src/analytics.test.ts checks it is unchanged).
+public/hw-events.js

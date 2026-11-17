@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { track } from '../analytics';
   import { marked } from 'marked';
   import { tick } from 'svelte';
   import { makeExample } from '../engine/example';
@@ -51,6 +52,7 @@
   function check(i: number) {
     checked[i] = true;
     const right = isCorrect(items[i]!.question.answer, responses[i] ?? '');
+    track('practice_answer', { correct: right });
     progress.update((p) => recordAttempt(p, def.id, attemptKey(seed, i), right, now()));
   }
 

@@ -6,7 +6,17 @@ import ts from 'typescript-eslint';
 import svelteConfig from './svelte.config.js';
 
 export default defineConfig(
-  { ignores: ['dist/', 'node_modules/', 'playwright-report/', 'test-results/', '.claude/'] },
+  // public/hw-events.js is the HintWise platform's analytics script, copied byte for byte.
+  {
+    ignores: [
+      'dist/',
+      'node_modules/',
+      'playwright-report/',
+      'test-results/',
+      '.claude/',
+      'public/hw-events.js',
+    ],
+  },
   js.configs.recommended,
   ts.configs.recommended,
   svelte.configs.recommended,

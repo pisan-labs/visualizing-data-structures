@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { track } from '../analytics';
   import { account } from '../account/account.svelte';
   import { asAccountError } from '../account/backend';
   import { encodeExample, exampleViz, validateExample } from '../engine/example';
@@ -110,6 +111,7 @@
   }
 
   function loadCurated(ex: SavedExample) {
+    track('example_load', { example: ex.id ?? 'unnamed' });
     session.load(validateExample(session.def, ex));
     notify(`Loaded "${ex.title}". Press play or step through it.`);
   }

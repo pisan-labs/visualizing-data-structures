@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { track } from '../analytics';
   import type { Snippet } from 'svelte';
   import type { Level } from '../engine/types';
   import Icon from './Icon.svelte';
@@ -44,7 +45,10 @@
     </button>
     <button
       class="icon-btn primary play"
-      onclick={() => session.toggle()}
+      onclick={() => {
+        if (!session.playing) track('play');
+        session.toggle();
+      }}
       aria-label={session.playing ? 'Pause' : 'Play'}
       title="Play or pause (Space)"
     >

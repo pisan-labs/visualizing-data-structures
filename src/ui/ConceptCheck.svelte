@@ -7,6 +7,7 @@
 </script>
 
 <script lang="ts">
+  import { track } from '../analytics';
   import { marked } from 'marked';
 
   let {
@@ -47,6 +48,7 @@
         disabled={picked !== null && picked !== i && !o.correct}
         onclick={() => {
           picked = i;
+          track('check_answer', { correct: o.correct, first_try: !missed });
           onanswer?.(o.correct && !missed);
           if (!o.correct) missed = true;
         }}

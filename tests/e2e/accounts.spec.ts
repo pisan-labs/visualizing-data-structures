@@ -251,7 +251,7 @@ test.describe('signed out', () => {
     await expect(check).toBeVisible();
     expect(loads).toEqual([`${TURNSTILE}/turnstile/v0/api.js?render=explicit`]);
     await expect(dialog(page)).toContainText(
-      'Nothing on this site tracks you. This check is run by Cloudflare.',
+      'send nothing under Global Privacy Control. This check is run by Cloudflare.',
     );
     const stub = () =>
       page.evaluate(

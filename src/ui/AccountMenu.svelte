@@ -313,7 +313,8 @@
         lists, your settings (theme, speed, detail, code view and tab), your progress, the last
         release you saw, and whether you want email about new pages. With Google, it also keeps what
         Google sends: your name, picture link and Google account id. One account works on every
-        HintWise app and is stored in the US. Nothing on this site tracks you.{challenge
+        HintWise app and is stored in the US. Pages count visits and clicks anonymously, with no
+        cookies and nothing kept in your browser, and send nothing under Global Privacy Control.{challenge
           ? ' This check is run by Cloudflare.'
           : ''}
       </p>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { track } from '../analytics';
   import { makeRng, randomSeed } from '../engine/rng';
   import type { ControlButton, OpCall, Value } from '../engine/types';
   import type { OpTarget } from './pair.svelte';
@@ -39,6 +40,7 @@
   }
 
   function run(b: ControlButton) {
+    track('op_run', { op: b.op });
     if (!b.usesInput || !controls.input) {
       error = '';
       session.run([[b.op]]);
@@ -118,7 +120,10 @@
       <button
         type="button"
         class="btn"
-        onclick={() => session.run(random.make(makeRng(randomSeed())))}
+        onclick={() => {
+          track('op_run', { op: 'random' });
+          session.run(random.make(makeRng(randomSeed())));
+        }}
       >
         {random.label}
       </button>

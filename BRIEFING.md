@@ -55,4 +55,5 @@ the browser, exported as files, and embedded in Canvas.
 - LTI grade passback
 - Copying Galles/Lucet code
 - Old browsers
-- Analytics or tracking
+- Analytics or tracking beyond the platform's first-party, cookieless page and event counts
+  (owner, 17 November 2026: `public/hw-events.js`, app `stepwise`)

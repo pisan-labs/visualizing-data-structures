@@ -147,6 +147,9 @@ everything on every push; Netlify builds and deploys `main` (`netlify.toml`).
   reader's settings and opens on the last step (the Chomsky hierarchy opens on the whole map).
 - The app loads each visualization on demand (`src/viz/registry.ts`); tests and prerender use
   `src/viz/all.ts`.
-- No analytics or tracking. No external fonts or CDNs. One exception: Cloudflare Turnstile,
+- Analytics: only the HintWise platform's first-party, cookieless script (`public/hw-events.js`,
+  a byte-for-byte copy checked by `src/analytics.test.ts`; owner, 17 November 2026). Events go
+  through `track()` in `src/analytics.ts`; props never carry what a reader typed. No other
+  analytics or tracking. No external fonts or CDNs. One exception: Cloudflare Turnstile,
   loaded only when the platform's sign-in-link service asks for a check during a magic-link sign-in.
 - Code is MIT; written explanations are CC BY 4.0.

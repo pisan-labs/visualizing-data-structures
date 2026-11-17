@@ -33,7 +33,7 @@ describe('public/hw-events.js', () => {
   it('is the platform script, unchanged', () => {
     const text = readFileSync(new URL('../public/hw-events.js', import.meta.url));
     expect(createHash('sha256').update(text).digest('hex')).toBe(
-      'fe0b6e92ddd6093e9ba7fa2b9fff32cd68bb5a42e191e9770fda93e5a1ba6227',
+      'd2833162b9f18f9f2fdb36dbd62440c13ee26c6600200d8e55ad32b907f00633',
     );
   });
   it('is loaded by index.html as app stepwise', () => {

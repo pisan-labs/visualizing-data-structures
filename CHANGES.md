@@ -580,3 +580,5 @@
 2026-11-17 [code] First-party, cookieless analytics (owner): index.html loads public/hw-events.js (HintWise app-events, app stepwise); track() for op_run, example_load, play, practice_answer, check_answer; account privacy text updated
 2026-11-17 [decision] Owner chose first-party analytics through the platform, replacing the "no analytics" non-goal (CLAUDE.md, BRIEFING.md)
 2026-11-17 [code] Emailed sign-in links wait for a "Finish signing in" click when nobody is signed in (account.finishLink and a dialog): mail scanners such as Safe Links were spending the single-use links on page load
+
+2026-11-17 [note] Deployed 11:16 UTC on Yusuf's "deploy" (CI 44053604530 green): main db951f3..732e4bf (first-party analytics, Finish signing in dialog). Live bundle matches the local build; 282 addresses 200 with footer and mark once; hw-events.js identical; token link shows the dialog with no verify call; an ordinary visit sends only app-events beacons (pageview, engaged)

@@ -586,3 +586,5 @@
 2026-11-17 [code] public/hw-events.js updated to the platform version that masks id-like path segments and quoted text in error messages (owner: analytics for every app, no deploy); live with the next deploy
 
 2026-11-17 [code] Credits under each page take that page's column (app.css --col-*; on path pages they sat at the far left, owner report); path pages get a 16px side margin on phones; CI skips pushes that only change root *.md notes or docs/
+
+2026-11-17 [note] Deployed 18:19 UTC on Yusuf's "deploy" (CI 44127973561 green): main 732e4bf..d83c070 (credits aligned with each page's column, path pages get a phone margin, analytics script with masking and data-mask). Live bundle matches the local build; 282 addresses 200 with footer and mark once; credits line up on a path, the catalog, #lists and a visualization; no account requests

@@ -98,3 +98,26 @@ test('the step bar passes axe', async ({ page }) => {
   const results = await new AxeBuilder({ page }).include('.path-bar').analyze();
   expect(axeFindings(results)).toEqual([]);
 });
+
+test('the credits under a page line up with its column, and a path page keeps a side margin', async ({
+  page,
+}) => {
+  const lefts = async () =>
+    page.evaluate(() => {
+      const main = document.querySelector('main > *') as HTMLElement;
+      const pad = parseFloat(getComputedStyle(main).paddingLeft);
+      return {
+        column: Math.round(main.getBoundingClientRect().left + pad),
+        credits: Math.round(document.querySelector('footer.site p')!.getBoundingClientRect().left),
+      };
+    });
+  for (const url of ['/path/llms/', '/', '/stack-array/']) {
+    await page.goto(url);
+    await expect(page.locator('footer.site p').first()).toBeVisible();
+    const { column, credits } = await lefts();
+    expect(Math.abs(column - credits), url).toBeLessThanOrEqual(1);
+  }
+  await page.goto('/path/llms/');
+  const box = await page.getByRole('heading', { level: 1 }).boundingBox();
+  expect(box!.x).toBeGreaterThanOrEqual(16);
+});

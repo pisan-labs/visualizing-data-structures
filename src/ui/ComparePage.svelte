@@ -165,7 +165,7 @@
     display: grid;
     gap: 12px;
     padding: 12px 16px 24px;
-    max-width: 1600px;
+    max-width: var(--col-compare);
     margin: 0 auto;
   }
 

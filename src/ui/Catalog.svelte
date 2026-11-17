@@ -147,7 +147,7 @@
 
 <style>
   .catalog {
-    max-width: 1200px;
+    max-width: var(--col-catalog);
     margin: 0 auto;
     padding: 20px 16px 32px;
   }

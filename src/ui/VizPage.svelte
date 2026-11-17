@@ -447,7 +447,7 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 12px;
-    max-width: 1480px;
+    max-width: var(--col-viz);
     margin: 0 auto;
     padding: 12px 16px 24px;
   }

@@ -3,7 +3,11 @@ name: CI
 on:
   push:
     branches: [main, next]
+    # A push that only touches the project's notes runs nothing (a deploy log entry used to start
+    # a 70-minute run). Concept pages live under src/, so they still run everything.
+    paths-ignore: ['*.md', 'docs/**']
   pull_request:
+    paths-ignore: ['*.md', 'docs/**']
 
 # A newer push to the same branch (or pull request) cancels the run still going for it.
 concurrency:

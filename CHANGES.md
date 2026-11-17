@@ -584,3 +584,5 @@
 2026-11-17 [note] Deployed 11:16 UTC on Yusuf's "deploy" (CI 44053604530 green): main db951f3..732e4bf (first-party analytics, Finish signing in dialog). Live bundle matches the local build; 282 addresses 200 with footer and mark once; hw-events.js identical; token link shows the dialog with no verify call; an ordinary visit sends only app-events beacons (pageview, engaged)
 
 2026-11-17 [code] public/hw-events.js updated to the platform version that masks id-like path segments and quoted text in error messages (owner: analytics for every app, no deploy); live with the next deploy
+
+2026-11-17 [code] Credits under each page take that page's column (app.css --col-*; on path pages they sat at the far left, owner report); path pages get a 16px side margin on phones; CI skips pushes that only change root *.md notes or docs/

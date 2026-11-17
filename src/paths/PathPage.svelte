@@ -84,8 +84,9 @@
 <style>
   .path,
   .missing {
-    max-width: 760px;
+    max-width: var(--col-path);
     margin: 0 auto;
+    padding: 20px 16px 32px;
   }
 
   .crumb {

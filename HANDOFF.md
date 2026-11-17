@@ -43,7 +43,9 @@ goes out with the last deploy of the session; `CHANGES.md` logs its commit and l
 
 `main` moves only when Yusuf says "deploy" (or approves a merge to `main`): fast-forward it to a
 commit on `next` whose CI is green (`git merge-base --is-ancestor origin/main <sha>`, then
-`git push origin <sha>:refs/heads/main`). Each deploy costs 15 Netlify credits.
+`git push origin <sha>:refs/heads/main`). Each deploy costs 15 Netlify credits. Since 17 November a
+push that only changes root `*.md` notes or `docs/` runs no CI: such a commit counts as green when
+the last commit before it that changed anything else is green.
 
 - CI (`.github/workflows/ci.yml`) now takes about 100 minutes: lint 2, check 1, unit tests 17 and
   e2e about 80. A newer push to the same branch cancels the older run (the concurrency group),

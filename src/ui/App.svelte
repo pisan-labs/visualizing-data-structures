@@ -34,6 +34,19 @@
     route = parseLocation(to.pathname, to.hash);
   }
   const embed = $derived(route.kind === 'viz' && route.embed);
+  // The credits under the page take the page's own column (app.css --col-*): on a narrow page
+  // such as a learning path they sat at the far left of a 1480px box (owner, 17 Nov 2026).
+  const col = $derived(
+    route.kind === 'path'
+      ? 'path'
+      : route.kind === 'lists' || route.kind === 'list'
+        ? 'lists'
+        : route.kind === 'catalog'
+          ? 'catalog'
+          : route.kind === 'viz' && route.compare
+            ? 'compare'
+            : 'viz',
+  );
   // An embed shows the visualization alone: app.css hides the HintWise footer (a static part of
   // every page, added by scripts/prerender.mjs) while this class is on.
   $effect(() => {
@@ -226,7 +239,7 @@
 </main>
 
 {#if !embed}
-  <footer class="site">
+  <footer class="site" data-col={col}>
     {#if route.kind === 'catalog'}<OfflineDownload />{/if}
     <p>
       Code under the MIT license, text under CC BY 4.0. <a href={REPO_URL}>Source on GitHub</a>.
@@ -316,7 +329,7 @@
   }
 
   footer.site {
-    max-width: 1480px;
+    max-width: var(--col-viz);
     margin: 0 auto;
     padding: 16px 16px 40px;
     font-size: 0.88rem;
@@ -325,6 +338,22 @@
 
   footer p {
     margin: 4px 0;
+  }
+
+  footer.site[data-col='compare'] {
+    max-width: var(--col-compare);
+  }
+
+  footer.site[data-col='catalog'] {
+    max-width: var(--col-catalog);
+  }
+
+  footer.site[data-col='lists'] {
+    max-width: var(--col-lists);
+  }
+
+  footer.site[data-col='path'] {
+    max-width: var(--col-path);
   }
 
   .notices {

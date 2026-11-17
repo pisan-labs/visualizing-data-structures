@@ -17,7 +17,7 @@ changes in `CHANGES.md` (append-only, one line each: `YYYY-MM-DD [type] descript
 
 Before committing, run `npm run lint && npm run check && npm test`. Also run `npm run e2e` when
 anything under `src/ui`, `src/render`, or a view changed. CI (`.github/workflows/ci.yml`) runs
-everything on every push; Netlify builds and deploys `main` (`netlify.toml`).
+everything on every push that changes more than the root `*.md` notes or `docs/`; Netlify builds and deploys `main` (`netlify.toml`).
 
 `@playwright/test` is pinned to 1.63.0 to match the browsers preinstalled in cloud sessions, and
 `overrides` pins `playwright-core` to the same version. Bump them together.
